@@ -1,2 +1,10 @@
 ---
-# defaults file for macos_dev
+
+programming:
+  - iterm2
+  - visual-studio-code
+  - docker
+  - xquartz
+
+convenience:
+  - authy

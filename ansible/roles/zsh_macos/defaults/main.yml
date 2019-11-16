@@ -1,0 +1,5 @@
+---
+
+zsh_dependencies:
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
