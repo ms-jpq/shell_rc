@@ -1,11 +1,11 @@
 ## Roles
 
 ```
-unix_common
+unix
   |--macos
   |    |--macos_personal
   |--ubuntu
        |--ubuntu_server
        |--ubuntu_desktop
-windows_common
+windows
 ```
