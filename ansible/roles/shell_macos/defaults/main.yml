@@ -1,5 +1,7 @@
 ---
 
+quick_sync: no
+
 core_utils:
   - python
   - zsh

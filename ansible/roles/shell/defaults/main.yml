@@ -1,5 +1,7 @@
 ---
 
+quick_sync: no
+
 install_dependencies:
   - git
   - zsh

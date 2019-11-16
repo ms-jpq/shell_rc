@@ -1,10 +1,7 @@
 ---
 
 - import_tasks: install_deps.yml
+  when: not quick_sync
 - import_tasks: clone_repos.yml
-
-- import_tasks: link_files.yml
-  when: ansible_connection == "local"
-
+  when: not quick_sync
 - import_tasks: copy_files.yml
-  when: ansible_connection != "local"

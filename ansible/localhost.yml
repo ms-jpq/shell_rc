@@ -2,8 +2,11 @@
 
 - hosts: localhost
   connection: local
+  gather_facts: no
+
+  vars:
+    quick_sync: yes
 
   roles:
-    # - role: debug
     - role: shell_macos
     - role: macos_dev

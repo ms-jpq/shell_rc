@@ -1,6 +1,6 @@
 ---
 
-- name: clone repos
+- name: clone oh-my-zsh repos
   git:
     depth: 1
     force: yes
