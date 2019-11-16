@@ -4,8 +4,9 @@
   connection: local
   gather_facts: no
 
+  # Change quick_sync -> yes for full sync
   vars:
-    quick_sync: no
+    quick_sync: yes
 
   roles:
     - role: shell_macos

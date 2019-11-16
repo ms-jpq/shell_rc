@@ -3,17 +3,14 @@
 sys_defaults:
   - domain: .GlobalPreferences
     key: com.apple.mouse.scaling
-    type: int
     value: -1
 
   - domain: .GlobalPreferences
     key: com.apple.scrollwheel.scaling
-    type: int
     value: -1
 
   - domain: com.apple.TextEdit
     key: TabWidth
-    type: int
     value: 4
 
 

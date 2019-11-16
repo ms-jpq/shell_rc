@@ -4,7 +4,6 @@
   osx_defaults:
     domain: "{{ item.domain }}"
     key: "{{ item.key }}"
-    type: "{{ item.type }}"
     value: "{{ item.value }}"
   loop: "{{ sys_defaults }}"
 
