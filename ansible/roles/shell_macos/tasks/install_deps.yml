@@ -1,0 +1,13 @@
+---
+
+- name: install core packages
+  brew:
+    name: "{{ core_utils }}"
+
+- name: install nice packages
+  brew:
+    name: "{{ nice_things }}"
+
+- name: install fun packages
+  brew:
+    name: "{{ fun_things }}"

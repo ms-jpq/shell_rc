@@ -35,3 +35,10 @@ fun_things:
   - cowsay
   - lolcat
   - figlet
+
+target_files:
+  - src: zsh/custom/
+    dest: ~/.oh-my-zsh/custom/
+
+  - src: zsh/.nanorc
+    dest: ~/.nanorc

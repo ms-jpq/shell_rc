@@ -1,0 +1,6 @@
+---
+
+- name: "-- zsh macos -- :: copy: os specific"
+  copy:
+    src: "{{ target_files.src }}"
+    dest: "{{ target_files.dest }}"

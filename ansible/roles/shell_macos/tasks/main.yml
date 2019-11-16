@@ -1,3 +1,4 @@
 ---
 
+- import_tasks: install_deps.yml
 - import_tasks: copy_files.yml
