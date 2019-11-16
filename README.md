@@ -1,11 +1,13 @@
 ## Roles
 
 ```
-unix
-  |--macos
-  |    |--macos_personal
-  |--ubuntu
-       |--ubuntu_server
-       |--ubuntu_desktop
+zsh
+  |--zsh_macos
+  |--zsH_ubuntu
+macos
+  |--macos_dev
+ubuntu
+  |--ubuntu_server
+  |--ubuntu_desktop
 windows
 ```

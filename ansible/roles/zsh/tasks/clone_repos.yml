@@ -1,0 +1,13 @@
+---
+
+- name: "-- zsh -- :: clone: oh my zsh"
+  git:
+    depth: 1
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: ~/.oh-my-zsh
+
+- name: "-- zsh -- :: clone: powerlevel10k"
+  git:
+    depth: 1
+    repo: https://github.com/romkatv/powerlevel10k.git
+    dest: ~/.zsh_custom/themes
