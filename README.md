@@ -7,7 +7,7 @@ zsh
 macos
   |--macos_dev
 ubuntu
-  |--ubuntu_server
-  |--ubuntu_desktop
+  |--ubuntu_docker
+  |--ubuntu_x11vnc
 windows
 ```
