@@ -40,5 +40,5 @@ target_files:
   - src: zsh/custom/
     dest: ~/.oh-my-zsh/custom/
 
-  - src: zsh/.nanorc
+  - src: .nanorc
     dest: ~/.nanorc
