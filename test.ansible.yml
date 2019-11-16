@@ -1,5 +1,0 @@
----
-- hosts: "{{ host }}"
-
-  tasks:
-    - import_tasks: shell/plays/ping.ansible.yml
