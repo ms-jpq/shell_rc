@@ -1,2 +1,3 @@
 ---
-# tasks file for ubuntu_server
+
+- import_tasks: ensure_install.yml

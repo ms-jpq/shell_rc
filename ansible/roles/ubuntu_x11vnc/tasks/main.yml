@@ -1,2 +1,3 @@
 ---
-# tasks file for ubuntu_desktop
+
+- import_tasks: ensure_install.yml

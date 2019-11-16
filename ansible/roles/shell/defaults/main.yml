@@ -1,5 +1,8 @@
 ---
 
+install_dependencies:
+  - 2
+
 zsh_repos:
   - src: https://github.com/robbyrussell/oh-my-zsh
     dest: ~/.oh-my-zsh

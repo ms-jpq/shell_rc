@@ -1,0 +1,5 @@
+---
+
+- name: install x11vnc
+  apt:
+    name: x11vnc
