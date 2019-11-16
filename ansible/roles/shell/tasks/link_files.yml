@@ -1,0 +1,8 @@
+---
+
+- name: link files
+  file:
+    state: link
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop: "{{ target_files }}"

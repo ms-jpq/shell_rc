@@ -4,5 +4,6 @@
   connection: local
 
   roles:
+    # - role: debug
     - role: shell_macos
-    # - role: macos_dev
+    - role: macos_dev
