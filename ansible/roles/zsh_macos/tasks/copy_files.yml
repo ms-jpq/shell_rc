@@ -1,6 +1,6 @@
 ---
 
-- name: "-- unix -- :: copy: mac os"
+- name: "-- zsh macos -- :: copy: os specific"
   copy:
     src: zsh/custom
     dest: ~/.zsh_custom

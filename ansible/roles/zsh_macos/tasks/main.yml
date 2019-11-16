@@ -1,2 +1,3 @@
 ---
-# tasks file for zsh_macos
+
+- import_tasks: copy_files.yml

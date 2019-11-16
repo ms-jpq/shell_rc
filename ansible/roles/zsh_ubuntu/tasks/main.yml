@@ -1,2 +1,4 @@
 ---
-# tasks file for zsh_ubuntu
+
+- import_tasks: copy_files.yml
+
