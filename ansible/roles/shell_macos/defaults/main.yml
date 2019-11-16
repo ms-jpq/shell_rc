@@ -1,0 +1,37 @@
+---
+
+core_utils:
+  - python
+  - zsh
+  - bash
+  - coreutils
+  - findutils
+  - openssh
+  - openssl
+  - rsync
+  - curl
+  - wget
+  - grep
+  - gnu-getopt
+  - nano
+  - htop
+  - nmap
+  - tree
+
+nice_things:
+  - exa
+  - bat
+  - trash
+  - thefuck
+  - tldr
+
+fun_things:
+  - neofetch
+  - archey
+  - sl
+  - cmatrix
+  - asciiquarium
+  - nyancat
+  - cowsay
+  - lolcat
+  - figlet

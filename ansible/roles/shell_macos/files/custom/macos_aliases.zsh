@@ -1,12 +1,11 @@
-
-#################### ############## ####################
-#################### Display Region ####################
-#################### ############## ####################
+#################### ############ ####################
+#################### MacOS Region ####################
+#################### ############ ####################
 
 alias trash='trash -v'
 
 alias batt='pmset -g batt'
-alias dns='killall -HUP mDNSResponder'
+alias dns='sudo killall -HUP mDNSResponder'
 
 alias brewup='brew update && brew upgrade && brew cleanup && brew doctor'
 
