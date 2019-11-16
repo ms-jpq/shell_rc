@@ -1,7 +1,8 @@
 ---
 
 install_dependencies:
-  - 2
+  - git
+  - zsh
 
 zsh_repos:
   - src: https://github.com/robbyrussell/oh-my-zsh
@@ -21,3 +22,13 @@ zsh_repos:
 
   - src: https://github.com/zsh-users/zsh-history-substring-search
     dest: ~/.oh-my-zsh/plugins/zsh-history-substring-search
+
+target_files:
+  - src: zsh/rc.zsh
+    dest: ~/.zshrc
+
+  - src: zsh/.p10k.zsh
+    dest: ~/.p10k.zsh
+
+  - src: zsh/custom/
+    dest: ~/.oh-my-zsh/custom/

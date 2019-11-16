@@ -1,0 +1,6 @@
+---
+
+- name: install packages
+  package:
+    name: "{{ install_dependencies }}"
+    state: present

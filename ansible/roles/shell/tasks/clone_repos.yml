@@ -3,6 +3,6 @@
 - name: "-- zsh -- :: cloning repos"
   git:
     depth: 1
-    repo: .git
-    dest:
+    repo: "{{ zsh_repos.src }}"
+    dest: "{{ zsh_repos.dest }}"
 

@@ -1,4 +1,5 @@
 ---
 
+- import_tasks: install_deps.yml
 - import_tasks: clone_repos.yml
 - import_tasks: copy_files.yml

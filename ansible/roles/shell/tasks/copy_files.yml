@@ -1,0 +1,6 @@
+---
+
+- name: "-- zsh -- :: copy files"
+  copy:
+    src: "{{ target_files.src }}"
+    dest: "{{ target_files.dest }}"
