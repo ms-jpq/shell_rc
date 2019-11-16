@@ -1,8 +1,9 @@
 ---
 
-- name: "-- zsh -- :: cloning repos"
+- name: clone repos
   git:
     depth: 1
-    repo: "{{ zsh_repos.src }}"
-    dest: "{{ zsh_repos.dest }}"
-
+    force: yes
+    repo: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop: "{{ zsh_repos }}"
