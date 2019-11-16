@@ -16,9 +16,6 @@ sys_defaults:
     type: int
     value: 4
 
-core_utils:
-  - cask
-  - git
 
 core_apps:
   - onyx

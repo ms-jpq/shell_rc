@@ -1,0 +1,11 @@
+---
+
+- name: install brew cask
+  homebrew:
+    name: cask
+    update_homebrew: yes
+
+
+- name: install basic apps
+  homebrew_cask:
+    cask: "{{ core_apps }}"

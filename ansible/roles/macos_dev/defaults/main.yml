@@ -1,10 +1,10 @@
 ---
 
-programming:
+programming_apps:
   - iterm2
   - visual-studio-code
   - docker
   - xquartz
 
-convenience:
+convenience_apps:
   - authy

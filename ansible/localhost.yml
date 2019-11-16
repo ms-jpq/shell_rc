@@ -5,8 +5,9 @@
   gather_facts: no
 
   vars:
-    quick_sync: yes
+    quick_sync: no
 
   roles:
     - role: shell_macos
     - role: macos_dev
+      when: not quick_sync
