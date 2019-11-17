@@ -12,3 +12,5 @@
     - role: shell_macos
     - role: macos_dev
       when: sync_all
+    - role: macos_personal
+      when: sync_all

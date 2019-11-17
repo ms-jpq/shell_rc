@@ -1,10 +1,10 @@
 ---
 
-- name: writing macos defaults
+- name: writing dev defaults
   osx_defaults:
     domain: "{{ item.domain }}"
     key: "{{ item.key }}"
     type: "{{ item.type }}"
     value: "{{ item.value }}"
-  loop: "{{ sys_defaults }}"
+  loop: "{{ dev_sys_defaults }}"
 

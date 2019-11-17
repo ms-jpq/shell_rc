@@ -1,5 +1,12 @@
 ---
 
+dev_sys_defaults:
+  - domain: org.macosforge.xquartz.X11
+    key: enable_iglx
+    type: bool
+    value: true
+
+
 programming_apps:
   - iterm2
   - visual-studio-code
