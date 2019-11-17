@@ -1,5 +1,7 @@
 ---
 
+nano_path: /usr/share/nano
+
 core-utils:
   - openssh-server
   - python

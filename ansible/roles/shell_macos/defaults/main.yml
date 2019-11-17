@@ -1,5 +1,7 @@
 ---
 
+nano_path: /usr/local/opt/nano/share/nano
+
 core_utils:
   - python
   - zsh
@@ -41,6 +43,3 @@ brew_packages: "{{ core_utils + nice_things + fun_things }}"
 target_files:
   - src: "zsh/custom/"
     dest: "{{ omz_dir }}/custom/"
-
-  - src: ".nanorc"
-    dest: "~/.nanorc"

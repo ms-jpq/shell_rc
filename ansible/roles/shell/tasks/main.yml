@@ -10,3 +10,5 @@
   when: sync_all or from_scratch
 
 - import_tasks: copy_files.yml
+
+- import_tasks: fill_templates.yml
