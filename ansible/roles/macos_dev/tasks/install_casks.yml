@@ -1,5 +1,0 @@
----
-
-- name: install apps for programming
-  homebrew_cask:
-    cask: "{{ programming_apps }}"

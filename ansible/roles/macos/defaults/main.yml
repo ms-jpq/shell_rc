@@ -1,23 +1,10 @@
 ---
 
-sys_defaults:
-  - domain: .GlobalPreferences
-    key: com.apple.mouse.scaling
-    type: string
-    value: -1
+# INPUT #
+additional_defaults: []
+additional_casks: []
+# INPUT #
 
-  - domain: .GlobalPreferences
-    key: com.apple.scrollwheel.scaling
-    type: string
-    value: -1
+_target_defaults: additional_defaults
 
-  - domain: com.apple.TextEdit
-    key: TabWidth
-    type: string
-    value: 4
-
-
-core_apps:
-  - onyx
-  - firefox
-  - keka
+_target_casks: additional_casks

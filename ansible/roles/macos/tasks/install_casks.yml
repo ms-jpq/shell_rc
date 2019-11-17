@@ -6,6 +6,6 @@
     update_homebrew: yes
 
 
-- name: install basic apps
+- name: install casks
   homebrew_cask:
-    cask: "{{ core_apps }}"
+    cask: "{{ _target_casks }}"

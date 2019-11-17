@@ -1,1 +1,5 @@
-dependencies: []
+dependencies:
+  - role: macos
+    vars:
+      additional_defaults: "{{ _shared_defaults }}"
+      additional_casks: "{{ _shared_casks }}"

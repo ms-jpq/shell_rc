@@ -1,5 +1,0 @@
----
-
-- import_tasks: write_defaults.yml
-
-- import_tasks: install_casks.yml
