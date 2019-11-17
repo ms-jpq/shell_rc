@@ -1,4 +1,4 @@
 ---
 
-- import_tasks: homebrew.yml
+- import_tasks: _homebrew.yml
   when: sync_all

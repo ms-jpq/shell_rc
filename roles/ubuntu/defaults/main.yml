@@ -5,3 +5,33 @@ _nano_path: /usr/share/nano
 _additional_files:
   - src: "../ubuntu/files/zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
+
+_core_utils:
+  - zsh
+  - python3
+  - python3-pip
+  - rsync
+  - curl
+  - wget
+  - grep
+  - nano
+  - htop
+  - nmap
+  - tree
+
+_nice_things:
+  - exa
+  - bat
+  - thefuck
+  - tldr
+
+_fun_things:
+  - neofetch
+  - sl
+  - cmatrix
+  - nyancat
+  - cowsay
+  - lolcat
+  - figlet
+
+_apt_packages: "{{ _core_utils + _nice_things + _fun_things }}"
