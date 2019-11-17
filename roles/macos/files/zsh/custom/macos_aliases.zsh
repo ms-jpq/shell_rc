@@ -2,6 +2,9 @@
 #################### MacOS Region ####################
 #################### ############ ####################
 
+alias c='pbcopy'
+alias p='pbpaste'
+
 alias trash='trash -v'
 
 alias batt='pmset -g batt'
