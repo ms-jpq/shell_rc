@@ -3,5 +3,5 @@
 _nano_path: /usr/share/nano
 
 _additional_files:
-  - src: "../shell_ubuntu/files/zsh/custom/"
+  - src: "../ubuntu/files/zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"

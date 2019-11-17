@@ -1,8 +1,4 @@
-## Conventions
-
-`role_` -> Abstract Role, never invoke in playbooks
-
-`role__base` -> Base Role, always invoke in playbooks
+# Ansible Shell
 
 ---
 
@@ -13,24 +9,3 @@
 `var` -> Input
 
 ---
-
-## Roles
-
-```
-shell
-  |--shell_macos
-  |--shell_ubuntu
-macos_
-  |--macos__base
-  |--macos_dev
-  |--macos_personal
-ubuntu_
-  |--ubuntu__base
-  |--ubuntu_docker
-  |--ubuntu_x11vnc
-windows_
-  |--windows__base
-  |--windows_auto_login
-  |--windows_hyper_v
-  |--windows_ssh
-```

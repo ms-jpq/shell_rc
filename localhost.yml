@@ -5,24 +5,12 @@
   gather_facts: no
 
   vars:
-    sync_all: no
+    git_name: Fly me to the moon
+    git_email: git@bigly.dog
+
+    sync_all: yes
+    from_scratch: no
 
   tasks:
     - import_role:
-        name: shell_macos
-      vars:
-        git_name: Fly me to the moon
-        git_email: git@bigly.dog
-        from_scratch: no
-
-    - import_role:
-        name: macos__base
-      when: sync_all
-
-    - import_role:
-        name: macos_dev
-      when: sync_all
-
-    - import_role:
-        name: macos_personal
-      when: sync_all
+        name: macos

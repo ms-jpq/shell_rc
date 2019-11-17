@@ -3,10 +3,11 @@
 _nano_path: /usr/local/opt/nano/share/nano
 
 _additional_files:
-  - src: "../shell_macos/files/zsh/custom/"
+  - src: "../macos/files/zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
 
 _core_utils:
+  - cask
   - python
   - zsh
   - bash
