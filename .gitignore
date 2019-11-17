@@ -1,5 +1,3 @@
 .DS_Store
 temp
-hosts.ansible.yml
-test.ansible.yml
-
+*.ansible.yml

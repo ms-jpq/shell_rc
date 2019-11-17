@@ -36,6 +36,8 @@ fun_things:
   - lolcat
   - figlet
 
+brew_packages: "{{ core_utils + nice_things + fun_things }}"
+
 target_files:
   - src: "zsh/custom/"
     dest: "{{ omz_dir }}/custom/"

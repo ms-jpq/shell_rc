@@ -1,13 +1,5 @@
 ---
 
-- name: install core packages
+- name: install packages
   homebrew:
-    name: "{{ core_utils }}"
-
-- name: install nice packages
-  homebrew:
-    name: "{{ nice_things }}"
-
-- name: install fun packages
-  homebrew:
-    name: "{{ fun_things }}"
+    name: "{{ brew_packages }}"
