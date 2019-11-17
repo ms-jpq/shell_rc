@@ -38,7 +38,7 @@ _zsh_repos:
     dest: "{{ _omz_dir_ }}/plugins/zsh-history-substring-search"
 
 
-_target_files:
+_shared_files:
   - src: "zsh/rc.zsh"
     dest: "~/.zshrc"
 
@@ -51,14 +51,14 @@ _target_files:
   - src: ".ansible.cfg"
     dest: "~/.ansible.cfg"
 
-target_files: "{{ _target_files + additional_files }}"
+_target_files: "{{ _shared_files + additional_files }}"
 
 
-_target_templates:
+_shared_templates:
   - src: ".nanorc.j2"
     dest: "~/.nanorc"
 
   - src: ".gitconfig.j2"
     dest: "~/.gitconfig"
 
-target_templates: "{{ _target_templates + additional_templates }}"
+_target_templates: "{{ _shared_templates + additional_templates }}"

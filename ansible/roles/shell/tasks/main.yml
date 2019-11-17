@@ -6,7 +6,7 @@
 - import_tasks: _remove_old.yml
   when: from_scratch
 
-- import_tasks: clone_repos.yml
+- import_tasks: _clone_repos.yml
   when: sync_all or from_scratch
 
 - import_tasks: copy_files.yml

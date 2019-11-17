@@ -2,7 +2,7 @@
 
 _nano_path: /usr/local/opt/nano/share/nano
 
-_target_files:
+_additional_files:
   - src: "zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
 

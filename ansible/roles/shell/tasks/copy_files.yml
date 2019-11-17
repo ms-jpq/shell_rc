@@ -4,4 +4,4 @@
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-  loop: "{{ target_files }}"
+  loop: "{{ _target_files }}"
