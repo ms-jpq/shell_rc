@@ -5,6 +5,6 @@ additional_defaults: []
 additional_casks: []
 # INPUT #
 
-_target_defaults: additional_defaults
+_target_defaults: "{{ additional_defaults }}"
 
-_target_casks: additional_casks
+_target_casks: "{{ additional_casks }}"
