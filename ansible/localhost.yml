@@ -6,14 +6,14 @@
 
   vars:
     from_scratch: no
-    sync_all: yes
+    sync_all: no
 
     git_name: Fly me to the moon
     git_email: git@bigly.dog
 
   tasks:
-    # - import_role:
-    #     name: shell_macos
+    - import_role:
+        name: shell_macos
 
     - import_role:
         name: macos_base
