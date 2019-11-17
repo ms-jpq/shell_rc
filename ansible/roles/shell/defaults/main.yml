@@ -1,39 +1,42 @@
 ---
 
-quick_sync: no
+sync_all: yes
+from_scratch: yes
+
+omz_dir: ~/.oh-my-zsh
 
 install_dependencies:
   - git
   - zsh
 
 zsh_repos:
-  - src: https://github.com/robbyrussell/oh-my-zsh
-    dest: ~/.oh-my-zsh
+  - src: "https://github.com/robbyrussell/oh-my-zsh"
+    dest: "{{ omz_dir }}"
 
-  - src: https://github.com/romkatv/powerlevel10k
-    dest: ~/.oh-my-zsh/themes/powerlevel10k
+  - src: "https://github.com/romkatv/powerlevel10k"
+    dest: "{{ omz_dir }}/themes/powerlevel10k"
 
-  - src: https://github.com/zsh-users/zsh-syntax-highlighting
-    dest: ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+  - src: "https://github.com/zsh-users/zsh-syntax-highlighting"
+    dest: "{{ omz_dir }}/plugins/zsh-syntax-highlighting"
 
-  - src: https://github.com/zsh-users/zsh-autosuggestions
-    dest: ~/.oh-my-zsh/plugins/zsh-autosuggestions
+  - src: "https://github.com/zsh-users/zsh-autosuggestions"
+    dest: "{{ omz_dir }}/plugins/zsh-autosuggestions"
 
-  - src: https://github.com/zsh-users/zsh-completions
-    dest: ~/.oh-my-zsh/plugins/zsh-completions
+  - src: "https://github.com/zsh-users/zsh-completions"
+    dest: "{{ omz_dir }}/plugins/zsh-completions"
 
-  - src: https://github.com/zsh-users/zsh-history-substring-search
-    dest: ~/.oh-my-zsh/plugins/zsh-history-substring-search
+  - src: "https://github.com/zsh-users/zsh-history-substring-search"
+    dest: "{{ omz_dir }}/plugins/zsh-history-substring-search"
 
 target_files:
-  - src: zsh/rc.zsh
-    dest: ~/.zshrc
+  - src: "zsh/rc.zsh"
+    dest: "~/.zshrc"
 
-  - src: zsh/.p10k.zsh
-    dest: ~/.p10k.zsh
+  - src: "zsh/.p10k.zsh"
+    dest: "~/.p10k.zsh"
 
-  - src: zsh/custom/
-    dest: ~/.oh-my-zsh/custom/
+  - src: "zsh/custom/"
+    dest: "{{ omz_dir }}/custom/"
 
-  - src: .ansible.cfg
-    dest: ~/.ansible.cfg
+  - src: ".ansible.cfg"
+    dest: "~/.ansible.cfg"

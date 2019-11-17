@@ -1,7 +1,12 @@
 ---
 
 - import_tasks: install_deps.yml
-  when: not quick_sync
+  when: sync_all
+
+- import_tasks: remove_old.yml
+  when: from_scratch
+
 - import_tasks: clone_repos.yml
-  when: not quick_sync
+  when: sync_all or from_scratch
+
 - import_tasks: copy_files.yml

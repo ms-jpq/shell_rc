@@ -1,5 +1,5 @@
 ---
 
 target_files:
-  - src: zsh/custom/
-    dest: ~/.oh-my-zsh/custom/
+  - src: "zsh/custom/"
+    dest: "{{ omz_dir }}/custom/"

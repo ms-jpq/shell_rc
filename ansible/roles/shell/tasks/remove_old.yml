@@ -1,0 +1,6 @@
+---
+
+- name: removing stale oh-my-zsh
+  file:
+    path: "{{ omz_dir }}/"
+    state: absent

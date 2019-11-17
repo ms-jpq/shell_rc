@@ -1,7 +1,5 @@
 ---
 
-quick_sync: no
-
 core_utils:
   - python
   - zsh
@@ -39,8 +37,8 @@ fun_things:
   - figlet
 
 target_files:
-  - src: zsh/custom/
-    dest: ~/.oh-my-zsh/custom/
+  - src: "zsh/custom/"
+    dest: "{{ omz_dir }}/custom/"
 
-  - src: .nanorc
-    dest: ~/.nanorc
+  - src: ".nanorc"
+    dest: "~/.nanorc"
