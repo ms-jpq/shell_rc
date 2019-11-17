@@ -1,5 +1,0 @@
----
-
-- name: "reboot windows when {{ something }} "
-  win_reboot:
-  when: "{{ something }}"

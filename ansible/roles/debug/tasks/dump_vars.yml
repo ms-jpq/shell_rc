@@ -1,6 +1,0 @@
----
-
-- name: "dump vars to {{ dump_location }}"
-  template:
-    src: var_dump.j2
-    dest: "{{ dump_location }}"

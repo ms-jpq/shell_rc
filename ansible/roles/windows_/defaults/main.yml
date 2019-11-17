@@ -1,7 +1,0 @@
----
-
-base_regedits:
-  - path: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search
-    entry: BingSearchEnabled
-    type: dword
-    data: 0

@@ -1,6 +1,6 @@
 ---
 
-- name: install common packages
+- name: "install common packages {{ _shell_dependencies }}"
   package:
     name: "{{ _shell_dependencies }}"
     state: present

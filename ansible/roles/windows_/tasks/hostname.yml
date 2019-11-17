@@ -1,6 +1,0 @@
----
-
-- name: "update hostname to {{ win_name }}"
-  win_hostname:
-    name: "{{ win_name }}"
-
