@@ -9,13 +9,14 @@ ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 DISABLE_UPDATE_PROMPT=true
 
-
+zle -N autosuggest-accept
+bindkey '^ ' autosuggest-accept
 ZSH_AUTOSUGGEST_USE_ASYNC=true
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=4"
-# ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(autosuggest-accept)
-# bindkey '^ ' autosuggest-accept
+ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(autosuggest-accept)
 
 HYPHEN_INSENSITIVE="true"
+
 plugins=(zsh-syntax-highlighting
          zsh-autosuggestions
          zsh-completions
@@ -26,8 +27,6 @@ source $ZSH/oh-my-zsh.sh
 autoload -U compinit && compinit
 
 
+source ~/.p10k.zsh
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-
-source ~/.p10k.zsh
