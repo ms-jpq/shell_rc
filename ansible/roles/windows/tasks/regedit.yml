@@ -1,0 +1,9 @@
+---
+
+- name: regedit basics
+  win_regedit:
+    path: "{{ item.path }}"
+    entry: "{{ item.entry }}"
+    type: "{{ item.type }}"
+    data: "{{ item.data }}"
+  loop: "{{ base_regedits }}"

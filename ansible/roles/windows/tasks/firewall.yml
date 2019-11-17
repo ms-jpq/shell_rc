@@ -1,0 +1,11 @@
+---
+
+- name: enable ICMP ping
+  win_firewall_rule:
+    name: "ICMP Allow incoming {{ item }} echo request"
+    protocol: "icmp{{ item }}:8,any"
+    action: allow
+    enabled: yes
+  loop:
+    - v4
+    - v6
