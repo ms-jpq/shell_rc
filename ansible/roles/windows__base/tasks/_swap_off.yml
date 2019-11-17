@@ -1,0 +1,7 @@
+---
+
+- name: swap off
+  win_pagefile:
+    remove_all: yes
+    automatic: no
+    system_managed: no

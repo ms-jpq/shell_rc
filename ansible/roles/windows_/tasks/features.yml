@@ -1,0 +1,10 @@
+---
+
+- name: "install windows feature {{ _target_features }}"
+  win_feature:
+    name: "{{ _target_features }}"
+
+
+- name: "install windows optional feature {{ _target_opt_features }}"
+  win_opt_feature:
+    name: "{{ _target_opt_features  }}"

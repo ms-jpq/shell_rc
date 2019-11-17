@@ -1,11 +1,17 @@
 ---
 
 - vars:
-    from_scratch: yes
-    sync_all: yes
+    sync_all: no
 
-    git_name: Fly me to the moon
-    git_email: git@bigly.dog
+  tasks:
+    - import_role:
+        name: shell_ubuntu
+      vars:
+        git_name: Fly me to the moon
+        git_email: git@bigly.dog
+        from_scratch: yes
 
-  roles:
-    - role: shell_ubuntu
+
+
+
+

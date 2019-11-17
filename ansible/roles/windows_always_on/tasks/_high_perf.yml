@@ -1,0 +1,6 @@
+---
+
+- name: "never sleep"
+  win_power_plan:
+    name: high performance
+

@@ -2,11 +2,17 @@
 
 `role_` -> Abstract Role, never invoke in playbooks
 
+`role__base` -> Base Role, always invoke in playbooks
+
+---
+
 `_var_` -> Shared Consts
 
 `_var` -> Private
 
 `var` -> Input
+
+---
 
 ## Roles
 

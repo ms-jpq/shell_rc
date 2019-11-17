@@ -1,0 +1,7 @@
+---
+
+- name: Create a mapped drive under Z
+  win_mapped_drive:
+    letter: Z
+    path: \\domain\appdata\accounting
+
