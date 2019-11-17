@@ -8,6 +8,9 @@
     from_scratch: no
     sync_all: no
 
+    git_name: Fly me to the moon
+    git_email: git@bigly.dog
+
   roles:
     - role: shell_macos
     - role: macos_dev
