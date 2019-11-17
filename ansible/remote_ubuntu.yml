@@ -1,0 +1,12 @@
+---
+
+- hosts: "{{ hosts }}"
+  vars:
+    from_scratch: yes
+    sync_all: yes
+
+    git_name: Fly me to the moon
+    git_email: git@bigly.dog
+
+  roles:
+    - role: shell_ubuntu
