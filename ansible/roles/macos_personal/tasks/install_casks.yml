@@ -1,0 +1,5 @@
+---
+
+- name: install apps for personal use
+  homebrew_cask:
+    cask: "{{ personal_apps }}"

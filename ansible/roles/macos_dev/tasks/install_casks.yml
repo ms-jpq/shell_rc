@@ -3,8 +3,3 @@
 - name: install apps for programming
   homebrew_cask:
     cask: "{{ programming_apps }}"
-
-
-- name: install apps for convenience
-  homebrew_cask:
-    cask: "{{ convenience_apps }}"

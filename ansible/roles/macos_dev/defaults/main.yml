@@ -5,6 +5,3 @@ programming_apps:
   - visual-studio-code
   - docker
   - xquartz
-
-convenience_apps:
-  - authy

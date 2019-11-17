@@ -17,5 +17,4 @@ sys_defaults:
 core_apps:
   - onyx
   - firefox
-  - iina
   - keka
