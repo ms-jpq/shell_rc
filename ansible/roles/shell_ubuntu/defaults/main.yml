@@ -4,4 +4,4 @@ nano_path: /usr/share/nano
 
 target_files:
   - src: "zsh/custom/"
-    dest: "{{ omz_dir }}/custom/"
+    dest: "{{ _omz_dir_ }}/custom/"

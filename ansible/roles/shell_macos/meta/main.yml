@@ -1,2 +1,5 @@
 dependencies:
-  - shell
+  - role: shell
+    vars:
+      nano_path: "{{ _nano_path }}"
+      additional_files: "{{ _target_files }}"

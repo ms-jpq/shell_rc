@@ -1,3 +1,11 @@
+## Conventions
+
+`_name_` -> Shared Consts
+
+`_name` -> Private
+
+`name` -> Input
+
 ## Roles
 
 ```

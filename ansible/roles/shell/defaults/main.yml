@@ -1,34 +1,44 @@
 ---
 
+## GLOBAL ##
+_omz_dir_: ~/.oh-my-zsh
+## GLOBAL ##
+
+
+# INPUT #
+nano_path: ""
 sync_all: yes
 from_scratch: yes
+additional_files: []
+additional_templates: []
+# INPUT #
 
-omz_dir: ~/.oh-my-zsh
 
-shell_dependencies:
+_shell_dependencies:
   - git
   - zsh
 
-zsh_repos:
+_zsh_repos:
   - src: "https://github.com/robbyrussell/oh-my-zsh"
-    dest: "{{ omz_dir }}"
+    dest: "{{ _omz_dir_ }}"
 
   - src: "https://github.com/romkatv/powerlevel10k"
-    dest: "{{ omz_dir }}/themes/powerlevel10k"
+    dest: "{{ _omz_dir_ }}/themes/powerlevel10k"
 
   - src: "https://github.com/zsh-users/zsh-syntax-highlighting"
-    dest: "{{ omz_dir }}/plugins/zsh-syntax-highlighting"
+    dest: "{{ _omz_dir_ }}/plugins/zsh-syntax-highlighting"
 
   - src: "https://github.com/zsh-users/zsh-autosuggestions"
-    dest: "{{ omz_dir }}/plugins/zsh-autosuggestions"
+    dest: "{{ _omz_dir_ }}/plugins/zsh-autosuggestions"
 
   - src: "https://github.com/zsh-users/zsh-completions"
-    dest: "{{ omz_dir }}/plugins/zsh-completions"
+    dest: "{{ _omz_dir_ }}/plugins/zsh-completions"
 
   - src: "https://github.com/zsh-users/zsh-history-substring-search"
-    dest: "{{ omz_dir }}/plugins/zsh-history-substring-search"
+    dest: "{{ _omz_dir_ }}/plugins/zsh-history-substring-search"
 
-target_files:
+
+_target_files:
   - src: "zsh/rc.zsh"
     dest: "~/.zshrc"
 
@@ -36,14 +46,19 @@ target_files:
     dest: "~/.p10k.zsh"
 
   - src: "zsh/custom/"
-    dest: "{{ omz_dir }}/custom/"
+    dest: "{{ _omz_dir_ }}/custom/"
 
   - src: ".ansible.cfg"
     dest: "~/.ansible.cfg"
 
-target_templates:
+target_files: "{{ _target_files + additional_files }}"
+
+
+_target_templates:
   - src: ".nanorc.j2"
     dest: "~/.nanorc"
 
   - src: ".gitconfig.j2"
     dest: "~/.gitconfig"
+
+target_templates: "{{ _target_templates + additional_templates }}"

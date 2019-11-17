@@ -1,8 +1,12 @@
 ---
 
-nano_path: /usr/local/opt/nano/share/nano
+_nano_path: /usr/local/opt/nano/share/nano
 
-core_utils:
+_target_files:
+  - src: "zsh/custom/"
+    dest: "{{ _omz_dir_ }}/custom/"
+
+_core_utils:
   - python
   - zsh
   - bash
@@ -20,14 +24,14 @@ core_utils:
   - nmap
   - tree
 
-nice_things:
+_nice_things:
   - exa
   - bat
   - trash
   - thefuck
   - tldr
 
-fun_things:
+_fun_things:
   - neofetch
   - archey
   - sl
@@ -38,8 +42,4 @@ fun_things:
   - lolcat
   - figlet
 
-brew_packages: "{{ core_utils + nice_things + fun_things }}"
-
-target_files:
-  - src: "zsh/custom/"
-    dest: "{{ omz_dir }}/custom/"
+_brew_packages: "{{ _core_utils + _nice_things + _fun_things }}"

@@ -2,5 +2,5 @@
 
 - name: install common packages
   package:
-    name: "{{ shell_dependencies }}"
+    name: "{{ _shell_dependencies }}"
     state: present

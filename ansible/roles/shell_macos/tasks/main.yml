@@ -2,5 +2,3 @@
 
 - import_tasks: install_deps.yml
   when: sync_all
-
-- import_tasks: copy_files.yml

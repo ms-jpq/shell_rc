@@ -6,4 +6,4 @@
     force: yes
     repo: "{{ item.src }}"
     dest: "{{ item.dest }}"
-  loop: "{{ zsh_repos }}"
+  loop: "{{ _zsh_repos }}"

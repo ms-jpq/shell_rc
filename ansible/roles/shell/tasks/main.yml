@@ -1,9 +1,9 @@
 ---
 
-- import_tasks: install_deps.yml
+- import_tasks: _install_deps.yml
   when: sync_all
 
-- import_tasks: remove_old.yml
+- import_tasks: _remove_old.yml
   when: from_scratch
 
 - import_tasks: clone_repos.yml
