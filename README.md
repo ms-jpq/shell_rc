@@ -1,6 +1,6 @@
 ## Conventions
 
-`role_` -> Abstract Role, never call directly
+`role_` -> Abstract Role, never invoke in playbooks
 
 `_var_` -> Shared Consts
 
@@ -15,12 +15,16 @@ shell
   |--shell_macos
   |--shell_ubuntu
 macos_
-  |--macos_base
+  |--macos__base
   |--macos_dev
   |--macos_personal
 ubuntu_
-  |--ubuntu_base
+  |--ubuntu__base
   |--ubuntu_docker
   |--ubuntu_x11vnc
-windows
+windows_
+  |--windows__base
+  |--windows_auto_login
+  |--windows_hyper_v
+  |--windows_ssh
 ```

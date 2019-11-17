@@ -16,7 +16,7 @@
         name: shell_macos
 
     - import_role:
-        name: macos_base
+        name: macos__base
       when: sync_all
 
     - import_role:
