@@ -5,7 +5,7 @@ from_scratch: yes
 
 omz_dir: ~/.oh-my-zsh
 
-install_dependencies:
+shell_dependencies:
   - git
   - zsh
 
