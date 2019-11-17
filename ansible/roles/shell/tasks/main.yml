@@ -1,14 +1,14 @@
 ---
 
-- import_tasks: _install_deps.yml
+- import_tasks: _package.yml
   when: sync_all
 
-- import_tasks: _remove_old.yml
+- import_tasks: _remove_fs.yml
   when: from_scratch
 
-- import_tasks: _clone_repos.yml
+- import_tasks: _git_clone.yml
   when: sync_all or from_scratch
 
-- import_tasks: copy_files.yml
+- import_tasks: copy.yml
 
-- import_tasks: fill_templates.yml
+- import_tasks: templates.yml

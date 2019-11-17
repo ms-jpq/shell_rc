@@ -6,6 +6,8 @@ _omz_dir_: ~/.oh-my-zsh
 
 
 # INPUT #
+git_name: ""
+git_email: ""
 nano_path: ""
 sync_all: yes
 from_scratch: yes

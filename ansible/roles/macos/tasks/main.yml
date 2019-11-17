@@ -1,5 +1,5 @@
 ---
 
-- import_tasks: write_defaults.yml
-- import_tasks: install_casks.yml
+- import_tasks: homebrew_cask.yml
+- import_tasks: osx_defaults.yml
 
