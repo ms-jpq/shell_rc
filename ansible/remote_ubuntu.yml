@@ -1,7 +1,6 @@
 ---
 
-- hosts: "{{ hosts }}"
-  vars:
+- vars:
     from_scratch: yes
     sync_all: yes
 

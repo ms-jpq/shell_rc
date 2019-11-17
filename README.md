@@ -1,20 +1,25 @@
 ## Conventions
 
-`_name_` -> Shared Consts
+`role_` -> Abstract Role, never call directly
 
-`_name` -> Private
+`_var_` -> Shared Consts
 
-`name` -> Input
+`_var` -> Private
+
+`var` -> Input
 
 ## Roles
 
 ```
-zsh
-  |--zsh_macos
-  |--zsH_ubuntu
-macos
+shell
+  |--shell_macos
+  |--shell_ubuntu
+macos_
+  |--macos_base
   |--macos_dev
-ubuntu
+  |--macos_personal
+ubuntu_
+  |--ubuntu_base
   |--ubuntu_docker
   |--ubuntu_x11vnc
 windows

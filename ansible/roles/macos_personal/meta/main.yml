@@ -1,4 +1,4 @@
 dependencies:
-  - role: macos
+  - role: macos_
     vars:
       additional_casks: "{{ _personal_apps }}"
