@@ -1,8 +1,8 @@
 ---
 
-- name: "install python libs {{ _python_libs }}"
+- name: "install python libs {{ _python_packages }}"
   become: yes
   pip:
     executable: "{{ item.version }}"
     name: "{{ item.name }}"
-  loop: "{{ _python_libs }}"
+  loop: "{{ _python_packages }}"
