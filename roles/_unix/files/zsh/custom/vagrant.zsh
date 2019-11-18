@@ -3,7 +3,7 @@
 #################### ############## ####################
 
 alias v='vagrant'
-
+alias vdun='vagrant destroy'
 
 #################### ########### ####################
 #################### VBox Region ####################
@@ -15,7 +15,7 @@ vboff() {
   vb controlvm $1 poweroff
 }
 
-vdun() {
+vbdun() {
   vboff $1
   vb unregistervm $1
 }
