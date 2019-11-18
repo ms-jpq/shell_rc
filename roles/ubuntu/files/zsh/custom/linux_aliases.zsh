@@ -2,7 +2,7 @@
 #################### Display Region ####################
 #################### ############## ####################
 
-alias ls='ls --group-directories-first -hAF '
+alias ls='ls --group-directories-first --color -hAF '
 alias l='ls -1 '
 alias ll='ls -l '
 tree() {
