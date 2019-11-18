@@ -7,7 +7,8 @@ _additional_files:
     dest: "{{ _omz_dir_ }}/custom/"
 
 _additional_python_lbs:
-  - setuptools
+  - name: setuptools
+    version: pip3
 
 _core_utils:
   - cask

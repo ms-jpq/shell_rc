@@ -7,11 +7,13 @@ _additional_files:
     dest: "{{ _omz_dir_ }}/custom/"
 
 _additional_python_lbs:
-  - setuptools
+  - name: setuptools
+    version: pip
 
 _core_utils:
   - zsh
   - python3-pip
+  - python-pip
   - rsync
   - curl
   - wget
