@@ -3,9 +3,6 @@
 - import_tasks: _packages.yml
   when: sync_all
 
-- import_tasks: pip_packages.yml
-  when: sync_all
-
 - import_tasks: _remove_fs.yml
   when: from_scratch
 

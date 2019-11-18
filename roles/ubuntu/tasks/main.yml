@@ -4,3 +4,6 @@
   when: sync_all
 
 - import_tasks: _set_shell.yml
+
+- import_tasks: _pip_packages.yml
+  when: sync_all
