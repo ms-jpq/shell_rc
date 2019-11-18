@@ -1,0 +1,5 @@
+---
+
+- name: "install packages {{ brew_packages }}"
+  homebrew:
+    name: "{{ brew_packages }}"

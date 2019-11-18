@@ -1,0 +1,7 @@
+---
+
+- name: "install common packages {{ packages }}"
+  become: "{{ ansible_distribution != 'MacOSX' }}"
+  package:
+    name: "{{ packages }}"
+    state: present

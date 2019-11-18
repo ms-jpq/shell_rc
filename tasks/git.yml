@@ -1,7 +1,7 @@
 ---
 
 - name: clone oh-my-zsh repos
-  loop: "{{ _zsh_repos }}"
+  loop: "{{ git_repos }}"
   git:
     depth: 1
     force: yes

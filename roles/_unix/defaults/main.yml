@@ -16,13 +16,13 @@ additional_templates: []
 # INPUT #
 
 
-_shell_dependencies:
+packages:
   - git
   - zsh
   - python3
 
 
-_zsh_repos:
+git_repos:
   - src: "https://github.com/robbyrussell/oh-my-zsh"
     dest: "{{ _omz_dir_ }}"
 
@@ -55,7 +55,7 @@ _shared_files:
   - src: ".ansible.cfg"
     dest: "~/.ansible.cfg"
 
-_target_files: "{{ _shared_files + additional_files }}"
+target_files: "{{ _shared_files + additional_files }}"
 
 
 _shared_templates:
@@ -65,4 +65,4 @@ _shared_templates:
   - src: ".gitconfig.j2"
     dest: "~/.gitconfig"
 
-_target_templates: "{{ _shared_templates + additional_templates }}"
+target_templates: "{{ _shared_templates + additional_templates }}"

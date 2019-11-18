@@ -1,0 +1,5 @@
+---
+- name: "update apt and install {{ apt_packages }}"
+  become: yes
+  apt:
+    name: "{{ apt_packages }}"

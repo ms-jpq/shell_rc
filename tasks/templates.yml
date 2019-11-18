@@ -1,7 +1,7 @@
 ---
 
 - name: fill templates
-  loop: "{{ _target_templates }}"
+  loop: "{{ target_templates }}"
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

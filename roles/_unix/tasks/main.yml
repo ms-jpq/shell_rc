@@ -1,12 +1,12 @@
 ---
 
-- import_tasks: _packages.yml
+- import_tasks: packages.yml
   when: sync_all
 
-- import_tasks: _remove_fs.yml
+- import_tasks: remove_fs.yml
   when: from_scratch
 
-- import_tasks: _git_clone.yml
+- import_tasks: git.yml
   when: sync_all or from_scratch
 
 - import_tasks: copy.yml

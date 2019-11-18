@@ -1,7 +1,7 @@
 ---
 
 - name: copy files
-  loop: "{{ _target_files }}"
+  loop: "{{ target_files }}"
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
