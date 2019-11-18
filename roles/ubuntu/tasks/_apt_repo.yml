@@ -1,11 +1,11 @@
 ---
 
-- name: "add apt repo {{ repo }} "
+- name: "add apt repo {{ _apt_repos }} "
   apt_key:
     url: "{{ item.key }}"
   apt_repository:
     repo: "{{ item.repo }}"
-  loop: "{{ _apt_repo }}"
+  loop: "{{ _apt_repos }}"
 
 - name: "apt update"
   apt:

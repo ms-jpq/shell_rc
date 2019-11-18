@@ -4,15 +4,6 @@
 
 alias sudo='sudo -E '
 
-alias ls='exa --group-directories-first -ahF '
-alias l='ls -1 '
-alias ll='ls -l '
-tree() {
-  ls -T -L ${1-9999}
-}
-
-alias cat="bat --pager never --theme GitHub"
-
 alias hist='history'
 
 alias nano='nano -glm -$'

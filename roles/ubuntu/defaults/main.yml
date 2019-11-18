@@ -20,8 +20,6 @@ _core_utils:
   - tree
 
 _nice_things:
-  - exa
-  - bat
   - thefuck
   - tldr
 
@@ -34,4 +32,8 @@ _fun_things:
   - lolcat
   - figlet
 
+_apt_repos: []
+
 _apt_packages: "{{ _core_utils + _nice_things + _fun_things }}"
+
+

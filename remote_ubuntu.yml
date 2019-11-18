@@ -1,6 +1,8 @@
 ---
 
-- vars:
+- hosts: ubuntu
+
+  vars:
     sync_all: no
 
   tasks:
