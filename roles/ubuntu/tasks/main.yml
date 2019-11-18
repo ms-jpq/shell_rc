@@ -6,5 +6,8 @@
 - import_tasks: apt.yml
   when: sync_all
 
+- import_tasks: pip.yml
+  when: sync_all
+
 - import_tasks: _set_shell.yml
   when: sync_all
