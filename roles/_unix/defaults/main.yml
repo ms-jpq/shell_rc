@@ -13,12 +13,16 @@ sync_all: yes
 from_scratch: yes
 additional_files: []
 additional_templates: []
+additional_python_lbs: []
 # INPUT #
 
 
 _shell_dependencies:
   - git
   - zsh
+  - python3
+
+_python_libs: "{{ additional_python_lbs }}"
 
 _zsh_repos:
   - src: "https://github.com/robbyrussell/oh-my-zsh"

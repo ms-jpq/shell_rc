@@ -1,12 +1,8 @@
 ---
 
-- name: echo whoami
-  local_action: command whoami
-  register: _zsh_user
-
 - name: Set zsh as default shell
-  become: true
+  become: yes
   user:
-    name: "{{ _zsh_user }}"
+    name: "{{ ansible_user }}"
     shell: /bin/zsh
 

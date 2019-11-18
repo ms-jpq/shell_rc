@@ -3,3 +3,4 @@ dependencies:
     vars:
       nano_path: "{{ _nano_path }}"
       additional_files: "{{ _additional_files }}"
+      additional_python_lbs: "{{ _additional_python_lbs }}"

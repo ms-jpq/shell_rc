@@ -6,9 +6,11 @@ _additional_files:
   - src: "../macos/files/zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
 
+_additional_python_lbs:
+  - setuptools
+
 _core_utils:
   - cask
-  - python
   - zsh
   - bash
   - coreutils

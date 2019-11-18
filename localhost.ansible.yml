@@ -2,7 +2,6 @@
 
 - hosts: localhost
   connection: local
-  gather_facts: no
 
   vars:
     git_name: Fly me to the moon

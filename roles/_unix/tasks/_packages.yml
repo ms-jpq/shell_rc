@@ -1,6 +1,7 @@
 ---
 
 - name: "install common packages {{ _shell_dependencies }}"
+  become: "{{ ansible_distribution != 'MacOSX' }}"
   package:
     name: "{{ _shell_dependencies }}"
     state: present

@@ -3,17 +3,12 @@
 - hosts: ubuntu
 
   vars:
+    git_name: Fly me to the moon
+    git_email: git@bigly.dog
+
     sync_all: yes
+    from_scratch: no
 
   tasks:
     - import_role:
         name: ubuntu
-      vars:
-        git_name: Fly me to the moon
-        git_email: git@bigly.dog
-        from_scratch: yes
-
-
-
-
-
