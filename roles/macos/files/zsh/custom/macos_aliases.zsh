@@ -4,6 +4,7 @@
 
 alias c='pbcopy'
 alias p='pbpaste'
+alias t='open -f'
 
 alias trash='trash -v'
 
@@ -13,7 +14,7 @@ alias dns='sudo killall -HUP mDNSResponder'
 alias brewup='brew update && brew upgrade && brew cleanup && brew doctor && brew cask outdated'
 
 ma() {
-  man -t $1 | open -fa Preview
+  man -t $1 | open -a Preview
 }
 
 vnc() {
