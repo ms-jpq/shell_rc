@@ -1,12 +1,16 @@
 ---
 
+- name: "add gpg key {{ _gpg_keys }}"
+  become: yes
+  loop: "{{ _gpg_keys }}"
+  apt_key:
+    url: "{{ item }}"
+
 - name: "add apt repo {{ _apt_repos }} "
   become: yes
   loop: "{{ _apt_repos }}"
-  apt_key:
-    url: "{{ item.key }}"
   apt_repository:
-    repo: "{{ item.repo }}"
+    repo: "{{ item }}"
 
 - name: "apt update"
   become: yes

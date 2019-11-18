@@ -36,7 +36,10 @@ _fun_things:
   - lolcat
   - figlet
 
-_apt_repos: []
+_gpg_keys: []
+
+_apt_repos:
+  - deb http://archive.canonical.com/ubuntu bionic partner
 
 _apt_packages: "{{ _core_utils + _nice_things + _fun_things }}"
 
