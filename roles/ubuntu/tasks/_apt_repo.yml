@@ -1,12 +1,14 @@
 ---
 
 - name: "add apt repo {{ _apt_repos }} "
+  become: yes
+  loop: "{{ _apt_repos }}"
   apt_key:
     url: "{{ item.key }}"
   apt_repository:
     repo: "{{ item.repo }}"
-  loop: "{{ _apt_repos }}"
 
 - name: "apt update"
+  become: yes
   apt:
     update_cache: yes

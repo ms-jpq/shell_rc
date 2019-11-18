@@ -1,4 +1,5 @@
 ---
 - name: "update apt and install {{ _apt_packages }}"
+  become: true
   apt:
     name: "{{ _apt_packages }}"

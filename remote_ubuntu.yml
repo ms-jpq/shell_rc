@@ -3,7 +3,7 @@
 - hosts: ubuntu
 
   vars:
-    sync_all: no
+    sync_all: yes
 
   tasks:
     - import_role:

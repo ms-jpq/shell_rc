@@ -1,0 +1,12 @@
+---
+
+- name: echo whoami
+  local_action: command whoami
+  register: _zsh_user
+
+- name: Set zsh as default shell
+  become: true
+  user:
+    name: "{{ _zsh_user }}"
+    shell: /bin/zsh
+
