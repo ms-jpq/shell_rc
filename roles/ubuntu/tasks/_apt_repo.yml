@@ -11,8 +11,10 @@
   loop: "{{ _apt_repos }}"
   apt_repository:
     repo: "{{ item }}"
+  register: __apt_repo
 
 - name: "apt update"
   become: yes
   apt:
     update_cache: yes
+  when: __apt_repo.changed
