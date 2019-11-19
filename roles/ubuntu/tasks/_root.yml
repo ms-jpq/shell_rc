@@ -1,0 +1,37 @@
+---
+
+- name: enable root user
+  become: yes
+  user:
+    name: root
+    password: "{{ root_pw | password_hash('sha512') }}"
+
+
+- name: add ssh pub key
+  become: yes
+  authorized_key:
+    user: root
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+
+- name: enable root login
+  become: yes
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    line: "PermitRootLogin yes"
+
+
+- name: set zsh as default shell
+  become: yes
+  user:
+    name: root
+    shell: /bin/zsh
+
+
+- name: restart sshd
+  become: yes
+  systemd:
+    name: sshd
+    state: restarted
+
+
