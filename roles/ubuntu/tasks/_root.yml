@@ -22,6 +22,7 @@
     line: "PermitRootLogin yes"
   register: __root_ssh
 
+
 - name: restart sshd
   become: yes
   systemd:
