@@ -7,7 +7,7 @@
     git_email: git@bigly.dog
 
     sync_all: no
-    from_scratch: no
+    from_scratch: yes
 
   tasks:
     - import_role:
