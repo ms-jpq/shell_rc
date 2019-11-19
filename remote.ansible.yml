@@ -7,7 +7,6 @@
     git_email: git@bigly.dog
 
     sync_all: no
-    # from_scratch: yes
     from_scratch: no
 
   tasks:

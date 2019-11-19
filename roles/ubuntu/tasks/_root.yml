@@ -4,6 +4,7 @@
   become: yes
   user:
     name: root
+    shell: /bin/zsh
     password: "{{ root_pw | password_hash('sha512') }}"
 
 
@@ -19,19 +20,11 @@
   lineinfile:
     dest: "/etc/ssh/sshd_config"
     line: "PermitRootLogin yes"
-
-
-- name: set zsh as default shell
-  become: yes
-  user:
-    name: root
-    shell: /bin/zsh
-
+  register: __root_ssh
 
 - name: restart sshd
   become: yes
   systemd:
     name: sshd
     state: restarted
-
-
+  when: __root_ssh.changed
