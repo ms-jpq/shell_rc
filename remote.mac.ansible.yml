@@ -6,12 +6,12 @@
     git_name: Fly me to the moon
     git_email: git@bigly.dog
 
-    sync_all: no
-    from_scratch: no
+    sync_all: yes
+    from_scratch: yes
 
   tasks:
     - assert:
-        that: ansible_distribution != 'MacOSX'
+        that: ansible_distribution == 'MacOSX'
 
     - import_role:
-        name: ubuntu
+        name: macos
