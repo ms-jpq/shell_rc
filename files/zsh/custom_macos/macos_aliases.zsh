@@ -20,6 +20,7 @@ alias p='pbpaste'
 alias t='open -f'
 
 alias trash='trash -v'
+alias rm='trash'
 
 alias batt='pmset -g batt'
 alias dns='sudo killall -HUP mDNSResponder'
