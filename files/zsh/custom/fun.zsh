@@ -4,6 +4,10 @@
 
 gay() {
   local TEXT="'$*'"
+  if [[ "$#" -eq 0 ]]
+  then
+    local TEXT="Fully Automated Luxury Gay Space Communism"
+  fi
   figlet "$TEXT" | lolcat -a -d 1 -s 250
 }
 
