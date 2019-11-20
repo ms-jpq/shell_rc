@@ -6,7 +6,7 @@
     git_name: Fly me to the moon
     git_email: git@bigly.dog
 
-    sync_all: no
+    sync_all: yes
     from_scratch: no
 
   tasks:
