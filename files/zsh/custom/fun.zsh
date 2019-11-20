@@ -15,7 +15,7 @@ cow() {
   else
     local VERSION=$(ls -D /usr/local/Cellar/cowsay)
     local COW=$(ls -1 /usr/local/Cellar/cowsay/$VERSION/share/cows | grep .cow | shuf -n 1)
-    cowsay -f $COW "$TEXT" | gay
+    cowsay -f $COW "$TEXT" | lolcat -a -d 1 -s 250
   fi
 }
 
