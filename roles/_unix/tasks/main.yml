@@ -9,6 +9,8 @@
 - import_tasks: git.yml
   when: sync_all or from_scratch
 
+- import_tasks: mkdir.yml
+
 - import_tasks: copy.yml
 
 - import_tasks: templates.yml

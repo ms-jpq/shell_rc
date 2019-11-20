@@ -27,7 +27,7 @@ alias dns='sudo killall -HUP mDNSResponder'
 alias brewup='brew update && brew upgrade && brew cleanup && brew doctor && brew cask outdated'
 
 ma() {
-  man -t $1 | open -a Preview
+  man $1 | col -b | t
 }
 
 vnc() {

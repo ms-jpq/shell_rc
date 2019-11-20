@@ -3,6 +3,7 @@
 ## GLOBAL ##
 _user_dir_: "{{ '~' if ansible_distribution == 'MacOSX' else '/root' }}"
 _omz_dir_: "{{ _user_dir_ }}/.oh-my-zsh"
+_nano_backup_dir_: "{{ _user_dir_ }}/.nano_backup"
 ## GLOBAL ##
 
 
@@ -55,6 +56,10 @@ _shared_files:
 
   - src: ".ansible.cfg"
     dest: "{{ _user_dir_ }}/.ansible.cfg"
+
+
+target_dirs:
+  - "{{ _nano_backup_dir_ }}"
 
 target_files: "{{ _shared_files + additional_files }}"
 

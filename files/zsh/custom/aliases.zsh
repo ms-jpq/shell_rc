@@ -6,8 +6,6 @@ alias sudo='sudo -E '
 
 alias hist='history'
 
-alias nano='nano -glm -$'
-
 alias rsy='rsync -ah --no-o --no-g --partial --info=progress2'
 
 

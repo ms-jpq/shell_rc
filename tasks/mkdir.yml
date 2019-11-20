@@ -1,0 +1,7 @@
+---
+
+- name: mkdir
+  loop: "{{ target_dirs }}"
+  file:
+    state: directory
+    path: "{{ item }}"
