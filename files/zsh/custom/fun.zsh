@@ -2,13 +2,16 @@
 #################### Fun Region ####################
 #################### ########## ####################
 
-alias gay='echo Fully Automated Luxury Gay Space Communism | figlet | lolcat'
+gay() {
+  local TEXT="'$*'"
+  figlet "$TEXT" | lolcat -a -d 1 -s 250
+}
 
 cow() {
   local TEXT="'$*'"
   if [[ $((RANDOM % 10)) -gt 8 ]]
   then
-    figlet "$TEXT" | lolcat
+    gay $TEXT
   else
     local VERSION=$(ls -D /usr/local/Cellar/cowsay)
     local COW=$(ls -1 /usr/local/Cellar/cowsay/$VERSION/share/cows | grep .cow | shuf -n 1)
