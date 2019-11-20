@@ -1,20 +1,17 @@
 ---
 
 - name: "add gpg key {{ gpg_keys }}"
-  become: yes
   loop: "{{ gpg_keys | default([]) }}"
   apt_key:
     url: "{{ item }}"
 
 - name: "add apt repo {{ apt_repos }} "
-  become: yes
   loop: "{{ apt_repos }}"
   apt_repository:
     repo: "{{ item }}"
   register: __apt_repo
 
 - name: "apt update"
-  become: yes
   apt:
     update_cache: yes
   when: __apt_repo.changed

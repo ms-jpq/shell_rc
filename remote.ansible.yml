@@ -1,6 +1,7 @@
 ---
 
 - hosts: "{{ host | default('all') }}"
+  become: yes
 
   vars:
     git_name: Fly me to the moon

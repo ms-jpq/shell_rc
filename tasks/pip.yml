@@ -1,7 +1,6 @@
 ---
 
 - name: "install python libs {{ python_packages }}"
-  become: "{{ ansible_distribution != 'MacOSX' }}"
   pip:
     executable: "{{ item.version }}"
     name: "{{ item.name }}"

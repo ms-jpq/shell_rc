@@ -1,7 +1,6 @@
 ---
 
 - name: enable root user
-  become: yes
   user:
     name: root
     shell: /bin/zsh
@@ -9,14 +8,12 @@
 
 
 - name: add ssh pub key
-  become: yes
   authorized_key:
     user: root
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
 
 - name: enable root login
-  become: yes
   lineinfile:
     dest: "/etc/ssh/sshd_config"
     line: "PermitRootLogin yes"
@@ -24,7 +21,6 @@
 
 
 - name: restart sshd
-  become: yes
   systemd:
     name: sshd
     state: restarted

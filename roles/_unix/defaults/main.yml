@@ -1,7 +1,8 @@
 ---
 
 ## GLOBAL ##
-_omz_dir_: ~/.oh-my-zsh
+_user_dir_: "{{ '~' if ansible_distribution == 'MacOSX' else '/root' }}"
+_omz_dir_: "{{ _user_dir_ }}/.oh-my-zsh"
 ## GLOBAL ##
 
 
@@ -44,25 +45,25 @@ git_repos:
 
 _shared_files:
   - src: "zsh/rc.zsh"
-    dest: "~/.zshrc"
+    dest: "{{ _user_dir_ }}/.zshrc"
 
   - src: "zsh/.p10k.zsh"
-    dest: "~/.p10k.zsh"
+    dest: "{{ _user_dir_ }}/.p10k.zsh"
 
   - src: "zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
 
   - src: ".ansible.cfg"
-    dest: "~/.ansible.cfg"
+    dest: "{{ _user_dir_ }}/.ansible.cfg"
 
 target_files: "{{ _shared_files + additional_files }}"
 
 
 _shared_templates:
   - src: ".nanorc.j2"
-    dest: "~/.nanorc"
+    dest: "{{ _user_dir_ }}/.nanorc"
 
   - src: ".gitconfig.j2"
-    dest: "~/.gitconfig"
+    dest: "{{ _user_dir_ }}/.gitconfig"
 
 target_templates: "{{ _shared_templates + additional_templates }}"
