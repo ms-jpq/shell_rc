@@ -1,6 +1,6 @@
 ---
 
-- hosts: "{{ host | default('all') }}"
+- hosts: macos
 
   vars:
     git_name: Fly me to the moon

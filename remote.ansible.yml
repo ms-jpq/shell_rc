@@ -1,6 +1,6 @@
 ---
 
-- hosts: "{{ host | default('all') }}"
+- hosts: ubuntu
   become: yes
 
   vars:
