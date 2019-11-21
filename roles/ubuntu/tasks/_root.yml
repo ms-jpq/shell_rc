@@ -5,6 +5,7 @@
     name: root
     shell: /bin/zsh
     password: "{{ root_pw | password_hash('sha512') }}"
+  when: root_pw is defined
 
 
 - name: add ssh pub key
