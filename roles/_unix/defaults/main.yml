@@ -8,13 +8,12 @@ _nano_backup_dir_: "{{ _user_dir_ }}/.nano_backup"
 
 
 # INPUT #
-git_name: ""
-git_email: ""
 nano_path: ""
 sync_all: yes
 from_scratch: yes
 additional_files: []
 additional_templates: []
+git_conf: []
 # INPUT #
 
 
@@ -67,8 +66,5 @@ target_files: "{{ _shared_files + additional_files }}"
 _shared_templates:
   - src: ".nanorc.j2"
     dest: "{{ _user_dir_ }}/.nanorc"
-
-  - src: ".gitconfig.j2"
-    dest: "{{ _user_dir_ }}/.gitconfig"
 
 target_templates: "{{ _shared_templates + additional_templates }}"

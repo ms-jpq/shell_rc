@@ -4,8 +4,11 @@
   become: yes
 
   vars:
-    git_name: Fly me to the moon
-    git_email: git@bigly.dog
+    git_conf:
+      - name: user.name
+        value: Fly me to the moon
+      - name: user.email
+        value: git@bigly.dog
 
     sync_all: yes
     from_scratch: no
