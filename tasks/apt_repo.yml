@@ -12,6 +12,7 @@
   register: __apt_repo
 
 - name: "apt update"
+  when: __apt_repo.changed
   apt:
     update_cache: yes
-  when: __apt_repo.changed
+
