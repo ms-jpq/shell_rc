@@ -25,6 +25,7 @@ _core_utils:
   - gnu-getopt
   - nano
   - htop
+  - watch
   - nmap
   - tree
 
