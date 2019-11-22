@@ -18,3 +18,7 @@ alias open='xdg-open'
 alias 1440='xrandr -s 2560x1440'
 alias 1200='xrandr -s 1920x1200'
 alias 800='xrandr -s 1280x800'
+
+ma() {
+  man $1 | col -b
+}
