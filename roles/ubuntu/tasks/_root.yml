@@ -1,12 +1,9 @@
 ---
 
-- name: enable root user
-  when: root_pw is defined
+- name: set default shell
   user:
     name: root
     shell: /bin/zsh
-    password: "{{ root_pw | password_hash('sha512') }}"
-
 
 
 - name: add ssh pub key
@@ -28,3 +25,8 @@
     name: sshd
     state: restarted
 
+- name: set root_pw
+  when: root_pw is defined
+  user:
+    name: root
+    password: "{{ root_pw | password_hash('sha512') }}"
