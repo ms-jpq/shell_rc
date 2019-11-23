@@ -13,7 +13,6 @@ sync_all: yes
 from_scratch: yes
 additional_files: []
 additional_templates: []
-git_conf: []
 # INPUT #
 
 

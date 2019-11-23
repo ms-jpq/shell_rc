@@ -1,9 +1,9 @@
 ---
 
-- import_tasks: git_conf.yml
-
 - import_tasks: packages.yml
   when: sync_all
+
+- import_tasks: git_conf.yml
 
 - import_tasks: remove_fs.yml
   when: from_scratch
