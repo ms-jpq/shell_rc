@@ -29,6 +29,8 @@ cm() {
   cmatrix -ab -u 3 -C $COLOUR "$@"
 }
 
+alias fire='it2attention fireworks'
+
 alias fish='asciiquarium'
 
 alias weather='curl https://wttr.in\?format\=4'

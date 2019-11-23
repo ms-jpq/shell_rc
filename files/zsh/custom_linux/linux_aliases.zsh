@@ -22,3 +22,5 @@ alias 800='xrandr -s 1280x800'
 ma() {
   man $1 | col -b
 }
+
+alias c='it2copy'
