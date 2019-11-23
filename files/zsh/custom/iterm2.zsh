@@ -26,5 +26,9 @@
 # it2universion
 #   Sets the current unicode version.
 
+#################### ############# ####################
+#################### iTerm2 Region ####################
+#################### ############# ####################
+
 alias icat='imgcat'
 alias dl='it2dl'
