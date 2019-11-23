@@ -5,9 +5,7 @@
 alias ls='ls --group-directories-first --color -hAF '
 alias l='ls -1 '
 alias ll='ls -l '
-tree() {
-  command tree -L ${1-9999}
-}
+alias tree='tree -L'
 
 #################### ############## ####################
 #################### Display Region ####################
