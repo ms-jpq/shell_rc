@@ -22,6 +22,8 @@ _core_utils:
   - htop
   - nmap
   - tree
+  - iotop
+  - iftop
 
 _nice_things:
   - thefuck
@@ -39,7 +41,7 @@ _fun_things:
 gpg_keys: []
 
 apt_repos:
-  - deb http://archive.canonical.com/ubuntu bionic partner
+  - "deb http://archive.canonical.com/ubuntu {{ __release_version__ }} partner"
 
 apt_packages: "{{ _core_utils + _nice_things + _fun_things }}"
 

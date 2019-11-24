@@ -1,3 +1,5 @@
 ---
 
 ansible_ssh_user: root
+
+__release_version__: bionic
