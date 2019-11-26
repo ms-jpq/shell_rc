@@ -24,10 +24,11 @@ _core_utils:
   - grep
   - gnu-getopt
   - nano
-  - htop
   - watch
   - nmap
   - tree
+  - pstree
+  - htop
 
 _nice_things:
   - exa

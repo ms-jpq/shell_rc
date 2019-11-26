@@ -19,9 +19,10 @@ _core_utils:
   - wget
   - grep
   - nano
-  - htop
   - nmap
   - tree
+  - pstree
+  - htop
   - iotop
   - iftop
 
