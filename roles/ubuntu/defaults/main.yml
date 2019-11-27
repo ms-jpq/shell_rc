@@ -21,7 +21,7 @@ _core_utils:
   - nano
   - nmap
   - tree
-  - pstree
+  - psmisc
   - htop
   - iotop
   - iftop
