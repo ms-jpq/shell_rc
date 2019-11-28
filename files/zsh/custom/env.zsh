@@ -1,4 +1,4 @@
-export EDITOR=nano
+export EDITOR=micro
 
 export BAT_THEME=GitHub
 export BAT_PAGER=never

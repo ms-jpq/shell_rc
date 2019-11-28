@@ -6,6 +6,9 @@
 - import_tasks: apt.yml
   when: sync_all
 
+- import_tasks: snap.yml
+  when: sync_all
+
 - import_tasks: pip.yml
   when: sync_all
 

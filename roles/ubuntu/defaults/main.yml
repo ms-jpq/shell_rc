@@ -30,7 +30,6 @@ _core_utils:
 _nice_things:
   # - exa
   # - bat
-  - micro
   # - fzf
   # - fd-find
   # - ripgrep
@@ -45,6 +44,12 @@ _fun_things:
   - cowsay
   - lolcat
   - figlet
+
+
+snap_packages:
+  - name: micro
+    classic: yes
+
 
 gpg_keys: []
 
