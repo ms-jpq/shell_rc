@@ -33,6 +33,7 @@ _core_utils:
 _nice_things:
   - exa
   - bat
+  - micro
   - fzf
   - fd
   - ripgrep

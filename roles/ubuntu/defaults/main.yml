@@ -25,13 +25,15 @@ _core_utils:
   - htop
   - iotop
   - iftop
-  # - bat
+
+
+_nice_things:
   # - exa
+  # - bat
+  - micro
   # - fzf
   # - fd-find
   # - ripgrep
-
-_nice_things:
   - thefuck
   - tldr
 
