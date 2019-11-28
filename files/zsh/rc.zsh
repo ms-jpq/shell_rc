@@ -54,7 +54,7 @@ plugins=(zsh-syntax-highlighting
          zsh-completions
          zsh-autosuggestions
          history-substring-search
-         fzf
+        #  fzf
          colorize
          thefuck)
 autoload -U compinit && compinit
