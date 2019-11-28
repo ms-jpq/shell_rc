@@ -10,7 +10,7 @@
       - name: user.email
         value: git@bigly.dog
 
-    sync_all: no
+    sync_all: yes
     from_scratch: no
 
   tasks:

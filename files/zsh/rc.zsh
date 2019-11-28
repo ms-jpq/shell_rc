@@ -53,9 +53,16 @@ plugins=(zsh-syntax-highlighting
          zsh-completions
          zsh-autosuggestions
          history-substring-search
+         colorize
          thefuck)
 autoload -U compinit && compinit
 source $ZSH/oh-my-zsh.sh
+
+
+#################### ########### ####################
+#################### Init Region ####################
+#################### ########### ####################
+. /usr/local/etc/profile.d/z.sh
 
 
 #################### ################ ####################
