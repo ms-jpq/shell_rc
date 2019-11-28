@@ -9,7 +9,7 @@ alias t='open -f'
 
 alias ls=' exa --group-directories-first -ahF '
 alias l='ls -1 '
-alias ll='ls -l --time-style iso'
+alias ll='ls -l --time-style long-iso'
 alias tree='ls -T -L'
 
 
