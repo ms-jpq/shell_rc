@@ -13,19 +13,13 @@ alias ll='ls -l --time-style iso'
 alias tree='ls -T -L'
 
 
-export BAT_THEME=GitHub
-export BAT_PAGER=never
 alias cat=" bat"
-
 
 alias fd='fd -HI'
 
 
 alias trash='trash -v'
 alias rm='trash'
-
-
-export FZF_DEFAULT_OPTS=--color light
 
 
 alias batt='pmset -g batt'
