@@ -46,6 +46,7 @@ bindkey '^[[B' history-substring-search-down
 HISTORY_SUBSTRING_SEARCH_FUZZY=true
 HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
 
+
 #################### ########## ####################
 #################### OMZ Region ####################
 #################### ########## ####################
