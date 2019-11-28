@@ -1,9 +1,10 @@
 #################### ########## ####################
 #################### ZSH Region ####################
 #################### ########## ####################
-set -o pipefail
 
-HIST_IGNORE_DUPS=true
+set -o pipefail
+set -o histignoredups incappendhistory sharehistory extended_history
+set -o autopushd pushdignoredups pushdminus pushdsilent pushdtohome
 
 
 #################### ################ ####################

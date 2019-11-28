@@ -21,7 +21,6 @@ alias docuprm='docup --remove-orphans'
 alias dex='docker exec -it'
 alias det='docker exec -t'
 
-alias di='docker inspect'
 alias dlog='docker logs -f'
 
 alias dr='docker run -it --rm'
