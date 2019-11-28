@@ -2,12 +2,12 @@
 #################### Homebrew Region ####################
 #################### ############### ####################
 
-alias ls='exa --group-directories-first -ahF '
+alias ls=' exa --group-directories-first -ahF '
 alias l='ls -1 '
 alias ll='ls -l '
 alias tree='ls -T -L'
 
-alias cat="bat --pager never --theme GitHub"
+alias cat=" bat --pager never --theme GitHub"
 
 #################### ############ ####################
 #################### MacOS Region ####################
