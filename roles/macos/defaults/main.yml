@@ -31,14 +31,14 @@ _core_utils:
   - htop
 
 _nice_things:
-  - z
   - exa
   - bat
+  - fzf
   - fd
+  - ripgrep
   - trash
   - thefuck
   - tldr
-  - fzf
 
 _fun_things:
   - neofetch

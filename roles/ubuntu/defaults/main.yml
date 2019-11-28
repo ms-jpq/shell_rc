@@ -25,10 +25,11 @@ _core_utils:
   - htop
   - iotop
   - iftop
-  # - fd-find
   # - bat
   # - exa
   # - fzf
+  # - fd-find
+  # - ripgrep
 
 _nice_things:
   - thefuck

@@ -56,6 +56,7 @@ plugins=(zsh-syntax-highlighting
          history-substring-search
         #  fzf
          colorize
+         z
          thefuck)
 autoload -U compinit && compinit
 source $ZSH/oh-my-zsh.sh
