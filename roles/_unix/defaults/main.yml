@@ -54,6 +54,9 @@ _shared_files:
   - src: "zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
 
+  - src: "micro/"
+    dest: "{{ _user_dir_ }}/.config/micro/"
+
   - src: ".ansible.cfg"
     dest: "{{ _user_dir_ }}/.ansible.cfg"
 

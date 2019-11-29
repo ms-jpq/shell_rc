@@ -34,6 +34,7 @@ _core_utils:
   - htop
   - watch
   - diffutils
+  - pv
 
 _nice_things:
   - exa
@@ -42,9 +43,11 @@ _nice_things:
   - fzf
   - fd
   - ripgrep
+  - autojump
   - trash
   - thefuck
   - tldr
+  - shellcheck
 
 _fun_things:
   - neofetch

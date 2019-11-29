@@ -55,10 +55,12 @@ plugins=(zsh-syntax-highlighting
          zsh-autosuggestions
          history-substring-search
         #  fzf
-         z
          mosh
+         autojump
          colorize
          thefuck
+         ansible
+         docker
          docker-compose
          kubectl
          vagrant)
