@@ -58,7 +58,6 @@ plugins=(zsh-syntax-highlighting
          mosh
          autojump
          colorize
-         thefuck
          ansible
          docker
          docker-compose
