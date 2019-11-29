@@ -10,7 +10,6 @@ alias tree=' tree -L'
 alias cat=' cat'
 
 
-alias c='it2copy'
 alias open=' xdg-open'
 
 

@@ -2,11 +2,13 @@
 #################### Core Region ####################
 #################### ########### ####################
 
+alias c='clipcopy'
+alias p='clippaste'
+
 alias sudo='sudo -E '
 
 alias cd=' cd'
 alias 0='cd'
-alias d=' dirs -v'
 
 alias hist=' history'
 
