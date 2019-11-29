@@ -23,6 +23,8 @@ _core_utils:
   - wget
   - grep
   - gnu-getopt
+  - awk
+  - gnu-sed
   - nano
   - watch
   - nmap
