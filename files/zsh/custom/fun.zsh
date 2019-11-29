@@ -29,6 +29,9 @@ cm() {
   cmatrix -ab -u 3 -C $COLOUR "$@"
 }
 
+alias vi='gay ok boomer'
+alias vim='vi'
+
 alias fire='it2attention fireworks'
 
 alias fish='asciiquarium'
