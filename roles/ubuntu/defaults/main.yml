@@ -12,6 +12,7 @@ python_packages:
 
 _core_utils:
   - zsh
+  - mosh
   - python3-pip
   - python-pip
   - rsync
