@@ -14,10 +14,10 @@ _core_utils:
   - cask
   - zsh
   - bash
+  - nano
   - coreutils
   - findutils
-  - openssh
-  - openssl
+  - gnu-which
   - rsync
   - curl
   - wget
@@ -25,12 +25,14 @@ _core_utils:
   - gnu-getopt
   - awk
   - gnu-sed
-  - nano
-  - watch
+  - openssh
+  - openssl
   - nmap
   - tree
   - pstree
   - htop
+  - watch
+  - diffutils
 
 _nice_things:
   - exa
