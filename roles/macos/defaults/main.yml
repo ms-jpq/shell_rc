@@ -57,8 +57,4 @@ _fun_things:
   - lolcat
   - figlet
 
-_extra_things:
-  - kubectl
-  - docker-compose
-
-brew_packages: "{{ _core_utils + _nice_things + _fun_things + _extra_things }}"
+brew_packages: "{{ _core_utils + _nice_things + _fun_things }}"

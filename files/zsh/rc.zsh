@@ -55,9 +55,13 @@ plugins=(zsh-syntax-highlighting
          zsh-autosuggestions
          history-substring-search
         #  fzf
-         colorize
          z
-         thefuck)
+         mosh
+         colorize
+         thefuck
+         docker-compose
+         kubectl
+         vagrant)
 autoload -U compinit && compinit
 source $ZSH/oh-my-zsh.sh
 
