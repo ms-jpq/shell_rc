@@ -10,7 +10,7 @@ alias tree=' tree -L'
 alias cat=' cat'
 
 
-alias open=' xdg-open'
+alias open=' open_command'
 
 
 ma() {

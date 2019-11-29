@@ -15,6 +15,7 @@ _core_utils:
   - zsh
   - bash
   - mosh
+  - less
   - nano
   - coreutils
   - findutils

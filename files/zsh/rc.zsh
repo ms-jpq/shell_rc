@@ -3,7 +3,6 @@
 #################### ########## ####################
 
 set -o pipefail
-set -o histignoredups incappendhistory sharehistory extended_history
 set -o autopushd pushdignoredups pushdminus pushdsilent pushdtohome
 
 autoload zmv
@@ -22,7 +21,8 @@ fi
 ZSH="$HOME/.oh-my-zsh"
 ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 ZSH_THEME=powerlevel10k/powerlevel10k
-# ZSH_THEME_RANDOM_CANDIDATES=()
+
+HIST_STAMPS=yyyy-mm-dd
 DISABLE_UPDATE_PROMPT=true
 HYPHEN_INSENSITIVE=true
 COMPLETION_WAITING_DOTS=true
