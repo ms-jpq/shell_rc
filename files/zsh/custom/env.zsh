@@ -1,10 +1,9 @@
 export EDITOR=micro
-export PAGER=micro
+export PAGER=tee
 
 export LESS="-FKQRi"
 
 
-export BAT_PAGER=never
 export BAT_THEME=GitHub
 export BAT_STYLE=auto
 

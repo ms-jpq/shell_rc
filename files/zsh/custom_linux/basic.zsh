@@ -13,7 +13,4 @@ alias cat=' cat'
 alias open=' open_command'
 
 
-ma() {
-  man $1 | col -b
-}
 
