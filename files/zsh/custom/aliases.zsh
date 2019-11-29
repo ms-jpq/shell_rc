@@ -5,6 +5,7 @@
 alias sudo='sudo -E '
 
 alias cd=' cd'
+alias 0='cd'
 alias d=' dirs -v'
 
 alias hist=' history'
