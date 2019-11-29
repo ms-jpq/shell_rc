@@ -21,10 +21,11 @@ fi
 #################### ########## ####################
 ZSH="$HOME/.oh-my-zsh"
 ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME=powerlevel10k/powerlevel10k
+# ZSH_THEME_RANDOM_CANDIDATES=()
 DISABLE_UPDATE_PROMPT=true
 HYPHEN_INSENSITIVE=true
-
+COMPLETION_WAITING_DOTS=true
 
 #################### ################## ####################
 #################### AutoSuggest Region ####################
