@@ -21,6 +21,12 @@ packages:
   - zsh
   - python3
 
+python_packages:
+  - name: setuptools
+    version: pip3
+  - name: pygments
+    version: pip3
+
 
 git_repos:
   - src: "https://github.com/robbyrussell/oh-my-zsh"

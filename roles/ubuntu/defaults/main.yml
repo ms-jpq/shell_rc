@@ -6,9 +6,6 @@ _additional_files:
   - src: "zsh/custom_linux/"
     dest: "{{ _omz_dir_ }}/custom/"
 
-python_packages:
-  - name: setuptools
-    version: pip3
 
 _core_utils:
   - zsh

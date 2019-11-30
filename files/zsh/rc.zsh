@@ -59,6 +59,7 @@ plugins=(zsh-syntax-highlighting
          zsh-autosuggestions
          history-substring-search
         #  fzf
+         rsync
          mosh
          autojump
          colorize

@@ -1,11 +1,11 @@
 export EDITOR=micro
 export PAGER=tee
 
-export LESS="-FKQRi"
+export LESS="-KQRi"
 
 
 export BAT_THEME=GitHub
-export BAT_STYLE=auto
+export BAT_STYLE=grid,header
 
 
 export FZF_DEFAULT_OPTS="--color light"

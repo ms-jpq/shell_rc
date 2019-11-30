@@ -12,8 +12,6 @@ alias ll='ls -l'
 alias tree='ls -T -L'
 
 
-alias cat=" bat"
-
 alias fd='fd -HI'
 
 
