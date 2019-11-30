@@ -59,8 +59,10 @@ plugins=(zsh-syntax-highlighting
          zsh-autosuggestions
          history-substring-search
         #  fzf
+         ripgrep
          rsync
          mosh
+         dirpersist
          autojump
          colorize
          ansible
