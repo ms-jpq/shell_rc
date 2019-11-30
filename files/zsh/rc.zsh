@@ -7,6 +7,7 @@ set -o autopushd pushdignoredups pushdminus pushdsilent pushdtohome
 
 autoload zmv
 
+
 #################### ################ ####################
 #################### Powerline Region ####################
 #################### ################ ####################
@@ -15,6 +16,7 @@ then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 source $HOME/.p10k.zsh
+
 
 #################### ########## ####################
 #################### OMZ Region ####################
@@ -26,6 +28,7 @@ HIST_STAMPS=yyyy-mm-dd
 DISABLE_UPDATE_PROMPT=true
 HYPHEN_INSENSITIVE=true
 COMPLETION_WAITING_DOTS=true
+
 
 #################### ################## ####################
 #################### AutoSuggest Region ####################
