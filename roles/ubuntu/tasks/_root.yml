@@ -7,9 +7,10 @@
 
 
 - name: add ssh pub key
+  loop: "{{ __ssh_authorized__ }}"
   authorized_key:
     user: root
-    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    key: "{{ item }}"
 
 
 - name: enable root login

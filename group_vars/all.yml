@@ -1,0 +1,4 @@
+---
+
+__ssh_authorized__:
+  - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
