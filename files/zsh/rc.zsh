@@ -10,7 +10,8 @@ autoload zmv
 #################### ################ ####################
 #################### Powerline Region ####################
 #################### ################ ####################
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
+then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
@@ -72,9 +73,3 @@ source $ZSH/oh-my-zsh.sh
 #################### Powerline Region ####################
 #################### ################ ####################
 source ~/.p10k.zsh
-
-
-#################### ############# ####################
-#################### iTerm2 Region ####################
-#################### ############# ####################
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"

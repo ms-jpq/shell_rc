@@ -37,8 +37,6 @@ vim() {
   vi
 }
 
-alias fire='it2attention fireworks'
-
 alias fish='asciiquarium'
 
 alias weather='curl https://wttr.in\?format\=4'
