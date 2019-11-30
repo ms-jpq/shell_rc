@@ -3,7 +3,7 @@
 - name: copy files
   loop: "{{ target_files }}"
   synchronize:
-    group: no
-    owner: no
+    group: False
+    owner: False
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

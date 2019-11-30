@@ -14,5 +14,5 @@
 - name: "apt update"
   when: __apt_repo.changed
   apt:
-    update_cache: yes
+    update_cache: True
 

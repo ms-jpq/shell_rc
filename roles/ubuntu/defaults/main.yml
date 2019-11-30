@@ -47,7 +47,7 @@ _fun_things:
 
 snap_packages:
   - name: micro
-    classic: yes
+    classic: True
 
 
 gpg_keys: []

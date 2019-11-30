@@ -9,8 +9,8 @@ _nano_backup_dir_: "{{ _user_dir_ }}/.nano_backup"
 
 # INPUT #
 nano_path: ""
-sync_all: yes
-from_scratch: yes
+sync_all: True
+from_scratch: True
 additional_files: []
 additional_templates: []
 # INPUT #
