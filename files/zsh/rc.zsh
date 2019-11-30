@@ -20,7 +20,6 @@ fi
 #################### OMZ Region ####################
 #################### ########## ####################
 ZSH="$HOME/.oh-my-zsh"
-ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 ZSH_THEME=powerlevel10k/powerlevel10k
 
 HIST_STAMPS=yyyy-mm-dd
@@ -49,6 +48,12 @@ HISTORY_SUBSTRING_SEARCH_FUZZY=true
 HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
 
 
+#################### ################ ####################
+#################### Powerline Region ####################
+#################### ################ ####################
+source $HOME/.p10k.zsh
+
+
 #################### ########## ####################
 #################### OMZ Region ####################
 #################### ########## ####################
@@ -67,9 +72,3 @@ plugins=(zsh-syntax-highlighting
          vagrant)
 autoload -U compinit && compinit
 source $ZSH/oh-my-zsh.sh
-
-
-#################### ################ ####################
-#################### Powerline Region ####################
-#################### ################ ####################
-source ~/.p10k.zsh
