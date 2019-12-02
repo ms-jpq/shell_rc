@@ -1,6 +1,7 @@
 ---
 
 - name: removing stale oh-my-zsh
+  loop: "{{ target_removals }}"
   file:
-    path: "{{ _omz_dir_ }}/"
+    path: "{{ item }}"
     state: absent

@@ -47,9 +47,15 @@ git_repos:
     dest: "{{ _user_dir_ }}/.emacs.d"
 
 
+target_removals:
+  - "{{ _omz_dir_ }}/"
+  - "{{ _user_dir_ }}/.scripts"
+
+
 target_dirs:
   - "{{ _nano_backup_dir_ }}"
   - "{{ _user_dir_ }}/.config"
+  - "{{ _user_dir_ }}/.scripts"
 
 
 target_files:
@@ -62,11 +68,15 @@ target_files:
   - src: "zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
 
-  - src: "micro/"
-    dest: "{{ _user_dir_ }}/.config/micro/"
+  - src: "micro"
+    dest: "{{ _user_dir_ }}/.config/"
+
+  - src: "scripts/"
+    dest: "{{ _user_dir_ }}/.scripts"
 
   - src: ".ansible.cfg"
     dest: "{{ _user_dir_ }}/.ansible.cfg"
+
 
 target_templates:
   - src: ".nanorc.j2"
