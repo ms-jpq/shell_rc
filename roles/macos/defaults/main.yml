@@ -1,8 +1,8 @@
 ---
 
-_nano_path: /usr/local/opt/nano/share/nano
+nano_path: /usr/local/opt/nano/share/nano
 
-_additional_files:
+target_files:
   - src: "zsh/custom_macos/"
     dest: "{{ _omz_dir_ }}/custom/"
 

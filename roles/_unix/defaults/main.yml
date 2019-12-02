@@ -8,11 +8,8 @@ _nano_backup_dir_: "{{ _user_dir_ }}/.nano_backup"
 
 
 # INPUT #
-nano_path: ""
 sync_all: True
 from_scratch: True
-additional_files: []
-additional_templates: []
 # INPUT #
 
 
@@ -20,6 +17,7 @@ packages:
   - git
   - zsh
   - python3
+
 
 python_packages:
   - name: setuptools
@@ -48,7 +46,7 @@ git_repos:
   - src: "https://github.com/syl20bnr/spacemacs"
     dest: "{{ _user_dir_ }}/.emacs.d"
 
-_shared_files:
+target_files:
   - src: "zsh/rc.zsh"
     dest: "{{ _user_dir_ }}/.zshrc"
 
@@ -68,11 +66,6 @@ _shared_files:
 target_dirs:
   - "{{ _nano_backup_dir_ }}"
 
-target_files: "{{ _shared_files + additional_files }}"
-
-
-_shared_templates:
+target_templates:
   - src: ".nanorc.j2"
     dest: "{{ _user_dir_ }}/.nanorc"
-
-target_templates: "{{ _shared_templates + additional_templates }}"

@@ -1,5 +1,7 @@
 ---
 
+- import_tasks: copy.yml
+
 - import_tasks: apt_repo.yml
   when: sync_all
 
@@ -7,6 +9,9 @@
   when: sync_all
 
 - import_tasks: snap.yml
+  when: sync_all
+
+- import_tasks: pip.yml
   when: sync_all
 
 - import_tasks: _root.yml

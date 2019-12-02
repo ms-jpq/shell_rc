@@ -1,14 +1,15 @@
 ---
 
-_nano_path: /usr/share/nano
+nano_path: /usr/share/nano
 
-_additional_files:
+target_files:
   - src: "zsh/custom_linux/"
     dest: "{{ _omz_dir_ }}/custom/"
 
 
 _core_utils:
   - snapd
+  - python3-pip
   - zsh
   - mosh
   - python3-pip
@@ -50,8 +51,6 @@ snap_packages:
   - name: micro
     classic: True
 
-
-gpg_keys: []
 
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ __release_version__ }} partner"

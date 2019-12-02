@@ -1,5 +1,0 @@
-dependencies:
-  - role: _unix
-    vars:
-      nano_path: "{{ _nano_path }}"
-      additional_files: "{{ _additional_files }}"

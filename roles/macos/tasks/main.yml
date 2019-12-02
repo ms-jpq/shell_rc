@@ -1,4 +1,9 @@
 ---
 
+- import_tasks: copy.yml
+
 - import_tasks: homebrew.yml
+  when: sync_all
+
+- import_tasks: pip.yml
   when: sync_all
