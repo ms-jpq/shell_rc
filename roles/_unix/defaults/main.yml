@@ -23,9 +23,7 @@ packages:
 
 python_packages:
   - name: setuptools
-    version: pip3
   - name: pygments
-    version: pip3
 
 
 git_repos:
