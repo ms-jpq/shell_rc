@@ -46,6 +46,12 @@ git_repos:
   - src: "https://github.com/syl20bnr/spacemacs"
     dest: "{{ _user_dir_ }}/.emacs.d"
 
+
+target_dirs:
+  - "{{ _nano_backup_dir_ }}"
+  - "{{ _user_dir_ }}/.config"
+
+
 target_files:
   - src: "zsh/rc.zsh"
     dest: "{{ _user_dir_ }}/.zshrc"
@@ -61,10 +67,6 @@ target_files:
 
   - src: ".ansible.cfg"
     dest: "{{ _user_dir_ }}/.ansible.cfg"
-
-
-target_dirs:
-  - "{{ _nano_backup_dir_ }}"
 
 target_templates:
   - src: ".nanorc.j2"

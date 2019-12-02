@@ -8,6 +8,7 @@ target_files:
 
 
 _core_utils:
+  - sudo
   - snapd
   - python3-pip
   - zsh
