@@ -8,6 +8,7 @@ _additional_files:
 
 
 _core_utils:
+  - snapd
   - zsh
   - mosh
   - python3-pip
