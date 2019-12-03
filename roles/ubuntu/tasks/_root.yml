@@ -25,10 +25,3 @@
   systemd:
     name: sshd
     state: restarted
-
-
-- name: set root_pw
-  when: root_pw is defined
-  user:
-    name: root
-    password: "{{ root_pw | password_hash('sha512') }}"
