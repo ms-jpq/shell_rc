@@ -1,5 +1,6 @@
 ---
 
-- name: "update apt and install {{ apt_deb_packages }}"
+- name: install deb package
+  loop: "{{ apt_deb_packages }}"
   apt:
-    deb: "{{ apt_deb_packages }}"
+    deb: "{{ item }}"
