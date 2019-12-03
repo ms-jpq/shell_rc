@@ -5,8 +5,6 @@ nano_path: /usr/local/opt/nano/share/nano
 target_files:
   - src: "zsh/custom_macos/"
     dest: "{{ _omz_dir_ }}/custom/"
-  - src: "gotop"
-    dest: "{{ _user_dir_ }}/.config/"
 
 brew_repos:
   - name: cjbassi/gotop

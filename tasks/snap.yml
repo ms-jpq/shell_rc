@@ -4,4 +4,4 @@
   loop: "{{ snap_packages }}"
   snap:
     name: "{{ item.name }}"
-    classic: "{{ item.classic }}"
+    classic: "{{ item.classic | default('False') }}"

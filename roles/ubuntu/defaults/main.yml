@@ -2,16 +2,10 @@
 
 nano_path: /usr/share/nano
 
-_gotop_snap_: "/root/snap/gotop-cjbassi/3"
-
-target_dirs:
-  - "{{ _gotop_snap_ }}/.config"
-
 target_files:
   - src: "zsh/custom_linux/"
     dest: "{{ _omz_dir_ }}/custom/"
-  - src: "gotop"
-    dest: "{{ _gotop_snap_ }}/.config/"
+
 
 _core_utils:
   - sudo
@@ -57,11 +51,13 @@ _fun_things:
 snap_packages:
   - name: micro
     classic: True
-  - name: gotop-cjbassi
-    classic: True
-
 
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
 
 apt_packages: "{{ _core_utils + _nice_things + _fun_things }}"
+
+apt_deb_packages:
+  - "https://github.com/sharkdp/bat/releases/download/v0.12.1/bat_0.12.1_amd64.deb"
+  - "https://github.com/sharkdp/fd/releases/download/v7.4.0/fd_7.4.0_amd64.deb"
+  - "https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb"

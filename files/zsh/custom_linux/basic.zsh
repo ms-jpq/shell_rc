@@ -9,5 +9,3 @@ alias tree=' tree -L'
 
 alias open=' open_command'
 
-alias gotop=' gotop-cjbassi -c lite'
-
