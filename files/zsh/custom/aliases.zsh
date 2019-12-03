@@ -13,6 +13,8 @@ alias 0='cd'
 # alias cat=" bat"
 alias cat=' ccat'
 
+alias f=' fzf'
+
 alias m='micro'
 
 alias rsy='rsync -ah --no-o --no-g --partial --info=progress2'

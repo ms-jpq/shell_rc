@@ -54,8 +54,6 @@ snap_packages:
 
 
 apt_repos:
-  - "deb http://archive.canonical.com/ubuntu {{ __release_version__ }} partner"
+  - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
 
 apt_packages: "{{ _core_utils + _nice_things + _fun_things }}"
-
-
