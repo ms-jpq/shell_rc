@@ -35,7 +35,6 @@ _nice_things:
   # - fzf
   # - fd-find
   # - ripgrep
-  - autojump
   - tldr
 
 _fun_things:

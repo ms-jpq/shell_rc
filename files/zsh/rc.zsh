@@ -57,11 +57,11 @@ plugins=(zsh-syntax-highlighting
          zsh-completions
          zsh-autosuggestions
          history-substring-search
+         dirpersist
          fzf
          ripgrep
          rsync
          mosh
-         autojump
          colorize
          ansible
          docker
