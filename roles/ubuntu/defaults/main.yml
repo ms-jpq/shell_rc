@@ -58,8 +58,10 @@ apt_repos:
 apt_packages: "{{ _core_utils + _nice_things + _fun_things }}"
 
 apt_deb_packages:
+  # Next version of LTS should have these #
   - "https://github.com/sharkdp/bat/releases/download/v0.12.1/bat_0.12.1_amd64.deb"
   - "http://archive.ubuntu.com/ubuntu/pool/universe/f/fzf/fzf_0.17.5-2_amd64.deb"
   - "https://github.com/sharkdp/fd/releases/download/v7.4.0/fd_7.4.0_amd64.deb"
   - "https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb"
+  # Required Deb #
   - "https://github.com/cjbassi/gotop/releases/download/3.0.0/gotop_3.0.0_linux_amd64.deb"
