@@ -2,7 +2,7 @@
 
 nano_path: /usr/share/nano
 
-_gotop_snap_: "root/snap/gotop-cjbassi/3/"
+_gotop_snap_: "/root/snap/gotop-cjbassi/3/"
 
 target_dirs:
   - "{{ _gotop_snap_ }}/.config"
