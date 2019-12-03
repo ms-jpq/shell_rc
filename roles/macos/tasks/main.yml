@@ -2,6 +2,8 @@
 
 - import_tasks: copy.yml
 
+- import_tasks: homebrew_repos.yml
+
 - import_tasks: homebrew.yml
   when: sync_all
 

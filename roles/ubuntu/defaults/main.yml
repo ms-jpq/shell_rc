@@ -51,6 +51,8 @@ _fun_things:
 snap_packages:
   - name: micro
     classic: True
+  - name: gotop
+    classic: True
 
 
 apt_repos:

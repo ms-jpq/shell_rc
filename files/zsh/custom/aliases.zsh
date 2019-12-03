@@ -17,6 +17,8 @@ alias f=' fzf'
 
 alias m='micro'
 
+alias gotop=' gotop -c lite'
+
 alias rsy='rsync -ah --no-o --no-g --partial --info=progress2'
 
 alias hist=' history'
