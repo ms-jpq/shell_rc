@@ -5,6 +5,8 @@
 alias c='clipcopy'
 alias p='clippaste'
 
+alias cls=' clear'
+
 alias sudo='sudo -E '
 
 alias cd=' cd'
