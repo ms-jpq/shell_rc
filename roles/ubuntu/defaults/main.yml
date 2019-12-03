@@ -2,7 +2,7 @@
 
 nano_path: /usr/share/nano
 
-_gotop_snap_: "/root/snap/gotop-cjbassi/3/"
+_gotop_snap_: "/root/snap/gotop-cjbassi/3"
 
 target_dirs:
   - "{{ _gotop_snap_ }}/.config"
@@ -11,7 +11,7 @@ target_files:
   - src: "zsh/custom_linux/"
     dest: "{{ _omz_dir_ }}/custom/"
   - src: "gotop"
-    dest: "{{ _gotop_snap_ }}.config/"
+    dest: "{{ _gotop_snap_ }}/.config/"
 
 _core_utils:
   - sudo
