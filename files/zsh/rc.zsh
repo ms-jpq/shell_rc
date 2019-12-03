@@ -57,7 +57,7 @@ plugins=(zsh-syntax-highlighting
          zsh-completions
          zsh-autosuggestions
          history-substring-search
-        #  fzf
+         fzf
          ripgrep
          rsync
          mosh

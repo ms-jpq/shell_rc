@@ -2,8 +2,8 @@
 #################### Vagrant Region ####################
 #################### ############## ####################
 
-alias v='vagrant'
-alias vdun='vagrant destroy'
+alias va='vagrant'
+alias vadun='vagrant destroy'
 
 #################### ########### ####################
 #################### VBox Region ####################
