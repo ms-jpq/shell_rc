@@ -9,9 +9,10 @@ alias sudo='sudo -E '
 
 alias cd=' cd'
 alias 0='cd'
+alias d=' d'
 
-# alias cat=" bat"
-alias cat=' ccat'
+alias cat=" bat"
+alias ccat=' ccat'
 
 alias fd='fd -HI'
 

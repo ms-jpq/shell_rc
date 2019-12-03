@@ -61,7 +61,6 @@ plugins=(zsh-syntax-highlighting
          ripgrep
          rsync
          mosh
-         dirpersist
          autojump
          colorize
          ansible
