@@ -71,9 +71,6 @@ target_files:
   - src: "micro"
     dest: "{{ _user_dir_ }}/.config/"
 
-  - src: "gotop"
-    dest: "{{ _user_dir_ }}/.config/"
-
   - src: "scripts/"
     dest: "{{ _user_dir_ }}/.scripts"
 

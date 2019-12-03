@@ -2,10 +2,16 @@
 
 nano_path: /usr/share/nano
 
+_gotop_snap_: "root/snap/gotop-cjbassi/3/"
+
+target_dirs:
+  - "{{ _gotop_snap_ }}/.config"
+
 target_files:
   - src: "zsh/custom_linux/"
     dest: "{{ _omz_dir_ }}/custom/"
-
+  - src: "gotop"
+    dest: "{{ _gotop_snap_ }}.config/"
 
 _core_utils:
   - sudo
@@ -51,7 +57,7 @@ _fun_things:
 snap_packages:
   - name: micro
     classic: True
-  - name: gotop
+  - name: gotop-cjbassi
     classic: True
 
 

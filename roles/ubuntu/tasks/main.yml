@@ -1,5 +1,7 @@
 ---
 
+- import_tasks: mkdir.yml
+
 - import_tasks: copy.yml
 
 - import_tasks: apt_repo.yml
