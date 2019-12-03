@@ -43,6 +43,9 @@ git_repos:
   - src: "https://github.com/zsh-users/zsh-history-substring-search"
     dest: "{{ _omz_dir_ }}/plugins/zsh-history-substring-search"
 
+  - src: "https://github.com/trapd00r/LS_COLORS"
+    dest: "{{ _omz_dir_ }}/custom/LS_COLORS"
+
   - src: "https://github.com/syl20bnr/spacemacs"
     dest: "{{ _user_dir_ }}/.emacs.d"
 

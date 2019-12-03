@@ -70,3 +70,9 @@ plugins=(zsh-syntax-highlighting
          vagrant)
 autoload -U compinit && compinit
 source $ZSH/oh-my-zsh.sh
+
+
+#################### ############## ####################
+#################### LSCOLOR Region ####################
+#################### ############## ####################
+# eval $(dircolors -b $ZSH_CUSTOM/LS_COLORS/LS_COLORS)
