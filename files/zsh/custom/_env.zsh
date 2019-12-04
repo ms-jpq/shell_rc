@@ -14,3 +14,5 @@ export FZF_DEFAULT_OPTS="--color light \
                          --height 40% \
                          --reverse \
                          --border"
+
+

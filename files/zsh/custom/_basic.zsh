@@ -28,18 +28,19 @@ alias hist=' history'
 #################### Dir Region ####################
 #################### ########## ####################
 alias cd=' cd'
-alias d=' cd "$($FZFZ_SCRIPT_PATH/fzfz)"'
-# d() {
-#   local target="$(dirs -p | awk '!a[$0]++' | fzf)"
-#   local target="${target/#\~/$HOME}"
-#   if [[ -d $target ]]
-#   then
-#     cd "$target"
-#   else
-#     echo "cd: no such file or directory: $target"
-#   fi
-# }
-# alias d=' d'
+d() {
+  local candidates=$(fd -t d "$@")
+  if [[ -z $candidates ]]
+  then
+    echo "no such file or directory: $@"
+  elif [[ $(echo $candidates | wc -l) -eq 1 ]]
+  then
+    cd "$candidates"
+  else
+    cd "$(echo $candidates | fzf --preview "$FZF_DIR_PREVIEW")"
+  fi
+}
+alias d=' d'
 
 
 #################### ########## ####################

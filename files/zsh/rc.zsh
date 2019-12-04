@@ -71,6 +71,12 @@ plugins=(zsh-syntax-highlighting
          vagrant)
 autoload -U compinit && compinit
 source $ZSH/oh-my-zsh.sh
+# Remove CD #
+for i in $(seq 1 9)
+do
+  unalias "$i"
+done
+# Remove CD #
 
 
 #################### ############## ####################
