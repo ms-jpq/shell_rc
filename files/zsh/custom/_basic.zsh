@@ -29,7 +29,7 @@ alias hist=' history'
 #################### ########## ####################
 alias cd=' cd'
 d() {
-  local candidates=$(fd -t d "$@")
+  local candidates=$(fd -t d "$@" | sort -nf)
   if [[ -z $candidates ]]
   then
     echo "no such file or directory: $@"
