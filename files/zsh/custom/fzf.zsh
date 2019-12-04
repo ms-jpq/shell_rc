@@ -5,7 +5,8 @@
 export FZF_DEFAULT_OPTS="--color light \
                          --height 40% \
                          --reverse \
-                         --border"
+                         --border
+                         --preview '$FZF_PREVIEW'"
 
 alias f=' fzf'
 
@@ -18,7 +19,7 @@ __fzf_jump() {
   then
     cd "$candidates"
   else
-    cd "$(echo "$candidates" | fzf --preview "$FZF_DIR_PREVIEW")"
+    cd "$(echo "$candidates" | fzf +s)"
   fi
 }
 

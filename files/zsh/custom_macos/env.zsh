@@ -14,7 +14,9 @@ export LC_ALL=zh_CN.UTF-8
 export LANG=zh_CN.UTF-8
 
 
-export FZF_DIR_PREVIEW="exa \
-                        --color=always \
-                        --group-directories-first \
-                        -T -L 2 {}"
+export FZF_PREVIEW="[[ -d {} ]] \
+                    && exa \
+                    --color=always \
+                    --group-directories-first \
+                    -T -L 2 {} \
+                    || bat {}"
