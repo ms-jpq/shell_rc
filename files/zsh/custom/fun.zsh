@@ -2,7 +2,7 @@
 #################### Fun Region ####################
 #################### ########## ####################
 
-gay() {
+__gay() {
   local TEXT="'$*'"
   if [[ "$#" -eq 0 ]]
   then
@@ -10,8 +10,9 @@ gay() {
   fi
   figlet "$TEXT" | lolcat -a -d 1 -s 250
 }
+alias gay=' __gay'
 
-cow() {
+__cow() {
   local TEXT="'$*'"
   if [[ $((RANDOM % 10)) -gt 8 ]]
   then
@@ -22,22 +23,16 @@ cow() {
     cowsay -f $COW "$TEXT" | lolcat -a -d 1 -s 250
   fi
 }
+alias cow=' __cow'
 
-cm() {
+__cm() {
   local COLOURS=(green red blue white yellow cyan magenta black)
   local COLOUR=${COLOURS[$RANDOM % ${#COLOURS[@]} + 1]}
   cmatrix -ab -u 3 -C $COLOUR "$@"
 }
+alias cm=' __cm'
 
-vi() {
-  gay ok boomer
-}
+alias fish=' asciiquarium'
 
-vim() {
-  vi
-}
-
-alias fish='asciiquarium'
-
-alias weather='curl https://wttr.in\?format\=4'
-alias ipinfo='curl https://ipinfo.io'
+alias weather=' curl https://wttr.in\?T'
+alias ipinfo=' curl https://ipinfo.io'

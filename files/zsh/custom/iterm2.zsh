@@ -32,8 +32,8 @@
 if test -e "${HOME}/.iterm2_shell_integration.zsh"
 then
   source "${HOME}/.iterm2_shell_integration.zsh"
-  alias c='it2copy'
-  alias fire='it2attention fireworks'
-  alias icat='imgcat'
-  alias dl='it2dl'
+  alias c=' it2copy'
+  alias fire=' it2attention fireworks'
+  alias icat=' imgcat'
+  alias dl=' it2dl'
 fi

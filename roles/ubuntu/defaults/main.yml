@@ -45,6 +45,7 @@ _fun_things:
   - cowsay
   - lolcat
   - figlet
+  - libaa-bin #aafire
 
 
 snap_packages:
