@@ -2,6 +2,8 @@
 #################### FZF Region ####################
 #################### ########## ####################
 
+export FZFZ_SUBDIR_LIMIT=0
+
 export FZF_DEFAULT_OPTS="--color light \
                          --height 40% \
                          --reverse \
@@ -11,7 +13,7 @@ export FZF_DEFAULT_OPTS="--color light \
 alias f=' fzf'
 
 d() {
-  local candidates=$(fd -HI -t d "$@" | sort -nf)
+  local candidates=$(fd -HI -t l -t d "$@" | sort -nf)
   if [[ -z $candidates ]]
   then
     echo "no such file or directory: $@"
