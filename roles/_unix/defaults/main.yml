@@ -1,9 +1,8 @@
 ---
 
 ## GLOBAL ##
-_user_dir_: "{{ '~' if ansible_distribution == 'MacOSX' else '/root' }}"
-_omz_dir_: "{{ _user_dir_ }}/.oh-my-zsh"
-_nano_backup_dir_: "{{ _user_dir_ }}/.nano_backup"
+_omz_dir_: "~/.oh-my-zsh"
+_nano_backup_dir_: "~/.nano_backup"
 ## GLOBAL ##
 
 
@@ -47,47 +46,47 @@ git_repos:
     dest: "{{ _omz_dir_ }}/custom/dircolors-solarized"
 
   - src: "https://github.com/syl20bnr/spacemacs"
-    dest: "{{ _user_dir_ }}/.emacs.d"
+    dest: "~/.emacs.d"
 
 
 target_removals:
   - "{{ _omz_dir_ }}/"
-  - "{{ _user_dir_ }}/.scripts"
+  - "~/.scripts"
 
 
 target_dirs:
   - "{{ _nano_backup_dir_ }}"
-  - "{{ _user_dir_ }}/.config"
-  - "{{ _user_dir_ }}/.scripts"
+  - "~/.config"
+  - "~/.scripts"
 
 target_touches:
-  - "{{ _user_dir_ }}/.z"
+  - "~/.z"
 
 target_files:
   - src: "zsh/rc.zsh"
-    dest: "{{ _user_dir_ }}/.zshrc"
+    dest: "~/.zshrc"
 
   - src: "zsh/.p10k.zsh"
-    dest: "{{ _user_dir_ }}/.p10k.zsh"
+    dest: "~/.p10k.zsh"
 
   - src: "zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
 
   - src: "micro"
-    dest: "{{ _user_dir_ }}/.config/"
+    dest: "~/.config/"
 
   - src: "gotop"
-    dest: "{{ _user_dir_ }}/.config/"
+    dest: "~/.config/"
 
   - src: "scripts/"
-    dest: "{{ _user_dir_ }}/.scripts"
+    dest: "~/.scripts"
 
   - src: ".ansible.cfg"
-    dest: "{{ _user_dir_ }}/.ansible.cfg"
+    dest: "~/.ansible.cfg"
 
 
 target_templates:
   - src: ".nanorc.j2"
-    dest: "{{ _user_dir_ }}/.nanorc"
+    dest: "~/.nanorc"
   - src: "tz.zsh.j2"
     dest: "{{ _omz_dir_ }}/custom/tz.zsh"

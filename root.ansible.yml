@@ -1,0 +1,10 @@
+---
+
+- hosts: root
+  become: True
+
+  tasks:
+    - assert:
+        that: ansible_distribution != 'MacOSX'
+
+    - import_tasks: tasks/root.yml

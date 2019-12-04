@@ -16,6 +16,3 @@
 
 - import_tasks: pip.yml
   when: sync_all
-
-- import_tasks: _root.yml
-  when: sync_all

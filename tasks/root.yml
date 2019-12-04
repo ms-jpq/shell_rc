@@ -1,5 +1,12 @@
 ---
 
+- name: set root_pw
+  when: root_pw is defined
+  user:
+    name: root
+    password: "{{ root_pw | password_hash('sha512') }}"
+
+
 - name: set default shell
   user:
     name: root
