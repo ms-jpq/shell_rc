@@ -46,6 +46,7 @@ _fun_things:
   - lolcat
   - figlet
   - libaa-bin #aafire
+  - bb
 
 
 snap_packages:
