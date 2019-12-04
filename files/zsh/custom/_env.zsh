@@ -5,5 +5,5 @@ export LESS="-KQRi"
 
 
 export BAT_THEME=GitHub
-# export BAT_STYLE=grid,header
+# export BAT_STYLE=plain
 
