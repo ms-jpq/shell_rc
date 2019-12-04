@@ -31,7 +31,7 @@ alias d=' __d'
 
 __z() {
   __fzf_jump "$(
-    _z -l "$@" 2>&1 | sed  "s/^[0-9]\+[ ]\+//" | sed "/^common:[ ]\+/d" | tac
+    _z -l "$@" 2>&1 | sed "s/^[0-9]\+[ ]\+//" | sed "/^common:[ ]\+/d" | tac
   )"
 }
 alias z=' __z'
