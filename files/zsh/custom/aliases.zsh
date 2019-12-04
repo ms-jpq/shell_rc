@@ -28,7 +28,6 @@ alias hist=' history'
 #################### Dir Region ####################
 #################### ########## ####################
 alias cd=' cd'
-alias d=' __fzfz'
 # d() {
 #   local target="$(dirs -p | awk '!a[$0]++' | fzf)"
 #   local target="${target/#\~/$HOME}"
