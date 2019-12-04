@@ -22,12 +22,16 @@ __fzf_jump() {
   fi
 }
 
-d() {
-  __fzf_jump "$(fd -t l -t d "$@" | sort -nf)"
-}
-alias d=' d'
 
-b() {
+__d() {
   __fzf_jump "$(fd -t l -t d "$@" | sort -nf)"
 }
-alias b=' b'
+alias d=' __d'
+
+
+__z() {
+  __fzf_jump "$(
+    _z -l "$@" 2>&1 | sed  "s/^[0-9]\+[ ]\+//" | sed "/^common:[ ]\+/d" | tac
+  )"
+}
+alias z=' __z'
