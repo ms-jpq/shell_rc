@@ -29,19 +29,22 @@ git_repos:
     dest: "{{ _omz_dir_ }}"
 
   - src: "https://github.com/romkatv/powerlevel10k"
-    dest: "{{ _omz_dir_ }}/themes/powerlevel10k"
+    dest: "{{ _omz_dir_ }}/custom/themes/powerlevel10k"
 
   - src: "https://github.com/zsh-users/zsh-syntax-highlighting"
-    dest: "{{ _omz_dir_ }}/plugins/zsh-syntax-highlighting"
+    dest: "{{ _omz_dir_ }}/custom/plugins/zsh-syntax-highlighting"
 
   - src: "https://github.com/zsh-users/zsh-autosuggestions"
-    dest: "{{ _omz_dir_ }}/plugins/zsh-autosuggestions"
+    dest: "{{ _omz_dir_ }}/custom/plugins/zsh-autosuggestions"
 
   - src: "https://github.com/zsh-users/zsh-completions"
-    dest: "{{ _omz_dir_ }}/plugins/zsh-completions"
+    dest: "{{ _omz_dir_ }}/custom/plugins/zsh-completions"
 
   - src: "https://github.com/zsh-users/zsh-history-substring-search"
-    dest: "{{ _omz_dir_ }}/plugins/zsh-history-substring-search"
+    dest: "{{ _omz_dir_ }}/custom/plugins/zsh-history-substring-search"
+
+  - src: "https://github.com/andrewferrier/fzf-z"
+    dest: "{{ _omz_dir_ }}/custom/plugins/fzf-z"
 
   - src: "https://github.com/trapd00r/LS_COLORS"
     dest: "{{ _omz_dir_ }}/custom/LS_COLORS"

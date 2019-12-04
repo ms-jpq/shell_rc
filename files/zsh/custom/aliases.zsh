@@ -28,17 +28,18 @@ alias hist=' history'
 #################### Dir Region ####################
 #################### ########## ####################
 alias cd=' cd'
-d() {
-  local target="$(dirs -p | awk '!a[$0]++' | fzf)"
-  local target="${target/#\~/$HOME}"
-  if [[ -d $target ]]
-  then
-    cd "$target"
-  else
-    echo "cd: no such file or directory: $target"
-  fi
-}
-alias d=' d'
+alias d=' __fzfz'
+# d() {
+#   local target="$(dirs -p | awk '!a[$0]++' | fzf)"
+#   local target="${target/#\~/$HOME}"
+#   if [[ -d $target ]]
+#   then
+#     cd "$target"
+#   else
+#     echo "cd: no such file or directory: $target"
+#   fi
+# }
+# alias d=' d'
 
 
 #################### ########## ####################
