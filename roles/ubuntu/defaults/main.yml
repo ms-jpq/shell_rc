@@ -36,6 +36,7 @@ _nice_things:
   # - fd-find
   # - ripgrep
   - tldr
+  - ncdu
 
 _fun_things:
   - neofetch

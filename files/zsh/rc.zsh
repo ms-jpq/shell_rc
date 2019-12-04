@@ -58,7 +58,6 @@ plugins=(zsh-syntax-highlighting
          history-substring-search
          fzf
          z
-         dirpersist
          ripgrep
          rsync
          mosh
@@ -81,4 +80,4 @@ done
 #################### ############## ####################
 #################### LSCOLOR Region ####################
 #################### ############## ####################
-# eval $(dircolors -b $ZSH_CUSTOM/LS_COLORS/LS_COLORS)
+eval $(dircolors -b $ZSH_CUSTOM/dircolors-solarized/dircolors.256dark)

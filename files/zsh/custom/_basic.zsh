@@ -2,10 +2,14 @@
 #################### Core Region ####################
 #################### ########### ####################
 
+# NEVER USE IT DIRECTLY #
+alias rm=' echo 🦄'
+# NEVER USE IT DIRECTLY #
+
+alias cls='clear'
+
 alias c='clipcopy'
 alias p='clippaste'
-
-alias cls=' clear'
 
 alias sudo='sudo -E '
 
