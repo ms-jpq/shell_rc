@@ -58,6 +58,7 @@ plugins=(zsh-syntax-highlighting
          history-substring-search
          fzf
          z
+         dirpersist
          ripgrep
          rsync
          mosh
