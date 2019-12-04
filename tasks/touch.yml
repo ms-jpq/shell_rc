@@ -1,0 +1,8 @@
+---
+
+- name: ensure file exists
+  loop: "{{ target_touches }}"
+  copy:
+    content: ""
+    dest: "{{ item }}"
+    force: no

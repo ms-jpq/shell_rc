@@ -63,6 +63,8 @@ target_dirs:
   - "{{ _user_dir_ }}/.config"
   - "{{ _user_dir_ }}/.scripts"
 
+target_touches:
+  - "{{ _user_dir_ }}/.z"
 
 target_files:
   - src: "zsh/rc.zsh"

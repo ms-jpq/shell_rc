@@ -13,6 +13,8 @@
 
 - import_tasks: mkdir.yml
 
+- import_tasks: touch.yml
+
 - import_tasks: copy.yml
 
 - import_tasks: template.yml
