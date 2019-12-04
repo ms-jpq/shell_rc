@@ -3,7 +3,6 @@
 #################### ########## ####################
 
 set -o pipefail
-set -o autopushd pushdignoredups pushdminus pushdsilent pushdtohome
 
 autoload zmv
 
