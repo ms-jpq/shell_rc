@@ -2,12 +2,12 @@
 #################### FZF Region ####################
 #################### ########## ####################
 
-export FZFZ_SUBDIR_LIMIT=0
-
 export FZF_DEFAULT_OPTS="--color light \
                          --height 40% \
                          --reverse \
                          --border"
+
+export FZFZ_SUBDIR_LIMIT=0
 
 
 alias f=' fzf'
