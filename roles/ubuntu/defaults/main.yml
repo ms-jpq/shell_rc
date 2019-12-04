@@ -13,8 +13,7 @@ _core_utils:
   - python3-pip
   - zsh
   - mosh
-  - python3-pip
-  - python-pip
+  - trash-cli
   - rsync
   - curl
   - wget
