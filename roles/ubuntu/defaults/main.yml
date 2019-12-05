@@ -18,6 +18,8 @@ _core_utils:
   - curl
   - wget
   - grep
+  - awk
+  - jq
   - nano
   - nmap
   - tree
