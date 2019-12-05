@@ -10,16 +10,19 @@ export FZF_DEFAULT_OPTS="--color light \
 
 alias f=' fzf'
 
+fe() {
+  local file="$(fzf)"
+  [[ ! -z "$file" ]] && $EDITOR "$file"
+}
+
+
 __fzf_jump() {
   local candidates="$1"
   if [[ -z "$candidates" ]]
   then
     echo "no such file or directory: $@"
-  elif [[ $(echo "$candidates" | wc -l) -eq 1 ]]
-  then
-    cd "$candidates"
   else
-    cd "$(echo "$candidates" | fzf +s)"
+    cd "$(echo "$candidates" | fzf -1 +s)"
   fi
 }
 

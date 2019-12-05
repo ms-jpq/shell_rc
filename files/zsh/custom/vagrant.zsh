@@ -12,10 +12,10 @@ alias vadun='vagrant destroy'
 alias vb='VBoxManage'
 
 vboff() {
-  vb controlvm $1 poweroff
+  vb controlvm "$1" poweroff
 }
 
 vbdun() {
-  vboff $1
-  vb unregistervm $1 --delete
+  vboff "$1"
+  vb unregistervm "$1" --delete
 }

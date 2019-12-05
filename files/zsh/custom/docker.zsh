@@ -4,11 +4,11 @@
 
 dm() {
   if [ "$#" -eq 0 ]; then
-    export DOCKER_HOST=unix:///var/run/docker.sock
+    export DOCKER_HOST="unix:///var/run/docker.sock"
   else
-    export DOCKER_HOST=tcp://$1:${2-2375}
+    export DOCKER_HOST="tcp://$1:${2-2375}"
   fi
-  echo DOCKER_HOST=$DOCKER_HOST
+  echo DOCKER_HOST="$DOCKER_HOST"
 }
 
 alias dun='docker rm -f $(docker ps -aq)'

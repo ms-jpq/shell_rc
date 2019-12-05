@@ -6,7 +6,7 @@
 alias rm=' echo 🦄'
 # NEVER USE IT DIRECTLY #
 
-alias cls='clear'
+alias cls=' clear'
 
 alias c='clipcopy'
 alias p='clippaste'
@@ -28,5 +28,5 @@ alias rsy='rsync -ah --no-o --no-g --partial --info=progress2'
 alias hist=' history'
 
 ma() {
-  man $1 | col -b
+  man "$1" | col -b
 }

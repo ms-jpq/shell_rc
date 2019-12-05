@@ -13,7 +13,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-source $HOME/.p10k.zsh
+source "$HOME/.p10k.zsh"
 
 
 #################### ########## ####################
@@ -67,7 +67,7 @@ plugins=(zsh-syntax-highlighting
          kubectl
          vagrant)
 autoload -U compinit && compinit
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
 # Remove CD #
 for i in $(seq 1 9)
 do
@@ -79,4 +79,4 @@ done
 #################### ############## ####################
 #################### LSCOLOR Region ####################
 #################### ############## ####################
-eval $(dircolors -b $ZSH_CUSTOM/dircolors-solarized/dircolors.256dark)
+eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.256dark")"
