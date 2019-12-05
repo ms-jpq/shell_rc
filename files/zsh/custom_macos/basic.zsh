@@ -13,8 +13,8 @@ alias tree='ls -T -L'
 alias trash='trash -v'
 
 
-alias batt='pmset -g batt'
-alias dns='sudo killall -HUP mDNSResponder'
+alias batt=' pmset -g batt'
+alias dns=' sudo killall -HUP mDNSResponder'
 
 
 alias brewup='brew update && \
