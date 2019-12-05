@@ -48,6 +48,7 @@ _nice_things:
   - gotop
   - tldr
   - shellcheck
+  - watchman
   - ncdu
 
 _fun_things:
