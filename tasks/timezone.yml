@@ -1,6 +1,7 @@
 ---
 
 - name: get timezone from ipinfo.io
+  become: False
   local_action:
     module: shell
     warn: False
