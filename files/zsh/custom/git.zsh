@@ -3,5 +3,5 @@
 #################### ########## ####################
 
 gitlines() {
-  git ls-files | grep "$@" | xargs wc -l
+  git ls-files | rg "$@" | xargs wc -l
 }

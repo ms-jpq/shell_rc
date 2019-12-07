@@ -3,9 +3,9 @@
 #################### ############ ####################
 
 
-alias t=' open -f'
+alias t='open -f'
 
-alias ls=' exa --group-directories-first --time-style long-iso -ahF'
+alias ls='exa --group-directories-first --time-style long-iso -ahF'
 alias l='ls -1'
 alias ll='ls -l'
 alias tree='ls -T -L'
@@ -13,8 +13,8 @@ alias tree='ls -T -L'
 alias trash='trash -v'
 
 
-alias batt=' pmset -g batt'
-alias dns=' sudo killall -HUP mDNSResponder'
+alias batt='pmset -g batt'
+alias dns='sudo killall -HUP mDNSResponder'
 
 
 alias brewup='brew update && \

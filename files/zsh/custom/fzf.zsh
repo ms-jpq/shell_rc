@@ -8,7 +8,7 @@ export FZF_DEFAULT_OPTS="--color light \
                          --border
                          --preview '$FZF_PREVIEW'"
 
-alias f=' fzf'
+alias f='fzf'
 
 fe() {
   local file="$(fzf)"
@@ -27,15 +27,13 @@ __fzf_jump() {
 }
 
 
-__d() {
+d() {
   __fzf_jump "$(fd -t l -t d "$@" | sort -nf)"
 }
-alias d=' __d'
 
 
-__z() {
+z() {
   __fzf_jump "$(
     _z -lr "$@" 2>&1 | sed -e "s/^[0-9]\+[ ]\+//" -e "/^common:[ ]\+/d" | tac
   )"
 }
-alias z=' __z'
