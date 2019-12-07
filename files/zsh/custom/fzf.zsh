@@ -32,6 +32,7 @@ d() {
 }
 
 
+unalias z
 z() {
   __fzf_jump "$(
     _z -lr "$@" 2>&1 | sed -e "s/^[0-9]\+[ ]\+//" -e "/^common:[ ]\+/d" | tac
