@@ -10,8 +10,8 @@
       - name: user.email
         value: git@bigly.dog
 
-    sync_all: True
-    from_scratch: False
+    sync_all: "{{ all | default(True) | bool }}"
+    from_scratch: "{{ reset | default(False) | bool }}"
 
   tasks:
     - assert:
