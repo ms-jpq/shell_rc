@@ -7,12 +7,6 @@
     password: "{{ root_pw | password_hash('sha512') }}"
 
 
-- name: set default shell
-  user:
-    name: root
-    shell: /bin/zsh
-
-
 - name: add ssh pub key
   loop: "{{ __ssh_authorized__ }}"
   authorized_key:
