@@ -4,14 +4,6 @@
   become: True
 
   vars:
-    git_conf:
-      - name: user.name
-        value: Fly me to the moon
-      - name: user.email
-        value: git@bigly.dog
-
-    sync_all: "{{ all | default(True) | bool }}"
-    from_scratch: "{{ reset | default(False) | bool }}"
 
   tasks:
     - assert:

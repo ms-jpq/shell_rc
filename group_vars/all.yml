@@ -2,3 +2,14 @@
 
 __ssh_authorized__:
   - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+
+sync_all: "{{ all | default(False) | bool }}"
+from_scratch: "{{ reset | default(False) | bool }}"
+
+
+git_conf:
+  - name: user.name
+    value: Fly me to the moon
+  - name: user.email
+    value: git@bigly.dog
