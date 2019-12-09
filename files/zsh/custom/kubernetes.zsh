@@ -4,3 +4,4 @@
 
 alias k='kubectl'
 alias kd='k describe'
+alias kg='k get'
