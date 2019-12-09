@@ -3,6 +3,7 @@
 __ssh_authorized__:
   - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
+_time_zone_: "{{ (lookup('pipe', 'curl https://ipinfo.io') | from_json).timezone }}"
 
 sync_all: "{{ all | default(False) | bool }}"
 from_scratch: "{{ reset | default(False) | bool }}"

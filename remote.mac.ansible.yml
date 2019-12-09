@@ -2,8 +2,6 @@
 
 - hosts: macos
 
-  vars:
-
   tasks:
     - assert:
         that: ansible_distribution == 'MacOSX'

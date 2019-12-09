@@ -3,8 +3,6 @@
 - hosts: ubuntu
   become: True
 
-  vars:
-
   tasks:
     - assert:
         that: ansible_distribution != 'MacOSX'

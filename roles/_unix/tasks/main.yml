@@ -1,7 +1,5 @@
 ---
 
-- import_tasks: timezone.yml
-
 - import_tasks: packages.yml
   when: sync_all
 
