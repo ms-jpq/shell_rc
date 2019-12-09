@@ -2,7 +2,7 @@
 
 - import_tasks: shell.yml
 
-- import_tasks: copy.yml
+- import_tasks: sync.yml
 
 - import_tasks: apt_repo.yml
   when: sync_all

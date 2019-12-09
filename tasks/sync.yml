@@ -1,6 +1,6 @@
 ---
 
-- name: copy files
+- name: sync files
   loop: "{{ target_files }}"
   synchronize:
     group: False
