@@ -5,8 +5,8 @@ __ssh_authorized__:
 
 _time_zone_: "{{ (lookup('pipe', 'curl https://ipinfo.io') | from_json).timezone }}"
 
-sync_all: "{{ all | default(False) | bool }}"
-from_scratch: "{{ reset | default(False) | bool }}"
+_all_: "{{ all | default(False) | bool }}"
+_reset_: "{{ reset | default(False) | bool }}"
 
 
 git_conf:

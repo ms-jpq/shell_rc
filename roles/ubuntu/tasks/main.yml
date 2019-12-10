@@ -5,16 +5,16 @@
 - import_tasks: sync.yml
 
 - import_tasks: apt_repo.yml
-  when: sync_all
+  when: _all_
 
 - import_tasks: apt.yml
-  when: sync_all
+  when: _all_
 
 - import_tasks: apt_deb.yml
-  when: sync_all
+  when: _all_
 
 - import_tasks: snap.yml
-  when: sync_all
+  when: _all_
 
 - import_tasks: pip.yml
-  when: sync_all
+  when: _all_

@@ -1,15 +1,15 @@
 ---
 
 - import_tasks: packages.yml
-  when: sync_all
+  when: _all_
 
 - import_tasks: git_conf.yml
 
 - import_tasks: remove_fs.yml
-  when: from_scratch
+  when: _reset_
 
 - import_tasks: git.yml
-  when: sync_all or from_scratch
+  when: _all_ or _reset_
 
 - import_tasks: mkdir.yml
 
