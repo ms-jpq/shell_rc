@@ -10,9 +10,16 @@ export FZF_DEFAULT_OPTS="--color light \
 
 alias f='fzf'
 
+
 fe() {
   local file="$(fzf)"
   [[ ! -z "$file" ]] && $EDITOR "$file"
+}
+
+
+cf() {
+  local file="$(fzf)"
+  [[ ! -z "$file" ]] && cat "$file"
 }
 
 

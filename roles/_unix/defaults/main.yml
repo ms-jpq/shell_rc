@@ -6,11 +6,6 @@ _nano_backup_dir_: "~/.nano_backup"
 ## GLOBAL ##
 
 
-# INPUT #
-_all_: True
-_reset_: True
-# INPUT #
-
 
 packages:
   - git
