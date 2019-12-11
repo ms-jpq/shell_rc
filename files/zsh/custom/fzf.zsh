@@ -10,7 +10,6 @@ export FZF_DEFAULT_OPTS="--color light \
 
 
 f() {
-  echo "$@"
   if [[ "$#" -eq 0 ]]
   then
     fzf
@@ -21,7 +20,7 @@ f() {
 
 
 fe() {
-  local file="$(f "$@")"
+  local file="$(fzf "$@")"
   if [[ ! -z "$file" ]]
   then
     $EDITOR "$file"
@@ -30,7 +29,7 @@ fe() {
 
 
 cf() {
-  local file="$(f "$@")"
+  local file="$(fzf "$@")"
   if [[ ! -z "$file" ]]
   then
     cat "$file"
@@ -57,6 +56,6 @@ d() {
 unalias z
 z() {
   __fzf_jump "$(
-    _z -lr "$@" 2>&1 | sed -e "s/^[0-9]\+[ ]\+//" -e "/^common:[ ]\+/d" | tac
+    _z -l -r "$@" 2>&1 | sed -e "s/^[0-9]\+[ ]\+//" -e "/^common:[ ]\+/d" | tac
   )"
 }
