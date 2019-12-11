@@ -8,18 +8,33 @@ export FZF_DEFAULT_OPTS="--color light \
                          --border
                          --preview '$FZF_PREVIEW'"
 
-alias f='fzf'
+
+f() {
+  echo "$@"
+  if [[ "$#" -eq 0 ]]
+  then
+    fzf
+  else
+    fzf -q "$@"
+  fi
+}
 
 
 fe() {
-  local file="$(fzf)"
-  [[ ! -z "$file" ]] && $EDITOR "$file"
+  local file="$(f "$@")"
+  if [[ ! -z "$file" ]]
+  then
+    $EDITOR "$file"
+  fi
 }
 
 
 cf() {
-  local file="$(fzf)"
-  [[ ! -z "$file" ]] && cat "$file"
+  local file="$(f "$@")"
+  if [[ ! -z "$file" ]]
+  then
+    cat "$file"
+  fi
 }
 
 

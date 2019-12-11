@@ -3,7 +3,8 @@
 #################### ############# ####################
 
 dm() {
-  if [ "$#" -eq 0 ]; then
+  if [ "$#" -eq 0 ]
+  then
     export DOCKER_HOST="unix:///var/run/docker.sock"
   else
     export DOCKER_HOST="tcp://$1:${2-2375}"
