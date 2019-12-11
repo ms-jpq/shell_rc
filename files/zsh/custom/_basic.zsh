@@ -15,8 +15,6 @@ alias sudo='sudo -E '
 
 alias cat='bat'
 
-alias fd='fd -H'
-
 alias m='micro'
 
 alias gotop='gotop -c lite'
