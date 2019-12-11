@@ -15,7 +15,7 @@ alias sudo='sudo -E '
 
 alias cat='bat'
 
-alias fd='fd -HI'
+alias fd='fd -H'
 
 alias m='micro'
 
