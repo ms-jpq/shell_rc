@@ -8,7 +8,7 @@
 
 
 - name: add ssh pub key
-  loop: "{{ __ssh_authorized__ }}"
+  loop: "{{ _ssh_authorized_ }}"
   authorized_key:
     user: root
     key: "{{ item }}"
