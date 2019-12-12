@@ -17,8 +17,6 @@ alias cat='bat'
 
 alias m='micro'
 
-alias py='python3'
-
 alias gotop='gotop -c lite'
 
 alias rsy='rsync -ah --no-o --no-g --info=progress2'
