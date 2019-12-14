@@ -65,6 +65,7 @@ plugins=(zsh-syntax-highlighting
          docker
          docker-compose
          kubectl
+         helm
          vagrant)
 autoload -U compinit && compinit
 source "$ZSH/oh-my-zsh.sh"
