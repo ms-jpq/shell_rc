@@ -10,8 +10,6 @@ alias l='ls -1'
 alias ll='ls -l'
 alias tree='ls -T -L'
 
-alias trash='trash -v'
-
 
 alias batt='pmset -g batt'
 alias dns='sudo killall -HUP mDNSResponder'

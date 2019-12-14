@@ -15,13 +15,16 @@ alias sudo='sudo -E '
 
 alias cat='bat'
 
+alias hist='history'
+
 alias m='micro'
 
-alias gotop='gotop -c lite'
+alias trash='trash -v'
 
 alias rsy='rsync -ah --no-o --no-g --info=progress2'
 
-alias hist='history'
+alias gotop='gotop -c lite'
+
 
 ma() {
   man "$1" | col -b
