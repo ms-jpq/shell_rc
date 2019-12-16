@@ -2,7 +2,7 @@
 #################### Linux Region ####################
 #################### ############ ####################
 
-alias ls='ls --group-directories-first --color -hAF'
+alias ls='ls --group-directories-first --color -hF'
 alias l='ls -1'
 alias ll='ls -l'
 alias tree='tree -L'
