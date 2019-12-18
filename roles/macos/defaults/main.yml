@@ -53,7 +53,6 @@ _nice_things:
 
 _fun_things:
   - neofetch
-  - archey
   - sl
   - cmatrix
   - asciiquarium
@@ -61,6 +60,5 @@ _fun_things:
   - cowsay
   - lolcat
   - figlet
-  - aalib # aafire
 
 brew_packages: "{{ _core_utils + _nice_things + _fun_things }}"

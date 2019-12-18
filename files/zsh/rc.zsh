@@ -3,7 +3,6 @@
 #################### ########## ####################
 set -o pipefail
 export PROMPT_EOL_MARK=""
-autoload zmv
 
 
 #################### ################ ####################
@@ -65,8 +64,7 @@ plugins=(zsh-syntax-highlighting
          docker
          docker-compose
          kubectl
-         helm
-         vagrant)
+         helm)
 autoload -U compinit && compinit
 source "$ZSH/oh-my-zsh.sh"
 # Remove CD #
