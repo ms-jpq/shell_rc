@@ -44,7 +44,7 @@ _nice_things:
   - fzf
   - fd
   - ripgrep
-  - peco
+  - peco # https://github.com/peco/peco
   - trash
   - gotop
   - tldr
