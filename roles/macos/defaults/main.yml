@@ -44,6 +44,7 @@ _nice_things:
   - fzf
   - fd
   - ripgrep
+  - peco
   - trash
   - gotop
   - tldr
