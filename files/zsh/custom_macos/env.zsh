@@ -19,4 +19,4 @@ export FZF_PREVIEW="[[ -d {} ]] \
                     --color=always \
                     --group-directories-first \
                     -T -L 2 {} \
-                    || bat {}"
+                    || bat --color always {}"
