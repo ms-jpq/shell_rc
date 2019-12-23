@@ -35,6 +35,7 @@ _nice_things:
   # - fzf
   # - fd-find
   # - ripgrep
+  # - peco
   - tldr
   - ncdu
 
