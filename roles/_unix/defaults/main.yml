@@ -73,6 +73,9 @@ target_files:
   - src: "gotop"
     dest: "~/.config/"
 
+  - src: "peco"
+    dest: "~/.config/"
+
   - src: "scripts/"
     dest: "~/.scripts"
 
