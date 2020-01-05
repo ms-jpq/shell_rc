@@ -54,6 +54,7 @@ _fun_things:
 snap_packages:
   - name: micro
     classic: True
+  - name: yq
 
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
