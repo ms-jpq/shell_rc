@@ -26,6 +26,7 @@ _core_utils:
   - gnu-getopt
   - awk
   - jq
+  - yq
   - gnu-sed
   - openssh
   - openssl
