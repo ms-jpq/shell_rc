@@ -67,14 +67,11 @@ target_files:
   - src: "zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
 
-  - src: "micro"
+  - src: "config/"
     dest: "~/.config/"
 
-  - src: "gotop"
-    dest: "~/.config/"
-
-  - src: "peco"
-    dest: "~/.config/"
+  - src: "launchd/"
+    dest: "~/Library/LaunchAgents/"
 
   - src: "scripts/"
     dest: "~/.scripts"
