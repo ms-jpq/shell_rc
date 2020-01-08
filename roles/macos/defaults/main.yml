@@ -19,6 +19,7 @@ _core_utils:
   - coreutils
   - findutils
   - gnu-which
+  - glib-openssl
   - rsync
   - curl
   - wget
@@ -29,7 +30,6 @@ _core_utils:
   - yq
   - gnu-sed
   - openssh
-  - openssl
   - nmap
   - tree
   - pstree
