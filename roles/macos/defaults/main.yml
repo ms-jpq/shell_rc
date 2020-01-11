@@ -19,6 +19,7 @@ _core_utils:
   - coreutils
   - findutils
   - gnu-which
+  - bind
   - glib-openssl
   - rsync
   - curl
