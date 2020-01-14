@@ -7,6 +7,14 @@
     password: "{{ root_pw | password_hash('sha512') }}"
 
 
+- name: disable password login
+  when: root_pw is not defined
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    line: "PasswordAuthentication no"
+  register: __root_ssh
+
+
 - name: add ssh pub key
   loop: "{{ _ssh_authorized_ }}"
   authorized_key:
