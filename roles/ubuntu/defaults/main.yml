@@ -38,6 +38,7 @@ _nice_things:
   # - peco
   - tldr
   - ncdu
+  - iperf3
 
 _fun_things:
   - neofetch
