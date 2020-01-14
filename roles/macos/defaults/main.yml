@@ -53,6 +53,7 @@ _nice_things:
   - shellcheck
   - watchman
   - ncdu
+  - iperf3
 
 _fun_things:
   - neofetch
