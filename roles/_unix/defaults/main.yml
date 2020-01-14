@@ -70,9 +70,6 @@ target_files:
   - src: "config/"
     dest: "~/.config/"
 
-  - src: "launchd/"
-    dest: "~/Library/LaunchAgents/"
-
   - src: "scripts/"
     dest: "~/.scripts"
 

@@ -6,6 +6,9 @@ target_files:
   - src: "zsh/custom_macos/"
     dest: "{{ _omz_dir_ }}/custom/"
 
+  - src: "launchd/"
+    dest: "~/Library/LaunchAgents/"
+
 brew_repos:
   - name: cjbassi/gotop
 
