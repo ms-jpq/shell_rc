@@ -1,5 +1,12 @@
 ---
 
+- name: add ssh pub key
+  loop: "{{ _ssh_authorized_ }}"
+  authorized_key:
+    user: root
+    key: "{{ item }}"
+
+
 - name: set root_pw
   when: root_pw is defined
   user:
@@ -13,13 +20,6 @@
     dest: "/etc/ssh/sshd_config"
     line: "PasswordAuthentication no"
   register: __root_ssh
-
-
-- name: add ssh pub key
-  loop: "{{ _ssh_authorized_ }}"
-  authorized_key:
-    user: root
-    key: "{{ item }}"
 
 
 - name: enable root login
