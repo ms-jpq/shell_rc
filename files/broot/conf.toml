@@ -56,14 +56,7 @@ shortcut = "root"
 
 
 [[verbs]]
-invocation = "open_command {file}"
-execution = "open_command {file}"
-shortcut = "open"
-key = "^o"
-
-
-[[verbs]]
-invocation = "trash {file}"
+invocation = "trash"
 execution = "trash {file}"
 shortcut = "trash"
 
