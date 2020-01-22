@@ -1,6 +1,7 @@
 ---
 
 _ansible_tmp_: "/tmp/ansible"
+_exec_bin_: "/usr/local/bin"
 
 nano_path: /usr/share/nano
 
@@ -94,17 +95,17 @@ target_archives:
     dest: "{{ _ansible_tmp_ }}"
 
 
+target_remote_copy:
+  - src: "{{ _ansible_tmp_ }}/peco_linux_amd64/peco"
+    dest: "{{ _exec_bin_ }}/peco"
+  - src: "{{ _ansible_tmp_ }}/build/x86_64-linux/broot"
+    dest: "{{ _exec_bin_ }}/broot"
+
+
 target_mods:
   - path: "/usr/local/bin/ttyd"
     mode: "775"
-  - path: "/tmp/peco"
+  - path: "{{ _exec_bin_ }}/peco"
     mode: "775"
-  - path: "/tmp/broot"
+  - path: "{{ _exec_bin_ }}/broot"
     mode: "775"
-
-
-target_remote_copy:
-  - src: "{{ _ansible_tmp_ }}/peco_linux_amd64/peco"
-    dest: "/usr/local/bin/peco"
-  - src: "{{ _ansible_tmp_ }}/build/x86_64-linux/broot"
-    dest: "/usr/local/bin/broot"
