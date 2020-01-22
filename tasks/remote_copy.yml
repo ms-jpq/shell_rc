@@ -1,7 +1,7 @@
 ---
 
 - name: copy remote files
-  loop: "{{ target_remote_files }}"
+  loop: "{{ target_remote_copy }}"
   copy:
     remote_src: True
     src: "{{ item.src }}"

@@ -1,5 +1,7 @@
 ---
 
+_ansible_tmp_: "/tmp/ansible"
+
 nano_path: /usr/share/nano
 
 target_files:
@@ -81,11 +83,15 @@ target_downloads:
     dest: "/usr/local/bin/ttyd"
 
 
+target_dirs:
+  - "{{ _ansible_tmp_ }}"
+
+
 target_archives:
   - src: "https://github.com/peco/peco/releases/download/v0.5.7/peco_linux_amd64.tar.gz"
-    dest: "/tmp/peco"
+    dest: "{{ _ansible_tmp_ }}"
   - src: "https://github.com/Canop/broot/releases/download/v0.12.0/release.zip"
-    dest: "/tmp/broot"
+    dest: "{{ _ansible_tmp_ }}"
 
 
 target_mods:
@@ -97,8 +103,8 @@ target_mods:
     mode: "775"
 
 
-target_moves:
-  - src: "/tmp/peco/peco"
+target_remote_copy:
+  - src: "{{ _ansible_tmp_ }}/peco_linux_amd64/peco"
     dest: "/usr/local/bin/peco"
-  - src: "/tmp/broot/x86_64-linux/broot"
+  - src: "{{ _ansible_tmp_ }}/build/x86_64-linux/broot"
     dest: "/usr/local/bin/broot"

@@ -19,6 +19,8 @@
 
 - import_tasks: sync.yml
 
+- import_tasks: mkdir.yml
+
 - import_tasks: download.yml
 
 - import_tasks: unarchive.yml
