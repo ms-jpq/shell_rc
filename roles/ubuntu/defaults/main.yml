@@ -39,6 +39,7 @@ _nice_things:
   - tldr
   - ncdu
   - iperf3
+  - ttyd
 
 _fun_things:
   - neofetch
@@ -59,6 +60,7 @@ snap_packages:
 
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
+  - "ppa:tsl0922/ttyd-dev"
 
 apt_packages: "{{ _core_utils + _nice_things + _fun_things }}"
 
