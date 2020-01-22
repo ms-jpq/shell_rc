@@ -1,31 +1,82 @@
-# This configuration file lets you define new commands
-# or change the shortcut or triggering keys of built-in verbs.
-# You can change the colors of broot too.
-#
 # Configuration documentation is available at https://dystroy.org/broot
-#
 
-#####################
-# user defined verbs:
+
+#################### ########### ####################
+#################### Skin Region ####################
+#################### ########### ####################
 
 [[verbs]]
-invocation = "edit"
-key = "F2"
-shortcut = "e"
-execution = "$EDITOR {file}"
+invocation = ":quit"
+execution = ":quit"
+key = "^c"
+
+
+[[verbs]]
+invocation = ":refresh"
+execution = ":refresh"
+key = "^r"
+
+
+[[verbs]]
+invocation = ":toggle_hidden"
+execution = ":toggle_hidden"
+key = "^h"
+
+
+[[verbs]]
+invocation = ":toggle_sizes"
+execution = ":toggle_sizes"
+shortcut = "s"
+key = "^s"
+
+
+[[verbs]]
+invocation = ":open_stay"
+execution = ":open_stay"
+shortcut = "os"
+
+
+[[verbs]]
+invocation = ":open_leave"
+execution = ":open_leave"
+shortcut = "o"
+key = "^o"
+
+
+[[verbs]]
+invocation = ":mkdir"
+execution = ":mkdir"
+shortcut = "mkdir"
+
+
+[[verbs]]
+invocation = ":mv"
+execution = ":mv"
+shortcut = "mv"
+
+
+[[verbs]]
+invocation = "trash {file}"
+execution = "trash {file}"
+shortcut = "trash"
+
 
 [[verbs]]
 invocation = "create {subpath}"
 execution = "$EDITOR {directory}/{subpath}"
+shortcut = "n"
 
 
 [[verbs]]
-name = "view"
-invocation = "view"
-execution = "$PAGER {file}"
+invocation = "edit"
+execution = "$EDITOR {file}"
+shortcut = "e"
+key = "^e"
 
-#####################
-# Skin
+
+#################### ########### ####################
+#################### Skin Region ####################
+#################### ########### ####################
 
 [skin]
 default = "gray(2) gray(23)"

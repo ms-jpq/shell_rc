@@ -44,6 +44,7 @@ _core_utils:
   - watch
   - diffutils
   - pv
+  - ncdu
 
 _nice_things:
   - broot
@@ -59,7 +60,6 @@ _nice_things:
   - tldr
   - shellcheck
   - watchman
-  - ncdu
   - iperf3
   - ttyd
 

@@ -5,7 +5,7 @@ _ssh_authorized_:
 
 __web_tz__: "{{ (lookup('pipe', 'curl -s https://ipinfo.io') | from_json).timezone }}"
 __env_tz__: "{{ lookup('env', 'TZ') }}"
-_time_zone_: "{{ (ansible_connection == 'local') | ternary(__web_tz__, __env_tz__) }}"
+_time_zone_: "{{ (ansible_connection == 'local') | ternary(__env_tz__, __env_tz__) }}"
 
 _all_: "{{ all | default(False) | bool }}"
 _reset_: "{{ reset | default(False) | bool }}"
