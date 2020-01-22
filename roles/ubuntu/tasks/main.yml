@@ -2,8 +2,6 @@
 
 - import_tasks: shell.yml
 
-- import_tasks: sync.yml
-
 - import_tasks: apt_repo.yml
   when: _all_
 
@@ -18,3 +16,5 @@
 
 - import_tasks: pip.yml
   when: _all_
+
+- import_tasks: sync.yml

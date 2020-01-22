@@ -9,6 +9,9 @@ target_files:
   - src: "launchd/"
     dest: "~/Library/LaunchAgents/"
 
+  - src: "broot/conf.toml"
+    dest: "~/Library/Preferences/org.dystroy.broot/conf.toml"
+
 brew_repos:
   - name: cjbassi/gotop
 

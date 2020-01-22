@@ -1,7 +1,5 @@
 ---
 
-- import_tasks: sync.yml
-
 - import_tasks: homebrew_repos.yml
   when: _all_
 
@@ -10,3 +8,5 @@
 
 - import_tasks: pip.yml
   when: _all_
+
+- import_tasks: sync.yml

@@ -3,7 +3,7 @@
 #################### ########### ####################
 
 # NEVER USE IT DIRECTLY #
-alias rm='echo 🦄'
+# alias rm='echo 🦄'
 # NEVER USE IT DIRECTLY #
 
 alias cls='clear'
