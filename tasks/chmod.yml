@@ -1,0 +1,7 @@
+---
+
+- name: chmod
+  loop: "{{ target_mods }}"
+  file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"

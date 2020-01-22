@@ -44,7 +44,9 @@ _core_utils:
   - watch
   - diffutils
   - pv
+  - iperf3
   - ncdu
+
 
 _nice_things:
   - broot
@@ -60,8 +62,8 @@ _nice_things:
   - tldr
   - shellcheck
   - watchman
-  - iperf3
   - ttyd
+
 
 _fun_things:
   - neofetch
@@ -72,5 +74,6 @@ _fun_things:
   - cowsay
   - lolcat
   - figlet
+
 
 brew_packages: "{{ _core_utils + _nice_things + _fun_things }}"

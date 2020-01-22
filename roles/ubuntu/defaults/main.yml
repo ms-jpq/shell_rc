@@ -27,6 +27,8 @@ _core_utils:
   - iotop
   - iftop
   - pv
+  - ncdu
+  - iperf3
 
 
 _nice_things:
@@ -37,8 +39,7 @@ _nice_things:
   # - ripgrep
   # - peco
   - tldr
-  - ncdu
-  - iperf3
+
 
 _fun_things:
   - neofetch
@@ -57,10 +58,13 @@ snap_packages:
     classic: True
   - name: yq
 
+
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
 
+
 apt_packages: "{{ _core_utils + _nice_things + _fun_things }}"
+
 
 apt_deb_packages:
   # Next version of LTS should have these #
@@ -70,3 +74,31 @@ apt_deb_packages:
   - "https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb"
   # Required Deb #
   - "https://github.com/cjbassi/gotop/releases/download/3.0.0/gotop_3.0.0_linux_amd64.deb"
+
+
+target_downloads:
+  - src: "https://github.com/tsl0922/ttyd/releases/download/1.5.2/ttyd_linux.x86_64"
+    dest: "/usr/local/bin/ttyd"
+
+
+target_archives:
+  - src: "https://github.com/peco/peco/releases/download/v0.5.7/peco_linux_amd64.tar.gz"
+    dest: "/tmp/peco"
+  - src: "https://github.com/Canop/broot/releases/download/v0.12.0/release.zip"
+    dest: "/tmp/broot"
+
+
+target_mods:
+  - path: "/usr/local/bin/ttyd"
+    mode: "775"
+  - path: "/tmp/peco"
+    mode: "775"
+  - path: "/tmp/broot"
+    mode: "775"
+
+
+target_moves:
+  - src: "/tmp/peco/peco"
+    dest: "/usr/local/bin/peco"
+  - src: "/tmp/broot/x86_64-linux/broot"
+    dest: "/usr/local/bin/broot"
