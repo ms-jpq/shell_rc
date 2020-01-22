@@ -18,6 +18,17 @@ key = "^r"
 
 
 [[verbs]]
+invocation = ":page_up"
+execution = ":page_up"
+key = "^z"
+
+[[verbs]]
+invocation = ":page_down"
+execution = ":page_down"
+key = "^x"
+
+
+[[verbs]]
 invocation = ":toggle_hidden"
 execution = ":toggle_hidden"
 key = "^h"
@@ -53,6 +64,18 @@ shortcut = "home"
 invocation = ":focus_root"
 execution = ":focus_root"
 shortcut = "root"
+
+
+[[verbs]]
+invocation = ":open_stay"
+execution = ":open_stay"
+shortcut = "os"
+
+
+[[verbs]]
+invocation = ":open_leave"
+execution = ":open_leave"
+shortcut = "ol"
 
 
 [[verbs]]
