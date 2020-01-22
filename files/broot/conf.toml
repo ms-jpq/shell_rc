@@ -55,6 +55,13 @@ key = "^d"
 
 
 [[verbs]]
+invocation = ":toggle_perm"
+execution = ":toggle_perm"
+shortcut = "p"
+key = "^p"
+
+
+[[verbs]]
 invocation = ":focus_user_home"
 execution = ":focus_user_home"
 shortcut = "home"
