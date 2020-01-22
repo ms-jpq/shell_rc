@@ -43,6 +43,7 @@ _core_utils:
   - pv
 
 _nice_things:
+  - broot
   - exa
   - bat
   - micro
