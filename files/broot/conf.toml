@@ -24,6 +24,12 @@ key = "^h"
 
 
 [[verbs]]
+invocation = ":toggle_files"
+execution = ":toggle_files"
+key = "^f"
+
+
+[[verbs]]
 invocation = ":toggle_sizes"
 execution = ":toggle_sizes"
 shortcut = "s"
@@ -31,28 +37,29 @@ key = "^s"
 
 
 [[verbs]]
-invocation = ":open_stay"
-execution = ":open_stay"
-shortcut = "os"
+invocation = ":toggle_dates"
+execution = ":toggle_dates"
+shortcut = "d"
+key = "^d"
 
 
 [[verbs]]
-invocation = ":open_leave"
-execution = ":open_leave"
-shortcut = "o"
+invocation = ":focus_user_home"
+execution = ":focus_user_home"
+shortcut = "home"
+
+
+[[verbs]]
+invocation = ":focus_root"
+execution = ":focus_root"
+shortcut = "root"
+
+
+[[verbs]]
+invocation = "open_command {file}"
+execution = "open_command {file}"
+shortcut = "open"
 key = "^o"
-
-
-[[verbs]]
-invocation = ":mkdir"
-execution = ":mkdir"
-shortcut = "mkdir"
-
-
-[[verbs]]
-invocation = ":mv"
-execution = ":mv"
-shortcut = "mv"
 
 
 [[verbs]]
