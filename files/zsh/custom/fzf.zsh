@@ -3,11 +3,11 @@
 #################### ########## ####################
 
 export FZF_DEFAULT_OPTS="--color light \
-                         --height 40% \
                          --reverse \
-                         --border
-                         --preview '$FZF_PREVIEW'"
+                         --border"
 
+
+alias fp='fzf --preview $FZF_PREVIEW'
 
 f() {
   if [[ "$#" -eq 0 ]]
@@ -20,7 +20,7 @@ f() {
 
 
 fe() {
-  local file="$(fzf "$@")"
+  local file="$(fp "$@")"
   if [[ ! -z "$file" ]]
   then
     $EDITOR "$file"
@@ -29,7 +29,7 @@ fe() {
 
 
 cf() {
-  local file="$(fzf "$@")"
+  local file="$(fp "$@")"
   if [[ ! -z "$file" ]]
   then
     cat "$file"
@@ -43,7 +43,7 @@ __fzf_jump() {
   then
     echo "no such file or directory: $@"
   else
-    cd "$(echo "$candidates" | fzf -1 +s)"
+    cd "$(echo "$candidates" | fp -1 +s)"
   fi
 }
 
