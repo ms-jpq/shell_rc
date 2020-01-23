@@ -48,7 +48,7 @@ __fzf_jump() {
 }
 
 
-ds() {
+dc() {
   __fzf_jump "$(fd -t l -t d "$@" | sort -nf)"
 }
 
