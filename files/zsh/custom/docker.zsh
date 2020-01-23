@@ -57,7 +57,7 @@ alias dslog='docker service logs -f'
 #################### Applied Docker Region ####################
 #################### ##################### ####################
 
-alias dlz='drs --name=lazy_docker -v=~/.config/lazydocker:/.config/jesseduffield/lazydocker lazyteam/lazydocker'
+alias dlz='drs --name=lazy_docker -v=$HOME/.config/lazydocker:/.config/jesseduffield/lazydocker lazyteam/lazydocker'
 
 alias ctop='drs --name=ctop quay.io/vektorlab/ctop -i -scale-cpu'
 
