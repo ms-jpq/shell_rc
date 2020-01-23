@@ -9,6 +9,8 @@ target_files:
   - src: "zsh/custom_linux/"
     dest: "{{ _omz_dir_ }}/custom/"
 
+  - src: "broot/conf.toml"
+    dest: "~/.config/broot/conf.toml"
 
 _core_utils:
   - sudo
