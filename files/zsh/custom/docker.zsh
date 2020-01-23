@@ -45,8 +45,6 @@ alias dni='dn inspect --pretty'
 
 alias dsd='docker stack deploy -c'
 
-alias ds='docker service'
-
 alias dsps='ds ps --no-trunc'
 
 alias dsi='ds inspect --pretty'
