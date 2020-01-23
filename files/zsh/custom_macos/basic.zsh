@@ -5,12 +5,6 @@
 
 alias t='open -f'
 
-alias ls='exa --group-directories-first -hF'
-alias l='ls -1'
-alias ll='ls -l'
-alias tree='ls -T -L'
-
-
 alias batt='pmset -g batt'
 alias dns='sudo killall -HUP mDNSResponder'
 

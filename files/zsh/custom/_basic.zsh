@@ -13,6 +13,11 @@ alias p='clippaste'
 
 alias sudo='sudo -E '
 
+alias ls='exa --group-directories-first -hF'
+alias l='ls -1'
+alias ll='ls -l'
+alias tree='ls -T -L'
+
 alias cat='bat'
 
 alias hist='history'
