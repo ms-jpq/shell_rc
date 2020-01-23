@@ -22,9 +22,12 @@
 - import_tasks: sync.yml
 
 - import_tasks: download.yml
+  when: _all_
 
 - import_tasks: unarchive.yml
+  when: _all_
 
 - import_tasks: remote_copy.yml
+  when: _all_
 
 - import_tasks: chmod.yml

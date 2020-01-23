@@ -21,6 +21,7 @@ _core_utils:
   - sudo
   - snapd
   - python3-pip
+  - unzip
   - zsh
   - mosh
   - trash-cli
