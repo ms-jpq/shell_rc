@@ -46,6 +46,7 @@ _nice_things:
   # - exa
   # - bat
   # - fzf
+  # - micro
   # - fd-find
   # - ripgrep
   # - peco
@@ -53,6 +54,7 @@ _nice_things:
 
 
 _fun_things:
+  # - termshark
   - neofetch
   - sl
   - cmatrix
