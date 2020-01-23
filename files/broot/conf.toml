@@ -86,6 +86,13 @@ shortcut = "ol"
 
 
 [[verbs]]
+invocation = "open"
+execution = "open {file}"
+shortcut = "o"
+key = "^o"
+
+
+[[verbs]]
 invocation = "trash"
 execution = "trash {file}"
 shortcut = "trash"
