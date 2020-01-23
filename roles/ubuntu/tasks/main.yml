@@ -17,9 +17,9 @@
 - import_tasks: pip.yml
   when: _all_
 
-- import_tasks: sync.yml
-
 - import_tasks: mkdir.yml
+
+- import_tasks: sync.yml
 
 - import_tasks: download.yml
 

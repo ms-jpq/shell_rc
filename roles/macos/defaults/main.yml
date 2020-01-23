@@ -2,6 +2,9 @@
 
 nano_path: /usr/local/opt/nano/share/nano
 
+target_dirs:
+  - "~/Library/Preferences/org.dystroy.broot"
+
 target_files:
   - src: "zsh/custom_macos/"
     dest: "{{ _omz_dir_ }}/custom/"
