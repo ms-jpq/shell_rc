@@ -8,57 +8,57 @@
 [[verbs]]
 invocation = ":quit"
 execution = ":quit"
-key = "^c"
+key = "ctrl-c"
 
 
 [[verbs]]
 invocation = ":refresh"
 execution = ":refresh"
-key = "^r"
+key = "ctrl-r"
 
 
 [[verbs]]
 invocation = ":page_up"
 execution = ":page_up"
-key = "^z"
+key = "ctrl-z"
 
 [[verbs]]
 invocation = ":page_down"
 execution = ":page_down"
-key = "^x"
+key = "ctrl-x"
 
 
 [[verbs]]
 invocation = ":toggle_hidden"
 execution = ":toggle_hidden"
-key = "^h"
+key = "ctrl-h"
 
 
 [[verbs]]
 invocation = ":toggle_files"
 execution = ":toggle_files"
-key = "^f"
+key = "ctrl-f"
 
 
 [[verbs]]
 invocation = ":toggle_sizes"
 execution = ":toggle_sizes"
 shortcut = "s"
-key = "^s"
+key = "ctrl-s"
 
 
 [[verbs]]
 invocation = ":toggle_dates"
 execution = ":toggle_dates"
 shortcut = "d"
-key = "^d"
+key = "ctrl-d"
 
 
 [[verbs]]
 invocation = ":toggle_perm"
 execution = ":toggle_perm"
 shortcut = "p"
-key = "^p"
+key = "ctrl-p"
 
 
 [[verbs]]
@@ -89,7 +89,7 @@ shortcut = "ol"
 invocation = "open"
 execution = "open {file}"
 shortcut = "o"
-key = "^o"
+key = "ctrl-o"
 
 
 [[verbs]]
@@ -108,7 +108,7 @@ shortcut = "n"
 invocation = "edit"
 execution = "$EDITOR {file}"
 shortcut = "e"
-key = "^e"
+key = "ctrl-e"
 
 
 #################### ########### ####################
