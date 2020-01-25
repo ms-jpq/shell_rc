@@ -24,6 +24,7 @@ _core_utils:
   - unzip
   - zsh
   - mosh
+  - socat
   - trash-cli
   - rsync
   - curl

@@ -23,6 +23,7 @@ _core_utils:
   - zsh
   - bash
   - mosh
+  - socat
   - less
   - nano
   - coreutils
