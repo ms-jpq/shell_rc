@@ -7,6 +7,11 @@ import subprocess
 import tempfile
 
 
+##                ##
+# START OF PROGRAM #
+##                ##
+
+
 def parse():
   parser = argparse.ArgumentParser()
   parser.add_argument("-r", "--remote", default="localhost")
@@ -29,6 +34,7 @@ with open(fd, "w") as f:
   json.dump(config, f)
 
 try:
+  subprocess.call(f"< {tmp} jq -r", shell=True)
   subprocess.call(f"v2ray -config {tmp}".split())
 finally:
   os.unlink(tmp)
