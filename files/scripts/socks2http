@@ -2,7 +2,9 @@
 
 import argparse
 import json
+import os
 import subprocess
+import tempfile
 
 
 def parse():
@@ -21,6 +23,12 @@ config = {"outbounds": [{"protocol": "socks",
           "inbounds": [{"protocol": "http",
                         "port": args.http}]}
 
-cmd = json.dumps(config)
+fd, tmp = tempfile.mkstemp()
 
-subprocess.call(f"v2ray -config <(echo '{cmd}')", shell=True)
+with open(fd, "w") as f:
+  json.dump(config, f)
+
+try:
+  subprocess.call(f"v2ray -config {tmp}".split())
+finally:
+  os.unlink(tmp)

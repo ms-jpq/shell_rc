@@ -9,11 +9,11 @@ alias batt='pmset -g batt'
 alias dns='sudo killall -HUP mDNSResponder'
 
 
-alias brewup='brew update && \
-              brew upgrade && \
-              brew cleanup && \
-              brew doctor && \
-              brew cask outdated'
+alias brewup='brew update -v && \
+              brew upgrade -v && \
+              brew cleanup -v && \
+              brew doctor -v && \
+              brew cask outdated -v'
 
 
 vnc() {
