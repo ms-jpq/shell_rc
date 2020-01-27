@@ -2,6 +2,7 @@
 #################### Env Region ####################
 #################### ########## ####################
 
+export PATH="$HOME/.scripts:$PATH"
 
 export EDITOR=micro
 export PAGER=tee

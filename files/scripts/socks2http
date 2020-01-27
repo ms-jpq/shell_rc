@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import subprocess
+
+
+def parse():
+  parser = argparse.ArgumentParser()
+  parser.add_argument("-r", "--remote", default="localhost")
+  parser.add_argument("-s", "--socks", type=int, required=True)
+  parser.add_argument("-p", "--http", type=int, required=True)
+  return parser.parse_args()
+
+
+args = parse()
+
+
+config = {"outbounds": [{"protocol": "socks",
+                         "settings": {"servers": [{"address": args.remote, "port": args.socks}]}}],
+          "inbounds": [{"protocol": "http",
+                        "port": args.http}]}
+
+cmd = json.dumps(config)
+
+subprocess.call(f"v2ray -config <(echo '{cmd}')", shell=True)
