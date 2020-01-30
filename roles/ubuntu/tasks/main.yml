@@ -31,3 +31,4 @@
   when: _all_
 
 - import_tasks: chmod.yml
+  when: _all_
