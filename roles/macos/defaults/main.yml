@@ -79,5 +79,8 @@ _fun_things:
   - lolcat
   - figlet
 
+_langs:
+  - nodejs
+  - ruby
 
-brew_packages: "{{ _core_utils + _nice_things + _fun_things }}"
+brew_packages: "{{ _core_utils + _nice_things + _fun_things + _langs }}"

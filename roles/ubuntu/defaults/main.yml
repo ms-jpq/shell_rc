@@ -20,6 +20,7 @@ target_files:
 _core_utils:
   - sudo
   - snapd
+  - python3
   - python3-pip
   - unzip
   - zsh
