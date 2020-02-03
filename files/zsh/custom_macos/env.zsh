@@ -10,6 +10,9 @@ export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
 export PATH="/usr/local/opt/ncurses/bin:$PATH"
 
+# RUBY #
+export PATH="/usr/local/opt/ruby/bin:$PATH"
+
 
 export LC_ALL=zh_CN.UTF-8
 export LANG=zh_CN.UTF-8
