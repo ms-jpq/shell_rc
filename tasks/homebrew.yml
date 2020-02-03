@@ -2,4 +2,5 @@
 
 - name: "install packages {{ brew_packages }}"
   homebrew:
+    update_homebrew: False
     name: "{{ brew_packages }}"
