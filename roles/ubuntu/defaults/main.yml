@@ -68,12 +68,6 @@ _fun_things:
   - bb
 
 
-snap_packages:
-  - name: micro
-    classic: True
-  - name: yq
-
-
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
 
@@ -93,7 +87,9 @@ apt_deb_packages:
 
 target_downloads:
   - src: "https://github.com/tsl0922/ttyd/releases/download/1.5.2/ttyd_linux.x86_64"
-    dest: "/usr/local/bin/ttyd"
+    dest: "{{ _exec_bin_ }}/ttyd"
+  - src: "https://github.com/mikefarah/yq/releases/download/3.1.0/yq_linux_amd64"
+    dest: "{{ _exec_bin_ }}/yq"
 
 
 target_archives:
@@ -102,6 +98,8 @@ target_archives:
   - src: "https://github.com/peco/peco/releases/download/v0.5.7/peco_linux_amd64.tar.gz"
     dest: "{{ _ansible_tmp_ }}"
   - src: "https://github.com/Canop/broot/releases/download/v0.12.0/release.zip"
+    dest: "{{ _ansible_tmp_ }}"
+  - src: "https://github.com/zyedidia/micro/releases/download/v1.4.1/micro-1.4.1-linux64.tar.gz"
     dest: "{{ _ansible_tmp_ }}"
 
 
@@ -112,6 +110,8 @@ target_remote_copy:
     dest: "{{ _exec_bin_ }}/peco"
   - src: "{{ _ansible_tmp_ }}/build/x86_64-linux/broot"
     dest: "{{ _exec_bin_ }}/broot"
+  - src: "{{ _ansible_tmp_ }}/micro-1.4.1/micro"
+    dest: "{{ _exec_bin_ }}/micro"
 
 
 target_mods:
@@ -122,4 +122,8 @@ target_mods:
   - path: "{{ _exec_bin_ }}/peco"
     mode: "775"
   - path: "{{ _exec_bin_ }}/broot"
+    mode: "775"
+  - path: "{{ _exec_bin_ }}/micro"
+    mode: "775"
+  - path: "{{ _exec_bin_ }}/yq"
     mode: "775"
