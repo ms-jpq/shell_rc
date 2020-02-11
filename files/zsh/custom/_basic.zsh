@@ -15,7 +15,7 @@ alias sudo='sudo -E '
 
 alias ls='exa --group-directories-first -hF'
 alias l='ls -1'
-alias ll='ls -l'
+alias ll='ls -lg'
 alias tree='ls -T -L'
 
 alias cat='bat'
