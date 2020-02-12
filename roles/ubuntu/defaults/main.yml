@@ -39,6 +39,7 @@ _core_utils:
   - htop
   - iotop
   - iftop
+  - dstat
   - pv
   - ncdu
   - iperf3
