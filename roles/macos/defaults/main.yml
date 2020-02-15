@@ -15,6 +15,10 @@ target_files:
   - src: "broot/conf.toml"
     dest: "~/Library/Preferences/org.dystroy.broot/conf.toml"
 
+target_links:
+  - src: "~/Library/Mobile Documents/com~apple~CloudDocs"
+    dest: "~/.icloud"
+
 brew_repos:
   - name: cjbassi/gotop
 

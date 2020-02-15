@@ -100,7 +100,7 @@ target_archives:
     dest: "{{ _ansible_tmp_ }}"
   - src: "https://github.com/Canop/broot/releases/download/v0.12.0/release.zip"
     dest: "{{ _ansible_tmp_ }}"
-  - src: "https://github.com/zyedidia/micro/releases/download/v1.4.1/micro-1.4.1-linux64.tar.gz"
+  - src: "https://github.com/zyedidia/micro/releases/download/v2.0.1/micro-2.0.1-linux64.tar.gz"
     dest: "{{ _ansible_tmp_ }}"
 
 
@@ -111,7 +111,7 @@ target_remote_copy:
     dest: "{{ _exec_bin_ }}/peco"
   - src: "{{ _ansible_tmp_ }}/build/x86_64-linux/broot"
     dest: "{{ _exec_bin_ }}/broot"
-  - src: "{{ _ansible_tmp_ }}/micro-1.4.1/micro"
+  - src: "{{ _ansible_tmp_ }}/micro-2.0.1/micro"
     dest: "{{ _exec_bin_ }}/micro"
 
 

@@ -1,0 +1,8 @@
+---
+
+- name: "symbolic link"
+  loop: "{{ target_links }}"
+  file:
+    state: link
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"

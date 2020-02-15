@@ -12,3 +12,5 @@
 - import_tasks: mkdir.yml
 
 - import_tasks: sync.yml
+
+- import_tasks: link.yml
