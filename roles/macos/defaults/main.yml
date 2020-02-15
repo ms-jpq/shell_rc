@@ -16,6 +16,8 @@ target_files:
     dest: "~/Library/Preferences/org.dystroy.broot/conf.toml"
 
 target_links:
+  - src: "/usr/local/bin/dash"
+    dest: "/usr/local/bin/sh"
   - src: "~/Library/Mobile Documents/com~apple~CloudDocs"
     dest: "~/.icloud"
 
@@ -24,6 +26,7 @@ brew_repos:
 
 _core_utils:
   - cask
+  - dash
   - zsh
   - bash
   - mosh
