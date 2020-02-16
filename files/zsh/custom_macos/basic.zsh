@@ -19,3 +19,8 @@ alias brewup='brew update && \
 vnc() {
   open "vnc://$1:${2-5900}"
 }
+
+resetpad() {
+  defaults write com.apple.dock ResetLaunchPad -bool true
+  killall Dock
+}
