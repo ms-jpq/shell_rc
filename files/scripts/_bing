@@ -65,6 +65,7 @@ def parse_args():
 
 
 async def main():
+  print(f"-- | {datetime.datetime.now()} | --")
   args = parse_args()
   base_path = os.path.abspath(args.out)
   images = await bing(args.days)
