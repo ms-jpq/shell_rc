@@ -5,11 +5,13 @@
     <key>KeepAlive</key> <true/>
     <key>RunAtLoad</key> <true/>
     <key>Label</key> <string>v2ray-core</string>
+    <key>StandardOutPath</key> <string>{{ _home_dir_ }}/.logs/v2ray.log</string>
+    <key>StandardErrorPath</key> <string>{{ _home_dir_ }}/.logs/v2ray.log</string>
     <key>ProgramArguments</key>
     <array>
       <string>/usr/local/bin/v2ray</string>
       <string>-config</string>
-      <string>~/.config/v2ray/v2ray.json</string>
+      <string>{{ _home_dir_ }}/.config/v2ray/v2ray.json</string>
     </array>
   </dict>
 </plist>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>RunAtLoad</key> <true/>
+    <key>Label</key> <string>bing-image</string>
+    <key>StandardOutPath</key> <string>{{ _home_dir_ }}/.logs/bing.log</string>
+    <key>StandardErrorPath</key> <string>{{ _home_dir_ }}/.logs/bing.log</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>{{ _home_dir_ }}/.scripts/_bing</string>
+      <string>-o</string>
+      <string>{{ _home_dir_ }}/.icloud/Bing</string>
+    </array>
+  </dict>
+  <key>StartInterval</key> <integer>86400</integer>
+</plist>
