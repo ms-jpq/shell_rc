@@ -78,4 +78,5 @@ done
 #################### ############## ####################
 #################### LSCOLOR Region ####################
 #################### ############## ####################
-eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.256dark")"
+# eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.256dark")"
+eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.ansi-dark")"
