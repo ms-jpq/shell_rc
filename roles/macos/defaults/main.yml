@@ -45,6 +45,7 @@ _core_utils:
   - rsync
   - curl
   - wget
+  - cmake
   - grep
   - gnu-getopt
   - awk
