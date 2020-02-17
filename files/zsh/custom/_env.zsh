@@ -12,8 +12,8 @@ export TIME_STYLE="long-iso"
 
 export LESS="-KQRi"
 
-# export BAT_THEME=GitHub
-export BAT_THEME=ansi-dark
+export BAT_THEME=GitHub
+# export BAT_THEME=ansi-dark
 export BAT_STYLE=plain
 
 
