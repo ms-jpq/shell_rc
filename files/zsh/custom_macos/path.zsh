@@ -19,5 +19,3 @@ export PATH="/usr/local/opt/icu4c/sbin:$PATH"
 
 # RUBY #
 export PATH="/usr/local/opt/ruby/bin:$PATH"
-export GEM_HOME="$HOME/.gems"
-export PATH="$HOME/.gems/bin:$PATH"
