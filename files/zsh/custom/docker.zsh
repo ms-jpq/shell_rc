@@ -28,6 +28,7 @@ alias det='docker exec -t'
 alias dlog='docker logs -f'
 
 alias dr='docker run -it --rm'
+alias dre='dr --entrypoint'
 alias drw='dr -w=/workdir -v=${PWD}:/workdir'
 alias drs='dr -v=/var/run/docker.sock:/var/run/docker.sock'
 
