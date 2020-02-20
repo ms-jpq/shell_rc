@@ -29,8 +29,8 @@ alias dlog='docker logs -f'
 
 alias dr='docker run -it --rm'
 alias dre='dr --entrypoint'
-alias drw='dr -w=/workdir -v=${PWD}:/workdir'
-alias drs='dr -v=/var/run/docker.sock:/var/run/docker.sock'
+alias drw='dr -w /workdir -v "$PWD":/workdir'
+alias drs='dr -v /var/run/docker.sock:/var/run/docker.sock'
 
 drx() {
   xhost + 127.0.0.1
@@ -56,7 +56,7 @@ alias dslog='docker service logs -f'
 #################### Applied Docker Region ####################
 #################### ##################### ####################
 
-alias dlz='drs --name=lazy_docker -v=$HOME/.config/lazydocker:/.config/jesseduffield/lazydocker lazyteam/lazydocker'
+alias dlz='drs --name=lazy_docker -v "$HOME/.config/lazydocker":/.config/jesseduffield/lazydocker lazyteam/lazydocker'
 
 alias ctop='drs --name=ctop quay.io/vektorlab/ctop -i -scale-cpu'
 
