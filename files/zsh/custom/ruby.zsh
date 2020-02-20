@@ -2,10 +2,20 @@
 #################### Ruby Region ####################
 #################### ########### ####################
 
-export GEM_HOME="$HOME/.gems"
-export PATH="$HOME/.gems/bin:$PATH"
 
-if [[ -x "$(command -v rbenv)" ]]
+if command -v rbenv > /dev/null
 then
   eval "$(rbenv init -)"
 fi
+
+gem() {
+  if command -v rbenv > /dev/null && rbenv local > /dev/null 2>&1
+  then
+    command gem "$@"
+  else
+    echo "Not in rbenv - require explicit:"
+    echo
+    echo "command gem $@"
+    echo
+  fi
+}
