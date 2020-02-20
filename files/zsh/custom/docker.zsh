@@ -60,6 +60,6 @@ alias dlz='drs --name=lazy_docker -v=$HOME/.config/lazydocker:/.config/jesseduff
 
 alias ctop='drs --name=ctop quay.io/vektorlab/ctop -i -scale-cpu'
 
-alias k9='dr --name=k9s derailed/k9s'
+alias k9='dr -v "$HOME/.kube":/root/.kube derailed/k9s'
 
 alias sped='dr tianon/speedtest'
