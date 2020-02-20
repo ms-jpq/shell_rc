@@ -94,5 +94,6 @@ _fun_things:
 _langs:
   - nodejs
   - ruby
+  - rbenv
 
 brew_packages: "{{ _core_utils + _nice_things + _fun_things + _langs }}"
