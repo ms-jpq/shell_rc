@@ -20,6 +20,9 @@ target_templates:
   - src: "etc/locale.j2"
     dest: "/etc/default/locale"
 
+_languages:
+  - language-pack-zh-hans
+
 _core_utils:
   - sudo
   - snapd
@@ -76,7 +79,7 @@ apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
 
 
-apt_packages: "{{ _core_utils + _nice_things + _fun_things }}"
+apt_packages: "{{ _languages + _core_utils + _nice_things + _fun_things }}"
 
 
 apt_deb_packages:
