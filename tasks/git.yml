@@ -1,6 +1,6 @@
 ---
 
-- name: clone oh-my-zsh repos
+- name: clone git repos
   loop: "{{ git_repos }}"
   git:
     depth: 1

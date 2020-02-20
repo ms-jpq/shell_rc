@@ -20,6 +20,10 @@ target_templates:
   - src: "etc/locale.j2"
     dest: "/etc/default/locale"
 
+git_repos:
+  - src: "https://github.com/rbenv/rbenv.git"
+    dest: "~/.rbenv"
+
 _languages:
   - language-pack-zh-hans
 

@@ -4,6 +4,9 @@
 
 - import_tasks: shell.yml
 
+- import_tasks: git.yml
+  when: _all_ or _reset_
+
 - import_tasks: apt_repo.yml
   when: _all_
 

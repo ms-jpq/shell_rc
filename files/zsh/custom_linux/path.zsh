@@ -3,3 +3,4 @@
 #################### ########### ####################
 
 export PATH="/snap/bin:$PATH"
+export PATH="$HOME/.rbenv/bin:$PATH"

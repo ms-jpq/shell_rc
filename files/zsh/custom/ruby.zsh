@@ -2,14 +2,10 @@
 #################### Ruby Region ####################
 #################### ########### ####################
 
-
-if command -v rbenv > /dev/null
-then
-  eval "$(rbenv init -)"
-fi
+eval "$(rbenv init -)"
 
 gem() {
-  if command -v rbenv > /dev/null && rbenv local > /dev/null 2>&1
+  if rbenv local > /dev/null 2>&1
   then
     command gem "$@"
   else
