@@ -10,6 +10,7 @@ _time_zone_: "{{ (ansible_connection == 'local') | ternary(__web_tz__, __env_tz_
 _all_: "{{ all | default(False) | bool }}"
 _reset_: "{{ reset | default(False) | bool }}"
 
+locale: zh_CN.UTF-8
 
 git_conf:
   - name: user.name

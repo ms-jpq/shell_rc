@@ -1,5 +1,7 @@
 ---
 
+- import_tasks: locale.yml
+
 - import_tasks: shell.yml
 
 - import_tasks: apt_repo.yml

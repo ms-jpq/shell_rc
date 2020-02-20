@@ -82,5 +82,7 @@ target_files:
 target_templates:
   - src: ".nanorc.j2"
     dest: "~/.nanorc"
-  - src: "tz.zsh.j2"
+  - src: "zsh/locale.zsh.j2"
+    dest: "{{ _omz_dir_ }}/custom/locale.zsh"
+  - src: "zsh/tz.zsh.j2"
     dest: "{{ _omz_dir_ }}/custom/tz.zsh"

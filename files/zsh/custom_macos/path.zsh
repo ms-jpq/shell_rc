@@ -14,7 +14,3 @@ export PATH="/usr/local/opt/icu4c/sbin:$PATH"
 
 # RUBY #
 export PATH="/usr/local/opt/ruby/bin:$PATH"
-
-
-export LC_ALL=zh_CN.UTF-8
-export LANG=zh_CN.UTF-8
