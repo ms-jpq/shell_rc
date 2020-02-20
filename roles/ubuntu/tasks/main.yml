@@ -20,6 +20,8 @@
 
 - import_tasks: sync.yml
 
+- import_tasks: template.yml
+
 - import_tasks: download.yml
   when: _all_
 

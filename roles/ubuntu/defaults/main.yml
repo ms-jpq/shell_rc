@@ -9,13 +9,16 @@ target_dirs:
   - "~/.config/broot"
   - "{{ _ansible_tmp_ }}"
 
-
 target_files:
   - src: "zsh/custom_linux/"
     dest: "{{ _omz_dir_ }}/custom/"
 
   - src: "broot/conf.toml"
     dest: "~/.config/broot/conf.toml"
+
+target_templates:
+  - src: "etc/locale.j2"
+    dest: "/etc/default/locale"
 
 _core_utils:
   - sudo
