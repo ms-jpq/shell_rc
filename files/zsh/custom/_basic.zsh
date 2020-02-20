@@ -35,6 +35,8 @@ ma() {
   man "$1" | col -b
 }
 
+alias http='python3 -m http.server'
+
 proxy() {
   if [ "$#" -eq 0 ]
   then

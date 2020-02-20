@@ -6,12 +6,6 @@
 #################### ########### ####################
 
 [[verbs]]
-invocation = ":quit"
-execution = ":quit"
-key = "ctrl-c"
-
-
-[[verbs]]
 invocation = ":refresh"
 execution = ":refresh"
 key = "ctrl-r"
@@ -62,6 +56,13 @@ key = "ctrl-p"
 
 
 [[verbs]]
+invocation = ":open_leave"
+execution = ":open_leave"
+shortcut = "ol"
+key = "ctrl-c"
+
+
+[[verbs]]
 invocation = ":focus_user_home"
 execution = ":focus_user_home"
 shortcut = "home"
@@ -77,12 +78,6 @@ shortcut = "root"
 invocation = ":open_stay"
 execution = ":open_stay"
 shortcut = "os"
-
-
-[[verbs]]
-invocation = ":open_leave"
-execution = ":open_leave"
-shortcut = "ol"
 
 
 [[verbs]]
