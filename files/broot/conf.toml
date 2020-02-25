@@ -29,6 +29,12 @@ key = "ctrl-h"
 
 
 [[verbs]]
+invocation = ":toggle_git_ignore"
+execution = ":toggle_git_ignore"
+key = "ctrl-g"
+
+
+[[verbs]]
 invocation = ":toggle_files"
 execution = ":toggle_files"
 key = "ctrl-f"
