@@ -2,4 +2,4 @@
 #################### Node Region ####################
 #################### ########### ####################
 
-alias np='export PATH="$PWD/node_modules/.bin:$PATH"'
+alias np='PATH="$PWD/node_modules/.bin:$PATH" '
