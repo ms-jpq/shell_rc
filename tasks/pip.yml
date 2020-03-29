@@ -1,7 +1,0 @@
----
-
-- name: "install python libs {{ python_packages }}"
-  pip:
-    executable: "{{ item.version | default('pip3') }}"
-    name: "{{ item.name }}"
-  loop: "{{ python_packages }}"

@@ -59,10 +59,7 @@ plugins=(zsh-syntax-highlighting
          ripgrep
          rsync
          mosh
-         colorize
-         ansible
          docker
-         docker-compose
          kubectl
          helm)
 autoload -U compinit && compinit

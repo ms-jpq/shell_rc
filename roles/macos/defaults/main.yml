@@ -3,15 +3,11 @@
 _home_dir_: "/Users/{{ ansible_user }}"
 nano_path: /usr/local/opt/nano/share/nano
 
-target_dirs:
-  - "~/Library/Preferences/org.dystroy.broot"
+target_dirs: []
 
 target_files:
   - src: "zsh/custom_macos/"
     dest: "{{ _omz_dir_ }}/custom/"
-
-  - src: "broot/conf.toml"
-    dest: "~/Library/Preferences/org.dystroy.broot/conf.toml"
 
 target_templates:
   - src: "launchd/v2ray.plist.j2"
@@ -65,7 +61,6 @@ _core_utils:
 
 
 _nice_things:
-  - broot
   - exa
   - bat
   - micro

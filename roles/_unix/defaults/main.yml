@@ -12,12 +12,6 @@ packages:
   - zsh
   - python3
 
-
-python_packages:
-  - name: setuptools
-  - name: pygments
-
-
 git_repos:
   - src: "https://github.com/robbyrussell/oh-my-zsh"
     dest: "{{ _omz_dir_ }}"
@@ -39,9 +33,6 @@ git_repos:
 
   - src: "https://github.com/seebi/dircolors-solarized"
     dest: "{{ _omz_dir_ }}/custom/dircolors-solarized"
-
-  - src: "https://github.com/syl20bnr/spacemacs"
-    dest: "~/.emacs.d"
 
 
 target_removals:
