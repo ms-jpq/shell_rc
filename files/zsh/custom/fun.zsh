@@ -34,5 +34,5 @@ cm() {
 
 alias fish='asciiquarium'
 
-alias weather='curl https://wttr.in\?T'
+alias weather='curl -H "Accept-Language: zh" https://wttr.in\?T'
 alias ipinfo='curl https://ipinfo.io'
