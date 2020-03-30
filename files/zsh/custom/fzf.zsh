@@ -4,8 +4,8 @@
 
 export FZF_DEFAULT_OPTS="--color light \
                          --reverse \
+                         --no-height \
                          --border \
-                         --height 100% \
                          -e \
                          --bind ctrl-s:toggle-sort"
 
@@ -15,6 +15,8 @@ export FZF_PREVIEW="[ -d {} ] \
                     --group-directories-first \
                     -T -L 2 {} \
                     || bat --color always {}"
+
+export FZF_TMUX_HEIGHT="100%"
 
 
 alias f='fzf'
