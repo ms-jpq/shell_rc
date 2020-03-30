@@ -14,9 +14,9 @@ export FZF_PREVIEW="[ -d {} ] \
                     -T -L 2 {} \
                     || bat --color always {}"
 
-alias fp='fzf --preview $FZF_PREVIEW'
 
 alias f='fzf'
+alias fp='f --preview $FZF_PREVIEW'
 
 
 fe() {
@@ -46,12 +46,6 @@ __fzf_jump() {
     cd "$(echo "$candidates" | fp -1 +s)"
   fi
 }
-
-
-dc() {
-  __fzf_jump "$(fd -t l -t d "$@" | sort -nf)"
-}
-
 
 unalias z
 z() {

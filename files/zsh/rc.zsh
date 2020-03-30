@@ -77,3 +77,11 @@ done
 #################### ############## ####################
 eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.256dark")"
 # eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.ansi-dark")"
+
+
+#################### ############## ####################
+#################### ENHANCD Region ####################
+#################### ############## ####################
+unset -f d
+export ENHANCD_COMMAND="d"
+source "$HOME/.enhancd/init.sh"

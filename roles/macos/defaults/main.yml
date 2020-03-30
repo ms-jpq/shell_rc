@@ -21,6 +21,7 @@ target_links:
 brew_repos:
   - name: cjbassi/gotop
 
+
 _core_utils:
   - cask
   - dash
@@ -81,5 +82,6 @@ _fun_things:
   - cowsay
   - lolcat
   - figlet
+
 
 brew_packages: "{{ _core_utils + _nice_things + _fun_things }}"
