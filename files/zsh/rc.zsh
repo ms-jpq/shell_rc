@@ -57,6 +57,7 @@ plugins=(zsh-syntax-highlighting
          fzf
          zsh-interactive-cd
          z
+         fd
          ripgrep
          docker
          kubectl
