@@ -5,6 +5,7 @@
 export FZF_DEFAULT_OPTS="--color light \
                          --reverse \
                          --border \
+                         --height 100% \
                          -e \
                          --bind ctrl-s:toggle-sort"
 
