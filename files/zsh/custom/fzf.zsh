@@ -25,7 +25,7 @@ alias fp='f --preview $FZF_PREVIEW'
 
 fe() {
   local file="$(fp "$@")"
-  if [[ ! -z "$file" ]]
+  if [[ -f "$file" ]]
   then
     $EDITOR "$file"
   fi
@@ -34,7 +34,7 @@ fe() {
 
 cf() {
   local file="$(fp "$@")"
-  if [[ ! -z "$file" ]]
+  if [[ -f "$file" ]]
   then
     cat "$file"
   fi
