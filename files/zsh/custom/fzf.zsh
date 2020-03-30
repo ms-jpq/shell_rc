@@ -5,7 +5,8 @@
 export FZF_DEFAULT_OPTS="--color light \
                          --reverse \
                          --border \
-                         -e"
+                         -e \
+                         --bind ctrl-s:toggle-sort"
 
 export FZF_PREVIEW="[ -d {} ] \
                     && exa \
@@ -37,19 +38,15 @@ cf() {
 }
 
 
-__fzf_jump() {
-  local candidates="$1"
-  if [[ -z "$candidates" ]]
+unalias z
+z() {
+  local A="$(_z -l "$@" 2>&1)"
+  local B="$(echo "$A" | sed -e "s/^[0-9|\.]\+[ ]\+//" -e "/^common:[ ]\+/d")"
+  if [[ -z "$B" ]]
   then
     echo "no such file or directory: $@"
   else
-    cd "$(echo "$candidates" | fp -1 +s)"
+    local C="$(echo "$B" | fp -1 +s --tac)"
+    cd "$C"
   fi
-}
-
-unalias z
-z() {
-  __fzf_jump "$(
-    _z -l "$@" 2>&1 | sed -e "s/^[0-9|\.]\+[ ]\+//" -e "/^common:[ ]\+/d" | tac
-  )"
 }
