@@ -2,7 +2,9 @@
 #################### Ruby Region ####################
 #################### ########### ####################
 
+export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
+
 
 gem() {
   if rbenv local > /dev/null 2>&1

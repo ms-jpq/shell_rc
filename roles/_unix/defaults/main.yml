@@ -6,10 +6,10 @@ _nano_backup_dir_: "~/.nano_backup"
 ## GLOBAL ##
 
 
-
 packages:
   - git
   - zsh
+
 
 git_repos:
   - src: "https://github.com/robbyrussell/oh-my-zsh"
@@ -33,6 +33,18 @@ git_repos:
   - src: "https://github.com/seebi/dircolors-solarized"
     dest: "{{ _omz_dir_ }}/custom/dircolors-solarized"
 
+  - src: "https://github.com/pyenv/pyenv.git"
+    dest: "~/.pyenv"
+
+  - src: "https://github.com/nvm-sh/nvm.git"
+    dest: "~/.nvm"
+
+  - src: "https://github.com/rbenv/rbenv.git"
+    dest: "~/.rbenv"
+
+  - src: "https://github.com/rbenv/ruby-build.git"
+    dest: "~/.rbenv/plugins/ruby-build"
+
 
 target_removals:
   - "{{ _omz_dir_ }}/"
@@ -45,8 +57,10 @@ target_dirs:
   - "~/.scripts"
   - "~/.logs"
 
+
 target_touches:
   - "~/.z"
+
 
 target_files:
   - src: "zsh/rc.zsh"

@@ -16,12 +16,6 @@ target_templates:
   - src: "etc/locale.j2"
     dest: "/etc/default/locale"
 
-git_repos:
-  - src: "https://github.com/rbenv/rbenv.git"
-    dest: "~/.rbenv"
-  - src: "https://github.com/rbenv/ruby-build.git"
-    dest: "~/.rbenv/plugins/ruby-build"
-
 _languages:
   - language-pack-zh-hans
 
