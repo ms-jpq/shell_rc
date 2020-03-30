@@ -50,6 +50,6 @@ __fzf_jump() {
 unalias z
 z() {
   __fzf_jump "$(
-    _z -l "$@" 2>&1 | sed -e "s/^[0-9|\.]\+[ ]\+//" | tac
+    _z -l "$@" 2>&1 | sed -e "s/^[0-9|\.]\+[ ]\+//" -e "/^common:[ ]\+/d" | tac
   )"
 }
