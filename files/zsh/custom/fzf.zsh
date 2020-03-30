@@ -4,7 +4,8 @@
 
 export FZF_DEFAULT_OPTS="--color light \
                          --reverse \
-                         --border"
+                         --border \
+                         -e"
 
 export FZF_PREVIEW="[ -d {} ] \
                     && exa \
@@ -15,7 +16,7 @@ export FZF_PREVIEW="[ -d {} ] \
 
 alias fp='fzf --preview $FZF_PREVIEW'
 
-alias f='fzf -e'
+alias f='fzf'
 
 
 fe() {

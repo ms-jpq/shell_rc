@@ -55,6 +55,7 @@ plugins=(zsh-syntax-highlighting
          zsh-autosuggestions
          history-substring-search
          fzf
+         zsh-interactive-cd
          z
          ripgrep
          docker
