@@ -2,6 +2,9 @@
 #################### Python Region ####################
 #################### ############# ####################
 
+eval "$(pyenv init -)"
+
+
 DEFAULT_VENV_PATH=".venv"
 
 alias py='python3'

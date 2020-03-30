@@ -60,6 +60,7 @@ _nice_things:
   # - micro
   # - fd-find
   # - ripgrep
+  - httpie
   - tldr
 
 

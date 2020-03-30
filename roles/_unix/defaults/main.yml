@@ -10,7 +10,6 @@ _nano_backup_dir_: "~/.nano_backup"
 packages:
   - git
   - zsh
-  - python3
 
 git_repos:
   - src: "https://github.com/robbyrussell/oh-my-zsh"
