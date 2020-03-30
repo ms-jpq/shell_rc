@@ -10,8 +10,6 @@ target_files:
     dest: "{{ _omz_dir_ }}/custom/"
 
 target_templates:
-  - src: "launchd/v2ray.plist.j2"
-    dest: "~/Library/LaunchAgents/v2ray.plist"
   - src: "launchd/bing.plist.j2"
     dest: "~/Library/LaunchAgents/bing.plist"
 
