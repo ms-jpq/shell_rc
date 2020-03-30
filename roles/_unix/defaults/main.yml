@@ -39,8 +39,8 @@ git_repos:
   - src: "https://github.com/pyenv/pyenv.git"
     dest: "~/.pyenv"
 
-  - src: "https://github.com/nvm-sh/nvm.git"
-    dest: "~/.nvm"
+  - src: "https://github.com/nodenv/nodenv.git"
+    dest: "~/.nodenv"
 
   - src: "https://github.com/rbenv/rbenv.git"
     dest: "~/.rbenv"
