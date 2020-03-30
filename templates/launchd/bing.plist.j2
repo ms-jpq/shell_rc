@@ -5,13 +5,13 @@
     <key>RunAtLoad</key> <true/>
     <key>StartInterval</key> <integer>86400</integer>
     <key>Label</key> <string>bing-image</string>
-    <key>StandardOutPath</key> <string>{{ _home_dir_ }}/.logs/bing.stdout</string>
-    <key>StandardErrorPath</key> <string>{{ _home_dir_ }}/.logs/bing.stderr</string>
+    <key>StandardOutPath</key> <string>{{ ansible_env.HOME }}/.logs/bing.stdout</string>
+    <key>StandardErrorPath</key> <string>{{ ansible_env.HOME }}/.logs/bing.stderr</string>
     <key>ProgramArguments</key>
     <array>
-      <string>{{ _home_dir_ }}/.scripts/_bing</string>
+      <string>{{ ansible_env.HOME }}/.scripts/_bing</string>
       <string>-o</string>
-      <string>{{ _home_dir_ }}/.icloud/桌面背景</string>
+      <string>{{ ansible_env.HOME }}/.icloud/桌面背景</string>
       <string>-d</string>
       <string>7</string>
     </array>

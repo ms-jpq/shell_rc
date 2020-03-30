@@ -1,6 +1,5 @@
 ---
 
-_home_dir_: "/Users/{{ ansible_user }}"
 nano_path: /usr/local/opt/nano/share/nano
 
 target_dirs: []
