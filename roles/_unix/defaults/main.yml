@@ -42,6 +42,9 @@ git_repos:
   - src: "https://github.com/nodenv/nodenv.git"
     dest: "~/.nodenv"
 
+  - src: "https://github.com/nodenv/node-build.git"
+    dest: "~/.nodenv/plugins/node-build"
+
   - src: "https://github.com/rbenv/rbenv.git"
     dest: "~/.rbenv"
 
