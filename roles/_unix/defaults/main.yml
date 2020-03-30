@@ -33,9 +33,6 @@ git_repos:
   - src: "https://github.com/seebi/dircolors-solarized"
     dest: "{{ _omz_dir_ }}/custom/dircolors-solarized"
 
-  - src: "https://github.com/b4b4r07/enhancd.git"
-    dest: "~/.enhancd"
-
   - src: "https://github.com/pyenv/pyenv.git"
     dest: "~/.pyenv"
 

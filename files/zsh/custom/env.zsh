@@ -4,8 +4,6 @@
 
 export PATH="$HOME/.scripts:$PATH"
 
-export ENHANCD_FILTER='fzf --preview $FZF_PREVIEW'
-
 export EDITOR=micro
 export PAGER=tee
 

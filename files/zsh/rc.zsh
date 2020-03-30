@@ -65,6 +65,7 @@ plugins=(zsh-syntax-highlighting
 autoload -U compinit && compinit
 source "$ZSH/oh-my-zsh.sh"
 # Remove CD #
+unset -f d
 for i in $(seq 1 9)
 do
   unalias "$i"
@@ -77,11 +78,3 @@ done
 #################### ############## ####################
 eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.256dark")"
 # eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.ansi-dark")"
-
-
-#################### ############## ####################
-#################### ENHANCD Region ####################
-#################### ############## ####################
-unset -f d
-export ENHANCD_COMMAND="d"
-source "$HOME/.enhancd/init.sh"
