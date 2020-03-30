@@ -10,19 +10,12 @@ DEFAULT_VENV_PATH=".venv"
 alias py='python3'
 
 
-mkvenv() {
-  if [[ -d "$DEFAULT_VENV_PATH" ]]
-  then
-    echo "Virtualenv already initialized"
-  else
-    python3 -m venv "$DEFAULT_VENV_PATH"
-  fi
-}
-
 _venv_off() {
   if [[ ! -z "$VIRTUAL_ENV" ]]
   then
+    local VENV="$VIRTUAL_ENV"
     deactivate
+    echo "Deactivated - $VENV"
   fi
 }
 
@@ -32,11 +25,28 @@ _venv_on() {
   if [[ -f "$ACTIVATE" ]]
   then
     source "$ACTIVATE"
+    echo "Activated - $VIRTUAL_ENV"
+  else
+    echo "No Virtualenv found at - $ACTIVATE"
+  fi
+}
+
+_mkvenv() {
+  if [[ -d "$DEFAULT_VENV_PATH" ]]
+  then
+    echo "Virtualenv already initialized"
+  else
+    python3 -m venv "$DEFAULT_VENV_PATH"
+    echo "Initialized Virtualenv"
+    _venv_on
   fi
 }
 
 venv() {
   case "$1" in
+  init)
+    _mkvenv
+    ;;
   on)
     _venv_on
     ;;
@@ -45,7 +55,7 @@ venv() {
     ;;
   *)
     echo "Invalid argument"
-    echo "venv - [on | off]"
+    echo "venv - [init | on | off]"
     ;;
   esac
 }
