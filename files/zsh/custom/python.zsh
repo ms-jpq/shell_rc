@@ -2,16 +2,49 @@
 #################### Python Region ####################
 #################### ############# ####################
 
+DEFAULT_VENV_PATH=".venv"
+
 alias py='python3'
 
+
 mkvenv() {
-  local VENV_PATH=".venv"
-  if [[ -d "$VENV_PATH" ]]
+  if [[ -d "$DEFAULT_VENV_PATH" ]]
   then
     echo "Virtualenv already initialized"
   else
-    python3 -m venv "$VENV_PATH"
+    python3 -m venv "$DEFAULT_VENV_PATH"
   fi
+}
+
+_venv_off() {
+  if [[ ! -z "$VIRTUAL_ENV" ]]
+  then
+    deactivate
+  fi
+}
+
+_venv_on() {
+  local ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
+  _venv_off
+  if [[ -f "$ACTIVATE" ]]
+  then
+    source "$ACTIVATE"
+  fi
+}
+
+venv() {
+  case "$1" in
+  on)
+    _venv_on
+    ;;
+  off)
+    _venv_off
+    ;;
+  *)
+    echo "Invalid argument"
+    echo "venv - [on | off]"
+    ;;
+  esac
 }
 
 
