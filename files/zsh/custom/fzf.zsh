@@ -6,17 +6,16 @@ export FZF_DEFAULT_OPTS="--color light \
                          --reverse \
                          --border"
 
+export FZF_PREVIEW="[ -d {} ] \
+                    && exa \
+                    --color=always \
+                    --group-directories-first \
+                    -T -L 2 {} \
+                    || bat --color always {}"
 
 alias fp='fzf --preview $FZF_PREVIEW'
 
-f() {
-  if [[ "$#" -eq 0 ]]
-  then
-    fzf
-  else
-    fzf -q "$@"
-  fi
-}
+alias f='fzf -e'
 
 
 fe() {

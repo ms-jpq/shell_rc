@@ -60,7 +60,6 @@ _nice_things:
   # - micro
   # - fd-find
   # - ripgrep
-  # - peco
   - tldr
 
 
@@ -104,8 +103,6 @@ target_downloads:
 target_archives:
   - src: "https://github.com/ogham/exa/releases/download/v0.9.0/exa-linux-x86_64-0.9.0.zip"
     dest: "{{ _ansible_tmp_ }}"
-  - src: "https://github.com/peco/peco/releases/download/v0.5.7/peco_linux_amd64.tar.gz"
-    dest: "{{ _ansible_tmp_ }}"
   - src: "https://github.com/zyedidia/micro/releases/download/v2.0.1/micro-2.0.1-linux64.tar.gz"
     dest: "{{ _ansible_tmp_ }}"
 
@@ -113,8 +110,6 @@ target_archives:
 target_remote_copy:
   - src: "{{ _ansible_tmp_ }}/exa-linux-x86_64"
     dest: "{{ _exec_bin_ }}/exa"
-  - src: "{{ _ansible_tmp_ }}/peco_linux_amd64/peco"
-    dest: "{{ _exec_bin_ }}/peco"
   - src: "{{ _ansible_tmp_ }}/micro-2.0.1/micro"
     dest: "{{ _exec_bin_ }}/micro"
 
@@ -123,8 +118,6 @@ target_mods:
   - path: "{{ _exec_bin_ }}/exa"
     mode: "775"
   - path: "{{ _exec_bin_ }}/ttyd"
-    mode: "775"
-  - path: "{{ _exec_bin_ }}/peco"
     mode: "775"
   - path: "{{ _exec_bin_ }}/micro"
     mode: "775"

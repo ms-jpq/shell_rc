@@ -15,11 +15,3 @@ export LESS="-KQRi"
 export BAT_THEME=GitHub
 # export BAT_THEME=ansi-dark
 export BAT_STYLE=plain
-
-
-export FZF_PREVIEW="[ -d {} ] \
-                    && exa \
-                    --color=always \
-                    --group-directories-first \
-                    -T -L 2 {} \
-                    || bat --color always {}"

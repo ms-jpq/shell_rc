@@ -57,8 +57,6 @@ plugins=(zsh-syntax-highlighting
          fzf
          z
          ripgrep
-         rsync
-         mosh
          docker
          kubectl
          helm)

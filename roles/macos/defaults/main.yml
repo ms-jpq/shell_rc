@@ -65,7 +65,6 @@ _nice_things:
   - fzf
   - fd
   - ripgrep
-  - peco # https://github.com/peco/peco
   - trash
   - gotop
   - tldr
@@ -83,6 +82,7 @@ _fun_things:
   - cowsay
   - lolcat
   - figlet
+
 
 _langs:
   - nodejs
