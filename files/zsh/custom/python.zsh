@@ -29,6 +29,7 @@ _venv_on() {
     echo "Activated - $VIRTUAL_ENV"
   else
     echo "No Virtualenv found at - $ACTIVATE"
+    return 1
   fi
 }
 
@@ -36,6 +37,7 @@ _mkvenv() {
   if [[ -d "$DEFAULT_VENV_PATH" ]]
   then
     echo "Virtualenv already initialized"
+    return 1
   else
     python3 -m venv "$DEFAULT_VENV_PATH"
     echo "Initialized Virtualenv"

@@ -2,9 +2,8 @@
 #################### Core Region ####################
 #################### ########### ####################
 
-# NEVER USE IT DIRECTLY #
-# alias rm='echo 🦄'
-# NEVER USE IT DIRECTLY #
+alias rm='echo 🦄'
+alias mv='mv -i'
 
 alias cls='clear'
 
@@ -23,6 +22,7 @@ alias cat='bat'
 alias hist='history'
 
 alias m='micro'
+alias e='emacs'
 
 alias trash='trash -v'
 
