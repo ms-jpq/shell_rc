@@ -2,8 +2,11 @@
 #################### Core Region ####################
 #################### ########### ####################
 
-alias rm='echo 🦄'
+# Safety
+alias rm='rm -I'
 alias mv='mv -i'
+alias cp='cp -i'
+# Safety
 
 alias cls='clear'
 
