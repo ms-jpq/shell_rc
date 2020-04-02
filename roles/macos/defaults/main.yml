@@ -27,6 +27,7 @@ _core_utils:
   - dash
   - zsh
   - bash
+  - emacs
   - mosh
   - socat
   - less
@@ -61,8 +62,6 @@ _core_utils:
 _nice_things:
   - exa
   - bat
-  - micro
-  - emacs
   - fzf
   - fd
   - ripgrep

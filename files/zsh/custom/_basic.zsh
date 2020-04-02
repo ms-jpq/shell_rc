@@ -24,9 +24,6 @@ alias cat='bat'
 
 alias hist='history'
 
-alias m='micro'
-alias e='emacs'
-
 alias trash='trash -v'
 
 alias rsy='rsync -ah --no-o --no-g --info progress2'

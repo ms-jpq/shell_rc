@@ -4,8 +4,8 @@
 
 export PATH="$HOME/.scripts:$PATH"
 
-export EDITOR=micro
-export PAGER=tee
+export EDITOR="emacs"
+export PAGER="tee"
 
 # export TIME_STYLE="+%Y/%m/%d %H:%M"
 export TIME_STYLE="long-iso"
