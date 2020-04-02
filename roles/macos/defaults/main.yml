@@ -83,6 +83,7 @@ _fun_things:
   - lolcat
   - figlet
   - pipes-sh
+  - chafa
 
 
 brew_packages: "{{ _core_utils + _nice_things + _fun_things }}"
