@@ -81,6 +81,9 @@ target_files:
   - src: "zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
 
+  - src: "tmux/tmux.conf"
+    dest: "~/.tmux.conf.local"
+
   - src: "config/"
     dest: "~/.config/"
 
