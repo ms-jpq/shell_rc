@@ -8,7 +8,6 @@ alias mv='mv -i'
 alias cp='cp -i'
 # Safety
 
-alias t='tmux'
 alias cls='clear'
 
 alias c='clipcopy'
