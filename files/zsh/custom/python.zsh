@@ -75,3 +75,4 @@ pip3() {
     command pip3 "$@"
   fi
 }
+alias pip='pip3'
