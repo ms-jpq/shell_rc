@@ -84,6 +84,10 @@ target_files:
   - src: "tmux/tmux.conf"
     dest: "~/.tmux.conf.local"
 
+  - src: "tmux/custom/"
+    dest: "~/.tmux.custom"
+    delete: true
+
   - src: "config/"
     dest: "~/.config/"
 
