@@ -33,6 +33,9 @@ git_repos:
   - src: "https://github.com/seebi/dircolors-solarized"
     dest: "{{ _omz_dir_ }}/custom/dircolors-solarized"
 
+  - src: "https://github.com/gpakosz/.tmux.git"
+    dest: "~/.tmux"
+
   - src: "https://github.com/cyproterone/emacs.d.git"
     dest: "~/.emacs.d"
 
@@ -96,3 +99,8 @@ target_templates:
     dest: "{{ _omz_dir_ }}/custom/locale.zsh"
   - src: "zsh/tz.zsh.j2"
     dest: "{{ _omz_dir_ }}/custom/tz.zsh"
+
+
+target_links:
+  - src: "~/.tmux/.tmux.conf"
+    dest: "~/.tmux.conf"

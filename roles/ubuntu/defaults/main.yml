@@ -24,10 +24,9 @@ _core_utils:
   - snapd
   - python3
   - python3-pip
-  - unzip
-  - zsh
-  - emacs
   - mosh
+  - tmux
+  - emacs
   - socat
   - trash-cli
   - rsync
@@ -46,6 +45,7 @@ _core_utils:
   - pv
   - ncdu
   - iperf3
+  - unzip
 
 
 _nice_things:

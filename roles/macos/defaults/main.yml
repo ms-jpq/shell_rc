@@ -25,10 +25,11 @@ brew_repos:
 _core_utils:
   - cask
   - dash
-  - zsh
   - bash
   - emacs
+  - openssh
   - mosh
+  - tmux
   - socat
   - less
   - nano
@@ -47,7 +48,6 @@ _core_utils:
   - jq
   - yq
   - gnu-sed
-  - openssh
   - nmap
   - tree
   - pstree
@@ -82,6 +82,7 @@ _fun_things:
   - cowsay
   - lolcat
   - figlet
+  - pipes-sh
 
 
 brew_packages: "{{ _core_utils + _nice_things + _fun_things }}"

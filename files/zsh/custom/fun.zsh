@@ -36,3 +36,5 @@ alias fish='asciiquarium'
 
 alias weather='curl -H "Accept-Language: zh" https://wttr.in\?T'
 alias ipinfo='curl https://ipinfo.io'
+
+alias foxd='dr browsh/browsh'
