@@ -3,7 +3,7 @@
 #################### ############ ####################
 
 
-alias tt='open -f'
+alias t='open -f'
 
 alias batt='pmset -g batt'
 alias dns='sudo killall -HUP mDNSResponder'

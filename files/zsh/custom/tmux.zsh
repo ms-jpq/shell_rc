@@ -2,8 +2,6 @@
 #################### Tmux Region ####################
 #################### ########### ####################
 
-alias t='tmux'
+alias ta='tmux new-session -A -s TMUX'
 
-alias ta='t new-session -A -s TMUX'
-
-alias tl='t list-sessions'
+alias tl='tmux list-sessions'
