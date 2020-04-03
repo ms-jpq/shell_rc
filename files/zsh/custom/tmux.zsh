@@ -5,12 +5,10 @@
 alias tl='tmux list-sessions'
 
 ta() {
-  local sessions="$(tl -F '#{session_name}')"
-  if [[ -z "$sessions" ]]
+  local session="$(tl -F '#{session_name}' | fzf -0 -1)"
+  if [[ -z "$session" ]]
   then
-    tmux new-session -A -s TMUX
-  else
-    local session="$(echo "$sessions" | fzf -1)"
-    tmux attach -t "$session"
+    unset session
   fi
+  tmux new-session -A -s "${session-"TMUX"}"
 }
