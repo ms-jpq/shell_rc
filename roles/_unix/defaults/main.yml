@@ -63,6 +63,7 @@ target_removals:
 target_dirs:
   - "{{ _nano_backup_dir_ }}"
   - "~/.config"
+  - "~/.bin"
   - "~/.scripts"
   - "~/.logs"
 

@@ -3,6 +3,7 @@
 #################### ########## ####################
 
 export PATH="$HOME/.scripts:$PATH"
+export PATH="$HOME/.bin:$PATH"
 
 export EDITOR="emacs"
 export PAGER="tee"
