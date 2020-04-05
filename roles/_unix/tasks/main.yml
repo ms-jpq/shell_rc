@@ -8,10 +8,10 @@
 - import_tasks: remove_fs.yml
   when: _reset_
 
+- import_tasks: mkdir.yml
+
 - import_tasks: git.yml
   when: _all_ or _reset_
-
-- import_tasks: mkdir.yml
 
 - import_tasks: touch.yml
 
