@@ -3,3 +3,6 @@
 #################### ############ ####################
 
 alias e='emacs'
+alias ec='emacsclient -t'
+
+alias ep='touch .projectile'
