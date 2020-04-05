@@ -34,7 +34,10 @@ git_repos:
     dest: "{{ _omz_dir_ }}/custom/dircolors-solarized"
 
   - src: "https://github.com/gpakosz/.tmux.git"
-    dest: "~/.tmux"
+    dest: "~/.tmux-framework"
+
+  - src: "https://github.com/tmux-plugins/tpm"
+    dest: "~/.tmux-pkg"
 
   - src: "https://github.com/cyproterone/emacs.d.git"
     dest: "~/.emacs.d"
@@ -82,11 +85,8 @@ target_files:
   - src: "zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
 
-  - src: "tmux/tmux.conf"
-    dest: "~/.tmux.conf.local"
-
-  - src: "tmux/custom/"
-    dest: "~/.tmux.custom"
+  - src: "tmux/"
+    dest: "~/.tmux-custom"
     delete: true
 
   - src: "config/"
@@ -110,5 +110,5 @@ target_templates:
 
 
 target_links:
-  - src: "~/.tmux/.tmux.conf"
+  - src: "~/.tmux-custom/_entry.conf"
     dest: "~/.tmux.conf"
