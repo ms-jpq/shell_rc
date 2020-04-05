@@ -11,16 +11,6 @@ packages:
   - zsh
 
 
-target_dirs:
-  - ".tmux"
-  - ".tmux/plugins"
-  - "{{ _nano_backup_dir_ }}"
-  - "~/.config"
-  - "~/.bin"
-  - "~/.scripts"
-  - "~/.logs"
-
-
 git_repos:
   - src: "https://github.com/robbyrussell/oh-my-zsh"
     dest: "{{ _omz_dir_ }}"
@@ -43,8 +33,8 @@ git_repos:
   - src: "https://github.com/seebi/dircolors-solarized"
     dest: "{{ _omz_dir_ }}/custom/dircolors-solarized"
 
-  - src: "https://github.com/gpakosz/.tmux.git"
-    dest: "~/.tmux/framework"
+  - src: "https://github.com/cyproterone/tmux.git"
+    dest: "~/.tmux"
 
   - src: "https://github.com/tmux-plugins/tpm"
     dest: "~/.tmux/plugins/tpm"
@@ -68,9 +58,13 @@ git_repos:
     dest: "~/.rbenv/plugins/ruby-build"
 
 
-target_removals:
-  - "{{ _omz_dir_ }}/"
+target_dirs:
+  - ".tmux/plugins"
+  - "{{ _nano_backup_dir_ }}"
+  - "~/.config"
+  - "~/.bin"
   - "~/.scripts"
+  - "~/.logs"
 
 
 target_touches:
@@ -86,10 +80,6 @@ target_files:
 
   - src: "zsh/custom/"
     dest: "{{ _omz_dir_ }}/custom/"
-
-  - src: "tmux/"
-    dest: "~/.tmux/custom"
-    delete: true
 
   - src: "config/"
     dest: "~/.config/"
@@ -112,8 +102,12 @@ target_templates:
 
 
 target_links:
-  - src: "~/.tmux/framework/.tmux.conf"
+  - src: "~/.tmux/entry.conf"
     dest: "~/.tmux.conf"
 
-  - src: "~/.tmux/custom/_entry.conf"
-    dest: "~/.tmux.conf.local"
+
+target_removals:
+  - "{{ _omz_dir_ }}/"
+  - "~/.tmux"
+  - "~/.scripts"
+
