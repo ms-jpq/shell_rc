@@ -10,5 +10,5 @@ ta() {
   then
     unset session
   fi
-  tmux new-session -A -s "${session-"TMUX"}"
+  tmux new-session -A -s "${session-"MAIN"}"
 }
