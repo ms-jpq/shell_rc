@@ -1,0 +1,5 @@
+#!/usr/bin/env emacs --script
+
+(require 'server)
+(kill-emacs
+ (if (server-running-p) 0 1))
