@@ -43,6 +43,7 @@ _core_utils:
   - iftop
   - dstat
   - pv
+  - sysstat
   - ncdu
   - iperf3
   - unzip
