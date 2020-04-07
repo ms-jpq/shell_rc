@@ -15,7 +15,7 @@ alias p='clippaste'
 
 alias sudo='sudo -E '
 
-alias ls='exa --group-directories-first -hF'
+alias ls='exa --group-directories-first --icons -hF'
 alias l='ls -1'
 alias ll='ls -lg'
 alias tree='ls -T -L'
