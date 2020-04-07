@@ -49,3 +49,32 @@ proxy() {
   echo "http_proxy=$http_proxy"
   echo "https_proxy=$https_proxy"
 }
+
+
+extract() {
+  local FILE="$1"
+
+  case "$FILE" in
+    *.tar.bz|*.tar.bz2|*.tbz|*.tbz2)
+      tar xjvf "$FILE"
+      ;;
+    *.tar.gz|*.tgz)
+      tar xzvf "$FILE"
+      ;;
+    *.tar.xz|*.txz)
+      tar xJvf "$FILE"
+      ;;
+    *.zip)
+      unzip "$FILE"
+      ;;
+    *.rar)
+      unrar x "$FILE"
+      ;;
+    *.7z)
+      7z x "$FILE"
+      ;;
+    *)
+      echo "Unknown format :: $FILE"
+      ;;
+  esac
+}
