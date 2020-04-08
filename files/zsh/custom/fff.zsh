@@ -72,8 +72,9 @@ export FFF_KEY_MOVE="x"
 export FFF_KEY_MOVE_ALL="X"
 
 
-# paste
-export FFF_KEY_PASTE="v"
+# Confirm Marked Actions
+# will open editor
+export FFF_KEY_PASTE="k"
 
 
 # delete
@@ -125,7 +126,7 @@ export FFF_COL4=2
 #################### NAVI Region ####################
 #################### ########### ####################
 
-dc() {
+d() {
   fff "$@"
   cd "$(cat "$FFF_CD_FILE")"
 }
