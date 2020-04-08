@@ -31,42 +31,54 @@ export FFF_KEY_LINK_ALL="off"
 
 export FFF_KEY_SHELL="!"
 export FFF_KEY_GO_DIR=":"
-export FFF_KEY_SEARCH="f"
+export FFF_KEY_SEARCH="?"
 export FFF_KEY_REFRESH="e"
 
 
 export FFF_KEY_TO_TOP="["
 export FFF_KEY_TO_BOTTOM="]"
-export FFF_KEY_PREVIOUS="-"
+export FFF_KEY_PREVIOUS="p"
 
 
 export FFF_KEY_HIDDEN="."
 export FFF_KEY_ATTRIBUTES="a"
 
 
-export FFF_KEY_CLEAR="l"
-export FFF_KEY_RENAME="r"
-export FFF_KEY_PASTE="v"
-
-
 export FFF_KEY_MKDIR="m"
 export FFF_KEY_MKFILE="n"
 
 
-export FFF_KEY_YANK="x"
-export FFF_KEY_YANK_ALL="X"
+#################### ########## ####################
+#################### CUA Region ####################
+#################### ########## ####################
+
+# clear selec
+export FFF_KEY_CLEAR="l"
 
 
-export FFF_KEY_MOVE="m"
-export FFF_KEY_MOVE_ALL="M"
-
-
-export FFF_KEY_TRASH="d"
-export FFF_KEY_TRASH_ALL="D"
-
-
+# Rename
+export FFF_KEY_RENAME="r"
 export FFF_KEY_BULK_RENAME="b"
 export FFF_KEY_BULK_RENAME_ALL="B"
+
+
+# Yank is copy
+export FFF_KEY_YANK="c"
+export FFF_KEY_YANK_ALL="C"
+
+
+# Move is cut
+export FFF_KEY_MOVE="x"
+export FFF_KEY_MOVE_ALL="X"
+
+
+# paste
+export FFF_KEY_PASTE="v"
+
+
+# delete
+export FFF_KEY_TRASH="d"
+export FFF_KEY_TRASH_ALL="D"
 
 
 #################### ################ ####################

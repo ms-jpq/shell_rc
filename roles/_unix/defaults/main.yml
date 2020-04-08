@@ -33,6 +33,9 @@ git_repos:
   - src: "https://github.com/seebi/dircolors-solarized"
     dest: "{{ _omz_dir_ }}/custom/dircolors-solarized"
 
+  - src: "https://github.com/dylanaraps/fff"
+    dest: "~/.fff"
+
   - src: "https://github.com/cyproterone/tmux.git"
     dest: "~/.tmux"
 
@@ -104,6 +107,9 @@ target_templates:
 target_links:
   - src: "~/.tmux/entry.conf"
     dest: "~/.tmux.conf"
+
+  - src: "~/.fff/fff"
+    dest: "/usr/local/bin/fff"
 
 
 target_removals:
