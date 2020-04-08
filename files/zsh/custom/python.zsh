@@ -21,6 +21,7 @@ _venv_off() {
     else
       echo "Failed to deactivate - $VENV"
       return 1
+    fi
   fi
 }
 
