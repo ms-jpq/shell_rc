@@ -4,9 +4,6 @@
 
 export FFF_OPENER="open_command"
 
-export FFF_TRASH_CMD="trash"
-export FFF_TRASH="$HOME/.local/share/fff/trash"
-
 export FFF_CD_FILE="$HOME/.fff_d"
 
 
@@ -31,7 +28,7 @@ export FFF_KEY_LINK_ALL="off"
 
 export FFF_KEY_SHELL="!"
 export FFF_KEY_GO_DIR=":"
-export FFF_KEY_SEARCH="?"
+export FFF_KEY_SEARCH="f"
 export FFF_KEY_REFRESH="e"
 
 
@@ -82,13 +79,23 @@ export FFF_KEY_TRASH="d"
 export FFF_KEY_TRASH_ALL="D"
 
 
+#################### ############# ####################
+#################### Trash Region ####################
+#################### ############# ####################
+
+# Do not use FFF's trash
+export FFF_TRASH_CMD="trash"
+
+export FFF_TRASH="$HOME"
+
+export FFF_KEY_GO_TRASH="off"
+
+
 #################### ################ ####################
 #################### Bookmarks Region ####################
 #################### ################ ####################
 
 export FFF_KEY_GO_HOME="~"
-export FFF_KEY_GO_TRASH="t"
-
 
 export FFF_FAV1="/"
 export FFF_FAV2=
