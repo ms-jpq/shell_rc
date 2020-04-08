@@ -15,8 +15,12 @@ _venv_off() {
   if [[ ! -z "$VIRTUAL_ENV" ]]
   then
     local VENV="$VIRTUAL_ENV"
-    deactivate
-    echo "Deactivated - $VENV"
+    if deactivate
+    then
+      echo "Deactivated - $VENV"
+    else
+      echo "Failed to deactivate - $VENV"
+      return 1
   fi
 }
 

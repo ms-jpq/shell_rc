@@ -17,7 +17,7 @@ alias brewup='brew update && \
 
 
 vnc() {
-  open "vnc://$1:${2-5900}"
+  open "vnc://$1:${2:-5900}"
 }
 
 resetpad() {

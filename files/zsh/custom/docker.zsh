@@ -7,7 +7,7 @@ dm() {
   then
     export DOCKER_HOST="unix:///var/run/docker.sock"
   else
-    export DOCKER_HOST="tcp://$1:${2-2375}"
+    export DOCKER_HOST="tcp://$1:${2:-2375}"
   fi
   echo DOCKER_HOST="$DOCKER_HOST"
 }
