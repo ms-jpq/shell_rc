@@ -12,7 +12,7 @@ alias py='python3'
 
 
 _venv_off() {
-  if [[ ! -z "$VIRTUAL_ENV" ]]
+  if [[ -n "$VIRTUAL_ENV" ]]
   then
     local VENV="$VIRTUAL_ENV"
     if deactivate
@@ -74,7 +74,7 @@ pip3() {
   then
     echo "Not in virtualenv - require explicit:"
     echo
-    echo "command pip3 $@"
+    echo "command pip3 $*"
     echo
   else
     command pip3 "$@"

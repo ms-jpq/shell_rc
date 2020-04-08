@@ -47,9 +47,9 @@ z() {
   local B="$(echo "$A" | sed -e "s/^[0-9|\.]\+[ ]\+//" -e "/^common:[ ]\+/d")"
   if [[ -z "$B" ]]
   then
-    echo "no such file or directory: $@"
+    echo "no such file or directory: $*"
   else
     local C="$(echo "$B" | fp -1 +s --tac)"
-    cd "$C"
+    cd "$C" || return 1
   fi
 }

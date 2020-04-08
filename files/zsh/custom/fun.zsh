@@ -18,10 +18,10 @@ cow() {
   local TEXT="'$*'"
   if [[ $((RANDOM % 10)) -gt 8 ]]
   then
-    gay $TEXT
+    gay "$TEXT"
   else
-    local VERSION=$(ls -D /usr/local/Cellar/cowsay)
-    local COW=$(ls -1 /usr/local/Cellar/cowsay/$VERSION/share/cows | grep .cow | shuf -n 1)
+    local COWS="$(echo "/usr/local/Cellar/cowsay/"**/*".cow")"
+    local COW="$(echo "$COWS" | tr " " "\n" | shuf -n 1)"
     cowsay -f "$COW" "$TEXT" | lolcat -a -d 1 -s 250
   fi
 }
@@ -29,7 +29,7 @@ cow() {
 cm() {
   local COLOURS=(green red blue white yellow cyan magenta black)
   local COLOUR=${COLOURS[$RANDOM % ${#COLOURS[@]} + 1]}
-  cmatrix -ab -u 3 -C $COLOUR "$@"
+  cmatrix -ab -u 3 -C "$COLOUR" "$@"
 }
 
 alias fish='asciiquarium'

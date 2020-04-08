@@ -13,7 +13,7 @@ gem() {
   else
     echo "Not in rbenv - require explicit:"
     echo
-    echo "command gem $@"
+    echo "command gem $*"
     echo
   fi
 }

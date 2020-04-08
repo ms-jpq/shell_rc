@@ -135,5 +135,5 @@ export FFF_COL4=2
 
 _d() {
   fff "$@"
-  cd "$(cat "$FFF_CD_FILE")"
+  cd "$(cat "$FFF_CD_FILE")" || return 1
 }
