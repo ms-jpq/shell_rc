@@ -18,12 +18,12 @@ source "$HOME/.p10k.zsh"
 #################### ########## ####################
 #################### OMZ Region ####################
 #################### ########## ####################
-ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME=powerlevel10k/powerlevel10k
+export ZSH="$HOME/.oh-my-zsh"
+export ZSH_THEME=powerlevel10k/powerlevel10k
 
-DISABLE_UPDATE_PROMPT=true
-HYPHEN_INSENSITIVE=true
-COMPLETION_WAITING_DOTS=true
+export DISABLE_UPDATE_PROMPT=true
+export HYPHEN_INSENSITIVE=true
+export COMPLETION_WAITING_DOTS=true
 
 
 #################### ################## ####################
@@ -31,9 +31,9 @@ COMPLETION_WAITING_DOTS=true
 #################### ################## ####################
 zle -N autosuggest-accept
 bindkey '^ ' autosuggest-accept
-ZSH_AUTOSUGGEST_USE_ASYNC=true
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=4"
-ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(autosuggest-accept)
+export ZSH_AUTOSUGGEST_USE_ASYNC=true
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=4"
+export ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(autosuggest-accept)
 
 
 #################### ############## ####################
@@ -43,8 +43,8 @@ zle -N history-substring-search-up
 zle -N history-substring-search-down
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
-HISTORY_SUBSTRING_SEARCH_FUZZY=true
-HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
+export HISTORY_SUBSTRING_SEARCH_FUZZY=true
+export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
 
 
 #################### ########## ####################
