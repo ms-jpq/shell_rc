@@ -23,24 +23,6 @@ alias f='fzf'
 alias fp='f --preview $FZF_PREVIEW'
 
 
-fe() {
-  local file="$(fp "$@")"
-  if [[ -f "$file" ]]
-  then
-    $EDITOR "$file"
-  fi
-}
-
-
-cf() {
-  local file="$(fp "$@")"
-  if [[ -f "$file" ]]
-  then
-    cat "$file"
-  fi
-}
-
-
 unalias z
 z() {
   local A="$(_z -l "$@" 2>&1)"
