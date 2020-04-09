@@ -19,4 +19,7 @@ ec() {
 #################### ############ ####################
 
 alias e='emacs'
+
 alias ep='touch .projectile'
+
+alias et='time EMACS_BENCHMARK=1 e'
