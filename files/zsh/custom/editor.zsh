@@ -19,6 +19,7 @@ ec() {
 #################### ############ ####################
 
 alias e='emacs'
+alias ee='emacsclient -t -a emacs'
 
 alias ep='touch .projectile'
 
