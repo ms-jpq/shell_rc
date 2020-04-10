@@ -18,8 +18,7 @@ ec() {
 #################### Emacs Region ####################
 #################### ############ ####################
 
-alias e='emacs'
-alias ee='emacsclient -t -a emacs'
+alias ee='emacsclient -t -a "$EDITOR"'
 
 alias ep='touch .projectile'
 

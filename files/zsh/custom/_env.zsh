@@ -5,7 +5,7 @@
 export PATH="$HOME/.scripts:$PATH"
 export PATH="$HOME/.bin:$PATH"
 
-export EDITOR="emacs"
+export EDITOR="emacs -nw"
 export PAGER="tee"
 
 # export TIME_STYLE="+%Y/%m/%d %H:%M"
