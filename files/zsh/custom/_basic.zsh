@@ -22,8 +22,6 @@ alias tree='ls -T -L'
 
 alias cat='bat'
 
-alias e='eval "$EDITOR"'
-
 alias hist='history'
 
 alias trash='trash -v'
