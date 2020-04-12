@@ -1,12 +1,48 @@
-#################### ########### ####################
-#################### Keys Region ####################
-#################### ########### ####################
+#################### ########## ####################
+#################### Key Region ####################
+#################### ########## ####################
 
 map q quit
 
 map ":" read
 
-map <c-r> reload
+
+#################### ############ ####################
+#################### Shell Region ####################
+#################### ############ ####################
+
+map e $$EDITOR $f
+
+map "$" shell
+map "%" shell-pipe
+map "!" shell-wait
+map "&" shell-async
+
+
+#################### ############### ####################
+#################### Commands Region ####################
+#################### ############### ####################
+
+cmap <esc>     cmd-escape
+cmap <tab>     cmd-complete
+
+cmap <enter>   cmd-enter
+cmap <delete>  cmd-delete
+cmap <bs>      cmd-delete-back
+cmap <bs2>     cmd-delete-back
+
+cmap <left>    cmd-left
+cmap <right>   cmd-right
+cmap <up>      cmd-history-next
+cmap <down>    cmd-history-prev
+
+cmap <c-c>     cmd-yank
+cmap <c-d>     cmd-interrupt
+
+cmap <c-a>     cmd-home
+cmap <c-e>     cmd-end
+cmap <m-left>  cmd-word-back
+cmap <m-right> cmd-word
 
 
 #################### ################# ####################
@@ -19,8 +55,10 @@ map <down> down
 map <left> updir
 map <right> open
 
-map top [
-map bottom ]
+map "[" top
+map "]" bottom
+
+map "." set hidden!
 
 
 #################### ########## ####################
@@ -37,6 +75,9 @@ map c copy
 map x cut
 map v paste
 map r rename
+
+
+map <c-r> reload
 
 
 #################### ############# ####################

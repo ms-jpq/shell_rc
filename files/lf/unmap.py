@@ -86,6 +86,11 @@ map se :set sortby ext; set info
 map gh cd ~
 """
 
+cmds4 = """\
+map e $$EDITOR $f
+map i $$PAGER $f
+map w $$SHELL
+"""
 
 
 def parse_unquotes():
@@ -100,28 +105,34 @@ def escape_non_ascii(s: str):
   return ss if s1.isalnum() or s1 == "<" else f'"{ss}"'
 
 
-def parse_quotes(lines):
+def parse_quotes(lines, cmd):
   m = re.findall("'[^\']+'", lines)
-  l = ["map " + escape_non_ascii(s)
+  l = [f"{'c' if cmd else ''}map " + escape_non_ascii(s)
        for s in m
        if s]
   return l
 
 
+def parse_normal_map(lines):
+  l = re.findall("map [^ ]+", lines)
+  return l
+
+
 def p_cmds12():
   c_ = parse_unquotes()
-  c1 = parse_quotes(cmds1)
-  c2 = parse_quotes(cmds2)
+  c1 = parse_quotes(cmds1, False)
+  c2 = parse_quotes(cmds2, True)
   c12 = [*c_, *c1, *c2]
   return c12
 
 
-def p_cmds3():
-  c3 = re.findall("map [^ ]+", cmds3)
-  return c3
+def p_cmds34():
+  c3 = parse_normal_map(cmds3)
+  c4 = parse_normal_map(cmds4)
+  return [*c3, *c4]
 
 
-c_all = [*p_cmds12(), *p_cmds3()]
+c_all = [*p_cmds12(), *p_cmds34()]
 
 for c in c_all:
   print(c)
