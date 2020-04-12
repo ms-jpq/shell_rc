@@ -64,6 +64,7 @@ git_repos:
 target_dirs:
   - "{{ _nano_backup_dir_ }}"
   - "~/.config"
+  - "~/.config/lf"
   - "~/.bin"
   - "~/.scripts"
   - "~/.logs"
@@ -101,6 +102,8 @@ target_templates:
     dest: "{{ _omz_dir_ }}/custom/locale.zsh"
   - src: "zsh/tz.zsh.j2"
     dest: "{{ _omz_dir_ }}/custom/tz.zsh"
+  - src: "lf/lfrc.j2"
+    dest: "~/.config/lf/lfrc"
 
 
 target_links:
