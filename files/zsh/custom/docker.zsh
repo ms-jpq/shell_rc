@@ -13,10 +13,10 @@ dm() {
 }
 
 alias dun='docker rm -f $(docker ps -aq)'
-alias dprune='docker system prune -fa && \
+alias dprune="docker system prune -fa && \
               docker volume prune -f && \
               docker network prune -f && \
-              docker image prune -fa'
+              docker image prune -fa"
 
 alias doc='docker-compose'
 alias docup='doc up -d --build'
