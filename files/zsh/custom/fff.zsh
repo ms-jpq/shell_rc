@@ -71,7 +71,7 @@ export FFF_KEY_MOVE_ALL="X"
 
 # Confirm Marked Actions
 # will open editor
-export FFF_KEY_PASTE="k"
+export FFF_KEY_PASTE="v"
 
 
 # delete
