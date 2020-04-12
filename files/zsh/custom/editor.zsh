@@ -22,6 +22,4 @@ ec() {
 
 alias ee='emacsclient -t -a "$EDITOR"'
 
-alias ep='touch .projectile'
-
 alias et='sh -c "export EMACS_BENCHMARK=1; time emacs"'

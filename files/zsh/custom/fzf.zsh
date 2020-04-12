@@ -2,14 +2,17 @@
 #################### FZF Region ####################
 #################### ########## ####################
 
-export FZF_DEFAULT_OPTS="--color light \
+export FZF_COLOUR="light"
+
+export FZF_DEFAULT_OPTS="--color $FZF_COLOUR \
                          --reverse \
                          --no-height \
                          --border \
+                         --cycle \
                          -e \
                          --bind ctrl-s:toggle-sort"
 
-export FZF_PREVIEW="[ -d {} ] \
+export FZF_PREVIEW="test -d {} \
                     && exa \
                     --color=always \
                     --group-directories-first \
