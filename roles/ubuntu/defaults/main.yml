@@ -21,9 +21,6 @@ _languages:
 
 _core_utils:
   - sudo
-  - snapd
-  - python3
-  - python3-pip
   - mosh
   - tmux
   - emacs
