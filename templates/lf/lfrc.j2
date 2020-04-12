@@ -1,7 +1,11 @@
-{% include "parts/unmap.j2"  %}
+#################### ############ ####################
+#################### Unmap Region ####################
+#################### ############ ####################
 
-{% include "parts/opts.j2"  %}
+{{ lookup("pipe", "files/lf/unmap.py") }}
 
-{% include "parts/keys.j2"  %}
+{{ lookup("file", "lf/opts.conf") }}
 
-{% include "parts/commands.j2"  %}
+{{ lookup("file", "lf/keys.conf") }}
+
+{{ lookup("file", "lf/commands.conf") }}
