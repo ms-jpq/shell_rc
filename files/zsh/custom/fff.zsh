@@ -4,8 +4,6 @@
 
 export FFF_OPENER="open_command"
 
-export FFF_CD_FILE="$HOME/.fff_d"
-
 
 #################### ############# ####################
 #################### Unbind Region ####################
@@ -134,6 +132,7 @@ export FFF_COL4=2
 #################### ########### ####################
 
 _d() {
-  fff "$@"
+  local FFF_CD_FILE="$(mktemp)"
+  FFF_CD_FILE="$FFF_CD_FILE" fff "$@"
   cd "$(cat "$FFF_CD_FILE")" || return 1
 }
