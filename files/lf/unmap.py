@@ -105,6 +105,7 @@ def escape_non_ascii(s: str):
   return ss if s1.isalnum() or s1 == "<" else f'"{ss}"'
 
 
+# Commands in LF are mapped differently
 def parse_quotes(lines, cmd):
   m = re.findall("'[^\']+'", lines)
   l = [f"{'c' if cmd else ''}map " + escape_non_ascii(s)
