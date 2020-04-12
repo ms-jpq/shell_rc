@@ -89,14 +89,20 @@ map gh cd ~
 
 
 def parse_unquotes():
-  c1_1 = "map '"
-  c1_2 = 'map "'
+  c1_1 = "map \"'\""
+  c1_2 = 'map \'"\''
   return [c1_1, c1_2]
+
+
+def escape_non_ascii(s: str):
+  ss = s.strip("'")
+  s1 = ss[0]
+  return ss if s1.isalnum() or s1 == "<" else f'"{ss}"'
 
 
 def parse_quotes(lines):
   m = re.findall("'[^\']+'", lines)
-  l = ["map " + s.strip("'")
+  l = ["map " + escape_non_ascii(s)
        for s in m
        if s]
   return l

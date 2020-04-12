@@ -62,7 +62,6 @@ git_repos:
 
 
 target_dirs:
-  - ".tmux/plugins"
   - "{{ _nano_backup_dir_ }}"
   - "~/.config"
   - "~/.config/lf"
