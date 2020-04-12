@@ -38,7 +38,7 @@ ma() {
 alias srv='python3 -m http.server'
 
 proxy() {
-  if [ "$#" -eq 0 ]
+  if [[ "$#" -eq 0 ]]
   then
     unset http_proxy
     unset https_proxy
