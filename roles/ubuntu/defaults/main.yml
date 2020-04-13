@@ -23,6 +23,7 @@ _core_utils:
   - sudo
   - mosh
   - tmux
+  - neovim
   - emacs
   - socat
   - trash-cli

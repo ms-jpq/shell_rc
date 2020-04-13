@@ -26,6 +26,7 @@ _core_utils:
   - cask
   - dash
   - bash
+  - neovim
   - emacs
   - openssh
   - mosh
