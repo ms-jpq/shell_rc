@@ -25,6 +25,8 @@ export DISABLE_UPDATE_PROMPT=true
 export HYPHEN_INSENSITIVE=true
 export COMPLETION_WAITING_DOTS=true
 
+export ZDOTDIR="$ZSH/cache/"
+
 
 #################### ################## ####################
 #################### AutoSuggest Region ####################
@@ -50,18 +52,18 @@ export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
 #################### ########## ####################
 #################### OMZ Region ####################
 #################### ########## ####################
-plugins=(zsh-syntax-highlighting
-         zsh-completions
-         zsh-autosuggestions
-         history-substring-search
-         fzf
-         zsh-interactive-cd
-         z
-         fd
-         ripgrep
-         docker
-         kubectl
-         helm)
+export plugins=(zsh-syntax-highlighting
+                zsh-completions
+                zsh-autosuggestions
+                history-substring-search
+                fzf
+                zsh-interactive-cd
+                z
+                fd
+                ripgrep
+                docker
+                kubectl
+                helm)
 autoload -U compinit && compinit
 source "$ZSH/oh-my-zsh.sh"
 # Remove CD #
