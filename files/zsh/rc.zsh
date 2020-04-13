@@ -25,8 +25,6 @@ export DISABLE_UPDATE_PROMPT=true
 export HYPHEN_INSENSITIVE=true
 export COMPLETION_WAITING_DOTS=true
 
-export ZDOTDIR="$ZSH/cache"
-
 
 #################### ################## ####################
 #################### AutoSuggest Region ####################
