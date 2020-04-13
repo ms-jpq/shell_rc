@@ -5,14 +5,13 @@ set -o pipefail
 export PROMPT_EOL_MARK=""
 
 
-#################### ################ ####################
-#################### Powerline Region ####################
-#################### ################ ####################
+#################### #################### ####################
+#################### Instant Promp Region ####################
+#################### #################### ####################
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-source "$HOME/.p10k.zsh"
 
 
 #################### ########## ####################
@@ -82,3 +81,9 @@ alias d='_d'
 #################### ############## ####################
 eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.256dark")"
 # eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.ansi-dark")"
+
+
+#################### ################ ####################
+#################### Powerline Region ####################
+#################### ################ ####################
+source "$HOME/.p10k.zsh"
