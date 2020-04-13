@@ -20,6 +20,5 @@ ec() {
 #################### Emacs Region ####################
 #################### ############ ####################
 
-alias ee='emacsclient -t -a "$EDITOR"'
 
 alias et='sh -c "export EMACS_BENCHMARK=1; time emacs"'
