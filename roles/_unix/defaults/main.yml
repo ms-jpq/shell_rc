@@ -43,7 +43,7 @@ git_repos:
     dest: "~/.tmux/plugins/tpm"
 
   - src: "https://github.com/cyproterone/vim.git"
-    dest: "~/.config/nvim"
+    dest: "~/.vim"
 
   - src: "https://github.com/cyproterone/emacs.d.git"
     dest: "~/.emacs.d"
@@ -67,6 +67,7 @@ git_repos:
 target_dirs:
   - "{{ _nano_backup_dir_ }}"
   - "~/.config"
+  - "~/.config/nvim"
   - "~/.bin"
   - "~/.scripts"
   - "~/.logs"
@@ -112,6 +113,9 @@ target_links:
 
   - src: "~/.fff/fff"
     dest: "/usr/local/bin/fff"
+
+  - src: "~/.vim/init.vim"
+    dest: "~/.config/nvim/init.vim"
 
 
 target_removals:
