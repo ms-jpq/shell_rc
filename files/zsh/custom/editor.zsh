@@ -3,10 +3,13 @@
 #################### ############# ####################
 
 alias e='emacs'
-alias v='nvim'
 
+alias v='nvim'
+alias vi='nvim'
+alias vim='nvim'
 
 alias sc='shellcheck'
+
 
 ec() {
   (
