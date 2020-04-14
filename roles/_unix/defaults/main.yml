@@ -42,6 +42,9 @@ git_repos:
   - src: "https://github.com/tmux-plugins/tpm"
     dest: "~/.tmux/plugins/tpm"
 
+  - src: "https://github.com/cyproterone/vim.git"
+    dest: "~/.config/nvim"
+
   - src: "https://github.com/cyproterone/emacs.d.git"
     dest: "~/.emacs.d"
 
