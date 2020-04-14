@@ -67,7 +67,6 @@ git_repos:
 target_dirs:
   - "{{ _nano_backup_dir_ }}"
   - "~/.config"
-  - "~/.config/nvim"
   - "~/.bin"
   - "~/.scripts"
   - "~/.logs"
@@ -114,8 +113,8 @@ target_links:
   - src: "~/.fff/fff"
     dest: "/usr/local/bin/fff"
 
-  - src: "~/.vim/init.vim"
-    dest: "~/.config/nvim/init.vim"
+  - src: "~/.vim"
+    dest: "~/.config/nvim"
 
 
 target_removals:
