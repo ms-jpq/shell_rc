@@ -63,6 +63,9 @@ git_repos:
   - src: "https://github.com/rbenv/ruby-build.git"
     dest: "~/.rbenv/plugins/ruby-build"
 
+  - src: "https://github.com/jenv/jenv.git"
+    dest: "~/.jenv"
+
 
 target_downloads:
   - src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
@@ -124,5 +127,3 @@ target_links:
 
 target_removals:
   - "{{ _omz_dir_ }}/"
-  - "~/.tmux"
-  - "~/.scripts"
