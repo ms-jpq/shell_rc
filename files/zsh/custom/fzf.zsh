@@ -9,7 +9,6 @@ export FZF_DEFAULT_OPTS="--color $FZF_COLOUR \
                          --no-height \
                          --border \
                          --cycle \
-                         -e \
                          --bind ctrl-s:toggle-sort"
 
 export FZF_PREVIEW="test -d {} \
