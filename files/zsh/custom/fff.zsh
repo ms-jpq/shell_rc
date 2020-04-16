@@ -9,15 +9,12 @@ export FFF_OPENER="open_command"
 #################### Unbind Region ####################
 #################### ############# ####################
 
-# Unbind VIM hotkeys
-export FFF_KEY_CHILD1="off"
-export FFF_KEY_PARENT1="off"
-export FFF_KEY_SCROLL_DOWN1="off"
-export FFF_KEY_SCROLL_UP1="off"
-
-
+# used to be s, S
 export FFF_KEY_LINK="off"
 export FFF_KEY_LINK_ALL="off"
+
+# used to be x
+export FFF_KEY_EXECUTABLE="off"
 
 
 #################### ############# ####################
@@ -48,7 +45,7 @@ export FFF_KEY_MKFILE="n"
 #################### ########## ####################
 
 # clear selec
-export FFF_KEY_CLEAR="l"
+export FFF_KEY_CLEAR="w"
 
 
 # Rename
