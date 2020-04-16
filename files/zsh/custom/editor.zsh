@@ -18,7 +18,7 @@ ec() {
 #################### ############ ####################
 
 alias e='emacs'
-alias ee'TERM=screen-256color emacs'
+alias ee='TERM=screen-256color emacs'
 
 alias et='sh -c "export EMACS_BENCHMARK=1; time emacs"'
 
