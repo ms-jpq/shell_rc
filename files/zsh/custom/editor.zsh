@@ -2,14 +2,7 @@
 #################### Editor Region ####################
 #################### ############# ####################
 
-alias e='emacs'
-
-alias v='nvim'
-alias vi='nvim'
-alias vim='nvim'
-
 alias sc='shellcheck'
-
 
 ec() {
   (
@@ -24,5 +17,16 @@ ec() {
 #################### Emacs Region ####################
 #################### ############ ####################
 
+alias e='emacs'
+alias ee'TERM=screen-256color emacs'
 
 alias et='sh -c "export EMACS_BENCHMARK=1; time emacs"'
+
+
+#################### ########## ####################
+#################### Vim Region ####################
+#################### ########## ####################
+
+alias v='nvim'
+alias vi='nvim'
+alias vim='nvim'
