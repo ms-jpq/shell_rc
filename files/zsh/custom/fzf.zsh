@@ -11,7 +11,7 @@ export FZF_DEFAULT_OPTS="--color $FZF_COLOUR \
                          --cycle \
                          --bind ctrl-s:toggle-sort"
 
-export FZF_DEFAULT_COMMAND="fd -HI"
+export FZF_DEFAULT_COMMAND="fd -HI -t f"
 
 export FZF_PREVIEW="test -d {} \
                     && exa \
