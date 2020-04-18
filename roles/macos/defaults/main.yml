@@ -23,7 +23,6 @@ brew_repos:
 
 
 _core_utils:
-  - cask
   - dash
   - bash
   - neovim
