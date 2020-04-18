@@ -8,3 +8,5 @@ ta() {
   local session="$(tl -F '#{session_name}' | fzf -0 -1)"
   tmux new-session -A -s "${session:-"MAIN"}"
 }
+
+alias scr='TERM=screen-256color '
