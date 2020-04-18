@@ -9,7 +9,9 @@ export FZF_DEFAULT_OPTS="--color $FZF_COLOUR \
                          --no-height \
                          --border \
                          --cycle \
-                         --bind ctrl-s:toggle-sort"
+                         --preview-window right:wrap \
+                         --bind alt-a:select-all \
+                         --bind alt-l:deselect-all"
 
 export FZF_DEFAULT_COMMAND="fd -HI -t f"
 
