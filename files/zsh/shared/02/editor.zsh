@@ -2,7 +2,7 @@
 #################### Editor Region ####################
 #################### ############# ####################
 
-alias sc='shellcheck'
+export EDITOR="emacs"
 
 ec() {
   (
@@ -12,13 +12,14 @@ ec() {
   ) > ".editorconfig"
 }
 
+alias sc='shellcheck'
+
 
 #################### ############ ####################
 #################### Emacs Region ####################
 #################### ############ ####################
 
 alias e='emacs'
-
 alias et='bash -c "export EMACS_BENCHMARK=1; time emacs"'
 
 

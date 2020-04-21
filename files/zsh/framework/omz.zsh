@@ -1,26 +1,10 @@
 #################### ########## ####################
-#################### ZSH Region ####################
-#################### ########## ####################
-set -o pipefail
-export PROMPT_EOL_MARK=""
-
-
-#################### #################### ####################
-#################### Instant Promp Region ####################
-#################### #################### ####################
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
-then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-
-#################### ########## ####################
 #################### OMZ Region ####################
 #################### ########## ####################
+
 export ZSH="$HOME/.config/.oh-my-zsh"
 export ZSH_THEME=powerlevel10k/powerlevel10k
 
-export DISABLE_UPDATE_PROMPT=true
 export HYPHEN_INSENSITIVE=true
 export COMPLETION_WAITING_DOTS=true
 
@@ -28,6 +12,7 @@ export COMPLETION_WAITING_DOTS=true
 #################### ################## ####################
 #################### AutoSuggest Region ####################
 #################### ################## ####################
+
 zle -N autosuggest-accept
 bindkey '^ ' autosuggest-accept
 export ZSH_AUTOSUGGEST_USE_ASYNC=true
@@ -38,6 +23,7 @@ export ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(autosuggest-accept)
 #################### ############## ####################
 #################### History Region ####################
 #################### ############## ####################
+
 zle -N history-substring-search-up
 zle -N history-substring-search-down
 bindkey '^[[A' history-substring-search-up
@@ -49,6 +35,7 @@ export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
 #################### ########## ####################
 #################### OMZ Region ####################
 #################### ########## ####################
+
 export plugins=(zsh-syntax-highlighting
                 zsh-completions
                 zsh-autosuggestions
@@ -72,18 +59,9 @@ done
 # Remove CD #
 
 
-# Bring back _d
-alias d='_d'
-
-
 #################### ############## ####################
 #################### LSCOLOR Region ####################
 #################### ############## ####################
+
 eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.256dark")"
 # eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.ansi-dark")"
-
-
-#################### ################ ####################
-#################### Powerline Region ####################
-#################### ################ ####################
-source "$HOME/.p10k.zsh"
