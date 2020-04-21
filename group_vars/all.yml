@@ -1,5 +1,7 @@
 ---
 
+_conf_home_: "~/.config"
+
 _ssh_authorized_:
   - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 

@@ -2,7 +2,7 @@
 #################### Python Region ####################
 #################### ############# ####################
 
-export PATH="$HOME/.pyenv/bin:$PATH"
+export PATH="$HOME/.config/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 
 

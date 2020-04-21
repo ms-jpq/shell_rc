@@ -2,5 +2,5 @@
 #################### Java Region ####################
 #################### ########### ####################
 
-export PATH="$HOME/.jenv/bin:$PATH"
+export PATH="$HOME/.config/.jenv/bin:$PATH"
 eval "$(jenv init -)"

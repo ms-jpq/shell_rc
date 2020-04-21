@@ -2,7 +2,7 @@
 #################### Node Region ####################
 #################### ########### ####################
 
-export PATH="$HOME/.nodenv/bin:$PATH"
+export PATH="$HOME/.config/.nodenv/bin:$PATH"
 eval "$(nodenv init -)"
 
 

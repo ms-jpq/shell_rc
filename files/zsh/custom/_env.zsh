@@ -2,7 +2,7 @@
 #################### Env Region ####################
 #################### ########## ####################
 
-export PATH="$HOME/.scripts:$PATH"
+export PATH="$HOME/.config/.scripts:$PATH"
 export PATH="$HOME/.bin:$PATH"
 
 export EDITOR="emacs"

@@ -17,7 +17,7 @@ fi
 #################### ########## ####################
 #################### OMZ Region ####################
 #################### ########## ####################
-export ZSH="$HOME/.oh-my-zsh"
+export ZSH="$HOME/.config/.oh-my-zsh"
 export ZSH_THEME=powerlevel10k/powerlevel10k
 
 export DISABLE_UPDATE_PROMPT=true
