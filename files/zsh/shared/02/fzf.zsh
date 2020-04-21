@@ -29,21 +29,7 @@ alias f='fzf'
 alias fp='f --preview $FZF_PREVIEW'
 
 
-_d() {
+d() {
   local dest="$(FZF_DEFAULT_COMMAND='fd -HI -t d -t l' fp -q "${*:-""}")"
   cd "$dest" || return 1
-}
-
-
-unalias z
-z() {
-  local A="$(_z -l "$@" 2>&1)"
-  local B="$(echo "$A" | sed -e "s/^[0-9|\.]\+[ ]\+//" -e "/^common:[ ]\+/d")"
-  if [[ -z "$B" ]]
-  then
-    echo "no such file or directory: $*"
-  else
-    local C="$(echo "$B" | fp -1 +s --tac)"
-    cd "$C" || return 1
-  fi
 }
