@@ -30,7 +30,7 @@ alias fp='f --preview $FZF_PREVIEW'
 
 
 _d() {
-  local dest="$(FZF_DEFAULT_COMMAND="fd -HI -t d -t l" fp)"
+  local dest="$(FZF_DEFAULT_COMMAND="fd -HI -t d -t l" fp -q "${*:-""}" )"
   cd "$dest" || return 1
 }
 
