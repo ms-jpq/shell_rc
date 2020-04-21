@@ -29,6 +29,12 @@ alias f='fzf'
 alias fp='f --preview $FZF_PREVIEW'
 
 
+_d() {
+  local dest="$(FZF_DEFAULT_COMMAND="fd -HI -t d -t l" fp)"
+  cd "$dest" || return 1
+}
+
+
 unalias z
 z() {
   local A="$(_z -l "$@" 2>&1)"

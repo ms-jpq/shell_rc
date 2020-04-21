@@ -72,7 +72,7 @@ done
 # Remove CD #
 
 
-# Bring back fff
+# Bring back _d
 alias d='_d'
 
 
