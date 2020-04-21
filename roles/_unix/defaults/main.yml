@@ -35,43 +35,44 @@ git_repos:
     dest: "{{ _omz_dir_ }}/custom/dircolors-solarized"
 
   - src: "https://github.com/dylanaraps/fff"
-    dest: "{{ _conf_home_ }}/.fff"
+    dest: "{{ _conf_home_ }}/fff"
 
   - src: "https://github.com/cyproterone/tmux.git"
-    dest: "{{ _conf_home_  }}/.tmux"
+    dest: "{{ _conf_home_  }}/tmux"
 
   - src: "https://github.com/tmux-plugins/tpm"
-    dest: "{{ _conf_home_ }}/.tmux/plugins/tpm"
+    dest: "{{ _conf_home_ }}/tmux/plugins/tpm"
 
   - src: "https://github.com/cyproterone/vim.git"
-    dest: "{{ _conf_home_ }}/.vim"
+    dest: "{{ _conf_home_ }}/nvim"
 
   - src: "https://github.com/cyproterone/emacs.d.git"
-    dest: "{{ _conf_home_ }}/.emacs.d"
+    dest: "{{ _conf_home_ }}/emacs.d"
 
   - src: "https://github.com/pyenv/pyenv.git"
-    dest: "{{ _conf_home_ }}/.pyenv"
+    dest: "{{ _conf_home_ }}/pyenv"
 
   - src: "https://github.com/nodenv/nodenv.git"
-    dest: "{{ _conf_home_ }}/.nodenv"
+    dest: "{{ _conf_home_ }}/nodenv"
 
   - src: "https://github.com/nodenv/node-build.git"
-    dest: "{{ _conf_home_ }}/.nodenv/plugins/node-build"
+    dest: "{{ _conf_home_ }}/nodenv/plugins/node-build"
 
   - src: "https://github.com/rbenv/rbenv.git"
-    dest: "{{ _conf_home_ }}/.rbenv"
+    dest: "{{ _conf_home_ }}/rbenv"
 
   - src: "https://github.com/rbenv/ruby-build.git"
-    dest: "{{ _conf_home_ }}/.rbenv/plugins/ruby-build"
+    dest: "{{ _conf_home_ }}/rbenv/plugins/ruby-build"
 
   - src: "https://github.com/jenv/jenv.git"
-    dest: "{{ _conf_home_ }}/.jenv"
+    dest: "{{ _conf_home_ }}/jenv"
 
 
 target_dirs:
   - "{{ _conf_home_ }}"
   - "{{ _zsh_dir_ }}"
-  - "{{ _conf_home_ }}/.scripts"
+  - "{{ _zsh_dir_ }}/intrinsic"
+  - "{{ _conf_home_ }}/scripts"
   - "~/.bin"
 
 
@@ -87,8 +88,12 @@ target_files:
     dest: "{{ _zsh_dir_ }}/shared"
     delete: True
 
+  - src: "zsh/framework/"
+    dest: "{{ _zsh_dir_ }}/framework"
+    delete: True
+
   - src: "scripts/"
-    dest: "{{ _conf_home_ }}/.scripts"
+    dest: "{{ _conf_home_ }}/scripts"
     delete: True
 
   - src: "ansible.cfg"
@@ -105,12 +110,13 @@ target_templates:
   - src: ".nanorc.j2"
     dest: "~/.nanorc"
 
+
 target_links:
-  - src: "{{ _conf_home_ }}/.tmux/entry.conf"
+  - src: "{{ _conf_home_ }}/tmux/entry.conf"
     dest: "~/.tmux.conf"
 
-  - src: "{{ _conf_home_ }}/.fff/fff"
+  - src: "{{ _conf_home_ }}/fff/fff"
     dest: "/usr/local/bin/fff"
 
-  - src: "{{ _conf_home_ }}/zsh/shared/init.zsh"
-    dest: "~/.zshrc"
+  # - src: "{{ _conf_home_ }}/zsh/shared/init.zsh"
+  #   dest: "~/.zshrc"

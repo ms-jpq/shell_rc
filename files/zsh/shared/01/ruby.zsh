@@ -2,7 +2,7 @@
 #################### Ruby Env Region ####################
 #################### ############### ####################
 
-export PATH="$HOME/.config/.rbenv/bin:$PATH"
+export PATH="$HOME/.config/rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
 
