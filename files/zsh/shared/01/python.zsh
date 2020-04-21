@@ -76,7 +76,7 @@ pip3() {
   then
     echo "Not in virtualenv - require explicit:"
     echo
-    echo "command pip3 $*"
+    echo "command pip $*"
     echo
   else
     command pip3 "$@"
