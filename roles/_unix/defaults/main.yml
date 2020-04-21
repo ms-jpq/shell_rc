@@ -84,8 +84,8 @@ target_files:
   - src: "config/"
     dest: "~/.config/"
 
-  - src: "zsh/init.zsh"
-    dest: "{{ _zsh_dir_ }}/init.zsh"
+  - src: "zsh/rc/"
+    dest: "{{ _zsh_dir_ }}"
 
   - src: "zsh/shared/"
     dest: "{{ _zsh_dir_ }}/shared"
@@ -112,11 +112,14 @@ target_templates:
 
 
 target_links:
+  - src: "{{ _conf_home_ }}/zsh/.zshenv"
+    dest: "~/.zshenv"
+
   - src: "{{ _conf_home_ }}/tmux/entry.conf"
     dest: "~/.tmux.conf"
 
   - src: "{{ _conf_home_ }}/fff/fff"
     dest: "/usr/local/bin/fff"
 
-  - src: "{{ _conf_home_ }}/zsh/init.zsh"
-    dest: "~/.zshrc"
+  - src: "{{ _conf_home_ }}/emacs.d"
+    dest: "~/.emacs.d"
