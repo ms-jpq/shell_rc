@@ -99,9 +99,6 @@ target_files:
     dest: "{{ _conf_home_ }}/scripts"
     delete: True
 
-  - src: "ansible.cfg"
-    dest: "~/.ansible.cfg"
-
 
 target_templates:
   - src: "zsh/locale.zsh.j2"

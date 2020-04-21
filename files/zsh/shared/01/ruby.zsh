@@ -2,7 +2,8 @@
 #################### Ruby Env Region ####################
 #################### ############### ####################
 
-export PATH="$XDG_CONFIG_HOME/rbenv/bin:$PATH"
+export RBENV_ROOT="$XDG_CONFIG_HOME/rbenv"
+export PATH="$RBENV_ROOT/bin:$PATH"
 eval "$(rbenv init -)"
 
 

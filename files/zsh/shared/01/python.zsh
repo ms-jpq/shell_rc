@@ -2,7 +2,8 @@
 #################### Python Env Region ####################
 #################### ################# ####################
 
-export PATH="$XDG_CONFIG_HOME/pyenv/bin:$PATH"
+export PYENV_ROOT="$XDG_CONFIG_HOME/pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 
