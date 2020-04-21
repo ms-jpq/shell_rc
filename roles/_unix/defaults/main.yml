@@ -31,6 +31,9 @@ git_repos:
   - src: "https://github.com/zsh-users/zsh-history-substring-search"
     dest: "{{ _omz_dir_ }}/custom/plugins/zsh-history-substring-search"
 
+  - src: "https://github.com/Aloxaf/fzf-tab.git"
+    dest: "{{ _omz_dir_ }}/custom/plugins/fzf-tab"
+
   - src: "https://github.com/seebi/dircolors-solarized"
     dest: "{{ _zsh_dir_ }}/dircolors-solarized"
 

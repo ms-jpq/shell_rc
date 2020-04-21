@@ -10,10 +10,13 @@ export FZF_DEFAULT_OPTS="--color $FZF_COLOUR \
                          --border \
                          --cycle \
                          --preview-window right:wrap \
+                         --bind btab:up \
+                         --bind tab:down \
+                         --bind ctrl-space:toggle \
                          --bind alt-a:select-all \
                          --bind alt-l:deselect-all"
 
-export FZF_DEFAULT_COMMAND='fd -HI -t f'
+export FZF_DEFAULT_COMMAND='fd -HIL -t f'
 
 export FZF_PREVIEW="test -d {} \
                     && exa \
@@ -30,6 +33,6 @@ alias fp='f --preview $FZF_PREVIEW'
 
 
 d() {
-  local dest="$(FZF_DEFAULT_COMMAND='fd -HI -t d -t l' fp -q "${*:-""}")"
+  local dest="$(FZF_DEFAULT_COMMAND='fd -HIL -t d -t l' fp -q "${*:-""}")"
   cd "$dest" || return 1
 }
