@@ -10,7 +10,6 @@ __env_tz__: "{{ lookup('env', 'TZ') }}"
 _time_zone_: "{{ (ansible_connection == 'local') | ternary(__web_tz__, __env_tz__) }}"
 
 _all_: "{{ all | default(False) | bool }}"
-_reset_: "{{ reset | default(False) | bool }}"
 
 locale: zh_CN.UTF-8
 

@@ -5,11 +5,8 @@
 
 - import_tasks: git_conf.yml
 
-- import_tasks: remove_fs.yml
-  when: _reset_
-
 - import_tasks: git.yml
-  when: _all_ or _reset_
+  when: _all_
 
 - import_tasks: mkdir.yml
 

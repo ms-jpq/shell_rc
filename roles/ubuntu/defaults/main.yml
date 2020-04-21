@@ -9,8 +9,9 @@ target_dirs:
   - "{{ _ansible_tmp_ }}"
 
 target_files:
-  - src: "zsh/custom_linux/"
-    dest: "{{ _omz_dir_ }}/custom/"
+  - src: "zsh/linux/"
+    dest: "{{ _zsh_dir_ }}/distro"
+    delete: True
 
 target_templates:
   - src: "etc/locale.j2"

@@ -5,8 +5,9 @@ nano_path: /usr/local/opt/nano/share/nano
 target_dirs: []
 
 target_files:
-  - src: "zsh/custom_macos/"
-    dest: "{{ _omz_dir_ }}/custom/"
+  - src: "zsh/macos/"
+    dest: "{{ _zsh_dir_ }}/distro"
+    delete: True
 
 target_templates:
   - src: "launchd/bing.plist.j2"

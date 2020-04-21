@@ -2,11 +2,11 @@
 #################### OMZ Region ####################
 #################### ########## ####################
 
-export ZSH="$HOME/.config/.oh-my-zsh"
-export ZSH_THEME=powerlevel10k/powerlevel10k
+ZSH="$HOME/.config/.oh-my-zsh"
+ZSH_THEME=powerlevel10k/powerlevel10k
 
-export HYPHEN_INSENSITIVE=true
-export COMPLETION_WAITING_DOTS=true
+HYPHEN_INSENSITIVE=true
+COMPLETION_WAITING_DOTS=true
 
 
 #################### ################## ####################
@@ -15,9 +15,9 @@ export COMPLETION_WAITING_DOTS=true
 
 zle -N autosuggest-accept
 bindkey '^ ' autosuggest-accept
-export ZSH_AUTOSUGGEST_USE_ASYNC=true
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=4"
-export ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(autosuggest-accept)
+ZSH_AUTOSUGGEST_USE_ASYNC=true
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=4"
+ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(autosuggest-accept)
 
 
 #################### ############## ####################
@@ -28,26 +28,25 @@ zle -N history-substring-search-up
 zle -N history-substring-search-down
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
-export HISTORY_SUBSTRING_SEARCH_FUZZY=true
-export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
+HISTORY_SUBSTRING_SEARCH_FUZZY=true
+HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
 
 
 #################### ########## ####################
 #################### OMZ Region ####################
 #################### ########## ####################
-
-export plugins=(zsh-syntax-highlighting
-                zsh-completions
-                zsh-autosuggestions
-                history-substring-search
-                fzf
-                zsh-interactive-cd
-                z
-                fd
-                ripgrep
-                docker
-                kubectl
-                helm)
+plugins=(zsh-syntax-highlighting
+         zsh-completions
+         zsh-autosuggestions
+         history-substring-search
+         fzf
+         zsh-interactive-cd
+         z
+         fd
+         ripgrep
+         docker
+         kubectl
+         helm)
 autoload -U compinit && compinit
 source "$ZSH/oh-my-zsh.sh"
 # Remove CD #

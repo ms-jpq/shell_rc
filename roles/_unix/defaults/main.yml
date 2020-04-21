@@ -1,7 +1,8 @@
 ---
 
 ## GLOBAL ##
-_omz_dir_: "{{ _conf_home_  }}/.oh-my-zsh"
+_zsh_dir_: "{{ _conf_home_ }}/zsh"
+_omz_dir_: "{{ _zsh_dir_  }}/oh-my-zsh"
 _nano_backup_dir_: "~/.nano_backup"
 ## GLOBAL ##
 
@@ -69,6 +70,7 @@ git_repos:
 
 target_dirs:
   - "{{ _conf_home_ }}"
+  - "{{ _zsh_dir_ }}"
   - "{{ _conf_home_ }}/.scripts"
   - "~/.bin"
 
@@ -78,34 +80,30 @@ target_touches:
 
 
 target_files:
-  - src: "zsh/rc.zsh"
-    dest: "~/.zshrc"
-
-  - src: "zsh/.p10k.zsh"
-    dest: "~/.p10k.zsh"
-
-  - src: "zsh/custom/"
-    dest: "{{ _omz_dir_ }}/custom/"
-
   - src: "config/"
     dest: "~/.config/"
+
+  - src: "zsh/shared/"
+    dest: "{{ _zsh_dir_ }}/shared"
+    delete: True
 
   - src: "scripts/"
     dest: "{{ _conf_home_ }}/.scripts"
     delete: True
 
-  - src: ".ansible.cfg"
+  - src: "ansible.cfg"
     dest: "~/.ansible.cfg"
 
 
 target_templates:
+  - src: "zsh/locale.zsh.j2"
+    dest: "{{ _zsh_dir_ }}/intrinsic/locale.zsh"
+
+  - src: "zsh/tz.zsh.j2"
+    dest: "{{ _zsh_dir_ }}/intrinsic/tz.zsh"
+
   - src: ".nanorc.j2"
     dest: "~/.nanorc"
-  - src: "zsh/locale.zsh.j2"
-    dest: "{{ _omz_dir_ }}/custom/locale.zsh"
-  - src: "zsh/tz.zsh.j2"
-    dest: "{{ _omz_dir_ }}/custom/tz.zsh"
-
 
 target_links:
   - src: "{{ _conf_home_ }}/.tmux/entry.conf"
@@ -114,9 +112,5 @@ target_links:
   - src: "{{ _conf_home_ }}/.fff/fff"
     dest: "/usr/local/bin/fff"
 
-  - src: "{{ _conf_home_ }}/.vim"
-    dest: "~/.config/nvim"
-
-
-target_removals:
-  - "{{ _omz_dir_ }}/"
+  - src: "{{ _conf_home_ }}/zsh/shared/init.zsh"
+    dest: "~/.zshrc"

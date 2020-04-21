@@ -12,11 +12,7 @@ alias py='python3'
 #################### Python Region ####################
 #################### ############# ####################
 
-
 DEFAULT_VENV_PATH=".venv"
-
-
-
 
 _venv_off() {
   if [[ -n "$VIRTUAL_ENV" ]]
