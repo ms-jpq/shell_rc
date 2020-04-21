@@ -2,7 +2,7 @@
 #################### OMZ Region ####################
 #################### ########## ####################
 
-ZSH="$HOME/.config/.oh-my-zsh"
+ZSH="$XDG_CONFIG_HOME/zsh/oh-my-zsh"
 ZSH_THEME=powerlevel10k/powerlevel10k
 
 HYPHEN_INSENSITIVE=true
@@ -56,11 +56,3 @@ do
   unalias "$i"
 done
 # Remove CD #
-
-
-#################### ############## ####################
-#################### LSCOLOR Region ####################
-#################### ############## ####################
-
-eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.256dark")"
-# eval "$(dircolors -b "$ZSH_CUSTOM/dircolors-solarized/dircolors.ansi-dark")"

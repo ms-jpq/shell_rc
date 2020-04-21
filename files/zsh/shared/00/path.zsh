@@ -2,5 +2,5 @@
 #################### Path Region ####################
 #################### ########### ####################
 
-export PATH="$HOME/.config/scripts:$PATH"
+export PATH="$XDG_CONFIG_HOME/scripts:$PATH"
 export PATH="$HOME/.bin:$PATH"

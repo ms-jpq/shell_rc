@@ -2,7 +2,7 @@
 #################### Node Env Region ####################
 #################### ############### ####################
 
-export PATH="$HOME/.config/nodenv/bin:$PATH"
+export PATH="$XDG_CONFIG_HOME/nodenv/bin:$PATH"
 eval "$(nodenv init -)"
 
 
