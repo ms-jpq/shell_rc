@@ -52,6 +52,9 @@ git_repos:
   - src: "https://github.com/cyproterone/emacs.d.git"
     dest: "{{ _conf_home_ }}/emacs.d"
 
+  - src: "https://github.com/cyproterone/ranger.git"
+    dest: "{{ _conf_home_ }}/ranger"
+
   - src: "https://github.com/pyenv/pyenv.git"
     dest: "{{ _conf_home_ }}/pyenv"
 
