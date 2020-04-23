@@ -19,6 +19,18 @@ ZSH_AUTOSUGGEST_USE_ASYNC=true
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=4"
 ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(autosuggest-accept)
 
+# https://github.com/zsh-users/zsh-autosuggestions/issues/238#issuecomment-389324292
+pasteinit() {
+  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+  zle -N self-insert url-quote-magic
+}
+
+pastefinish() {
+  zle -N self-insert $OLD_SELF_INSERT
+}
+zstyle :bracketed-paste-magic paste-init pasteinit
+zstyle :bracketed-paste-magic paste-finish pastefinish
+
 
 #################### ############## ####################
 #################### History Region ####################
