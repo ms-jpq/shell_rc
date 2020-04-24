@@ -72,7 +72,7 @@ plugins=(zsh-syntax-highlighting
          z
          fd
          ripgrep
-         ccat
+         colorize
          docker
          kubectl
          helm)
