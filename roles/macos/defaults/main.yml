@@ -26,17 +26,18 @@ brew_repos:
 _core_utils:
   - dash
   - bash
-  - neovim
-  - emacs
+  - coreutils
+  - findutils
+  - gettext
+  - gnu-which
   - openssh
   - mosh
   - tmux
+  - neovim
+  - emacs
   - socat
   - less
   - nano
-  - coreutils
-  - findutils
-  - gnu-which
   - bind
   - glib-openssl
   - rsync
@@ -47,7 +48,6 @@ _core_utils:
   - gnu-getopt
   - awk
   - jq
-  - yq
   - gnu-sed
   - nmap
   - tree
@@ -68,6 +68,7 @@ _nice_things:
   - ripgrep
   - sd
   - httpie
+  - yq
   - trash
   - gotop
   - tldr
