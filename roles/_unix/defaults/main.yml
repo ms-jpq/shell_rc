@@ -3,7 +3,6 @@
 ## GLOBAL ##
 _zsh_dir_: "{{ _conf_home_ }}/zsh"
 _omz_dir_: "{{ _zsh_dir_  }}/oh-my-zsh"
-_nano_backup_dir_: "~/.nano_backup"
 ## GLOBAL ##
 
 
