@@ -77,7 +77,6 @@ _editors:
   - neovim
   - emacs
   - lazygit
-  - diff-so-fancy
 
 
 _nice_things:

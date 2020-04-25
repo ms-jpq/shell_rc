@@ -48,6 +48,9 @@ git_repos:
   - src: "https://github.com/cyproterone/vim.git"
     dest: "{{ _conf_home_ }}/nvim"
 
+  - src: "https://github.com/so-fancy/diff-so-fancy.git"
+    dest: "{{ _conf_home_ }}/diff-so-fancy"
+
   - src: "https://github.com/cyproterone/emacs.d.git"
     dest: "{{ _conf_home_ }}/emacs.d"
 
@@ -128,6 +131,9 @@ target_links:
 
   - src: "{{ _conf_home_ }}/fff/fff"
     dest: "/usr/local/bin/fff"
+
+  - src: "{{ _conf_home_ }}/diff-so-fancy/diff-so-fancy"
+    dest: "/usr/local/bin/diff-so-fancy"
 
   - src: "{{ _conf_home_ }}/emacs.d"
     dest: "~/.emacs.d"
