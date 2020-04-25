@@ -28,6 +28,7 @@ _core_utils:
   - bash
   - coreutils
   - findutils
+  - lsof
   - gettext
   - gnu-which
   - openssh

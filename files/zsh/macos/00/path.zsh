@@ -3,6 +3,7 @@
 #################### ########### ####################
 
 export PATH="/usr/local/sbin:$PATH"
+export PATH="/usr/local/opt/lsof/bin:$PATH"
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/usr/local/opt/icu4c/bin:$PATH"
 export PATH="/usr/local/opt/icu4c/sbin:$PATH"
