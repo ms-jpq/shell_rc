@@ -48,8 +48,6 @@ _core_utils:
   - openssh
   - mosh
   - tmux
-  - neovim
-  - emacs
   - socat
   - less
   - nano
@@ -73,6 +71,13 @@ _core_utils:
   - pv
   - iperf3
   - ncdu
+
+
+_editors:
+  - neovim
+  - emacs
+  - lazygit
+  - diff-so-fancy
 
 
 _nice_things:
@@ -102,4 +107,4 @@ _fun_things:
   - pipes-sh
 
 
-brew_packages: "{{ _core_utils + _nice_things + _fun_things }}"
+brew_packages: "{{ _core_utils + _editors + _nice_things + _fun_things }}"

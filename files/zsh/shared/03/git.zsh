@@ -2,6 +2,9 @@
 #################### GIT Region ####################
 #################### ########## ####################
 
+export GIT_PAGER='diff-so-fancy | less'
+
+
 gitlines() {
   git ls-files | rg "$@" | xargs wc -l
 }

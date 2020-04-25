@@ -3,7 +3,7 @@
 #################### ########### ####################
 
 export PAGER="tee"
-export LESS="-KQRi"
+export LESS="-KQRFi"
 
 
 # Safety

@@ -24,8 +24,6 @@ _core_utils:
   - sudo
   - mosh
   - tmux
-  - neovim
-  - emacs
   - socat
   - trash-cli
   - rsync
@@ -46,6 +44,13 @@ _core_utils:
   - ncdu
   - iperf3
   - unzip
+
+
+_editors:
+  - neovim
+  - emacs
+  - lazygit
+  - diff-so-fancy
 
 
 _nice_things:
@@ -72,9 +77,10 @@ _fun_things:
 
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
+  - "ppa:lazygit-team/release"
 
 
-apt_packages: "{{ _languages + _core_utils + _nice_things + _fun_things }}"
+apt_packages: "{{ _languages + _core_utils + _editors + _nice_things + _fun_things }}"
 
 
 apt_deb_packages:
