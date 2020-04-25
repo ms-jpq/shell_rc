@@ -98,6 +98,13 @@ target_remote_copy:
     dest: "{{ _exec_bin_ }}/sd"
 
 
+target_links:
+  - src: "/bin/batcat"
+    dest: "/usr/local/bin/bat"
+  - src: "/bin/fdfind"
+    dest: "/usr/local/bin/fd"
+
+
 target_mods:
   - path: "{{ _exec_bin_ }}/exa"
     mode: "775"
