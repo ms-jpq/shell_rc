@@ -89,8 +89,11 @@ target_files:
   - src: "config/"
     dest: "~/.config/"
 
-  - src: "zsh/rc/"
-    dest: "{{ _zsh_dir_ }}"
+  - src: "zsh/env.zsh"
+    dest: "{{ _zsh_dir_ }}/.zshenv"
+
+  - src: "zsh/rc.zsh"
+    dest: "{{ _zsh_dir_ }}/.zshrc"
 
   - src: "zsh/shared/"
     dest: "{{ _zsh_dir_ }}/shared"
