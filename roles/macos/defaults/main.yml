@@ -2,22 +2,36 @@
 
 nano_path: /usr/local/opt/nano/share/nano
 
+
 target_dirs: []
+
+
+target_localized_dirs:
+  - path: "~/"
+    ascii: "mnt"
+    name: "挂载"
+  - path: "~/"
+    ascii: "dev"
+    name: "开发"
+
 
 target_files:
   - src: "zsh/macos/"
     dest: "{{ _zsh_dir_ }}/distro"
     delete: True
 
+
 target_templates:
   - src: "launchd/bing.plist.j2"
     dest: "~/Library/LaunchAgents/bing.plist"
+
 
 target_links:
   - src: "/usr/local/bin/dash"
     dest: "/usr/local/bin/sh"
   - src: "~/Library/Mobile Documents/com~apple~CloudDocs"
     dest: "~/.icloud"
+
 
 brew_repos:
   - name: cjbassi/gotop

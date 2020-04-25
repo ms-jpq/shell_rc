@@ -1,0 +1,22 @@
+---
+
+- name: localize folder
+  loop: "{{ target_localized_dirs }}"
+  file:
+    state: directory
+    path: "{{ item.path ~ '/' ~ item.ascii ~ '.localized' }}"
+
+
+- name: localize internal
+  loop: "{{ target_localized_dirs }}"
+  file:
+    state: directory
+    path: "{{ item.path ~ '/' ~ item.ascii ~ '.localized/' ~ '.localized' }}"
+
+
+- name: localize name
+  loop: "{{ target_localized_dirs }}"
+  lineinfile:
+    create: True
+    path: "{{ item.path ~ '/' ~ item.ascii ~ '.localized/' ~ '.localized/' ~ locale ~ '.strings' }}"
+    line: "\"{{ item.ascii }}\" = \"{{ item.name }}\";"
