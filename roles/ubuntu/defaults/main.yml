@@ -49,16 +49,14 @@ _core_utils:
 
 
 _nice_things:
-  # - exa
-  # - bat
-  # - fzf
-  # - fd-find
+  - bat
+  - fzf
+  - fd-find
   # - ripgrep
-  - tldr
 
 
 _fun_things:
-  # - termshark
+  - termshark
   - neofetch
   - sl
   - cmatrix
@@ -78,20 +76,12 @@ apt_packages: "{{ _languages + _core_utils + _nice_things + _fun_things }}"
 
 
 apt_deb_packages:
-  # Next version of LTS should have these #
-  - "https://github.com/sharkdp/bat/releases/download/v0.12.1/bat_0.12.1_amd64.deb"
-  - "http://archive.ubuntu.com/ubuntu/pool/universe/f/fzf/fzf_0.17.5-2_amd64.deb"
-  - "https://github.com/sharkdp/fd/releases/download/v7.4.0/fd_7.4.0_amd64.deb"
-  - "https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb"
-  # Required Deb #
   - "https://github.com/cjbassi/gotop/releases/download/3.0.0/gotop_3.0.0_linux_amd64.deb"
 
 
 target_downloads:
-  - src: "https://github.com/tsl0922/ttyd/releases/download/1.5.2/ttyd_linux.x86_64"
+  - src: "https://github.com/tsl0922/ttyd/releases/download/1.6.0/ttyd_linux.x86_64"
     dest: "{{ _exec_bin_ }}/ttyd"
-  - src: "https://github.com/mikefarah/yq/releases/download/3.1.0/yq_linux_amd64"
-    dest: "{{ _exec_bin_ }}/yq"
 
 
 target_archives:
@@ -100,11 +90,13 @@ target_archives:
   - src: "https://github.com/chmln/sd/releases/download/v0.7.4/sd-0.7.4.x86_64-unknown-linux-gnu.zip"
     dest: "{{ _ansible_tmp_  }}"
 
+
 target_remote_copy:
   - src: "{{ _ansible_tmp_ }}/exa-linux-x86_64"
     dest: "{{ _exec_bin_ }}/exa"
   - src: "{{ _ansible_tmp_ }}/b/x86_64-unknown-linux-gnu/release/sd"
     dest: "{{ _exec_bin_ }}/sd"
+
 
 target_mods:
   - path: "{{ _exec_bin_ }}/exa"
@@ -112,6 +104,4 @@ target_mods:
   - path: "{{ _exec_bin_ }}/sd"
     mode: "775"
   - path: "{{ _exec_bin_ }}/ttyd"
-    mode: "775"
-  - path: "{{ _exec_bin_ }}/yq"
     mode: "775"
