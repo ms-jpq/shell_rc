@@ -15,7 +15,6 @@ COMPLETION_WAITING_DOTS=true
 #################### ################## ####################
 
 zle -N autosuggest-accept
-bindkey '^ ' autosuggest-accept
 ZSH_AUTOSUGGEST_USE_ASYNC=true
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=4"
 ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(autosuggest-accept)
@@ -64,6 +63,7 @@ FZF_TAB_OPTS=(
 #################### ############## ####################
 #################### Plugins Region ####################
 #################### ############## ####################
+
 plugins=(zsh-syntax-highlighting
          zsh-completions
          zsh-autosuggestions
@@ -79,6 +79,17 @@ plugins=(zsh-syntax-highlighting
          helm)
 autoload -U compinit && compinit
 source "$ZSH/oh-my-zsh.sh"
+
+
+#################### ################ ####################
+#################### Post-Init Region ####################
+#################### ################ ####################
+
+# Fix tmux
+bindkey '^ ' autosuggest-accept
+# Fix tmux
+
+
 # Remove CD #
 unset -f d
 for i in $(seq 1 9)
