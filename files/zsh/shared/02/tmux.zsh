@@ -9,4 +9,3 @@ ta() {
   tmux new-session -A -s "${session:-"MAIN"}"
 }
 
-alias scr='TERM=screen-256color '
