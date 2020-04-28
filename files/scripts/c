@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+##########################
+# OSC 52 Escape Sequence #
+##########################
+
 DATA="$(base64 --wrap=0)"
 
 case "$TERM" in
