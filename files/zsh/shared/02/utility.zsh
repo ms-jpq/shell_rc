@@ -2,7 +2,6 @@
 #################### Utility Region ####################
 #################### ############## ####################
 
-alias c='clipcopy'
 alias p='clippaste'
 
 alias trash='trash -v'
