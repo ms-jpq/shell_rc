@@ -6,17 +6,12 @@
 
 DATA="$(base64 --wrap=0)"
 
-case "$TERM" in
-  xterm-256color)
-    ENCODING="\e]52;c;%s\07"
-    ;;
-  screen-256color)
-    ENCODING="\ePtmux;\e\e]52;c;%s\a\e\\"
-    ;;
-  *)
-    echo "unrecognized TERM - $TERM"
-    return 1
-esac
+if [[ -v "TMUX" ]]
+then
+  ENCODING="\ePtmux;\e\e]52;c;%s\a\e\\"
+else
+  ENCODING="\e]52;c;%s\07"
+fi
 
 ENCODED="$(printf "$ENCODING" "$DATA")"
 
