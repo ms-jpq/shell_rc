@@ -2,9 +2,10 @@
 #################### Core Region ####################
 #################### ########### ####################
 
-export PAGER="less"
-export LESS="-KQRJi --mouse"
+export PAGER='less'
+export LESS='-KQRJi --mouse'
 
+export MANPAGER='nvim +Man!'
 
 # Safety
 alias rm='rm -I'
@@ -16,7 +17,7 @@ alias cls='clear'
 alias sudo='sudo -E '
 
 
-export TIME_STYLE="long-iso"
+export TIME_STYLE='long-iso'
 alias ls='exa --group-directories-first --icons -hF'
 alias l='ls -1'
 alias ll='ls -lg'
