@@ -2,8 +2,8 @@
 #################### Core Region ####################
 #################### ########### ####################
 
-export PAGER="tee"
-export LESS="-KQRFi"
+export PAGER="less"
+export LESS="-KQRJi --mouse"
 
 
 # Safety
