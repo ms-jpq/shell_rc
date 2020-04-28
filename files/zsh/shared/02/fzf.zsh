@@ -30,6 +30,7 @@ export FZF_TMUX_HEIGHT='100%'
 export FZF_COMPLETION_OPTS="$(printf "--preview '%s'" "$FZF_PREVIEW")"
 
 alias f='fzf'
+alias fp='fzf --preview $FZF_PREVIEW'
 
 
 d() {
