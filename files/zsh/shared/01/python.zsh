@@ -2,7 +2,7 @@
 #################### Python Env Region ####################
 #################### ################# ####################
 
-if [[ "$SHLVL" -eq 1  ]]
+if [[ "$SHLVL" -eq 1 ]]
 then
   export PYENV_ROOT="$XDG_CONFIG_HOME/pyenv"
   export PATH="$PYENV_ROOT/bin:$PATH"

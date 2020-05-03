@@ -2,7 +2,7 @@
 #################### Path Region ####################
 #################### ########### ####################
 
-if [[ "$SHLVL" -eq 1  ]]
+if [[ "$SHLVL" -eq 1 ]]
 then
   export PATH="/usr/local/sbin:$PATH"
   export PATH="/usr/local/opt/lsof/bin:$PATH"
