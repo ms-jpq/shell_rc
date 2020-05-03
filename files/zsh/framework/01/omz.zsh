@@ -70,7 +70,6 @@ plugins=(zsh-syntax-highlighting
          history-substring-search
          fzf
          fzf-tab
-         z
          fd
          ripgrep
          colorize

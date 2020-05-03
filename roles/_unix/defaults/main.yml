@@ -33,6 +33,9 @@ git_repos:
   - src: "https://github.com/Aloxaf/fzf-tab.git"
     dest: "{{ _omz_dir_ }}/custom/plugins/fzf-tab"
 
+  - src: "https://github.com/rupa/z.git"
+    dest: "{{ _zsh_dir_ }}/z"
+
   - src: "https://github.com/seebi/dircolors-solarized"
     dest: "{{ _zsh_dir_ }}/dircolors-solarized"
 
@@ -85,7 +88,7 @@ target_dirs:
 
 
 target_touches:
-  - "{{ _zsh_dir_ }}/z"
+  - "{{ _zsh_dir_ }}/zz"
 
 
 target_files:
