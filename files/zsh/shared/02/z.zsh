@@ -10,7 +10,7 @@ export _Z_CMD='__z'
 
 z() {
   local A="$(_z -l "$@" 2>&1)"
-  local B="$(echo "$A" | sed -e "s/^[0-9|\.]\+[ ]\+//" -e "/^common:[ ]\+/d")"
+  local B="$(echo "$A" | sd '^[\d|\.|common:]+\s+' '')"
   if [[ -z "$B" ]]
   then
     echo "no such file or directory: $*"
