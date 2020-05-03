@@ -18,3 +18,5 @@ git_conf:
     value: Fly me to the moon
   - name: user.email
     value: git@bigly.dog
+  - name: diff.algorithm
+    value: minimal

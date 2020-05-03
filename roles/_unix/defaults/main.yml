@@ -125,6 +125,13 @@ target_templates:
     dest: "~/.nanorc"
 
 
+target_lines:
+  - file: "~/.ssh/config"
+    line: |-
+      ServerAliveInterval 1
+      ServerAliveCountMax 5
+
+
 target_links:
   - src: "{{ _conf_home_ }}/zsh/.zshenv"
     dest: "~/.zshenv"
