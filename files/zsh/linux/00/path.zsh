@@ -2,4 +2,7 @@
 #################### Path Region ####################
 #################### ########### ####################
 
-export PATH="/snap/bin:$PATH"
+if [[ "$SHLVL" -eq 1  ]]
+then
+  export PATH="/snap/bin:$PATH"
+fi
