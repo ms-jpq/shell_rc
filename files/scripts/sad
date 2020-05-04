@@ -3,7 +3,7 @@
 import argparse
 import asyncio as a
 import difflib
-import functools
+import locale
 import operator
 import sys
 
@@ -98,8 +98,9 @@ async def main():
   files = (args.source
            if args.source
            else [f for f in stdin.split(delim)if f])
-
+  files.sort(key=locale.strxfrm)
   assert len(files)
+
 
   if args.commit:
     tasks = (sd(
