@@ -27,7 +27,7 @@ export FZF_PREVIEW="test -d {} \
 
 export FZF_FD_PREFIX='fd -HIL'
 
-export FZF_DEFAULT_COMMAND="$FZF_FD_PREFIX -t f"
+export FZF_DEFAULT_COMMAND="$FZF_FD_PREFIX -t f -t l"
 export FZF_COMPLETION_OPTS="$(printf "--preview '%s'" "$FZF_PREVIEW")"
 
 export FZF_ALT_C_COMMAND="$FZF_FD_PREFIX -0 -t d -t l"
