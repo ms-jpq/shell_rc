@@ -62,14 +62,10 @@ async def colour(colourizer, diff):
   return out
 
 
-async def preview(colourizer, flags, pattern, replace, file):
+async def preview(flags, pattern, replace, file):
   replaced = await sd(True, flags, pattern, replace, file)
   changed, dif = await diff(file, replaced)
-  if not changed:
-    return None
-  else:
-    coloured = await colour(colourizer, dif)
-    return coloured
+  return dif if changed else None
 
 
 def parse():
@@ -105,11 +101,6 @@ def parse():
       "--print0",
       action="store_true")
 
-  parser.add_argument(
-      "-c",
-      "--colour",
-      default="diff-so-fancy")
-
   return parser.parse_args()
 
 
@@ -136,7 +127,6 @@ async def main():
     await a.gather(*tasks)
   else:
     tasks = (preview(
-        args.colour,
         flags,
         args.pattern,
         args.replace,
