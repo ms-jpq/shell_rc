@@ -5,6 +5,7 @@ import asyncio as a
 import difflib
 import locale
 import operator
+import os
 import sys
 
 
@@ -20,7 +21,21 @@ async def pipe(program, *args, stdin=None):
   return stdout.decode(), stderr.decode(), process.returncode
 
 
+def is_file(path):
+  if os.path.islink(path):
+    return is_file(os.readlink(path))
+  else:
+    return os.path.isfile(path)
+
+
+def sd_flags(literal, regex):
+  l_flags = ["-s"] if literal else []
+  r_flags = [f"--flags={''.join(regex)}"] if regex else []
+  return [*l_flags, *r_flags]
+
+
 async def sd(preview, flags, pattern, replace, file):
+  assert is_file(file), f"Not file :: {file}"
   op = operator.or_ if preview else operator.sub
   flagset = op(set(flags), set(["-p"]))
   args = [*flagset, pattern, replace, file]
@@ -64,8 +79,8 @@ def parse():
   parser.add_argument("replace")
 
   parser.add_argument(
-      "-s",
-      "--source",
+      "-i",
+      "--input",
       nargs="+",
       default=[])
 
@@ -74,6 +89,11 @@ def parse():
       "--flags",
       nargs="+",
       default=[])
+
+  parser.add_argument(
+      "-s",
+      "--string",
+      action="store_true")
 
   parser.add_argument(
       "-k",
@@ -97,17 +117,18 @@ async def main():
   args = parse()
   stdin = sys.stdin.read()
   delim = "\0" if args.print0 else "\n"
-  files = (args.source
-           if args.source
+  files = (args.input
+           if args.input
            else [f for f in stdin.split(delim)if f])
   files.sort(key=locale.strxfrm)
   assert len(files)
 
+  flags = sd_flags(args.string, args.flags)
 
   if args.commit:
     tasks = (sd(
         False,
-        args.flags,
+        flags,
         args.pattern,
         args.replace,
         f)
@@ -116,7 +137,7 @@ async def main():
   else:
     tasks = (preview(
         args.colour,
-        args.flags,
+        flags,
         args.pattern,
         args.replace,
         f)
