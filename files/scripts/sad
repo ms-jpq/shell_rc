@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+
+import argparse
+import asyncio as a
+import difflib
+import functools
+import operator
+import sys
+
+
+async def pipe(program, *args, stdin=None):
+  process = await a.create_subprocess_exec(
+      *[program, *args],
+      stdin=a.subprocess.PIPE,
+      stdout=a.subprocess.PIPE,
+      stderr=a.subprocess.PIPE)
+
+  msg = stdin.encode() if stdin else None
+  stdout, stderr = await process.communicate(msg)
+  return stdout.decode(), stderr.decode(), process.returncode
+
+
+async def sd(preview, flags, pattern, replace, file):
+  op = operator.or_ if preview else operator.sub
+  flagset = op(set(flags), set(["-p"]))
+  args = [*flagset, pattern, replace, file]
+  out, err, code = await pipe("sd", *args)
+  assert code == 0, err
+  return out
+
+
+async def diff(before, after):
+  max_w = 10000
+  flags = ["--suppress-common-lines",
+           f"--width={max_w}",
+           "--unified=3", ]
+  args = [*flags, before, "/dev/stdin"]
+  out, err, code = await pipe("diff", *args, stdin=after)
+  assert code in [0, 1], err
+  changed = code == 1
+  return changed, out
+
+
+async def colour(colourizer, diff):
+  out, err, code = await pipe(colourizer, stdin=diff)
+  assert code == 0, err
+  return out
+
+
+async def preview(colourizer, flags, pattern, replace, file):
+  replaced = await sd(True, flags, pattern, replace, file)
+  changed, dif = await diff(file, replaced)
+  if changed:
+    coloured = await colour(colourizer, dif)
+    return coloured
+
+
+def parse():
+  parser = argparse.ArgumentParser()
+
+  parser.add_argument("pattern")
+  parser.add_argument("replace")
+
+  parser.add_argument(
+      "-f",
+      "--flags",
+      nargs="+",
+      default=[])
+
+  parser.add_argument(
+      "-k",
+      "--commit",
+      action="store_true")
+
+  parser.add_argument(
+      "-0",
+      "--print0",
+      action="store_true")
+
+  parser.add_argument(
+      "-c",
+      "--colour",
+      default="diff-so-fancy")
+
+  return parser.parse_args()
+
+
+async def main():
+  args = parse()
+  stdin = sys.stdin.read()
+  delim = "\0" if args.print0 else "\n"
+  files = [f for f in stdin.split(delim)
+           if f]
+
+  assert len(files)
+
+  if args.commit:
+    tasks = (sd(
+        False,
+        args.flags,
+        args.pattern,
+        args.replace,
+        f)
+        for f in files)
+    await a.gather(*tasks)
+  else:
+    tasks = (preview(
+        args.colour,
+        args.flags,
+        args.pattern,
+        args.replace,
+        f)
+        for f in files)
+    diffs = await a.gather(*tasks)
+    for dif in diffs:
+      print(dif)
+
+
+if __name__ == "__main__":
+  loop = a.get_event_loop()
+  loop.run_until_complete(main())
+  loop.close()

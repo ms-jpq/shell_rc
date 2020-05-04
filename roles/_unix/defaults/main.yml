@@ -127,9 +127,9 @@ target_templates:
 
 target_lines:
   - file: "~/.ssh/config"
-    line: |-
-      ServerAliveInterval 1
-      ServerAliveCountMax 5
+    line: "ServerAliveInterval 1"
+  - file: "~/.ssh/config"
+    line: "ServerAliveCountMax 5"
 
 
 target_links:
