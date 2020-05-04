@@ -84,11 +84,13 @@ target_dirs:
   - "{{ _zsh_dir_ }}"
   - "{{ _zsh_dir_ }}/intrinsic"
   - "{{ _conf_home_ }}/scripts"
+  - "~/.ssh"
   - "~/.bin"
 
 
 target_touches:
   - "{{ _zsh_dir_ }}/zz"
+  - "~/.ssh/config"
 
 
 target_files:
