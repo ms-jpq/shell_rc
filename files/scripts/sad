@@ -62,6 +62,12 @@ def parse():
   parser.add_argument("replace")
 
   parser.add_argument(
+      "-s",
+      "--source",
+      nargs="+",
+      default=[])
+
+  parser.add_argument(
       "-f",
       "--flags",
       nargs="+",
@@ -89,8 +95,9 @@ async def main():
   args = parse()
   stdin = sys.stdin.read()
   delim = "\0" if args.print0 else "\n"
-  files = [f for f in stdin.split(delim)
-           if f]
+  files = (args.source
+           if args.source
+           else [f for f in stdin.split(delim)if f])
 
   assert len(files)
 
