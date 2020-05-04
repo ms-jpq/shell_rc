@@ -26,6 +26,11 @@ async def pipe(program, *args, stdin=None):
     return stdout.decode(), stderr.decode(), process.returncode
 
 
+def read(path):
+  with open(path, "r") as fd:
+    return fd.readlines()
+
+
 def is_file(path):
   if os.path.islink(path):
     return is_file(os.readlink(path))
@@ -49,18 +54,6 @@ async def sd(preview, flags, pattern, replace, file):
   return out
 
 
-async def diff(before, after):
-  max_w = 10000
-  flags = ["--suppress-common-lines",
-           f"--width={max_w}",
-           "--unified=3", ]
-  args = [*flags, before, "/dev/stdin"]
-  out, err, code = await pipe("diff", *args, stdin=after)
-  assert code in [0, 1], err
-  changed = code == 1
-  return changed, out
-
-
 async def colour(colourizer, diff):
   out, err, code = await pipe(colourizer, stdin=diff)
   assert code == 0, err
@@ -68,9 +61,14 @@ async def colour(colourizer, diff):
 
 
 async def preview(flags, pattern, replace, file):
-  replaced = await sd(True, flags, pattern, replace, file)
-  changed, dif = await diff(file, replaced)
-  return dif if changed else None
+  t_sd = a.create_task(sd(True, flags, pattern, replace, file))
+  t_read = a.get_event_loop().run_in_executor(None, read, file)
+  before, replaced = await a.gather(t_read, t_sd)
+  after = replaced.splitlines(True)
+  if before == after:
+    return []
+  else:
+    return difflib.unified_diff(before, after, fromfile=file, tofile=file)
 
 
 def parse():
@@ -140,10 +138,11 @@ async def main():
     diffs = await a.gather(*tasks)
     for dif in diffs:
       if dif:
-        print(dif)
+        print(*dif, sep="", end="")
 
 
 if __name__ == "__main__":
   loop = a.get_event_loop()
   loop.run_until_complete(main())
   loop.close()
+
