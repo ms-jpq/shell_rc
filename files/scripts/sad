@@ -3,6 +3,7 @@
 import argparse
 import asyncio as a
 import difflib
+import itertools
 import locale
 import multiprocessing
 import operator
@@ -63,7 +64,9 @@ def diff(file, before, after):
         after,
         fromfile=file,
         tofile=file)
-    return dif
+    # pretend it's git -- for diff-so-fancy
+    prefix = f"diff --git {file} {file}\n"
+    return itertools.chain([prefix], dif)
 
 
 async def preview(flags, pattern, replace, file):
@@ -142,7 +145,7 @@ async def main():
     diffs = await a.gather(*tasks)
     for dif in diffs:
       if dif:
-        print(*dif, sep="")
+        print(*dif, sep="", end="")
 
 
 if __name__ == "__main__":
