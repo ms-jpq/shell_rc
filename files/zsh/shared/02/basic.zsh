@@ -3,7 +3,7 @@
 #################### ########### ####################
 
 export PAGER='less'
-export LESS='-KQRJi --mouse'
+export LESS='-KQRJi~ --mouse --tabs=2 --no-histdups'
 
 export MANPAGER='nvim +Man!'
 
