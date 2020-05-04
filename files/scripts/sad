@@ -10,7 +10,7 @@ import os
 import sys
 
 
-semaphore = a.BoundedSemaphore(multiprocessing.cpu_count())
+semaphore = a.BoundedSemaphore(multiprocessing.cpu_count() + 1)
 
 
 async def pipe(program, *args, stdin=None):
