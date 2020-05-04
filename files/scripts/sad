@@ -50,7 +50,9 @@ async def colour(colourizer, diff):
 async def preview(colourizer, flags, pattern, replace, file):
   replaced = await sd(True, flags, pattern, replace, file)
   changed, dif = await diff(file, replaced)
-  if changed:
+  if not changed:
+    return None
+  else:
     coloured = await colour(colourizer, dif)
     return coloured
 
@@ -121,7 +123,8 @@ async def main():
         for f in files)
     diffs = await a.gather(*tasks)
     for dif in diffs:
-      print(dif)
+      if dif:
+        print(dif)
 
 
 if __name__ == "__main__":
