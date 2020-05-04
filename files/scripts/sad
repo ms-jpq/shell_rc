@@ -8,11 +8,9 @@ import multiprocessing
 import operator
 import os
 import sys
-from datetime import datetime, timezone
 
 
 semaphore = a.BoundedSemaphore(multiprocessing.cpu_count() + 1)
-cur_time = datetime.now()
 
 
 async def pipe(program, *args, stdin=None):
@@ -56,22 +54,15 @@ async def sd(preview, flags, pattern, replace, file):
   return out
 
 
-def time_fmt(date):
-  return date.astimezone().strftime("%Y-%m-%d %H:%M:%S.%f %z")
-
-
-def diff(file, mod_time, before, after):
+def diff(file, before, after):
   if before == after:
     return []
   else:
-    file_time = datetime.fromtimestamp(mod_time)
     dif = difflib.unified_diff(
         before,
         after,
         fromfile=file,
-        tofile=file,
-        fromfiledate=time_fmt(file_time),
-        tofiledate=time_fmt(cur_time))
+        tofile=file)
     return dif
 
 
@@ -79,10 +70,9 @@ async def preview(flags, pattern, replace, file):
   loop = a.get_event_loop()
   t_sd = a.create_task(sd(True, flags, pattern, replace, file))
   t_read = loop.run_in_executor(None, read, file)
-  t_mod = loop.run_in_executor(None, os.path.getmtime, file)
-  before, replaced, mod_time = await a.gather(t_read, t_sd, t_mod)
+  before, replaced = await a.gather(t_read, t_sd)
   after = replaced.splitlines(True)
-  return diff(file, mod_time, before, after)
+  return diff(file, before, after)
 
 
 def parse():
