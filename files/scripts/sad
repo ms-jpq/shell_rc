@@ -8,47 +8,49 @@ import locale
 import os
 import re
 import sys
+from argparse import Namespace
+from typing import Any, Dict, Iterable, List, Set, Tuple
 
 
-def run(fun, *args):
+def run(fun, *args: List[Any]):
   loop = a.get_running_loop()
   return loop.run_in_executor(None, fun, *args)
 
 
-def is_file(path):
+def is_file(path: str) -> bool:
   if os.path.islink(path):
     return is_file(os.readlink(path))
   else:
     return os.path.isfile(path)
 
 
-def read(path):
+def read(path: str) -> List[str]:
   assert is_file(path), f"Not file :: {path}"
   with open(path, "r") as fd:
     return fd.readlines()
 
 
-def write(path, content):
+def write(path: str, content: str) -> None:
   with open(path, "w") as fd:
     fd.write(content)
 
 
-def parse_flags(flags):
-  lokup = {"i": re.DOTALL,
-           "m": re.IGNORECASE,
-           "s": re.MULTILINE}
-  coll = set(lokup[f] for f in flags)
+def parse_flags(flags: Iterable[str]) -> int:
+  lokup: Dict[str, int] = {"i": re.DOTALL,
+                           "m": re.IGNORECASE,
+                           "s": re.MULTILINE}
+  coll: Set[int] = set(lokup[f] for f in flags)
   return sum(coll)
 
 
-def sd(exact, flags, pattern, replace, text):
+def sd(exact: bool, flags: int, pattern: str, replace: str, text: str) -> str:
   if exact:
     return text.replace(pattern, replace)
   else:
     return re.sub(pattern, replace, text, flags)
 
 
-def diff(file, before, after):
+def diff(file: str, before: List[str], after: List[str]) -> Iterable[str]:
   if before == after:
     return []
   else:
@@ -62,23 +64,26 @@ def diff(file, before, after):
     return itertools.chain([prefix], dif)
 
 
-def preview(exact, flags, pattern, replace, file):
-  lines = read(file)
-  txt = "".join(lines)
+def delta(exact: bool, flags: int, pattern: str, replace: str, file: str) -> Tuple[List[str], str, str]:
+  before = read(file)
+  txt = "".join(before)
   replaced = sd(exact, flags, pattern, replace, txt)
+  return before, txt, replaced
+
+
+def preview(exact: bool, flags: int, pattern: str, replace: str, file: str) -> Iterable[str]:
+  before, _, replaced = delta(exact, flags, pattern, replace, file)
   after = replaced.splitlines(True)
-  return diff(file, lines, after)
+  return diff(file, before, after)
 
 
-def replace(exact, flags, pattern, replace, file):
-  lines = read(file)
-  txt = "".join(lines)
-  replaced = sd(exact, flags, pattern, replace, txt)
-  if replaced != txt:
+def replace(exact: bool, flags: int, pattern: str, replace: str, file: str) -> None:
+  _, before, replaced =  delta(exact, flags, pattern, replace, file)
+  if replaced != before:
     write(file, replaced)
 
 
-def parse():
+def parse() -> Namespace:
   parser = argparse.ArgumentParser()
 
   parser.add_argument("pattern")
@@ -114,13 +119,13 @@ def parse():
   return parser.parse_args()
 
 
-async def main():
+async def main() -> None:
   args = parse()
-  stdin = sys.stdin.read()
+  stdin: str = sys.stdin.read()
   delim = "\0" if args.print0 else "\n"
-  files = (args.input
-           if args.input
-           else [f for f in stdin.split(delim)if f])
+  files: Iterable[str] = (args.input
+                          if args.input
+                          else [f for f in stdin.split(delim)if f])
   files.sort(key=locale.strxfrm)
   assert len(files)
 
