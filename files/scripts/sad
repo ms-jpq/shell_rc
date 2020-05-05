@@ -5,31 +5,14 @@ import asyncio as a
 import difflib
 import itertools
 import locale
-import multiprocessing
-import operator
 import os
+import re
 import sys
 
 
-semaphore = a.BoundedSemaphore(multiprocessing.cpu_count() + 1)
-
-
-async def pipe(program, *args, stdin=None):
-  async with semaphore:
-    process = await a.create_subprocess_exec(
-        *[program, *args],
-        stdin=a.subprocess.PIPE,
-        stdout=a.subprocess.PIPE,
-        stderr=a.subprocess.PIPE)
-
-    msg = stdin.encode() if stdin else None
-    stdout, stderr = await process.communicate(msg)
-    return stdout.decode(), stderr.decode(), process.returncode
-
-
-def read(path):
-  with open(path, "r") as fd:
-    return fd.readlines()
+def run(fun, *args):
+  loop = a.get_running_loop()
+  return loop.run_in_executor(None, fun, *args)
 
 
 def is_file(path):
@@ -39,20 +22,30 @@ def is_file(path):
     return os.path.isfile(path)
 
 
-def sd_flags(literal, regex):
-  l_flags = ["-s"] if literal else []
-  r_flags = [f"--flags={''.join(regex)}"] if regex else []
-  return [*l_flags, *r_flags]
+def read(path):
+  assert is_file(path), f"Not file :: {path}"
+  with open(path, "r") as fd:
+    return fd.readlines()
 
 
-async def sd(preview, flags, pattern, replace, file):
-  assert is_file(file), f"Not file :: {file}"
-  op = operator.or_ if preview else operator.sub
-  flagset = op(set(flags), set(["-p"]))
-  args = [*flagset, pattern, replace, file]
-  out, err, code = await pipe("sd", *args)
-  assert code == 0, err
-  return out
+def write(path, content):
+  with open(path, "w") as fd:
+    fd.write(content)
+
+
+def parse_flags(flags):
+  lokup = {"i": re.DOTALL,
+           "m": re.IGNORECASE,
+           "s": re.MULTILINE}
+  coll = set(lokup[f] for f in flags)
+  return sum(coll)
+
+
+def sd(exact, flags, pattern, replace, text):
+  if exact:
+    return text.replace(pattern, replace)
+  else:
+    return re.sub(pattern, replace, text, flag)
 
 
 def diff(file, before, after):
@@ -69,13 +62,20 @@ def diff(file, before, after):
     return itertools.chain([prefix], dif)
 
 
-async def preview(flags, pattern, replace, file):
-  loop = a.get_event_loop()
-  t_sd = a.create_task(sd(True, flags, pattern, replace, file))
-  t_read = loop.run_in_executor(None, read, file)
-  before, replaced = await a.gather(t_read, t_sd)
+def preview(exact, flags, pattern, replace, file):
+  lines = read(file)
+  txt = "".join(lines)
+  replaced = sd(exact, flags, pattern, replace, txt)
   after = replaced.splitlines(True)
-  return diff(file, before, after)
+  return diff(file, lines, after)
+
+
+def replace(exact, flags, pattern, replace, file):
+  lines = read(file)
+  txt = "".join(lines)
+  replaced = sd(exact, flags, pattern, replace, txt)
+  if replaced != txt:
+    write(file, replaced)
 
 
 def parse():
@@ -97,8 +97,8 @@ def parse():
       default=[])
 
   parser.add_argument(
-      "-s",
-      "--string",
+      "-e",
+      "--exact",
       action="store_true")
 
   parser.add_argument(
@@ -124,24 +124,18 @@ async def main():
   files.sort(key=locale.strxfrm)
   assert len(files)
 
-  flags = sd_flags(args.string, args.flags)
+  cmds = [args.exact,
+          parse_flags(args.flags),
+          args.pattern,
+          args.replace, ]
 
   if args.commit:
-    tasks = (sd(
-        False,
-        flags,
-        args.pattern,
-        args.replace,
-        f)
-        for f in files)
+    tasks = (run(replace, *cmds, f)
+             for f in files)
     await a.gather(*tasks)
   else:
-    tasks = (preview(
-        flags,
-        args.pattern,
-        args.replace,
-        f)
-        for f in files)
+    tasks = (run(preview, *cmds, f)
+             for f in files)
     diffs = await a.gather(*tasks)
     for dif in diffs:
       if dif:
@@ -152,4 +146,3 @@ if __name__ == "__main__":
   loop = a.get_event_loop()
   loop.run_until_complete(main())
   loop.close()
-
