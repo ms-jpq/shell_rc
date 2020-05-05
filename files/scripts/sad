@@ -45,7 +45,7 @@ def sd(exact, flags, pattern, replace, text):
   if exact:
     return text.replace(pattern, replace)
   else:
-    return re.sub(pattern, replace, text, flag)
+    return re.sub(pattern, replace, text, flags)
 
 
 def diff(file, before, after):
