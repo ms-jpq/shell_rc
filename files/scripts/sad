@@ -9,7 +9,8 @@ import os
 import re
 import sys
 from argparse import Namespace
-from typing import Any, Dict, Iterable, List, Set, Tuple
+from re import Pattern
+from typing import Any, Dict, Iterable, List, Set, Tuple, Union
 
 
 def run(fun, *args: List[Any]):
@@ -43,11 +44,11 @@ def parse_flags(flags: Iterable[str]) -> int:
   return sum(coll)
 
 
-def sd(exact: bool, flags: int, pattern: str, replace: str, text: str) -> str:
+def sd(exact: bool, pattern: Union[str, Pattern], replace: str, text: str) -> str:
   if exact:
     return text.replace(pattern, replace)
   else:
-    return re.sub(pattern, replace, text, flags)
+    return re.sub(pattern, replace, text)
 
 
 def diff(file: str, before: List[str], after: List[str]) -> Iterable[str]:
@@ -64,21 +65,21 @@ def diff(file: str, before: List[str], after: List[str]) -> Iterable[str]:
     return itertools.chain([prefix], dif)
 
 
-def delta(exact: bool, flags: int, pattern: str, replace: str, file: str) -> Tuple[List[str], str, str]:
+def delta(exact: bool, pattern: Union[str, Pattern], replace: str, file: str) -> Tuple[List[str], str, str]:
   before = read(file)
   txt = "".join(before)
-  replaced = sd(exact, flags, pattern, replace, txt)
+  replaced = sd(exact, pattern, replace, txt)
   return before, txt, replaced
 
 
-def preview(exact: bool, flags: int, pattern: str, replace: str, file: str) -> Iterable[str]:
-  before, _, replaced = delta(exact, flags, pattern, replace, file)
+def preview(exact: bool, pattern: Union[str, Pattern], replace: str, file: str) -> Iterable[str]:
+  before, _, replaced = delta(exact, pattern, replace, file)
   after = replaced.splitlines(True)
   return diff(file, before, after)
 
 
-def replace(exact: bool, flags: int, pattern: str, replace: str, file: str) -> None:
-  _, before, replaced =  delta(exact, flags, pattern, replace, file)
+def replace(exact: bool, pattern: Union[str, Pattern], replace: str, file: str) -> None:
+  _, before, replaced = delta(exact, pattern, replace, file)
   if replaced != before:
     write(file, replaced)
     return file
@@ -132,9 +133,12 @@ async def main() -> None:
   files.sort(key=locale.strxfrm)
   assert len(files)
 
+  flags = parse_flags(args.flags)
+  pattern = (args.pattern
+             if args.exact
+             else re.compile(args.pattern, flags))
   cmds = [args.exact,
-          parse_flags(args.flags),
-          args.pattern,
+          pattern,
           args.replace, ]
 
   if args.commit:
