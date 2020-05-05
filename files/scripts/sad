@@ -36,9 +36,9 @@ def write(path: str, content: str) -> None:
 
 
 def parse_flags(flags: Iterable[str]) -> int:
-  lokup: Dict[str, int] = {"i": re.DOTALL,
-                           "m": re.IGNORECASE,
-                           "s": re.MULTILINE}
+  lokup: Dict[str, int] = {"i": re.IGNORECASE,
+                           "m": re.MULTILINE,
+                           "s": re.DOTALL}
   coll: Set[int] = set(lokup[f] for f in flags)
   return sum(coll)
 
@@ -81,6 +81,9 @@ def replace(exact: bool, flags: int, pattern: str, replace: str, file: str) -> N
   _, before, replaced =  delta(exact, flags, pattern, replace, file)
   if replaced != before:
     write(file, replaced)
+    return file
+  else:
+    return None
 
 
 def parse() -> Namespace:
@@ -137,7 +140,10 @@ async def main() -> None:
   if args.commit:
     tasks = (run(replace, *cmds, f)
              for f in files)
-    await a.gather(*tasks)
+    diffs = await a.gather(*tasks)
+    for dif in diffs:
+      if dif:
+        print(dif)
   else:
     tasks = (run(preview, *cmds, f)
              for f in files)
