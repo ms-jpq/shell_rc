@@ -60,7 +60,7 @@ def diff(file: str, before: List[str], after: List[str]) -> Iterable[str]:
         fromfile=file,
         tofile=file)
     # pretend it's git -- for diff-so-fancy
-    prefix = f"diff --git {file} {file}\n"
+    prefix = f"\ndiff --git {file} {file}\n"
     return itertools.chain([prefix], dif)
 
 
