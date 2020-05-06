@@ -144,5 +144,8 @@ target_links:
   - src: "{{ _conf_home_ }}/diff-so-fancy/diff-so-fancy"
     dest: "/usr/local/bin/diff-so-fancy"
 
+  - src: "/usr/local/bin/diff-so-fancy"
+    dest: "/usr/local/bin/dsf"
+
   - src: "{{ _conf_home_ }}/emacs.d"
     dest: "~/.emacs.d"
