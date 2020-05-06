@@ -75,9 +75,6 @@ git_repos:
   - src: "https://github.com/rbenv/ruby-build.git"
     dest: "{{ _conf_home_ }}/rbenv/plugins/ruby-build"
 
-  - src: "https://github.com/jenv/jenv.git"
-    dest: "{{ _conf_home_ }}/jenv"
-
 
 target_dirs:
   - "{{ _conf_home_ }}"

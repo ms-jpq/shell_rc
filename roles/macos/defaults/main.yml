@@ -92,6 +92,7 @@ _nice_things:
 _fun_things:
   - mpv
   - hyperfine
+  - watchexec
   - termshark
   - neofetch
   - sl
