@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import asyncio as a
 import difflib
 import itertools
 import locale
@@ -11,11 +10,6 @@ import sys
 from argparse import Namespace
 from re import Pattern
 from typing import Any, Dict, Iterable, List, Set, Tuple, Union
-
-
-def run(fun, *args: List[Any]):
-  loop = a.get_running_loop()
-  return loop.run_in_executor(None, fun, *args)
 
 
 def is_file(path: str) -> bool:
@@ -123,7 +117,7 @@ def parse() -> Namespace:
   return parser.parse_args()
 
 
-async def main() -> None:
+def main() -> None:
   args = parse()
   stdin: str = sys.stdin.read()
   delim = "\0" if args.print0 else "\n"
@@ -142,22 +136,17 @@ async def main() -> None:
           args.replace, ]
 
   if args.commit:
-    tasks = (run(replace, *cmds, f)
+    diffs = (replace(*cmds, f)
              for f in files)
-    diffs = await a.gather(*tasks)
     for dif in diffs:
       if dif:
         print(dif)
   else:
-    tasks = (run(preview, *cmds, f)
+    diffs = (preview(*cmds, f)
              for f in files)
-    diffs = await a.gather(*tasks)
     for dif in diffs:
       if dif:
         print(*dif, sep="", end="")
 
 
-if __name__ == "__main__":
-  loop = a.get_event_loop()
-  loop.run_until_complete(main())
-  loop.close()
+main()
