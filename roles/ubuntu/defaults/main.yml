@@ -88,7 +88,7 @@ target_archives:
     dest: "{{ _ansible_tmp_ }}"
   - src: "https://github.com/chmln/sd/releases/download/v0.7.4/sd-0.7.4.x86_64-unknown-linux-gnu.zip"
     dest: "{{ _ansible_tmp_  }}"
-  - src: "https://github.com/ms-jpq/sad/releases/download/0.1.0/release.zip"
+  - src: "https://github.com/ms-jpq/sad/releases/download/0.1.1/release.zip"
     dest: "{{ _ansible_tmp_ }}"
 
 
@@ -97,7 +97,7 @@ target_remote_copy:
     dest: "{{ _exec_bin_ }}/exa"
   - src: "{{ _ansible_tmp_ }}/b/x86_64-unknown-linux-gnu/release/sd"
     dest: "{{ _exec_bin_ }}/sd"
-  - src: "{{ _ansible_tmp_ }}/out/x86_64-unknown-linux-gnu"
+  - src: "{{ _ansible_tmp_ }}/sad/x86_64-unknown-linux-gnu"
     dest: "{{ _exec_bin_ }}/sad"
 
 

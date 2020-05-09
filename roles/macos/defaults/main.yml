@@ -109,12 +109,12 @@ brew_packages: "{{ _core_utils + _editors + _nice_things + _fun_things }}"
 
 
 target_archives:
-  - src: "https://github.com/ms-jpq/sad/releases/download/0.1.0/release.zip"
+  - src: "https://github.com/ms-jpq/sad/releases/download/0.1.1/release.zip"
     dest: "{{ _ansible_tmp_ }}"
 
 
 target_remote_copy:
-  - src: "{{ _ansible_tmp_ }}/out/x86_64-apple-darwin"
+  - src: "{{ _ansible_tmp_ }}/sad/x86_64-apple-darwin"
     dest: "{{ _exec_bin_ }}/sad"
 
 
