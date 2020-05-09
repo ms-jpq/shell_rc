@@ -1,7 +1,4 @@
 ---
-
-_exec_bin_: "/usr/local/bin"
-
 nano_path: /usr/share/nano
 
 
