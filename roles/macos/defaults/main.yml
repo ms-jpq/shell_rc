@@ -109,7 +109,7 @@ brew_packages: "{{ _core_utils + _editors + _nice_things + _fun_things }}"
 
 
 target_archives:
-  - src: "https://github.com/ms-jpq/sad/releases/download/0.1.1/release.zip"
+  - src: "https://github.com/ms-jpq/sad/releases/download/0.1.4/release.zip"
     dest: "{{ _ansible_tmp_ }}"
 
 
