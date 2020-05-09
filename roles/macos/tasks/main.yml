@@ -14,4 +14,13 @@
 
 - import_tasks: template.yml
 
+- import_tasks: unarchive.yml
+  when: _all_
+
+- import_tasks: remote_copy.yml
+  when: _all_
+
 - import_tasks: link.yml
+
+- import_tasks: chmod.yml
+

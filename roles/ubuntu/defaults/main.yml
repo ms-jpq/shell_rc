@@ -1,12 +1,9 @@
 ---
 
-_ansible_tmp_: "/tmp/ansible"
 _exec_bin_: "/usr/local/bin"
 
 nano_path: /usr/share/nano
 
-target_dirs:
-  - "{{ _ansible_tmp_ }}"
 
 target_files:
   - src: "zsh/linux/"

@@ -13,8 +13,6 @@
 - import_tasks: apt_deb.yml
   when: _all_
 
-- import_tasks: mkdir.yml
-
 - import_tasks: sync.yml
 
 - import_tasks: template.yml
