@@ -90,6 +90,8 @@ target_dirs:
   - "{{ _local_bin_ }}"
   - "{{ _conf_home_ }}/scripts"
   - "~/.ssh"
+  - "~/.cache"
+  - "~/.cache/zsh"
 
 
 target_touches:
