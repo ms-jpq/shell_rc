@@ -4,7 +4,6 @@
 
 alias p='clippaste'
 
-alias trash='trash -v'
 
 alias rsy='rsync -ah --no-o --no-g --info progress2'
 

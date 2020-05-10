@@ -5,13 +5,13 @@
 export PAGER='less'
 export LESS='-KQRJi~ --mouse --tabs=2 --no-histdups'
 
-export MANPAGER='nvim +Man!'
 
 # Safety
 alias rm='rm -I'
 alias mv='mv -i'
 alias cp='cp -i'
 # Safety
+
 
 alias cls='clear'
 alias sudo='sudo -E '
@@ -30,6 +30,7 @@ export BAT_STYLE=plain
 alias cat='bat'
 
 
+export MANPAGER='nvim +Man!'
 ma() {
   man "$1" | col -b
 }

@@ -16,6 +16,9 @@ alias brewup="brew update && \
               brew cask outdated"
 
 
+alias trash='trash -v'
+
+
 vnc() {
   open "vnc://$1:${2:-5900}"
 }
