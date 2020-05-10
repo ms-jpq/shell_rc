@@ -76,7 +76,6 @@ plugins=(zsh-syntax-highlighting
          docker
          kubectl
          helm)
-autoload -U compinit && compinit
 source "$ZSH/oh-my-zsh.sh"
 
 
