@@ -33,8 +33,7 @@ target_links:
     dest: "~/.icloud"
 
 
-brew_repos:
-  - name: cjbassi/gotop
+brew_repos: []
 
 
 _core_utils:
@@ -86,7 +85,6 @@ _nice_things:
   - fd
   - ripgrep
   - sd
-  - gotop
 
 
 _fun_things:
