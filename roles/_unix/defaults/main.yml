@@ -42,6 +42,9 @@ git_repos:
   - src: "https://github.com/dylanaraps/fff"
     dest: "{{ _conf_home_ }}/fff"
 
+  - src: "https://github.com/LuRsT/hr.git"
+    dest: "{{ _conf_home_ }}/hr"
+
   - src: "https://github.com/cyproterone/tmux.git"
     dest: "{{ _conf_home_  }}/tmux"
 
@@ -81,9 +84,9 @@ target_dirs:
   - "{{ _conf_home_ }}"
   - "{{ _zsh_dir_ }}"
   - "{{ _zsh_dir_ }}/intrinsic"
+  - "{{ _local_bin_ }}"
   - "{{ _conf_home_ }}/scripts"
   - "~/.ssh"
-  - "~/.bin"
 
 
 target_touches:
@@ -140,13 +143,13 @@ target_links:
     dest: "~/.tmux.conf"
 
   - src: "{{ _conf_home_ }}/fff/fff"
-    dest: "/usr/local/bin/fff"
+    dest: "{{ _local_bin_  }}/fff"
 
   - src: "{{ _conf_home_ }}/diff-so-fancy/diff-so-fancy"
-    dest: "/usr/local/bin/diff-so-fancy"
+    dest: "{{ _local_bin_ }}/dsf"
 
-  - src: "/usr/local/bin/diff-so-fancy"
-    dest: "/usr/local/bin/dsf"
+  - src: "{{ _conf_home_ }}/hr/hr"
+    dest: "{{ _local_bin_  }}/hr"
 
   - src: "{{ _conf_home_ }}/emacs.d"
     dest: "~/.emacs.d"

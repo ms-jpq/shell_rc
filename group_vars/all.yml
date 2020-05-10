@@ -3,6 +3,7 @@ _ansible_tmp_: "/tmp/ansible"
 
 _exec_bin_: "/usr/local/bin"
 _conf_home_: "~/.config"
+_local_bin_: "{{ _conf_home_ }}/bin"
 
 _ssh_authorized_:
   - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
