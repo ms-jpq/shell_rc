@@ -26,4 +26,4 @@ plugins=(fd
          docker
          kubectl
          helm)
-source "$ZSH/oh-my-zsh.sh"
+# source "$ZSH/oh-my-zsh.sh"

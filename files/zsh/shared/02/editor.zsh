@@ -20,7 +20,6 @@ alias sc='shellcheck'
 #################### ############ ####################
 
 alias e='emacs'
-alias et='bash -c "export EMACS_BENCHMARK=1; time emacs"'
 
 
 #################### ########## ####################

@@ -8,8 +8,6 @@ alias trash='trash -v'
 
 alias rsy='rsync -ah --no-o --no-g --info progress2'
 
-alias gt='gotop -c lite'
-
 
 proxy() {
   if [[ "$#" -eq 0 ]]
