@@ -2,6 +2,12 @@
 #################### FZF Region ####################
 #################### ########## ####################
 
+# INTI #
+source "$ZDOTDIR/fzf/shell/key-bindings.zsh"
+source "$ZDOTDIR/fzf/shell/completion.zsh"
+# INIT #
+
+
 export FZF_COLOUR='light'
 
 export FZF_DEFAULT_OPTS="--color $FZF_COLOUR \
