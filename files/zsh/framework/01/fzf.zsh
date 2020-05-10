@@ -2,12 +2,6 @@
 #################### FZF Region ####################
 #################### ########## ####################
 
-# INTI #
-source "$ZDOTDIR/fzf/shell/key-bindings.zsh"
-source "$ZDOTDIR/fzf/shell/completion.zsh"
-# INIT #
-
-
 export FZF_COLOUR='light'
 
 export FZF_DEFAULT_OPTS="--color $FZF_COLOUR \
@@ -44,6 +38,12 @@ export FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS --read0"
 
 
 export FZF_TMUX_HEIGHT='100%'
+
+
+# INTI #
+source "$ZDOTDIR/fzf/shell/key-bindings.zsh"
+source "$ZDOTDIR/fzf/shell/completion.zsh"
+# INIT #
 
 
 alias f='fzf'

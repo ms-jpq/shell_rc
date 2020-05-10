@@ -3,12 +3,11 @@
 #################### ######## ####################
 
 # INIT
+export _Z_DATA="$ZDOTDIR/zz"
+export _Z_CMD='__z'
 . "$ZDOTDIR/z/z.sh"
 # INIT #
 
-
-export _Z_DATA="$ZDOTDIR/zz"
-export _Z_CMD='__z'
 
 z() {
   local A="$(_z -l "$@" 2>&1)"

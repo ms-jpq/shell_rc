@@ -2,12 +2,7 @@
 #################### FZF Tab Region ####################
 #################### ############## ####################
 
-# INTI #
-source "$ZDOTDIR/fzf-tab/fzf-tab.zsh"
-# INIT #
-
-
-FZF_TAB_OPTS=(
+export FZF_TAB_OPTS=(
   --ansi
   --no-color
   --tiebreak=begin
@@ -17,3 +12,8 @@ FZF_TAB_OPTS=(
   '--query=$query'   # $query will be expanded to query string at runtime.
   '--header-lines=$#headers' # $#headers will be expanded to lines of headers at runtime
 )
+
+
+# INTI #
+source "$ZDOTDIR/fzf-tab/fzf-tab.zsh"
+# INIT #
