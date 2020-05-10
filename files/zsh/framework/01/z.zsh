@@ -2,9 +2,11 @@
 #################### Z Region ####################
 #################### ######## ####################
 
-# INIT
 export _Z_DATA="$ZDOTDIR/zz"
 export _Z_CMD='__z'
+
+
+# INIT
 . "$ZDOTDIR/z/z.sh"
 # INIT #
 
