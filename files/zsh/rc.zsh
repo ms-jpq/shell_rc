@@ -8,10 +8,10 @@ zrc_targets=(
   plugins
 )
 
-for target ($zrc_targets)
+for target in "${zrc_targets[@]}"
 do
   rcs="$XDG_CONFIG_HOME/zsh/$target"
-  for rc ("$rcs"/**/*.zsh)
+  for rc in "$rcs"/**/*.zsh
   do
     source "$rc"
   done
