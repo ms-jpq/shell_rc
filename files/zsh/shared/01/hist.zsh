@@ -2,4 +2,8 @@
 #################### History Region ####################
 #################### ############## ####################
 
+export HISTSIZE=50000
+export SAVEHIST=10000
+
+alias hist='history'
 

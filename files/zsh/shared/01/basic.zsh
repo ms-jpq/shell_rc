@@ -30,9 +30,6 @@ export BAT_STYLE=plain
 alias cat='bat'
 
 
-alias hist='history'
-
-
 ma() {
   man "$1" | col -b
 }
