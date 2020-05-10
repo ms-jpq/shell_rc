@@ -3,9 +3,9 @@
 #################### ############## ####################
 zrc_targets=(
   intrinsic
-  framework
   shared
   distro
+  plugins
 )
 
 for target ($zrc_targets)

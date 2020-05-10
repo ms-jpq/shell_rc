@@ -111,8 +111,8 @@ target_files:
     dest: "{{ _zsh_dir_ }}/shared"
     delete: True
 
-  - src: "zsh/framework/"
-    dest: "{{ _zsh_dir_ }}/framework"
+  - src: "zsh/plugins/"
+    dest: "{{ _zsh_dir_ }}/plugins"
     delete: True
 
   - src: "scripts/"
