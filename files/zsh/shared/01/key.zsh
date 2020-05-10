@@ -4,8 +4,12 @@
 
 # Emacs
 bindkey -e
+# tmux
 bindkey '^[[1;3C' emacs-forward-word
 bindkey '^[[1;3D' emacs-backward-word
+# iterm
+bindkey '^[[C' emacs-forward-word
+bindkey '^[[D' emacs-backward-word
 # Emacs
 
 
@@ -19,4 +23,9 @@ bindkey '\C-x\C-e' edit-command-line
 # History Expansion
 bindkey ' ' magic-space
 # History Expansion
+
+
+# Del key
+bindkey "^[[3~" delete-char
+# Del key
 
