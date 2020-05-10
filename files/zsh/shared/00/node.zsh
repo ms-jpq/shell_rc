@@ -7,7 +7,7 @@ if [[ "$SHLVL" -eq 1 ]]
 then
   export PATH="$NODENV_ROOT/bin:$PATH"
 fi
-eval "$(nodenv init -)"
+eval "$(nodenv init - --no-rehash)"
 
 
 alias np='PATH="$PWD/node_modules/.bin:$PATH" '
