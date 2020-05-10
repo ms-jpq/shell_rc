@@ -16,22 +16,25 @@ git_repos:
     dest: "{{ _omz_dir_ }}"
 
   - src: "https://github.com/romkatv/powerlevel10k"
-    dest: "{{ _omz_dir_ }}/custom/themes/powerlevel10k"
+    dest: "{{ _zsh_dir_ }}/powerlevel10k"
 
   - src: "https://github.com/zsh-users/zsh-syntax-highlighting"
-    dest: "{{ _omz_dir_ }}/custom/plugins/zsh-syntax-highlighting"
+    dest: "{{ _zsh_dir_ }}/zsh-syntax-highlighting"
 
   - src: "https://github.com/zsh-users/zsh-autosuggestions"
-    dest: "{{ _omz_dir_ }}/custom/plugins/zsh-autosuggestions"
+    dest: "{{ _zsh_dir_ }}/zsh-autosuggestions"
 
   - src: "https://github.com/zsh-users/zsh-completions"
-    dest: "{{ _omz_dir_ }}/custom/plugins/zsh-completions"
+    dest: "{{ _zsh_dir_ }}/zsh-completions"
 
   - src: "https://github.com/zsh-users/zsh-history-substring-search"
-    dest: "{{ _omz_dir_ }}/custom/plugins/zsh-history-substring-search"
+    dest: "{{ _zsh_dir_ }}/zsh-history-substring-search"
+
+  - src: "https://github.com/junegunn/fzf.git"
+    dest: "{{ _zsh_dir_  }}/fzf"
 
   - src: "https://github.com/Aloxaf/fzf-tab.git"
-    dest: "{{ _omz_dir_ }}/custom/plugins/fzf-tab"
+    dest: "{{ _zsh_dir_ }}/fzf-tab"
 
   - src: "https://github.com/rupa/z.git"
     dest: "{{ _zsh_dir_ }}/z"
