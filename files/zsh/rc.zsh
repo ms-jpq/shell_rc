@@ -4,6 +4,7 @@
 
 zsh_main() {
   local zrc_targets=(
+    apriori
     intrinsic
     shared
     distro
