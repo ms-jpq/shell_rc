@@ -85,6 +85,9 @@ _nice_things:
   - fd
   - ripgrep
   - sd
+  - tokei
+  - bandwhich
+  - pastel
 
 
 _fun_things:
