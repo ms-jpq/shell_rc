@@ -111,7 +111,5 @@ target_mods:
     mode: "775"
   - path: "{{ _exec_bin_ }}/sd"
     mode: "775"
-  - path: "{{ _exec_bin_ }}/ttyd"
-    mode: "775"
   - path: "{{ _exec_bin_ }}/sad"
     mode: "775"
