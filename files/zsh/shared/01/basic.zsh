@@ -4,6 +4,7 @@
 
 export PAGER='less'
 export LESS='-KQRJi~ --mouse --tabs=2 --no-histdups'
+export LESSHISTFILE="$XDG_CACHE_HOME/less_hist"
 
 
 # Safety
