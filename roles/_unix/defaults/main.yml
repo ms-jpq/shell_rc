@@ -95,7 +95,6 @@ target_dirs:
 
 
 target_touches:
-  - "{{ _zsh_dir_ }}/zz"
   - "~/.ssh/config"
 
 

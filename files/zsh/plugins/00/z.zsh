@@ -2,7 +2,7 @@
 #################### Z Region ####################
 #################### ######## ####################
 
-export _Z_DATA="$ZDOTDIR/zz"
+export _Z_DATA="$XDG_CACHE_HOME/zz"
 export _Z_CMD='__z'
 
 
