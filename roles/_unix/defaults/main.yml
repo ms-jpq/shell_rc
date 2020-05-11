@@ -103,16 +103,6 @@ target_files:
   - src: "config/"
     dest: "~/.config/"
 
-  - src: "zsh/env.zsh"
-    dest: "{{ _zsh_dir_ }}/.zshenv"
-
-  - src: "zsh/rc.zsh"
-    dest: "{{ _zsh_dir_ }}/.zshrc"
-
-  - src: "zsh/bin/"
-    dest: "{{ _zsh_dir_ }}/bin"
-    delete: True
-
   - src: "zsh/shared/"
     dest: "{{ _zsh_dir_ }}/shared"
     delete: True
