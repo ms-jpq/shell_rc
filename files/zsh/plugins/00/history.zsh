@@ -11,5 +11,5 @@ source "$ZDOTDIR/zsh-history-substring-search/zsh-history-substring-search.zsh"
 # INIT #
 
 
-bindkey '^[0A' history-substring-search-up
-bindkey '^[0B' history-substring-search-down
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
