@@ -2,11 +2,6 @@
 nano_path: /usr/share/nano
 
 
-target_files:
-  - src: "zsh/linux/"
-    dest: "{{ _zsh_dir_ }}/distro"
-    delete: True
-
 target_templates:
   - src: "etc/locale.j2"
     dest: "/etc/default/locale"

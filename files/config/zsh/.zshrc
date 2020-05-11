@@ -5,15 +5,19 @@
 zsh_main() {
   local zrc_targets=(
     apriori
-    intrinsic
     shared
-    distro
+    "$(uname | tr '[:upper:]' '[:lower:]')"
     plugins
   )
 
+  for rc in "$XDG_CONFIG_HOME/zsh/intrinsic"/**/*.zsh
+  do
+    source "$rc"
+  done
+
   for target in "${zrc_targets[@]}"
   do
-    local rcs="$XDG_CONFIG_HOME/zsh/$target"
+    local rcs="$XDG_CONFIG_HOME/zsh/rc/$target"
     for rc in "$rcs"/**/*.zsh
     do
       source "$rc"
@@ -22,4 +26,3 @@ zsh_main() {
 }
 
 zsh_main
-

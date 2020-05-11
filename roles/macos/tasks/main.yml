@@ -10,8 +10,6 @@
 
 - import_tasks: localize.yml
 
-- import_tasks: sync.yml
-
 - import_tasks: template.yml
 
 - import_tasks: unarchive.yml
@@ -23,4 +21,3 @@
 - import_tasks: link.yml
 
 - import_tasks: chmod.yml
-

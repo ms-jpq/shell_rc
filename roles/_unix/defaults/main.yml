@@ -103,20 +103,8 @@ target_files:
   - src: "config/"
     dest: "~/.config/"
 
-  - src: "zsh/shared/"
-    dest: "{{ _zsh_dir_ }}/shared"
-    delete: True
-
-  - src: "zsh/apriori/"
-    dest: "{{ _zsh_dir_ }}/apriori"
-    delete: True
-
-  - src: "zsh/plugins/"
-    dest: "{{ _zsh_dir_ }}/plugins"
-    delete: True
-
-  - src: "scripts/"
-    dest: "{{ _conf_home_ }}/scripts"
+  - src: "zsh/"
+    dest: "{{ _zsh_dir_ }}/rc"
     delete: True
 
 
