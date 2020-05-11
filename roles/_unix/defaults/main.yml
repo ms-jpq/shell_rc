@@ -96,6 +96,7 @@ target_dirs:
 
 target_touches:
   - "~/.ssh/config"
+  - "~/.cache/zz"
 
 
 target_files:
