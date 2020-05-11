@@ -113,6 +113,10 @@ target_files:
     dest: "{{ _zsh_dir_ }}/shared"
     delete: True
 
+  - src: "zsh/apriori/"
+    dest: "{{ _zsh_dir_ }}/apriori"
+    delete: True
+
   - src: "zsh/plugins/"
     dest: "{{ _zsh_dir_ }}/plugins"
     delete: True
