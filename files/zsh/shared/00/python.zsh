@@ -9,7 +9,7 @@ then
 fi
 eval "$(pyenv init - --no-rehash)"
 
-export PYTHONSTARTUP="$XDG_CACHE_HOME/pythonrc.py"
+export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"
 
 #################### ########### ####################
 #################### Venv Region ####################
