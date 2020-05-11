@@ -43,10 +43,13 @@ git_repos:
     dest: "{{ _zsh_dir_ }}/dircolors-solarized"
 
   - src: "https://github.com/dylanaraps/fff"
-    dest: "{{ _conf_home_ }}/fff"
+    dest: "{{ _zsh_dir_ }}/fff"
 
   - src: "https://github.com/LuRsT/hr.git"
-    dest: "{{ _conf_home_ }}/hr"
+    dest: "{{ _zsh_dir_ }}/hr"
+
+  - src: "https://github.com/so-fancy/diff-so-fancy.git"
+    dest: "{{ _zsh_dir_ }}/diff-so-fancy"
 
   - src: "https://github.com/cyproterone/tmux.git"
     dest: "{{ _conf_home_  }}/tmux"
@@ -56,9 +59,6 @@ git_repos:
 
   - src: "https://github.com/cyproterone/vim.git"
     dest: "{{ _conf_home_ }}/nvim"
-
-  - src: "https://github.com/so-fancy/diff-so-fancy.git"
-    dest: "{{ _conf_home_ }}/diff-so-fancy"
 
   - src: "https://github.com/cyproterone/emacs.d.git"
     dest: "{{ _conf_home_ }}/emacs.d"
@@ -151,13 +151,13 @@ target_links:
   - src: "{{ _conf_home_ }}/tmux/entry.conf"
     dest: "~/.tmux.conf"
 
-  - src: "{{ _conf_home_ }}/diff-so-fancy/diff-so-fancy"
+  - src: "{{ _zsh_dir_ }}/diff-so-fancy/diff-so-fancy"
     dest: "{{ _local_bin_ }}/diff-so-fancy"
 
-  - src: "{{ _conf_home_ }}/diff-so-fancy/diff-so-fancy"
+  - src: "{{ _zsh_dir_ }}/diff-so-fancy/diff-so-fancy"
     dest: "{{ _local_bin_ }}/dsf"
 
-  - src: "{{ _conf_home_ }}/hr/hr"
+  - src: "{{ _zsh_dir_ }}/hr/hr"
     dest: "{{ _local_bin_  }}/hr"
 
   - src: "{{ _conf_home_ }}/emacs.d"

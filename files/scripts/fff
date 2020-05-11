@@ -118,4 +118,4 @@ export FFF_COL3=6
 # Cursor color [0-9]
 export FFF_COL4=2
 
-. "$XDG_CONFIG_HOME"/fff/fff "$@"
+. "$XDG_CONFIG_HOME"/zsh/fff/fff "$@"
