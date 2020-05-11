@@ -11,7 +11,9 @@ setopt inc_append_history     # add commands to HISTFILE in order of execution
 setopt share_history          # share command history data
 
 
+export HISTFILE="$XDG_CACHE_HOME/zsh_hist"
 export HISTSIZE=50000
 export SAVEHIST=10000
+
 
 alias hist='history'
