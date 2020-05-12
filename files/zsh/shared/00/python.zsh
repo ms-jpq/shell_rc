@@ -12,9 +12,6 @@ eval "$(pyenv init - --no-rehash)"
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"
 
 
-alias python='python3'
-
-
 #################### ########### ####################
 #################### Venv Region ####################
 #################### ########### ####################
@@ -97,5 +94,7 @@ alias pip='pip3'
 #################### Python Region ####################
 #################### ############# ####################
 
+alias python='python3'
 alias py='python3'
 alias srv='python3 -m http.server'
+
