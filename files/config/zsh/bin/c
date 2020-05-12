@@ -44,6 +44,7 @@ def supervise(args: List[str]) -> None:
     if code:
       print(f"ssh exited - {code}", file=sys.stderr)
       print(process.stderr.read().decode(), file=sys.stderr)
+      print("\a")
       exit(code)
 
     line: bytes = process.stdout.readline()
@@ -115,6 +116,7 @@ def main() -> None:
     pass
   except Exception as e:
     print(e, file=sys.stderr)
+    print("\a")
     exit(1)
 
 
