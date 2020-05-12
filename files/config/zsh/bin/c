@@ -25,12 +25,16 @@ def clean_socket(path: str) -> None:
     pass
 
 
-def supervise(args: List[str]) -> None:
+def locate_prog() -> str:
   p = os.path.join(os.getcwd(), os.path.realpath(__file__))
   prog = os.path.relpath(p, os.environ["HOME"])
+  return f"$HOME/{prog}"
 
+
+def supervise(args: List[str]) -> None:
+  prog = locate_prog()
   process = subprocess.Popen(
-      ["ssh", *args, f"$HOME/{prog} -d"],
+      ["ssh", *args, f"{prog} -d"],
       stdout=subprocess.PIPE,
       stderr=subprocess.PIPE)
 
