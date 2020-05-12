@@ -11,6 +11,13 @@ from argparse import Namespace
 from typing import List
 
 
+def clippy(data: str) -> None:
+  if shutil.which("pbcopy"):
+    subprocess.run(["pbcopy"], input=data.encode())
+  else:
+    raise NotImplementedError("⚠️ No clipboard integration ⚠️")
+
+
 def clean_socket(path: str) -> None:
   try:
     os.unlink(path)
@@ -20,21 +27,35 @@ def clean_socket(path: str) -> None:
 
 def supervise(*args: List[str]) -> None:
   process = subprocess.Popen(
-      ["/Users/iiiii/dev.localized/ansible-shell/files/config/zsh/bin/c", "-d"],
-      stdin=subprocess.PIPE,
+      ["ssh", *args, "-c" "c -d"],
       stdout=subprocess.PIPE,
       stderr=subprocess.PIPE)
+
+  buf = bytearray()
   while True:
-    line = process.stdout.readline()
-    print(line)
+    code = process.poll()
+    if code:
+      print(f"ssh exited - {code}", file=sys.stderr)
+      exit(code)
+
+    line: bytes = process.stdout.readline()
+    for b in line:
+      if b == 0:
+        data: str = buf.decode()
+        buf = bytearray()
+        clippy(data)
+        break
+      else:
+        buf.append(b)
 
 
 def remote_daemon(path: str) -> None:
   class Handler(socketserver.BaseRequestHandler):
     def handle(self) -> None:
       with self.request.makefile() as fd:
-        data = fd.read()
-        print(data, end="\0")
+        data: str = fd.read()
+        sys.stdout.write(data)
+        sys.stdout.flush()
 
   clean_socket(path)
   with socketserver.UnixStreamServer(path, Handler) as srv:
@@ -44,20 +65,16 @@ def remote_daemon(path: str) -> None:
 def remote_copy(path: str) -> None:
   with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
     sock.connect(path)
-    data = sys.stdin.read().strip("\n") + "\n"
-    sock.sendall(data.encode())
-
-
-def pipe(prog: str, *args: List[str]) -> None:
-  data: str = sys.stdin.read().strip("\n")
-  subprocess.run([prog], input=data.encode())
+    with sock.makefile("w") as fd:
+      data: str = sys.stdin.read().strip("\n")
+      fd.write(data)
+      fd.write("\0\n")
+      fd.flush()
 
 
 def local_copy() -> None:
-  if shutil.which("pbcopy"):
-    pipe("pbcopy")
-  else:
-    raise NotImplementedError("⚠️ No clipboard integration ⚠️")
+  data: str = sys.stdin.read().strip("\n")
+  clippy(data)
 
 
 def parse_args() -> Namespace:
