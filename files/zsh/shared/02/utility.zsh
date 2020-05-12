@@ -2,9 +2,6 @@
 #################### Utility Region ####################
 #################### ############## ####################
 
-alias p='clippaste'
-
-
 alias rsy='rsync -ah --no-o --no-g --info progress2'
 
 
@@ -46,6 +43,7 @@ extract() {
       ;;
     *)
       echo "Unknown format :: $FILE"
+      exit 1
       ;;
   esac
 }
