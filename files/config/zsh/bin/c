@@ -1,18 +1,78 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
-##########################
-# OSC 52 Escape Sequence #
-##########################
+import argparse
+import os
+import shutil
+import socket
+import socketserver
+import subprocess
+import sys
+from argparse import Namespace
+from pprint import pprint
+from typing import List
 
-DATA="$(base64 --wrap=0)"
 
-if [[ -v "TMUX" ]]
-then
-  ENCODING="\ePtmux;\e\e]52;c;%s\a\e\\"
-else
-  ENCODING="\e]52;c;%s\07"
-fi
+def clean_socket(path: str) -> None:
+  try:
+    os.unlink(path)
+  except IOError:
+    pass
 
-ENCODED="$(printf "$ENCODING" "$DATA")"
 
-echo -ne "$ENCODED"
+def remote_daemon(path: str) -> None:
+  class Handler(socketserver.BaseRequestHandler):
+    def handle(self) -> None:
+      data = self.request.makefile().read()
+      print(data, end="\0")
+
+  clean_socket(path)
+  with socketserver.UnixStreamServer(path, Handler) as srv:
+    srv.serve_forever()
+
+
+def remote_copy(path: str) -> None:
+  with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
+    sock.connect(path)
+    data = sys.stdin.read().strip("\n") + "\n"
+    sock.sendall(data.encode())
+
+
+def pipe(prog: str, *args: List[str]) -> None:
+  data: str = sys.stdin.read().strip("\n")
+  subprocess.run([prog], text=True, input=data)
+
+
+def local_copy() -> None:
+  if shutil.which("pbcopy"):
+    pipe("pbcopy")
+  else:
+    raise NotImplementedError("⚠️ No clipboard integration ⚠️")
+
+
+def parse_args() -> Namespace:
+  socket_path = os.path.join(os.environ["HOME"], ".ssh", "copy_socket")
+  parser = argparse.ArgumentParser()
+  parser.add_argument("-d", "--daemon", action="store_true")
+  parser.add_argument("--socket", default=socket_path)
+  return parser.parse_args()
+
+
+def run() -> None:
+  args = parse_args()
+  if args.daemon:
+    remote_daemon(args.socket)
+  elif os.environ.get("SSH_TTY") is not None:
+    remote_copy(args.socket)
+  else:
+    local_copy()
+
+
+def main() -> None:
+  try:
+    run()
+  except Exception as e:
+    print(e, file=sys.stderr)
+    exit(1)
+
+
+main()
