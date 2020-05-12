@@ -8,7 +8,6 @@ import socketserver
 import subprocess
 import sys
 from argparse import Namespace
-from pprint import pprint
 from typing import List
 
 
@@ -19,11 +18,23 @@ def clean_socket(path: str) -> None:
     pass
 
 
+def supervise(*args: List[str]) -> None:
+  process = subprocess.Popen(
+      ["/Users/iiiii/dev.localized/ansible-shell/files/config/zsh/bin/c", "-d"],
+      stdin=subprocess.PIPE,
+      stdout=subprocess.PIPE,
+      stderr=subprocess.PIPE)
+  while True:
+    line = process.stdout.readline()
+    print(line)
+
+
 def remote_daemon(path: str) -> None:
   class Handler(socketserver.BaseRequestHandler):
     def handle(self) -> None:
-      data = self.request.makefile().read()
-      print(data, end="\0")
+      with self.request.makefile() as fd:
+        data = fd.read()
+        print(data, end="\0")
 
   clean_socket(path)
   with socketserver.UnixStreamServer(path, Handler) as srv:
@@ -39,7 +50,7 @@ def remote_copy(path: str) -> None:
 
 def pipe(prog: str, *args: List[str]) -> None:
   data: str = sys.stdin.read().strip("\n")
-  subprocess.run([prog], text=True, input=data)
+  subprocess.run([prog], input=data.encode())
 
 
 def local_copy() -> None:
@@ -51,7 +62,10 @@ def local_copy() -> None:
 
 def parse_args() -> Namespace:
   socket_path = os.path.join(os.environ["HOME"], ".ssh", "copy_socket")
+  do_supervise = sys.argv[0].endswith("ssh")
   parser = argparse.ArgumentParser()
+  parser.add_argument("-s", "--supervise",
+                      action="store_true", default=do_supervise)
   parser.add_argument("-d", "--daemon", action="store_true")
   parser.add_argument("--socket", default=socket_path)
   return parser.parse_args()
@@ -59,7 +73,9 @@ def parse_args() -> Namespace:
 
 def run() -> None:
   args = parse_args()
-  if args.daemon:
+  if args.supervise:
+    supervise()
+  elif args.daemon:
     remote_daemon(args.socket)
   elif os.environ.get("SSH_TTY") is not None:
     remote_copy(args.socket)
@@ -70,6 +86,8 @@ def run() -> None:
 def main() -> None:
   try:
     run()
+  except KeyboardInterrupt:
+    pass
   except Exception as e:
     print(e, file=sys.stderr)
     exit(1)
