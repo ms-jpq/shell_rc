@@ -8,7 +8,7 @@ import socketserver
 import subprocess
 import sys
 from argparse import Namespace
-from typing import List
+from typing import List, Tuple, Union
 
 
 def clippy(data: str) -> None:
@@ -25,9 +25,9 @@ def clean_socket(path: str) -> None:
     pass
 
 
-def supervise(*args: List[str]) -> None:
+def supervise(args: List[str]) -> None:
   process = subprocess.Popen(
-      ["ssh", *args, "-c" "c -d"],
+      ["ssh", *args, "c -d"],
       stdout=subprocess.PIPE,
       stderr=subprocess.PIPE)
 
@@ -77,21 +77,21 @@ def local_copy() -> None:
   clippy(data)
 
 
-def parse_args() -> Namespace:
-  socket_path = os.path.join(os.environ["HOME"], ".ssh", "copy_socket")
-  do_supervise = sys.argv[0].endswith("ssh")
-  parser = argparse.ArgumentParser()
-  parser.add_argument("-s", "--supervise",
-                      action="store_true", default=do_supervise)
-  parser.add_argument("-d", "--daemon", action="store_true")
-  parser.add_argument("--socket", default=socket_path)
-  return parser.parse_args()
+def parse_args() -> Tuple[bool, Union[Namespace, List[str]]]:
+  if sys.argv[0].endswith("ssh"):
+    return True, sys.argv[1:]
+  else:
+    socket_path = os.path.join(os.environ["HOME"], ".ssh", "copy_socket")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--daemon", action="store_true")
+    parser.add_argument("--socket", default=socket_path)
+    return False, parser.parse_args()
 
 
 def run() -> None:
-  args = parse_args()
-  if args.supervise:
-    supervise()
+  ssh, args = parse_args()
+  if ssh:
+    supervise(args)
   elif args.daemon:
     remote_daemon(args.socket)
   elif os.environ.get("SSH_TTY") is not None:
