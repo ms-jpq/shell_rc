@@ -36,6 +36,7 @@ def supervise(args: List[str]) -> None:
     code = process.poll()
     if code:
       print(f"ssh exited - {code}", file=sys.stderr)
+      print(process.stderr.read().decode(), file=sys.stderr)
       exit(code)
 
     line: bytes = process.stdout.readline()
