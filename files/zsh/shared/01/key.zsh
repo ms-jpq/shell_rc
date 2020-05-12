@@ -4,9 +4,12 @@
 
 # Emacs
 bindkey -e
-# tmux
+
 bindkey '^[[1;3C' emacs-forward-word
 bindkey '^[[1;3D' emacs-backward-word
+
+bindkey '^[[1;9C' emacs-forward-word
+bindkey '^[[1;9D' emacs-backward-word
 # Emacs
 
 
