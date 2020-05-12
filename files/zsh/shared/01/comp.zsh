@@ -19,9 +19,10 @@ export WORDCHARS=''
 
 
 # INIT #
-autoload -U compinit && compinit
-autoload -U +X bashcompinit && bashcompinit
+autoload -U compinit
+autoload -U +X bashcompinit
 compinit -u -C -d "$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
+bashcompinit
 # INIT #
 
 
