@@ -78,13 +78,11 @@ def remote_daemon(path: str) -> None:
 
 
 def remote_copy(path: str) -> None:
+  data: str = sys.stdin.read().strip("\n")
   with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
     sock.connect(path)
-    with sock.makefile("w") as fd:
-      data: str = sys.stdin.read().strip("\n")
-      fd.write(data)
-      fd.write("\0\n")
-      fd.flush()
+    sock.sendall(data.encode())
+    sock.sendall(b'\0\n')
 
 
 def local_copy() -> None:
