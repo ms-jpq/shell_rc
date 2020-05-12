@@ -26,9 +26,15 @@ def clean_socket(path: str) -> None:
 
 
 def locate_prog() -> str:
-  p = os.path.join(os.getcwd(), os.path.realpath(__file__))
-  prog = os.path.relpath(p, os.environ["HOME"])
-  return f"$HOME/{prog}"
+  home = os.environ["HOME"]
+  canonical = os.path.realpath(__file__)
+
+  if canonical.startswith(home):
+    p = os.path.join(os.getcwd(), canonical)
+    prog = os.path.relpath(p, home)
+    return f"$HOME/{prog}"
+  else:
+    return canonical
 
 
 def supervise(args: List[str]) -> None:
