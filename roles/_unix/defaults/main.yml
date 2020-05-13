@@ -67,19 +67,19 @@ git_repos:
     dest: "{{ _xdg_conf_home_ }}/ranger"
 
   - src: "https://github.com/pyenv/pyenv.git"
-    dest: "{{ _xdg_conf_home_ }}/pyenv"
+    dest: "{{ _xdg_data_home_ }}/pyenv"
 
   - src: "https://github.com/nodenv/nodenv.git"
-    dest: "{{ _xdg_conf_home_ }}/nodenv"
+    dest: "{{ _xdg_data_home_ }}/nodenv"
 
   - src: "https://github.com/nodenv/node-build.git"
-    dest: "{{ _xdg_conf_home_ }}/nodenv/plugins/node-build"
+    dest: "{{ _xdg_data_home_ }}/nodenv/plugins/node-build"
 
   - src: "https://github.com/rbenv/rbenv.git"
-    dest: "{{ _xdg_conf_home_ }}/rbenv"
+    dest: "{{ _xdg_data_home_ }}/rbenv"
 
   - src: "https://github.com/rbenv/ruby-build.git"
-    dest: "{{ _xdg_conf_home_ }}/rbenv/plugins/ruby-build"
+    dest: "{{ _xdg_data_home_ }}/rbenv/plugins/ruby-build"
 
 
 target_dirs:

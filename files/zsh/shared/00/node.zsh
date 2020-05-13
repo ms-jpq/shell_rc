@@ -2,7 +2,7 @@
 #################### Node Env Region ####################
 #################### ############### ####################
 
-export NODENV_ROOT="$XDG_CONFIG_HOME/nodenv"
+export NODENV_ROOT="$XDG_DATA_HOME/nodenv"
 if [[ "$SHLVL" -eq 1 ]]
 then
   export PATH="$NODENV_ROOT/bin:$PATH"

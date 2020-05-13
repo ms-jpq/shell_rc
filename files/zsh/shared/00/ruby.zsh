@@ -2,7 +2,7 @@
 #################### Ruby Env Region ####################
 #################### ############### ####################
 
-export RBENV_ROOT="$XDG_CONFIG_HOME/rbenv"
+export RBENV_ROOT="$XDG_DATA_HOME/rbenv"
 if [[ "$SHLVL" -eq 1 ]]
 then
   export PATH="$RBENV_ROOT/bin:$PATH"
