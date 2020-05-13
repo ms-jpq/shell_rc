@@ -8,6 +8,7 @@ zsh_main() {
     shared
     "$(uname | tr '[:upper:]' '[:lower:]')"
     plugins
+    aposteriori
   )
 
   for rc in "$XDG_CONFIG_HOME/zsh/intrinsic"/**/*.zsh
