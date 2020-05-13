@@ -3,9 +3,11 @@
 #################### ########## ####################
 
 omz_main() {
+  export ZSH_CACHE_DIR="$XDG_CACHE_HOME"
+
   local plugins=(
-    # fd
-    # ripgrep
+    fd
+    ripgrep
     colorize
     docker
     # kubectl
@@ -19,9 +21,12 @@ omz_main() {
     if [[ ! -f "$p" ]]
     then
       p="$plug/$plugin.plugin.zsh"
+      source "$p"
     fi
-    source "$p"
+    fpath=("$p" $fpath)
   done
+
+  unset ZSH_CACHE_DIR
 }
 
 omz_main
