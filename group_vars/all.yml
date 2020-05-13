@@ -2,9 +2,10 @@
 _ansible_tmp_: "/tmp/ansible"
 
 _exec_bin_: "/usr/local/bin"
-_conf_home_: "~/.config"
-_local_bin_: "{{ _conf_home_ }}/bin"
-_xdg_cache_dir_: "~/.cache"
+_xdg_conf_home_: "~/.config"
+_xdg_data_home_: "~/.local/share"
+_xdg_cache_home_: "~/.cache"
+_local_bin_: "{{ _xdg_conf_home_ }}/bin"
 
 
 _ssh_authorized_:

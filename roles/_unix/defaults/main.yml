@@ -1,7 +1,7 @@
 ---
 
 ## GLOBAL ##
-_zsh_dir_: "{{ _conf_home_ }}/zsh"
+_zsh_dir_: "{{ _xdg_conf_home_ }}/zsh"
 _omz_dir_: "{{ _zsh_dir_  }}/oh-my-zsh"
 ## GLOBAL ##
 
@@ -52,45 +52,45 @@ git_repos:
     dest: "{{ _zsh_dir_ }}/diff-so-fancy"
 
   - src: "https://github.com/cyproterone/tmux.git"
-    dest: "{{ _conf_home_  }}/tmux"
+    dest: "{{ _xdg_conf_home_  }}/tmux"
 
   - src: "https://github.com/tmux-plugins/tpm"
-    dest: "{{ _conf_home_ }}/tmux/plugins/tpm"
+    dest: "{{ _xdg_conf_home_ }}/tmux/plugins/tpm"
 
   - src: "https://github.com/cyproterone/vim.git"
-    dest: "{{ _conf_home_ }}/nvim"
+    dest: "{{ _xdg_conf_home_ }}/nvim"
 
   - src: "https://github.com/cyproterone/emacs.d.git"
-    dest: "{{ _conf_home_ }}/emacs.d"
+    dest: "{{ _xdg_conf_home_ }}/emacs.d"
 
   - src: "https://github.com/cyproterone/ranger.git"
-    dest: "{{ _conf_home_ }}/ranger"
+    dest: "{{ _xdg_conf_home_ }}/ranger"
 
   - src: "https://github.com/pyenv/pyenv.git"
-    dest: "{{ _conf_home_ }}/pyenv"
+    dest: "{{ _xdg_conf_home_ }}/pyenv"
 
   - src: "https://github.com/nodenv/nodenv.git"
-    dest: "{{ _conf_home_ }}/nodenv"
+    dest: "{{ _xdg_conf_home_ }}/nodenv"
 
   - src: "https://github.com/nodenv/node-build.git"
-    dest: "{{ _conf_home_ }}/nodenv/plugins/node-build"
+    dest: "{{ _xdg_conf_home_ }}/nodenv/plugins/node-build"
 
   - src: "https://github.com/rbenv/rbenv.git"
-    dest: "{{ _conf_home_ }}/rbenv"
+    dest: "{{ _xdg_conf_home_ }}/rbenv"
 
   - src: "https://github.com/rbenv/ruby-build.git"
-    dest: "{{ _conf_home_ }}/rbenv/plugins/ruby-build"
+    dest: "{{ _xdg_conf_home_ }}/rbenv/plugins/ruby-build"
 
 
 target_dirs:
   - "{{ _ansible_tmp_ }}"
   - "~/.ssh"
-  - "{{ _conf_home_ }}"
+  - "{{ _xdg_conf_home_ }}"
+  - "{{ _xdg_data_home_ }}"
   - "{{ _local_bin_ }}"
   - "{{ _zsh_dir_ }}"
   - "{{ _zsh_dir_ }}/intrinsic"
-  - "{{ _conf_home_ }}/scripts"
-  - "~/.local"
+  - "{{ _xdg_conf_home_ }}/scripts"
   - "~/.local/share"
   - "~/.cache"
   - "~/.cache/zsh_comp"
@@ -128,11 +128,11 @@ target_lines:
 
 
 target_links:
-  - src: "{{ _conf_home_ }}/zsh/.zshenv"
+  - src: "{{ _xdg_conf_home_ }}/zsh/.zshenv"
     dest: "~/.zshenv"
 
-  - src: "{{ _conf_home_ }}/tmux/entry.conf"
+  - src: "{{ _xdg_conf_home_ }}/tmux/entry.conf"
     dest: "~/.tmux.conf"
 
-  - src: "{{ _conf_home_ }}/emacs.d"
+  - src: "{{ _xdg_conf_home_ }}/emacs.d"
     dest: "~/.emacs.d"
