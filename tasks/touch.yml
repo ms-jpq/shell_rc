@@ -2,7 +2,6 @@
 
 - name: ensure file exists
   loop: "{{ target_touches }}"
-  copy:
-    content: ""
-    dest: "{{ item }}"
-    force: no
+  file:
+    state: touch
+    path: "{{ item }}"
