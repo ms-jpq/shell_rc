@@ -89,8 +89,8 @@ target_dirs:
   - "{{ _xdg_cache_home_ }}"
   - "{{ _zsh_dir_ }}/intrinsic"
   - "{{ _xdg_conf_home_ }}/git"
-  - "{{ _xdg_data_home_ }}/bin"
   - "{{ _xdg_cache_home_ }}/zsh_comp"
+  - "~/.local/bin"
 
 
 target_touches:
