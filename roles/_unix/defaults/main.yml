@@ -90,6 +90,9 @@ target_dirs:
   - "{{ _local_bin_ }}"
   - "{{ _conf_home_ }}/scripts"
   - "~/.ssh"
+  - "~/.local"
+  - "~/.local/share"
+  - "~/.local/runtime"
   - "~/.cache"
   - "~/.cache/zsh"
 
