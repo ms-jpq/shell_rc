@@ -3,8 +3,13 @@
 - name: sync files
   loop: "{{ target_files }}"
   synchronize:
+    archive: False
     group: False
     owner: False
+    times: False
+    recursive: True
+    links: True
+    perms: True
     delete: "{{ item.delete | default(False) }}"
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

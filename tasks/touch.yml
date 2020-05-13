@@ -4,4 +4,6 @@
   loop: "{{ target_touches }}"
   file:
     state: touch
+    access_time: preserve
+    modification_time: preserve
     path: "{{ item }}"
