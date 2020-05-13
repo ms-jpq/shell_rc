@@ -84,20 +84,17 @@ git_repos:
 
 target_dirs:
   - "{{ _ansible_tmp_ }}"
-  - "~/.ssh"
   - "{{ _xdg_conf_home_ }}"
   - "{{ _xdg_data_home_ }}"
-  - "{{ _local_bin_ }}"
-  - "{{ _zsh_dir_ }}"
+  - "{{ _xdg_cache_home_ }}"
   - "{{ _zsh_dir_ }}/intrinsic"
-  - "{{ _xdg_conf_home_ }}/scripts"
-  - "~/.local/share"
-  - "~/.cache"
-  - "~/.cache/zsh_comp"
+  - "{{ _xdg_data_home_ }}/bin"
+  - "{{ _xdg_cache_home_ }}/zsh_comp"
 
 
 target_touches:
   - "~/.ssh/config"
+  - "{{ _xdg_conf_home_ }}/git/config"
 
 
 target_files:
