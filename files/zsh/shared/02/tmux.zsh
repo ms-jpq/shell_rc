@@ -16,6 +16,6 @@ ta() {
     then
       return
     fi
-    tmux new-session -A -s "${session:-"MAIN"}"
+    tmux new-session -A -s "${session:-"owo"}"
   fi
 }
