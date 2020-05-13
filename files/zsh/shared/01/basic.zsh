@@ -31,6 +31,9 @@ export BAT_STYLE=plain
 alias cat='bat'
 
 
+export WGETRC="$XDG_CONFIG_HOME/wgetrc"
+
+
 export MANPAGER='nvim +Man!'
 ma() {
   man "$1" | col -b
