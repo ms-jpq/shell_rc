@@ -18,14 +18,6 @@ setopt no_menu_complete  # do not autoselect the first completion entry
 export WORDCHARS=''
 
 
-# INIT #
-autoload -U -z compinit
-autoload -U +X bashcompinit
-compinit -u -C -d "$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
-bashcompinit
-# INIT #
-
-
 # Case insensitive matches
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 
