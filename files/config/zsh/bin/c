@@ -95,7 +95,9 @@ def parse_args() -> Tuple[bool, Union[Namespace, List[str]]]:
   if sys.argv[0].endswith("ssh"):
     return True, sys.argv[1:]
   else:
-    socket_path = os.path.join(os.environ["HOME"], ".ssh", "copy_socket")
+    runtime_dir = os.environ.get(
+        "XDG_RUNTIME_DIR", os.path.join(os.environ["HOME"], ".ssh"))
+    socket_path = os.path.join(runtime_dir, "copy_socket")
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--daemon", action="store_true")
     parser.add_argument("--socket", default=socket_path)

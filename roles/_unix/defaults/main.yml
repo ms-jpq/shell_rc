@@ -84,17 +84,16 @@ git_repos:
 
 target_dirs:
   - "{{ _ansible_tmp_ }}"
+  - "~/.ssh"
   - "{{ _conf_home_ }}"
+  - "{{ _local_bin_ }}"
   - "{{ _zsh_dir_ }}"
   - "{{ _zsh_dir_ }}/intrinsic"
-  - "{{ _local_bin_ }}"
   - "{{ _conf_home_ }}/scripts"
-  - "~/.ssh"
   - "~/.local"
   - "~/.local/share"
-  - "~/.local/runtime"
   - "~/.cache"
-  - "~/.cache/zsh"
+  - "~/.cache/zsh_comp"
 
 
 target_touches:
