@@ -20,7 +20,7 @@ proxy() {
 
 
 extract() {
-  local FILE="$1"
+  local FILE="$*"
 
   case "$FILE" in
     *.tar.bz|*.tar.bz2|*.tbz|*.tbz2)

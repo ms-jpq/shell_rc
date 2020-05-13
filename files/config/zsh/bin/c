@@ -7,6 +7,7 @@ import socket
 import socketserver
 import subprocess
 import sys
+import time
 from argparse import Namespace
 from typing import List, Tuple, Union
 
@@ -51,7 +52,7 @@ def supervise(args: List[str]) -> None:
       print(f"ssh exited - {code}", file=sys.stderr)
       print(process.stderr.read().decode(), file=sys.stderr)
       print("\a")
-      exit(code)
+      return
 
     line: bytes = process.stdout.readline()
     for b in line:
@@ -104,7 +105,9 @@ def parse_args() -> Tuple[bool, Union[Namespace, List[str]]]:
 def run() -> None:
   ssh, args = parse_args()
   if ssh:
-    supervise(args)
+    while True:
+      supervise(args)
+      time.sleep(1)
   elif args.daemon:
     remote_daemon(args.socket)
   elif os.environ.get("SSH_TTY") is not None:
