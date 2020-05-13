@@ -116,8 +116,8 @@ target_templates:
   - src: "zsh/tz.zsh.j2"
     dest: "{{ _zsh_dir_ }}/intrinsic/tz.zsh"
 
-  - src: ".nanorc.j2"
-    dest: "~/.nanorc"
+  - src: "config/nanorc.j2"
+    dest: "{{ _xdg_conf_home_ }}/nanorc"
 
 
 target_lines:
