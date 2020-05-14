@@ -19,5 +19,3 @@
   when: _all_
 
 - import_tasks: link.yml
-
-- import_tasks: chmod.yml

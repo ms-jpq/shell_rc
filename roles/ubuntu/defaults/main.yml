@@ -71,6 +71,7 @@ apt_packages: "{{ _languages + _core_utils + _editors + _nice_things + _fun_thin
 
 apt_deb_packages:
   - "https://github.com/cjbassi/gotop/releases/download/3.0.0/gotop_3.0.0_linux_amd64.deb"
+  - "https://github.com/sharkdp/hyperfine/releases/download/v1.9.0/hyperfine_1.9.0_amd64.deb"
 
 
 target_downloads: []
@@ -79,10 +80,12 @@ target_downloads: []
 target_archives:
   - src: "https://github.com/ogham/exa/releases/download/v0.9.0/exa-linux-x86_64-0.9.0.zip"
     dest: "{{ _ansible_tmp_ }}"
-  - src: "https://github.com/chmln/sd/releases/download/v0.7.4/sd-0.7.4.x86_64-unknown-linux-gnu.zip"
+  - src: "https://github.com/chmln/sd/releases/download/v0.7.5/sd.0.7.5-.x86_64-unknown-linux-gnu.zip"
     dest: "{{ _ansible_tmp_  }}"
   - src: "https://github.com/ms-jpq/sad/releases/download/0.1.6/release.zip"
     dest: "{{ _ansible_tmp_ }}"
+  - src: "https://github.com/XAMPPRocky/tokei/releases/download/v11.1.1/tokei-x86_64-unknown-linux-gnu.tar.gz"
+    dest: "{{ _exec_bin_ }}"
 
 
 target_remote_copy:
@@ -105,6 +108,4 @@ target_mods:
   - path: "{{ _exec_bin_ }}/exa"
     mode: "775"
   - path: "{{ _exec_bin_ }}/sd"
-    mode: "775"
-  - path: "{{ _exec_bin_ }}/sad"
     mode: "775"

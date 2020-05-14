@@ -113,7 +113,3 @@ target_remote_copy:
   - src: "{{ _ansible_tmp_ }}/sad/x86_64-apple-darwin"
     dest: "{{ _exec_bin_ }}/sad"
 
-
-target_mods:
-  - path: "{{ _exec_bin_ }}/sad"
-    mode: "775"
