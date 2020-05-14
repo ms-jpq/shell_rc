@@ -1,0 +1,22 @@
+reporting: "on"
+startuppopupversion: 1
+
+confirmOnQuit: True
+
+git:
+  paging:
+    useConfig: True
+
+gui:
+  scrollHeight: 1
+  theme:
+    lightTheme: True
+    activeBorderColor:
+      - blue
+    inactiveBorderColor:
+      - black
+    optionsTextColor:
+      - black
+    selectedLineBgColor:
+      - reverse
+
