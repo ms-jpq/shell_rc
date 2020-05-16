@@ -10,20 +10,28 @@ omz_main() {
     ripgrep
     colorize
     docker
-    # kubectl
+    kubectl
     helm
   )
 
   for plugin in "${plugins[@]}"
   do
     local plug="$XDG_CONFIG_HOME/zsh/oh-my-zsh/plugins/$plugin"
-    local p="$plug/_$plugin"
-    if [[ ! -f "$p" ]]
+    fpath=("$plug" $fpath)
+  done
+
+  # INIT #
+  compinit -u -C -d "$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
+  # INIT #
+
+  for plugin in "${plugins[@]}"
+  do
+    local plug="$XDG_CONFIG_HOME/zsh/oh-my-zsh/plugins/$plugin"
+    local p="$plug/$plugin.plugin.zsh"
+    if [[ -f "$p" ]]
     then
-      p="$plug/$plugin.plugin.zsh"
       source "$p"
     fi
-    fpath=("$p" $fpath)
   done
 
   unset ZSH_CACHE_DIR
