@@ -10,7 +10,7 @@ omz_main() {
     ripgrep
     colorize
     docker
-    kubectl
+    # kubectl
     helm
   )
 
