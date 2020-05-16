@@ -24,3 +24,9 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 # Cache completions:
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh_comp"
+
+
+# INIT
+autoload -U -z compinit
+autoload -U +X bashcompinit
+# INIT
