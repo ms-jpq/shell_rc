@@ -30,7 +30,7 @@ export FZF_FD_PREFIX='fd -HL'
 export FZF_DEFAULT_COMMAND="$FZF_FD_PREFIX -t f -t l"
 export FZF_COMPLETION_OPTS="$(printf "--preview '%s'" "$FZF_PREVIEW")"
 
-export FZF_ALT_C_COMMAND="$FZF_FD_PREFIX -0 -t d"
+export FZF_ALT_C_COMMAND="$FZF_FD_PREFIX -0 -I -t d"
 export FZF_ALT_C_OPTS="$FZF_COMPLETION_OPTS --read0"
 
 export FZF_CTRL_T_COMMAND="$FZF_FD_PREFIX -0"
