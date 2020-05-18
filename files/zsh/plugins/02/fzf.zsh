@@ -10,8 +10,6 @@ export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --border \
                          --cycle \
                          --preview-window right:wrap \
-                         --bind btab:up \
-                         --bind tab:down \
                          --bind ctrl-space:toggle \
                          --bind alt-a:select-all \
                          --bind alt-l:deselect-all"
