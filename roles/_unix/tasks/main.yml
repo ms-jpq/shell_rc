@@ -6,7 +6,7 @@
 - import_tasks: mkdir.yml
 
 - import_tasks: git.yml
-  when: _all_
+  when: _git_ or _all_
 
 - import_tasks: touch.yml
 

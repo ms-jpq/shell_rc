@@ -14,7 +14,10 @@ __web_tz__: "{{ (lookup('pipe', 'curl -s https://ipinfo.io') | from_json).timezo
 __env_tz__: "{{ lookup('env', 'TZ') }}"
 _time_zone_: "{{ (ansible_connection == 'local') | ternary(__web_tz__, __env_tz__) }}"
 
+
+_git_: "{{ git | default(False) | bool }}"
 _all_: "{{ all | default(False) | bool }}"
+
 
 locale: zh_CN
 
