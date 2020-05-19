@@ -45,9 +45,6 @@ git_repos:
   - src: "https://github.com/dylanaraps/fff"
     dest: "{{ _zsh_dir_ }}/fff"
 
-  - src: "https://github.com/LuRsT/hr.git"
-    dest: "{{ _zsh_dir_ }}/hr"
-
   - src: "https://github.com/so-fancy/diff-so-fancy.git"
     dest: "{{ _zsh_dir_ }}/diff-so-fancy"
 
