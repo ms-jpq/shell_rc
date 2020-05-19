@@ -8,6 +8,7 @@ zsh_main() {
     shared
     "$(uname | tr '[:upper:]' '[:lower:]')"
     plugins
+    lang
     aposteriori
   )
 
