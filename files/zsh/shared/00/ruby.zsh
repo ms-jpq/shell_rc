@@ -7,7 +7,7 @@ if [[ "$SHLVL" -eq 1 ]]
 then
   export PATH="$RBENV_ROOT/bin:$PATH"
 fi
-eval "$(rbenv init - --no-rehash)"
+# eval "$(rbenv init - --no-rehash)"
 
 
 export GEM_HOME="$XDG_DATA_HOME/gem"
