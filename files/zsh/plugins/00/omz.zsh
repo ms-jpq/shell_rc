@@ -9,9 +9,9 @@ omz_main() {
     fd
     ripgrep
     colorize
-    docker
-    kubectl
-    helm
+    # docker
+    # kubectl
+    # helm
   )
 
   for plugin in "${plugins[@]}"
