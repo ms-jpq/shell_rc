@@ -7,7 +7,7 @@ if [[ "$SHLVL" -eq 1 ]]
 then
   export PATH="$NODENV_ROOT/bin:$PATH"
 fi
-eval "$(nodenv init - --no-rehash)"
+eval "$(nodenv init -)"
 
 
 export NODE_REPL_HISTORY="$XDG_CACHE_HOME/node_hist"

@@ -7,7 +7,7 @@ if [[ "$SHLVL" -eq 1 ]]
 then
   export PATH="$PYENV_ROOT/bin:$PATH"
 fi
-eval "$(pyenv init - --no-rehash)"
+eval "$(pyenv init -)"
 
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"
 
