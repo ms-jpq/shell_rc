@@ -2,13 +2,6 @@
 #################### Python Env Region ####################
 #################### ################# ####################
 
-export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
-if [[ "$SHLVL" -eq 1 ]]
-then
-  export PATH="$PYENV_ROOT/bin:$PATH"
-fi
-eval "$(pyenv init -)"
-
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"
 
 

@@ -2,14 +2,6 @@
 #################### Ruby Env Region ####################
 #################### ############### ####################
 
-export RBENV_ROOT="$XDG_DATA_HOME/rbenv"
-if [[ "$SHLVL" -eq 1 ]]
-then
-  export PATH="$RBENV_ROOT/bin:$PATH"
-fi
-# eval "$(rbenv init -)"
-
-
 export GEM_HOME="$XDG_DATA_HOME/gem"
 export GEM_SPEC_CACHE="$XDG_CACHE_HOME/gem"
 

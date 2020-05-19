@@ -63,20 +63,8 @@ git_repos:
   - src: "https://github.com/cyproterone/ranger.git"
     dest: "{{ _xdg_conf_home_ }}/ranger"
 
-  - src: "https://github.com/pyenv/pyenv.git"
-    dest: "{{ _xdg_data_home_ }}/pyenv"
-
-  - src: "https://github.com/nodenv/nodenv.git"
-    dest: "{{ _xdg_data_home_ }}/nodenv"
-
-  - src: "https://github.com/nodenv/node-build.git"
-    dest: "{{ _xdg_data_home_ }}/nodenv/plugins/node-build"
-
-  - src: "https://github.com/rbenv/rbenv.git"
-    dest: "{{ _xdg_data_home_ }}/rbenv"
-
-  - src: "https://github.com/rbenv/ruby-build.git"
-    dest: "{{ _xdg_data_home_ }}/rbenv/plugins/ruby-build"
+  - src: "https://github.com/asdf-vm/asdf.git"
+    dest: "{{ _xdg_data_home_ }}/asdf"
 
 
 target_dirs:

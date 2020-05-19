@@ -38,6 +38,7 @@ _core_utils:
   - lsof
   - gettext
   - gnu-which
+  - gnupg
   - openssh
   - mosh
   - tmux
