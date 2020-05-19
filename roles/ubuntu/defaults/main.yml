@@ -70,7 +70,6 @@ apt_packages: "{{ _languages + _core_utils + _editors + _nice_things + _fun_thin
 
 
 apt_deb_packages:
-  - "https://github.com/cjbassi/gotop/releases/download/3.0.0/gotop_3.0.0_linux_amd64.deb"
   - "https://github.com/sharkdp/hyperfine/releases/download/v1.9.0/hyperfine_1.9.0_amd64.deb"
 
 
