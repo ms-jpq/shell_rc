@@ -16,6 +16,7 @@ alias cp='cp -i'
 
 alias cls='clear'
 alias sudo='sudo -E '
+alias cmd='command '
 
 
 export TIME_STYLE='long-iso'
