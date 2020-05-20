@@ -92,7 +92,7 @@ def local_copy() -> None:
 
 
 def parse_args() -> Tuple[bool, Union[Namespace, List[str]]]:
-  if sys.argv[1] == "-d":
+  if len(sys.argv) > 1 and sys.argv[1] == "-d":
     return True, sys.argv[2:]
   else:
     runtime_dir = os.environ.get(
