@@ -20,9 +20,7 @@ omz_main() {
     fpath=("$plug" $fpath)
   done
 
-  # INIT #
-  compinit -i -C -d "$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
-  # INIT #
+  __init_zcompdump
 
   for plugin in "${plugins[@]}"
   do

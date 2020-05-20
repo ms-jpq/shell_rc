@@ -29,3 +29,18 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 # Cache completions:
 zstyle ':completion::complete:*' use-cache on
 zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh_comp"
+
+
+__init_zcompdump() {
+  local dump="$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
+  # # zsh extended glob, based on file mod time
+  local globbed=("$dump"(Nmh-6))
+  if (( $#globbed ))
+  then
+    # found comp < 6 hours
+    compinit -i -C -d "$dump"
+  else
+    # rebuild
+    compinit -i -d "$dump"
+  fi
+}
