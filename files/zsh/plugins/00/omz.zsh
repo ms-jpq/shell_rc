@@ -8,7 +8,6 @@ omz_main() {
   local plugins=(
     fd
     ripgrep
-    colorize
     # docker
     # kubectl
     # helm
