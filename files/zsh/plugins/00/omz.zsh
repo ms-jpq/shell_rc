@@ -21,7 +21,7 @@ omz_main() {
   done
 
   # INIT #
-  compinit -u -C -d "$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
+  compinit -i -C -d "$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
   # INIT #
 
   for plugin in "${plugins[@]}"
