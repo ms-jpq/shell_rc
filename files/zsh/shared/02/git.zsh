@@ -2,7 +2,7 @@
 #################### GIT Region ####################
 #################### ########## ####################
 
-export GIT_PAGER='diff-so-fancy | less'
+export GIT_PAGER='delta --paging=never | less'
 
 alias lg='lazygit'
 
