@@ -27,5 +27,5 @@ zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh_comp"
 
 
 # INIT
-autoload -U -z compinit
+autoload -Uz compinit
 # INIT
