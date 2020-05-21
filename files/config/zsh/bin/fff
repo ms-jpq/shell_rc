@@ -24,15 +24,15 @@ export FFF_KEY_REFRESH="e"
 
 export FFF_KEY_TO_TOP="["
 export FFF_KEY_TO_BOTTOM="]"
-export FFF_KEY_PREVIOUS="p"
+export FFF_KEY_PREVIOUS="0"
 
 
 export FFF_KEY_HIDDEN="."
 export FFF_KEY_ATTRIBUTES="a"
 
 
-export FFF_KEY_MKDIR="m"
 export FFF_KEY_MKFILE="n"
+export FFF_KEY_MKDIR="N"
 
 
 #################### ########## ####################
@@ -61,7 +61,7 @@ export FFF_KEY_MOVE_ALL="X"
 
 # Confirm Marked Actions
 # will open editor
-export FFF_KEY_PASTE="v"
+export FFF_KEY_PASTE="p"
 
 
 # delete
