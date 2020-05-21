@@ -2,7 +2,8 @@
 #################### FZF Region ####################
 #################### ########## ####################
 
-export FZF_COLOUR='--color=light'
+export FZF_COLOUR="--color=light \
+                   --color=bg+:#dee2f7"
 
 export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --reverse \
