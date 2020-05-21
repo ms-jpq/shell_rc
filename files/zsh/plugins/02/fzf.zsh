@@ -9,6 +9,7 @@ export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --no-height \
                          --border \
                          --cycle \
+                         --tabstop=4 \
                          --preview-window right:wrap \
                          --bind ctrl-space:toggle \
                          --bind alt-a:select-all \
