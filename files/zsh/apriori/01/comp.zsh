@@ -44,3 +44,5 @@ __init_zcompdump() {
     compinit -i -d "$dump"
   fi
 }
+__init_zcompdump
+unset -f __init_zcompdump

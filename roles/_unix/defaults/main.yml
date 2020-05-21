@@ -12,9 +12,6 @@ packages:
 
 
 git_repos:
-  - src: "https://github.com/robbyrussell/oh-my-zsh"
-    dest: "{{ _omz_dir_ }}"
-
   - src: "https://github.com/romkatv/powerlevel10k"
     dest: "{{ _zsh_dir_ }}/powerlevel10k"
 
@@ -23,9 +20,6 @@ git_repos:
 
   - src: "https://github.com/zsh-users/zsh-autosuggestions"
     dest: "{{ _zsh_dir_ }}/zsh-autosuggestions"
-
-  - src: "https://github.com/zsh-users/zsh-completions"
-    dest: "{{ _zsh_dir_ }}/zsh-completions"
 
   - src: "https://github.com/zsh-users/zsh-history-substring-search"
     dest: "{{ _zsh_dir_ }}/zsh-history-substring-search"
