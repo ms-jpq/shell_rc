@@ -3,7 +3,7 @@
 #################### ########## ####################
 
 export FZF_COLOUR="--color=light \
-                   --color=bg+:#dee2f7"
+                   --color=bg+:#dfdfdf"
 
 export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --reverse \
