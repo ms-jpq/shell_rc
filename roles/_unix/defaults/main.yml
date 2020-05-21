@@ -76,14 +76,12 @@ target_dirs:
   - "{{ _xdg_data_home_ }}"
   - "{{ _xdg_cache_home_ }}"
   - "{{ _zsh_dir_ }}/intrinsic"
-  - "{{ _xdg_conf_home_ }}/git"
   - "{{ _xdg_cache_home_ }}/zsh_comp"
   - "~/.local/bin"
 
 
 target_touches:
   - "~/.ssh/config"
-  - "{{ _xdg_conf_home_ }}/git/config"
 
 
 target_files:

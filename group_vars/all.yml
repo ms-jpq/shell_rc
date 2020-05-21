@@ -21,10 +21,3 @@ _all_: "{{ all | default(False) | bool }}"
 
 locale: zh_CN
 
-git_conf:
-  - name: user.name
-    value: Fly me to the moon
-  - name: user.email
-    value: git@bigly.dog
-  - name: diff.algorithm
-    value: minimal

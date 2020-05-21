@@ -14,8 +14,6 @@
 
 - import_tasks: template.yml
 
-- import_tasks: git_conf.yml
-
 - import_tasks: lineinfile.yml
 
 - import_tasks: link.yml
