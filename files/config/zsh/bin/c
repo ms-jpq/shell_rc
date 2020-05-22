@@ -19,6 +19,8 @@ def tmux_cp(data: str) -> None:
 
 
 def clippy(data: str) -> None:
+  tmux_cp(data)
+
   if shutil.which("pbcopy"):
     subprocess.run(["pbcopy"], input=data.encode())
   else:
@@ -118,7 +120,6 @@ def run() -> None:
     remote_copy(args.socket, data)
   else:
     data: str = sys.stdin.read().strip("\n")
-    tmux_cp(data)
     clippy(data)
 
 
