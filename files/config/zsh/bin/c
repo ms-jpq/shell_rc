@@ -13,6 +13,9 @@ from typing import List, Tuple, Union
 
 
 def clippy(data: str) -> None:
+  if os.environ.get("TMUX", None):
+    subprocess.run(["tmux", "set-buffer", data])
+
   if shutil.which("pbcopy"):
     subprocess.run(["pbcopy"], input=data.encode())
   else:
