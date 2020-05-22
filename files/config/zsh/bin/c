@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import asyncio
 import os
 import shutil
 import socket
@@ -12,10 +13,12 @@ from argparse import Namespace
 from typing import List, Tuple, Union
 
 
-def clippy(data: str) -> None:
+def tmux_cp(data: str) -> None:
   if os.environ.get("TMUX", None):
     subprocess.run(["tmux", "set-buffer", data])
 
+
+def clippy(data: str) -> None:
   if shutil.which("pbcopy"):
     subprocess.run(["pbcopy"], input=data.encode())
   else:
@@ -81,17 +84,11 @@ def remote_daemon(path: str) -> None:
     srv.serve_forever()
 
 
-def remote_copy(path: str) -> None:
-  data: str = sys.stdin.read().strip("\n")
+def remote_copy(path: str, data: str) -> None:
   with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
     sock.connect(path)
     sock.sendall(data.encode())
     sock.sendall(b'\0\n')
-
-
-def local_copy() -> None:
-  data: str = sys.stdin.read().strip("\n")
-  clippy(data)
 
 
 def parse_args() -> Tuple[bool, Union[Namespace, List[str]]]:
@@ -116,9 +113,13 @@ def run() -> None:
   elif args.daemon:
     remote_daemon(args.socket)
   elif os.environ.get("SSH_TTY") is not None:
-    remote_copy(args.socket)
+    data: str = sys.stdin.read().strip("\n")
+    tmux_cp(data)
+    remote_copy(args.socket, data)
   else:
-    local_copy()
+    data: str = sys.stdin.read().strip("\n")
+    tmux_cp(data)
+    clippy(data)
 
 
 def main() -> None:
