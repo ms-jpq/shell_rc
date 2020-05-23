@@ -11,14 +11,14 @@ export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --border \
                          --cycle \
                          --tabstop=4 \
-                         --preview-window right:wrap \
-                         --bind ctrl-space:toggle \
-                         --bind btab:up \
-                         --bind tab:down \
-                         --bind alt-p:toggle+up \
-                         --bind alt-n:toggle+down \
-                         --bind alt-a:select-all \
-                         --bind alt-l:deselect-all"
+                         --preview-window=right:wrap \
+                         --bind=ctrl-space:toggle \
+                         --bind=btab:up \
+                         --bind=tab:down \
+                         --bind=alt-p:toggle+up \
+                         --bind=alt-n:toggle+down \
+                         --bind=alt-a:select-all \
+                         --bind=alt-l:deselect-all"
 
 export FZF_PREVIEW="test -d {} \
                     && exa \
