@@ -106,6 +106,6 @@ brew_packages: "{{ _core_utils + _editors + _nice_things + _fun_things }}"
 
 
 target_archives:
-  - src: "https://github.com/ms-jpq/sad/releases/download/0.3.0/x86_64-apple-darwin.zip"
+  - src: "https://github.com/ms-jpq/sad/releases/download/0.3.2/x86_64-apple-darwin.zip"
     dest: "{{ _exec_bin_ }}"
 
