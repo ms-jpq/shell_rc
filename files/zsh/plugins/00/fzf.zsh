@@ -13,6 +13,10 @@ export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --tabstop=4 \
                          --preview-window=right:wrap \
                          --bind=ctrl-space:toggle \
+                         --bind=tab:down \
+                         --bind=btab:up \
+                         --bind=shift-down:toggle+down \
+                         --bind=shift-up:toggle+up \
                          --bind=alt-a:select-all \
                          --bind=alt-l:deselect-all"
 
