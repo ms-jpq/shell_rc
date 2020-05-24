@@ -17,6 +17,8 @@ export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --bind=btab:up \
                          --bind=shift-down:toggle+down \
                          --bind=shift-up:toggle+up \
+                         --bind=shift-left:preview-up \
+                         --bind=shift-right:preview-down \
                          --bind=alt-a:select-all \
                          --bind=alt-l:deselect-all"
 
