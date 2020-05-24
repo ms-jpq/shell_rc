@@ -19,3 +19,5 @@ gui:
       - black
     selectedLineBgColor:
       - reverse
+    selectedRangeBgColor:
+      - reverse
