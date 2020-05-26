@@ -3,6 +3,7 @@
 #################### ############## ####################
 
 export FZF_TAB_OPTS=(
+  -m
   --ansi
   --no-color
   --tiebreak=begin
