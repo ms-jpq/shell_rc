@@ -10,7 +10,7 @@ export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --no-height \
                          --border \
                          --cycle \
-                         --tabstop=4 \
+                         --tabstop=2 \
                          --preview-window=right:wrap \
                          --bind=ctrl-space:toggle \
                          --bind=tab:down \
@@ -51,7 +51,7 @@ alias fp='fzf --preview $FZF_PREVIEW'
 
 
 d() {
-  local dest="$(FZF_DEFAULT_COMMAND="$FZF_ALT_C_COMMAND" fp --read0 -q "${*:-""}")"
+  local dest="$(FZF_DEFAULT_COMMAND="$FZF_FD_PREFIX -0 -t d" fp --read0 -q "${*:-""}")"
   cd "$dest" || return 1
 }
 
