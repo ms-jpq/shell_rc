@@ -89,5 +89,6 @@ alias pip='pip3'
 
 alias python='python3'
 alias py='python3'
+alias pd='pydoc'
 alias srv='python3 -m http.server'
 
