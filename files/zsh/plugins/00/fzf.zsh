@@ -22,7 +22,7 @@ export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --bind=alt-a:select-all \
                          --bind=alt-l:deselect-all"
 
-export FZF_PREVIEW='fzf-preview {}'
+export FZF_PREVIEW='preview {}'
 
 export FZF_FD_PREFIX='fd -HL'
 
