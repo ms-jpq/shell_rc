@@ -23,7 +23,9 @@ export TIME_STYLE='long-iso'
 alias ls='exa --group-directories-first --icons -hF'
 alias l='ls -1'
 alias ll='ls -lg'
-alias tree='ls -T -L'
+tree() {
+  ls -T --level="${1:-2}"
+}
 
 
 export BAT_THEME=GitHub
