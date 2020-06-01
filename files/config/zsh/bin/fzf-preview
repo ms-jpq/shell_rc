@@ -5,7 +5,7 @@ TARGET="$1"
 
 if [[ -d "$TARGET" ]]
 then
-  exa --color=always --group-directories-first --icons --level=1 -ahFT "$TARGET"
+  exa --color=always --group-directories-first --icons -ahF1 "$TARGET"
 else
   bat --color=always "$TARGET"
 fi
