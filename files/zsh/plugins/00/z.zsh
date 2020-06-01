@@ -12,7 +12,7 @@ export _Z_CMD='__z'
 
 
 z() {
-  local A="$(_z -l "$@" 2>&1)"
+  local A="$(_z -l -t "$*" 2>&1)"
   local B="$(echo "$A" | sd '^[[\d|\.]|common:]+\s+' '' | awk '!seen[$0]++')"
   if [[ -z "$B" ]]
   then
