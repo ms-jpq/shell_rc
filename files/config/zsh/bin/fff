@@ -105,17 +105,24 @@ export FFF_FAV9=
 export FFF_FILE_FORMAT=" %f"
 export FFF_MARK_FORMAT=" >> %f*"
 
+# Show Hidden
+export FFF_HIDDEN=1
 
-# Directory color [0-9]
+# Directory colour [0-9]
 export FFF_COL1=2
 
-# Status color [0-9]
+# Status colour [0-9]
 export FFF_COL2=7
 
-# Selection color [0-9] (copied/moved files)
+# Selection colour [0-9] (copied/moved files)
 export FFF_COL3=6
 
-# Cursor color [0-9]
+# Cursor colour [0-9]
 export FFF_COL4=2
+
+
+# Status colour
+export FFF_COL5=0
+
 
 . "$XDG_CONFIG_HOME/zsh/fff/fff" "$@"
