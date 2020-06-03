@@ -14,8 +14,9 @@ from typing import List, Tuple, Union
 
 
 def tmux_cp(data: str) -> None:
-  if os.environ.get("TMUX", None):
-    subprocess.run(["tmux", "set-buffer", data])
+  pass
+  # if os.environ.get("TMUX", None):
+  #   subprocess.run(["tmux", "set-buffer", data])
 
 
 def clippy(data: str) -> None:
