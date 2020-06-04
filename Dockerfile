@@ -9,9 +9,9 @@ RUN apt update && \
 
 # VENV
 RUN apt install -y python3-pip && \
-    pip3 install ansible 
+    pip3 install ansible
 
 
 # INSTALL
 COPY . /_install
-RUN ansible-playbook -e all=true /_install/playbooks/docker.ansible.yml
+RUN ansible-playbook -e all=true /_install/docker.ansible.yml

@@ -72,6 +72,7 @@ target_dirs:
   - "{{ _zsh_dir_ }}/intrinsic"
   - "{{ _xdg_cache_home_ }}/zsh_comp"
   - "~/.local/bin"
+  - "~/.ssh"
 
 
 target_touches:
