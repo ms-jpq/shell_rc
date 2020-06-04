@@ -3,5 +3,5 @@
 - name: chmod
   loop: "{{ target_mods }}"
   file:
-    path: "{{ item.path }}"
+    path: "{{ item.src }}"
     mode: "{{ item.mode }}"

@@ -20,4 +20,9 @@ RUN mkdir /_install && \
 COPY . /_install
 RUN source /_install/venv/bin/activate && \
     ansible-playbook -e all=true /_install/docker.ansible.yml
-RUN chsh -s /bin/zsh
+WORKDIR "/root"
+ENTRYPOINT ["/usr/bin/zsh"]
+
+
+# Cleanup
+RUN rm -rf /tmp/ansible /_install
