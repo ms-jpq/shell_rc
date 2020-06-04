@@ -11,8 +11,7 @@ _languages:
 
 _core_utils:
   - sudo
-  - locale
-  - gnupg2
+  - locales
   - mosh
   - tmux
   - socat
@@ -66,6 +65,7 @@ _fun_things:
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
   - "ppa:lazygit-team/release"
+  - "ppa:neovim-ppa/unstable"
 
 
 apt_packages: "{{ _languages + _core_utils + _editors + _nice_things + _fun_things }}"
