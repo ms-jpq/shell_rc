@@ -5,7 +5,7 @@
 
   tasks:
     - assert:
-        that: ansible_distribution != 'MacOSX'
+        that: ansible_distribution == 'Ubuntu'
 
     - import_role:
         name: _unix
