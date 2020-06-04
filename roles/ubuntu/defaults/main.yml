@@ -11,6 +11,8 @@ _languages:
 
 _core_utils:
   - sudo
+  - locale
+  - gnupg2
   - mosh
   - tmux
   - socat

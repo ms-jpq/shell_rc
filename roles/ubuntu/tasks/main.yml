@@ -1,7 +1,5 @@
 ---
 
-- import_tasks: locale.yml
-
 - import_tasks: shell.yml
 
 - import_tasks: apt_repo.yml
@@ -25,3 +23,5 @@
   when: _all_
 
 - import_tasks: link.yml
+
+- import_tasks: locale.yml
