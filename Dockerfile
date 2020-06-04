@@ -1,15 +1,21 @@
 FROM ubuntu
 
 
+# Requirements
 SHELL ["/usr/bin/bash", "-c"]
 RUN apt update && \
-    apt install -y python3-pip
+    apt install -y \
+    python3-venv
 
 
-COPY . /_install
-RUN python3 -m venv /_install/venv && \
+# VENV
+RUN mkdir /_install && \
+    python3 -m venv /_install/venv && \
     source /_install/venv/bin/activate && \
     pip3 install ansible
 
 
-RUN ansible-playbook -e all=true /_install/docker.ansible.yml
+# INSTALL
+COPY . /_install
+RUN source /_install/venv/bin/activate && \
+    ansible-playbook -e all=true /_install/docker.ansible.yml
