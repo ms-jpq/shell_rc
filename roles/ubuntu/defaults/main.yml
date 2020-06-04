@@ -6,8 +6,10 @@ target_templates:
   - src: "etc/locale.j2"
     dest: "/etc/default/locale"
 
+
 _languages:
   - language-pack-zh-hans
+
 
 _core_utils:
   - sudo
