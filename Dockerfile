@@ -24,5 +24,11 @@ WORKDIR "/root"
 ENTRYPOINT ["/usr/bin/zsh"]
 
 
+# Bug
+RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
+
+
 # Cleanup
-RUN rm -rf /tmp/ansible /_install
+RUN apt autoremove -y && \
+    apt clean && \
+    rm -rf /tmp/ansible /_install
