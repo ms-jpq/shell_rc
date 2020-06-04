@@ -5,7 +5,7 @@ set -o pipefail
 
 cd "$(dirname "$0")"
 
-IMAGE="msjpq/env"
+IMAGE="msjpq/cli"
 
 docker build -t "$IMAGE" . -f "Dockerfile"
 
