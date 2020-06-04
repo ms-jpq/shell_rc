@@ -4,18 +4,14 @@ FROM ubuntu
 # Requirements
 SHELL ["/usr/bin/bash", "-c"]
 RUN apt update && \
-    apt install -y \
-    python3-venv
+    apt install -y python3
 
 
 # VENV
-RUN mkdir /_install && \
-    python3 -m venv /_install/venv && \
-    source /_install/venv/bin/activate && \
-    pip3 install ansible
+RUN apt install -y python3-pip && \
+    pip3 install ansible 
 
 
 # INSTALL
 COPY . /_install
-RUN source /_install/venv/bin/activate && \
-    ansible-playbook -e all=true /_install/docker.ansible.yml
+RUN ansible-playbook -e all=true /_install/playbooks/docker.ansible.yml
