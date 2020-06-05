@@ -31,7 +31,7 @@ RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Setup
-RUN nvim
+RUN nvim > /dev/null
 
 
 # Cleanup
