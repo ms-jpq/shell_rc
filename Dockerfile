@@ -30,6 +30,10 @@ ENTRYPOINT ["/usr/bin/zsh"]
 RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
+# Setup
+RUN pip3 install pynvim
+
+
 # Cleanup
 RUN apt autoremove -y && \
     apt clean && \
