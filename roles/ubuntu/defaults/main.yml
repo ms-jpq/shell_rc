@@ -16,7 +16,6 @@ _core_utils:
   - locales
   - mosh
   - tmux
-  - awk
   - rsync
   - curl
   - wget
