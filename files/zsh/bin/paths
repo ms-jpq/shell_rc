@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+
+
+from argparse import ArgumentParser, Namespace
+from os import environ
+from sys import stderr
+from typing import List, Iterable
+
+
+def parse_args() -> Namespace:
+  parser = ArgumentParser()
+  parser.add_argument("command", choices=("add", "remove", "toggle"))
+  parser.add_argument("path")
+  return parser.parse_args()
+
+
+def remove(path: str, paths: List[str], silent=False) -> Iterable[str]:
+  if not silent:
+    print(f"REMOVE -- {path}", file=stderr)
+  return (p for p in paths if p != path)
+
+
+def add(path: str, paths: List[str]) -> Iterable[str]:
+  print(f"ADD -- {path}", file=stderr)
+  return (path, *remove(path, paths, True))
+
+
+def toggle(path: str, paths: List[str]) -> Iterable[str]:
+  return (remove if path in paths else add)(path, paths)
+
+
+def p_path(command: str, path: str) -> Iterable[str]:
+  paths = environ["PATH"].split(":")
+
+  if command == "add":
+    return add(path, paths)
+  elif command == "remove":
+    return remove(path, paths)
+  elif command == "toggle":
+    return toggle(path, paths)
+  else:
+    assert False
+
+
+def main() -> None:
+  args = parse_args()
+  paths = p_path(args.command, args.path)
+  print(*paths, sep=":")
+
+
+main()
