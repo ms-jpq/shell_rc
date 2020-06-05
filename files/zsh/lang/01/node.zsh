@@ -7,3 +7,5 @@ export npm_config_cache="$XDG_CACHE_HOME/npm"
 
 
 alias np='PATH="$PWD/node_modules/.bin:$PATH" '
+
+# Remember fx -- https://github.com/antonmedv/fx
