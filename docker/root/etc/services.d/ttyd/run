@@ -3,7 +3,6 @@
 set -eu
 set -o pipefail
 
-export PATH="/usr/local/bin:$PATH"
 
 THEME="$(cat /etc/ttyd/theme.json)"
 
