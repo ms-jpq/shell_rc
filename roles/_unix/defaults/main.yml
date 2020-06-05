@@ -107,6 +107,6 @@ target_links:
   - src: "{{ _xdg_conf_home_ }}/zsh/.zshenv"
     dest: "~/.zshenv"
 
-  - src: "{{ _xdg_conf_home_ }}/tmux/entry.conf"
+  - src: "{{ _xdg_conf_home_ }}/tmux/tmux.conf"
     dest: "~/.tmux.conf"
 
