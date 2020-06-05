@@ -15,7 +15,7 @@
   "white": "#feffff",
   "cyan": "#52bcaf",
   "magenta": "#f587c5",
-  "foregroud": "#6e7a86",
+  "foreground": "#6e7a86",
   "background": "#f1f1f1",
   "cursor": "#ffb1fa"
 }
