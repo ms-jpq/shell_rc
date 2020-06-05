@@ -1,6 +1,22 @@
 FROM ubuntu
 
 
+ARG S6_VER="2.0.0.1"
+
+
+## S6 Overlay
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_VER}/s6-overlay-amd64.tar.gz /_install
+RUN tar xzf /_install/s6-overlay-amd64.tar.gz -C / --exclude="./bin" && \
+    tar xzf /_install/s6-overlay-amd64.tar.gz -C /usr ./bin
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
+ENTRYPOINT ["/init"]
+
+
+# TTYd
+ADD https://github.com/tsl0922/ttyd/releases/download/1.6.0/ttyd_linux.x86_64 /usr/local/bin
+EXPOSE 8080
+
+
 # Requirements
 SHELL ["/usr/bin/bash", "-c"]
 RUN yes | unminimize && \
@@ -22,9 +38,7 @@ COPY . /_install
 RUN source /_install/venv/bin/activate && \
     ansible-playbook -e all=true /_install/docker.ansible.yml
 SHELL ["/usr/bin/zsh", "-l", "-c"]
-ENTRYPOINT ["/usr/bin/zsh"]
 ENV TERM=xterm-256color
-WORKDIR "/root/WORK"
 
 
 # Bug
