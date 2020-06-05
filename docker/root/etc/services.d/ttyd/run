@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+THEME="$(cat /etc/ttyd/theme.json)"
+
+/usr/local/bin/ttyd --port=8080 -t "$THEME" /usr/bin/zsh
