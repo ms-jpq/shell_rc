@@ -61,7 +61,6 @@ git_repos:
     dest: "{{ _xdg_conf_home_ }}/ranger"
 
 
-
 target_dirs:
   - "{{ _ansible_tmp_ }}"
   - "{{ _xdg_conf_home_ }}"
