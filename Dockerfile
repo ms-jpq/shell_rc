@@ -7,7 +7,7 @@ RUN yes | unminimize && \
     apt update && \
     apt install -y \
     rsync curl gnupg2 \
-    python3 python3-venv python3-apt
+    python3 python3-venv python3-pip python3-apt
 
 
 # VENV
