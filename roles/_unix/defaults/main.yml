@@ -36,6 +36,9 @@ git_repos:
   - src: "https://github.com/seebi/dircolors-solarized"
     dest: "{{ _zsh_dir_ }}/dircolors-solarized"
 
+  - src: "https://github.com/asdf-vm/asdf.git"
+    dest: "{{ _xdg_data_home_ }}/asdf"
+
   - src: "https://github.com/dylanaraps/fff"
     dest: "{{ _zsh_dir_ }}/fff"
 
@@ -57,8 +60,6 @@ git_repos:
   - src: "https://github.com/cyproterone/ranger.git"
     dest: "{{ _xdg_conf_home_ }}/ranger"
 
-  - src: "https://github.com/asdf-vm/asdf.git"
-    dest: "{{ _xdg_data_home_ }}/asdf"
 
 
 target_dirs:
