@@ -3,6 +3,7 @@
 
 from argparse import ArgumentParser, Namespace
 from os import environ
+from os.path import isdir
 from sys import stderr
 from typing import List, Iterable
 
@@ -44,8 +45,12 @@ def p_path(command: str, path: str) -> Iterable[str]:
 
 def main() -> None:
   args = parse_args()
-  paths = p_path(args.command, args.path)
-  print(*paths, sep=":")
+  if not isdir(args.path):
+    print(environ["PATH"])
+    print(f"ERR :: Not A Directory -- {args.path}",file=stderr)
+  else:
+    paths = p_path(args.command, args.path)
+    print(*paths, sep=":")
 
 
 main()
