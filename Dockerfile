@@ -22,6 +22,7 @@ COPY . /_install
 RUN source /_install/venv/bin/activate && \
     ansible-playbook -e all=true /_install/docker.ansible.yml
 SHELL ["/usr/bin/zsh", "-l", "-c"]
+ENV TERM=xterm-256color
 WORKDIR "/root/WORK"
 ENTRYPOINT ["/usr/bin/zsh"]
 
@@ -31,7 +32,7 @@ RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Setup
-RUN pip3 install pynvim
+RUN pip3 install ranger-fm pynvim
 
 
 # Cleanup
