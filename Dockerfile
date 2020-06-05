@@ -3,11 +3,11 @@ FROM ubuntu
 
 # Requirements
 SHELL ["/usr/bin/bash", "-c"]
+RUN yes | unminimize
 RUN apt update && \
     apt install -y \
     rsync curl gnupg2 \
-    python3 python3-venv python3-apt && \
-    unminimize
+    python3 python3-venv python3-apt
 
 
 # VENV
