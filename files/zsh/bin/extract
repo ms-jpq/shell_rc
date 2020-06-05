@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+FILE="$*"
+
+case "$FILE" in
+  *.tar.bz|*.tar.bz2|*.tbz|*.tbz2)
+    tar xjvf "$FILE"
+    ;;
+  *.tar.gz|*.tgz)
+    tar xzvf "$FILE"
+    ;;
+  *.tar.xz|*.txz)
+    tar xJvf "$FILE"
+    ;;
+  *.zip)
+    unzip "$FILE"
+    ;;
+  *.rar)
+    unrar x "$FILE"
+    ;;
+  *.7z)
+    7z x "$FILE"
+    ;;
+  *)
+    echo "Unknown format :: $FILE"
+    exit 1
+    ;;
+esac
