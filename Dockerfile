@@ -3,8 +3,8 @@ FROM ubuntu
 
 # Requirements
 SHELL ["/usr/bin/bash", "-c"]
-RUN yes | unminimize
-RUN apt update && \
+RUN yes | unminimize && \
+    apt update && \
     apt install -y \
     rsync curl gnupg2 \
     python3 python3-venv python3-apt
@@ -28,11 +28,6 @@ ENTRYPOINT ["/usr/bin/zsh"]
 
 # Bug
 RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
-
-
-# Setup
-RUN nvim > /dev/null || true && \
-    echo "DONE"
 
 
 # Cleanup
