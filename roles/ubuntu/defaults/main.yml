@@ -12,6 +12,7 @@ _languages:
 
 
 _core_utils:
+  - man
   - sudo
   - locales
   - mosh
