@@ -12,7 +12,7 @@ RUN tar xzf /_install/s6-overlay-amd64.tar.gz -C / --exclude="./bin" && \
     tar xzf /_install/s6-overlay-amd64.tar.gz -C /usr ./bin
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
     S6_KILL_GRACETIME=0 \
-    S6_LOGGING=2
+    S6_CMD_WAIT_FOR_SERVICES=1
 ENTRYPOINT ["/init"]
 
 
