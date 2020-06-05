@@ -22,9 +22,9 @@ COPY . /_install
 RUN source /_install/venv/bin/activate && \
     ansible-playbook -e all=true /_install/docker.ansible.yml
 SHELL ["/usr/bin/zsh", "-l", "-c"]
+ENTRYPOINT ["/usr/bin/zsh"]
 ENV TERM=xterm-256color
 WORKDIR "/root/WORK"
-ENTRYPOINT ["/usr/bin/zsh"]
 
 
 # Bug
