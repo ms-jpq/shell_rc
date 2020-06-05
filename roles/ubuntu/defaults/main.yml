@@ -16,7 +16,7 @@ _core_utils:
   - locales
   - mosh
   - tmux
-  - socat
+  - awk
   - rsync
   - curl
   - wget
@@ -31,6 +31,7 @@ _core_utils:
   - iftop
   - dstat
   - pv
+  - socat
   - sysstat
   - ncdu
   - iperf3
