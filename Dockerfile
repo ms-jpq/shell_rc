@@ -30,9 +30,7 @@ RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Setup
-RUN mkdir /root/.config/nvim/bin && \
-    cd /root/.config/nvim/bin && \
-    wget "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+RUN nvim
 
 
 # Cleanup
