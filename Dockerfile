@@ -30,10 +30,9 @@ RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Setup
-RUN apt install -y python3-pip && \
-    pip3 install ranger-fm && \
-    curl --create-dirs /root/.config/nvim/bin/plug.vim \
-    "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+RUN mkdir /root/.config/nvim/bin && \
+    cd /root/.config/nvim/bin && \
+    wget "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 
 
 # Cleanup
