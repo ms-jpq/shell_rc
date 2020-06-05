@@ -65,6 +65,17 @@ venv() {
       fi
     fi
     ;;
+  rm)
+    if [[ -d "$DEFAULT_VENV_PATH" ]]
+    then
+      if [[ "$VIRTUAL_ENV" = "$DEFAULT_VENV_PATH" ]]
+      then
+        venv off
+      fi
+      command rm -rf "$DEFAULT_VENV_PATH"
+      echo "Removed - $DEFAULT_VENV_PATH"
+    fi
+    ;;
   *)
     echo "Invalid argument"
     echo "venv - [init | on | off]"
