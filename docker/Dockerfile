@@ -24,6 +24,7 @@ RUN source /_install/venv/bin/activate && \
 SHELL ["/usr/bin/zsh", "-l", "-c"]
 ENV TERM=xterm-256color
 ENTRYPOINT ["/usr/bin/zsh", "-l"]
+WORKDIR "/root"
 
 
 # Bug
