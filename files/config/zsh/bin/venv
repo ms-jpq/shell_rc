@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-set -u
 
 ARG="$1"
 DEFAULT_VENV_PATH=".venv"
