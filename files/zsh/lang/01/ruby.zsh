@@ -11,7 +11,7 @@ gem() {
   then
     command gem "$@"
   else
-    echo "Not in rbenv - require explicit:"
+    echo 'Not in rbenv - require explicit:'
     echo
     echo "command gem $*"
     echo

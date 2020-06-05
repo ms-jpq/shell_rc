@@ -3,5 +3,4 @@
 #################### ############ ####################
 
 
-export PROMPT_EOL_MARK=""
-
+export PROMPT_EOL_MARK=''
