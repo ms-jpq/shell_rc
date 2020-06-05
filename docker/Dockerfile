@@ -16,6 +16,7 @@ ENTRYPOINT ["/init"]
 
 # TTYd
 ADD https://github.com/tsl0922/ttyd/releases/download/${TTYD_VER}/ttyd_linux.x86_64 /_install
+COPY docker/root /
 RUN chmod +x /_install/ttyd_linux.x86_64 && \
     mv /_install/ttyd_linux.x86_64 /usr/local/bin/ttyd
 EXPOSE 8080
