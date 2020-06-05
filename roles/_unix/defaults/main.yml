@@ -110,5 +110,3 @@ target_links:
   - src: "{{ _xdg_conf_home_ }}/tmux/entry.conf"
     dest: "~/.tmux.conf"
 
-  - src: "{{ _xdg_conf_home_ }}/emacs.d"
-    dest: "~/.emacs.d"
