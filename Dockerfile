@@ -21,7 +21,7 @@ RUN mkdir /_install && \
 COPY . /_install
 RUN source /_install/venv/bin/activate && \
     ansible-playbook -e all=true /_install/docker.ansible.yml
-WORKDIR "/WORK"
+WORKDIR "/root/WORK"
 ENTRYPOINT ["/usr/bin/zsh"]
 
 
