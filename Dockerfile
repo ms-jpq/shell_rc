@@ -32,7 +32,7 @@ RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Setup
-RUN ."$XDG_CONFIG_HOME/tmux/bin/tmux_init" && \
+RUN . "$XDG_CONFIG_HOME/tmux/bin/tmux_init" && \
     pip3 install ranger-fm pynvim
 
 
