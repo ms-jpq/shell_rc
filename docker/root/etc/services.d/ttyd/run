@@ -3,7 +3,9 @@
 set -eu
 set -o pipefail
 
+cd "/root" || exit 1
+
 
 THEME="$(cat /etc/ttyd/theme.json)"
 
-/usr/local/bin/ttyd --port=8080 -t "theme=$THEME" -t "fontSize=$FONT_SIZE" /usr/bin/zsh
+/usr/local/bin/ttyd --port=8080 -t "theme=$THEME" -t "fontSize=$FONT_SIZE" zsh
