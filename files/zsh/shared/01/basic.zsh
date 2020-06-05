@@ -38,6 +38,4 @@ export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 
 
 export MANPAGER='nvim +Man!'
-ma() {
-  man "$1" | col -b
-}
+export MANWIDTH='99999'
