@@ -2,6 +2,12 @@
 #################### Tmux Region ####################
 #################### ########### ####################
 
+if [[ -n "$TMUX" ]]
+then
+  PATH="$XDG_CONFIG_HOME/tmux/bin:$PATH"
+fi
+
+
 alias tl='tmux list-sessions'
 
 
