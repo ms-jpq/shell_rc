@@ -45,9 +45,6 @@ git_repos:
   - src: "https://github.com/cyproterone/tmux.git"
     dest: "{{ _xdg_conf_home_  }}/tmux"
 
-  - src: "https://github.com/tmux-plugins/tpm"
-    dest: "{{ _xdg_conf_home_ }}/tmux/plugins/tpm"
-
   - src: "https://github.com/cyproterone/vim.git"
     dest: "{{ _xdg_conf_home_ }}/nvim"
 
