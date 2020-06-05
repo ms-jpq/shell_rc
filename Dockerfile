@@ -35,7 +35,7 @@ RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 RUN . "$XDG_CONFIG_HOME/tmux/bin/tmux_init" && \
     pip3 install ranger-fm pynvim && \
     touch "$XDG_CACHE_HOME/zz" && \
-    source "$XDG_CONFIG_HOME/zsh/powerlevel10k/gitstatus/gitstatus.plugin.zsh"
+    source "$XDG_CONFIG_HOME/zsh/powerlevel10k/gitstatus/gitstatus.plugin.zsh" _p9k_
 
 
 # Cleanup
