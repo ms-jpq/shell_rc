@@ -8,5 +8,10 @@ export PATH="$HOME/.local/bin:$PATH"
 
 
 paths() {
-  export PATH="$(command paths "$1" "$2")"
+  if [[ "$1" = "show" ]]
+  then
+    echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++'
+  else
+    export PATH="$(command paths "$1" "$2")"
+  fi
 }
