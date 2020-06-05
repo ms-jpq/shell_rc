@@ -2,6 +2,7 @@ FROM ubuntu
 
 
 ARG S6_VER="2.0.0.1"
+ARG TTYD_VER="1.6.0"
 
 
 ## S6 Overlay
@@ -13,7 +14,9 @@ ENTRYPOINT ["/init"]
 
 
 # TTYd
-ADD https://github.com/tsl0922/ttyd/releases/download/1.6.0/ttyd_linux.x86_64 /usr/local/bin
+ADD https://github.com/tsl0922/ttyd/releases/download/${TTYD_VER}/ttyd_linux.x86_64 /_install
+RUN chmod +x /_install/ttyd_linux.x86_64 && \
+    mv /_install/ttyd_linux.x86_64 /usr/local/bin/ttyd
 EXPOSE 8080
 
 
