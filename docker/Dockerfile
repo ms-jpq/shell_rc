@@ -20,6 +20,7 @@ COPY docker/root /
 RUN chmod +x /_install/ttyd_linux.x86_64 && \
     mv /_install/ttyd_linux.x86_64 /usr/local/bin/ttyd
 EXPOSE 8080
+ENV FONT_SIZE=16
 
 
 # Requirements
