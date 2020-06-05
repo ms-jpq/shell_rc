@@ -6,7 +6,8 @@ SHELL ["/usr/bin/bash", "-c"]
 RUN apt update && \
     apt install -y \
     rsync curl gnupg2 \
-    python3 python3-venv python3-apt
+    python3 python3-venv python3-apt && \
+    unminimize
 
 
 # VENV
@@ -20,12 +21,18 @@ RUN mkdir /_install && \
 COPY . /_install
 RUN source /_install/venv/bin/activate && \
     ansible-playbook -e all=true /_install/docker.ansible.yml
-WORKDIR "/root"
+WORKDIR "/WORK"
 ENTRYPOINT ["/usr/bin/zsh"]
 
 
 # Bug
 RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
+
+
+# Setup
+RUN pip3 install ranger-fm && \
+    curl --create-dirs /root/.config/nvim/bin/plug.vim \
+    "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 
 
 # Cleanup
