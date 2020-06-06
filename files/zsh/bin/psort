@@ -19,7 +19,7 @@ def main() -> None:
   output_d = "\0" if args.print0 else "\n"
   lines: List[str] = stdin.read().split(input_d)
   lines.sort(key=strxfrm)
-  print(*lines, sep="\n", end="")
+  print(*lines, sep=output_d, end="")
 
 
 main()
