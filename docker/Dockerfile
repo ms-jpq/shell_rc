@@ -42,4 +42,4 @@ RUN . "$XDG_CONFIG_HOME/tmux/bin/tmux-init" && \
 # Cleanup
 RUN apt autoremove -y && \
     apt clean && \
-    rm -rf /tmp/ansible /_install
+    rm -rf /tmp/ansible
