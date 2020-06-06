@@ -36,7 +36,7 @@ RUN . "$XDG_CONFIG_HOME/tmux/bin/tmux-init" && \
     touch "$XDG_CACHE_HOME/zz" && \
     pip3 install ranger-fm pynvim && \
     python3 "$XDG_CONFIG_HOME/ranger/bin/plug.py" && \
-    VIM_INIT=1 nvim > /dev/null
+    VIM_INIT=1 nvim --headless
 
 
 # Cleanup
