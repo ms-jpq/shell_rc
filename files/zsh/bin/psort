@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser, Namespace
+from locale import strxfrm
+from sys import stdin
+from typing import List
+
+
+def parse_args() -> Namespace:
+  parser = ArgumentParser()
+  parser.add_argument("--read0", action="store_true")
+  parser.add_argument("--print0", action="store_true")
+  return parser.parse_args()
+
+
+def main() -> None:
+  args = parse_args()
+  input_d = "\0" if args.read0 else "\n"
+  output_d = "\0" if args.print0 else "\n"
+  lines: List[str] = stdin.read().split(input_d)
+  lines.sort(key=strxfrm)
+  print(*lines, sep="\n", end="")
+
+
+main()
