@@ -35,7 +35,7 @@ RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 RUN . "$XDG_CONFIG_HOME/tmux/bin/tmux-init" && \
     touch "$XDG_CACHE_HOME/zz" && \
     pip3 install ranger-fm pynvim && \
-    . "$XDG_CONFIG_HOME/ranger/bin/plug.py"
+    python3 "$XDG_CONFIG_HOME/ranger/bin/plug.py"
 
 
 # Cleanup
