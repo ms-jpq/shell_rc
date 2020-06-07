@@ -11,7 +11,11 @@ np() {
   do
     paths remove "$p"
   done
-  paths add "$PWD/node_modules/.bin"
+  local this="$PWD/node_modules/.bin"
+  if [[ -d "$this" ]]
+  then
+    paths add "$this"
+  fi
 }
 
 # Remember fx -- https://github.com/antonmedv/fx
