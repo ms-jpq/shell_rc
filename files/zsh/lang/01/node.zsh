@@ -11,6 +11,7 @@ np() {
   do
     paths remove "$p"
   done
+
   local this="$PWD/node_modules/.bin"
   if [[ -d "$this" ]]
   then
