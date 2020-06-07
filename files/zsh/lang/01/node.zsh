@@ -15,6 +15,8 @@ np() {
   if [[ -d "$this" ]]
   then
     paths add "$this"
+  else
+    echo "RESET -- npm PATH"
   fi
 }
 
