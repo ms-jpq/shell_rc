@@ -22,7 +22,7 @@ def remove(path: str, paths: List[str], silent=False) -> Iterable[str]:
 
 
 def add(path: str, paths: List[str]) -> Iterable[str]:
-  print(f"ADD -- {path}", file=stderr)
+  print(f"ADD    -- {path}", file=stderr)
   return (path, *remove(path, paths, True))
 
 

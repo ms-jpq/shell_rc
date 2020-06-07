@@ -7,8 +7,8 @@ zsh_main() {
     apriori
     shared
     "$(uname | tr '[:upper:]' '[:lower:]')"
-    lang
     plugins
+    lang
     aposteriori
   )
 
