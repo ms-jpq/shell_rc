@@ -5,7 +5,7 @@ from os import environ, getcwd, unlink
 from os.path import join, realpath, relpath
 from shutil import which
 from socket import socket, AF_UNIX, SOCK_STREAM
-from socketserver import UnixStreamServer
+from socketserver import BaseRequestHandler, UnixStreamServer
 from subprocess import run, Popen, PIPE
 from sys import argv, stderr, stdin, stdout
 from time import sleep
@@ -74,7 +74,7 @@ def supervise(args: List[str]) -> None:
 
 
 def remote_daemon(path: str) -> None:
-  class Handler(socketserver.BaseRequestHandler):
+  class Handler(BaseRequestHandler):
     def handle(self) -> None:
       with self.request.makefile() as fd:
         data: str = fd.read()
