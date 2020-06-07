@@ -32,7 +32,8 @@ RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Setup
-RUN bash /_install/docker/setup.sh
+RUN source "$XDG_CONFIG_HOME/zsh/.zshrc" && \
+    bash /_install/docker/setup.sh
 
 
 # Cleanup
