@@ -11,7 +11,7 @@ on:
     - cron: "0 0 * * *" # daily
 
 jobs:
-  base_image:
+  build:
     runs-on: ubuntu-latest
 
     steps:
