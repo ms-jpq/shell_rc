@@ -22,3 +22,4 @@ z() {
     cd "$C" || return 1
   fi
 }
+

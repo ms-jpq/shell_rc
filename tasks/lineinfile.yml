@@ -6,3 +6,4 @@
     path: "{{ item.file }}"
     line: "{{ item.line }}"
   register: __lineinfile
+

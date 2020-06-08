@@ -36,3 +36,4 @@ alias ipinfo='curl https://ipinfo.io'
 alias foxd='dr browsh/browsh'
 
 alias icat='catimg'
+

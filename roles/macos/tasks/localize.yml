@@ -20,3 +20,4 @@
     create: True
     path: "{{ item.path ~ '/' ~ item.ascii ~ '.localized/' ~ '.localized/' ~ locale ~ '.strings' }}"
     line: "\"{{ item.ascii }}\" = \"{{ item.name }}\";"
+
