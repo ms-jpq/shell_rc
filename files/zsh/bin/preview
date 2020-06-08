@@ -5,8 +5,8 @@ set -o pipefail
 
 
 TARGET="$1"
-export PAGER='tee'
 
+export PAGER='tee'
 
 if [[ -d "$TARGET" ]]
 then
