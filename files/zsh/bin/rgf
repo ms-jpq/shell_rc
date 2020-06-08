@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+echo "$FZF_PREVIEW_COLUMNS"
+
+OPTIONS='--color=always \
+         --context=2 \
+         --context-separator="$(hr "-" "$FZF_PREVIEW_COLUMNS")"'
+
+
+rg -l "$@" | fzf --preview="rg $OPTIONS $@ {}"
+
