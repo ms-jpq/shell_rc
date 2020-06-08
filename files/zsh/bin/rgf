@@ -7,5 +7,5 @@ OPTIONS='--color=always \
          --context-separator="$(hr "-" "$FZF_PREVIEW_COLUMNS")"'
 
 
-rg -l "$@" | fzf --preview="rg $OPTIONS $@ {}"
+rg "$@" --files-with-matches | fzf --preview="rg $OPTIONS $* {}"
 
