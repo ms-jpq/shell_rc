@@ -30,3 +30,4 @@ case "$FILE" in
     exit 1
     ;;
 esac
+

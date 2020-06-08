@@ -14,3 +14,4 @@ if os.path.isfile(__history_file__) and os.access(__history_file__, os.R_OK):
   readline.read_history_file(__history_file__)
 
 atexit.register(__readline_write_history__, __history_file__)
+
