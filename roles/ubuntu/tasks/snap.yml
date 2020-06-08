@@ -5,3 +5,4 @@
   snap:
     name: "{{ item.name }}"
     classic: "{{ item.classic | default('False') }}"
+

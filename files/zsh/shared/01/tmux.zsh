@@ -25,3 +25,4 @@ ta() {
     tmux new-session -A -s "${session:-"owo"}"
   fi
 }
+

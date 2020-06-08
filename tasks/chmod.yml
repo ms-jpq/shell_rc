@@ -5,3 +5,4 @@
   file:
     path: "{{ item.src }}"
     mode: "{{ item.mode }}"
+

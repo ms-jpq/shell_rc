@@ -32,3 +32,4 @@ export NVIM_LOG_FILE="$XDG_CACHE_HOME/nvim.log"
 alias v='nvim'
 alias vi='nvim'
 alias vim='nvim'
+

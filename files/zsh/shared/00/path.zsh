@@ -15,3 +15,4 @@ paths() {
     export PATH="$(command paths "$1" "$2")"
   fi
 }
+

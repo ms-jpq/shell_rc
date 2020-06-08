@@ -5,3 +5,4 @@
   file:
     state: directory
     path: "{{ item }}"
+
