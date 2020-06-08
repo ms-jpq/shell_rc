@@ -42,9 +42,6 @@ git_repos:
   - src: "https://github.com/dylanaraps/fff"
     dest: "{{ _zsh_dir_ }}/fff"
 
-  - src: "https://github.com/so-fancy/diff-so-fancy.git"
-    dest: "{{ _zsh_dir_ }}/diff-so-fancy"
-
   - src: "https://github.com/cyproterone/tmux.git"
     dest: "{{ _xdg_conf_home_  }}/tmux"
 
