@@ -2,7 +2,6 @@
 #################### MacOS Region ####################
 #################### ############ ####################
 
-alias p='pbpaste'
 alias t='open -f'
 
 alias batt='pmset -g batt'
@@ -27,3 +26,4 @@ resetpad() {
   defaults write com.apple.dock ResetLaunchPad -bool true
   killall Dock
 }
+
