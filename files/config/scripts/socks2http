@@ -38,3 +38,4 @@ try:
   subprocess.call(f"v2ray -config {tmp}".split())
 finally:
   os.unlink(tmp)
+

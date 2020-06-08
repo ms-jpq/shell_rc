@@ -29,3 +29,4 @@ zsh_main() {
 
 zsh_main
 unset -f zsh_main
+
