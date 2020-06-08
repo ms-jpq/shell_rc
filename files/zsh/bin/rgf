@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-echo "$FZF_PREVIEW_COLUMNS"
 
 OPTIONS='--color=always \
          --context=2 \
