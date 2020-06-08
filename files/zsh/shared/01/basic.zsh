@@ -3,7 +3,15 @@
 #################### ########### ####################
 
 export PAGER='less'
-export LESS='-KQRJi~ --mouse --tabs=2 --no-histdups'
+export LESS="--quit-on-intr \
+             --quit-if-one-screen \
+             --mouse \
+             --RAW-CONTROL-CHARS \
+             --tilde \
+             --tabs=2 \
+             --QUIET \
+             --ignore-case \
+             --no-histdups"
 export LESSHISTFILE="$XDG_CACHE_HOME/less_hist"
 
 
