@@ -32,7 +32,6 @@ RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Setup
-ENV GITSTATUS_AUTO_INSTALL=0
 RUN source "$XDG_CONFIG_HOME/zsh/.zshrc" && \
     bash /_install/docker/setup.sh
 
