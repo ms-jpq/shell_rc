@@ -26,3 +26,4 @@ jobs:
           repository: ${{ secrets.DOCKER_USERNAME }}/cli
           tags: latest
           dockerfile: "docker/Dockerfile"
+
