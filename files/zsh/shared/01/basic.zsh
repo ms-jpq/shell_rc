@@ -21,6 +21,7 @@ alias mv='mv -i'
 alias cp='cp -i'
 # Safety
 
+alias mkdir='mkdir -p'
 
 alias cls='clear'
 alias sudo='sudo -E '
