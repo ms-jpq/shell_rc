@@ -3,7 +3,7 @@ FROM ubuntu:latest
 
 # Requirements
 SHELL ["/usr/bin/bash", "-c"]
-RUN mkdir /_install && \
+RUN mkdir -p /_install && \
     yes | unminimize && \
     apt update && \
     apt install -y \
