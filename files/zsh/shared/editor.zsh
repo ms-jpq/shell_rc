@@ -26,8 +26,7 @@ alias e='emacs'
 #################### Vim Region ####################
 #################### ########## ####################
 
-export NVIM_LOG_FILE="$XDG_CACHE_HOME/nvim.log"
-
+export MANPAGER='nvim +Man!'
 
 alias v='nvim'
 alias vi='nvim'

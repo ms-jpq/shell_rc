@@ -12,7 +12,6 @@ export LESS="--quit-on-intr \
              --QUIET \
              --ignore-case \
              --no-histdups"
-export LESSHISTFILE="$XDG_CACHE_HOME/less_hist"
 
 
 # Safety
@@ -20,6 +19,7 @@ alias rm='rm -I'
 alias mv='mv -i'
 alias cp='cp -i'
 # Safety
+
 
 alias mkdir='mkdir -p'
 
@@ -43,8 +43,12 @@ export BAT_STYLE=plain
 alias cat='bat'
 
 
-export WGETRC="$XDG_CONFIG_HOME/wgetrc"
-
-
-export MANPAGER='nvim +Man!'
+paths() {
+  if [[ "$1" = "show" ]]
+  then
+    echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++'
+  else
+    export PATH="$(command paths "$1" "$2")"
+  fi
+}
 
