@@ -62,5 +62,3 @@ alias ctop='drs --name=ctop quay.io/vektorlab/ctop -i -scale-cpu'
 
 alias k9='dr -v "$HOME/.kube":/root/.kube derailed/k9s'
 
-alias sped='dr tianon/speedtest'
-

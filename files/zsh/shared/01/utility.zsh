@@ -14,7 +14,7 @@ proxy() {
     export http_proxy="http://${2:-localhost}:$1"
     export https_proxy="http://${2:-localhost}:$1"
   fi
-  echo "http_proxy=$http_proxy"
+  echo "http_proxy =$http_proxy"
   echo "https_proxy=$https_proxy"
 }
 
