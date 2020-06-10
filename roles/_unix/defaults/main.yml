@@ -54,8 +54,8 @@ git_repos:
   - src: "https://github.com/cyproterone/emacs.d.git"
     dest: "{{ _xdg_conf_home_ }}/emacs.d"
 
-  - src: "https://github.com/cyproterone/git.git"
-    dest: "{{ _xdg_conf_home_ }}/gitrc"
+  - src: "https://github.com/cyproterone/devrc.git"
+    dest: "{{ _xdg_conf_home_ }}/devrc"
 
   - src: "https://github.com/cyproterone/ranger.git"
     dest: "{{ _xdg_conf_home_ }}/ranger"
