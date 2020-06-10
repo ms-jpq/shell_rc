@@ -12,7 +12,7 @@ zsh_main() {
     aposteriori
   )
 
-  for rc in "$XDG_CONFIG_HOME/zsh/intrinsic"/**/*.zsh
+  for rc in "$XDG_CONFIG_HOME/zsh/intrinsic"/**/*.zsh(N)
   do
     source "$rc"
   done
@@ -20,7 +20,7 @@ zsh_main() {
   for target in "${zrc_targets[@]}"
   do
     local rcs="$XDG_CONFIG_HOME/zsh/rc/$target"
-    for rc in "$rcs"/**/*.zsh
+    for rc in "$rcs"/**/*.zsh(N)
     do
       source "$rc"
     done
