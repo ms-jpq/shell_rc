@@ -33,7 +33,7 @@ ARG_NUM=$#
 
 print_err() {
   >&2 echo "$1"
-  >&2 echo 'paths {show, add, remove, toggle} path'
+  >&2 echo 'paths {show, add, remove} path'
 }
 
 
@@ -52,17 +52,23 @@ show() {
 
 remove() {
   local target="$1"
+  local silent="$2"
   local expr="$(printf '$0!="%s" {print $0}' "$target")"
   echo "$PATH" | tr ':' '\n' | awk "$expr" | tr '\n' ':'
+  if [[ "$silent" -eq 0 ]]
+  then
+    >&2 echo "REMOVED -- $target"
+  fi
 }
 
 add() {
   local target="$1"
-  echo "$target:$(remove "$target")"
-}
-
-toggle() {
-  local target="$1"
+  local silent="$2"
+  echo "$target:$(remove "$target" 1)"
+  if [[ "$silent" -eq 0 ]]
+  then
+    >&2 echo "ADDED   -- $target"
+  fi
 }
 
 
@@ -73,15 +79,11 @@ case "$ACTION" in
     ;;
   add)
     check_arg
-    add "$2"
+    add "$2" "$SILENT"
     ;;
   remove)
     check_arg
-    remove "$2"
-    ;;
-  toggle)
-    check_arg
-    toggle "$2"
+    remove "$2" "$SILENT"
     ;;
   *)
     print_err 'ERR!'
