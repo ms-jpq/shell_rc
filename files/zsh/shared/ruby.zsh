@@ -8,9 +8,9 @@ gem() {
     command gem "$@"
   else
     printf '%s\n' 'Not in rbenv - require explicit:'
-    printf '%s\n'
+    printf '\n'
     printf '%s\n' "command gem $*"
-    printf '%s\n'
+    printf '\n'
   fi
 }
 
