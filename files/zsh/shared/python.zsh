@@ -9,9 +9,9 @@ pip3() {
   if [[ -z "$VIRTUAL_ENV" ]]
   then
     printf '%s\n' 'Not in virtualenv - require explicit:'
-    printf '%s\n'
+    printf '\n'
     printf '%s\n' "command pip $*"
-    printf '%s\n'
+    printf '\n'
   else
     command pip3 "$@"
   fi
