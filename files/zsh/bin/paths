@@ -58,15 +58,14 @@ remove() {
   local acc=''
   local IFS=':'
   read -r -a paths <<< "$PATH"
-  for idx in "${!paths[@]}"
+  for path in "${paths[@]}"
   do
-    local sep=''
-    if [[ idx -gt 0 ]]
+    local sep=':'
+    if [[ -z "$acc" ]]
     then
-      sep=':'
+      sep=''
     fi
 
-    local path="${paths[idx]}"
     if [[ "$path" != "$target" ]]
     then
       acc="${acc}${sep}${path}"
