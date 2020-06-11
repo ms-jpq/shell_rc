@@ -23,7 +23,7 @@ do
       break
       ;;
     *)
-      >&2 echo 'ERR!'
+      >&2 echo '!ERR!'
       exit 2
       ;;
   esac
@@ -41,7 +41,7 @@ check_arg() {
   if [[ $ARG_NUM -ne 2 ]]
   then
     print_err 'ERR! -- # of arguments'
-    exit 2
+    exit 1
   fi
 }
 
@@ -50,12 +50,15 @@ show() {
   echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' >&2
 }
 
-add() {
-  local target="$1"
-}
-
 remove() {
   local target="$1"
+  local expr="$(printf '$0!="%s" {print $0}' "$target")"
+  echo "$PATH" | tr ':' '\n' | awk "$expr" | tr '\n' ':'
+}
+
+add() {
+  local target="$1"
+  echo "$target:$(remove "$target")"
 }
 
 toggle() {
