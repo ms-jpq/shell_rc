@@ -9,7 +9,7 @@ dm() {
   else
     export DOCKER_HOST="tcp://$1:${2:-2375}"
   fi
-  echo DOCKER_HOST="$DOCKER_HOST"
+  echo "DOCKER_HOST=$DOCKER_HOST"
 }
 
 alias dun='docker rm -f $(docker ps -aq)'
