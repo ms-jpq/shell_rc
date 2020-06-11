@@ -33,7 +33,7 @@ ARG_NUM=$#
 
 print_err() {
   echo -n "$PATH"
-  >&2 echo 'paths {show, add, remove} path'
+  >&2 echo 'paths {show, add, rm|remove} path'
   >&2 echo "$1"
   exit 1
 }
@@ -106,7 +106,7 @@ case "$ACTION" in
     check_arg
     add "$2" "$SILENT"
     ;;
-  remove)
+  rm|remove)
     check_arg
     remove "$2" "$SILENT"
     ;;
