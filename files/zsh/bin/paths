@@ -12,33 +12,35 @@ def parse_args() -> Namespace:
   parser = ArgumentParser()
   parser.add_argument("command", choices=("add", "remove", "toggle"))
   parser.add_argument("path")
+  parser.add_argument("-s", "--silent", action="store_true")
   return parser.parse_args()
 
 
-def remove(path: str, paths: List[str], silent=False) -> Iterable[str]:
+def remove(path: str, paths: List[str], silent: bool) -> Iterable[str]:
   if not silent:
     print(f"REMOVE -- {path}", file=stderr)
   return (p for p in paths if p != path)
 
 
-def add(path: str, paths: List[str]) -> Iterable[str]:
-  print(f"ADD    -- {path}", file=stderr)
+def add(path: str, paths: List[str], silent: bool) -> Iterable[str]:
+  if not silent:
+    print(f"ADD    -- {path}", file=stderr)
   return (path, *remove(path, paths, True))
 
 
-def toggle(path: str, paths: List[str]) -> Iterable[str]:
-  return (remove if path in paths else add)(path, paths)
+def toggle(path: str, paths: List[str], silent: bool) -> Iterable[str]:
+  return (remove if path in paths else add)(path, paths, silent)
 
 
-def p_path(command: str, path: str) -> Iterable[str]:
+def p_path(command: str, path: str, silent: bool) -> Iterable[str]:
   paths = environ["PATH"].split(":")
 
   if command == "add":
-    return add(path, paths)
+    return add(path, paths, silent)
   elif command == "remove":
-    return remove(path, paths)
+    return remove(path, paths, silent)
   elif command == "toggle":
-    return toggle(path, paths)
+    return toggle(path, paths, silent)
   else:
     assert False
 
@@ -46,10 +48,9 @@ def p_path(command: str, path: str) -> Iterable[str]:
 def main() -> None:
   args = parse_args()
   if not isdir(args.path):
-    print(environ["PATH"])
-    print(f"ERR :: Not A Directory -- {args.path}",file=stderr)
+    print(f"ERR :: Not A Directory -- {args.path}", file=stderr)
   else:
-    paths = p_path(args.command, args.path)
+    paths = p_path(args.command, args.path, args.silent)
     print(*paths, sep=":")
 
 
