@@ -1,58 +1,88 @@
-#!/usr/bin/env python3
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+OPTS='s'
+LONG_OPTS='silent'
+
+PARSED="$(getopt --options="$OPTS", --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
+eval set -- "$PARSED"
+
+SILENT=0
+
+while true
+do
+  case "$1" in
+    -s|--silent)
+      SILENT=1
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      >&2 echo 'ERR!'
+      exit 2
+      ;;
+  esac
+done
+ARG_NUM=$#
 
 
-from argparse import ArgumentParser, Namespace
-from os import environ
-from os.path import isdir
-from sys import stderr
-from typing import List, Iterable
+print_err() {
+  >&2 echo "$1"
+  >&2 echo 'paths {show, add, remove, toggle} path'
+}
 
 
-def parse_args() -> Namespace:
-  parser = ArgumentParser()
-  parser.add_argument("command", choices=("add", "remove", "toggle"))
-  parser.add_argument("path")
-  parser.add_argument("-s", "--silent", action="store_true")
-  return parser.parse_args()
+check_arg() {
+  if [[ $ARG_NUM -ne 2 ]]
+  then
+    print_err 'ERR! -- # of arguments'
+    exit 2
+  fi
+}
+
+show() {
+  echo "$PATH"
+  echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' >&2
+}
+
+add() {
+  local target="$1"
+}
+
+remove() {
+  local target="$1"
+}
+
+toggle() {
+  local target="$1"
+}
 
 
-def remove(path: str, paths: List[str], silent: bool) -> Iterable[str]:
-  if not silent:
-    print(f"REMOVE -- {path}", file=stderr)
-  return (p for p in paths if p != path)
-
-
-def add(path: str, paths: List[str], silent: bool) -> Iterable[str]:
-  if not silent:
-    print(f"ADD    -- {path}", file=stderr)
-  return (path, *remove(path, paths, True))
-
-
-def toggle(path: str, paths: List[str], silent: bool) -> Iterable[str]:
-  return (remove if path in paths else add)(path, paths, silent)
-
-
-def p_path(command: str, path: str, silent: bool) -> Iterable[str]:
-  paths = environ["PATH"].split(":")
-
-  if command == "add":
-    return add(path, paths, silent)
-  elif command == "remove":
-    return remove(path, paths, silent)
-  elif command == "toggle":
-    return toggle(path, paths, silent)
-  else:
-    assert False
-
-
-def main() -> None:
-  args = parse_args()
-  if not isdir(args.path):
-    print(f"ERR :: Not A Directory -- {args.path}", file=stderr)
-  else:
-    paths = p_path(args.command, args.path, args.silent)
-    print(*paths, sep=":")
-
-
-main()
+ACTION="$1"
+case "$ACTION" in
+  show)
+    show
+    ;;
+  add)
+    check_arg
+    add "$2"
+    ;;
+  remove)
+    check_arg
+    remove "$2"
+    ;;
+  toggle)
+    check_arg
+    toggle "$2"
+    ;;
+  *)
+    print_err 'ERR!'
+    exit 2
+    ;;
+esac
 
