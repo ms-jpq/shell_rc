@@ -32,8 +32,10 @@ ARG_NUM=$#
 
 
 print_err() {
-  >&2 echo "$1"
+  echo -n "$PATH"
   >&2 echo 'paths {show, add, remove} path'
+  >&2 echo "$1"
+  exit 1
 }
 
 
@@ -41,7 +43,6 @@ check_arg() {
   if [[ $ARG_NUM -ne 2 ]]
   then
     print_err 'ERR! -- # of arguments'
-    exit 1
   fi
 }
 
@@ -91,8 +92,7 @@ add() {
       >&2 echo "ADDED   -- $target"
     fi
   else
-    echo -n "$PATH"
-    >&2 echo "ERR! -- Not a Directory: $target"
+    print_err "ERR! -- Not a Directory: $target"
   fi
 }
 
