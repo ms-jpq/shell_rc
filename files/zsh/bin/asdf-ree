@@ -7,3 +7,5 @@ export ASDF_SKIP_RESHIM=1
 exec "$@"
 asdf reshim
 
+hr 'ASDF -- RESHIM -- DONE'
+
