@@ -9,5 +9,3 @@ export ASDF_DATA_DIR="$XDG_DATA_HOME/asdf"
 . "$ASDF_DATA_DIR/asdf.sh"
 # INIT #
 
-alias asdf-ree='ASDF_SKIP_RESHIM=1 '
-

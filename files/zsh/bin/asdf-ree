@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+export ASDF_SKIP_RESHIM=1
+exec "$@"
+asdf reshim
+
