@@ -48,12 +48,12 @@ check_arg() {
 
 show() {
   printf '%s' "$PATH"
-  (
+  {
     while read -r -d ':' path
     do
       printf '%s\n' "$path"
     done <<< "$PATH"
-  ) | awk '!seen[$0]++' >&2
+  } | awk '!seen[$0]++' >&2
 }
 
 remove() {
