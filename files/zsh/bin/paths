@@ -47,7 +47,7 @@ check_arg() {
 }
 
 show() {
-  echo "$PATH"
+  echo -n "$PATH"
   echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' >&2
 }
 
