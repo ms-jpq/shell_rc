@@ -4,7 +4,7 @@ set -eu
 set -o pipefail
 
 bin="$(dirname "$0")"
-PATH="$(paths remove "$bin")"
+PATH="$(paths -silent remove "$bin")"
 
 exec ranger '--cmd=set preview_files=true' --cmd='set use_preview_script=true' "$@"
 
