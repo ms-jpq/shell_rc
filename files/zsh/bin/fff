@@ -125,5 +125,5 @@ export FFF_COL4=2
 export FFF_COL5=0
 
 
-. "$XDG_CONFIG_HOME/zsh/fff/fff" "$@"
+exec "$XDG_CONFIG_HOME/zsh/fff/fff" "$@"
 

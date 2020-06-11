@@ -10,8 +10,8 @@ export PAGER='tee'
 
 if [[ -d "$TARGET" ]]
 then
-  exa --color=always --group-directories-first --icons -ahF1 "$TARGET"
+  exec exa --color=always --group-directories-first --icons -ahF1 "$TARGET"
 else
-  bat --color=always "$TARGET"
+  exec bat --color=always "$TARGET"
 fi
 
