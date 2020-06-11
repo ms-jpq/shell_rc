@@ -7,10 +7,10 @@ gem() {
   then
     command gem "$@"
   else
-    echo 'Not in rbenv - require explicit:'
-    echo
-    echo "command gem $*"
-    echo
+    printf '%s\n' 'Not in rbenv - require explicit:'
+    printf '%s\n'
+    printf '%s\n' "command gem $*"
+    printf '%s\n'
   fi
 }
 

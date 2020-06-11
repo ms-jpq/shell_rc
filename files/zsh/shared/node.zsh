@@ -14,7 +14,7 @@ np() {
   then
     paths add "$this"
   else
-    echo 'RESET  -- npm PATH'
+    printf '%s\n' 'RESET  -- npm PATH'
   fi
 }
 

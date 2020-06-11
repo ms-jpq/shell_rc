@@ -23,7 +23,7 @@ do
       break
       ;;
     *)
-      >&2 echo '!ERR!'
+      >&2 printf '!ERR!\n'
       exit 2
       ;;
   esac
@@ -33,8 +33,8 @@ ARG_NUM=$#
 
 print_err() {
   printf '%s' "$PATH"
-  >&2 echo 'paths {show, add, rm|remove} path'
-  >&2 echo "$1"
+  >&2 printf 'paths {show, add, rm|remove} path\n'
+  >&2 printf '%s\n' "$1"
   exit 1
 }
 
@@ -78,7 +78,7 @@ remove() {
 
   if [[ "$silent" -eq 0 ]]
   then
-    >&2 echo "REMOVED -- $target"
+    >&2 printf '%s\n' "REMOVED -- $target"
   fi
 }
 
@@ -91,7 +91,7 @@ add() {
     printf '%s' "$target:$(remove "$target" 1)"
     if [[ "$silent" -eq 0 ]]
     then
-      >&2 echo "ADDED   -- $target"
+      >&2 printf '%s\n' "ADDED   -- $target"
     fi
   else
     print_err "ERR! -- Not a Directory: $target"

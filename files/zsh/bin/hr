@@ -37,7 +37,7 @@ hr() {
       LINE="$LINE$WORD"
     done
 
-    echo "${LINE:0:$COLS}"
+    printf '%s\n' "${LINE:0:$COLS}"
   fi
 }
 
