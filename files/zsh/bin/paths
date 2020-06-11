@@ -56,9 +56,7 @@ remove() {
   local silent="$2"
 
   local acc=''
-  local IFS=':'
-  read -r -a paths <<< "$PATH"
-  for path in "${paths[@]}"
+  while read -r -d ':' path
   do
     local sep=':'
     if [[ -z "$acc" ]]
@@ -70,7 +68,7 @@ remove() {
     then
       acc="${acc}${sep}${path}"
     fi
-  done
+  done <<< "$PATH"
   echo -n "$acc"
 
   if [[ "$silent" -eq 0 ]]
