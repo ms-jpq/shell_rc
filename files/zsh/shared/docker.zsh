@@ -5,7 +5,7 @@
 dm() {
   if [ "$#" -eq 0 ]
   then
-    export DOCKER_HOST="unix:///var/run/docker.sock"
+    export DOCKER_HOST='unix:///var/run/docker.sock'
   else
     export DOCKER_HOST="tcp://$1:${2:-2375}"
   fi
@@ -59,7 +59,7 @@ alias dslog='docker service logs -f'
 
 alias dlz='drs --name=lazy_docker -v "$XDG_CONFIG_HOME/lazydocker":/.config/jesseduffield/lazydocker lazyteam/lazydocker'
 
-alias ctop='drs --name=ctop quay.io/vektorlab/ctop -i -scale-cpu'
-
 alias k9='dr -v "$HOME/.kube":/root/.kube derailed/k9s'
+
+alias ctop='drs --name=ctop quay.io/vektorlab/ctop -i -scale-cpu'
 
