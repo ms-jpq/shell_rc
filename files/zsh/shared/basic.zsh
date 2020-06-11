@@ -44,11 +44,6 @@ alias cat='bat'
 
 
 paths() {
-  if [[ "$1" = "show" ]]
-  then
-    echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++'
-  else
-    export PATH="$(command paths "$1" "$2")"
-  fi
+  export PATH="$(command paths "$@")"
 }
 
