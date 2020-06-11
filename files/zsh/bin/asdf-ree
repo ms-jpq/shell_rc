@@ -8,6 +8,6 @@ export ASDF_SKIP_RESHIM=1
 
 asdf reshim
 
-echo
+printf '\n'
 hr 'ASDF -- RESHIM -- '
 

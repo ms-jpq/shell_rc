@@ -8,10 +8,10 @@ export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"
 pip3() {
   if [[ -z "$VIRTUAL_ENV" ]]
   then
-    echo 'Not in virtualenv - require explicit:'
-    echo
-    echo "command pip $*"
-    echo
+    printf '%s\n' 'Not in virtualenv - require explicit:'
+    printf '%s\n'
+    printf '%s\n' "command pip $*"
+    printf '%s\n'
   else
     command pip3 "$@"
   fi
@@ -36,10 +36,10 @@ venv() {
   init)
     if [[ -d "$DEFAULT_VENV_PATH" ]]
     then
-      echo "Virtualenv already initialized"
+      printf '%s\n' "Virtualenv already initialized"
     else
       python3 -m venv "$DEFAULT_VENV_PATH"
-      echo "Initialized Virtualenv"
+      printf '%s\n' "Initialized Virtualenv"
       venv on
     fi
     ;;
@@ -48,9 +48,9 @@ venv() {
     then
       venv off
       source "$ACTIVATE"
-      echo "Activated - $VIRTUAL_ENV"
+      printf '%s\n' "Activated - $VIRTUAL_ENV"
     else
-      echo "No Virtualenv found at - $ACTIVATE"
+      printf '%s\n' "No Virtualenv found at - $ACTIVATE"
     fi
     ;;
   off)
@@ -59,9 +59,9 @@ venv() {
       local VENV="$VIRTUAL_ENV"
       if deactivate
       then
-        echo "Deactivated - $VENV"
+        printf '%s\n' "Deactivated - $VENV"
       else
-        echo "Failed to deactivate - $VENV"
+        printf '%s\n' "Failed to deactivate - $VENV"
       fi
     fi
     ;;
@@ -73,12 +73,12 @@ venv() {
         venv off
       fi
       command rm -rf "$DEFAULT_VENV_PATH"
-      echo "Removed - $DEFAULT_VENV_PATH"
+      printf '%s\n' "Removed - $DEFAULT_VENV_PATH"
     fi
     ;;
   *)
-    echo "Invalid argument"
-    echo "venv - [init | on | off]"
+    printf '%s\n' "Invalid argument"
+    printf '%s\n' "venv - [init | on | off]"
     ;;
   esac
 }
