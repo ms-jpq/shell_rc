@@ -83,11 +83,16 @@ add() {
   local target="$1"
   local silent="$2"
 
-  echo -n "$target:$(remove "$target" 1)"
-
-  if [[ "$silent" -eq 0 ]]
+  if [[ -d "$target" ]]
   then
-    >&2 echo "ADDED   -- $target"
+    echo -n "$target:$(remove "$target" 1)"
+    if [[ "$silent" -eq 0 ]]
+    then
+      >&2 echo "ADDED   -- $target"
+    fi
+  else
+    echo -n "$PATH"
+    >&2 echo "ERR! -- Not a Directory: $target"
   fi
 }
 
