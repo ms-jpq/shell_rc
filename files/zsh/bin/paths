@@ -54,7 +54,7 @@ remove() {
   local target="$1"
   local silent="$2"
   local expr="$(printf '$0!="%s" {print $0}' "$target")"
-  echo "$PATH" | tr ':' '\4' | awk -F '\4' "$expr" | tr '\4' ':'
+  echo "$PATH" | tr ':' '\4' | awk -F '\4' "$expr" | tr '\4' ':' | tr '\n' ''
   if [[ "$silent" -eq 0 ]]
   then
     >&2 echo "REMOVED -- $target"
