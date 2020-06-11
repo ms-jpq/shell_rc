@@ -7,7 +7,7 @@ export npm_config_cache="$XDG_CACHE_HOME/npm"
 
 
 np() {
-  paths show | rg 'node_modules' | while read p
+  paths show 2>&1 | rg -F 'node_modules' | while read p
   do
     paths remove "$p"
   done
