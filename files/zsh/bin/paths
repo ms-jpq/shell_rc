@@ -53,8 +53,26 @@ show() {
 remove() {
   local target="$1"
   local silent="$2"
-  local expr="$(printf '$0!="%s" {print $0}' "$target")"
-  echo "$PATH" | tr ':' '\4' | awk -F '\4' "$expr" | tr '\4' ':' | sd '\n$' ''
+
+  local acc=''
+  local IFS=':'
+  read -r -a paths <<< "$PATH"
+  for idx in "${!paths[@]}"
+  do
+    local sep=''
+    if [[ idx -gt 1 ]]
+    then
+      sep=':'
+    fi
+
+    local path="${paths[idx]}"
+    if [[ "$path" != "$target" ]]
+    then
+      acc="${acc}${sep}${path}"
+    fi
+  done
+  echo -n "$acc"
+
   if [[ "$silent" -eq 0 ]]
   then
     >&2 echo "REMOVED -- $target"
@@ -64,7 +82,9 @@ remove() {
 add() {
   local target="$1"
   local silent="$2"
-  echo "$target:$(remove "$target" 1)"
+
+  echo -n "$target:$(remove "$target" 1)"
+
   if [[ "$silent" -eq 0 ]]
   then
     >&2 echo "ADDED   -- $target"
