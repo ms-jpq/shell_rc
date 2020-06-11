@@ -33,6 +33,9 @@ zsh_main() {
       source "$rc"
     done
   done
+
+  export PATH="$ZDOTDIR/rc/bin:$PATH"
+  export PATH="$HOME/.local/bin:$PATH"
 }
 
 zsh_main
