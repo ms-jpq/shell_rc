@@ -9,12 +9,12 @@ _Z_CMD='__z' . "$ZDOTDIR/z/z.sh"
 
 z() {
   local A="$(_z -l "$*" 2>&1)"
-  local B="$(printf '%s' "$A" | sd '^[[\d|\.]|common:]+\s+' '' | awk '!seen[$0]++')"
+  local B="$(sd '^[[\d|\.]|common:]+\s+' '' <<< "$A" | awk '!seen[$0]++')"
   if [[ -z "$B" ]]
   then
     printf '%s' "no such file or directory: $*"
   else
-    local C="$(printf '%s' "$B" | fp -1 +s --tac)"
+    local C="$(fp -1 +s --tac <<< "$B")"
     cd "$C" || return 1
   fi
 }
