@@ -60,7 +60,7 @@ remove() {
   for idx in "${!paths[@]}"
   do
     local sep=''
-    if [[ idx -gt 1 ]]
+    if [[ idx -gt 0 ]]
     then
       sep=':'
     fi
