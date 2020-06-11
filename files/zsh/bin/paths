@@ -32,7 +32,7 @@ ARG_NUM=$#
 
 
 print_err() {
-  echo -n "$PATH"
+  printf '%s' "$PATH"
   >&2 echo 'paths {show, add, rm|remove} path'
   >&2 echo "$1"
   exit 1
@@ -47,8 +47,13 @@ check_arg() {
 }
 
 show() {
-  echo -n "$PATH"
-  echo "$PATH" | tr ':' '\n' | awk '!seen[$0]++' >&2
+  printf '%s' "$PATH"
+  (
+    while read -r -d ':' path
+    do
+      printf '%s\n' "$path"
+    done <<< "$PATH"
+  ) | awk '!seen[$0]++' >&2
 }
 
 remove() {
@@ -69,7 +74,7 @@ remove() {
       acc="${acc}${sep}${path}"
     fi
   done <<< "$PATH"
-  echo -n "$acc"
+  printf '%s' "$acc"
 
   if [[ "$silent" -eq 0 ]]
   then
@@ -83,7 +88,7 @@ add() {
 
   if [[ -d "$target" ]]
   then
-    echo -n "$target:$(remove "$target" 1)"
+    printf '%s' "$target:$(remove "$target" 1)"
     if [[ "$silent" -eq 0 ]]
     then
       >&2 echo "ADDED   -- $target"
