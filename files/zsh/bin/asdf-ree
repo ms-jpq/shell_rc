@@ -3,10 +3,11 @@
 set -eu
 set -o pipefail
 
-export ASDF_SKIP_RESHIM=1
-exec "$@"
+(
+  export ASDF_SKIP_RESHIM=1
+  exec "$@"
+)
 
-unset ASDF_SKIP_RESHIM
 asdf reshim
 
 hr 'ASDF -- RESHIM -- DONE'
