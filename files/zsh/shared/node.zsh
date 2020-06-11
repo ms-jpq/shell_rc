@@ -3,16 +3,17 @@
 #################### ############### ####################
 
 np() {
+  local modules='node_modules/.bin'
   local LFS=$'\0'
-  paths show 2>&1 | rg -F0 'node_modules' | while read -r p
+  paths show 2>&1 | rg -F0 "$modules" | while read -r p
   do
     paths remove "$p"
   done
 
-  local this="$PWD/node_modules/.bin"
+  local this="$modules"
   if [[ -d "$this" ]]
   then
-    paths add "$this"
+    paths add -r "$this"
   else
     printf '%s\n' 'RESET  -- npm PATH'
   fi
