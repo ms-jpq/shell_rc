@@ -10,5 +10,6 @@ set -o pipefail
 
 asdf reshim
 
+echo
 hr 'ASDF -- RESHIM -- DONE'
 
