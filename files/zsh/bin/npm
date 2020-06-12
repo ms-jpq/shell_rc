@@ -35,14 +35,14 @@ if (global_install) {
   }
   const packages = join(global_home, "package.json");
   if (!existsSync(packages)) {
-    spawnSync("bash", ["-c", "yes $'\\n' | npm init"], {
+    spawnSync("npm", ["init", "-y"], {
       cwd,
       stdio: ["pipe", "inherit", "inherit"],
     });
   }
-  console.log("-".repeat(process.stdout.columns))
-  console.log(`@ - ${packages} - @`)
-  console.log("-".repeat(process.stdout.columns))
+  console.log("-".repeat(process.stdout.columns));
+  console.log(`@ - ${packages} - @`);
+  console.log("-".repeat(process.stdout.columns));
 }
 
 const { status } = spawnSync("npm", [...args], {
