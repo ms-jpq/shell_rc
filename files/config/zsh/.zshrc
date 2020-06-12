@@ -17,6 +17,7 @@ zsh_main() {
     apriori
     shared
     "$(uname | tr '[:upper:]' '[:lower:]')"
+    paths
     aposteriori
   )
 
