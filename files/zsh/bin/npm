@@ -23,7 +23,7 @@ if (global_install) {
   if (!existsSync(global_home)) {
     mkdirSync(global_home, { recursive: true });
   }
-  const packages = join(global_home, "packages.json");
+  const packages = join(global_home, "package.json");
   if (!existsSync(packages)) {
     const boilerplate = {
       name: "npm_global",
