@@ -2,6 +2,19 @@
 #################### Node Env Region ####################
 #################### ############### ####################
 
+export NPM_GLOBAL_HOME="$XDG_DATA_HOME/npm_global"
+
+_npmg() {
+  local npm_bin="$NPM_GLOBAL_HOME/node_modules/.bin"
+  if [[ -d "$npm_bin" ]]
+  then
+    export PATH="$npm_bin:$PATH"
+  fi
+}
+_npmg
+unset -f _npmg
+
+
 np() {
   local modules='node_modules/.bin'
   local LFS=$'\0'
@@ -18,22 +31,4 @@ np() {
     printf '%s\n' 'RESET  -- npm PATH'
   fi
 }
-
-
-npmg() {
-  local NPMG="$XDG_DATA_HOME/npm_global"
-  local MODULES="$NPMG/node_modules"
-
-  if [[ -d "$NPMG" ]]
-  then
-    paths add "$NPMG/node_modules"
-  else
-    mkdir -p "$MODULES"
-    cd "$NPMG"
-    yes $'\n' | npm init
-    npm install
-  fi
-}
-
-# Remember fx -- https://github.com/antonmedv/fx
 
