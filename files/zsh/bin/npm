@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const assert = require("assert");
 const { spawnSync } = require("child_process");
 const { existsSync, mkdirSync, writeFileSync } = require("fs");
 const { join } = require("path");
@@ -42,7 +43,7 @@ const args = (() => {
   } else {
     return process.argv;
   }
-})();
+})().filter((_, i) => i !== 0);
 
 const { status } = spawnSync("npm", [...args], {
   cwd: global_install ? global_home : process.cwd(),
