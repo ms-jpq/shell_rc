@@ -4,21 +4,6 @@
 
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"
 
-
-pip3() {
-  if [[ -z "$VIRTUAL_ENV" ]]
-  then
-    printf '%s\n' 'Not in virtualenv - require explicit:'
-    printf '\n'
-    printf '%s\n' "command pip $*"
-    printf '\n'
-  else
-    command pip3 "$@"
-  fi
-}
-alias pip='pip3'
-
-
 alias python='python3'
 alias py='python3'
 alias pd='pydoc'
