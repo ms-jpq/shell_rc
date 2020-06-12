@@ -2,7 +2,7 @@
 
 const assert = require("assert");
 const { spawnSync } = require("child_process");
-const { existsSync, mkdirSync, writeFileSync } = require("fs");
+const { existsSync, mkdirSync } = require("fs");
 const { join } = require("path");
 
 process.env["PATH"] = process.env["PATH"]
@@ -19,24 +19,7 @@ const install = command === "install" || command === "i";
 const is_global = process.argv.some((arg) => global_set.has(arg));
 const global_install = install && is_global;
 
-if (global_install) {
-  if (!existsSync(global_home)) {
-    mkdirSync(global_home, { recursive: true });
-  }
-  const packages = join(global_home, "package.json");
-  if (!existsSync(packages)) {
-    const boilerplate = {
-      name: "npm_global",
-      version: "1.0",
-      description: "_",
-      main: "index.js",
-      scripts: {},
-      author: "me",
-      license: "no",
-    };
-    writeFileSync(packages, JSON.stringify(boilerplate));
-  }
-}
+const cwd = global_install ? global_home : process.cwd();
 
 const args = (() => {
   if (global_install) {
@@ -46,10 +29,23 @@ const args = (() => {
   }
 })().filter((_, i) => i > 1);
 
+if (global_install) {
+  if (!existsSync(global_home)) {
+    mkdirSync(global_home, { recursive: true });
+  }
+  const packages = join(global_home, "package.json");
+  if (!existsSync(packages)) {
+    spawnSync("npm", ["init"], {
+      cwd,
+      input: "\n".repeat(1000),
+      stdio: ["pipe", "inherit", "inherit"],
+    });
+  }
+}
+
 const { status } = spawnSync("npm", [...args], {
-  cwd: global_install ? global_home : process.cwd(),
+  cwd,
   stdio: ["inherit", "inherit", "inherit"],
 });
-
 process.exit(status);
 
