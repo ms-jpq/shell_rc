@@ -19,5 +19,21 @@ np() {
   fi
 }
 
+
+npmg() {
+  local NPMG="$XDG_DATA_HOME/npm_global"
+  local MODULES="$NPMG/node_modules"
+
+  if [[ -d "$NPMG" ]]
+  then
+    export PATH="$(paths add "$NPMG/node_modules")"
+  else
+    mkdir -p "$MODULES"
+    cd "$NPMG"
+    yes $'\n' | npm init
+    npm install
+  fi
+}
+
 # Remember fx -- https://github.com/antonmedv/fx
 
