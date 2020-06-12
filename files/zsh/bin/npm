@@ -10,10 +10,11 @@ process.env["PATH"] = process.env["PATH"]
   .filter((p) => p !== __dirname)
   .join(":");
 
-const global_home = assert(process.env["NPM_GLOBAL_HOME"]);
+const global_home = process.env["NPM_GLOBAL_HOME"];
 const global_set = new Set(["--global", "-g"]);
+assert(global_home);
 
-const command = process.argv[1];
+const command = process.argv[2];
 const install = command === "install" || command === "i";
 const is_global = process.argv.some((arg) => global_set.has(arg));
 const global_install = install && is_global;
@@ -43,7 +44,7 @@ const args = (() => {
   } else {
     return process.argv;
   }
-})().filter((_, i) => i !== 0);
+})().filter((_, i) => i > 1);
 
 const { status } = spawnSync("npm", [...args], {
   cwd: global_install ? global_home : process.cwd(),
