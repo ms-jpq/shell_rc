@@ -26,7 +26,7 @@ npmg() {
 
   if [[ -d "$NPMG" ]]
   then
-    export PATH="$(paths add "$NPMG/node_modules")"
+    paths add "$NPMG/node_modules"
   else
     mkdir -p "$MODULES"
     cd "$NPMG"
