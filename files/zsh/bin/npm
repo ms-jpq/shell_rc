@@ -40,6 +40,9 @@ if (global_install) {
       stdio: ["pipe", "inherit", "inherit"],
     });
   }
+  console.log("-".repeat(process.stdout.columns))
+  console.log(`@ - ${packages} - @`)
+  console.log("-".repeat(process.stdout.columns))
 }
 
 const { status } = spawnSync("npm", [...args], {
