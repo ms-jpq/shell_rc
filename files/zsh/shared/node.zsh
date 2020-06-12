@@ -2,17 +2,8 @@
 #################### Node Env Region ####################
 #################### ############### ####################
 
-export NPM_GLOBAL_HOME="$XDG_DATA_HOME/npm_global"
-
-_npmg() {
-  local npm_bin="$NPM_GLOBAL_HOME/node_modules/.bin"
-  if [[ -d "$npm_bin" ]]
-  then
-    export PATH="$npm_bin:$PATH"
-  fi
-}
-_npmg
-unset -f _npmg
+export NPM_GLOBAL_BIN="$XDG_DATA_HOME/npm_global/node_modules/.bin"
+export PATH="$NPM_GLOBAL_BIN:$PATH"
 
 
 np() {

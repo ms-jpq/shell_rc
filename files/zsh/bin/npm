@@ -3,14 +3,14 @@
 const assert = require("assert");
 const { spawnSync } = require("child_process");
 const { existsSync, mkdirSync } = require("fs");
-const { join } = require("path");
+const { dirname, join } = require("path");
 
 process.env["PATH"] = process.env["PATH"]
   .split(":")
   .filter((p) => p !== __dirname)
   .join(":");
 
-const global_home = process.env["NPM_GLOBAL_HOME"];
+const global_home = dirname(dirname(process.env["NPM_GLOBAL_BIN"]));
 const global_set = new Set(["--global", "-g"]);
 assert(global_home);
 
@@ -35,9 +35,8 @@ if (global_install) {
   }
   const packages = join(global_home, "package.json");
   if (!existsSync(packages)) {
-    spawnSync("npm", ["init"], {
+    spawnSync("bash", ["-c", "yes $'\\n' | npm init"], {
       cwd,
-      input: "\n".repeat(1000),
       stdio: ["pipe", "inherit", "inherit"],
     });
   }
