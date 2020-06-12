@@ -47,3 +47,29 @@ paths() {
   export PATH="$(command paths "$@")"
 }
 
+#################### ################ ####################
+#################### Auxiliary Region ####################
+#################### ################ ####################
+
+proxy() {
+  if [[ "$#" -eq 0 ]]
+  then
+    unset http_proxy
+    unset https_proxy
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+  else
+    export http_proxy="http://${2:-localhost}:$1"
+    export https_proxy="$http_proxy"
+    export HTTP_PROXY="$http_proxy"
+    export HTTPS_PROXY="$http_proxy"
+  fi
+  printf '%s\n' "http_proxy =$http_proxy"
+  printf '%s\n' "https_proxy=$https_proxy"
+}
+
+
+export WGETRC="$XDG_CONFIG_HOME/wgetrc"
+
+alias rsy='rsync -ah --no-o --no-g --info progress2'
+
