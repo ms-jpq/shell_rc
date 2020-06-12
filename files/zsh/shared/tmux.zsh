@@ -4,7 +4,7 @@
 
 if [[ -n "$TMUX" ]]
 then
-  PATH="$XDG_CONFIG_HOME/tmux/bin:$PATH"
+  export PATH="$XDG_CONFIG_HOME/tmux/bin:$PATH"
 fi
 
 
