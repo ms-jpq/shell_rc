@@ -19,9 +19,3 @@ gay() {
   figlet "$TEXT" | lolcat -a -d 1 -s 1000
 }
 
-cm() {
-  local COLOURS=(green red blue white yellow cyan magenta black)
-  local COLOUR="${COLOURS[$(($RANDOM % ${#COLOURS[@]} + 1))]}"
-  cmatrix -ab -u 3 -C "$COLOUR" "$@"
-}
-

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+COLOURS=(green red blue white yellow cyan magenta black)
+COLOUR="${COLOURS[$(($RANDOM % ${#COLOURS[@]} + 1))]}"
+
+exec cmatrix -ab -u 3 -C "$COLOUR" "$@"
+
