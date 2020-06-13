@@ -58,7 +58,7 @@ show() {
     while read -r -d ':' path
     do
       printf '%s\n' "$path"
-    done <<< "$PATH"
+    done <<< "$PATH:"
   } | awk '!seen[$0]++' >&2
 }
 
@@ -129,7 +129,7 @@ toggle() {
     then
       found=1
     fi
-  done <<< "$PATH"
+  done <<< "$PATH:"
 
   if [[ "$found" -eq 0 ]]
   then
