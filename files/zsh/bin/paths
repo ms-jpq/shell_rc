@@ -140,6 +140,10 @@ toggle() {
 }
 
 
+if [[ $ARG_NUM -lt 1 ]]
+then
+  print_err 'ERR! -- # of arguments'
+fi
 ACTION="$1"
 case "$ACTION" in
   show)
@@ -161,7 +165,7 @@ case "$ACTION" in
     toggle "$target" "$SILENT"
     ;;
   *)
-    print_err 'ERR!'
+    print_err 'ERR! -- Must be one of ^'
     exit 2
     ;;
 esac
