@@ -6,7 +6,7 @@ np() {
   local modules='node_modules/.bin'
   if [[ -d "$modules" ]]
   then
-    paths toggle -r "$this"
+    paths toggle -r "$modules"
   else
     printf '%s\n' 'RESET  -- npm PATH'
   fi
