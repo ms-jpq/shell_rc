@@ -91,7 +91,7 @@ remove() {
     then
       acc="${acc}${sep}${path}"
     fi
-  done <<< "$PATH"
+  done <<< "$PATH:"
   printf '%s' "$acc"
 
   if [[ "$silent" -eq 0 ]]
