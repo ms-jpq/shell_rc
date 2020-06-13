@@ -44,7 +44,12 @@ alias cat='bat'
 
 
 paths() {
-  export PATH="$(command paths "$@")"
+  local htap
+  htap="$(command paths "$@")"
+  if [[ $? -eq 0 ]]
+  then
+    export PATH="$htap"
+  fi
 }
 
 #################### ################ ####################
