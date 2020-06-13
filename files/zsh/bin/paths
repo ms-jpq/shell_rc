@@ -55,10 +55,12 @@ check_arg() {
 show() {
   printf '%s' "$PATH"
   {
-    while read -r -d ':' path
+    local arr
+    IFS=':' read -ra arr <<< "$PATH"
+    for path in "${arr[@]}"
     do
       printf '%s\n' "$path"
-    done <<< "$PATH:"
+    done
   } | awk '!seen[$0]++' >&2
 }
 
@@ -79,7 +81,9 @@ remove() {
   local silent="$2"
 
   local acc=''
-  while read -r -d ':' path
+  local arr
+  IFS=':' read -ra arr <<< "$PATH"
+  for path in "${arr[@]}"
   do
     local sep=':'
     if [[ -z "$acc" ]]
@@ -91,7 +95,7 @@ remove() {
     then
       acc="${acc}${sep}${path}"
     fi
-  done <<< "$PATH:"
+  done
   printf '%s' "$acc"
 
   if [[ "$silent" -eq 0 ]]
@@ -123,13 +127,15 @@ toggle() {
   local silent="$2"
 
   local found=0
-  while read -r -d ':' path
+  local arr
+  IFS=':' read -ra arr <<< "$PATH"
+  for path in "${arr[@]}"
   do
     if [[ "$path" == "$target" ]]
     then
       found=1
     fi
-  done <<< "$PATH:"
+  done
 
   if [[ "$found" -eq 0 ]]
   then
