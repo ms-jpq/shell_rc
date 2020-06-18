@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Homebrew
-        run: |-
+        run: >-
           bash -c
           "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
