@@ -12,7 +12,7 @@ on:
     - cron: "0 0 * * *" # daily
 
 jobs:
-  build:
+  docker:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,4 +27,22 @@ jobs:
           repository: ${{ secrets.DOCKER_USERNAME }}/cli
           tags: latest
           dockerfile: "docker/Dockerfile"
+
+  macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Homebrew
+        run: |-
+          bash -c
+          "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+      - name: Install Ansible
+        run: brew install ansible
+
+      - name: Build
+        run: ansible-playbook localhost.ansible.yml
 
