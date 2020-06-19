@@ -15,19 +15,12 @@ target_localized_dirs:
     name: "开发"
 
 
-target_templates:
-  - src: "launchd/bing.plist.j2"
-    dest: "~/Library/LaunchAgents/bing.plist"
+target_templates: []
 
 
 target_links:
   - src: "/usr/local/bin/dash"
     dest: "/usr/local/bin/sh"
-  - src: "~/Library/Mobile Documents/com~apple~CloudDocs"
-    dest: "~/.icloud"
-
-
-brew_repos: []
 
 
 _core_utils:
