@@ -1,8 +1,5 @@
 ---
 
-- import_tasks: homebrew_repos.yml
-  when: _all_
-
 - import_tasks: homebrew.yml
   when: _all_
 
