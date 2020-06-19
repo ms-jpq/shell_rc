@@ -1,8 +1,0 @@
----
-
-- name: homebrew tap
-  loop: "{{ brew_repos }}"
-  homebrew_tap:
-    name: "{{ item.name }}"
-    url: "{{ item.uri | default('null') }}"
-
