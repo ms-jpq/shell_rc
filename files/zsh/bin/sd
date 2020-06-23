@@ -7,7 +7,7 @@ if [[ $# -lt 2 ]]
 then
   >&2 printf '%s\n' 'ERROR -- missing args:
   <search> <replacement>'
-  exit 2
+  exit 1
 fi
 
 
