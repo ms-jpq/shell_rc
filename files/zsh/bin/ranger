@@ -7,15 +7,11 @@ bin="$(dirname "$0")"
 PATH="$(paths --silent remove "$bin")"
 
 
-ARGS=("$@")
-if [[ "$(id -u)" -eq 0 ]]
-then
-  ARGS=(
-    --cmd='set preview_files=true'
-    --cmd='set use_preview_script=true'
-    "${ARGS[@]}"
-    )
-fi
+ARGS=(
+  --cmd='set preview_files=true'
+  --cmd='set use_preview_script=true'
+  "$@"
+  )
 
 
 exec ranger "${ARGS[@]}"
