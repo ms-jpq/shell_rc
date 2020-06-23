@@ -3,10 +3,12 @@
 set -eu
 set -o pipefail
 
+
 ARGS=(
   --line-buffered
   --pretty
   )
 
-rg "${ARGS[@]}" "$@" | less
+
+rg "$@" "${ARGS[@]}" | less
 
