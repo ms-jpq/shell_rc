@@ -5,7 +5,6 @@ set -o pipefail
 
 export ASDF_SKIP_RESHIM=1
 "$@"
-
 asdf reshim
 
 printf '\n'
