@@ -7,7 +7,8 @@ set -o pipefail
 OPTIONS=(
   --color=always
   --context=2
-  '--context-separator="$(hr "-" "$FZF_PREVIEW_COLUMNS")"')
+  '--context-separator="$(hr "-" "$FZF_PREVIEW_COLUMNS")"'
+  )
 
 
 rg "$@" --files-with-matches -0 | fzf --read0 --preview="rg ${OPTIONS[*]} $* {}"
