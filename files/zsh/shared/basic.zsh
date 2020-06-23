@@ -30,10 +30,10 @@ alias cmd='command '
 
 export TIME_STYLE='long-iso'
 alias ls='exa --group-directories-first --icons --header --classify'
-alias l='ls -1'
-alias ll='ls -lg'
+alias l='ls --oneline'
+alias ll='ls --long --group'
 tree() {
-  ls -T --level="${1:-2}"
+  ls --tree --level="${1:-2}"
 }
 
 
