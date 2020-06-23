@@ -19,6 +19,6 @@ launch /Applications/Firefox.app/Contents/MacOS/firefox
 launch /usr/bin/firefox
 
 
->&2 printf '%s\n' 'ERROR - no browser found'
+>&2 printf '%s\n%s\n' 'ERROR - no browser found' "$*"
 exit 1
 
