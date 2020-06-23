@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+if [[ $# -lt 2 ]]
+then
+  >&2 printf '%s\n' 'ERROR -- missing args:
+  <search> <replacement>'
+  exit 2
+fi
+
+
+SEARCH="$1"
+REPLACE="$2"
+shift
+shift
+
+ARGS=(
+  --replace
+  "$REPLACE"
+  "$@"
+  --color=never
+  --passthru
+  --
+  "$SEARCH"
+  )
+
+
+rg "${ARGS[@]}" < /dev/stdin
+
