@@ -24,12 +24,12 @@ alias cp='cp -i'
 alias mkdir='mkdir -p'
 
 alias cls='clear'
-alias sudo='sudo -E '
+alias sudo='sudo --preserve-env -- '
 alias cmd='command '
 
 
 export TIME_STYLE='long-iso'
-alias ls='exa --group-directories-first --icons -hF'
+alias ls='exa --group-directories-first --icons --header --classify'
 alias l='ls -1'
 alias ll='ls -lg'
 tree() {
