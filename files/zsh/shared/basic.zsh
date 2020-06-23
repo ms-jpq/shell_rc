@@ -12,6 +12,7 @@ export LESS="--quit-on-intr \
              --QUIET \
              --ignore-case \
              --no-histdups"
+export BROWSER='firefox'
 
 
 # Safety
