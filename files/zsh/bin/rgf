@@ -4,6 +4,12 @@ set -eu
 set -o pipefail
 
 
+ARGS=(
+  --line-buffered
+  --files-with-matches
+  -0
+  )
+
 OPTIONS=(
   --color=always
   --context=2
@@ -11,5 +17,5 @@ OPTIONS=(
   )
 
 
-rg "$@" --files-with-matches -0 | fzf --read0 --preview="rg ${OPTIONS[*]} $* {}"
+rg "$@" "${ARGS[@]}" | fzf --read0 --preview="rg ${OPTIONS[*]} $* {}"
 
