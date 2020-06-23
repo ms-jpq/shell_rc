@@ -2,7 +2,7 @@
 #################### Git Region ####################
 #################### ########## ####################
 
-export GIT_PAGER='delta --paging=never | less'
+export GIT_PAGER='delta'
 
 alias lg='lazygit'
 
