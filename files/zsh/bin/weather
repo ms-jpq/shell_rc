@@ -6,12 +6,15 @@ from urllib.request import Request, urlopen
 
 
 class Format(Enum):
+  LINE = "line"
   TABLE = "table"
   GRAPH = "graph"
 
 
 def wttrin_uri(display: Format) -> str:
-  if display == Format.TABLE:
+  if display == Format.LINE:
+    return "https://wttr.in?format=3"
+  elif display == Format.TABLE:
     return "https://wttr.in?T"
   elif display == Format.GRAPH:
     return "https://v2.wttr.in?T"
