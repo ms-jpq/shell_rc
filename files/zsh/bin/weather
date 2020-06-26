@@ -10,8 +10,17 @@ class Format(Enum):
   GRAPH = "graph"
 
 
+def wttrin_uri(display: Format) -> str:
+  if display == Format.TABLE:
+    return "https://wttr.in?T"
+  elif display == Format.GRAPH:
+    return "https://v2.wttr.in?T"
+  else:
+    raise ValueError()
+
+
 def wttrin(display: Format) -> str:
-  uri = "https://v2.wttr.in"
+  uri = wttrin_uri(display)
   headers = {"User-Agent": "curl",
              "Accept-Language": "zh"}
 
