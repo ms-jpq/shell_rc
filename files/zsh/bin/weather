@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+
+
+from argparse import ArgumentParser, Namespace
+from enum import Enum
+from urllib.request import Request, urlopen
+
+# alias weather='curl -H "Accept-Language: zh" https://wttr.in\?T'
+
+
+class Format(Enum):
+  TABLE = "table"
+  GRAPH = "graph"
+
+
+def wttrin(display: Format) -> str:
+  uri = "https://wttr.in?T"
+  headers = {"User-Agent": "curl",
+             "Accept-Language": "zh"}
+
+  req = Request(uri, headers=headers)
+  with urlopen(uri) as resp:
+    return resp.read().decode()
+
+
+def parse_args() -> Namespace:
+  parser = ArgumentParser()
+  parser.add_argument("format", nargs="?", type=Format, default=Format.TABLE,)
+  return parser.parse_args()
+
+
+def main() -> None:
+  args = parse_args()
+  resp = wttrin(args.format)
+  print(resp)
+
+
+main()
+
