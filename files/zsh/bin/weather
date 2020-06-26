@@ -31,7 +31,7 @@ def wttrin(display: Format) -> str:
 
 def parse_args() -> Namespace:
   parser = ArgumentParser()
-  parser.add_argument("format", nargs="?", type=Format, default=Format.TABLE,)
+  parser.add_argument("format", nargs="?", type=Format, default=Format.TABLE)
   return parser.parse_args()
 
 
