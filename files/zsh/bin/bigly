@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+COLS=$(tput cols)
+FONTS=("$(figlet -I 2)"/**.flf)
+FONT="${FONTS[$(($RANDOM % ${#FONTS[@]}))]}"
+
+
+F_ARGS=(
+  -c
+  -w
+  "$COLS"
+  -f
+  "$FONT"
+  )
+
+
+if [[ -t 0 ]]
+then
+  TEXT="$*"
+else
+  TEXT="$(< /dev/stdin)"
+fi
+
+
+figlet "${F_ARGS[@]}" <<< "$TEXT"
