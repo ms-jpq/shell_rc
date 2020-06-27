@@ -25,5 +25,5 @@ else
   TEXT="$(< /dev/stdin)"
 fi
 
-
+TEXT="${TEXT:-'BIGLY'}"
 figlet "${F_ARGS[@]}" <<< "$TEXT"
