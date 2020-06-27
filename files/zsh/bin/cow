@@ -4,13 +4,22 @@ set -eu
 set -o pipefail
 
 
+COLS=$(tput cols)
+WRAP=$((COLS / 3))
+
 COWS=($(cowsay -l | tail -n +2))
 COW="${COWS[$(($RANDOM % ${#COWS[@]}))]}"
 
+STYLES=(-b -d -g -p -s -t -w -y)
+STYLE="${STYLES[$(($RANDOM % ${#STYLES[@]}))]}"
+
 
 ARGS=(
+  -W
+  "$WRAP"
   -f
   "$COW"
+  "$STYLE"
   )
 
 
@@ -20,6 +29,7 @@ then
 else
   TEXT="$(< /dev/stdin)"
 fi
+
 
 TEXT="${TEXT:-'moo'}"
 exec cowsay "${ARGS[@]}" <<< "$TEXT"
