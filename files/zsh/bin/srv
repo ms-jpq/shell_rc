@@ -6,25 +6,25 @@ from socket import getfqdn
 
 
 def parse_args() -> Namespace:
-  parser = ArgumentParser()
-  parser.add_argument("-o", "--open", action="store_true")
-  parser.add_argument("-p", "--port", type=int, default=8080)
-  return parser.parse_args()
+    parser = ArgumentParser()
+    parser.add_argument("-o", "--open", action="store_true")
+    parser.add_argument("-p", "--port", type=int, default=8080)
+    return parser.parse_args()
 
 
 def main() -> None:
-  args = parse_args()
-  addr = "" if args.open else "localhost"
-  bind = (addr, args.port)
+    args = parse_args()
+    addr = "" if args.open else "localhost"
+    bind = (addr, args.port)
 
-  host = getfqdn() if args.open else "localhost"
-  print(f"SERVING -- http://{host}:{args.port}")
+    host = getfqdn() if args.open else "localhost"
+    print(f"SERVING -- http://{host}:{args.port}")
 
-  httpd = ThreadingHTTPServer(bind, SimpleHTTPRequestHandler)
-  httpd.serve_forever()
+    httpd = ThreadingHTTPServer(bind, SimpleHTTPRequestHandler)
+    httpd.serve_forever()
 
 
 try:
-  main()
+    main()
 except KeyboardInterrupt:
-  pass
+    pass
