@@ -4,4 +4,4 @@ set -eu
 set -o pipefail
 
 
-curl https://ipinfo.io
+curl -s https://ipinfo.io
