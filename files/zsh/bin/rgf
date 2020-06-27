@@ -17,4 +17,4 @@ OPTIONS=(
   )
 
 
-rg "$@" "${ARGS[@]}" | fzf --read0 --preview="rg ${OPTIONS[*]} $* {}"
+rg "$@" "${ARGS[@]}" | exec fzf --read0 --preview="rg ${OPTIONS[*]} $* {}"
