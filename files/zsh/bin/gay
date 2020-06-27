@@ -4,5 +4,25 @@ set -eu
 set -o pipefail
 
 
-TEXT=${*:-"Fully Automated Luxury Gay Space Communism"}
-figlet "$TEXT" | lolcat
+COLS=$(tput cols)
+F_ARGS=(
+  -c
+  -w
+  "$COLS"
+  )
+
+L_ARGS=(
+  --duration=0
+  )
+
+
+if [[ -t 0 ]]
+then
+  TEXT=${*:-"Fully Automated Luxury Gay Space Communism"}
+else
+  TEXT="$(< /dev/stdin)"
+  L_ARGS=("${L_ARGS[@]}" "$@")
+fi
+
+
+figlet "${F_ARGS[@]}" <<< "$TEXT" | lolcat "${L_ARGS[@]}"
