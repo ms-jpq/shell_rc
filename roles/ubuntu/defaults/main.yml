@@ -110,4 +110,3 @@ target_links:
 target_mods:
   - src: "{{ _exec_bin_ }}/exa"
     mode: "+x"
-

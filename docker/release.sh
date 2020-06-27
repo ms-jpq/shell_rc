@@ -14,4 +14,3 @@ if [[ $# -gt 1 ]]
 then
   docker push "$IMAGE"
 fi
-

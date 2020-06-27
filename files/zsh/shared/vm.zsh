@@ -28,4 +28,3 @@ vbdun() {
   vboff "$1"
   vb unregistervm "$1" --delete
 }
-

@@ -5,4 +5,3 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-

@@ -14,4 +14,3 @@ else
   fi
   exec tmux new-session -A -s "${session:-"owo"}"
 fi
-

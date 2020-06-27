@@ -28,4 +28,3 @@ bindkey ' ' magic-space
 # Del key
 bindkey '^[[3~' delete-char
 # Del key
-

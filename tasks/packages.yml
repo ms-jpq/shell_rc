@@ -4,4 +4,3 @@
   package:
     name: "{{ packages }}"
     state: present
-

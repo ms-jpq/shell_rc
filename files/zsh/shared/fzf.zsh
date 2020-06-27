@@ -65,4 +65,3 @@ _fzf_compgen_dir() {
 source "$ZDOTDIR/fzf/shell/key-bindings.zsh"
 source "$ZDOTDIR/fzf/shell/completion.zsh"
 # INIT #
-

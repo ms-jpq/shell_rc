@@ -73,4 +73,3 @@ proxy() {
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 
 alias rsy='rsync -ah --no-o --no-g --info progress2'
-
