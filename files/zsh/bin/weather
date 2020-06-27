@@ -36,7 +36,7 @@ def parse_args() -> Namespace:
   parser = ArgumentParser()
   parser.add_argument("format", nargs="?",
                       type=Format,
-                      choices=tuple(f.value for f in Format),
+                      choices=tuple(f for f in Format),
                       default=Format.TABLE)
   return parser.parse_args()
 
