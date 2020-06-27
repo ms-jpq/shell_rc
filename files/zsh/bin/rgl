@@ -11,4 +11,3 @@ ARGS=(
 
 
 rg "$@" "${ARGS[@]}" | less
-

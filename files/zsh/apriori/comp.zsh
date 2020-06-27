@@ -46,4 +46,3 @@ __init_zcompdump() {
 }
 __init_zcompdump
 unset -f __init_zcompdump
-

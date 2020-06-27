@@ -23,4 +23,3 @@ then
 else
   exec bat --color=always "$TARGET"
 fi
-

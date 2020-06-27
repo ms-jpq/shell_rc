@@ -20,4 +20,3 @@ _all_: "{{ all | default(False) | bool }}"
 
 
 locale: zh_CN
-

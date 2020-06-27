@@ -15,4 +15,3 @@ ARGS=(
 
 
 exec ranger "${ARGS[@]}"
-

@@ -17,4 +17,3 @@ FZF_TAB_OPTS=(
 # INTI #
 source "$ZDOTDIR/fzf-tab/fzf-tab.zsh"
 # INIT #
-

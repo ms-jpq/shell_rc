@@ -8,4 +8,3 @@ COLOURS=(green red blue white yellow cyan magenta black)
 COLOUR="${COLOURS[$(($RANDOM % ${#COLOURS[@]}))]}"
 
 exec cmatrix -ab -u 3 -C "$COLOUR" "$@"
-

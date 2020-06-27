@@ -5,4 +5,3 @@
   get_url:
     url: "{{ item.src }}"
     dest: "{{ item.dest }}"
-

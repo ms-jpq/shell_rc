@@ -15,4 +15,3 @@
   when: __apt_repo.changed
   apt:
     update_cache: True
-

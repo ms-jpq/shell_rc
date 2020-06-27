@@ -17,4 +17,3 @@ gay() {
   local TEXT=${*:-"Fully Automated Luxury Gay Space Communism"}
   figlet "$TEXT" | lolcat -a -d 1 -s 1000
 }
-

@@ -7,4 +7,3 @@
     access_time: preserve
     modification_time: preserve
     path: "{{ item }}"
-

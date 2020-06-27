@@ -3,4 +3,3 @@
 #################### ########## ####################
 
 source "$XDG_CONFIG_HOME/devrc/main.zsh"
-

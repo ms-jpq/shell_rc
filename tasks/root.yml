@@ -34,4 +34,3 @@
   systemd:
     name: sshd
     state: restarted
-

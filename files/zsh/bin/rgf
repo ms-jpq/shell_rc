@@ -18,4 +18,3 @@ OPTIONS=(
 
 
 rg "$@" "${ARGS[@]}" | fzf --read0 --preview="rg ${OPTIONS[*]} $* {}"
-

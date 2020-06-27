@@ -17,4 +17,3 @@ export SAVEHIST=10000
 
 
 alias hist='history'
-

@@ -4,4 +4,3 @@
   user:
     name: "{{ ansible_user }}"
     shell: /bin/zsh
-
