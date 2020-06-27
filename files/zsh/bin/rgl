@@ -10,4 +10,4 @@ ARGS=(
   )
 
 
-rg "$@" "${ARGS[@]}" | less
+rg "$@" "${ARGS[@]}" | exec less

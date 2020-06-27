@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+COWS=($(cowsay -l | tail -n +2))
+COW="${COWS[$(($RANDOM % ${#COWS[@]}))]}"
+
+
+ARGS=(
+  -f
+  "$COW"
+  )
+
+
+if [[ -t 0 ]]
+then
+  TEXT="$*"
+else
+  TEXT="$(< /dev/stdin)"
+fi
+
+TEXT="${TEXT:-'moo'}"
+exec cowsay "${ARGS[@]}" <<< "$TEXT"
