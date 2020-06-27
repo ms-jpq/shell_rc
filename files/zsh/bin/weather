@@ -13,11 +13,11 @@ class Format(Enum):
 
 def wttrin_uri(display: Format) -> str:
   if display == Format.LINE:
-    return "https://wttr.in?format=4"
+    return "https://wttr.in?m&format=4"
   elif display == Format.TABLE:
-    return "https://wttr.in?T"
+    return "https://wttr.in?mT"
   elif display == Format.GRAPH:
-    return "https://v2.wttr.in?T"
+    return "https://v2.wttr.in?mT"
   else:
     raise ValueError()
 
