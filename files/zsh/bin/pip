@@ -2,8 +2,9 @@
 
 from os import environ
 from os.path import basename, dirname
+from shutil import get_terminal_size
 from subprocess import run
-from sys import argv
+from sys import argv, stdin
 from typing import NoReturn
 
 __dirname__ = dirname(__file__)
@@ -30,11 +31,16 @@ def is_install() -> bool:
 
 def main() -> NoReturn:
     paths()
-    venv = environ.get("VIRTUAL_ENV") is not None
-    if venv or not is_install():
+    is_venv = environ.get("VIRTUAL_ENV") is not None
+    proceed = is_venv or not stdin.isatty() or not is_install()
+    if proceed:
         cont()
     else:
-        ans = input("Not in virtual environment:\nProceed (y/n)?")
+        cols, _ = get_terminal_size()
+        sep = "-" * cols
+        cmds = " ".join((__name__, *__args__))
+        ask = f"{sep}\nNot in virtual environment:\n{cmds}\n{sep}\nProceed (y/n)?"
+        ans = input(ask)
         if ans in {"y", "yes", "1"}:
             cont()
         else:
