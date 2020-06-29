@@ -2,7 +2,7 @@ FROM msjpq/cli:base
 
 
 # Bug
-RUN apt remove ripgrep
+RUN apt remove -y ripgrep
 
 
 # Requirements
@@ -12,7 +12,7 @@ RUN apt update && \
 
 
 # Bug
-RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
+RUN apt install -y -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Setup

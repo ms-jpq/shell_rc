@@ -21,7 +21,7 @@ WORKDIR "/root"
 
 
 # Bug
-RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
+RUN apt install -y -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Setup
