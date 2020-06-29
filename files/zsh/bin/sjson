@@ -35,4 +35,7 @@ def main() -> None:
         dump(new, stdout, indent=args.indent)
 
 
-main()
+try:
+    main()
+except KeyboardInterrupt:
+    pass
