@@ -1,10 +1,18 @@
 FROM msjpq/cli:base
 
 
+# Bug
+RUN apt remove ripgrep
+
+
 # Requirements
 RUN apt update && \
     apt upgrade -y && \
     yes | unminimize
+
+
+# Bug
+RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Setup
