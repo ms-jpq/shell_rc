@@ -41,3 +41,5 @@ asdf global nodejs "$NODE_VER"
 
 "$XDG_CONFIG_HOME/nvim/bin/nvim-pip"
 "$XDG_CONFIG_HOME/nvim/bin/nvim-npm"
+
+"$XDG_CONFIG_HOME/devrc/init.sh"
