@@ -27,9 +27,7 @@ def parse_args() -> Namespace:
     return parser.parse_args()
 
 
-def repr_str(width: int) -> Callable[[BaseDumper, str], ScalarNode]:
-    break_pt = width // 2
-
+def repr_str(break_pt: int) -> Callable[[BaseDumper, str], ScalarNode]:
     def repr_str(dumper: BaseDumper, data: str) -> ScalarNode:
         style = ">" if len(data) > break_pt else ""
         return dumper.represent_scalar("tag:yaml.org,2002:str", data, style=style)
@@ -42,9 +40,10 @@ def main() -> None:
     data = stdin.read()
 
     max_w = 80
+    fold_pt = max_w // 2
     cols, _ = get_terminal_size((max_w, -1))
     cols = min(cols, max_w)
-    add_representer(str, repr_str(max_w), Dumper=SafeDumper)
+    add_representer(str, repr_str(fold_pt), Dumper=SafeDumper)
 
     try:
         yaml = [*safe_load_all(data)]
