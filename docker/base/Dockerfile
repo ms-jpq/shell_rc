@@ -2,18 +2,11 @@ FROM ubuntu:latest
 
 
 # Requirements
-SHELL ["/usr/bin/bash", "-c"]
-RUN mkdir -p /_install && \
-    apt update && \
+RUN apt update && \
     apt upgrade -y && \
     apt install -y \
     rsync curl gnupg2 \
-    python3 python3-venv python3-pip python3-apt
-
-
-# VENV
-RUN python3 -m venv --system-site-packages /_install/venv && \
-    source /_install/venv/bin/activate && \
+    python3 python3-pip python3-apt && \
     pip3 install ansible
 
 
@@ -40,4 +33,4 @@ RUN source "$XDG_CONFIG_HOME/zsh/.zshrc" && \
 # Cleanup
 RUN apt autoremove -y && \
     apt clean && \
-    rm -rf /tmp/ansible /_install
+    rm -rf /tmp/** /_install
