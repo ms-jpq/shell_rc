@@ -3,7 +3,6 @@
 set -eux
 set -o pipefail
 
-export VIRTUAL_ENV=1
 
 "$XDG_CONFIG_HOME/tmux/bin/tmux-init"
 "$XDG_CONFIG_HOME/ranger/bin/ranger-init"
