@@ -4,8 +4,8 @@ FROM ubuntu:latest
 # Requirements
 SHELL ["/usr/bin/bash", "-c"]
 RUN mkdir -p /_install && \
-    yes | unminimize && \
     apt update && \
+    apt upgrade -y && \
     apt install -y \
     rsync curl gnupg2 \
     python3 python3-venv python3-pip python3-apt
@@ -34,7 +34,7 @@ RUN apt install -o Dpkg::Options::="--force-overwrite" ripgrep
 
 # Setup
 RUN source "$XDG_CONFIG_HOME/zsh/.zshrc" && \
-    bash /_install/docker/setup.sh
+    bash /_install/docker/base/setup.sh
 
 
 # Cleanup
