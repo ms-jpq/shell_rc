@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: ${{ secrets.DOCKER_USERNAME }}/cli
           tags: latest
-          dockerfile: "docker/Dockerfile"
+          dockerfile: "docker/base/Dockerfile"
 
   macos:
     runs-on: macos-latest
