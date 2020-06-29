@@ -37,3 +37,7 @@ export NODEJS_CHECK_SIGNATURES=no
 asdf plugin add nodejs
 asdf install nodejs "$NODE_VER"
 asdf global nodejs "$NODE_VER"
+
+
+"$XDG_CONFIG_HOME/nvim/bin/nvim-pip"
+"$XDG_CONFIG_HOME/nvim/bin/nvim-npm"
