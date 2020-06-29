@@ -43,7 +43,7 @@ def main() -> NoReturn:
         cols, _ = get_terminal_size()
         sep = "-" * cols
         cmds = " ".join((__name__, *__args__))
-        ask = f"{sep}\nNot in virtual environment:\n{cmds}\n{sep}\nProceed (y/n)?"
+        ask = f"Not in virtual environment:\n{sep}\n{cmds}\n{sep}\nProceed (y/n)?"
         ans = input(ask)
         if ans in {"y", "yes", "1"}:
             cont()
