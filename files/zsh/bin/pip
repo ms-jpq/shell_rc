@@ -3,29 +3,45 @@
 from os import environ
 from os.path import basename, dirname
 from subprocess import run
-from sys import argv, stderr
+from sys import argv
+from typing import NoReturn
 
 __dirname__ = dirname(__file__)
-environ["PATH"] = ":".join(
-    path for path in environ["PATH"].split(":") if path != __dirname__
-)
+__name__ = basename(argv[0])
+__args__ = argv[1:]
 
 
-name = basename(argv[0])
-args = argv[1:]
-
-glob = {"--global", "-g"}
-venv = environ.get("VIRTUAL_ENV") is not None
-install = len(args) and args[0] == "install"
-
-if install and not venv:
-    if set(args).isdisjoint(glob):
-        print(f"Not in VirtualENV | require: {' '.join(glob)}", file=stderr)
-        exit(1)
-    else:
-        new_args = [arg for arg in args if arg not in glob]
-        ret = run([name, *new_args])
-        exit(ret.returncode)
-else:
-    ret = run([name, *args])
+def cont() -> NoReturn:
+    ret = run([__name__, *__args__])
     exit(ret.returncode)
+
+
+def paths() -> None:
+    new_paths = (path for path in environ["PATH"].split(":") if path != __dirname__)
+    environ["PATH"] = ":".join(new_paths)
+
+
+def is_install() -> bool:
+    if not len(__args__):
+        return False
+    else:
+        return __args__[0] == "install"
+
+
+def main() -> NoReturn:
+    paths()
+    venv = environ.get("VIRTUAL_ENV") is not None
+    if venv or not is_install():
+        cont()
+    else:
+        ans = input("Not in virtual environment:\nProceed (y/n)?")
+        if ans in {"y", "yes", "1"}:
+            cont()
+        else:
+            exit(1)
+
+
+try:
+    main()
+except KeyboardInterrupt:
+    pass
