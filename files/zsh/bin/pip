@@ -22,6 +22,10 @@ def paths() -> None:
     environ["PATH"] = ":".join(new_paths)
 
 
+def is_venv() -> bool:
+    return environ.get("VIRTUAL_ENV") is not None
+
+
 def is_install() -> bool:
     if not len(__args__):
         return False
@@ -31,8 +35,8 @@ def is_install() -> bool:
 
 def main() -> NoReturn:
     paths()
-    is_venv = environ.get("VIRTUAL_ENV") is not None
-    proceed = is_venv or not stdin.isatty() or not is_install()
+    proceed = is_venv() or not stdin.isatty() or not is_install()
+
     if proceed:
         cont()
     else:
