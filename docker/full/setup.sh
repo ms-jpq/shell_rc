@@ -6,6 +6,16 @@ set -o pipefail
 
 PYTHON_VER='3.8.3'
 NODE_VER='14.4.0'
+RUST_VER='1.43.1'
+
+
+inst() {
+  local lang="$1"
+  local ver="$2"
+  asdf plugin add "$lang"
+  asdf install "$lang" "$ver"
+  asdf global "$lang" "$ver"
+}
 
 
 PYTHON_DEPS=(
@@ -28,15 +38,14 @@ PYTHON_DEPS=(
   liblzma-dev
 )
 apt install --no-install-recommends -y "${PYTHON_DEPS[@]}"
-asdf plugin add python
-asdf install python "$PYTHON_VER"
-asdf global python "$PYTHON_VER"
+inst python "$PYTHON_VER"
 
 
 export NODEJS_CHECK_SIGNATURES=no
-asdf plugin add nodejs
-asdf install nodejs "$NODE_VER"
-asdf global nodejs "$NODE_VER"
+inst nodejs "$NODE_VER"
+
+
+inst rust "$RUST_VER"
 
 
 "$XDG_CONFIG_HOME/nvim/bin/nvim-pip"
