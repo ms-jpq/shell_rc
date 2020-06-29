@@ -1,57 +1,76 @@
-#!/usr/bin/env python3
+#!/usr/bin/env bash
 
-from os import environ
-from os.path import basename, dirname
-from shutil import get_terminal_size
-from subprocess import run
-from sys import argv, stdin
-from typing import NoReturn
-
-__dirname__ = dirname(__file__)
-__name__ = basename(argv[0])
-__args__ = argv[1:]
+set -eu
+set -o pipefail
 
 
-def cont() -> NoReturn:
-    ret = run([__name__, *__args__])
-    exit(ret.returncode)
+bin="$(dirname "$0")"
+PATH="$(paths --silent remove "$bin")"
 
 
-def paths() -> None:
-    new_paths = (path for path in environ["PATH"].split(":") if path != __dirname__)
-    environ["PATH"] = ":".join(new_paths)
+EXECUTE=(
+  "$(basename "$0")"
+  "$@"
+  )
 
 
-def is_venv() -> bool:
-    return environ.get("VIRTUAL_ENV") is not None
+IS_VENV=0
+if [[ -v VIRTUAL_ENV ]]
+then
+  IS_VENV=1
+fi
 
 
-def is_install() -> bool:
-    if not len(__args__):
-        return False
-    else:
-        return __args__[0] == "install"
+IS_INTERACTIVE=0
+if [[ -t 0 ]]
+then
+  IS_INTERACTIVE=1
+fi
 
 
-def main() -> NoReturn:
-    paths()
-    proceed = is_venv() or not stdin.isatty() or not is_install()
-
-    if proceed:
-        cont()
-    else:
-        cols, _ = get_terminal_size()
-        sep = "-" * cols
-        cmds = " ".join((__name__, *__args__))
-        ask = f"Not in virtual environment:\n{sep}\n{cmds}\n{sep}\nProceed (y/n)?"
-        ans = input(ask)
-        if ans in {"y", "yes", "1"}:
-            cont()
-        else:
-            exit(1)
+IS_INSTALL=0
+if [[ $# -gt 0 ]] && [[ "${EXECUTE[1]}" == 'install' ]]
+then
+  IS_INSTALL=1
+fi
 
 
-try:
-    main()
-except KeyboardInterrupt:
-    pass
+ASK=0
+if [[ $IS_VENV -eq 0 ]] && [[ $IS_INTERACTIVE -eq 1 ]] && [[ $IS_INSTALL -eq 1 ]]
+then
+  ASK=1
+fi
+
+
+hr() {
+  local rep="$1"
+  local cols="$2"
+  local line=''
+  for ((i=1; i<=$cols; i++))
+  do
+    line="$line$rep"
+  done
+  printf '%s\n' "$line"
+}
+
+
+if [[ $ASK -eq 0 ]]
+then
+  exec "${EXECUTE[@]}"
+else
+  COLS="$(tput cols)"
+  >&2 printf '%s\n' 'Not in virtual environment:'
+  >&2 hr '-' "$COLS"
+  >&2 printf '%s\n' "${EXECUTE[*]}"
+  >&2 hr '-' "$COLS"
+
+  read -r -n 1 -p 'Continue (y/n)?' CONT
+  case "$CONT" in
+    1|y|Y)
+      exec "${EXECUTE[@]}"
+      ;;
+    *)
+      exit 1
+      ;;
+  esac
+fi
