@@ -28,7 +28,7 @@ do
       break
       ;;
     *)
-      >&2 printf '!ERR!\n'
+      >&2 printf '%s\n' '!ERR!'
       exit 2
       ;;
   esac
