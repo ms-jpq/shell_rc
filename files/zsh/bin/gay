@@ -5,19 +5,19 @@ set -o pipefail
 
 
 read -ra SPREADS < <(seq 0.5 0.5 5)
-SPREAD="${SPREADS[$(($RANDOM % ${#SPREADS[@]}))]}"
+SPREAD="${SPREADS[$((RANDOM % ${#SPREADS[@]}))]}"
 
 read -ra FREQUENCIES < <(seq 0.1 0.1 0.5)
-FREQUENCY="${FREQUENCIES[$(($RANDOM % ${#FREQUENCIES[@]}))]}"
+FREQUENCY="${FREQUENCIES[$((RANDOM % ${#FREQUENCIES[@]}))]}"
 
 
 ARGS=(
   --force
   --duration=0
   --spread
-  $SPREAD
+  "$SPREAD"
   --freq
-  $FREQUENCY
+  "$FREQUENCY"
   )
 
 
