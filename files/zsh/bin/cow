@@ -31,5 +31,5 @@ else
 fi
 
 
-TEXT="${TEXT:-'moo'}"
+TEXT="${TEXT:-"moo"}"
 exec cowsay "${ARGS[@]}" <<< "$TEXT"

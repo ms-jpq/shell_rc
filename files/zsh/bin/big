@@ -27,5 +27,5 @@ else
 fi
 
 
-TEXT="${TEXT:-'BIGLY'}"
+TEXT="${TEXT:-"BIGLY"}"
 exec figlet "${ARGS[@]}" <<< "$TEXT"
