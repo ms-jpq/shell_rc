@@ -8,10 +8,10 @@ COLS=$(tput cols)
 WRAP=$((COLS / 3))
 
 COWS=($(cowsay -l | tail -n +2))
-COW="${COWS[$(($RANDOM % ${#COWS[@]}))]}"
+COW="${COWS[$((RANDOM % ${#COWS[@]}))]}"
 
 STYLES=(-b -d -g -p -s -t -w -y)
-STYLE="${STYLES[$(($RANDOM % ${#STYLES[@]}))]}"
+STYLE="${STYLES[$((RANDOM % ${#STYLES[@]}))]}"
 
 
 ARGS=(
