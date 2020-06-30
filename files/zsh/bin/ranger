@@ -3,6 +3,7 @@
 set -eu
 set -o pipefail
 
+
 bin="$(dirname "$0")"
 PATH="$(paths --silent remove "$bin")"
 

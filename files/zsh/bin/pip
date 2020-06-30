@@ -46,7 +46,7 @@ hr() {
   local rep="$1"
   local cols="$2"
   local line=''
-  for ((i=1; i<=$cols; i++))
+  for ((i=1; i<=cols; i++))
   do
     line="$line$rep"
   done
