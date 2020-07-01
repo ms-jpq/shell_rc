@@ -3,6 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from locale import strxfrm
 from shutil import get_terminal_size
+from signal import SIG_DFL, SIGPIPE, signal
 from sys import stderr, stdin, stdout
 from typing import Any, Callable
 
@@ -36,6 +37,7 @@ def repr_str(break_pt: int) -> Callable[[BaseDumper, str], ScalarNode]:
 
 
 def main() -> None:
+    signal(SIGPIPE, SIG_DFL)
     args = parse_args()
     data = stdin.read()
 
@@ -64,5 +66,5 @@ def main() -> None:
 
 try:
     main()
-except (KeyboardInterrupt, BrokenPipeError):
-    pass
+except KeyboardInterrupt:
+    exit(130)

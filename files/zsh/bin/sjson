@@ -3,6 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from json import JSONDecodeError, dump, loads
 from locale import strxfrm
+from signal import SIG_DFL, SIGPIPE, signal
 from sys import stderr, stdin, stdout
 from typing import Any
 
@@ -23,6 +24,7 @@ def parse_args() -> Namespace:
 
 
 def main() -> None:
+    signal(SIGPIPE, SIG_DFL)
     args = parse_args()
     data = stdin.read()
     try:
@@ -37,5 +39,5 @@ def main() -> None:
 
 try:
     main()
-except (KeyboardInterrupt, BrokenPipeError):
-    pass
+except KeyboardInterrupt:
+    exit(130)
