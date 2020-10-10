@@ -61,7 +61,6 @@ _core_utils:
 
 _editors:
   - neovim
-  - emacs
   - lazygit
   - ms-jpq/sad/sad
 
@@ -82,7 +81,6 @@ _nice_things:
 _fun_things:
   - mpv
   - hyperfine
-  - watchexec
   - termshark
   - neofetch
   - sl
