@@ -59,6 +59,7 @@ then
   exec "${EXECUTE[@]}"
 else
   COLS="$(tput cols)"
+  >&2 type -a python3
   >&2 printf '%s\n' 'Not in virtual environment:'
   >&2 hr '-' "$COLS"
   >&2 printf '%s\n' "${EXECUTE[*]}"
