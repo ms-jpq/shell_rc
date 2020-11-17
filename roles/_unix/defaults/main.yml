@@ -68,7 +68,8 @@ target_dirs:
   - "{{ _xdg_cache_home_ }}"
   - "{{ _zsh_dir_ }}/intrinsic"
   - "{{ _xdg_cache_home_ }}/zsh_comp"
-  - "~/.local/bin"
+  - "{{ _local_exec_bin }}"
+  - "{{ _scripts_bin_ }}"
   - "~/.ssh"
 
 
