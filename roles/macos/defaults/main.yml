@@ -26,6 +26,7 @@ target_links:
 _core_utils:
   - dash
   - bash
+  - grep
   - coreutils
   - findutils
   - gettext
@@ -37,17 +38,16 @@ _core_utils:
   - gnu-sed
   - openssh
   - glib-openssl
+  - curl
+  - wget
+  - rsync
+  - awk
   - mosh
   - tmux
   - socat
   - less
   - nano
   - bind
-  - rsync
-  - curl
-  - wget
-  - grep
-  - awk
   - jq
   - nmap
   - tree
