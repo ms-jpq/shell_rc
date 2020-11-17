@@ -28,26 +28,27 @@ _core_utils:
   - bash
   - coreutils
   - findutils
-  - lsof
   - gettext
   - gnu-which
+  - gnu-getopt
   - gnupg
+  - lsof
+  - parallel
+  - gnu-sed
   - openssh
+  - glib-openssl
   - mosh
   - tmux
   - socat
   - less
   - nano
   - bind
-  - glib-openssl
   - rsync
   - curl
   - wget
   - grep
-  - gnu-getopt
   - awk
   - jq
-  - gnu-sed
   - nmap
   - tree
   - pstree
