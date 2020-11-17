@@ -57,6 +57,7 @@ _core_utils:
   - pv
   - iperf3
   - ncdu
+  - trash
 
 
 _editors:
