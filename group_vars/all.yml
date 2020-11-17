@@ -5,6 +5,8 @@ _exec_bin_: "/usr/local/bin"
 _xdg_conf_home_: "~/.config"
 _xdg_data_home_: "~/.local/share"
 _xdg_cache_home_: "~/.cache"
+_local_exec_bin: "~/.local/bin"
+_scripts_bin_: "~/.local/scripts"
 
 
 _ssh_authorized_:
