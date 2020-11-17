@@ -2,17 +2,7 @@
 #################### FZF Tab Region ####################
 #################### ############## ####################
 
-FZF_TAB_OPTS=(
-  -m
-  --ansi
-  --no-color
-  --tiebreak=begin
-  --expect='$continuous_trigger' # For continuous completion
-  --nth=2,3 --delimiter='\x00'  # Don't search prefix
-  '--query=$query'   # $query will be expanded to query string at runtime.
-  '--header-lines=$#headers' # $#headers will be expanded to lines of headers at runtime
-)
-
+zstyle ':fzf-tab:*:' fzf-flags '--no-color'
 
 # INTI #
 source "$ZDOTDIR/fzf-tab/fzf-tab.zsh"
