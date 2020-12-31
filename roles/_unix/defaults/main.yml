@@ -48,7 +48,7 @@ git_repos:
   - src: "https://github.com/ms-jpq/isomorphic-copy.git"
     dest: "{{ _xdg_conf_home_ }}/isomorphic-copy"
 
-  - src: "https://github.com/cyproterone/vim.git"
+  - src: "https://github.com/cyproterone/nvim2.git"
     dest: "{{ _xdg_conf_home_ }}/nvim"
 
   - src: "https://github.com/cyproterone/emacs.d.git"
