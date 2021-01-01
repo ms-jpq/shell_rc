@@ -2,5 +2,5 @@
 
 - name: set default shell
   user:
-    name: "{{ lookup('env', 'USER') }}"
+    name: "{{ ansible_user }}"
     shell: /bin/zsh
