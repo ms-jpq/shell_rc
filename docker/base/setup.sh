@@ -8,7 +8,7 @@ set -o pipefail
 "$XDG_CONFIG_HOME/ranger/bin/ranger-init"
 
 
-"$XDG_CONFIG_HOME/nvim/pip.py"
+"$XDG_CONFIG_HOME/nvim/init.py" --install-runtime --install-packages
 nvim --headless
 
 
