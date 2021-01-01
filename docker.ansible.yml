@@ -2,6 +2,9 @@
 
 - hosts: localhost
   connection: local
+  vars:
+    all: True
+    ansible_user: root
 
   tasks:
     - assert:

@@ -12,7 +12,7 @@ RUN apt update && \
 
 # INSTALL
 COPY . /_install
-RUN ansible-playbook -e all=true -e ansible_user=root /_install/docker.ansible.yml
+RUN ansible-playbook -e /_install/docker.ansible.yml
 SHELL ["/usr/bin/zsh", "-l", "-c"]
 ENV TERM=xterm-256color \
     ISOCP_USE_FILE=1
