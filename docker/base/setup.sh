@@ -5,10 +5,7 @@ set -o pipefail
 
 
 "$XDG_CONFIG_HOME/tmux/bin/tmux-init"
-
-
 "$XDG_CONFIG_HOME/nvim/init.py" --install-runtime --install-packages
-nvim --headless
 
 
 touch "$XDG_CACHE_HOME/zz"
