@@ -5,9 +5,10 @@ set -o pipefail
 
 
 ARGS=(
+  "$@"
   --line-buffered
   --pretty
   )
 
 
-rg "$@" "${ARGS[@]}" | exec less
+rg "${ARGS[@]}" | exec less
