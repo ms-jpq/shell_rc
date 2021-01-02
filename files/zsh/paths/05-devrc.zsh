@@ -3,4 +3,4 @@
 #################### ########## ####################
 
 
-"$XDG_CONFIG_HOME/devrc/main.zsh"
+source "$XDG_CONFIG_HOME/devrc/main.zsh"
