@@ -48,11 +48,7 @@ zsh_main() {
     done
   done
 
-  local PATHS=(
-    "$ZDOTDIR/rc/bin"
-    "$HOME/.local/bin"
-  )
-  pathprepend "${PATHS[@]}"
+  pathprepend "$HOME/.local/bin"
 }
 
 zsh_main
