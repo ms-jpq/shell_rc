@@ -12,6 +12,18 @@ fi
 #################### Loading Region ####################
 #################### ############## ####################
 
+pathprepend() {
+  for arg in "${@}"
+  do
+    # && [[ ":$PATH:" != *":$arg:"* ]]
+    if [[ -d "$arg" ]]
+    then
+      export PATH="$arg:$PATH"
+    fi
+  done
+}
+
+
 zsh_main() {
   local zrc_targets=(
     apriori
@@ -35,8 +47,11 @@ zsh_main() {
     done
   done
 
-  export PATH="$ZDOTDIR/rc/bin:$PATH"
-  export PATH="$HOME/.local/bin:$PATH"
+  local PATHS=(
+    "$ZDOTDIR/rc/bin"
+    "$HOME/.local/bin"
+  )
+  pathprepend "${PATHS[@]}"
 }
 
 zsh_main
