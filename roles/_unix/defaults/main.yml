@@ -51,9 +51,6 @@ git_repos:
   - src: "https://github.com/cyproterone/nvim2.git"
     dest: "{{ _xdg_conf_home_ }}/nvim"
 
-  - src: "https://github.com/cyproterone/emacs.d.git"
-    dest: "{{ _xdg_conf_home_ }}/emacs.d"
-
   - src: "https://github.com/cyproterone/devrc.git"
     dest: "{{ _xdg_conf_home_ }}/devrc"
 
