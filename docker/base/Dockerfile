@@ -6,7 +6,7 @@ RUN apt update && \
     apt upgrade -y && \
     apt install -y \
     rsync curl gnupg2 \
-    python3 python3-pip python3-apt && \
+    python3 python3-pip python3-apt nodejs npm && \
     pip3 install ansible
 
 
