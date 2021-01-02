@@ -87,7 +87,11 @@ remove() {
       acc+=("$path")
     fi
   done
-  printf ':%s' "${acc[@]}"
+  local save_ifs="$IFS"
+  IFS=':'
+  local ret="${acc[*]}"
+  IFS="$save_ifs"
+  printf '%s' "$ret"
 
   if [[ "$silent" -eq 0 ]]
   then
