@@ -57,9 +57,6 @@ git_repos:
   - src: "https://github.com/cyproterone/devrc.git"
     dest: "{{ _xdg_conf_home_ }}/devrc"
 
-  - src: "https://github.com/cyproterone/ranger.git"
-    dest: "{{ _xdg_conf_home_ }}/ranger"
-
 
 target_dirs:
   - "{{ _ansible_tmp_ }}"
