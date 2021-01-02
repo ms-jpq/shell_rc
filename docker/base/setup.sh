@@ -5,7 +5,6 @@ set -o pipefail
 
 
 "$XDG_CONFIG_HOME/tmux/bin/tmux-init"
-"$XDG_CONFIG_HOME/ranger/bin/ranger-init"
 
 
 "$XDG_CONFIG_HOME/nvim/init.py" --install-runtime --install-packages
