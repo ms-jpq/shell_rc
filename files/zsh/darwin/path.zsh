@@ -2,18 +2,22 @@
 #################### Path Region ####################
 #################### ########### ####################
 
-export PATH="/usr/local/opt/bc/bin:$PATH"
-export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
-export PATH="/usr/local/opt/curl/bin:$PATH"
-export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
-export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
-export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
-export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
-export PATH="/usr/local/opt/gnu-which/libexec/gnubin:$PATH"
-export PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
-export PATH="/usr/local/opt/icu4c/bin:$PATH"
-export PATH="/usr/local/opt/icu4c/sbin:$PATH"
-export PATH="/usr/local/opt/lsof/bin:$PATH"
-export PATH="/usr/local/opt/ncurses/bin:$PATH"
-export PATH="/usr/local/opt/openssl/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
+PATHS=(
+  "/usr/local/opt/bc/bin"
+  "/usr/local/opt/coreutils/libexec/gnubin"
+  "/usr/local/opt/curl/bin"
+  "/usr/local/opt/findutils/libexec/gnubin"
+  "/usr/local/opt/gnu-getopt/bin"
+  "/usr/local/opt/gnu-sed/libexec/gnubin"
+  "/usr/local/opt/gnu-tar/libexec/gnubin"
+  "/usr/local/opt/gnu-which/libexec/gnubin"
+  "/usr/local/opt/grep/libexec/gnubin"
+  "/usr/local/opt/icu4c/bin"
+  "/usr/local/opt/icu4c/sbin"
+  "/usr/local/opt/lsof/bin"
+  "/usr/local/opt/ncurses/bin"
+  "/usr/local/opt/openssl/bin"
+  "/usr/local/sbin"
+)
+pathprepend "${PATHS[@]}"
+unset PATHS

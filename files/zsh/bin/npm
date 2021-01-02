@@ -1,0 +1,53 @@
+#!/usr/bin/env node
+
+const assert = require("assert");
+const { spawnSync } = require("child_process");
+const { existsSync, mkdirSync } = require("fs");
+const { join } = require("path");
+
+process.env["PATH"] = process.env["PATH"]
+  .split(":")
+  .filter((p) => p !== __dirname)
+  .join(":");
+
+const [, , ...args] = process.argv;
+const global_home = process.env["NPM_GLOBAL_HOME"];
+assert(global_home);
+
+const command = args[0];
+const install = command === "install" || command === "i";
+
+const global_set = new Set(["--global", "-g"]);
+const is_global = args.some((arg) => global_set.has(arg));
+const global_install = install && is_global;
+
+const cwd = global_install ? global_home : process.cwd();
+const new_args = (() => {
+  if (global_install) {
+    return args.filter((arg) => !global_set.has(arg));
+  } else {
+    return args;
+  }
+})();
+
+if (global_install) {
+  if (!existsSync(global_home)) {
+    mkdirSync(global_home, { recursive: true });
+  }
+  const packages = join(global_home, "package.json");
+  if (!existsSync(packages)) {
+    spawnSync("npm", ["init", "-y"], {
+      cwd,
+      stdio: "inherit",
+    });
+  }
+  console.log("-".repeat(process.stdout.columns));
+  console.log(`@ - ${packages} - @`);
+  console.log("-".repeat(process.stdout.columns));
+}
+
+const { status } = spawnSync("npm", [...new_args], {
+  cwd,
+  stdio: "inherit",
+});
+process.exit(status);
