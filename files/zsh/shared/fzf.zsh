@@ -27,10 +27,10 @@ FZF_PREVIEW='preview {}'
 export FZF_DEFAULT_COMMAND='fd --type file -type symlink'
 FZF_COMPLETION_OPTS="--preview='$FZF_PREVIEW'"
 
-export FZF_ALT_C_COMMAND='fd -0 --no-ignore --type file -type symlink'
+export FZF_ALT_C_COMMAND='fd --print0 --no-ignore --type file -type symlink'
 FZF_ALT_C_OPTS="$FZF_COMPLETION_OPTS --read0"
 
-export FZF_CTRL_T_COMMAND='fd -0'
+export FZF_CTRL_T_COMMAND='fd --print0'
 FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS --read0"
 
 
