@@ -2,7 +2,7 @@
 #################### FZF Region ####################
 #################### ########## ####################
 
-export FZF_COLOUR="--color=light \
+FZF_COLOUR="--color=light \
                    --color=bg+:#dfdfdf"
 
 export FZF_DEFAULT_OPTS="$FZF_COLOUR \
@@ -22,16 +22,16 @@ export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --bind=alt-a:select-all \
                          --bind=alt-l:deselect-all"
 
-export FZF_PREVIEW='preview {}'
+FZF_PREVIEW='preview {}'
 
 export FZF_DEFAULT_COMMAND='fd -t f -t l'
-export FZF_COMPLETION_OPTS="--preview='$FZF_PREVIEW'"
+FZF_COMPLETION_OPTS="--preview='$FZF_PREVIEW'"
 
 export FZF_ALT_C_COMMAND='fd -0 -I -t d'
-export FZF_ALT_C_OPTS="$FZF_COMPLETION_OPTS --read0"
+FZF_ALT_C_OPTS="$FZF_COMPLETION_OPTS --read0"
 
 export FZF_CTRL_T_COMMAND='fd -0'
-export FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS --read0"
+FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS --read0"
 
 
 export FZF_TMUX_HEIGHT='100%'
