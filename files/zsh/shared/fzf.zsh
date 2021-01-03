@@ -23,15 +23,16 @@ export FZF_DEFAULT_OPTS="$FZF_COLOUR \
                          --bind=alt-l:deselect-all"
 
 FZF_PREVIEW='preview {}'
+FD_DEFAULT='fd --hidden --follow'
 
-export FZF_DEFAULT_COMMAND='fd --type file -type symlink'
+export FZF_DEFAULT_COMMAND="$FD_DEFAULT --type file --type symlink"
 FZF_COMPLETION_OPTS="--preview='$FZF_PREVIEW'"
 
-export FZF_ALT_C_COMMAND='fd --print0 --no-ignore --type file -type symlink'
-FZF_ALT_C_OPTS="$FZF_COMPLETION_OPTS --read0"
+export FZF_ALT_C_COMMAND="$FD_DEFAULT --print0 --no-ignore --type directory --type symlink"
+export FZF_ALT_C_OPTS="$FZF_COMPLETION_OPTS --read0"
 
-export FZF_CTRL_T_COMMAND='fd --print0'
-FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS --read0"
+export FZF_CTRL_T_COMMAND="$FD_DEFAULT --print0 --no-ignore"
+export FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS --read0"
 
 
 export FZF_TMUX_HEIGHT='100%'
