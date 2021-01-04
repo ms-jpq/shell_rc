@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 
 from argparse import ArgumentParser, Namespace
-from enum import Enum
-from urllib.request import Request, urlopen
+from enum import Enum, auto
+from http.client import HTTPResponse
+from typing import cast
+from urllib.request import Request, build_opener
 
 
 class Format(Enum):
-    LINE = "line"
-    TABLE = "table"
-    GRAPH = "graph"
+    line = auto()
+    table = auto()
+    graph = auto()
 
 
 def wttrin_uri(display: Format) -> str:
-    if display == Format.LINE:
+    if display == Format.line:
         return "https://wttr.in?m&format=4"
-    elif display == Format.TABLE:
+    elif display == Format.table:
         return "https://wttr.in?mT"
-    elif display == Format.GRAPH:
+    elif display == Format.graph:
         return "https://v2.wttr.in?mT"
     else:
         raise ValueError()
@@ -25,10 +27,11 @@ def wttrin_uri(display: Format) -> str:
 def wttrin(display: Format) -> str:
     uri = wttrin_uri(display)
     headers = {"User-Agent": "curl", "Accept-Language": "zh"}
-
     req = Request(uri, headers=headers)
-    with urlopen(req) as resp:
-        return resp.read().decode()
+
+    opener = build_opener()
+    with opener.open(req) as resp:
+        return cast(HTTPResponse, resp).read().decode()
 
 
 def parse_args() -> Namespace:
@@ -38,7 +41,7 @@ def parse_args() -> Namespace:
         nargs="?",
         type=Format,
         choices=tuple(f for f in Format),
-        default=Format.TABLE,
+        default=Format.table,
     )
     return parser.parse_args()
 
