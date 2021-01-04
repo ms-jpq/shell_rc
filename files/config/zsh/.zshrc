@@ -41,11 +41,11 @@ zsh_main() {
   for target in "${zrc_targets[@]}"
   do
     local rcs="$XDG_CONFIG_HOME/zsh/rc/$target"
-    pathprepend "$rcs/bin"
     for rc in "$rcs"/**/*.zsh(N)
     do
       source "$rc"
     done
+    pathprepend "$rcs/bin"
   done
 
   pathprepend "$HOME/.local/bin"
