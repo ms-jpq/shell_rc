@@ -30,6 +30,7 @@ zsh_main() {
     shared
     "$(uname | tr '[:upper:]' '[:lower:]')"
     paths
+    fun
     aposteriori
   )
 
