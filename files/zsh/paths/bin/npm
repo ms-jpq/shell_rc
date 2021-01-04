@@ -3,14 +3,16 @@
 const assert = require("assert");
 const { spawnSync } = require("child_process");
 const { existsSync, mkdirSync } = require("fs");
-const { join, delimiter } = require("path");
+const { basename, delimiter, dirname, join } = require("path");
+
+const [, filename, ...args] = process.argv;
+const [parent, npm] = [dirname(filename), basename(filename)];
 
 process.env["PATH"] = process.env["PATH"]
   .split(delimiter)
-  .filter((p) => p !== __dirname)
+  .filter((p) => p !== parent)
   .join(delimiter);
 
-const [, , ...args] = process.argv;
 const global_home = process.env["NPM_GLOBAL_HOME"];
 assert(global_home);
 
@@ -37,7 +39,7 @@ if (is_global_install) {
   }
   const packages = join(global_home, "package.json");
   if (!existsSync(packages)) {
-    spawnSync("npm", ["init", "-y"], {
+    spawnSync(npm, ["init", "-y"], {
       cwd,
       stdio: "inherit",
     });
@@ -47,7 +49,7 @@ if (is_global_install) {
   console.log("-".repeat(process.stdout.columns));
 }
 
-const { status } = spawnSync("npm", [...new_args], {
+const { status } = spawnSync(npm, [...new_args], {
   cwd,
   stdio: "inherit",
 });
