@@ -46,6 +46,3 @@ inst nodejs "$NODE_VER"
 
 
 inst rust "$RUST_VER"
-
-
-asdf-ree "$XDG_CONFIG_HOME/devrc/init.sh"
