@@ -4,7 +4,7 @@ set -eux
 set -o pipefail
 
 
-PYTHON_VER='3.8.3'
+PYTHON_VER='3.8.2'
 NODE_VER='14.4.0'
 RUST_VER='1.43.1'
 
@@ -47,8 +47,5 @@ inst nodejs "$NODE_VER"
 
 inst rust "$RUST_VER"
 
-
-"$XDG_CONFIG_HOME/nvim/bin/nvim-pip"
-"$XDG_CONFIG_HOME/nvim/bin/nvim-npm"
 
 asdf-ree "$XDG_CONFIG_HOME/devrc/init.sh"
