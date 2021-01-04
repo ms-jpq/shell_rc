@@ -3,34 +3,35 @@
 const assert = require("assert");
 const { spawnSync } = require("child_process");
 const { existsSync, mkdirSync } = require("fs");
-const { join } = require("path");
+const { join, delimiter } = require("path");
 
 process.env["PATH"] = process.env["PATH"]
-  .split(":")
+  .split(delimiter)
   .filter((p) => p !== __dirname)
-  .join(":");
+  .join(delimiter);
 
 const [, , ...args] = process.argv;
 const global_home = process.env["NPM_GLOBAL_HOME"];
 assert(global_home);
 
-const command = args[0];
-const install = command === "install" || command === "i";
-
+const install_set = new Set(["install", "i"]);
 const global_set = new Set(["--global", "-g"]);
-const is_global = args.some((arg) => global_set.has(arg));
-const global_install = install && is_global;
 
-const cwd = global_install ? global_home : process.cwd();
+const command = args[0];
+const is_install = install_set.has(command);
+const is_global = args.some((arg) => global_set.has(arg));
+const is_global_install = is_install && is_global;
+
+const cwd = is_global_install ? global_home : process.cwd();
 const new_args = (() => {
-  if (global_install) {
+  if (is_global_install) {
     return args.filter((arg) => !global_set.has(arg));
   } else {
     return args;
   }
 })();
 
-if (global_install) {
+if (is_global_install) {
   if (!existsSync(global_home)) {
     mkdirSync(global_home, { recursive: true });
   }
