@@ -8,22 +8,22 @@ FILE="$*"
 
 case "$FILE" in
   *.tar.bz|*.tar.bz2|*.tbz|*.tbz2)
-    exec tar xjvf "$FILE"
+    exec tar -xjvf "$FILE"
     ;;
   *.tar.gz|*.tgz)
-    exec tar xzvf "$FILE"
+    exec tar -xzvf "$FILE"
     ;;
   *.tar.xz|*.txz)
-    exec tar xJvf "$FILE"
+    exec tar -xJvf "$FILE"
     ;;
   *.zip)
     exec unzip "$FILE"
     ;;
   *.rar)
-    exec unrar x "$FILE"
+    exec unrar -x "$FILE"
     ;;
   *.7z)
-    exec 7z x "$FILE"
+    exec 7z -x "$FILE"
     ;;
   *)
     printf '%s\n' "Unknown format :: $FILE"
