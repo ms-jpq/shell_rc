@@ -23,7 +23,7 @@ venv() {
       source "$ACTIVATE"
       printf '%s\n' "Activated - $VIRTUAL_ENV"
     else
-      printf '%s\n' "No Virtualenv found at - $ACTIVATE"
+      venv init
     fi
     ;;
   off)
