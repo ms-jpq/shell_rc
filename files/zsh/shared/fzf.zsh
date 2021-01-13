@@ -2,48 +2,79 @@
 #################### FZF Region ####################
 #################### ########## ####################
 
-FZF_COLOUR="--color=light \
-            --color=bg+:#dfdfdf"
 
-export FZF_DEFAULT_OPTS="$FZF_COLOUR \
-                         --reverse \
-                         --no-height \
-                         --border \
-                         --cycle \
-                         --tabstop=2 \
-                         --preview-window=right:wrap \
-                         --bind=ctrl-space:toggle \
-                         --bind=tab:down \
-                         --bind=btab:up \
-                         --bind=shift-down:toggle+down \
-                         --bind=shift-up:toggle+up \
-                         --bind=shift-left:preview-up \
-                         --bind=shift-right:preview-down \
-                         --bind=alt-a:select-all \
-                         --bind=alt-l:deselect-all"
+_fzf_default_opts=(
+  --reverse
+  --no-height
+  --border
+  --cycle
+  --tabstop=2
+  --preview-window=right:wrap
+  --bind=ctrl-space:toggle
+  --bind=tab:down
+  --bind=btab:up
+  --bind=shift-down:toggle+down
+  --bind=shift-up:toggle+up
+  --bind=shift-left:preview-up
+  --bind=shift-right:preview-down
+  --bind=alt-a:select-all
+  --bind=alt-l:deselect-all
+  --color=light
+  --color=bg+:'#dfdfdf'
+)
+export FZF_DEFAULT_OPTS="${_fzf_default_opts[*]}"
+unset _fzf_default_opts
 
-FZF_PREVIEW='preview {}'
-FD_DEFAULT='fd --hidden --follow'
+_fzf_preview='preview {}'
+_fd_default=(
+  fd
+  --hidden
+  --follow
+)
+_fzf_default_command=(
+  "${_fd_default[@]}"
+  --type=file
+  --type=symlink
+)
+export FZF_DEFAULT_COMMAND="${_fzf_default_command[*]}"
+_fzf_preview_opts="--preview='$_fzf_preview'"
+unset _fzf_default_command
 
-export FZF_DEFAULT_COMMAND="$FD_DEFAULT --type file --type symlink"
-FZF_COMPLETION_OPTS="--preview='$FZF_PREVIEW'"
+_fzf_alt_c_command=(
+  "${_fd_default[@]}"
+  --print0
+  --no-ignore
+  --type=symlink
+  --type=directory
+)
+export FZF_ALT_C_COMMAND="${_fzf_alt_c_command[*]}"
+export FZF_ALT_C_OPTS="$_fzf_preview_opts --read0"
+unset _fzf_alt_c_command
 
-export FZF_ALT_C_COMMAND="$FD_DEFAULT --print0 --no-ignore --type directory --type symlink"
-export FZF_ALT_C_OPTS="$FZF_COMPLETION_OPTS --read0"
-
-export FZF_CTRL_T_COMMAND="$FD_DEFAULT --print0 --no-ignore"
-export FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS --read0"
-
+_fzf_ctrl_t_command=(
+  "${_fd_default[@]}"
+  --print0
+  --no-ignore
+)
+export FZF_CTRL_T_COMMAND="${_fzf_ctrl_t_command[*]}"
+export FZF_CTRL_T_OPTS="$_fzf_preview_opts --read0"
+unset _fzf_preview_opts
+unset _fzf_ctrl_t_command
 
 export FZF_TMUX_HEIGHT='100%'
 
 
 alias f='fzf'
-alias fp="fzf --preview='$FZF_PREVIEW'"
+alias fp="fzf --preview='$_fzf_preview'"
 
 
 d() {
-  local dest="$(FZF_DEFAULT_COMMAND='fd -0 -t d' fp --read0 -q "${*:-""}")"
+  local _default_cmd=(
+    "${_fd_default[@]}"
+    --print0
+    --type=directory
+  )
+  local dest="$(FZF_DEFAULT_COMMAND="${_default_cmd[*]}" fp --read0 -q "${*:-""}")"
   cd "$dest" || return 1
 }
 
@@ -53,14 +84,22 @@ d() {
 #################### ################ ####################
 
 _fzf_compgen_path() {
-  fd -t d -t f -t l "$1"
+  local local_opts=(
+    --type=directory
+    --type=symlink
+    --type=file
+  )
+  "${_fd_default[@]}" "${local_opts[@]}" "$1"
 }
 
 
 _fzf_compgen_dir() {
-  fd -t d "$1"
+  local local_opts=(
+    --type=directory
+  )
+  "${_fd_default[@]}" "${local_opts[@]}" "$1"
 }
-
+unset _fd_default
 
 # INTI #
 source "$ZDOTDIR/fzf/shell/key-bindings.zsh"
