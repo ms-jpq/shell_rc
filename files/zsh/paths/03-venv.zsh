@@ -47,6 +47,8 @@ venv() {
       fi
       command rm -rf "$DEFAULT_VENV_PATH"
       printf '%s\n' "Removed - $DEFAULT_VENV_PATH"
+    else
+      printf '%s\n' "Failed to find Virtualenv - $DEFAULT_VENV_PATH"
     fi
     ;;
   *)
