@@ -3,7 +3,7 @@
 #################### ############# ####################
 
 venv() {
-  local DEFAULT_VENV_PATH=".venv"
+  local DEFAULT_VENV_PATH="$PWD/.venv"
   local ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
   case "$1" in
   init)
