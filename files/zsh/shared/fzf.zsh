@@ -69,12 +69,12 @@ alias fp="fzf --preview='$_fzf_preview'"
 
 
 d() {
-  local _default_cmd=(
+  local default_cmd=(
     "${_fd_default[@]}"
     --print0
     --type=directory
   )
-  local dest="$(FZF_DEFAULT_COMMAND="${_default_cmd[*]}" fp --read0 -q "${*:-""}")"
+  local dest="$(FZF_DEFAULT_COMMAND="${default_cmd[*]}" fp --read0 -q "${*:-""}")"
   cd "$dest" || return 1
 }
 
@@ -99,7 +99,6 @@ _fzf_compgen_dir() {
   )
   "${_fd_default[@]}" "${local_opts[@]}" "$1"
 }
-unset _fd_default
 
 # INTI #
 source "$ZDOTDIR/fzf/shell/key-bindings.zsh"
