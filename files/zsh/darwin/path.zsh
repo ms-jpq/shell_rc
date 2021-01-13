@@ -2,7 +2,7 @@
 #################### Path Region ####################
 #################### ########### ####################
 
-PATHS=(
+_paths=(
   "/usr/local/opt/bc/bin"
   "/usr/local/opt/coreutils/libexec/gnubin"
   "/usr/local/opt/curl/bin"
@@ -19,5 +19,5 @@ PATHS=(
   "/usr/local/opt/openssl/bin"
   "/usr/local/sbin"
 )
-pathprepend "${PATHS[@]}"
-unset PATHS
+pathprepend "${_paths[@]}"
+unset _paths
