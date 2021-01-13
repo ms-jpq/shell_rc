@@ -2,16 +2,20 @@
 #################### Core Region ####################
 #################### ########### ####################
 
+_less=(
+  --quit-on-intr
+  --quit-if-one-screen
+  --mouse
+  --RAW-CONTROL-CHARS
+  --tilde
+  --tabs=2
+  --QUIET
+  --ignore-case
+  --no-histdups
+)
 export PAGER='less'
-export LESS="--quit-on-intr \
-             --quit-if-one-screen \
-             --mouse \
-             --RAW-CONTROL-CHARS \
-             --tilde \
-             --tabs=2 \
-             --QUIET \
-             --ignore-case \
-             --no-histdups"
+export LESS="${_less[*]}"
+unset _less
 
 
 # Safety
