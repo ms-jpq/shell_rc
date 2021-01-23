@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+print_ssh_cmd() {
+  if [[ -v GIT_SSH_COMMAND ]]
+  then
+    printf '%s' "$GIT_SSH_COMMAND"
+  else
+    printf ''
+  fi
+}
+
+
+if [[ $# -eq 0 ]]
+then
+  printf ''
+  >&2 printf '%s%s\n' 'REMOVED -- $GIT_SSH_COMMAND=' "$(print_ssh_cmd)"
+  exit
+fi
+
+
+if [[ $# -gt 1 ]]
+then
+  print_ssh_cmd
+  >&2 printf '%s\n' 'ERR! -- # of arguments'
+  exit 1
+fi
+
+
+key="$HOME/.ssh/$1"
+
+if [[ ! -f "$key" ]]
+then
+  print_ssh_cmd
+  >&2 printf '%s\n' "File Not Found -- $key"
+  exit 1
+fi
+
+
+opts="ssh -o IdentitiesOnly=yes -i $key"
+printf '%s' "$opts"
+>&2 printf '%s%s\n' 'NEW -- $GIT_SSH_COMMAND=' "$opts"

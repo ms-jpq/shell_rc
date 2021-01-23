@@ -51,9 +51,6 @@ git_repos:
   - src: "https://github.com/cyproterone/nvim2.git"
     dest: "{{ _xdg_conf_home_ }}/nvim"
 
-  - src: "https://github.com/cyproterone/devrc.git"
-    dest: "{{ _xdg_conf_home_ }}/devrc"
-
 
 target_dirs:
   - "{{ _ansible_tmp_ }}"
