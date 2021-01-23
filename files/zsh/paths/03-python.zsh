@@ -2,6 +2,8 @@
 #################### Python Region ####################
 #################### ############# ####################
 
+export MYPY_CACHE_DIR="$XDG_CACHE_HOME/mypy"
+
 venv() {
   local DEFAULT_VENV_PATH="$PWD/.venv"
   local ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
