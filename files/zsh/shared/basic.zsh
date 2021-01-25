@@ -27,7 +27,6 @@ alias cp='cp -i'
 
 alias mkdir='mkdir -p'
 
-alias cls='clear'
 alias sudo='sudo --preserve-env -- '
 alias cmd='command '
 
