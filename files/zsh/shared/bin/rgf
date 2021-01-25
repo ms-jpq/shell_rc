@@ -11,11 +11,14 @@ ARGS=(
   -0
   )
 
-OPTIONS=(
+
+export SHELL=bash
+export RGF_OPTIONS=(
+  "$@"
   --color=always
   --context=2
   '--context-separator="$(hr "-" "$FZF_PREVIEW_COLUMNS")"'
   )
 
 
-rg "${ARGS[@]}" | exec fzf --read0 --preview="rg ${OPTIONS[*]} $* {}"
+rg "${ARGS[@]}" | exec fzf --read0 --preview='rg ${RGF_OPTIONS[@]} {}'

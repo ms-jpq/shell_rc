@@ -26,13 +26,8 @@ export FZF_DEFAULT_OPTS="${_fzf_default_opts[*]}"
 unset _fzf_default_opts
 
 _fzf_preview='preview {}'
-_fd_default=(
-  fd
-  --hidden
-  --follow
-)
 _fzf_default_command=(
-  "${_fd_default[@]}"
+  fd
   --type=file
   --type=symlink
 )
@@ -41,7 +36,7 @@ _fzf_preview_opts="--preview='$_fzf_preview'"
 unset _fzf_default_command
 
 _fzf_alt_c_command=(
-  "${_fd_default[@]}"
+  fd
   --print0
   --no-ignore
   --type=symlink
@@ -52,7 +47,7 @@ export FZF_ALT_C_OPTS="$_fzf_preview_opts --read0"
 unset _fzf_alt_c_command
 
 _fzf_ctrl_t_command=(
-  "${_fd_default[@]}"
+  fd
   --print0
   --no-ignore
 )
@@ -70,7 +65,7 @@ alias fp="fzf --preview='$_fzf_preview'"
 
 d() {
   local default_cmd=(
-    "${_fd_default[@]}"
+    fd
     --print0
     --type=directory
   )
@@ -89,7 +84,7 @@ _fzf_compgen_path() {
     --type=symlink
     --type=file
   )
-  "${_fd_default[@]}" "${local_opts[@]}" "$1"
+  fd "${local_opts[@]}" "$1"
 }
 
 
@@ -97,7 +92,7 @@ _fzf_compgen_dir() {
   local local_opts=(
     --type=directory
   )
-  "${_fd_default[@]}" "${local_opts[@]}" "$1"
+  fd "${local_opts[@]}" "$1"
 }
 
 # INTI #
