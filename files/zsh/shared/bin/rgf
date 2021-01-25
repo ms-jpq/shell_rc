@@ -12,8 +12,7 @@ ARGS=(
   )
 
 
-export SHELL=bash
-export RGF_OPTIONS=(
+OPTIONS=(
   "$@"
   --color=always
   --context=2
@@ -21,4 +20,4 @@ export RGF_OPTIONS=(
   )
 
 
-rg "${ARGS[@]}" | exec fzf --read0 --preview='rg ${RGF_OPTIONS[@]} {}'
+rg "${ARGS[@]}" | exec fzf --read0 --preview="rg ${OPTIONS[*]} {}"
