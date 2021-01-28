@@ -13,6 +13,7 @@ RUN apt update && \
 # INSTALL
 COPY . /_install
 RUN python3 -m venv --system-site-packages /_install/venv && \
+    PATH="/_install/venv/bin:$PATH" pip3 install ansible && \
     PATH="/_install/venv/bin:$PATH" ansible-playbook /_install/docker.ansible.yml && \
     rm -rf /_install
 SHELL ["/usr/bin/zsh", "-l", "-c"]
