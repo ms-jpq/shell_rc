@@ -10,6 +10,10 @@ RUN apt update && \
     python3 python3-venv python3-apt nodejs npm
 
 
+# Bug
+RUN apt install -y -o Dpkg::Options::="--force-overwrite" ripgrep
+
+
 # INSTALL
 COPY . /_install
 RUN python3 -m venv --system-site-packages /_install/venv && \
@@ -26,10 +30,6 @@ ENV TERM=xterm-256color \
     ISOCP_USE_FILE=1
 ENTRYPOINT ["/usr/bin/zsh", "-l"]
 WORKDIR "/root"
-
-
-# Bug
-RUN apt install -y -o Dpkg::Options::="--force-overwrite" ripgrep
 
 
 # Cleanup
