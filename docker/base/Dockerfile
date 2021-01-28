@@ -10,16 +10,13 @@ RUN apt update && \
     python3 python3-venv python3-apt nodejs npm
 
 
-# Bug
-RUN apt install -y -o Dpkg::Options::="--force-overwrite" ripgrep
-
-
 # INSTALL
 COPY . /_install
 RUN python3 -m venv --system-site-packages /_install/venv && \
     PATH="/_install/venv/bin:$PATH" pip3 install ansible && \
     PATH="/_install/venv/bin:$PATH" ansible-playbook /_install/docker.ansible.yml && \
     rm -rf /root/.ansible /_install && \
+    apt install -y -o Dpkg::Options::="--force-overwrite" ripgrep && \
     /root/.config/tmux/bin/tmux-init && \
     /root/.config/nvim/init.py deps && \
     touch /root/.cache/zz
