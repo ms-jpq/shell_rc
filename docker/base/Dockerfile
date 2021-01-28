@@ -34,4 +34,4 @@ RUN source "$XDG_CONFIG_HOME/zsh/.zshrc" && \
 # Cleanup
 RUN apt autoremove -y && \
     apt clean && \
-    rm -rf /tmp/** /_install
+    rm -rf /tmp/**
