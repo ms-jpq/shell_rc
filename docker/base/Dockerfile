@@ -15,7 +15,12 @@ COPY . /_install
 RUN python3 -m venv --system-site-packages /_install/venv && \
     PATH="/_install/venv/bin:$PATH" pip3 install ansible && \
     PATH="/_install/venv/bin:$PATH" ansible-playbook /_install/docker.ansible.yml && \
-    rm -rf /_install
+    rm -rf /root/.ansible /_install && \
+    /root/.config/tmux/bin/tmux-init && \
+    /root/.config/nvim/init.py deps && \
+    touch /root/.cache/zz
+
+
 SHELL ["/usr/bin/zsh", "-l", "-c"]
 ENV TERM=xterm-256color \
     ISOCP_USE_FILE=1
@@ -25,11 +30,6 @@ WORKDIR "/root"
 
 # Bug
 RUN apt install -y -o Dpkg::Options::="--force-overwrite" ripgrep
-
-
-# Setup
-RUN source "$XDG_CONFIG_HOME/zsh/.zshrc" && \
-    /_install/docker/base/setup.sh
 
 
 # Cleanup
