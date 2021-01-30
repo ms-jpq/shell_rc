@@ -2,7 +2,6 @@ gay
 sortd
 markdown_live_preview
 git+https://github.com/ms-jpq/py-dev.git
-git+https://github.com/LazoCoder/Pokemon-Terminal.git
 speedtest-cli
 httpie
 tldr
