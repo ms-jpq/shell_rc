@@ -1,0 +1,8 @@
+gay
+sortd
+markdown_live_preview
+git+https://github.com/ms-jpq/py-dev/tree/dev
+git+https://github.com/LazoCoder/Pokemon-Terminal.git
+speedtest-cli
+httpie
+tldr
