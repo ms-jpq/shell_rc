@@ -5,3 +5,4 @@ git+https://github.com/ms-jpq/py-dev.git
 speedtest-cli
 httpie
 tldr
+git+https://github.com/LazoCoder/Pokemon-Terminal.git
