@@ -14,7 +14,8 @@ ARGS=(
 
 OPTIONS=(
   --color=always
-  --context=2
+  --line-number
+  --context=3
   '--context-separator="$(hr "-" "$FZF_PREVIEW_COLUMNS")"'
   "$@"
   )
