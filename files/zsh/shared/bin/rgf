@@ -5,18 +5,18 @@ set -o pipefail
 
 
 ARGS=(
-  "$@"
   --line-buffered
   --files-with-matches
   -0
+  "$@"
   )
 
 
 OPTIONS=(
-  "$@"
   --color=always
   --context=2
   '--context-separator="$(hr "-" "$FZF_PREVIEW_COLUMNS")"'
+  "$@"
   )
 
 
