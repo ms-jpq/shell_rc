@@ -2,7 +2,7 @@ gay
 sortd
 markdown_live_preview
 https://github.com/ms-jpq/py-dev/archive/dev.tar.gz
-glances[bottle,docker,statsd,zeroconf]
+glances[bottle,docker,zeroconf]
 speedtest-cli
 httpie
 tldr
