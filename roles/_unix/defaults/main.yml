@@ -54,14 +54,8 @@ git_repos:
 
 target_dirs:
   - "{{ _ansible_tmp_ }}"
-  - "{{ _xdg_conf_home_ }}"
-  - "{{ _xdg_data_home_ }}"
-  - "{{ _xdg_cache_home_ }}"
-  - "{{ _zsh_dir_ }}/intrinsic"
-  - "{{ _xdg_cache_home_ }}/zsh_comp"
   - "{{ _local_exec_bin }}"
   - "{{ _scripts_bin_ }}"
-  - "~/.ssh"
 
 
 target_touches:
