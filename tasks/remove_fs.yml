@@ -1,6 +1,6 @@
 ---
-- name: removing stale oh-my-zsh
+- name: removing stale
   loop: "{{ target_removals }}"
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent

@@ -1,5 +1,5 @@
 ---
 - name: "install common packages {{ packages }}"
-  package:
+  ansible.builtin.package:
     name: "{{ packages }}"
     state: present

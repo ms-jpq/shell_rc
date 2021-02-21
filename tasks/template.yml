@@ -1,6 +1,6 @@
 ---
 - name: fill templates
   loop: "{{ target_templates }}"
-  template:
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

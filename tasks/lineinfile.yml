@@ -1,7 +1,7 @@
 ---
 - name: line in file
   loop: "{{ target_lines }}"
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ item.file }}"
     line: "{{ item.line }}"
   register: __lineinfile
