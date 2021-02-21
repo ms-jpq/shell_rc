@@ -52,8 +52,7 @@ git_repos:
     dest: "{{ _xdg_conf_home_ }}/nvim"
 
 
-target_dirs:
-  - "{{ _ansible_tmp_ }}"
+target_dirs: []
 
 
 target_touches:

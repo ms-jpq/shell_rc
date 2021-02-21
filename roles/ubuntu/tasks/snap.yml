@@ -1,5 +1,4 @@
 ---
-
 - name: "install {{ snap_packages }}"
   loop: "{{ snap_packages }}"
   snap:

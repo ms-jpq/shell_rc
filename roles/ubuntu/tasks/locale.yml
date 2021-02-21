@@ -1,5 +1,4 @@
 ---
-
 - name: ensure locale exists
   locale_gen:
     name: "{{ locale }}.UTF-8"
