@@ -3,6 +3,11 @@
 nano_path: /usr/local/opt/nano/share/nano
 
 
+target_files:
+  - src: "macos/~/"
+    dest: "~/"
+
+
 target_dirs: []
 
 
