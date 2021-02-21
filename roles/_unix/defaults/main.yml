@@ -72,14 +72,8 @@ target_files:
 
 
 target_templates:
-  - src: "zsh/locale.zsh.j2"
-    dest: "{{ _zsh_dir_ }}/intrinsic/locale.zsh"
-
-  - src: "zsh/tz.zsh.j2"
-    dest: "{{ _zsh_dir_ }}/intrinsic/tz.zsh"
-
-  - src: "config/nanorc.j2"
-    dest: "{{ _xdg_conf_home_ }}/nanorc"
+  - src: "templates/_unix/~"
+    dest: "~/"
 
 
 target_lines:
