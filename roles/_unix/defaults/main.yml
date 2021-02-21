@@ -54,8 +54,6 @@ git_repos:
 
 target_dirs:
   - "{{ _ansible_tmp_ }}"
-  - "{{ _local_exec_bin }}"
-  - "{{ _scripts_bin_ }}"
 
 
 target_touches:
