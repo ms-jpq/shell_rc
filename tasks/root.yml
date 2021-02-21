@@ -1,18 +1,15 @@
 ---
-
 - name: add ssh pub key
   loop: "{{ _ssh_authorized_ }}"
   authorized_key:
     user: root
     key: "{{ item }}"
 
-
 - name: set root_pw
   when: root_pw is defined
   user:
     name: root
     password: "{{ root_pw | password_hash('sha512') }}"
-
 
 - name: disable password login
   when: root_pw is not defined
@@ -21,13 +18,11 @@
     line: "PasswordAuthentication no"
   register: __root_ssh
 
-
 - name: enable root login
   lineinfile:
     dest: "/etc/ssh/sshd_config"
     line: "PermitRootLogin yes"
   register: __root_ssh
-
 
 - name: restart sshd
   when: __root_ssh.changed

@@ -1,5 +1,4 @@
 ---
-
 - name: line in file
   loop: "{{ target_lines }}"
   lineinfile:

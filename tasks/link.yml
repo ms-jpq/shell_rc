@@ -1,5 +1,4 @@
 ---
-
 - name: "symbolic link"
   loop: "{{ target_links }}"
   file:

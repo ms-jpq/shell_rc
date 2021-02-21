@@ -1,5 +1,4 @@
 ---
-
 - name: ensure file exists
   loop: "{{ target_touches }}"
   file:

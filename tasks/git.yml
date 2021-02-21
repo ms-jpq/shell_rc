@@ -1,5 +1,4 @@
 ---
-
 - name: clone git repos
   loop: "{{ git_repos }}"
   git:

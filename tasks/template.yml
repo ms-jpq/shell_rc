@@ -1,5 +1,4 @@
 ---
-
 - name: fill templates
   loop: "{{ target_templates }}"
   template:
