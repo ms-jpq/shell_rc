@@ -1,5 +1,5 @@
 ---
-- name: build instructions
+- name: clean variables
   loop: "{{ target_templates }}"
   ansible.builtin.set_fact:
     __target_templates: []
@@ -9,9 +9,14 @@
   ansible.builtin.set_fact:
     __target_templates: "{{ __target_templates + [{'prefix': item.src, 'dest': item.dest, 'src': query('community.general.filetree', item.src)}] }}"
 
-- name: DEBUG
-  ansible.builtin.debug:
-    var: __target_templates
+- name: mkdir
+  with_subelements:
+    - "{{ __target_templates }}"
+    - src
+  when: item[1].state == 'directory'
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item[0].dest + item[1].path }}"
 
 - name: fill templates
   with_subelements:
@@ -21,3 +26,11 @@
   ansible.builtin.template:
     src: "{{ item[0].prefix + '/' + item[1].path }}"
     dest: "{{ item[0].dest + item[1].path }}"
+
+- name: chmod
+  with_subelements:
+    - "{{ __target_templates }}"
+    - src
+  ansible.builtin.file:
+    path: "{{ item[0].dest + item[1].path }}"
+    mode: "{{ item[1].mode }}"
