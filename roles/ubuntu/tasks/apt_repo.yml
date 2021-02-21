@@ -1,5 +1,4 @@
 ---
-
 - name: "add gpg key {{ gpg_keys }}"
   loop: "{{ gpg_keys | default([]) }}"
   apt_key:

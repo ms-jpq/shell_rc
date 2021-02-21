@@ -1,5 +1,7 @@
 ---
 
+- import_tasks: tmp_dir.yml
+
 - import_tasks: shell.yml
 
 - import_tasks: apt_repo.yml
