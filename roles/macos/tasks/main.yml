@@ -5,8 +5,6 @@
 
 - import_tasks: mkdir.yml
 
-- import_tasks: localize.yml
-
 - import_tasks: template.yml
 
 - import_tasks: unarchive.yml
