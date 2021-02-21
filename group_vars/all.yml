@@ -12,9 +12,9 @@ _scripts_bin_: "~/.local/scripts"
 _ssh_authorized_:
   - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
-__web_tz__: "{{ (lookup('pipe', 'curl -s https://ipinfo.io') | from_json).timezone }}"
-__env_tz__: "{{ lookup('env', 'TZ') }}"
-_time_zone_: "{{ (ansible_connection == 'local') | ternary(__web_tz__, __env_tz__) }}"
+_web_tz_: "{{ (lookup('pipe', 'curl -s https://ipinfo.io') | from_json).timezone }}"
+_env_tz_: "{{ lookup('env', 'TZ') }}"
+_time_zone_: "{{ (ansible_connection == 'local') | ternary(_web_tz_, _env_tz_) }}"
 
 
 _git_: "{{ git | default(False) | bool }}"
