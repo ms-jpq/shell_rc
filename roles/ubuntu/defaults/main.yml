@@ -3,8 +3,8 @@ nano_path: /usr/share/nano
 
 
 target_templates:
-  - src: "etc/locale.j2"
-    dest: "/etc/default/locale"
+  - src: "templates/ubuntu/"
+    dest: "/"
 
 
 _languages:
