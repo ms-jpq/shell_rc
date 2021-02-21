@@ -1,5 +1,4 @@
 ---
-
 - name: unarchive packages
   loop: "{{ target_archives }}"
   unarchive:

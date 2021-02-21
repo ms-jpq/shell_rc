@@ -1,5 +1,4 @@
 ---
-
 - name: copy remote files
   loop: "{{ target_remote_copy }}"
   copy:

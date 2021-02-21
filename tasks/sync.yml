@@ -1,5 +1,4 @@
 ---
-
 - name: sync files
   loop: "{{ target_files }}"
   synchronize:

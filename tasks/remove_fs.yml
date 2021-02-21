@@ -1,5 +1,4 @@
 ---
-
 - name: removing stale oh-my-zsh
   loop: "{{ target_removals }}"
   file:

@@ -1,5 +1,4 @@
 ---
-
 - name: chmod
   loop: "{{ target_mods }}"
   file:

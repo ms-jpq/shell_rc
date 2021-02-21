@@ -1,5 +1,4 @@
 ---
-
 - name: mkdir
   loop: "{{ target_dirs }}"
   file:
