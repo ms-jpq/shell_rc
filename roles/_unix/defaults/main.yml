@@ -61,10 +61,10 @@ target_touches:
 
 
 target_files:
-  - src: "~/"
+  - src: "_unix/~/"
     dest: "~/"
 
-  - src: "zsh/"
+  - src: "_unix/zsh/"
     dest: "{{ _zsh_dir_ }}/rc"
     delete: True
 
