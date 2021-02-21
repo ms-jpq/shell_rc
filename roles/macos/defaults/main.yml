@@ -15,7 +15,9 @@ target_localized_dirs:
     name: "开发"
 
 
-target_templates: []
+target_templates:
+  - src: "templates/~"
+    dest: "~/"
 
 
 target_links:
