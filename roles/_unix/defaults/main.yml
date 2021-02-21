@@ -55,10 +55,6 @@ git_repos:
 target_dirs: []
 
 
-target_touches:
-  - "~/.ssh/config"
-
-
 target_files:
   - src: "_unix/~/"
     dest: "~/"
@@ -71,6 +67,10 @@ target_files:
 target_templates:
   - src: "templates/_unix/~"
     dest: "~/"
+
+
+target_touches:
+  - "~/.ssh/config"
 
 
 target_lines:
