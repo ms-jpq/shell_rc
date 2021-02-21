@@ -61,8 +61,8 @@ target_touches:
 
 
 target_files:
-  - src: "config/"
-    dest: "~/.config/"
+  - src: "~/"
+    dest: "~/"
 
   - src: "zsh/"
     dest: "{{ _zsh_dir_ }}/rc"
