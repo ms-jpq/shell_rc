@@ -4,6 +4,9 @@ set -eux
 set -o pipefail
 
 
+export DEBIAN_FRONTEND=noninteractive
+
+
 inst() {
   local lang="$1"
   asdf plugin add "$lang"
