@@ -80,9 +80,5 @@ target_lines:
     line: "ServerAliveCountMax 5"
 
 
-target_links:
-  - src: "{{ _xdg_conf_home_ }}/zsh/.zshenv"
-    dest: "~/.zshenv"
+target_links: []
 
-  - src: "{{ _xdg_conf_home_ }}/tmux/tmux.conf"
-    dest: "~/.tmux.conf"
