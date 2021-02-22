@@ -18,8 +18,7 @@ RUN python3 -m venv --system-site-packages /_install/venv && \
     rm -rf /root/.ansible /_install && \
     apt install -y -o Dpkg::Options::="--force-overwrite" ripgrep && \
     /root/.config/tmux/bin/tmux-init && \
-    /root/.config/nvim/init.py deps && \
-    touch /root/.cache/zz
+    /root/.config/nvim/init.py deps
 
 
 SHELL ["/usr/bin/zsh", "-l", "-c"]
