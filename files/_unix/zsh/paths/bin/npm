@@ -18,16 +18,16 @@ assert(global_home);
 
 const install_set = new Set([
   "i",
-  "in",
-  "ins",
-  "inst",
-  "insta",
-  "instal",
-  "isnt",
-  "isnta",
-  "isntal",
-  "add",
-  "i",
+  " in",
+  " ins",
+  " inst",
+  " insta",
+  " instal",
+  " install",
+  " isnt",
+  " isnta",
+  " isntal",
+  " add",
 ]);
 const global_set = new Set(["--global", "-g"]);
 
