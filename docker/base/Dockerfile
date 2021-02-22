@@ -13,8 +13,8 @@ RUN apt update && \
 # INSTALL
 COPY . /_install
 RUN python3 -m venv --system-site-packages /_install/venv && \
-    PATH="/_install/venv/bin:$PATH" pip3 install ansible && \
-    PATH="/_install/venv/bin:$PATH" ansible-playbook /_install/docker.ansible.yml && \
+    /_install/venv/bin/pip3 install ansible && \
+    /_install/venv/bin/ansible-playbook /_install/docker.ansible.yml && \
     rm -rf /root/.ansible /_install && \
     apt install -y -o Dpkg::Options::="--force-overwrite" ripgrep && \
     /root/.config/tmux/bin/tmux-init && \
