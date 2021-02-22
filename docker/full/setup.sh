@@ -6,8 +6,8 @@ set -o pipefail
 
 inst() {
   local lang="$1"
-  local ver="$(asdf latest "$lang")"
   asdf plugin add "$lang"
+  local ver="$(asdf latest "$lang")"
   asdf install "$lang" "$ver"
   asdf global "$lang" "$ver"
 }
