@@ -8,11 +8,11 @@
 - import_tasks: git.yml
   when: _git_ or _all_
 
-- import_tasks: touch.yml
-
 - import_tasks: sync.yml
 
 - import_tasks: template.yml
+
+- import_tasks: touch.yml
 
 - import_tasks: lineinfile.yml
 
