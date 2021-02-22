@@ -39,5 +39,5 @@ inst python
 export NODEJS_CHECK_SIGNATURES=no
 inst nodejs
 
-
+inst golang
 inst rust
