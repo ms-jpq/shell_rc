@@ -3,7 +3,8 @@
 set -eux
 set -o pipefail
 
-cd /_install || exit 1
+cd "$(dirname "$0")" || exit 1
+
 
 XDG_CACHE_HOME="$HOME/.cache"
 mkdir -p "$XDG_CACHE_HOME/gitstatus"
