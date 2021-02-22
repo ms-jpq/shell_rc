@@ -16,7 +16,19 @@ process.env["PATH"] = process.env["PATH"]
 const global_home = process.env["NPM_GLOBAL_HOME"];
 assert(global_home);
 
-const install_set = new Set(["install", "i"]);
+const install_set = new Set([
+  "i",
+  "in",
+  "ins",
+  "inst",
+  "insta",
+  "instal",
+  "isnt",
+  "isnta",
+  "isntal",
+  "add",
+  "i",
+]);
 const global_set = new Set(["--global", "-g"]);
 
 const command = args[0];
