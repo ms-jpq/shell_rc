@@ -2,10 +2,9 @@ FROM ubuntu:latest
 
 
 # Requirements
-ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y \
+    DEBIAN_FRONTEND=noninteractive apt install -y \
     rsync curl gnupg2 \
     python3 python3-venv python3-apt nodejs npm
 
