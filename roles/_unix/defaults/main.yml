@@ -43,7 +43,7 @@ git_repos:
     dest: "{{ _zsh_dir_ }}/fff"
 
   - src: "https://github.com/cyproterone/tmux.git"
-    dest: "{{ _xdg_conf_home_  }}/tmux"
+    dest: "{{ _xdg_conf_home_ }}/tmux"
 
   - src: "https://github.com/ms-jpq/isomorphic-copy.git"
     dest: "{{ _xdg_conf_home_ }}/isomorphic-copy"
