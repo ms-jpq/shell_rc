@@ -4,14 +4,9 @@ set -eux
 set -o pipefail
 
 
-PYTHON_VER='3.8.2'
-NODE_VER='14.4.0'
-RUST_VER='1.43.1'
-
-
 inst() {
   local lang="$1"
-  local ver="$2"
+  local ver="$(asdf latest "$lang")"
   asdf plugin add "$lang"
   asdf install "$lang" "$ver"
   asdf global "$lang" "$ver"
@@ -38,11 +33,11 @@ PYTHON_DEPS=(
   liblzma-dev
 )
 apt install --no-install-recommends -y "${PYTHON_DEPS[@]}"
-inst python "$PYTHON_VER"
+inst python
 
 
 export NODEJS_CHECK_SIGNATURES=no
-inst nodejs "$NODE_VER"
+inst nodejs
 
 
-inst rust "$RUST_VER"
+inst rust
