@@ -14,5 +14,5 @@ then
 fi
 
 ./.venv/bin/pip3 install -U -r requirements.txt
-./.venv/bin/ansible-galaxy collection install community.general
+./.venv/bin/ansible-galaxy collection install -- ansible.posix community.general
 
