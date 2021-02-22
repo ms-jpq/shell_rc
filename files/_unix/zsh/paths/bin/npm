@@ -17,17 +17,17 @@ const global_home = process.env["NPM_GLOBAL_HOME"];
 assert(global_home);
 
 const install_set = new Set([
+  "add",
   "i",
-  " in",
-  " ins",
-  " inst",
-  " insta",
-  " instal",
-  " install",
-  " isnt",
-  " isnta",
-  " isntal",
-  " add",
+  "in",
+  "ins",
+  "inst",
+  "insta",
+  "instal",
+  "install",
+  "isnt",
+  "isnta",
+  "isntal",
 ]);
 const global_set = new Set(["--global", "-g"]);
 
