@@ -1,7 +1,7 @@
 ---
 - name: sync files
   loop: "{{ target_files }}"
-  ansible.builtin.synchronize:
+  ansible.posix.synchronize:
     archive: False
     group: False
     owner: False
