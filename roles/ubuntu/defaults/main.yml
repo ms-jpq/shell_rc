@@ -12,8 +12,9 @@ _languages:
 
 
 _core_utils:
-  - earlyoom
   - ntp
+  - zram-config
+  - earlyoom
   - man
   - sudo
   - locales
