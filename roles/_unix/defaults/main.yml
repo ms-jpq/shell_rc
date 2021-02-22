@@ -71,7 +71,7 @@ target_templates:
 
 target_touches:
   - "~/.ssh/config"
-  - "~/{{ _xdg_cache_home_ }}/zz"
+  - "{{ _xdg_cache_home_ }}/zz"
 
 
 target_lines:
