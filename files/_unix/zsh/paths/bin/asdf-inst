@@ -3,14 +3,17 @@
 set -eu
 set -o pipefail
 
+
 if [[ $# -ne 1 ]]
 then
   printf '%s\n' 'asdf-inst <LANG>'
   exit 1
 fi
 
+
 LANG="$1"
 asdf plugin add "$LANG"
+
 VER="$(asdf latest "$LANG")"
 asdf install "$LANG" "$VER"
 asdf global "$LANG" "$VER"
