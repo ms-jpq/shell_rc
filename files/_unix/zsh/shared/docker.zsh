@@ -22,12 +22,11 @@ alias doc='docker-compose'
 alias docup='doc up -d --build'
 alias docuprm='docup --remove-orphans'
 
-alias dex='docker exec -i'
-alias det='docker exec -t'
+alias dex='docker exec -it'
 
 alias dlog='docker logs -f'
 
-alias dr='docker run -i --rm'
+alias dr='docker run -it --rm'
 alias dre='dr --entrypoint'
 alias drw='dr -w /workdir -v "$PWD":/workdir'
 alias drs='dr -v /var/run/docker.sock:/var/run/docker.sock'
