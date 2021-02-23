@@ -12,7 +12,6 @@ _languages:
 
 
 _core_utils:
-  - ntp
   - zram-config
   - earlyoom
   - man
