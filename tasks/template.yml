@@ -1,6 +1,5 @@
 ---
 - name: clean variables
-  loop: "{{ target_templates }}"
   ansible.builtin.set_fact:
     __target_templates: []
 

@@ -14,6 +14,8 @@
 
 - import_tasks: touch.yml
 
+- import_tasks: git_conf.yml
+
 - import_tasks: lineinfile.yml
 
 - import_tasks: link.yml
