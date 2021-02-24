@@ -76,10 +76,10 @@ target_touches:
 
 
 git_conf:
-  branch.autosetuprebase: always
+  pull.rebase: true
   diff.algorithm: minimal
 
-  delta.light: True
+  delta.light: true
 
 
 target_lines:
