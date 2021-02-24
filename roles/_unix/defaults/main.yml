@@ -76,6 +76,7 @@ target_touches:
 
 
 git_conf:
+  branch.autosetuprebase: always
   diff.algorithm: minimal
 
   delta.light: True
