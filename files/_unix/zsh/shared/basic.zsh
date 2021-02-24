@@ -40,9 +40,6 @@ tree() {
 }
 
 
-export BAT_THEME=GitHub
-# export BAT_THEME=ansi-dark
-export BAT_STYLE=plain
 alias cat='bat'
 
 
