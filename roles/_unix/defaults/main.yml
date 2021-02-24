@@ -71,7 +71,14 @@ target_templates:
 
 target_touches:
   - "~/.ssh/config"
+  - "{{ _xdg_conf_home_ }}/git/config"
   - "{{ _xdg_cache_home_ }}/zz"
+
+
+git_conf:
+  diff.algorithm: minimal
+
+  delta.light: True
 
 
 target_lines:
