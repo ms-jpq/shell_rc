@@ -19,7 +19,10 @@ then
     --icons
     --oneline
     )
-  exec exa "${ARGS[@]}" "$TARGET"
+  exec exa "${ARGS[@]}" -- "$TARGET"
 else
-  exec bat --color=always "$TARGET"
+  ARGS=(
+    --color=always
+    )
+  exec bat "${ARGS[@]}" -- "$TARGET"
 fi
