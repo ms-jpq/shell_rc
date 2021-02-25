@@ -11,10 +11,6 @@ RUN apt update && \
     yes | unminimize
 
 
-# Bug
-RUN apt install -y -o Dpkg::Options::="--force-overwrite" ripgrep
-
-
 # Setup
 COPY . /_install
 RUN source "$XDG_CONFIG_HOME/zsh/.zshrc" && \
