@@ -51,8 +51,6 @@ _nice_things:
   - fzf
   - fd-find
   # - ripgrep
-  # apt install -o Dpkg::Options::="--force-overwrite" ripgrep
-  # TODO: https://bugs.launchpad.net/ubuntu/+source/rust-bat/+bug/1868517
 
 
 _fun_things:
