@@ -26,10 +26,3 @@
     src: "{{ item[0].prefix + '/' + item[1].path }}"
     dest: "{{ item[0].dest + item[1].path }}"
 
-- name: chmod
-  with_subelements:
-    - "{{ __target_templates }}"
-    - src
-  ansible.builtin.file:
-    path: "{{ item[0].dest + item[1].path }}"
-    mode: "{{ item[1].mode }}"
