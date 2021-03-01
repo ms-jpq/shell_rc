@@ -1,6 +1,10 @@
 ---
-- name: "install {{ snap_packages }}"
-  loop: "{{ snap_packages }}"
+- name: install classic snaps
   community.general.snap:
-    name: "{{ item.name }}"
-    classic: "{{ item.classic | default('False') }}"
+    name: "{{ snap_packages.classic | default([]) }}"
+    classic: True
+
+- name: install snaps
+  community.general.snap:
+    name: "{{ snap_packages.new | default([]) }}"
+    classic: True
