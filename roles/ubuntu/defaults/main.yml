@@ -90,6 +90,8 @@ target_archives:
     dest: "{{ build_tmp }}"
   - src: "https://github.com/XAMPPRocky/tokei/releases/download/v12.0.3/tokei-x86_64-unknown-linux-gnu.tar.gz"
     dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/ogham/dog/releases/download/v0.1.0/dog-v0.1.0-x86_64-unknown-linux-gnu.zip"
+    dest: "{{ build_tmp }}"
   - src: "https://github.com/simeji/jid/releases/download/v0.7.6/jid_linux_amd64.zip"
     dest: "{{ _exec_bin_ }}"
 
@@ -97,6 +99,8 @@ target_archives:
 target_remote_copy:
   - src: "{{ build_tmp }}/exa-linux-x86_64"
     dest: "{{ _exec_bin_ }}/exa"
+  - src: "{{ build_tmp }}/bin/dog"
+    dest: "{{ _exec_bin_ }}/dog"
 
 
 target_links: []
