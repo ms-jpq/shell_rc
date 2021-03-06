@@ -16,12 +16,12 @@ alias dun='docker rm --force $(docker ps --all --quiet)'
 alias dprune='docker system prune --all --volumes --force'
 
 alias doc='docker-compose'
-alias docup='doc up -d --build'
+alias docup='doc up --detach --build'
 alias docuprm='docup --remove-orphans'
 
 alias dex='docker exec -it'
 
-alias dlog='docker logs -f'
+alias dlog='docker logs --follow'
 
 alias dr='docker run -it --rm'
 alias dre='dr --entrypoint'
