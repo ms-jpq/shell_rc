@@ -12,7 +12,7 @@ dm() {
   printf '%s\n' "DOCKER_HOST=$DOCKER_HOST"
 }
 
-alias dun='docker rm -f $(docker ps -aq)'
+alias dun='docker rm --force $(docker ps -aq)'
 alias dprune='docker system prune --all --volumes --force'
 
 alias doc='docker-compose'
