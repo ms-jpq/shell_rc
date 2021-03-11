@@ -1,5 +1,5 @@
 ---
 - name: install deb package
   loop: "{{ apt_deb_packages }}"
-  apt:
+  ansible.builtin.apt:
     deb: "{{ item }}"

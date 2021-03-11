@@ -1,4 +1,5 @@
 ---
-- name: "update apt and install {{ apt_packages }}"
-  apt:
+- name: "install {{ apt_packages }}"
+  ansible.builtin.apt:
     name: "{{ apt_packages }}"
+  register: __apt
