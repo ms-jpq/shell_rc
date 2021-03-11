@@ -1,16 +1,22 @@
 ---
+- name: "install gpg deps"
+  ansible.builtin.apt:
+    name:
+      - gpg
+      - apt-transport-https
+
 - name: "add gpg key {{ gpg_keys }}"
   loop: "{{ gpg_keys | default([]) }}"
-  apt_key:
+  ansible.builtin.apt_key:
     url: "{{ item }}"
 
 - name: "add apt repo {{ apt_repos }} "
   loop: "{{ apt_repos }}"
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "{{ item }}"
   register: __apt_repo
 
 - name: "apt update"
   when: __apt_repo.changed
-  apt:
+  ansible.builtin.apt:
     update_cache: True
