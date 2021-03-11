@@ -1,5 +1,4 @@
 ---
-
 - import_tasks: packages.yml
   when: _all_
 

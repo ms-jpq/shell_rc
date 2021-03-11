@@ -1,5 +1,4 @@
 ---
-
 - name: git config
   loop: "{{ git_conf | dict2items }}"
   community.general.git_config:

@@ -1,5 +1,4 @@
 ---
-
 - import_tasks: tmp_dir.yml
 
 - import_tasks: shell.yml

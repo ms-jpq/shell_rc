@@ -4,7 +4,6 @@ _xdg_conf_home_: "~/.config"
 _xdg_data_home_: "~/.local/share"
 _xdg_cache_home_: "~/.cache"
 
-
 _ssh_authorized_:
   - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
@@ -12,9 +11,7 @@ _web_tz_: "{{ (lookup('pipe', 'curl -s https://ipinfo.io') | from_json).timezone
 _env_tz_: "{{ lookup('env', 'TZ') }}"
 _time_zone_: "{{ (ansible_connection == 'local') | ternary(_web_tz_, _env_tz_) }}"
 
-
 _git_: "{{ git | default(False) | bool }}"
 _all_: "{{ all | default(False) | bool }}"
-
 
 locale: zh_CN

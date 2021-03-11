@@ -1,15 +1,12 @@
 ---
-
 ## GLOBAL ##
 _zsh_dir_: "{{ _xdg_conf_home_ }}/zsh"
 _omz_dir_: "{{ _zsh_dir_  }}/oh-my-zsh"
 ## GLOBAL ##
 
-
 packages:
   - git
   - zsh
-
 
 git_repos:
   - src: "https://github.com/romkatv/powerlevel10k"
@@ -51,9 +48,7 @@ git_repos:
   - src: "https://github.com/cyproterone/nvim2.git"
     dest: "{{ _xdg_conf_home_ }}/nvim"
 
-
 target_dirs: []
-
 
 target_files:
   - src: "_unix/~/"
@@ -63,17 +58,14 @@ target_files:
     dest: "{{ _zsh_dir_ }}/rc"
     delete: True
 
-
 target_templates:
   - src: "templates/_unix/~"
     dest: "~/"
-
 
 target_touches:
   - "~/.ssh/config"
   - "{{ _xdg_conf_home_ }}/git/config"
   - "{{ _xdg_cache_home_ }}/zz"
-
 
 git_conf:
   pull.rebase: True
@@ -81,13 +73,10 @@ git_conf:
 
   delta.light: True
 
-
 target_lines:
   - file: "~/.ssh/config"
     line: "ServerAliveInterval 1"
   - file: "~/.ssh/config"
     line: "ServerAliveCountMax 5"
 
-
 target_links: []
-
