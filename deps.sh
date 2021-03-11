@@ -13,6 +13,7 @@ then
   export CPPFLAGS='-I/usr/local/opt/openssl@1.1/include'
 fi
 
+python3 -m venv ./venv
 ./.venv/bin/pip3 install -U -r requirements.txt
 ./.venv/bin/ansible-galaxy collection install -- ansible.posix community.general
 
