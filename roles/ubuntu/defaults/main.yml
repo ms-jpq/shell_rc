@@ -1,15 +1,12 @@
 ---
 nano_path: /usr/share/nano
 
-
 target_templates:
   - src: "templates/ubuntu/"
     dest: "/"
 
-
 _languages:
   - language-pack-zh-hans
-
 
 _core_utils:
   - zram-config
@@ -40,18 +37,15 @@ _core_utils:
   - iperf3
   - unzip
 
-
 _editors:
   - neovim
   - lazygit
-
 
 _nice_things:
   - bat
   - fzf
   - fd-find
   # - ripgrep
-
 
 _fun_things:
   - termshark
@@ -64,15 +58,12 @@ _fun_things:
   - libaa-bin #aafire
   - bb
 
-
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
   - "ppa:lazygit-team/release"
   - "ppa:neovim-ppa/unstable"
 
-
 apt_packages: "{{ _languages + _core_utils + _editors + _nice_things + _fun_things }}"
-
 
 apt_deb_packages:
   - "https://github.com/dandavison/delta/releases/download/0.4.3/git-delta_0.4.3_amd64.deb"
@@ -81,9 +72,7 @@ apt_deb_packages:
   - "https://github.com/muesli/duf/releases/download/v0.5.0/duf_0.5.0_linux_amd64.deb"
   - "https://github.com/ms-jpq/sad/releases/download/ci_0.4.7_2020-08-06_07-03/x86_64-unknown-linux-gnu.deb"
 
-
 target_downloads: []
-
 
 target_archives:
   - src: "https://github.com/ogham/exa/releases/download/v0.9.0/exa-linux-x86_64-0.9.0.zip"
@@ -95,16 +84,13 @@ target_archives:
   - src: "https://github.com/simeji/jid/releases/download/v0.7.6/jid_linux_amd64.zip"
     dest: "{{ _exec_bin_ }}"
 
-
 target_remote_copy:
   - src: "{{ build_tmp }}/exa-linux-x86_64"
     dest: "{{ _exec_bin_ }}/exa"
   - src: "{{ build_tmp }}/bin/dog"
     dest: "{{ _exec_bin_ }}/dog"
 
-
 target_links: []
-
 
 target_mods:
   - src: "{{ _exec_bin_ }}/exa"

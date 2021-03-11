@@ -1,15 +1,11 @@
 ---
-
 nano_path: /usr/local/opt/nano/share/nano
-
 
 target_files:
   - src: "macos/~/"
     dest: "~/"
 
-
 target_dirs: []
-
 
 target_localized_dirs:
   - path: "~/"
@@ -19,14 +15,11 @@ target_localized_dirs:
     ascii: "dev"
     name: "开发"
 
-
 target_templates: []
-
 
 target_links:
   - src: "/usr/local/bin/dash"
     dest: "/usr/local/bin/sh"
-
 
 _core_utils:
   - dash
@@ -65,12 +58,10 @@ _core_utils:
   - ncdu
   - trash
 
-
 _editors:
   - neovim
   - lazygit
   - ms-jpq/sad/sad
-
 
 _nice_things:
   - exa
@@ -86,7 +77,6 @@ _nice_things:
   - jid
   - muesli/tap/duf
 
-
 _fun_things:
   - mpv
   - hyperfine
@@ -101,8 +91,6 @@ _fun_things:
   - figlet
   - pipes-sh
 
-
 brew_packages: "{{ _core_utils + _editors + _nice_things + _fun_things }}"
-
 
 target_archives: []
