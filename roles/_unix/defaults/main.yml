@@ -54,7 +54,7 @@ target_files:
   - src: "home/"
     dest: "~/"
 
-  - src: "_unix/zsh/"
+  - src: "zsh/"
     dest: "{{ _zsh_dir_ }}/rc"
     delete: True
 
