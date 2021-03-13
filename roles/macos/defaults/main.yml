@@ -2,7 +2,7 @@
 nano_path: /usr/local/opt/nano/share/nano
 
 target_files:
-  - src: "~/"
+  - src: "home/"
     dest: "~/"
 
 target_templates: []
