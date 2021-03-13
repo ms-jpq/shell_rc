@@ -2,18 +2,8 @@
 nano_path: /usr/local/opt/nano/share/nano
 
 target_files:
-  - src: "macos/~/"
+  - src: "~/"
     dest: "~/"
-
-target_dirs: []
-
-target_localized_dirs:
-  - path: "~/"
-    ascii: "mnt"
-    name: "挂载"
-  - path: "~/"
-    ascii: "dev"
-    name: "开发"
 
 target_templates: []
 
