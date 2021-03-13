@@ -2,7 +2,7 @@
 nano_path: /usr/share/nano
 
 target_templates:
-  - src: "templates/ubuntu/"
+  - src: "templates/"
     dest: "/"
 
 _languages:
@@ -89,8 +89,6 @@ target_remote_copy:
     dest: "{{ _exec_bin_ }}/exa"
   - src: "{{ build_tmp }}/bin/dog"
     dest: "{{ _exec_bin_ }}/dog"
-
-target_links: []
 
 target_mods:
   - src: "{{ _exec_bin_ }}/exa"
