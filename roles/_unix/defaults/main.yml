@@ -48,8 +48,6 @@ git_repos:
   - src: "https://github.com/cyproterone/nvim2.git"
     dest: "{{ _xdg_conf_home_ }}/nvim"
 
-target_dirs: []
-
 target_files:
   - src: "home/"
     dest: "~/"
