@@ -1,5 +1,5 @@
 ---
 - name: set default shell
   ansible.builtin.user:
-    name: "{{ ansible_user }}"
+    name: "{{ user }}"
     shell: /bin/zsh

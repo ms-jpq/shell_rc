@@ -3,7 +3,7 @@
   connection: local
   vars:
     all: True
-    ansible_user: root
+    user: root
 
   tasks:
     - assert:
