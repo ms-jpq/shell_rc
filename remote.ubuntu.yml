@@ -1,5 +1,6 @@
 ---
 - hosts: ubuntu
+  ansible_ssh_user: root
 
   tasks:
     - assert:
