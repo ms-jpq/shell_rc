@@ -1,7 +1,5 @@
 ---
-
 - hosts: ubuntu
-  become: True
 
   tasks:
     - assert:
