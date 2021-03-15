@@ -1,6 +1,8 @@
 ---
 - hosts: localhost
   connection: local
+  vars:
+    tz: America/Vancouver
 
   tasks:
     - assert:
