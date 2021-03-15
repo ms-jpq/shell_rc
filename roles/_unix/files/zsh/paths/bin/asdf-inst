@@ -30,6 +30,7 @@ def main() -> None:
         check_call(("asdf", "install", lang, latest))
 
     check_call(("asdf", "global", lang, latest))
+    check_call(("asdf", "reshim"))
 
 
 main()
