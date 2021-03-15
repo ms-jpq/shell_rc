@@ -1,19 +1,35 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
-set -eu
-set -o pipefail
-
-
-if [[ $# -ne 1 ]]
-then
-  printf '%s\n' 'asdf-inst <LANG>'
-  exit 1
-fi
+from argparse import ArgumentParser, Namespace
+from subprocess import check_call, check_output
 
 
-LANG="$1"
-asdf plugin add "$LANG"
+def _parse_args() -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument("lang")
+    return parser.parse_args()
 
-VER="$(asdf latest "$LANG")"
-asdf install "$LANG" "$VER"
-asdf global "$LANG" "$VER"
+
+def main() -> None:
+    args = _parse_args()
+    lang = str(args.lang)
+
+    raw = check_output(("asdf", "plugin", "list"), text=True).rstrip()
+    plugins = {*raw.splitlines()}
+
+    if lang in plugins:
+        check_call(("asdf", "plugin", "update", lang))
+    else:
+        check_call(("asdf", "plugin", "add", lang))
+
+    raw = check_output(("asdf", "list", lang), text=True).rstrip()
+    installed = {*raw.splitlines()}
+    latest = check_output(("asdf", "latest", lang), text=True).rstrip()
+
+    if latest not in installed:
+        check_call(("asdf", "install", lang, latest))
+
+    check_call(("asdf", "global", lang, latest))
+
+
+main()
