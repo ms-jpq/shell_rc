@@ -57,7 +57,7 @@ target_files:
     delete: True
 
 target_templates:
-  - src: "templates/home"
+  - src: "templates/home/"
     dest: "~/"
 
 target_touches:
