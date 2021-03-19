@@ -30,7 +30,8 @@ WORD="${1-"#"}"
 COLS="${2:-"$(tput cols)"}"
 
 hr() {
-  if [[ -n "$WORD" ]] ; then
+  if [[ -n "$WORD" ]]
+  then
     local LINE=''
     while (( ${#LINE} < COLS ))
     do
