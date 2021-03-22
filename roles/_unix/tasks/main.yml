@@ -1,6 +1,5 @@
 ---
 - import_tasks: packages.yml
-  when: _all_
 
 - import_tasks: git.yml
   when: _git_ or _all_
