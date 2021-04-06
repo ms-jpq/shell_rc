@@ -27,6 +27,8 @@
 
 - import_tasks: chmod.yml
 
+- import_tasks: link.yml
+
 - import_tasks: locale.yml
 
 - name: Force RG

@@ -9,6 +9,10 @@ target_templates:
   - src: "templates/"
     dest: "/"
 
+target_links:
+  - src: "/etc/localtime"
+    dest: "/usr/share/zoneinfo/{{ _time_zone_ }}"
+
 _languages:
   - language-pack-zh-hans
 

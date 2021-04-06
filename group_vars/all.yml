@@ -7,8 +7,7 @@ _xdg_cache_home_: "~/.cache"
 _ssh_authorized_:
   - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
-_env_tz_: "{{ tz | default(lookup('env', 'TZ')) }}"
-_time_zone_: "{{ (ansible_connection == 'local') | ternary(_env_tz_, _env_tz_) }}"
+_time_zone_: "{{ lookup('env', 'TZ') | default(tz) }}"
 
 _git_: "{{ git | default(False) | bool }}"
 _all_: "{{ all | default(False) | bool }}"
