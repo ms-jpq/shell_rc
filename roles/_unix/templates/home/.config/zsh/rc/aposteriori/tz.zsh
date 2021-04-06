@@ -1,1 +1,1 @@
-export TZ={{ _time_zone_ }}
+export TZ={{ time_zone }}
