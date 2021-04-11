@@ -84,7 +84,7 @@ apt_deb_packages:
 target_downloads: []
 
 target_archives:
-  - src: "https://github.com/ogham/exa/releases/download/v0.9.0/exa-linux-x86_64-0.9.0.zip"
+  - src: "https://github.com/ogham/exa/releases/download/v0.10.0/exa-linux-x86_64-v0.10.0.zip"
     dest: "{{ build_tmp }}"
   - src: "https://github.com/XAMPPRocky/tokei/releases/download/v12.1.2/tokei-x86_64-unknown-linux-gnu.tar.gz"
     dest: "{{ _exec_bin_ }}"
