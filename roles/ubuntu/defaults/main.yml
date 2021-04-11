@@ -92,13 +92,11 @@ target_archives:
     dest: "{{ build_tmp }}"
 
 target_remote_copy:
-  - src: "{{ build_tmp }}/exa-linux-x86_64"
+  - src: "{{ build_tmp }}/bin/exa"
     dest: "{{ _exec_bin_ }}/exa"
   - src: "{{ build_tmp }}/bin/dog"
     dest: "{{ _exec_bin_ }}/dog"
 
 target_mods:
-  - src: "{{ _exec_bin_ }}/exa"
-    mode: "+x"
   - src: "{{ _exec_bin_ }}/dog"
     mode: "+x"
