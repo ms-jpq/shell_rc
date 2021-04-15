@@ -15,7 +15,7 @@ init)
   else
     python3 -m venv "$DEFAULT_VENV_PATH"
     >&2 printf '%s\n' "Initialized Virtualenv"
-    venv on
+    exec venv on
   fi
   ;;
 on)
@@ -25,7 +25,7 @@ on)
     printf '%s' "source $ACTIVATE"
     >&2 printf '%s\n' "Activated - $VIRTUAL_ENV"
   else
-    venv init
+    exec venv init
   fi
   ;;
 off)
@@ -41,7 +41,7 @@ rm)
   then
     if [[ "$VIRTUAL_ENV" = "$DEFAULT_VENV_PATH" ]]
     then
-      venv off
+      exec venv off
     fi
     rm -rf "$DEFAULT_VENV_PATH"
     >&2 printf '%s\n' "Removed - $DEFAULT_VENV_PATH"
