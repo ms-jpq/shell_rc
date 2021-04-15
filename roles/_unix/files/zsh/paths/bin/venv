@@ -4,9 +4,12 @@ set -eu
 set -o pipefail
 
 
-VIRTUAL_ENV="${VIRTUAL_ENV:-''}"
+VIRTUAL_ENV="${VIRTUAL_ENV:-""}"
 
 DEFAULT_VENV_PATH="$PWD/.venv"
+REQUIREMENTS="$PWD/requirements.txt"
+
+PY_EXE="$DEFAULT_VENV_PATH/bin/python3"
 ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
 
 
@@ -16,7 +19,11 @@ init)
   then
     >&2 printf '%s\n' "Virtualenv already initialized"
   else
-    python3 -m venv "$DEFAULT_VENV_PATH"
+    >&2 python3 -m venv "$DEFAULT_VENV_PATH"
+    if [[ -f "$REQUIREMENTS" ]]
+    then
+      >&2 "$PY_EXE" -m pip install --requirement "$REQUIREMENTS"
+    fi
     >&2 printf '%s\n' "Initialized Virtualenv"
     venv on
   fi
@@ -32,7 +39,7 @@ on)
   fi
   ;;
 off)
-  if [[ -n "$VIRTUAL_ENV" ]]
+  if [[ ! -z "$VIRTUAL_ENV" ]]
   then
     printf '%s\n' 'deactivate'
   fi
