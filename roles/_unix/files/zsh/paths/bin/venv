@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+DEFAULT_VENV_PATH="$PWD/.venv"
+ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
+
+case "$1" in
+init)
+  if [[ -d "$DEFAULT_VENV_PATH" ]]
+  then
+    >&2 printf '%s\n' "Virtualenv already initialized"
+  else
+    python3 -m venv "$DEFAULT_VENV_PATH"
+    >&2 printf '%s\n' "Initialized Virtualenv"
+    venv on
+  fi
+  ;;
+on)
+  if [[ -f "$ACTIVATE" ]]
+  then
+    venv off
+    printf '%s' "source $ACTIVATE"
+    >&2 printf '%s\n' "Activated - $VIRTUAL_ENV"
+  else
+    venv init
+  fi
+  ;;
+off)
+  if [[ -n "$VIRTUAL_ENV" ]]
+  then
+    VENV="$VIRTUAL_ENV"
+    >&2 printf '%s\n' "Deactivating - $VENV"
+    printf '%s' 'deactivate'
+  fi
+  ;;
+rm)
+  if [[ -d "$DEFAULT_VENV_PATH" ]]
+  then
+    if [[ "$VIRTUAL_ENV" = "$DEFAULT_VENV_PATH" ]]
+    then
+      venv off
+    fi
+    rm -rf "$DEFAULT_VENV_PATH"
+    >&2 printf '%s\n' "Removed - $DEFAULT_VENV_PATH"
+  else
+    >&2 printf '%s\n' "Failed to find Virtualenv - $DEFAULT_VENV_PATH"
+  fi
+  ;;
+*)
+  >&2 printf '%s\n' "Invalid argument"
+  >&2 printf '%s\n' "venv - [init | on | off]"
+  ;;
+esac
