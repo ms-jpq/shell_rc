@@ -32,15 +32,17 @@ on)
   if [[ -f "$ACTIVATE" ]]
   then
     venv off
-    printf '%s\n' "source $ACTIVATE"
+    printf '%s\n' "source '$ACTIVATE'"
     >&2 printf '%s\n' "Activated - $DEFAULT_VENV_PATH"
   else
     venv init
   fi
   ;;
 off)
-  if [[ ! -z "$VIRTUAL_ENV" ]]
+  if [[ -z "$VIRTUAL_ENV" ]]
   then
+    true
+  else
     printf '%s\n' 'deactivate'
   fi
   >&2 printf '%s\n' "Deactivating - $VIRTUAL_ENV"
@@ -52,11 +54,9 @@ rm)
     then
       venv off
     fi
-    rm -rf "$DEFAULT_VENV_PATH"
-    >&2 printf '%s\n' "Removed - $DEFAULT_VENV_PATH"
-  else
-    >&2 printf '%s\n' "Failed to find Virtualenv - $DEFAULT_VENV_PATH"
+    printf '%s\n' "rm -rf '$DEFAULT_VENV_PATH'"
   fi
+  >&2 printf '%s\n' "Removed - $DEFAULT_VENV_PATH"
   ;;
 *)
   >&2 printf '%s\n' "Invalid argument"
