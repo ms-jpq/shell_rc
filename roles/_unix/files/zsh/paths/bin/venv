@@ -60,6 +60,6 @@ rm)
   ;;
 *)
   >&2 printf '%s\n' "Invalid argument"
-  >&2 printf '%s\n' "venv - [init | on | off]"
+  >&2 printf '%s\n' "venv - [on | off | rm]"
   ;;
 esac
