@@ -4,8 +4,11 @@ set -eu
 set -o pipefail
 
 
+VIRTUAL_ENV="${VIRTUAL_ENV:-''}"
+
 DEFAULT_VENV_PATH="$PWD/.venv"
 ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
+
 
 case "$1" in
 init)
@@ -15,33 +18,32 @@ init)
   else
     python3 -m venv "$DEFAULT_VENV_PATH"
     >&2 printf '%s\n' "Initialized Virtualenv"
-    exec venv on
+    venv on
   fi
   ;;
 on)
   if [[ -f "$ACTIVATE" ]]
   then
     venv off
-    printf '%s' "source $ACTIVATE"
-    >&2 printf '%s\n' "Activated - $VIRTUAL_ENV"
+    printf '%s\n' "source $ACTIVATE"
+    >&2 printf '%s\n' "Activated - $DEFAULT_VENV_PATH"
   else
-    exec venv init
+    venv init
   fi
   ;;
 off)
   if [[ -n "$VIRTUAL_ENV" ]]
   then
-    VENV="$VIRTUAL_ENV"
-    >&2 printf '%s\n' "Deactivating - $VENV"
-    printf '%s' 'deactivate'
+    printf '%s\n' 'deactivate'
   fi
+  >&2 printf '%s\n' "Deactivating - $VIRTUAL_ENV"
   ;;
 rm)
   if [[ -d "$DEFAULT_VENV_PATH" ]]
   then
     if [[ "$VIRTUAL_ENV" = "$DEFAULT_VENV_PATH" ]]
     then
-      exec venv off
+      venv off
     fi
     rm -rf "$DEFAULT_VENV_PATH"
     >&2 printf '%s\n' "Removed - $DEFAULT_VENV_PATH"
