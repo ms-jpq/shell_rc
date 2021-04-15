@@ -13,7 +13,11 @@ PY_EXE="$DEFAULT_VENV_PATH/bin/python3"
 ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
 
 
-case "$1" in
+OP="$1"
+shift
+
+
+case "$OP" in
 init)
   if [[ -d "$DEFAULT_VENV_PATH" ]]
   then
