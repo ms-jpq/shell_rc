@@ -68,6 +68,7 @@ target_touches:
 git_conf:
   pull.rebase: True
   diff.algorithm: minimal
+  init.defaultBranch: main
 
   delta.light: True
 
