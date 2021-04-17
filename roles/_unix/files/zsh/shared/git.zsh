@@ -4,4 +4,4 @@
 
 export GIT_PAGER='delta'
 
-alias lg='lazygit'
+alias lg='LC_ALL=C lazygit'
