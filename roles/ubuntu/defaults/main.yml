@@ -98,5 +98,7 @@ target_remote_copy:
     dest: "{{ _exec_bin_ }}/dog"
 
 target_mods:
+  - src: "{{ _exec_bin_ }}/exa"
+    mode: "+x"
   - src: "{{ _exec_bin_ }}/dog"
     mode: "+x"
