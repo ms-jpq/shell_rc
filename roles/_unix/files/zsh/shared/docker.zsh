@@ -15,7 +15,7 @@ dm() {
 alias dun='docker rm --force $(docker ps --all --quiet)'
 alias dprune='docker system prune --all --volumes --force'
 
-alias doc='docker-compose'
+alias doc='docker compose'
 alias docup='doc up --detach --build'
 alias docuprm='docup --remove-orphans'
 
