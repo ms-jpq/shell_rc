@@ -4,16 +4,7 @@ set -eux
 set -o pipefail
 
 
-export DEBIAN_FRONTEND=noninteractive
-
-
-inst() {
-  local lang="$1"
-  asdf plugin add "$lang"
-  local ver="$(asdf latest "$lang")"
-  asdf install "$lang" "$ver"
-  asdf global "$lang" "$ver"
-}
+PATH="$PATH:/root/.config/zsh/rc/paths/bin"
 
 
 PYTHON_DEPS=(
@@ -35,12 +26,10 @@ PYTHON_DEPS=(
   libffi-dev
   liblzma-dev
 )
-apt install --no-install-recommends -y "${PYTHON_DEPS[@]}"
-inst python
+DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends -y "${PYTHON_DEPS[@]}"
+asdf-inst python
 
+NODEJS_CHECK_SIGNATURES=no asdf-inst nodejs
 
-export NODEJS_CHECK_SIGNATURES=no
-inst nodejs
-
-inst golang
-inst rust
+asdf-inst golang
+asdf-inst rust
