@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from argparse import ArgumentParser, Namespace
-from subprocess import check_call, check_output
+from subprocess import CalledProcessError, check_call, check_output
 
 
 def _parse_args() -> Namespace:
@@ -14,7 +14,11 @@ def main() -> None:
     args = _parse_args()
     lang = str(args.lang)
 
-    raw = check_output(("asdf", "plugin", "list"), text=True).rstrip()
+    try:
+        raw = check_output(("asdf", "plugin", "list"), text=True).rstrip()
+    except CalledProcessError:
+        raw = ""
+
     plugins = {*raw.splitlines()}
 
     if lang in plugins:
