@@ -11,10 +11,8 @@ RUN apt update && \
     yes | unminimize
 
 
-# Setup
-COPY . /_install
 RUN source "$XDG_CONFIG_HOME/zsh/.zshrc" && \
-    /_install/docker/full/setup.sh
+    /root/setup.sh
 
 
 # Cleanup
