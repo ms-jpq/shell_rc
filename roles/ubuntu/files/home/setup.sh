@@ -4,9 +4,6 @@ set -eux
 set -o pipefail
 
 
-PATH="$PATH:/root/.config/zsh/rc/paths/bin"
-
-
 PYTHON_DEPS=(
   make
   build-essential

@@ -4,6 +4,8 @@ nano_path: /usr/share/nano
 target_files:
   - src: "root/"
     dest: "/"
+  - src: "home/"
+    dest: "~/"
 
 target_templates:
   - src: "templates/"
