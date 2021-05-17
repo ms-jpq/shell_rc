@@ -8,9 +8,9 @@ cd "$(dirname "$0")" || exit 1
 
 readarray -d $'\n' -t REQUIREMENTS < "$XDG_CONFIG_HOME/requirements.txt"
 
-pip3 install --upgrade -- pipx
+python3 -m pip install --upgrade -- pipx
 
 for requirement in "${REQUIREMENTS[@]}"
 do
-  pipx install --force -- "$requirement"
+  python3 -m pipx install --force -- "$requirement"
 done
