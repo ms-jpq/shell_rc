@@ -31,10 +31,7 @@ _core_utils:
   - rsync
   - awk
   - mosh
-  #- tmux
-  # TODO: -- check tmux 3.3
-  # wget https://raw.githubusercontent.com/Homebrew/homebrew-core/e7208f400115de69154b998f5619af1117d4441a/Formula/tmux.rb
-  # brew install tmux.rb
+  - tmux
   - socat
   - less
   - nano
