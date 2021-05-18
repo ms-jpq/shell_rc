@@ -3,30 +3,42 @@
 from argparse import ArgumentParser, Namespace
 from enum import Enum, auto
 from http.client import HTTPResponse
-from typing import cast
+from locale import getdefaultlocale
+from typing import Optional, cast
 from urllib.request import Request, build_opener
 
 
-class Format(Enum):
+class _Fmt(Enum):
     line = auto()
     table = auto()
     graph = auto()
 
 
-def wttrin_uri(display: Format) -> str:
-    if display == Format.line:
+def _lang() -> Optional[str]:
+    tag, _ = getdefaultlocale()
+    if not tag:
+        return None
+    else:
+        primary, _, _ = tag.casefold().partition("-")
+        lang, _, _ = primary.partition("_")
+        return lang
+
+
+def _wttrin_uri(display: _Fmt) -> str:
+    if display is _Fmt.line:
         return "https://wttr.in?m&format=4"
-    elif display == Format.table:
+    elif display is _Fmt.table:
         return "https://wttr.in?mT"
-    elif display == Format.graph:
+    elif display is _Fmt.graph:
         return "https://v2.wttr.in?mT"
     else:
         raise ValueError()
 
 
-def wttrin(display: Format) -> str:
-    uri = wttrin_uri(display)
-    headers = {"User-Agent": "curl", "Accept-Language": "zh"}
+def wttrin(fmt: _Fmt) -> str:
+    lang = _lang()
+    uri = _wttrin_uri(fmt)
+    headers = {**{"User-Agent": "curl"}, **({"Accept-Language": lang} if lang else {})}
     req = Request(uri, headers=headers)
 
     opener = build_opener()
@@ -34,21 +46,21 @@ def wttrin(display: Format) -> str:
         return cast(HTTPResponse, resp).read().decode()
 
 
-def parse_args() -> Namespace:
+def _parse_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument(
         "format",
         nargs="?",
-        type=Format,
-        choices=tuple(f for f in Format),
-        default=Format.table,
+        choices=tuple(f.name for f in _Fmt),
+        default=_Fmt.table.name,
     )
     return parser.parse_args()
 
 
 def main() -> None:
-    args = parse_args()
-    resp = wttrin(args.format)
+    args = _parse_args()
+    fmt = _Fmt[args.format]
+    resp = wttrin(fmt)
     print(resp)
 
 
