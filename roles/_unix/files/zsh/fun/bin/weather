@@ -35,7 +35,7 @@ def _wttrin_uri(display: _Fmt) -> str:
         raise ValueError()
 
 
-def wttrin(fmt: _Fmt) -> str:
+def _wttrin(fmt: _Fmt) -> str:
     lang = _lang()
     uri = _wttrin_uri(fmt)
     headers = {**{"User-Agent": "curl"}, **({"Accept-Language": lang} if lang else {})}
@@ -60,7 +60,7 @@ def _parse_args() -> Namespace:
 def main() -> None:
     args = _parse_args()
     fmt = _Fmt[args.format]
-    resp = wttrin(fmt)
+    resp = _wttrin(fmt)
     print(resp)
 
 
