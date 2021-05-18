@@ -52,7 +52,7 @@ def _parse_args() -> Namespace:
         "format",
         nargs="?",
         choices=tuple(f.name for f in _Fmt),
-        default=_Fmt.table.name,
+        default=_Fmt.graph.name,
     )
     return parser.parse_args()
 
