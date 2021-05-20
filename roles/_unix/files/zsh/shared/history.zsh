@@ -1,12 +1,12 @@
+#!/usr/bin/env bash
+
 #################### ############## ####################
 #################### History Region ####################
 #################### ############## ####################
 
-HISTORY_SUBSTRING_SEARCH_FUZZY=true
-HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
-
-
 # INTI #
+HISTORY_SUBSTRING_SEARCH_FUZZY=true \
+HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true \
 source "$ZDOTDIR/zsh-history-substring-search/zsh-history-substring-search.zsh"
 # INIT #
 
