@@ -11,7 +11,7 @@ RUN apt update && \
     yes | unminimize
 
 
-RUN source "$XDG_CONFIG_HOME/zsh/.zshrc" && \
+RUN source "$XDG_CONFIG_HOME/zsh/rc/.zshrc" && \
     /root/setup.sh
 
 
