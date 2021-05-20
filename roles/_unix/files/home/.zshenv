@@ -1,1 +1,1 @@
-./.config/zsh/.zshenv
+./.config/zsh/rc/.zshenv
