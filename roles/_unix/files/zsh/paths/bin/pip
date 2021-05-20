@@ -33,6 +33,13 @@ if [[ $# -gt 0 ]] && [[ "${EXECUTE[1]}" == 'install' ]]
 then
   IS_INSTALL=1
 fi
+for ARG in "$@"
+do
+  if [[ "$ARG" == '-h' ]] || [[ "$ARG" == '--help' ]]
+  then
+    IS_INSTALL=0
+  fi
+done
 
 
 ASK=0
