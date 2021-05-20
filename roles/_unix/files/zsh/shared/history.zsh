@@ -5,8 +5,8 @@
 #################### ############## ####################
 
 # INTI #
-export HISTORY_SUBSTRING_SEARCH_FUZZY=true
-export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
+HISTORY_SUBSTRING_SEARCH_FUZZY=true
+HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
 source "$ZDOTDIR/../zsh-history-substring-search/zsh-history-substring-search.zsh"
 # INIT #
 
