@@ -36,11 +36,6 @@ zsh_main() {
     aposteriori
   )
 
-  for rc in "$XDG_CONFIG_HOME/zsh/intrinsic"/**/*.zsh
-  do
-    source "$rc"
-  done
-
   for target in "${zrc_targets[@]}"
   do
     local rcs="$XDG_CONFIG_HOME/zsh/rc/$target"
