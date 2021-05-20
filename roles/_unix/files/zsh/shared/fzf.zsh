@@ -62,7 +62,7 @@ export FZF_TMUX_HEIGHT='100%'
 
 
 alias f='fzf'
-alias fp="fzf --preview='$_fzf_preview'"
+alias fp='fzf --preview='\'"$_fzf_preview"\'
 
 
 d() {
