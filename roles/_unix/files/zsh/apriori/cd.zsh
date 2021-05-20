@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #################### ######### ####################
 #################### CD Region ####################
 #################### ######### ####################
@@ -7,8 +9,3 @@ setopt auto_pushd        # dirstack
 setopt pushd_ignore_dups # dirstack no dup
 setopt pushd_minus       # semantic +, - in pushd
 
-
-alias -g ...='../..'
-alias -g ....='../../..'
-alias -g .....='../../../..'
-alias -g ......='../../../../..'
