@@ -5,5 +5,5 @@
 #################### ########## ####################
 
 # INTI #
-source "$ZDOTDIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+source "$ZDOTDIR/../zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 # INIT #

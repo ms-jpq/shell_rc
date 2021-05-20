@@ -98,6 +98,6 @@ _fzf_compgen_dir() {
 }
 
 # INTI #
-source "$ZDOTDIR/fzf/shell/key-bindings.zsh"
-source "$ZDOTDIR/fzf/shell/completion.zsh"
+source "$ZDOTDIR/../fzf/shell/key-bindings.zsh"
+source "$ZDOTDIR/../fzf/shell/completion.zsh"
 # INIT #
