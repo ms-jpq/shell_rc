@@ -27,7 +27,7 @@ _fzf_default_opts=(
 export FZF_DEFAULT_OPTS="${_fzf_default_opts[*]}"
 unset _fzf_default_opts
 
-_fzf_preview='preview {}'
+_fzf_preview="$ZDOTDIR/shared/bin/preview {}"
 _fzf_default_command=(
   fd
   --type=file

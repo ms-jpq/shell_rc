@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+
+bin="$(dirname "$0")"
+PATH="$(paths --silent remove "$bin")"
+
+
+export LC_ALL=C
+export LANG=C
+
+exec fzf
