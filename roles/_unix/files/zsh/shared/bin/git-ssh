@@ -3,6 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from shlex import join, quote
+from sys import stderr
 
 _CMD = "GIT_SSH_COMMAND"
 
@@ -15,17 +16,19 @@ def _parse_args() -> Namespace:
 
 def main() -> None:
     args = _parse_args()
-    unset = f"unset {_CMD}"
 
     if args.path:
         path = Path.home() / ".ssh" / str(args.path)
         if path.exists():
             cmd = quote(join(("ssh", "-o", "IdentitiesOnly=yes", "-i", str(path))))
             print(f"export {_CMD}={cmd}", end="")
+            print(f"✅ {path}", file=stderr)
         else:
-            print(unset, end="")
+            print("true", end="")
+            print(f"⛔️ {path}", file=stderr)
     else:
-        print(unset, end="")
+        print(f"unset {_CMD}", end="")
+        print("✅ ", file=stderr)
 
 
 main()
