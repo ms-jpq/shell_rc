@@ -81,7 +81,7 @@ apt_deb_packages:
   - "https://github.com/sharkdp/hyperfine/releases/download/v1.11.0/hyperfine_1.11.0_amd64.deb"
   - "https://github.com/sharkdp/pastel/releases/download/v0.8.0/pastel_0.8.0_amd64.deb"
   - "https://github.com/muesli/duf/releases/download/v0.6.0/duf_0.6.0_linux_amd64.deb"
-  - "https://github.com/ms-jpq/sad/releases/download/ci_0.4.7_2020-08-06_07-03/x86_64-unknown-linux-gnu.deb"
+  - "https://github.com/ms-jpq/sad/releases/download/ci_0.4.8_2021-06-20_20-59/x86_64-unknown-linux-gnu.deb"
 
 target_downloads: []
 
