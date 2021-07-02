@@ -72,7 +72,7 @@ _fun_things:
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
   - "ppa:lazygit-team/release"
-  - "ppa:neovim-ppa/unstable"
+  - "ppa:neovim-ppa/stable"
 
 apt_packages: "{{ _languages + _core_utils + _editors + _nice_things + _fun_things }}"
 
