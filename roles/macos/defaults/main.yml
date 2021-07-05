@@ -22,7 +22,7 @@ _core_utils:
   - gnu-getopt
   - gnupg
   - lsof
-  - parallel
+  - moreutils
   - gnu-sed
   - openssh
   - glib-openssl

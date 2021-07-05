@@ -33,6 +33,7 @@ _core_utils:
   - wget
   - grep
   - jq
+  - moreutils
   - nano
   - nmap
   - tree
