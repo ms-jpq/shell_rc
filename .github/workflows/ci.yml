@@ -44,5 +44,8 @@ jobs:
       - name: Install Ansible
         run: brew install ansible
 
+      - name: Remove Conflicts
+        run: brew uninstall parallel
+
       - name: Build
         run: ansible-playbook localhost.yml -e all=true
