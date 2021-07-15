@@ -1,4 +1,6 @@
 ---
+ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+
 _exec_bin_: "/usr/local/bin"
 _xdg_conf_home_: "~/.config"
 _xdg_data_home_: "~/.local/share"
