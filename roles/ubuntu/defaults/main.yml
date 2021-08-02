@@ -52,6 +52,7 @@ _core_utils:
 _editors:
   - neovim
   - lazygit
+  - universal-ctags
 
 _nice_things:
   - bat

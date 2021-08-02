@@ -52,6 +52,7 @@ _editors:
   - neovim
   - lazygit
   - ms-jpq/sad/sad
+  - universal-ctags
 
 _nice_things:
   - exa
