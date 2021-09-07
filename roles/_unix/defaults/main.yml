@@ -48,6 +48,9 @@ git_repos:
   - src: "https://github.com/cyproterone/nvim2.git"
     dest: "{{ _xdg_conf_home_ }}/nvim"
 
+  - src: "https://github.com/ms-jpq/snips.git"
+    dest: "{{ _xdg_conf_home_ }}/snips"
+
 target_files:
   - src: "home/"
     dest: "~/"
