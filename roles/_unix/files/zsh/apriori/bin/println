@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+shopt -s globstar nullglob
+
+
+printf '%s\n' "$*"

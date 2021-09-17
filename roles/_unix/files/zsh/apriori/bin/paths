@@ -2,6 +2,8 @@
 
 set -eu
 set -o pipefail
+shopt -s globstar nullglob
+
 
 OPTS='sr'
 LONG_OPTS='silent,relative'
