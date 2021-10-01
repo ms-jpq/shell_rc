@@ -90,7 +90,7 @@ target_archives:
   - src: "https://github.com/ogham/exa/releases/download/v0.10.0/exa-linux-x86_64-v0.10.0.zip"
     dest: "{{ build_tmp }}"
   - src: "https://github.com/jesseduffield/lazygit/releases/download/v0.29/lazygit_0.29_Linux_x86_64.tar.gz"
-    dest: "{{ build_tmp }}"
+    dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/XAMPPRocky/tokei/releases/download/v12.1.2/tokei-x86_64-unknown-linux-gnu.tar.gz"
     dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/ogham/dog/releases/download/v0.1.0/dog-v0.1.0-x86_64-unknown-linux-gnu.zip"
