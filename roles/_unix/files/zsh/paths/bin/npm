@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const assert = require("assert");
+const { ok } = require("assert");
 const { spawnSync } = require("child_process");
 const { existsSync, mkdirSync } = require("fs");
 const { basename, delimiter, dirname, join } = require("path");
@@ -15,7 +15,7 @@ process.env["PATH"] = process.env["PATH"]
   .join(delimiter);
 
 const global_home = process.env["NPM_GLOBAL_HOME"];
-assert(global_home);
+ok(global_home);
 
 const install_set = new Set([
   "add",
