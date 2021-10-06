@@ -11,6 +11,21 @@ const {
   stdout: { columns },
 } = require("process");
 
+const install_set = new Set([
+  "add",
+  "i",
+  "in",
+  "ins",
+  "inst",
+  "insta",
+  "instal",
+  "install",
+  "isnt",
+  "isnta",
+  "isntal",
+]);
+const global_set = new Set(["--global", "-g"]);
+
 const [, filename, ...args] = argv;
 const [command] = args;
 const [parent, npm] = [dirname(filename), basename(filename)];
@@ -24,21 +39,6 @@ const global_home = process.env["NPM_GLOBAL_HOME"];
 ok(global_home);
 
 const is_global_install = (() => {
-  const install_set = new Set([
-    "add",
-    "i",
-    "in",
-    "ins",
-    "inst",
-    "insta",
-    "instal",
-    "install",
-    "isnt",
-    "isnta",
-    "isntal",
-  ]);
-  const global_set = new Set(["--global", "-g"]);
-
   const is_install = install_set.has(command);
   const is_global = args.some((arg) => global_set.has(arg));
   return is_install && is_global;
@@ -63,8 +63,8 @@ if (is_global_install) {
       cwd: new_cwd,
       stdio: "inherit",
     });
+    ok(status == 0);
   }
-  ok(status == 0);
   log("-".repeat(columns));
   log(`@ - ${packages} - @`);
   log("-".repeat(columns));
