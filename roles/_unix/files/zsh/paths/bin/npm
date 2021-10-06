@@ -4,8 +4,9 @@ const assert = require("assert");
 const { spawnSync } = require("child_process");
 const { existsSync, mkdirSync } = require("fs");
 const { basename, delimiter, dirname, join } = require("path");
+const { argv } = require("process");
 
-const [, filename, ...args] = process.argv;
+const [, filename, ...args] = argv;
 const [parent, npm] = [dirname(filename), basename(filename)];
 
 process.env["PATH"] = process.env["PATH"]
@@ -65,4 +66,4 @@ const { status } = spawnSync(npm, [...new_args], {
   cwd,
   stdio: "inherit",
 });
-process.exit(status);
+process.exitCode = status;
