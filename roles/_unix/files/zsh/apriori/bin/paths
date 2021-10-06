@@ -8,7 +8,7 @@ shopt -s globstar nullglob
 OPTS='sr'
 LONG_OPTS='silent,relative'
 
-PARSED="$(getopt --options="$OPTS", --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
+PARSED="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval set -- "$PARSED"
 
 SILENT=0
