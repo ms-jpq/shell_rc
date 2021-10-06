@@ -4,8 +4,8 @@
 #################### Node Region ####################
 #################### ########### ####################
 
-pathprepend "$NPM_GLOBAL_HOME/node_modules/.bin"
 export NPM_GLOBAL_HOME="$XDG_DATA_HOME/npm_global"
+pathprepend "$NPM_GLOBAL_HOME/node_modules/.bin"
 
 
 np() {
