@@ -2,11 +2,17 @@
 
 const { ok } = require("assert");
 const { spawnSync } = require("child_process");
+const { log } = require("console");
 const { existsSync, mkdirSync } = require("fs");
 const { basename, delimiter, dirname, join } = require("path");
-const { argv } = require("process");
+const {
+  argv,
+  cwd,
+  stdout: { columns },
+} = require("process");
 
 const [, filename, ...args] = argv;
+const [command] = args;
 const [parent, npm] = [dirname(filename), basename(filename)];
 
 process.env["PATH"] = process.env["PATH"]
@@ -17,27 +23,28 @@ process.env["PATH"] = process.env["PATH"]
 const global_home = process.env["NPM_GLOBAL_HOME"];
 ok(global_home);
 
-const install_set = new Set([
-  "add",
-  "i",
-  "in",
-  "ins",
-  "inst",
-  "insta",
-  "instal",
-  "install",
-  "isnt",
-  "isnta",
-  "isntal",
-]);
-const global_set = new Set(["--global", "-g"]);
+const is_global_install = (() => {
+  const install_set = new Set([
+    "add",
+    "i",
+    "in",
+    "ins",
+    "inst",
+    "insta",
+    "instal",
+    "install",
+    "isnt",
+    "isnta",
+    "isntal",
+  ]);
+  const global_set = new Set(["--global", "-g"]);
 
-const command = args[0];
-const is_install = install_set.has(command);
-const is_global = args.some((arg) => global_set.has(arg));
-const is_global_install = is_install && is_global;
+  const is_install = install_set.has(command);
+  const is_global = args.some((arg) => global_set.has(arg));
+  return is_install && is_global;
+})();
 
-const cwd = is_global_install ? global_home : process.cwd();
+const new_cwd = is_global_install ? global_home : cwd();
 const new_args = (() => {
   if (is_global_install) {
     return args.filter((arg) => !global_set.has(arg));
@@ -52,18 +59,19 @@ if (is_global_install) {
   }
   const packages = join(global_home, "package.json");
   if (!existsSync(packages)) {
-    spawnSync(npm, ["init", "-y"], {
-      cwd,
+    const { status } = spawnSync(npm, ["init", "-y"], {
+      cwd: new_cwd,
       stdio: "inherit",
     });
   }
-  console.log("-".repeat(process.stdout.columns));
-  console.log(`@ - ${packages} - @`);
-  console.log("-".repeat(process.stdout.columns));
+  ok(status == 0);
+  log("-".repeat(columns));
+  log(`@ - ${packages} - @`);
+  log("-".repeat(columns));
 }
 
 const { status } = spawnSync(npm, [...new_args], {
-  cwd,
+  cwd: new_cwd,
   stdio: "inherit",
 });
 process.exitCode = status;
