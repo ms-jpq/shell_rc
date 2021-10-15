@@ -3,5 +3,4 @@
 set -eu
 set -o pipefail
 
-
-exec curl -s https://ipinfo.io
+curl --location --silent https://ipinfo.io | jq
