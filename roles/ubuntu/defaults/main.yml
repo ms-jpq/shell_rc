@@ -19,6 +19,7 @@ _languages:
   - language-pack-zh-hans
 
 _core_utils:
+  - python3-venv
   - zram-config
   # TODO -- remove this
   - earlyoom
