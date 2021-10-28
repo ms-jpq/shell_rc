@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from itertools import chain
 from os import environ, linesep
 from pathlib import Path
-from shlex import split
+from shlex import quote, split
 from string import Template, ascii_letters, digits
 from sys import stderr, stdin, stdout
 from typing import Iterable, Iterator, Tuple
@@ -33,7 +33,7 @@ def _trans(stream: Iterable[Tuple[str, str]]) -> Iterator[Tuple[str, str]]:
                 part, *_ = parts
                 tpl = Template(part)
                 seen[key] = rhs = tpl.safe_substitute(seen)
-                yield key, rhs
+                yield key, quote(rhs)
 
 
 def _arg_parse() -> Namespace:
