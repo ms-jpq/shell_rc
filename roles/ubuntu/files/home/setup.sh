@@ -4,6 +4,11 @@ set -eux
 set -o pipefail
 
 
+apt-install() {
+  DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends --yes -- "$@"
+}
+
+
 PYTHON_DEPS=(
   make
   build-essential
@@ -23,10 +28,21 @@ PYTHON_DEPS=(
   libffi-dev
   liblzma-dev
 )
-DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends -y "${PYTHON_DEPS[@]}"
+apt-install "${PYTHON_DEPS[@]}"
 asdf-inst python
+
+
+RUBY_DEPS=(
+ libssl-dev
+)
+apt-install  "${RUBY_DEPS[@]}"
+asdf-inst python
+
 
 NODEJS_CHECK_SIGNATURES=no asdf-inst nodejs
 
+
 asdf-inst golang
+
+
 asdf-inst rust
