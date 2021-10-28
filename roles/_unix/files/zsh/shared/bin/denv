@@ -5,8 +5,9 @@ from configparser import ConfigParser
 from itertools import chain
 from os import environ, linesep
 from pathlib import Path
+from re import compile
 from shlex import quote, split
-from string import Template, ascii_letters, digits
+from string import Template
 from sys import stderr, stdin, stdout
 from typing import Iterable, Iterator, Tuple
 from uuid import uuid4
@@ -25,14 +26,14 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
 
 
 def _trans(stream: Iterable[Tuple[str, str]]) -> Iterator[Tuple[str, str]]:
-    legal = {*ascii_letters, digits, "_"}
+    re = compile(r"^[A-z][\w]*$")
     seen = {**environ}
     for key, val in stream:
-        if {*key} <= legal:
+        if re.match(key):
             if parts := split(val):
                 part, *_ = parts
                 tpl = Template(part)
-                seen[key] = rhs = tpl.safe_substitute(seen)
+                seen[key] = rhs = tpl.substitute(seen)
                 yield key, quote(rhs)
 
 
