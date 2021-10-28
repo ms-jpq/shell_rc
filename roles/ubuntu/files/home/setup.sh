@@ -9,6 +9,11 @@ apt-install() {
 }
 
 
+##
+##
+##
+
+
 PYTHON_DEPS=(
   make
   build-essential
@@ -39,6 +44,7 @@ apt-install  "${RUBY_DEPS[@]}"
 asdf-inst python
 
 
+mkdir --parent -- "$XDG_DATA_HOME/gnupg"
 NODEJS_CHECK_SIGNATURES=no asdf-inst nodejs
 
 
