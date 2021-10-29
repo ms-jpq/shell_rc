@@ -22,7 +22,7 @@ def main() -> None:
         p = Path(args.path)
         path = p if p.is_absolute() else Path.home() / ".ssh" / p
 
-        if path.exists():
+        if path.is_file():
             cmd = quote(join(("ssh", "-o", "IdentitiesOnly=yes", "-i", normcase(path))))
             print(f"export {_CMD}={cmd}", end="")
             print(f"✅ {path}", file=stderr)
