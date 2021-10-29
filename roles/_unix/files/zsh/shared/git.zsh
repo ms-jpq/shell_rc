@@ -10,5 +10,5 @@ alias lg='lazygit'
 
 
 git-ssh() {
-  source <(cmd git-ssh "$*")
+  source <(cmd git-ssh "$@")
 }
