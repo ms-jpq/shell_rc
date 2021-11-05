@@ -28,7 +28,7 @@ alias dlog='docker logs --follow'
 alias dr='docker run -it --rm'
 alias dre='dr --entrypoint'
 alias drw='dr -w /workdir -v "$PWD":/workdir'
-alias drs='dr -v /var/run/docker.sock:/var/run/docker.sock'
+alias drs='dr -v /var/run/docker.sock:/var/run/docker.sock:ro'
 
 drx() {
   xhost + 127.0.0.1
