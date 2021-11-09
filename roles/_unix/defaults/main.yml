@@ -69,7 +69,7 @@ target_touches:
   - "{{ _xdg_cache_home_ }}/zz"
 
 git_conf:
-  branch.autosetuprebase: True
+  branch.autosetuprebase: always
   rebase.autostash: true
   diff.algorithm: minimal
   init.defaultBranch: main
