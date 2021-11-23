@@ -52,3 +52,6 @@ asdf-inst golang
 
 
 asdf-inst rust
+
+
+asdf-inst ruby
