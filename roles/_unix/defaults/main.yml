@@ -71,6 +71,7 @@ target_touches:
 git_conf:
   branch.autosetuprebase: always
   rebase.autostash: true
+  pull.rebase: true
   diff.algorithm: minimal
   init.defaultBranch: main
 
