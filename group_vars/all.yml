@@ -9,8 +9,6 @@ _xdg_cache_home_: "~/.cache"
 _ssh_authorized_:
   - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
-time_zone: "{{ lookup('env', 'TZ') | default(tz) }}"
-
 _git_: "{{ git | default(False) | bool }}"
 _all_: "{{ all | default(False) | bool }}"
 
