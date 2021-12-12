@@ -11,9 +11,9 @@ target_templates:
   - src: "templates/"
     dest: "/"
 
-target_links:
-  - src: "/etc/localtime"
-    dest: "/usr/share/zoneinfo/{{ time_zone }}"
+target_links: []
+  # - src: "/etc/localtime"
+  #   dest: "/usr/share/zoneinfo/{{ time_zone }}"
 
 _languages:
   - language-pack-zh-hans
