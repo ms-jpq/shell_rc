@@ -39,13 +39,13 @@ git_repos:
   - src: "https://github.com/dylanaraps/fff"
     dest: "{{ _zsh_dir_ }}/fff"
 
-  - src: "https://github.com/cyproterone/tmux.git"
+  - src: "https://github.com/ms-jpq/tmux_rc.git"
     dest: "{{ _xdg_conf_home_ }}/tmux"
 
   - src: "https://github.com/ms-jpq/isomorphic-copy.git"
     dest: "{{ _xdg_conf_home_ }}/isomorphic-copy"
 
-  - src: "https://github.com/cyproterone/nvim2.git"
+  - src: "https://github.com/ms-jpq/nvim_rc.git"
     dest: "{{ _xdg_conf_home_ }}/nvim"
 
   - src: "https://github.com/ms-jpq/snips.git"
