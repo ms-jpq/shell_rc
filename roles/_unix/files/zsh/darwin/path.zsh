@@ -5,21 +5,22 @@
 #################### ########### ####################
 
 _paths=(
-  '/usr/local/opt/bc/bin'
-  '/usr/local/opt/coreutils/libexec/gnubin'
-  '/usr/local/opt/curl/bin'
-  '/usr/local/opt/findutils/libexec/gnubin'
-  '/usr/local/opt/gnu-getopt/bin'
-  '/usr/local/opt/gnu-sed/libexec/gnubin'
-  '/usr/local/opt/gnu-tar/libexec/gnubin'
-  '/usr/local/opt/gnu-which/libexec/gnubin'
-  '/usr/local/opt/grep/libexec/gnubin'
-  '/usr/local/opt/icu4c/bin'
-  '/usr/local/opt/icu4c/sbin'
-  '/usr/local/opt/lsof/bin'
-  '/usr/local/opt/ncurses/bin'
-  '/usr/local/opt/openssl/bin'
-  '/usr/local/sbin'
+  '/opt/homebrew/bin'
+  '/opt/homebrew/sbin'
+  '/opt/homebrew/opt/bc/bin'
+  '/opt/homebrew/opt/coreutils/libexec/gnubin'
+  '/opt/homebrew/opt/curl/bin'
+  '/opt/homebrew/opt/findutils/libexec/gnubin'
+  '/opt/homebrew/opt/gnu-getopt/bin'
+  '/opt/homebrew/opt/gnu-sed/libexec/gnubin'
+  '/opt/homebrew/opt/gnu-tar/libexec/gnubin'
+  '/opt/homebrew/opt/gnu-which/libexec/gnubin'
+  '/opt/homebrew/opt/grep/libexec/gnubin'
+  '/opt/homebrew/opt/icu4c/bin'
+  '/opt/homebrew/opt/icu4c/sbin'
+  '/opt/homebrew/opt/lsof/bin'
+  '/opt/homebrew/opt/ncurses/bin'
+  '/opt/homebrew/opt/openssl/bin'
 )
 pathprepend "${_paths[@]}"
 unset _paths

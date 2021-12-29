@@ -1,5 +1,5 @@
 ---
-nano_path: /usr/local/opt/nano/share/nano
+nano_path: /opt/homebrew/opt/nano/share/nano
 
 target_files:
   - src: "home/"
@@ -8,8 +8,8 @@ target_files:
 target_templates: []
 
 target_links:
-  - src: "/usr/local/bin/sh"
-    dest: "/usr/local/bin/dash"
+  - src: "~/.local/bin/sh"
+    dest: "/opt/homebrew/bin/dash"
 
 _core_utils:
   - dash
