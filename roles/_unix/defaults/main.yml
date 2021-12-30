@@ -79,8 +79,6 @@ git_conf:
 
 target_lines:
   - file: "~/.ssh/config"
-    line: "ServerAliveInterval 1"
-  - file: "~/.ssh/config"
-    line: "ServerAliveCountMax 5"
+    line: "Include ~/.config/ssh/*.conf"
 
 target_links: []
