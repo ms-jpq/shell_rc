@@ -4,7 +4,6 @@
 #################### MacOS Region ####################
 #################### ############ ####################
 
-alias t='open -f'
 
 alias batt='pmset -g batt'
 alias dns='sudo killall -HUP mDNSResponder'
