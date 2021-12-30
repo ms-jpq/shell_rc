@@ -79,18 +79,18 @@ apt_packages: "{{ _languages + _core_utils + _editors + _nice_things + _fun_thin
 
 apt_deb_packages:
   - "https://github.com/ms-jpq/sad/releases/download/v0.4.15/x86_64-unknown-linux-gnu.deb"
-  - "https://github.com/dandavison/delta/releases/download/0.6.0/git-delta_0.6.0_amd64.deb"
-  - "https://github.com/watchexec/watchexec/releases/download/cli-v1.16.1/watchexec-1.16.1-x86_64-unknown-linux-gnu.deb"
-  - "https://github.com/sharkdp/hyperfine/releases/download/v1.11.0/hyperfine_1.11.0_amd64.deb"
-  - "https://github.com/sharkdp/pastel/releases/download/v0.8.0/pastel_0.8.0_amd64.deb"
-  - "https://github.com/muesli/duf/releases/download/v0.6.0/duf_0.6.0_linux_amd64.deb"
+  - "https://github.com/dandavison/delta/releases/download/0.11.3/git-delta_0.11.3_amd64.deb"
+  - "https://github.com/watchexec/watchexec/releases/download/cli-v1.17.1/watchexec-1.17.1-x86_64-unknown-linux-gnu.deb"
+  - "https://github.com/sharkdp/hyperfine/releases/download/v1.12.0/hyperfine_1.12.0_amd64.deb"
+  - "https://github.com/sharkdp/pastel/releases/download/v0.8.1/pastel_0.8.1_amd64.deb"
+  - "https://github.com/muesli/duf/releases/download/v0.6.2/duf_0.6.2_linux_amd64.deb"
 
 target_downloads: []
 
 target_archives:
-  - src: "https://github.com/ogham/exa/releases/download/v0.10.0/exa-linux-x86_64-v0.10.0.zip"
+  - src: "https://github.com/ogham/exa/releases/download/v0.10.1/exa-linux-x86_64-v0.10.1.zip"
     dest: "{{ build_tmp }}"
-  - src: "https://github.com/jesseduffield/lazygit/releases/download/v0.29/lazygit_0.29_Linux_x86_64.tar.gz"
+  - src: "https://github.com/jesseduffield/lazygit/releases/download/v0.31.4/lazygit_0.31.4_Linux_x86_64.tar.gz"
     dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/XAMPPRocky/tokei/releases/download/v12.1.2/tokei-x86_64-unknown-linux-gnu.tar.gz"
     dest: "{{ _exec_bin_ }}"
