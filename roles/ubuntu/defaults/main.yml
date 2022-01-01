@@ -24,6 +24,7 @@ _core_utils:
   # TODO -- remove this
   - earlyoom
   - man
+  - man2html
   - sudo
   - locales
   - openssh-server
