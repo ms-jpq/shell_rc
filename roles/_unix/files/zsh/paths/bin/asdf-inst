@@ -7,6 +7,7 @@ from subprocess import CalledProcessError, check_call, check_output
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("lang")
+    parser.add_argument("--version")
     return parser.parse_args()
 
 
@@ -28,12 +29,12 @@ def main() -> None:
 
     raw = check_output(("asdf", "list", lang), text=True).rstrip()
     installed = {*raw.splitlines()}
-    latest = check_output(("asdf", "latest", lang), text=True).rstrip()
 
-    if latest not in installed:
-        check_call(("asdf", "install", lang, latest))
+    version = args.version or check_output(("asdf", "latest", lang), text=True).rstrip()
+    if version not in installed:
+        check_call(("asdf", "install", lang, version))
 
-    check_call(("asdf", "global", lang, latest))
+    check_call(("asdf", "global", lang, version))
     check_call(("asdf", "reshim"))
 
 
