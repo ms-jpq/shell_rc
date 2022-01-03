@@ -34,24 +34,24 @@ PYTHON_DEPS=(
   liblzma-dev
 )
 apt-install "${PYTHON_DEPS[@]}"
-asdf-inst python
+asdf-install python
 
 
 RUBY_DEPS=(
  libssl-dev
 )
 apt-install  "${RUBY_DEPS[@]}"
-asdf-inst python
+asdf-install python
 
 
 mkdir --parent -- "$XDG_DATA_HOME/gnupg"
-NODEJS_CHECK_SIGNATURES=no asdf-inst nodejs
+NODEJS_CHECK_SIGNATURES=no asdf-install nodejs
 
 
-asdf-inst golang
+asdf-install golang
 
 
-asdf-inst rust
+asdf-install rust
 
 
-asdf-inst ruby
+asdf-install ruby

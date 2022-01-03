@@ -1,0 +1,50 @@
+#!/usr/bin/python3
+
+from argparse import ArgumentParser, Namespace
+from shutil import which
+from subprocess import CalledProcessError, check_call, check_output
+
+
+def _parse_args() -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument("lang")
+    parser.add_argument("-g", "--global", dest="glob", action="store_true")
+    parser.add_argument("-v", "--version")
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = _parse_args()
+    lang = str(args.lang)
+
+    if not (asdf := which("asdf")):
+        raise FileNotFoundError("asdf")
+    else:
+        try:
+            raw = check_output((asdf, "plugin", "list"), text=True).rstrip()
+        except CalledProcessError:
+            raw = ""
+
+        plugins = {*raw.splitlines()}
+
+        if lang in plugins:
+            check_call((asdf, "plugin", "update", lang))
+        else:
+            check_call((asdf, "plugin", "add", lang))
+
+        raw = check_output((asdf, "list", lang), text=True).rstrip()
+        installed = {*raw.splitlines()}
+
+        version = (
+            args.version or check_output((asdf, "latest", lang), text=True).rstrip()
+        )
+        if version not in installed:
+            check_call((asdf, "install", lang, version))
+
+        if args.glob:
+            check_call((asdf, "global", lang, version))
+
+        check_call((asdf, "reshim"))
+
+
+main()
