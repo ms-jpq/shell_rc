@@ -72,6 +72,8 @@ git_conf:
   branch.autosetuprebase: always
   rebase.autostash: true
   pull.rebase: true
+  merge.ff: false
+  merge.commit: false
   diff.algorithm: minimal
   init.defaultBranch: main
 
