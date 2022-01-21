@@ -6,7 +6,8 @@ RUN apt remove -y ripgrep
 
 
 # Requirements
-RUN apt update && \
+RUN set -o pipefail && \
+    apt update && \
     apt upgrade -y && \
     yes | unminimize
 
