@@ -1,6 +1,4 @@
 ---
-nano_path: /opt/homebrew/opt/nano/share/nano
-
 target_files:
   - src: "home/"
     dest: "~/"
@@ -35,7 +33,6 @@ _core_utils:
   - tmux
   - socat
   - less
-  - nano
   - bind
   - jq
   - nmap
