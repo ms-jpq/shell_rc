@@ -5,9 +5,10 @@ target_files:
 
 target_templates: []
 
-target_links:
-  - src: "~/.local/bin/sh"
-    dest: "/opt/homebrew/bin/dash"
+# TODO -- re-enable when github CI gets M1
+# target_links:
+#   - src: "~/.local/bin/sh"
+#     dest: "/opt/homebrew/bin/dash"
 
 _core_utils:
   - dash
