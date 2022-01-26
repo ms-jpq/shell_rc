@@ -8,8 +8,7 @@ RUN apt remove -y ripgrep
 # Requirements
 RUN set -o pipefail && \
     apt update && \
-    apt upgrade -y && \
-    printf '%s\n' yes | unminimize
+    apt upgrade -y
 
 
 RUN source "$XDG_CONFIG_HOME/zsh/rc/.zshrc" && \
