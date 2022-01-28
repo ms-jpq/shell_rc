@@ -69,6 +69,7 @@ target_touches:
   - "{{ _xdg_cache_home_ }}/zz"
 
 git_conf:
+  core.pager: delta
   branch.autosetuprebase: always
   rebase.autostash: true
   pull.rebase: true
