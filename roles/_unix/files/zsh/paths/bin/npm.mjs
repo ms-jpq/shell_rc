@@ -61,10 +61,13 @@ if (is_global_install) {
     ok(status === 0);
   }
 
-  const { columns } = stdout;
-  log("-".repeat(columns));
-  log(`@ - ${packages} - @`);
-  log("-".repeat(columns));
+  {
+    const { columns } = stdout;
+    const hr = () => log("-".repeat(columns));
+    hr();
+    log(`@ - ${packages} - @`);
+    hr();
+  }
 }
 
 const { status } = spawnSync("npm", [...new_args], {
