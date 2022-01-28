@@ -7,7 +7,7 @@ import { existsSync, mkdirSync } from "fs";
 import { delimiter, dirname, join, isAbsolute } from "path";
 import { argv, cwd, stdout } from "process";
 
-const [, _, ...args] = argv;
+const [, , ...args] = argv;
 
 {
   const parent = dirname(new URL(import.meta.url).pathname);
