@@ -8,6 +8,7 @@ from os.path import normcase
 from pathlib import Path
 from re import compile
 from shlex import quote, split
+from shutil import which
 from string import Template
 from sys import stderr
 from typing import Iterable, Iterator, Mapping, Tuple
@@ -55,16 +56,19 @@ def _arg_parse() -> Namespace:
 
 def main() -> None:
     args = _arg_parse()
-    p_env = {**environ}
+
     dotenv = Path(args.path).read_text()
+    p_env = {**environ}
     env = _trans(_parse(dotenv), environ=p_env)
     c_env = {**env, **p_env}
 
     lines = zip((f"{key}={quote(val)}" for key, val in env.items()), repeat(linesep))
     stderr.writelines(chain.from_iterable(lines))
 
-    cmd = normcase(args.cmd)
-    execle(cmd, cmd, *args.argv, c_env)
+    if cmd := which(args.cmd):
+        execle(cmd, normcase(cmd), *args.argv, c_env)
+    else:
+        raise OSError(args.cmd)
 
 
 main()
