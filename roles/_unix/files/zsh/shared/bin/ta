@@ -8,9 +8,8 @@ then
   exec tmux new-session -A -s "$*"
 else
   session="$(tmux list-sessions -F '#{session_name}' | fzf -0 -1)"
-  if [[ $? -eq 130 ]]
+  if [[ $? -ne 130 ]]
   then
-    exit 130
+    exec tmux new-session -A -s "${session:-"owo"}"
   fi
-  exec tmux new-session -A -s "${session:-"owo"}"
 fi
