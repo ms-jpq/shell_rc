@@ -2,14 +2,15 @@
 
 from argparse import ArgumentParser, Namespace
 from configparser import ConfigParser
-from itertools import chain
-from os import environ, linesep
+from itertools import chain, repeat
+from os import environ, execle, linesep
+from os.path import normcase
 from pathlib import Path
 from re import compile
 from shlex import quote, split
 from string import Template
-from sys import stderr, stdin, stdout
-from typing import Iterable, Iterator, Tuple
+from sys import stderr
+from typing import Iterable, Iterator, Mapping, Tuple
 from uuid import uuid4
 
 
@@ -25,35 +26,45 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
         yield from section.items()
 
 
-def _trans(stream: Iterable[Tuple[str, str]]) -> Iterator[Tuple[str, str]]:
-    re = compile(r"^[A-z][\w]*$")
-    seen = {**environ}
-    for key, val in stream:
-        if re.match(key):
-            if parts := split(val):
-                part, *_ = parts
-                tpl = Template(part)
-                seen[key] = rhs = tpl.substitute(seen)
-                yield key, quote(rhs)
+def _trans(
+    stream: Iterable[Tuple[str, str]], environ: Mapping[str, str]
+) -> Mapping[str, str]:
+    def cont() -> Iterator[Tuple[str, str]]:
+        re = compile(r"^[A-z][\w]*$")
+        seen = {**environ}
+        for key, val in stream:
+            if re.match(key):
+                if parts := split(val):
+                    part, *_ = parts
+                    tpl = Template(part)
+                    seen[key] = rhs = tpl.substitute(seen)
+                    yield key, rhs
+
+    env = {key: val for key, val in cont()}
+    return env
 
 
 def _arg_parse() -> Namespace:
     parser = ArgumentParser()
-    parser.add_argument("path", nargs="?", type=Path, default=Path.cwd() / ".env")
-    parser.add_argument("-", "--stdin", action="store_true")
+    parser.add_argument("path", type=Path)
+    parser.add_argument("cmd")
+    parser.add_argument("argv", nargs="*")
     args = parser.parse_args()
     return args
 
 
 def main() -> None:
     args = _arg_parse()
-    text = stdin.read() if args.stdin else Path(args.path).read_text()
-    for lhs, rhs in _trans(_parse(text)):
-        line = f"{lhs}={rhs}"
-        stderr.write(line)
-        stderr.write(linesep)
-        stdout.write(f"export {line}")
-        stdout.write(linesep)
+    p_env = {**environ}
+    dotenv = Path(args.path).read_text()
+    env = _trans(_parse(dotenv), environ=p_env)
+    c_env = {**env, **p_env}
+
+    lines = zip((f"{key}={quote(val)}" for key, val in env.items()), repeat(linesep))
+    stderr.writelines(chain.from_iterable(lines))
+
+    cmd = normcase(args.cmd)
+    execle(cmd, cmd, *args.argv, c_env)
 
 
 main()
