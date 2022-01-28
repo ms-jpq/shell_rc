@@ -53,6 +53,7 @@ if (is_global_install) {
     mkdirSync(global_home, { recursive: true });
   }
   const packages = join(global_home, "package.json");
+
   if (!existsSync(packages)) {
     const { status } = spawnSync("npm", ["init", "--yes"], {
       cwd: new_cwd,
