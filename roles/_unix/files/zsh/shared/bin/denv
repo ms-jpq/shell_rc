@@ -11,7 +11,7 @@ from shlex import quote, split
 from shutil import which
 from string import Template
 from sys import stderr
-from typing import Iterable, Iterator, Mapping, Tuple
+from typing import Iterable, Iterator, Mapping, Sequence, Tuple
 from uuid import uuid4
 
 
@@ -45,17 +45,15 @@ def _trans(
     return env
 
 
-def _arg_parse() -> Namespace:
-    parser = ArgumentParser()
+def _arg_parse() -> Tuple[Namespace, Sequence[str]]:
+    parser = ArgumentParser(add_help=False)
     parser.add_argument("path", type=Path)
     parser.add_argument("cmd")
-    parser.add_argument("argv", nargs="*")
-    args = parser.parse_args()
-    return args
+    return parser.parse_known_args()
 
 
 def main() -> None:
-    args = _arg_parse()
+    args, argv = _arg_parse()
 
     dotenv = Path(args.path).read_text()
     p_env = {**environ}
@@ -66,7 +64,7 @@ def main() -> None:
     stderr.writelines(chain.from_iterable(lines))
 
     if cmd := which(args.cmd):
-        execle(cmd, normcase(cmd), *args.argv, c_env)
+        execle(cmd, normcase(cmd), *argv, c_env)
     else:
         raise OSError(args.cmd)
 
