@@ -47,7 +47,7 @@ def _trans(
 
 def _arg_parse() -> Tuple[Namespace, Sequence[str]]:
     parser = ArgumentParser(add_help=False)
-    parser.add_argument("path", type=Path)
+    parser.add_argument("path", type=PurePath)
     parser.add_argument("cmd")
     return parser.parse_known_args()
 
