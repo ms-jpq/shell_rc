@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from itertools import chain, repeat
 from os import environ, execle, linesep
 from os.path import normcase
-from pathlib import Path
+from pathlib import Path, PurePath
 from re import compile
 from shlex import quote, split
 from shutil import which
@@ -28,11 +28,11 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
 
 
 def _trans(
-    stream: Iterable[Tuple[str, str]], environ: Mapping[str, str]
+    stream: Iterable[Tuple[str, str]], env: Mapping[str, str]
 ) -> Mapping[str, str]:
     def cont() -> Iterator[Tuple[str, str]]:
         re = compile(r"^[A-z][\w]*$")
-        seen = {**environ}
+        seen = {**env}
         for key, val in stream:
             if re.match(key):
                 if parts := split(val):
@@ -41,8 +41,8 @@ def _trans(
                     seen[key] = rhs = tpl.substitute(seen)
                     yield key, rhs
 
-    env = {key: val for key, val in cont()}
-    return env
+    parsed = {key: val for key, val in cont()}
+    return parsed
 
 
 def _arg_parse() -> Tuple[Namespace, Sequence[str]]:
@@ -55,9 +55,10 @@ def _arg_parse() -> Tuple[Namespace, Sequence[str]]:
 def main() -> None:
     args, argv = _arg_parse()
 
-    dotenv = Path(args.path).read_text()
+    env_path = Path(args.path)
+    dotenv = "" if env_path == PurePath("-") else env_path.read_text()
     p_env = {**environ}
-    env = _trans(_parse(dotenv), environ=p_env)
+    env = _trans(_parse(dotenv), env=p_env)
     c_env = {**env, **p_env}
 
     lines = zip((f"{key}={quote(val)}" for key, val in env.items()), repeat(linesep))
