@@ -1,8 +1,7 @@
-reporting: "on"
-
+---
 git:
   paging:
-    pager: delta --paging=never
+    pager: delta --24-bit-color=never
 
 gui:
   scrollHeight: 1
