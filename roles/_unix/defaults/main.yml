@@ -69,15 +69,8 @@ target_touches:
   - "{{ _xdg_cache_home_ }}/zz"
 
 git_conf:
-  core.pager: delta
-  branch.autosetuprebase: always
-  rebase.autostash: true
-  pull.rebase: true
-  merge.commit: false
-  diff.algorithm: minimal
-  init.defaultBranch: main
-
-  delta.light: True
+  include.path: user_config
+  checkout.workers: "{{ (ansible_processor_vcpus | int) * 2 }}"
 
 target_lines:
   - file: "~/.ssh/config"

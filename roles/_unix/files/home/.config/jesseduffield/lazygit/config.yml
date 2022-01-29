@@ -1,11 +1,8 @@
 reporting: "on"
-startuppopupversion: 1
-
-confirmOnQuit: True
 
 git:
   paging:
-    pager: delta --24-bit-color=never --paging=never
+    pager: delta --paging=never
 
 gui:
   scrollHeight: 1
