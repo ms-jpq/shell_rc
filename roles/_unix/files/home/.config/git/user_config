@@ -4,6 +4,11 @@
 [delta]
 	light = True
 
+[diff]
+	algorithm = histogram
+	mnemonicPrefix = True
+	renames = copies
+
 [init]
 	defaultBranch = main
 
@@ -12,11 +17,6 @@
 
 [branch]
 	autosetuprebase = always
-
-[diff]
-	algorithm = histogram
-	mnemonicPrefix = True
-	renames = copies
 
 [pull]
 	ff = only
