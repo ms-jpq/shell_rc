@@ -9,7 +9,6 @@
 
 [diff]
 	algorithm = histogram
-	mnemonicPrefix = True
 	renames = copies
 
 [init]
