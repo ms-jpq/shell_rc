@@ -22,6 +22,9 @@
 [branch]
 	autosetuprebase = always
 
+[fetch]
+  recurseSubmodules = True
+
 [pull]
 	ff = only
 
