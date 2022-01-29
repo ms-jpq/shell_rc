@@ -8,8 +8,10 @@
 	light = True
 
 [diff]
-	algorithm = histogram
 	renames = copy
+	algorithm = histogram
+  colorMoved = dimmed-zebra
+  colorMovedWS = ignore-space-change
 
 [init]
 	defaultBranch = main
