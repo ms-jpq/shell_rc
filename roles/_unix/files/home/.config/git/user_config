@@ -1,0 +1,32 @@
+[core]
+	pager = delta
+
+[delta]
+	light = True
+
+[init]
+	defaultBranch = main
+
+[checkout]
+	thresholdForParallelism = 8
+
+[branch]
+	autosetuprebase = always
+
+[diff]
+	algorithm = histogram
+	mnemonicPrefix = True
+	renames = copies
+
+[pull]
+	ff = only
+
+[merge]
+	ff = only
+	conflictstyle = diff3
+
+[rebase]
+	autostash = True
+
+[rerere]
+	enabled = True
