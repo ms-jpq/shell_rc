@@ -19,7 +19,7 @@
   patternType = perl
 
 [log]
-  date = iso-local
+  date = human-local
 
 [init]
 	defaultBranch = main
