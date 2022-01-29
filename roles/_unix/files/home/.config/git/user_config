@@ -1,6 +1,9 @@
 [core]
 	pager = delta
 
+[core "whitespace"]
+	tabwidth = 4
+
 [delta]
 	light = True
 
