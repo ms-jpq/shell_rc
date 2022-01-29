@@ -1,19 +1,19 @@
 [core]
-	pager = delta
+  pager = delta
 
 [core "whitespace"]
-	tabwidth = 4
+  tabwidth = 4
 
 [submodule]
   fetchJobs = 0
   recurse = True
 
 [delta]
-	light = True
+  light = True
 
 [diff]
-	renames = copy
-	algorithm = histogram
+  renames = copy
+  algorithm = histogram
   colorMoved = dimmed-zebra
   colorMovedWS = ignore-space-change
 
@@ -30,13 +30,13 @@
   httpd = python
 
 [init]
-	defaultBranch = main
+  defaultBranch = main
 
 [checkout]
-	thresholdForParallelism = 8
+  thresholdForParallelism = 8
 
 [branch]
-	autosetuprebase = always
+  autosetuprebase = always
 
 [fetch]
   recurseSubmodules = True
@@ -44,18 +44,18 @@
   pruneTags = True
 
 [pull]
-	ff = only
+  ff = only
 
 [merge]
-	ff = only
-	conflictstyle = diff3
-	autostash = True
+  ff = only
+  conflictstyle = diff3
+  autostash = True
 
 [rebase]
-	autostash = True
+  autostash = True
 
 [rerere]
-	enabled = True
+  enabled = True
   autoUpdate = True
 
 [push]
