@@ -13,6 +13,14 @@
   colorMoved = dimmed-zebra
   colorMovedWS = ignore-space-change
 
+[grep]
+  lineNumber = True
+  column = True
+  patternType = perl
+
+[log]
+  date = iso-local
+
 [init]
 	defaultBranch = main
 
@@ -24,6 +32,8 @@
 
 [fetch]
   recurseSubmodules = True
+  parallel = 0
+  pruneTags = True
 
 [pull]
 	ff = only
