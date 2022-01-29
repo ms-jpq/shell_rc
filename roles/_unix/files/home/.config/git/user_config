@@ -4,6 +4,10 @@
 [core "whitespace"]
 	tabwidth = 4
 
+[submodule]
+  fetchJobs = 0
+  recurse = True
+
 [delta]
 	light = True
 
@@ -53,7 +57,3 @@
 
 [push]
   followTags = True
-
-[submodule]
-  fetchJobs = 0
-  recurse = True
