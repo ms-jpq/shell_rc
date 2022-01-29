@@ -9,7 +9,7 @@
 
 [diff]
 	algorithm = histogram
-	renames = copies
+	renames = copy
 
 [init]
 	defaultBranch = main
