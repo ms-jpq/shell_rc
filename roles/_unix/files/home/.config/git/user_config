@@ -19,6 +19,7 @@
   patternType = perl
 
 [log]
+  follow = True
   date = human-local
 
 [init]
@@ -41,9 +42,18 @@
 [merge]
 	ff = only
 	conflictstyle = diff3
+	autostash = True
 
 [rebase]
 	autostash = True
 
 [rerere]
 	enabled = True
+  autoUpdate = True
+
+[push]
+  followTags = True
+
+[submodule]
+  fetchJobs = 0
+  recurse = True
