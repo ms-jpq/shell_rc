@@ -28,7 +28,7 @@
   patternType = perl
 
 [log]
-  date = human-local
+  date = format:%Y-%m-%d %H:%M:%S
 
 [init]
   defaultBranch = main
