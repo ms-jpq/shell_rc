@@ -8,4 +8,4 @@ bin="$(dirname "$0")"
 PATH="$(paths --silent remove "$bin")"
 
 
-exec fd  --hidden --follow "$@"
+exec fd --hidden --follow "$@"
