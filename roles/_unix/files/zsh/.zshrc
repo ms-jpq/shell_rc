@@ -29,8 +29,8 @@ pathprepend() {
 zsh_main() {
   local zrc_targets=(
     apriori
-    shared
     "$(uname | tr '[:upper:]' '[:lower:]')"
+    shared
     paths
     fun
     aposteriori
