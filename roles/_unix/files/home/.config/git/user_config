@@ -15,28 +15,28 @@
   light = True
 
 [diff]
-  renames = copy
-  dirstat = files,cumulative
   algorithm = histogram
   colorMoved = dimmed-zebra
   colorMovedWS = ignore-space-change
+  dirstat = files,cumulative
+  renames = copy
   wsErrorHighlight = all
 
 [grep]
-  lineNumber = True
   column = True
+  lineNumber = True
   patternType = perl
 
 [log]
-  follow = True
   date = human-local
+  follow = True
 
 [init]
   defaultBranch = main
 
 [checkout]
-  workers = 0
   thresholdForParallelism = 1
+  workers = 0
 
 [branch]
   autosetuprebase = always
@@ -49,16 +49,16 @@
   ff = only
 
 [merge]
-  ff = only
-  conflictstyle = diff3
   autostash = True
+  conflictstyle = diff3
+  ff = only
 
 [rebase]
   autostash = True
 
 [rerere]
-  enabled = True
   autoUpdate = True
+  enabled = True
 
 [push]
   followTags = True
