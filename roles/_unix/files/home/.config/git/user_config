@@ -42,7 +42,6 @@
   autosetuprebase = always
 
 [fetch]
-  recurseSubmodules = True
   parallel = 0
   pruneTags = True
 
