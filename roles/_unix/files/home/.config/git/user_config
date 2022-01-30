@@ -30,7 +30,8 @@
   defaultBranch = main
 
 [checkout]
-  thresholdForParallelism = 8
+  workers = 0
+  thresholdForParallelism = 1
 
 [branch]
   autosetuprebase = always

@@ -70,7 +70,6 @@ target_touches:
 
 git_conf:
   include.path: user_config
-  checkout.workers: "{{ (ansible_processor_vcpus | int) * 2 }}"
 
 target_lines:
   - file: "~/.ssh/config"
