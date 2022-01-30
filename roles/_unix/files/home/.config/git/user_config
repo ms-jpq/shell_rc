@@ -1,12 +1,15 @@
+[submodule]
+  fetchJobs = 0
+  recurse = True
+
 [core]
   pager = delta
 
 [core "whitespace"]
   tabwidth = 4
 
-[submodule]
-  fetchJobs = 0
-  recurse = True
+[column]
+  ui = auto
 
 [delta]
   light = True
