@@ -29,7 +29,6 @@
 
 [log]
   date = human-local
-  follow = True
 
 [init]
   defaultBranch = main
