@@ -16,6 +16,7 @@
 
 [diff]
   renames = copy
+  dirstat = files,cumulative
   algorithm = histogram
   colorMoved = dimmed-zebra
   colorMovedWS = ignore-space-change
