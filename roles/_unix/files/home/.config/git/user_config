@@ -26,9 +26,6 @@
   follow = True
   date = human-local
 
-[instaweb]
-  httpd = python
-
 [init]
   defaultBranch = main
 
