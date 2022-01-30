@@ -20,6 +20,7 @@
   algorithm = histogram
   colorMoved = dimmed-zebra
   colorMovedWS = ignore-space-change
+  wsErrorHighlight = all
 
 [grep]
   lineNumber = True
