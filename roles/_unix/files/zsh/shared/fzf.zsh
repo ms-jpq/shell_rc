@@ -30,6 +30,7 @@ unset _fzf_default_opts
 _fzf_preview="$ZDOTDIR/shared/bin/preview {}"
 _fzf_default_command=(
   fd
+  --hidden
   --type=file
   --type=symlink
 )
@@ -39,6 +40,7 @@ unset _fzf_default_command
 
 _fzf_alt_c_command=(
   fd
+  --hidden
   --print0
   --no-ignore
   --type=symlink
@@ -50,6 +52,7 @@ unset _fzf_alt_c_command
 
 _fzf_ctrl_t_command=(
   fd
+  --hidden
   --print0
   --no-ignore
 )
@@ -68,6 +71,7 @@ alias fp='fzf --preview='\'"$_fzf_preview"\'
 d() {
   local default_cmd=(
     fd
+    --hidden
     --print0
     --type=directory
   )
@@ -82,19 +86,23 @@ d() {
 
 _fzf_compgen_path() {
   local local_opts=(
+    fd
+    --hidden
     --type=directory
     --type=symlink
     --type=file
   )
-  fd "${local_opts[@]}" "$1"
+  "${local_opts[@]}" "$1"
 }
 
 
 _fzf_compgen_dir() {
   local local_opts=(
+    fd
+    --hidden
     --type=directory
   )
-  fd "${local_opts[@]}" "$1"
+  "${local_opts[@]}" "$1"
 }
 
 # INTI #
