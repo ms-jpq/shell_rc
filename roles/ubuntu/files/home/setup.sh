@@ -34,14 +34,14 @@ PYTHON_DEPS=(
   liblzma-dev
 )
 apt-install "${PYTHON_DEPS[@]}"
-asdf-install python
+asdf-install --global -- python
 
 
 RUBY_DEPS=(
  libssl-dev
 )
 apt-install "${RUBY_DEPS[@]}"
-asdf-install ruby
+asdf-install --global -- ruby
 
 
 R_DEPS=(
@@ -63,14 +63,14 @@ R_OPTS=(
   --with-cairo
 )
 apt-install "${R_DEPS[@]}"
-R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install R
+R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
 
 
 mkdir --parent -- "$XDG_DATA_HOME/gnupg"
-NODEJS_CHECK_SIGNATURES=no asdf-install nodejs
+NODEJS_CHECK_SIGNATURES=no asdf-install --global -- nodejs
 
 
-asdf-install rust
+asdf-install --global -- rust
 
 
-asdf-install golang
+asdf-install --global -- golang
