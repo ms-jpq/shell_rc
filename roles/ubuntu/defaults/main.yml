@@ -54,6 +54,7 @@ _editors:
 
 _nice_things:
   - bat
+  # - exa
   - fzf
   - fd-find
   # - ripgrep
