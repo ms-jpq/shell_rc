@@ -7,4 +7,3 @@ speedtest-cli
 graphtage
 httpie
 tldr
-https://github.com/LazoCoder/Pokemon-Terminal/archive/master.tar.gz
