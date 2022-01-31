@@ -62,7 +62,7 @@ R_OPTS=(
   --enable-R-shlib
   --with-cairo
 )
-apt-install  "${R_DEPS[@]}"
+apt-install "${R_DEPS[@]}"
 R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install R
 
 
