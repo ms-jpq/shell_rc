@@ -25,9 +25,9 @@ def main() -> None:
         except CalledProcessError:
             raw = ""
 
-        plugins = {*raw.splitlines()}
+        plugins = {*(plugin.casefold() for plugin in raw.splitlines())}
 
-        if lang in plugins:
+        if lang.casefold() in plugins:
             check_call((asdf, "plugin", "update", lang))
         else:
             check_call((asdf, "plugin", "add", lang))
