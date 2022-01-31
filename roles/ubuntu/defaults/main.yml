@@ -53,6 +53,7 @@ _editors:
   - universal-ctags
 
 _nice_things:
+  - avahi-daemon
   - bat
   # - exa
   - fzf
