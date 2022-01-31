@@ -40,18 +40,32 @@ asdf-install python
 RUBY_DEPS=(
  libssl-dev
 )
-apt-install  "${RUBY_DEPS[@]}"
-asdf-install python
+apt-install "${RUBY_DEPS[@]}"
+asdf-install ruby
+
+
+R_DEPS=(
+  build-essential
+  libcurl3-dev
+  libreadline-dev 
+  gfortran
+  liblzma-dev 
+  liblzma5 
+  libbz2-1.0 
+  libbz2-dev
+  xorg-dev 
+  libbz2-dev 
+  liblzma-dev
+  libpcre2-dev
+  )
+apt-install  "${R_DEPS[@]}"
+asdf-install R
 
 
 mkdir --parent -- "$XDG_DATA_HOME/gnupg"
 NODEJS_CHECK_SIGNATURES=no asdf-install nodejs
 
 
-asdf-install golang
-
-
 asdf-install rust
 
-
-asdf-install ruby
+asdf-install golang
