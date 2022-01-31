@@ -58,8 +58,12 @@ R_DEPS=(
   liblzma-dev
   libpcre2-dev
   )
+R_OPTS=(
+  --enable-R-shlib
+  --with-cairo
+)
 apt-install  "${R_DEPS[@]}"
-asdf-install R
+R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install R
 
 
 mkdir --parent -- "$XDG_DATA_HOME/gnupg"
