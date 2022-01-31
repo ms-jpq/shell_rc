@@ -72,4 +72,5 @@ NODEJS_CHECK_SIGNATURES=no asdf-install nodejs
 
 asdf-install rust
 
+
 asdf-install golang
