@@ -7,7 +7,7 @@ from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
 from re import compile
-from shlex import quote, shlex
+from shlex import shlex
 from shutil import which
 from string import Template
 from sys import stderr
@@ -29,7 +29,7 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
 
 def _subst(val: str, env: Mapping[str, str]) -> str:
     def cont() -> Iterator[str]:
-        lex = shlex(val.encode().decode("unicode_escape"))
+        lex = shlex(val.rstrip().encode().decode("unicode_escape"))
         lex.whitespace = ""
         lex.whitespace_split = True
         for token in lex:
@@ -59,7 +59,7 @@ def _trans(
 def _print(env: Mapping[str, str]):
     def cont() -> Iterable[str]:
         for key, val in env.items():
-            rhs = quote(val.encode("unicode_escape").decode())
+            rhs = val.encode("unicode_escape").decode()
             yield f"{key}={rhs}"
 
     lines = zip(cont(), repeat(linesep))
