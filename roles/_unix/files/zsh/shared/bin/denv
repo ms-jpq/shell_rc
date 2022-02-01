@@ -11,7 +11,7 @@ from shlex import quote, split
 from shutil import which
 from string import Template
 from sys import stderr
-from typing import Iterable, Iterator, Mapping, Sequence, Tuple
+from typing import Iterable, Iterator, Mapping, MutableMapping, Sequence, Tuple
 from uuid import uuid4
 
 
@@ -32,7 +32,7 @@ def _trans(
 ) -> Mapping[str, str]:
     re = compile(r"^[A-z][\w]*$")
 
-    seen = {}
+    seen: MutableMapping[str, str] = {}
     for key, val in stream:
         if key not in env and re.match(key) and (parts := split(val)):
             tpl, *_ = map(Template, parts)
