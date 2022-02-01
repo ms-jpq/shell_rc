@@ -11,7 +11,15 @@ from shlex import shlex
 from shutil import which
 from string import Template
 from sys import stderr
-from typing import Iterable, Iterator, Mapping, MutableMapping, Sequence, Tuple
+from typing import (
+    Iterable,
+    Iterator,
+    Mapping,
+    MutableMapping,
+    MutableSequence,
+    Sequence,
+    Tuple,
+)
 from uuid import uuid4
 
 
@@ -31,14 +39,21 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
     def cont() -> Iterator[str]:
         lex = shlex(val.rstrip().encode().decode("unicode_escape"))
         lex.whitespace = ""
-        lex.whitespace_split = True
+        tmp: MutableSequence[str] = []
+
         for token in lex:
             if token.startswith("'") and token.endswith("'"):
                 yield token[1:-1]
             elif token.startswith('"') and token.endswith('"'):
                 yield Template(token[1:-1]).substitute(env)
+            elif token.isspace():
+                yield Template("".join(tmp)).substitute(env)
+                tmp.clear()
+                yield token
             else:
-                yield Template(token).substitute(env)
+                tmp.append(token)
+
+        yield Template("".join(tmp)).substitute(env)
 
     return "".join(cont())
 
