@@ -5,9 +5,9 @@ set -o pipefail
 
 
 ARGS=(
-  "$@"
   --line-buffered
   --pretty
+  "$@"
   )
 
 
