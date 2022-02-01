@@ -7,7 +7,7 @@ from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
 from re import compile
-from shlex import quote, split
+from shlex import quote, shlex, split
 from shutil import which
 from string import Template
 from sys import stderr
@@ -27,6 +27,19 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
         yield from section.items()
 
 
+def _subst(val: str, env: Mapping[str, str]) -> str:
+    def cont() -> Iterator[str]:
+        lex = shlex(val)
+        lex.whitespace_split = True
+        for token in lex:
+            if token.startswith("'") and token.endswith("'"):
+                yield token[1:-1]
+            else:
+                yield Template(token).substitute(env)
+
+    return " ".join(cont())
+
+
 def _trans(
     stream: Iterable[Tuple[str, str]], env: Mapping[str, str]
 ) -> Mapping[str, str]:
@@ -34,9 +47,8 @@ def _trans(
 
     seen: MutableMapping[str, str] = {}
     for key, val in stream:
-        if key not in env and re.match(key) and (parts := split(val)):
-            tpl, *_ = map(Template, parts)
-            seen[key] = tpl.substitute(**seen, **env)
+        if key not in env and re.match(key):
+            seen[key] = _subst(val, env={**seen, **env})
 
     return seen
 
