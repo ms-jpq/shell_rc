@@ -4,21 +4,26 @@ set -eu
 set -o pipefail
 
 
-ARGS=(
-  --line-buffered
-  --files-with-matches
-  -0
-  "$@"
-  )
+RG_ARGS="${_RG_ARGS:-""}"
 
 
-OPTIONS=(
-  --color=always
-  --line-number
-  --context=3
-  '--context-separator="$(hr "-" "$FZF_PREVIEW_COLUMNS")"'
-  "$@"
-  )
-
-
-rg "${ARGS[@]}" | exec fzf --read0 --preview="rg ${OPTIONS[*]} {}"
+if [[ -z "$RG_ARGS" ]]
+then
+  ARGS=(
+    --line-buffered
+    --files-with-matches
+    -0
+    "$@"
+    )
+   IFS=$'\0' ENV_ARGS="$*"
+   rg "${ARGS[@]}" | SHELL="$0" _RG_ARGS="$ENV_ARGS" exec fzf --read0 --preview='{}'
+else
+  ARGS=(
+    --color=always
+    --line-number
+    --context=3
+    --context-separator="$(hr '-' "$FZF_PREVIEW_COLUMNS")"
+    )
+  readarray -t -d $'\0' ENV_ARGS <<< "$RG_ARGS"
+  echo "${ARGS[@]}" "${ENV_ARGS[@]}" -- "$2"
+fi
