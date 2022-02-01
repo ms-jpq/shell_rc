@@ -32,16 +32,13 @@ def _trans(
 ) -> Mapping[str, str]:
     re = compile(r"^[A-z][\w]*$")
 
-    def cont() -> Iterator[Tuple[str, str]]:
-        seen = {}
-        for key, val in stream:
-            if key not in env and re.match(key) and (parts := split(val)):
-                tpl, *_ = map(Template, parts)
-                seen[key] = rhs = tpl.substitute(**seen, **env)
-                yield key, rhs
+    seen = {}
+    for key, val in stream:
+        if key not in env and re.match(key) and (parts := split(val)):
+            tpl, *_ = map(Template, parts)
+            seen[key] = tpl.substitute(**seen, **env)
 
-    parsed = {key: val for key, val in cont()}
-    return parsed
+    return seen
 
 
 def _arg_parse() -> Tuple[Namespace, Sequence[str]]:
