@@ -7,7 +7,7 @@ from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
 from re import compile
-from shlex import quote, shlex, split
+from shlex import quote, shlex
 from shutil import which
 from string import Template
 from sys import stderr
@@ -29,7 +29,7 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
 
 def _subst(val: str, env: Mapping[str, str]) -> str:
     def cont() -> Iterator[str]:
-        lex = shlex(val)
+        lex = shlex(val.encode().decode("unicode_escape"))
         lex.whitespace = ""
         lex.whitespace_split = True
         for token in lex:
@@ -56,6 +56,16 @@ def _trans(
     return seen
 
 
+def _print(env: Mapping[str, str]):
+    def cont() -> Iterable[str]:
+        for key, val in env.items():
+            rhs = quote(val.encode("unicode_escape").decode())
+            yield f"{key}={rhs}"
+
+    lines = zip(cont(), repeat(linesep))
+    stderr.writelines(chain.from_iterable(lines))
+
+
 def _arg_parse() -> Tuple[Namespace, Sequence[str]]:
     parser = ArgumentParser(add_help=False)
     parser.add_argument("path", type=PurePath)
@@ -68,15 +78,13 @@ def main() -> None:
 
     env_path = Path(args.path)
     dotenv = "" if env_path == PurePath("-") else env_path.read_text()
+
     p_env = {**environ}
     env = _trans(_parse(dotenv), env=p_env)
-    c_env = {**env, **p_env}
 
-    lines = zip((f"{key}={quote(val)}" for key, val in env.items()), repeat(linesep))
-    stderr.writelines(chain.from_iterable(lines))
-
+    _print(env)
     if cmd := which(args.cmd):
-        execle(cmd, normcase(cmd), *argv, c_env)
+        execle(cmd, normcase(cmd), *argv, {**env, **p_env})
     else:
         raise OSError(args.cmd)
 
