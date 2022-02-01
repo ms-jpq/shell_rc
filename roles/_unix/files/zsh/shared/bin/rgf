@@ -31,5 +31,5 @@ else
   )
   readarray -t -d $'\n' ENV_ARGS <<< "$RG_ARGS"
   readarray -t -d $'\0' RG_PATH < "$2"
-  exec rg "${ARGS[@]}" "${ENV_ARGS[@]}" -- "${RG_PATH[*]}"
+  exec rg "${ARGS[@]}" "${ENV_ARGS[@]}" -- "${RG_PATH[@]}"
 fi
