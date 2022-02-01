@@ -14,16 +14,22 @@ then
     --files-with-matches
     -0
     "$@"
-    )
-   IFS=$'\0' ENV_ARGS="$*"
-   rg "${ARGS[@]}" | SHELL="$0" _RG_ARGS="$ENV_ARGS" exec fzf --read0 --preview='{}'
+  )
+  FZF_ARGS=(
+    --read0
+    --print0
+    --preview='{f}'
+  )
+  IFS=$'\n' ENV_ARGS="$*"
+  rg "${ARGS[@]}" | SHELL="$0" _RG_ARGS="$ENV_ARGS" exec fzf "${FZF_ARGS[@]}"
 else
   ARGS=(
     --color=always
     --line-number
     --context=3
     --context-separator="$(hr '-' "$FZF_PREVIEW_COLUMNS")"
-    )
-  readarray -t -d $'\0' ENV_ARGS <<< "$RG_ARGS"
-  echo "${ARGS[@]}" "${ENV_ARGS[@]}" -- "$2"
+  )
+  readarray -t -d $'\n' ENV_ARGS <<< "$RG_ARGS"
+  readarray -t -d $'\0' RG_PATH < "$2"
+  exec rg "${ARGS[@]}" "${ENV_ARGS[@]}" -- "${RG_PATH[*]}"
 fi
