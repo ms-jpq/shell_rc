@@ -36,8 +36,7 @@ def _trans(
         seen = {}
         for key, val in stream:
             if key not in env and re.match(key) and (parts := split(val)):
-                part, *_ = parts
-                tpl = Template(part)
+                tpl, *_ = map(Template, parts)
                 seen[key] = rhs = tpl.substitute(**seen, **env)
                 yield key, rhs
 
