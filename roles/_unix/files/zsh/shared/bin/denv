@@ -30,7 +30,7 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
 def _trans(
     stream: Iterable[Tuple[str, str]], env: Mapping[str, str]
 ) -> Mapping[str, str]:
-    re = compile(r"^[A-z][\w]*$")
+    re = compile(r"^\w*$")
 
     seen: MutableMapping[str, str] = {}
     for key, val in stream:
