@@ -30,14 +30,17 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
 def _subst(val: str, env: Mapping[str, str]) -> str:
     def cont() -> Iterator[str]:
         lex = shlex(val)
+        lex.whitespace = ""
         lex.whitespace_split = True
         for token in lex:
             if token.startswith("'") and token.endswith("'"):
                 yield token[1:-1]
+            elif token.startswith('"') and token.endswith('"'):
+                yield Template(token[1:-1]).substitute(env)
             else:
                 yield Template(token).substitute(env)
 
-    return " ".join(cont())
+    return "".join(cont())
 
 
 def _trans(
