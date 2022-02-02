@@ -2,10 +2,10 @@
 
 from argparse import ArgumentParser, Namespace
 from configparser import ConfigParser
-from itertools import chain, repeat
+from itertools import chain
 from json import dumps
 from locale import strxfrm
-from logging import StreamHandler, getLogger
+from logging import INFO, StreamHandler, getLogger
 from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
@@ -13,7 +13,7 @@ from re import compile
 from shlex import shlex
 from shutil import which
 from string import Template
-from sys import exit, stderr
+from sys import exit
 from typing import (
     Iterable,
     Iterator,
@@ -26,6 +26,7 @@ from typing import (
 from uuid import uuid4
 
 log = getLogger()
+log.setLevel(INFO)
 log.addHandler(StreamHandler())
 
 
@@ -91,8 +92,7 @@ def _print(env: Mapping[str, str]):
             rhs = dumps(val, ensure_ascii=False)
             yield f"{key}={rhs}"
 
-    lines = zip(cont(), repeat(linesep))
-    stderr.writelines(chain.from_iterable(lines))
+    log.info("%s", linesep.join(cont()))
 
 
 def _arg_parse() -> Tuple[Namespace, Sequence[str]]:
