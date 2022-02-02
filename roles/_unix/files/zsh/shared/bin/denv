@@ -3,11 +3,13 @@
 from argparse import ArgumentParser, Namespace
 from configparser import ConfigParser
 from itertools import chain, repeat
+from json import dumps
+from locale import strxfrm
 from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
 from re import compile
-from shlex import shlex, split
+from shlex import shlex
 from shutil import which
 from string import Template
 from sys import stderr
@@ -72,8 +74,9 @@ def _trans(
 
 def _print(env: Mapping[str, str]):
     def cont() -> Iterable[str]:
-        for key, val in env.items():
-            rhs = val.encode("unicode_escape").decode()
+        ordered = sorted(env.items(), key=lambda kv: tuple(map(strxfrm, kv)))
+        for key, val in ordered:
+            rhs = dumps(val, ensure_ascii=False)
             yield f"{key}={rhs}"
 
     lines = zip(cont(), repeat(linesep))
