@@ -9,6 +9,8 @@ RG_ARGS="${_RG_ARGS:-""}"
 
 if [[ -z "$RG_ARGS" ]]
 then
+  export _RG_ARGS=""
+  _RG_ARGS="$(mktemp)"
   ARGS=(
     --line-buffered
     --files-with-matches
@@ -20,8 +22,11 @@ then
     --print0
     --preview='{f}'
   )
-  IFS=$'\n' ENV_ARGS="$*"
-  rg "${ARGS[@]}" | SHELL="$0" _RG_ARGS="$ENV_ARGS" exec fzf "${FZF_ARGS[@]}"
+  for ARG in "$@"
+  do
+    printf '%s\0' "$ARG" >> "$_RG_ARGS"
+  done
+  rg "${ARGS[@]}" | SHELL="$0" exec fzf "${FZF_ARGS[@]}"
 else
   ARGS=(
     --color=always
@@ -29,7 +34,7 @@ else
     --context=3
     --context-separator="$(hr '-' "$FZF_PREVIEW_COLUMNS")"
   )
-  readarray -t -d $'\n' ENV_ARGS <<< "$RG_ARGS"
+  readarray -t -d $'\0' ENV_ARGS < "$RG_ARGS"
   readarray -t -d $'\0' RG_PATH < "$2"
   exec rg "${ARGS[@]}" "${ENV_ARGS[@]}" -- "${RG_PATH[@]}"
 fi
