@@ -5,6 +5,7 @@ from configparser import ConfigParser
 from itertools import chain, repeat
 from json import dumps
 from locale import strxfrm
+from logging import StreamHandler, getLogger
 from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
@@ -12,7 +13,7 @@ from re import compile
 from shlex import shlex
 from shutil import which
 from string import Template
-from sys import stderr
+from sys import exit, stderr
 from typing import (
     Iterable,
     Iterator,
@@ -23,6 +24,9 @@ from typing import (
     Tuple,
 )
 from uuid import uuid4
+
+log = getLogger()
+log.addHandler(StreamHandler())
 
 
 def _parse(text: str) -> Iterator[Tuple[str, str]]:
@@ -56,7 +60,15 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
 
         yield Template("".join(tmp)).substitute(env)
 
-    return "".join(cont())
+    try:
+        return "".join(cont())
+    except (KeyError, ValueError) as e:
+        log.error(
+            f"> %s{linesep}%s",
+            e,
+            dumps(val, ensure_ascii=False),
+        )
+        exit(True)
 
 
 def _trans(
