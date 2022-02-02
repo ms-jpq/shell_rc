@@ -37,7 +37,10 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
 
 def _subst(val: str, env: Mapping[str, str]) -> str:
     def cont() -> Iterator[str]:
-        lex = shlex(val.rstrip().encode().decode("unicode_escape"), posix=True)
+        lex = shlex(
+            val.rstrip().encode().decode("unicode_escape"),
+            posix=True,
+        )
         lex.whitespace = ""
         tmp: MutableSequence[str] = []
 
