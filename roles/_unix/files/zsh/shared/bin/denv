@@ -44,10 +44,7 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
 
 def _subst(val: str, env: Mapping[str, str]) -> str:
     def cont() -> Iterator[str]:
-        lex = shlex(
-            val.encode().decode("unicode_escape"),
-            posix=True,
-        )
+        lex = shlex(val, posix=True)
         lex.whitespace = ""
         tmp: MutableSequence[str] = []
 
@@ -62,7 +59,7 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
         yield Template("".join(tmp)).substitute(env)
 
     try:
-        return "".join(cont())
+        parsed = "".join(cont())
     except (KeyError, ValueError) as e:
         log.error(
             f"> %s{linesep}%s",
@@ -70,6 +67,8 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
             dumps(val, ensure_ascii=False),
         )
         exit(True)
+    else:
+        return parsed.encode().decode("unicode_escape")
 
 
 def _trans(
