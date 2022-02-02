@@ -68,7 +68,7 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
         )
         exit(True)
     else:
-        return parsed.encode().decode("unicode_escape")
+        return parsed.encode("utf-8").decode("unicode_escape")
 
 
 def _trans(
@@ -105,7 +105,7 @@ def main() -> None:
     args, argv = _arg_parse()
 
     env_path = Path(args.path)
-    dotenv = "" if env_path == PurePath("-") else env_path.read_text()
+    dotenv = "" if env_path == PurePath("-") else env_path.read_text("utf-8")
 
     p_env = {**environ}
     env = _trans(_parse(dotenv), env=p_env)
