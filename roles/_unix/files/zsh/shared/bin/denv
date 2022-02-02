@@ -7,7 +7,7 @@ from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
 from re import compile
-from shlex import shlex
+from shlex import shlex, split
 from shutil import which
 from string import Template
 from sys import stderr
@@ -37,16 +37,12 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
 
 def _subst(val: str, env: Mapping[str, str]) -> str:
     def cont() -> Iterator[str]:
-        lex = shlex(val.rstrip().encode().decode("unicode_escape"))
+        lex = shlex(val.rstrip().encode().decode("unicode_escape"), posix=True)
         lex.whitespace = ""
         tmp: MutableSequence[str] = []
 
         for token in lex:
-            if token.startswith("'") and token.endswith("'"):
-                yield token[1:-1]
-            elif token.startswith('"') and token.endswith('"'):
-                yield Template(token[1:-1]).substitute(env)
-            elif token.isspace():
+            if token.isspace():
                 yield Template("".join(tmp)).substitute(env)
                 tmp.clear()
                 yield token
