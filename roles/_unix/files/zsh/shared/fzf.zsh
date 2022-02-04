@@ -11,7 +11,7 @@ _fzf_default_opts=(
   --border
   --cycle
   --tabstop=2
-  --preview-window=right:wrap
+  --preview-window=60%:wrap
   --bind=ctrl-space:toggle
   --bind=tab:down
   --bind=btab:up
