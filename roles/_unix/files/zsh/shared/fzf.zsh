@@ -31,6 +31,7 @@ _fzf_preview="$ZDOTDIR/shared/bin/preview {}"
 _fzf_default_command=(
   fd
   --hidden
+  --follow
   --type=file
   --type=symlink
 )
@@ -41,6 +42,7 @@ unset _fzf_default_command
 _fzf_alt_c_command=(
   fd
   --hidden
+  --follow
   --print0
   --no-ignore
   --type=symlink
@@ -53,6 +55,7 @@ unset _fzf_alt_c_command
 _fzf_ctrl_t_command=(
   fd
   --hidden
+  --follow
   --print0
   --no-ignore
 )
@@ -72,6 +75,7 @@ d() {
   local default_cmd=(
     fd
     --hidden
+    --follow
     --print0
     --type=directory
   )
@@ -88,6 +92,7 @@ _fzf_compgen_path() {
   local local_opts=(
     fd
     --hidden
+    --follow
     --type=directory
     --type=symlink
     --type=file
@@ -100,6 +105,7 @@ _fzf_compgen_dir() {
   local local_opts=(
     fd
     --hidden
+    --follow
     --type=directory
   )
   "${local_opts[@]}" "$1"
