@@ -6,7 +6,7 @@ set -o pipefail
 
 VIRTUAL_ENV="${VIRTUAL_ENV:-""}"
 
-DEFAULT_VENV_PATH="$PWD/.venv"
+DEFAULT_VENV_PATH="${2:"$PWD/.venv"}"
 REQUIREMENTS="$PWD/requirements.txt"
 
 PY_EXE="$DEFAULT_VENV_PATH/bin/python3"
