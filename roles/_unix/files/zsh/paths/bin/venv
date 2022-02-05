@@ -29,17 +29,17 @@ init)
       >&2 "$PY_EXE" -m pip install --requirement "$REQUIREMENTS"
     fi
     >&2 printf '%s\n' "Initialized Virtualenv"
-    venv on
+    venv on "$DEFAULT_VENV_PATH"
   fi
   ;;
 on)
   if [[ -f "$ACTIVATE" ]]
   then
-    venv off
+    venv off "$DEFAULT_VENV_PATH"
     printf '%s\n' "source '$ACTIVATE'"
     >&2 printf '%s\n' "Activated - $DEFAULT_VENV_PATH"
   else
-    venv init
+    venv init "$DEFAULT_VENV_PATH"
   fi
   ;;
 off)
@@ -56,7 +56,7 @@ rm)
   then
     if [[ "$VIRTUAL_ENV" = "$DEFAULT_VENV_PATH" ]]
     then
-      venv off
+      venv off "$DEFAULT_VENV_PATH"
     fi
     printf '%s\n' "rm -rf '$DEFAULT_VENV_PATH'"
   fi
