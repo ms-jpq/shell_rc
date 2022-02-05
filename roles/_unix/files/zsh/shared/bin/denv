@@ -84,7 +84,7 @@ def _trans(
     return seen
 
 
-def _print(env: Mapping[str, str]):
+def _print(env: Mapping[str, str]) -> None:
     def cont() -> Iterable[str]:
         ordered = sorted(env.items(), key=lambda kv: tuple(map(strxfrm, kv)))
         for key, val in ordered:
