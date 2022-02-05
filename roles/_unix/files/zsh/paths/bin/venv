@@ -6,7 +6,7 @@ set -o pipefail
 
 VIRTUAL_ENV="${VIRTUAL_ENV:-""}"
 
-DEFAULT_VENV_PATH="${2:-"$PWD/.venv"}"
+export DEFAULT_VENV_PATH="${DEFAULT_VENV_PATH:-"${2:-"$PWD/.venv"}"}"
 REQUIREMENTS="$PWD/requirements.txt"
 
 PY_EXE="$DEFAULT_VENV_PATH/bin/python3"
@@ -29,17 +29,17 @@ init)
       >&2 "$PY_EXE" -m pip install --requirement "$REQUIREMENTS"
     fi
     >&2 printf '%s\n' "Initialized Virtualenv"
-    venv on "$DEFAULT_VENV_PATH"
+    venv on
   fi
   ;;
 on)
   if [[ -f "$ACTIVATE" ]]
   then
-    venv off "$DEFAULT_VENV_PATH"
+    venv off
     printf '%s\n' "source '$ACTIVATE'"
     >&2 printf '%s\n' "Activated - $DEFAULT_VENV_PATH"
   else
-    venv init "$DEFAULT_VENV_PATH"
+    venv init
   fi
   ;;
 off)
@@ -56,7 +56,7 @@ rm)
   then
     if [[ "$VIRTUAL_ENV" = "$DEFAULT_VENV_PATH" ]]
     then
-      venv off "$DEFAULT_VENV_PATH"
+      venv off
     fi
     printf '%s\n' "rm -rf '$DEFAULT_VENV_PATH'"
   fi
