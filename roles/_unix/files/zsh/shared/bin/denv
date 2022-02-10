@@ -9,10 +9,9 @@ from logging import INFO, StreamHandler, getLogger
 from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
-from re import compile
 from shlex import shlex
 from shutil import which
-from string import Template
+from string import Template, whitespace
 from sys import exit
 from typing import (
     Iterable,
@@ -36,7 +35,13 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
             return optionstr
 
     lines = "".join(chain((f"[{uuid4()}]", linesep), text))
-    parser = _Parser(allow_no_value=True, strict=False, interpolation=None)
+    parser = _Parser(
+        allow_no_value=True,
+        strict=False,
+        interpolation=None,
+        comment_prefixes=("#",),
+        delimiters=("=",),
+    )
     parser.read_string(lines)
     for section in parser.values():
         yield from section.items()
@@ -74,22 +79,27 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
 def _trans(
     stream: Iterable[Tuple[str, str]], env: Mapping[str, str]
 ) -> Mapping[str, str]:
-    re = compile(r"^\w+$")
 
     seen: MutableMapping[str, str] = {}
     for key, val in stream:
-        if key not in env and re.match(key):
+        if key not in env:
             seen[key] = _subst(val, env={**seen, **env})
 
     return seen
 
 
 def _print(env: Mapping[str, str]) -> None:
+    ws = {*whitespace}
+
     def cont() -> Iterable[str]:
         ordered = sorted(env.items(), key=lambda kv: tuple(map(strxfrm, kv)))
         for key, val in ordered:
+            lhs = "".join(
+                char.encode("unicode_escape").decode("utf-8") if char in ws else char
+                for char in key
+            )
             rhs = dumps(val, ensure_ascii=False)
-            yield f"{key}={rhs}"
+            yield f"{lhs}={rhs}"
 
     log.info("%s", linesep.join(cont()))
 
