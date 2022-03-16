@@ -1,0 +1,28 @@
+---
+- name: clean variables
+  ansible.builtin.set_fact:
+    __github_accounts: []
+
+- name: build instructions
+  loop: "{{ github_accounts }}"
+  ansible.builtin.set_fact:
+    __github_accounts: "{{ __github_accounts + lookup('url', 'https://github.com/' ~ item ~ '.keys', wantlist=True) }}"
+
+- name: mkdir
+  ansible.builtin.file:
+    state: directory
+    path: "~/.ssh"
+
+- name: ensure file exists
+  ansible.builtin.file:
+    state: touch
+    access_time: preserve
+    modification_time: preserve
+    path: "~/.ssh/authorized_keys"
+
+- name: github ssh keys
+  loop: "{{ __github_accounts }}"
+  ansible.builtin.lineinfile:
+    path: "~/.ssh/authorized_keys"
+    line: "{{ item }}"
+  register: __ssh_keys
