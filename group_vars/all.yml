@@ -1,4 +1,7 @@
 ---
+github_accounts:
+  - ms-jpq
+
 ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
 _exec_bin_: "~/.local/bin"

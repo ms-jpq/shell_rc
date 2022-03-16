@@ -1,4 +1,6 @@
 ---
+- import_tasks: github_sshkeys.yml
+
 - import_tasks: packages.yml
 
 - import_tasks: git.yml
