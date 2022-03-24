@@ -76,4 +76,4 @@ proxy() {
 
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 
-alias rsy='rsync -ah --no-o --no-g --info progress2'
+alias rsy='rsync --archive --human-readable --no-o --no-g --info progress2 --'
