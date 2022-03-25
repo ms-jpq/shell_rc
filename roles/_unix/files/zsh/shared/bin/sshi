@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser, Namespace
+from os import execl
+from os.path import normcase
+from pathlib import Path, PurePath
+from shutil import which
+from typing import Sequence, Tuple
+
+
+def _parse_args() -> Tuple[Namespace, Sequence[str]]:
+    parser = ArgumentParser(add_help=False)
+    parser.add_argument("path", type=PurePath)
+    return parser.parse_known_args()
+
+
+def main() -> int:
+    args, argv = _parse_args()
+    path = PurePath(args.path)
+
+    if path == PurePath("-"):
+        addn = ()
+    else:
+        key_path = path if path.is_absolute() else Path.home() / ".ssh" / path
+        addn = ("ssh", "-o", "IdentitiesOnly=yes", "-i", normcase(key_path))
+
+    cmd = "ssh"
+    if ssh := which(cmd):
+        execl(ssh, normcase(ssh), *addn, *argv)
+    else:
+        raise OSError(cmd)
+
+
+main()
