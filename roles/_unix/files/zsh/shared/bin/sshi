@@ -22,7 +22,7 @@ def main() -> int:
         addn = ()
     else:
         key_path = path if path.is_absolute() else Path.home() / ".ssh" / path
-        addn = ("ssh", "-o", "IdentitiesOnly=yes", "-i", normcase(key_path))
+        addn = ("-o", "IdentitiesOnly=yes", "-i", normcase(key_path))
 
     cmd = "ssh"
     if ssh := which(cmd):
