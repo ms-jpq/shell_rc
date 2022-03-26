@@ -13,3 +13,4 @@ source "$ZDOTDIR/../zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 
 bindkey '^ ' autosuggest-accept
+bindkey '^[ ' autosuggest-accept
