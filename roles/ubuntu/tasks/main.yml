@@ -30,13 +30,3 @@
 - import_tasks: link.yml
 
 - import_tasks: locale.yml
-
-- name: Force RG
-  ansible.builtin.command:
-    argv:
-      - apt-get
-      - install
-      - -y
-      - -o
-      - Dpkg::Options::=--force-overwrite
-      - ripgrep
