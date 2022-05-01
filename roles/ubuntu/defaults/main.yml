@@ -9,7 +9,8 @@ target_templates:
   - src: "templates/"
     dest: "/"
 
-target_links: []
+target_links:
+  []
   # - src: "/etc/localtime"
   #   dest: "/usr/share/zoneinfo/{{ time_zone }}"
 
@@ -19,8 +20,6 @@ _languages:
 _core_utils:
   - python3-venv
   - zram-config
-  # TODO -- remove this
-  - earlyoom
   - man
   - man2html
   - sudo
@@ -55,10 +54,12 @@ _editors:
 _nice_things:
   - avahi-daemon
   - bat
-  # - exa
+  - exa
   - fzf
   - fd-find
-  # - ripgrep
+  - ripgrep
+  - duf
+  - hyperfine
 
 _fun_things:
   - termshark
@@ -81,16 +82,11 @@ apt_deb_packages:
   - "https://github.com/ms-jpq/sad/releases/latest/download/x86_64-unknown-linux-gnu.deb"
   - "https://github.com/dandavison/delta/releases/download/0.11.3/git-delta_0.11.3_amd64.deb"
   - "https://github.com/watchexec/watchexec/releases/download/cli-v1.17.1/watchexec-1.17.1-x86_64-unknown-linux-gnu.deb"
-  - "https://github.com/sharkdp/hyperfine/releases/download/v1.12.0/hyperfine_1.12.0_amd64.deb"
   - "https://github.com/sharkdp/pastel/releases/download/v0.8.1/pastel_0.8.1_amd64.deb"
-  - "https://github.com/muesli/duf/releases/download/v0.6.2/duf_0.6.2_linux_amd64.deb"
 
 target_downloads: []
 
 target_archives:
-  # TODO -- remove this @2022 when jammy is ok
-  - src: "https://github.com/ogham/exa/releases/download/v0.10.1/exa-linux-x86_64-v0.10.1.zip"
-    dest: "{{ build_tmp }}"
   - src: "https://github.com/jesseduffield/lazygit/releases/download/v0.31.4/lazygit_0.31.4_Linux_x86_64.tar.gz"
     dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-x86_64-unknown-linux-gnu.tar.gz"
@@ -99,13 +95,9 @@ target_archives:
     dest: "{{ build_tmp }}"
 
 target_remote_copy:
-  - src: "{{ build_tmp }}/bin/exa"
-    dest: "{{ _exec_bin_ }}/exa"
   - src: "{{ build_tmp }}/bin/dog"
     dest: "{{ _exec_bin_ }}/dog"
 
 target_mods:
-  - src: "{{ _exec_bin_ }}/exa"
-    mode: "+x"
   - src: "{{ _exec_bin_ }}/dog"
     mode: "+x"

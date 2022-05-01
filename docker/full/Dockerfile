@@ -1,14 +1,9 @@
 FROM msjpq/cli:base
 
 
-# Bug
-RUN apt remove -y ripgrep
-
-
 # Requirements
-RUN set -o pipefail && \
-    apt update && \
-    apt upgrade -y
+RUN apt-get update && \
+    apt-get upgrade --yes
 
 
 RUN source "$XDG_CONFIG_HOME/zsh/rc/.zshrc" && \
@@ -16,6 +11,6 @@ RUN source "$XDG_CONFIG_HOME/zsh/rc/.zshrc" && \
 
 
 # Cleanup
-RUN apt autoremove -y && \
-    apt clean && \
-    rm -rf /tmp/ansible /_install
+RUN apt-get autoremove --yes && \
+    apt-get clean && \
+    rm -rf -- /tmp/ansible /_install
