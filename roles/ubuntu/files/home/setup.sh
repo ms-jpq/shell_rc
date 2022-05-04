@@ -15,23 +15,23 @@ apt-install() {
 
 
 PYTHON_DEPS=(
-  make
   build-essential
-  libssl-dev
-  zlib1g-dev
-  libbz2-dev
-  libreadline-dev
-  libsqlite3-dev
-  wget
   curl
-  llvm
-  libncurses5-dev
-  xz-utils
-  tk-dev
-  libxml2-dev
-  libxmlsec1-dev
+  libbz2-dev
   libffi-dev
   liblzma-dev
+  libncurses5-dev
+  libreadline-dev
+  libsqlite3-dev
+  libssl-dev
+  libxml2-dev
+  libxmlsec1-dev
+  llvm
+  make
+  tk-dev
+  wget
+  xz-utils
+  zlib1g-dev
 )
 apt-install "${PYTHON_DEPS[@]}"
 asdf-install --global -- python
@@ -44,26 +44,26 @@ apt-install "${RUBY_DEPS[@]}"
 asdf-install --global -- ruby
 
 
-R_DEPS=(
-  build-essential
-  libcurl3-dev
-  libreadline-dev 
-  gfortran
-  liblzma-dev 
-  liblzma5 
-  libbz2-1.0 
-  libbz2-dev
-  xorg-dev 
-  libbz2-dev 
-  liblzma-dev
-  libpcre2-dev
-  )
-R_OPTS=(
-  --enable-R-shlib
-  --with-cairo
-)
-apt-install "${R_DEPS[@]}"
-R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
+#R_DEPS=(
+#  build-essential
+#  gfortran
+#  libbz2-1.0 
+#  libbz2-dev
+#  libbz2-dev 
+#  libcurl3-dev
+#  liblzma-dev
+#  liblzma-dev 
+#  liblzma5 
+#  libpcre2-dev
+#  libreadline-dev 
+#  xorg-dev 
+#)
+#R_OPTS=(
+#  --enable-R-shlib
+#  --with-cairo
+#)
+#apt-install "${R_DEPS[@]}"
+#R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
 
 
 mkdir --parent -- "$XDG_DATA_HOME/gnupg"
