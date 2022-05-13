@@ -13,15 +13,7 @@ from shlex import shlex
 from shutil import which
 from string import Template, whitespace
 from sys import exit
-from typing import (
-    Iterable,
-    Iterator,
-    Mapping,
-    MutableMapping,
-    MutableSequence,
-    Sequence,
-    Tuple,
-)
+from typing import Iterable, Iterator, Mapping, MutableMapping, MutableSequence, Tuple
 from uuid import uuid4
 
 log = getLogger()
@@ -104,15 +96,16 @@ def _print(env: Mapping[str, str]) -> None:
     log.info("%s", linesep.join(cont()))
 
 
-def _arg_parse() -> Tuple[Namespace, Sequence[str]]:
+def _arg_parse() -> Namespace:
     parser = ArgumentParser(add_help=False)
     parser.add_argument("path", type=PurePath)
-    parser.add_argument("cmd")
-    return parser.parse_known_args()
+    parser.add_argument("arg0")
+    parser.add_argument("argv", nargs="...")
+    return parser.parse_args()
 
 
 def main() -> None:
-    args, argv = _arg_parse()
+    args = _arg_parse()
 
     env_path = Path(args.path)
     dotenv = "" if env_path == PurePath("-") else env_path.read_text("utf-8")
@@ -121,10 +114,10 @@ def main() -> None:
     env = _trans(_parse(dotenv), env=p_env)
 
     _print(env)
-    if cmd := which(args.cmd):
-        execle(cmd, normcase(cmd), *argv, {**env, **p_env})
+    if cmd := which(args.arg0):
+        execle(cmd, normcase(cmd), *args.argv, {**env, **p_env})
     else:
-        raise OSError(args.cmd)
+        raise OSError(args.arg0)
 
 
 main()
