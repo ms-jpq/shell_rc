@@ -5,17 +5,17 @@ from os import execl
 from os.path import normcase
 from pathlib import Path, PurePath
 from shutil import which
-from typing import Sequence, Tuple
 
 
-def _parse_args() -> Tuple[Namespace, Sequence[str]]:
+def _parse_args() -> Namespace:
     parser = ArgumentParser(add_help=False)
     parser.add_argument("path", type=PurePath)
-    return parser.parse_known_args()
+    parser.add_argument("argv", nargs="...")
+    return parser.parse_args()
 
 
 def main() -> int:
-    args, argv = _parse_args()
+    args = _parse_args()
     path = PurePath(args.path)
 
     if path == PurePath("-"):
@@ -26,7 +26,7 @@ def main() -> int:
 
     cmd = "ssh"
     if ssh := which(cmd):
-        execl(ssh, normcase(ssh), *addn, *argv)
+        execl(ssh, normcase(ssh), *addn, *args.argv)
     else:
         raise OSError(cmd)
 
