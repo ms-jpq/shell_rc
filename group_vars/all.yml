@@ -9,9 +9,6 @@ _xdg_conf_home_: "~/.config"
 _xdg_data_home_: "~/.local/share"
 _xdg_cache_home_: "~/.cache"
 
-_ssh_authorized_:
-  - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-
 _git_: "{{ git | default(False) | bool }}"
 _all_: "{{ all | default(False) | bool }}"
 
