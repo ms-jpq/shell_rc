@@ -1,4 +1,6 @@
 ---
+- import_tasks: set_facts.yml
+
 - import_tasks: tmp_dir.yml
 
 - import_tasks: shell.yml
