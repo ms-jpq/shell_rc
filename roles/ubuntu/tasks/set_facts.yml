@@ -1,0 +1,12 @@
+---
+- name: check arch
+  changed_when: false
+  ansible.builtin.command:
+    argv:
+      - dpkg
+      - --print-architecture
+  register: __dpkg_arch
+
+- name: set arch fact
+  ansible.builtin.set_fact:
+    dpkg_arch: "{{ __dpkg_arch.stdout }}"

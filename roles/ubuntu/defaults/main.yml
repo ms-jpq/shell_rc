@@ -81,23 +81,23 @@ apt_packages: "{{ _languages + _core_utils + _editors + _nice_things + _fun_thin
 apt_deb_packages:
   - "https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/packages-microsoft-prod.deb"
   - "https://github.com/ms-jpq/sad/releases/latest/download/{{ ansible_architecture }}-unknown-linux-gnu.deb"
-  # - "https://github.com/dandavison/delta/releases/download/0.11.3/git-delta_0.11.3_amd64.deb"
+  - "https://github.com/dandavison/delta/releases/download/0.13.0/git-delta_0.13.0_{{ dpkg_arch }}.deb"
   - "https://github.com/watchexec/watchexec/releases/download/cli-v1.17.1/watchexec-1.17.1-{{ ansible_architecture }}-unknown-linux-gnu.deb"
-  # - "https://github.com/sharkdp/pastel/releases/download/v0.8.1/pastel_0.8.1_amd64.deb"
+  - "https://github.com/sharkdp/pastel/releases/download/v0.8.1/pastel_0.8.1_{{ dpkg_arch }}.deb"
 
 target_downloads: []
 
 target_archives:
-  - src: "https://github.com/jesseduffield/lazygit/releases/download/v0.31.4/lazygit_0.31.4_Linux_{{ ansible_architecture }}.tar.gz"
+  # - src: "https://github.com/jesseduffield/lazygit/releases/download/v0.31.4/lazygit_0.31.4_Linux_x86_64.tar.gz"
+  #   dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
     dest: "{{ _exec_bin_ }}"
-  - src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-x86_64-unknown-linux-gnu.tar.gz"
-    dest: "{{ _exec_bin_ }}"
-  - src: "https://github.com/ogham/dog/releases/download/v0.1.0/dog-v0.1.0-x86_64-unknown-linux-gnu.zip"
-    dest: "{{ build_tmp }}"
+  # - src: "https://github.com/ogham/dog/releases/download/v0.1.0/dog-v0.1.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
+  #   dest: "{{ build_tmp }}"
 
-target_remote_copy:
-  - src: "{{ build_tmp }}/bin/dog"
-    dest: "{{ _exec_bin_ }}/dog"
+target_remote_copy: []
+  # - src: "{{ build_tmp }}/bin/dog"
+  #   dest: "{{ _exec_bin_ }}/dog"
 
 target_mods:
   - src: "{{ _exec_bin_ }}/dog"
