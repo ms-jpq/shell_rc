@@ -3,7 +3,8 @@
   recurse = True
 
 [core]
-  pager = delta
+	fsmonitor = true
+  pager     = delta
 
 [core "whitespace"]
   tabwidth = 4
@@ -15,16 +16,19 @@
   light = True
 
 [diff]
-  algorithm = histogram
-  colorMoved = dimmed-zebra
-  colorMovedWS = ignore-space-change
-  dirstat = files,cumulative
-  # renames = copy
+  algorithm        = histogram
+  colorMoved       = dimmed-zebra
+  colorMovedWS     = ignore-space-change
+  dirstat          = files,cumulative
+  #renames         = copy
   wsErrorHighlight = all
 
+[feature]
+	manyFiles = True
+
 [grep]
-  column = True
-  lineNumber = True
+  column      = True
+  lineNumber  = True
   patternType = perl
 
 [log]
@@ -35,7 +39,7 @@
 
 [checkout]
   thresholdForParallelism = 1
-  workers = 0
+  workers                 = 0
 
 [branch]
   autosetuprebase = always
@@ -48,16 +52,16 @@
   ff = only
 
 [merge]
-  autostash = True
+  autostash     = True
   conflictstyle = diff3
-  ff = only
+  ff            = only
 
 [rebase]
   autostash = True
 
 [rerere]
   autoUpdate = True
-  enabled = True
+  enabled    = True
 
 [push]
   followTags = True
