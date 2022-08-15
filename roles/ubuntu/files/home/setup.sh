@@ -54,6 +54,28 @@ apt-install "${RUBY_DEPS[@]}"
 asdf-install --global -- ruby
 
 
+#R_DEPS=(
+#  build-essential
+#  gfortran
+#  libbz2-1.0
+#  libbz2-dev
+#  libbz2-dev
+#  libcurl3-dev
+#  liblzma-dev
+#  liblzma-dev
+#  liblzma5
+#  libpcre2-dev
+#  libreadline-dev
+#  xorg-dev
+#)
+#R_OPTS=(
+#  --enable-R-shlib
+#  --with-cairo
+#)
+#apt-install "${R_DEPS[@]}"
+#R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
+
+
 #PHP_DEPS=(
 #  autoconf
 #  bison
@@ -66,25 +88,26 @@ asdf-install --global -- ruby
 #apt-install "${PHP_DEPS[@]}"
 #asdf-install --global -- php
 
+JPLUGIN='java'
+HAS_JPLUGIN=0
+while read -r line
+do
+  if [[ "$line" = "$JPLUGIN" ]]
+  then
+    HAS_JPLUGIN=1
+    break
+  fi
+done <<< "$(asdf plugin list)"
 
-#R_DEPS=(
-#  build-essential
-#  gfortran
-#  libbz2-1.0 
-#  libbz2-dev
-#  libbz2-dev 
-#  libcurl3-dev
-#  liblzma-dev
-#  liblzma-dev 
-#  liblzma5 
-#  libpcre2-dev
-#  libreadline-dev 
-#  xorg-dev 
-#)
-#R_OPTS=(
-#  --enable-R-shlib
-#  --with-cairo
-#)
-#apt-install "${R_DEPS[@]}"
-#R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
+if [[ $HAS_JPLUGIN -eq 0 ]]
+then
+  asdf plugin add "$JPLUGIN"
+else
+  asdf plugin update "$JPLUGIN"
+fi
+
+JPLUGIN_VER="$(asdf list-all "$JPLUGIN" | grep --fixed-strings -- 'openjdk' | tail --lines 1)"
+asdf install "$JPLUGIN" "$JPLUGIN_VER"
+asdf global "$JPLUGIN" "$JPLUGIN_VER"
+asdf reshim
 
