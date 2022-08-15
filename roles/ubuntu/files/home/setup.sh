@@ -37,11 +37,34 @@ apt-install "${PYTHON_DEPS[@]}"
 asdf-install --global -- python
 
 
+mkdir --parent -- "$XDG_DATA_HOME/gnupg"
+NODEJS_CHECK_SIGNATURES=no asdf-install --global -- nodejs
+
+
+asdf-install --global -- rust
+
+
+asdf-install --global -- golang
+
+
 RUBY_DEPS=(
  libssl-dev
 )
 apt-install "${RUBY_DEPS[@]}"
 asdf-install --global -- ruby
+
+
+#PHP_DEPS=(
+#  autoconf
+#  bison
+#  libcurl4-openssl-dev
+#  libgd-dev
+#  libonig-dev
+#  libzip-dev
+#  re2c
+#)
+#apt-install "${PHP_DEPS[@]}"
+#asdf-install --global -- php
 
 
 #R_DEPS=(
@@ -65,12 +88,3 @@ asdf-install --global -- ruby
 #apt-install "${R_DEPS[@]}"
 #R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
 
-
-mkdir --parent -- "$XDG_DATA_HOME/gnupg"
-NODEJS_CHECK_SIGNATURES=no asdf-install --global -- nodejs
-
-
-asdf-install --global -- rust
-
-
-asdf-install --global -- golang
