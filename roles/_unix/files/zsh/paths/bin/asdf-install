@@ -23,9 +23,8 @@ do
       shift
       ;;
     -v|--version)
-      shift
-      VERSION="$1"
-      shift
+      VERSION="$2"
+      shift 2
       ;;
     --)
       shift
@@ -100,5 +99,3 @@ fi
 
 
 asdf reshim
-
-
