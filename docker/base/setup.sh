@@ -3,7 +3,7 @@
 set -eux
 set -o pipefail
 
-cd "$(dirname "$0")" || exit 1
+cd "$(dirname -- "$0")" || exit 1
 
 
 XDG_CACHE_HOME="$HOME/.cache"

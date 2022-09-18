@@ -3,7 +3,7 @@
 set -eu
 set -o pipefail
 
-cd "$(dirname "$0")" || exit 1
+cd "$(dirname -- "$0")" || exit 1
 
 
 readarray -d $'\n' -t REQUIREMENTS < "$XDG_CONFIG_HOME/requirements.txt"
