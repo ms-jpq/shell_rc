@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 set -u
-shopt -s globstar
-shopt -s nullglob
+shopt -s nullglob globstar
 
 
 if [[ $# -lt 2 ]]
