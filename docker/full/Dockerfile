@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get upgrade --yes
 
 
-RUN source "$XDG_CONFIG_HOME/zsh/rc/.zshrc" && \
+RUN source "$XDG_CONFIG_HOME/zsh/rc.d/.zshrc" && \
     /root/setup.sh
 
 
