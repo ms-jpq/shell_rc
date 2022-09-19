@@ -1,7 +1,6 @@
 ---
 ## GLOBAL ##
 _zsh_dir_: "{{ _xdg_conf_home_ }}/zsh"
-_omz_dir_: "{{ _zsh_dir_  }}/oh-my-zsh"
 ## GLOBAL ##
 
 packages:
