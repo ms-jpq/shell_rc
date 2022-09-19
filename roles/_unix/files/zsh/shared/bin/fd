@@ -2,8 +2,7 @@
 
 set -eu
 set -o pipefail
-shopt -s globstar
-shopt -s nullglob
+shopt -s nullglob globstar
 
 
 bin="$(dirname -- "$(realpath -- "$0")")"

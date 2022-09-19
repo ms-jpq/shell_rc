@@ -2,8 +2,7 @@
 
 set -eux
 set -o pipefail
-shopt -s globstar
-shopt -s nullglob
+shopt -s nullglob globstar
 
 
 apt-install() {

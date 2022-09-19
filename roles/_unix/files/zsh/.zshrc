@@ -29,7 +29,7 @@ pathprepend() {
 
 zsh_main() {
   local os=""
-  if [[ -d /Volumes ]]
+  if [[ "$OSTYPE" =~ 'darwin' ]]
   then
     os='darwin'
   else
