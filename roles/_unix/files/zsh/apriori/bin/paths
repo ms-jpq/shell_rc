@@ -81,7 +81,7 @@ remove() {
 
   local acc=()
   local arr
-  readarray -t -d ':' arr < print_path
+  readarray -t -d ':' arr < <(print_path)
   for path in "${arr[@]}"
   do
     if [[ "$path" != "$target" ]]
@@ -125,7 +125,7 @@ toggle() {
 
   local found=0
   local arr
-  readarray -t -d ':' arr < print_path
+  readarray -t -d ':' arr < <(print_path)
   for path in "${arr[@]}"
   do
     if [[ "$path" == "$target" ]]
