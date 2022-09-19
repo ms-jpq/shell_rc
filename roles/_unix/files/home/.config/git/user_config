@@ -3,7 +3,7 @@
   recurse = True
 
 [core]
-	fsmonitor = true
+	# fsmonitor = true
   pager     = delta
 
 [core "whitespace"]
