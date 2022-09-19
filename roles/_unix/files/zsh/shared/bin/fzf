@@ -2,10 +2,12 @@
 
 set -eu
 set -o pipefail
+shopt -s globstar
+shopt -s nullglob
 
 
-bin="$(dirname -- "$0")"
-PATH="$(paths --silent remove "$bin")"
+bin="$(dirname -- "$(realpath -- "$0")")"
+PATH="$(paths --silent remove -- "$bin")"
 
 export LC_ALL=C
 export LANG=C

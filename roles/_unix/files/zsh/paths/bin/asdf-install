@@ -2,7 +2,8 @@
 
 set -eu
 set -o pipefail
-shopt -s globstar nullglob
+shopt -s globstar
+shopt -s nullglob
 
 
 OPTS='gv:'

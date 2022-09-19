@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+d() {
+  local default_cmd=(
+    fd
+    --hidden
+    --follow
+    --print0
+    --type=directory
+  )
+  local dest=
+  dest="$(FZF_DEFAULT_COMMAND="${default_cmd[*]}" fp --read0 -q "${*:-""}")"
+  cd "$dest" || return 1
+}

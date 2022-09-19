@@ -67,23 +67,6 @@ unset _fzf_ctrl_t_command
 export FZF_TMUX_HEIGHT='100%'
 
 
-alias f='fzf'
-alias fp='fzf --preview='\'"$_fzf_preview"\'
-
-
-d() {
-  local default_cmd=(
-    fd
-    --hidden
-    --follow
-    --print0
-    --type=directory
-  )
-  local dest="$(FZF_DEFAULT_COMMAND="${default_cmd[*]}" fp --read0 -q "${*:-""}")"
-  cd "$dest" || return 1
-}
-
-
 #################### ################ ####################
 #################### Overwrite Region ####################
 #################### ################ ####################

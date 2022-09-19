@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+source <(command -- venv "$@")

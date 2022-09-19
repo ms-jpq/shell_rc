@@ -2,6 +2,8 @@
 
 set -eu
 set -o pipefail
+shopt -s globstar
+shopt -s nullglob
 
 cd "$(dirname -- "$0")" || exit 1
 
