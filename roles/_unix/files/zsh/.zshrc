@@ -72,7 +72,7 @@ zsh_main
 unset -f zsh_main
 
 
-if (( "$SHLVL" > 1 ))
+if (( SHLVL > 1 ))
 then
   PATH="$(awk -v 'RS=:' '!seen[$0]++ { if (NR != 1) { printf ":" } printf("%s", $0) }' <<< "$PATH")"
 fi
