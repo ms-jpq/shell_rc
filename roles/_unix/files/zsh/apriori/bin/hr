@@ -33,7 +33,7 @@ COLS="${2:-"$(tput cols)"}"
 
 if [[ -n "$WORD" ]]
 then
-  local LINE=''
+  LINE=''
   while (( ${#LINE} < COLS ))
   do
     LINE="$LINE$WORD"
