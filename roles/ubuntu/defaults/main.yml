@@ -90,6 +90,8 @@ apt_deb_packages:
 target_downloads: []
 
 target_archives:
+  - src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.33.0-linux_amd64.tar.gz"
+    dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.35_Linux_x86_64.tar.gz"
     dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
