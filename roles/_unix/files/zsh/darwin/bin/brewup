@@ -9,5 +9,4 @@ shopt -s nullglob
 brew update
 brew upgrade
 brew cleanup
-brew docker
-brew cast outdated
+brew doctor

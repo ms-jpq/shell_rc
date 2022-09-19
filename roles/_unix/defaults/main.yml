@@ -56,7 +56,7 @@ target_files:
     dest: "~/"
 
   - src: "zsh/"
-    dest: "{{ _zsh_dir_ }}/rc"
+    dest: "{{ _zsh_dir_ }}/rc.d"
     delete: True
 
 target_templates:

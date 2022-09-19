@@ -19,7 +19,6 @@ fi
 pathprepend() {
   for arg in "$@"
   do
-    # && [[ ":$PATH:" != *":$arg:"* ]]
     if [[ -d "$arg" ]]
     then
       export PATH="$arg:$PATH"
@@ -48,16 +47,17 @@ zsh_main() {
 
   for target in "${zrc_targets[@]}"
   do
+    local rcs="$ZDOTDIR/$target"
     local fns="$rcs/fn"
-    local rcs="$XDG_CONFIG_HOME/zsh/rc/$target"
 
     fpath=("$fns" "${fpath[@]}")
-    for f in "$fns"/**/*
+    pathprepend "$rcs/bin"
+
+    for fn in "$fns"/**/*
     do
-      autoload -Uz "$f"
+      autoload -Uz "$fn"
     done
 
-    pathprepend "$rcs/bin"
     for rc in "$rcs"/**/*.zsh
     do
       source "$rc"
