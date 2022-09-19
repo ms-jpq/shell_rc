@@ -74,5 +74,5 @@ unset -f zsh_main
 
 if (( SHLVL > 1 ))
 then
-  PATH="$(printf '%s' "$PATH" | awk -v 'RS=:' -v 'ORS=:' '!seen[$0]++ { if (NR != 1) { printf ":" } printf }')"
+  PATH="$(printf '%s' "$PATH" | awk -v 'RS=:' -v 'ORS=:' '!seen[$0]++ { if (NR != 1) { print ":" } print }')"
 fi
