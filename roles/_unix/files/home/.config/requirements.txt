@@ -2,7 +2,6 @@ gay
 sortd
 markdown_live_preview
 https://github.com/ms-jpq/py-dev/archive/dev.tar.gz
-glances[docker,netifaces,zeroconf]
 speedtest-cli
 graphtage
 httpie

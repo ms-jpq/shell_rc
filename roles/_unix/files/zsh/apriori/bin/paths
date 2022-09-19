@@ -57,11 +57,7 @@ check_arg() {
 
 show() {
   printf '%s' "$PATH"
-  {
-    local arr
-    readarray -t -d ':' arr <<< "$PATH"
-    printf '%s\n' "${arr[@]}"
-  } | awk '!seen[$0]++' >&2
+  awk -v 'RS=:' '!seen[$0]++' >&2 <<< "$PATH"
 }
 
 

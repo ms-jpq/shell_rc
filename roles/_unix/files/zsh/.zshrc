@@ -17,11 +17,11 @@ fi
 #################### ############## ####################
 
 pathprepend() {
-  for arg in "$@"
+  for p in "$@"
   do
-    if [[ -d "$arg" ]]
+    if [[ -d "$p" ]]
     then
-      export PATH="$arg:$PATH"
+      path=("$p" "${path[@]}")
     fi
   done
 }
@@ -70,3 +70,10 @@ zsh_main() {
 
 zsh_main
 unset -f zsh_main
+
+
+if (( "$SHLVL" > 1 ))
+then
+  PATH="$(awk -v 'RS=:' '!seen[$0]++ { if (NR != 1) { printf ":" } printf("%s", $0) }' <<< "$PATH")"
+fi
+
