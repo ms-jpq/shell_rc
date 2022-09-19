@@ -2,7 +2,8 @@
 
 set -eu
 set -o pipefail
-shopt -s globstar nullglob
+shopt -s globstar
+shopt -s nullglob
 
 
 # The MIT License (MIT)
@@ -30,18 +31,13 @@ shopt -s globstar nullglob
 WORD="${1-"#"}"
 COLS="${2:-"$(tput cols)"}"
 
-hr() {
-  if [[ -n "$WORD" ]]
-  then
-    local LINE=''
-    while (( ${#LINE} < COLS ))
-    do
-      LINE="$LINE$WORD"
-    done
+if [[ -n "$WORD" ]]
+then
+  local LINE=''
+  while (( ${#LINE} < COLS ))
+  do
+    LINE="$LINE$WORD"
+  done
 
-    printf '%s\n' "${LINE:0:$COLS}"
-  fi
-}
-
-
-hr
+  printf '%s\n' "${LINE:0:$COLS}"
+fi

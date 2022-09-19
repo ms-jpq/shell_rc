@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+setopt nullglob
+
 #################### ##################### ####################
 #################### Instant Prompt Region ####################
 #################### ##################### ####################
@@ -27,23 +29,40 @@ pathprepend() {
 
 
 zsh_main() {
+  local os=""
+  if [[ -d /Volumes ]]
+  then
+    os='darwin'
+  else
+    os='linux'
+  fi
   local zrc_targets=(
     apriori
-    "$(uname | tr '[:upper:]' '[:lower:]')"
+    "$os"
     shared
     paths
-    fun
     aposteriori
+    fun
+    docker
   )
 
   for target in "${zrc_targets[@]}"
   do
+    local fns="$rcs/fn"
     local rcs="$XDG_CONFIG_HOME/zsh/rc/$target"
+
+    fpath=("$fns" "${fpath[@]}")
+    for f in "$fns"/**/*
+    do
+      autoload -Uz "$f"
+    done
+
+    pathprepend "$rcs/bin"
     for rc in "$rcs"/**/*.zsh
     do
       source "$rc"
     done
-    pathprepend "$rcs/bin"
+
   done
 
   pathprepend "$HOME/.local/bin"

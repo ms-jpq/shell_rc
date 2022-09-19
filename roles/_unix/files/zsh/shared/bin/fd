@@ -2,9 +2,11 @@
 
 set -eu
 set -o pipefail
+shopt -s globstar
+shopt -s nullglob
 
 
-bin="$(dirname -- "$0")"
+bin="$(dirname -- "$(realpath -- "$0")")"
 PATH="$(paths --silent remove "$bin")"
 
 

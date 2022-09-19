@@ -2,6 +2,8 @@
 
 set -eu
 set -o pipefail
+shopt -s globstar
+shopt -s nullglob
 
 
 VIRTUAL_ENV="${VIRTUAL_ENV:-""}"

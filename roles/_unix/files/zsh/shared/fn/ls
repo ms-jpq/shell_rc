@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+exa --group-directories-first --icons --header --classify "$@"
