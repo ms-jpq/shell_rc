@@ -52,7 +52,7 @@ _editors:
   - ms-jpq/sad/sad
   - universal-ctags
   - gitui
-  # - lazygit
+  - lazygit
 
 _nice_things:
   - exa
