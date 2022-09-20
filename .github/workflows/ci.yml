@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build Base
         uses: docker/build-push-action@v1
@@ -39,9 +39,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Ansible
+        env:
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
         run: brew install ansible
 
       - name: Build
