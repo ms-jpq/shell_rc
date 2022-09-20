@@ -1,8 +1,9 @@
 gay
 sortd
-markdown_live_preview
 https://github.com/ms-jpq/py-dev/archive/dev.tar.gz
-speedtest-cli
-graphtage
+markdown_live_preview
 httpie
+http-prompt
+speedtest-cli
 tldr
+graphtage
