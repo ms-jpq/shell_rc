@@ -64,4 +64,5 @@
   enabled    = True
 
 [push]
+  autoSetupRemote = True
   followTags = True
