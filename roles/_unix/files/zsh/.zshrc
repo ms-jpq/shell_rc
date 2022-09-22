@@ -37,7 +37,6 @@ zsh_main() {
   fi
   local zrc_targets=(
     apriori
-    paths
     "$os"
     shared
     aposteriori
