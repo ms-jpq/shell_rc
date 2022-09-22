@@ -37,9 +37,9 @@ zsh_main() {
   fi
   local zrc_targets=(
     apriori
+    paths
     "$os"
     shared
-    paths
     aposteriori
     fun
     docker
@@ -51,7 +51,6 @@ zsh_main() {
     local fns="$rcs/fn"
 
     fpath=("$fns" "${fpath[@]}")
-    pathprepend "$rcs/bin"
 
     for fn in "$fns"/**/*
     do
@@ -63,6 +62,7 @@ zsh_main() {
       source "$rc"
     done
 
+    pathprepend "$rcs/bin"
   done
 
   pathprepend "$HOME/.local/bin"
