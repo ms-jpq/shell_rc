@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-docker system prune --all --volumes --force "$@"
+docker buildx prune --all --force
+docker system prune --all --volumes --force
