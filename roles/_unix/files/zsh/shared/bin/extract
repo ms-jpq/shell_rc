@@ -9,8 +9,7 @@ FILE="$*"
 
 case "$FILE" in
   *.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz)
-    export TAPE="$FILE"
-    exec tar --extract --auto-compress
+    exec tar --extract --auto-compress --file "$FILE"
     ;;
   *.7z|*.zip)
     exec 7zz x -- "$FILE"
