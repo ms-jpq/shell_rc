@@ -1,27 +1,21 @@
 #!/usr/bin/env bash
 
-set -eu
-set -o pipefail
-shopt -s nullglob globstar
-
-
 FILE="$*"
 
 case "$FILE" in
   *.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz)
-    exec tar --extract --auto-compress --file "$FILE"
+    tar --extract --auto-compress --file "$FILE"
     ;;
   *.7z|*.zip)
-    exec 7zz x -- "$FILE"
+    7zz x -- "$FILE"
     ;;
   *.gz)
-    exec gzip --decompress --keep -- "$FILE"
+    gzip --decompress --keep -- "$FILE"
     ;;
   *.rar)
-    exec unrar -x -- "$FILE"
+    unrar -x -- "$FILE"
     ;;
   *)
     printf '%s\n' "Unknown format :: $FILE"
-    exit 1
     ;;
 esac
