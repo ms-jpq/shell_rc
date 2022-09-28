@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -eu
-set -o pipefail
-shopt -s nullglob globstar
-
-curl --location --silent https://ipinfo.io | exec jq
