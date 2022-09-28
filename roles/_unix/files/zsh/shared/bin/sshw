@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-set -eu
-set -o pipefail
-shopt -s nullglob globstar
-
-
-exec ssh -t "$@" pwsh.exe
