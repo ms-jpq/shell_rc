@@ -14,71 +14,62 @@ target_links:
   # - src: "/etc/localtime"
   #   dest: "/usr/share/zoneinfo/{{ time_zone }}"
 
-_languages:
-  - language-pack-zh-hans
-
-_core_utils:
-  - python3-venv
-  - zram-config
-  - man
-  - man2html
-  - sudo
-  - locales
-  - openssh-server
-  - mosh
-  - tmux
-  - rsync
-  - curl
-  - wget
-  - grep
-  - jq
-  - moreutils
-  - nmap
-  - tree
-  - psmisc
-  - htop
-  - iotop
-  - iftop
-  - dstat
-  - pv
-  - socat
-  - sysstat
-  - ncdu
-  - iperf3
-  - unzip
-
-_editors:
-  - neovim
-  - universal-ctags
-
-_nice_things:
-  - avahi-daemon
-  - bat
-  - exa
-  - fzf
-  - fd-find
-  - ripgrep
-  - aha
-  - duf
-  - hyperfine
-  - rlwrap
-
-_fun_things:
-  - termshark
-  - neofetch
-  - sl
-  - cmatrix
-  - nyancat
-  - cowsay
-  - figlet
-  - libaa-bin #aafire
-  - bb
-
 apt_repos:
   - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
   - "ppa:neovim-ppa/unstable"
 
-apt_packages: "{{ _languages + _core_utils + _editors + _nice_things + _fun_things }}"
+apt_packages:
+  - 7zip
+  - aha
+  - avahi-daemon
+  - bat
+  - bb
+  - cmatrix
+  - cowsay
+  - curl
+  - dstat
+  - duf
+  - exa
+  - fd-find
+  - figlet
+  - fzf
+  - grep
+  - htop
+  - hyperfine
+  - iftop
+  - iotop
+  - iperf3
+  - jq
+  - language-pack-zh-hans
+  - libaa-bin #aafire
+  - locales
+  - man
+  - man2html
+  - moreutils
+  - mosh
+  - ncdu
+  - neofetch
+  - neovim
+  - nmap
+  - nyancat
+  - openssh-server
+  - psmisc
+  - pv
+  - python3-venv
+  - ripgrep
+  - rlwrap
+  - rsync
+  - sl
+  - socat
+  - sudo
+  - sysstat
+  - termshark
+  - tmux
+  - tree
+  - universal-ctags
+  - unzip
+  - wget
+  - zram-config
 
 apt_deb_packages:
   - "https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/packages-microsoft-prod.deb"
@@ -105,10 +96,12 @@ target_archives:
   # - src: "https://github.com/ogham/dog/releases/download/v0.1.0/dog-v0.1.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
   #   dest: "{{ build_tmp }}"
 
-target_remote_copy: []
+target_remote_copy:
+  []
   # - src: "{{ build_tmp }}/bin/dog"
   #   dest: "{{ _exec_bin_ }}/dog"
 
-target_mods: []
+target_mods:
+  []
   # - src: "{{ _exec_bin_ }}/dog"
   #   mode: "+x"

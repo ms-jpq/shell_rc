@@ -10,81 +10,73 @@ target_templates: []
 #   - src: "~/.local/bin/sh"
 #     dest: "/opt/homebrew/bin/dash"
 
-_core_utils:
-  - dash
-  - bash
-  - man2html
-  - grep
-  - coreutils
-  - findutils
-  - gettext
-  - gnu-which
-  - gnu-getopt
-  - gnupg
-  - lsof
-  - moreutils
-  - gnu-sed
-  - openssh
-  - glib-openssl
-  - curl
-  - wget
-  - rsync
-  - awk
-  - mosh
-  - tmux
-  - socat
-  - less
-  - bind
-  - jq
-  - nmap
-  - tree
-  - pstree
-  - htop
-  - watch
-  - diffutils
-  - pv
-  - iperf3
-  - ncdu
-  - trash
-
-_editors:
-  - neovim
-  - ms-jpq/sad/sad
-  - universal-ctags
-  - gitui
-  - lazygit
-
-_nice_things:
-  - exa
-  - bat
-  - fzf
-  - fd
-  - ripgrep
-  - watchexec
-  - dog
-  - jless
-  - xsv
-  - tokei
-  - bandwhich
+brew_packages:
   - aha
-  - pastel
-  - rlwrap
-  - muesli/tap/duf
-
-_fun_things:
-  - mpv
-  - hyperfine
-  - termshark
-  - neofetch
-  - sl
-  - cmatrix
   - asciiquarium
-  - nyancat
+  - awk
+  - bandwhich
+  - bash
+  - bat
+  - bind
+  - cmatrix
+  - coreutils
   - cowsay
-  - lolcat
+  - curl
+  - dash
+  - diffutils
+  - dog
+  - exa
+  - fd
   - figlet
+  - findutils
+  - fzf
+  - gettext
+  - gitui
+  - glib-openssl
+  - gnu-getopt
+  - gnu-sed
+  - gnu-which
+  - gnupg
+  - grep
+  - htop
+  - hyperfine
+  - iperf3
+  - jless
+  - jq
+  - lazygit
+  - less
+  - lolcat
+  - lsof
+  - man2html
+  - moreutils
+  - mosh
+  - mpv
+  - ms-jpq/sad/sad
+  - muesli/tap/duf
+  - ncdu
+  - neofetch
+  - neovim
+  - nmap
+  - nyancat
+  - openssh
+  - pastel
   - pipes-sh
-
-brew_packages: "{{ _core_utils + _editors + _nice_things + _fun_things }}"
+  - pstree
+  - pv
+  - ripgrep
+  - rlwrap
+  - rsync
+  - sl
+  - socat
+  - termshark
+  - tmux
+  - tokei
+  - trash
+  - tree
+  - universal-ctags
+  - watch
+  - watchexec
+  - wget
+  - xsv
 
 target_archives: []
