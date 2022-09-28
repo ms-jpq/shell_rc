@@ -12,17 +12,14 @@ case "$FILE" in
     export TAPE="$FILE"
     exec tar --extract --auto-compress
     ;;
-  *.zip)
-    exec unzip -- "$FILE"
+  *.7z|*.zip)
+    exec 7zz x -- "$FILE"
     ;;
   *.gz)
     exec gzip --decompress --keep -- "$FILE"
     ;;
   *.rar)
     exec unrar -x -- "$FILE"
-    ;;
-  *.7z)
-    exec 7z -x -- "$FILE"
     ;;
   *)
     printf '%s\n' "Unknown format :: $FILE"
