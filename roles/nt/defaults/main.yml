@@ -1,0 +1,69 @@
+---
+target_files:
+  - src: "root/"
+    dest: "/"
+  - src: "home/"
+    dest: "~/"
+
+target_templates:
+  - src: "templates/"
+    dest: "/"
+
+winget_packages:
+  # - Cygwin.Cygwin
+  - 7zip.7zip
+  - Git.Git
+  - Insecure.Nmap
+  - Microsoft.PowerShell
+  - Microsoft.Sysinternals.Autoruns
+  - Neovim.Neovim
+  - OpenJS.NodeJS
+  - Python.Python.3.10
+  - Starship.Starship
+  - gsass1.NTop
+  - stedolan.jq
+
+  # - mosh
+
+  # universal-ctags
+
+target_msis:
+  - "https://github.com/extrawurst/gitui/releases/latest/download/gitui.msi"
+
+target_archives:
+  - src: "https://repo.msys2.org/msys/x86_64/rsync-3.2.6-1-x86_64.pkg.tar.zst"
+    dest: ""
+  - src: "https://github.com/ms-jpq/sad/releases/latest/download/{{ ansible_architecture }}-pc-windows-msvc.zip"
+  - dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/sharkdp/fd/releases/latest/download/fd-v8.4.0-{{ ansible_architecture }}-pc-windows-msvc.zip"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/sharkdp/bat/releases/latest/download/bat-v0.22.1-{{ ansible_architecture }}-pc-windows-msvc.zip"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/sharkdp/hyperfine/releases/latest/download/hyperfine-v1.15.0-{{ ansible_architecture }}-pc-windows-msvc.zip"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/sharkdp/pastel/releases/latest/download/pastel-0.9.0-{{ ansible_architecture }}-pc-windows-msvc.zip"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/BurntSushi/ripgrep/releases/latest/download/ripgrep-13.0.0-{{ ansible_architecture }}-pc-windows-msvc.zip"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/junegunn/fzf/releases/latest/fzf-0.34.0-windows_amd64.zip"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/dandavison/delta/releases/latest/download/delta-0.14.0-{{ ansible_architecture }}-pc-windows-msvc.zip"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.20.6-{{ ansible_architecture }}-pc-windows-msvc.zip"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/muesli/duf/releases/latest/download/duf_0.8.1_Windows_{{ ansible_architecture }}.zip"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-v0.8.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.35_Linux_{{ ansible_architecture }}.tar.gz"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-{{ ansible_architecture }}-pc-windows-msvc.tar.gz"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-{{ ansible_architecture }}-pc-windows-msvc.tar.gz"
+    dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.3-{{ ansible_architecture }}-pc-windows-msvc.tar.gz"
+    dest: "{{ build_tmp }}"
+
+target_remote_copy:
+  - src: "{{ build_tmp }}/dust-v0.8.3-{{ ansible_architecture }}-pc-windows-msvc/dust"
+    dest: "{{ _exec_bin_ }}/dog"
