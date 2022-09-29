@@ -87,6 +87,8 @@ target_archives:
     dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/extrawurst/gitui/releases/latest/download/gitui-linux-musl.tar.gz"
     dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.3-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
+    dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.35_Linux_{{ ansible_architecture }}.tar.gz"
     dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"

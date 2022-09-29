@@ -25,6 +25,7 @@ brew_packages:
   - dash
   - diffutils
   - dog
+  - dust
   - exa
   - fd
   - figlet
