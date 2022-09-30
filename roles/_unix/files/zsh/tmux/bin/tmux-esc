@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+esc() {
+  printf '\ePtmux;'
+  awk '{ gsub("\x1B", "\x1B\x1B"); print }'
+  printf '\e\'
+}
+
+if [[ -v TMUX ]]
+then
+  if [[ -v SSH_TTY ]]
+  then
+    esc | esc
+  else
+    esc
+  fi
+elif [[ -v SSH_TTY ]]
+then
+  esc
+else
+  tee
+fi

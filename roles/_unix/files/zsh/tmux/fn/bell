@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
 
 # OSC 9 -> Notification
-if [[ -v TMUX ]]
-then
-  printf '\ePtmux;\e\e]9;%s\e\e\\\e\' "$*"
-else
-  printf '\e]9;%s\e\' "$*"
-fi
+printf '\e]9;%s\e\' "$*" | tmux-esc
