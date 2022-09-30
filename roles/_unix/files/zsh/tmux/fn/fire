@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
 
-# OSC 1337 -> FUCK
-if [[ -v TMUX ]]
-then
-  printf '\ePtmux;\e\e]1337;RequestAttention=fireworks\e\e\\\e\'
-else
-  printf '\e]1337;RequestAttention=fireworks\e\'
-fi
-
+# OSC 1337 -> iTerm Exts
+printf '\e]1337;RequestAttention=fireworks\e\' | tmux-esc
