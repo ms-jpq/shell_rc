@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+TMP="$(mktemp)"
+trap 'rm --force -- "$TMP"' EXIT
+"$(dirname -- "$0")/tmux-dump" > "$TMP"
+"$EDITOR" -- "$TMP"

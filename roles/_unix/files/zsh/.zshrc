@@ -39,6 +39,7 @@ zsh_main() {
     apriori
     "$os"
     shared
+    tmux
     aposteriori
     fun
     docker

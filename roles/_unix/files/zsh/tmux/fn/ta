@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [[ $# -ne 0 ]]
+then
+  tmux new-session -A -s "$*"
+else
+  session="$(tmux list-sessions -F '#{session_name}' | fzf -0 -1)"
+  if [[ $? -ne 130 ]]
+  then
+    tmux new-session -A -s "${session:-"owo"}"
+  fi
+fi
