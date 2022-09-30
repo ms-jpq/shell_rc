@@ -1,25 +1,34 @@
 #!/usr/bin/env bash
 
-set -eu
+set -u
 set -o pipefail
 
-esc() {
-  printf '\ePtmux;'
-  awk '{ gsub("\x1B", "\x1B\x1B"); print }'
-  printf '\e\'
+
+read -r -d '' AWK <<'EOF'
+BEGIN { 
+  printf("\x1BPtmux;")
 }
+{
+  gsub("\x1B", "\x1B\x1B")
+  printf($0)
+}
+END {
+  printf("\x1B\\")
+}
+EOF
+
 
 if [[ -v TMUX ]]
 then
   if [[ -v SSH_TTY ]]
   then
-    esc | esc
+    awk "$AWK" | awk "$AWK"
   else
-    esc
+    awk "$AWK"
   fi
 elif [[ -v SSH_TTY ]]
 then
-  esc
+  awk "$AWK"
 else
   tee
 fi
