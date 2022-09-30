@@ -3,7 +3,7 @@
 if [[ -v TMUX ]]
 then
   # ??
-  printf '\ek%s\e\\' "$*"
+  printf '\ek%s\e\' "$*"
 else
   # OSC 0 -> Update Title
   printf '\e]0;%s\e\' "$*"
