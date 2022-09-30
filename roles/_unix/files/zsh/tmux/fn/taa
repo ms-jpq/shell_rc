@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 
-session="$(tmux list-sessions -F '#{session_name}' | fzf -0 -1)"
-tmux new-session -t "${session}"
+session="$(tmux list-sessions -F '#{session_name}' | fzf -0)"
+if [[ -v TMUX ]]
+then
+  tmux switch -t "$session"
+else
+  tmux new-session -t "${session}"
+fi
