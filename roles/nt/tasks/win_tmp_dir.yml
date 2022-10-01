@@ -1,0 +1,10 @@
+---
+- name: create tmp build directory
+  ansible.builtin.win_tempfile:
+    state: directory
+    suffix: build
+  register: __build_tmp
+
+- name: create tmp build directory
+  ansible.builtin.set_fact:
+    build_tmp: "{{ __build_tmp.path }}"
