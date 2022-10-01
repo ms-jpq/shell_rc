@@ -47,15 +47,15 @@ jobs:
       - name: Build
         run: ansible-playbook local.macos.yml -e all=true
 
-  windows:
-    runs-on: windows-latest
+  # windows:
+  #   runs-on: windows-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Install Ansible
-        run: pip install -- ansible
+  #     - name: Install Ansible
+  #       run: pip install -- ansible
 
-      - name: Build
-        run: ansible-playbook local.windows.yml -e all=true
+  #     - name: Build
+  #       run: ansible-playbook local.windows.yml -e all=true

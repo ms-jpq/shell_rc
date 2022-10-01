@@ -4,10 +4,10 @@ github_accounts:
 
 ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
-_exec_bin_: "~/.local/bin"
-_xdg_conf_home_: "~/.config"
-_xdg_data_home_: "~/.local/share"
-_xdg_cache_home_: "~/.cache"
+_xdg_conf_home_: "{{ ansible_env.LOCALAPPDATA if ansible_facts.os_family == 'Windows' else ansible_facts.env.HOME ~ '/.config' }}"
+_xdg_data_home_: "{{ ansible_env.LOCALAPPDATA if ansible_facts.os_family == 'Windows' else ansible_facts.env.HOME ~ '/.local/share' }}"
+_exec_bin_: "{{ _xdg_data_home_ | dirname }}/bin"
+_xdg_cache_home_: "{{ ansible_env.TMP if ansible_facts.os_family == 'Windows' else ansible_facts.env.HOME ~ '/.cache' }}"
 
 _git_: "{{ git | default(False) | bool }}"
 _all_: "{{ all | default(False) | bool }}"

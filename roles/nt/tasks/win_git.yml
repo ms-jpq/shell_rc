@@ -1,8 +1,37 @@
 ---
+- name: check git repo exists
+  loop: "{{ git_repos }}"
+  ansible.windows.win_stat:
+    path: "{{ item.dest }}"
+  register: __git_repos
+
 - name: clone git repos
   loop: "{{ git_repos }}"
-  ansible.builtin.git:
-    depth: 1
-    force: True
-    repo: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+  loop_control:
+    index_var: index
+  when: not __git_repos.results[index].stat.exists
+  ansible.windows.win_command:
+    argv:
+      - git.exe
+      - clone
+      - --recurse-submodules
+      - --depth=1
+      - --shallow-submodules
+      - --
+      - "{{ item.src }}"
+      - "{{ item.dest }}"
+
+- name: pull git repos
+  loop: "{{ git_repos }}"
+  loop_control:
+    index_var: index
+  when: __git_repos.results[index].stat.exists
+  ansible.windows.win_command:
+    chdir: "{{ item.dest }}"
+    argv:
+      - git.exe
+      - pull
+      - --recurse-submodules
+      - --no-tags
+      - --
+      - "{{ item.src }}"

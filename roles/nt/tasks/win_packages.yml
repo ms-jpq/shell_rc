@@ -1,0 +1,7 @@
+---
+- name: install win packages
+  loop: "{{ win_packages }}"
+  ansible.windows.win_package:
+    path: "{{ item }}"
+  register: __win_packages
+
