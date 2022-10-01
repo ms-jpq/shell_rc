@@ -1,6 +1,6 @@
 ---
 - name: create tmp build directory
-  ansible.builtin.win_tempfile:
+  ansible.windows.win_tempfile:
     state: directory
     suffix: build
   register: __build_tmp

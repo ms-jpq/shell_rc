@@ -1,1 +1,7 @@
 ---
+- name: copy remote files
+  loop: "{{ target_remote_copy }}"
+  community.windows.win_robocopy:
+    recurse: True
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"

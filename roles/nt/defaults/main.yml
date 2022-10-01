@@ -1,7 +1,5 @@
 ---
 target_files:
-  - src: "root/"
-    dest: "/"
   - src: "home/"
     dest: "~/"
 
@@ -30,9 +28,11 @@ winget_packages:
 target_msis:
   - "https://github.com/extrawurst/gitui/releases/latest/download/gitui.msi"
 
+target_downloads: []
+
 target_archives:
   - src: "https://repo.msys2.org/msys/x86_64/rsync-3.2.6-1-x86_64.pkg.tar.zst"
-    dest: ""
+    dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/ms-jpq/sad/releases/latest/download/{{ ansible_architecture }}-pc-windows-msvc.zip"
   - dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/sharkdp/fd/releases/latest/download/fd-v8.4.0-{{ ansible_architecture }}-pc-windows-msvc.zip"

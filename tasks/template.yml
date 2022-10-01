@@ -25,4 +25,3 @@
   ansible.builtin.template:
     src: "{{ item[0].prefix + '/' + item[1].path }}"
     dest: "{{ item[0].dest + item[1].path }}"
-

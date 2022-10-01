@@ -58,4 +58,4 @@ jobs:
         run: pip install -- ansible
 
       - name: Build
-        run: python3 -m ansible-playbook local.windows.yml -e all=true
+        run: ansible-playbook local.windows.yml -e all=true

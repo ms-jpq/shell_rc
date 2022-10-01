@@ -1,1 +1,6 @@
 ---
+- name: sync files
+  loop: "{{ target_files }}"
+  ansible.windows.win_copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
