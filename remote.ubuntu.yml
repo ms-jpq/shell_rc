@@ -1,7 +1,5 @@
 ---
 - hosts: ubuntu
-  vars:
-    user: root
 
   tasks:
     - assert:
