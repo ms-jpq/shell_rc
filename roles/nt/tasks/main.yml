@@ -1,33 +1,18 @@
 ---
 - import_tasks: win_tmp_dir.yml
 
-# - import_tasks: shell.yml
+- import_tasks: winget.yml
+  when: _all_
 
-# - import_tasks: apt_repo.yml
-#   when: _all_
+- import_tasks: win_sync.yml
 
-# - import_tasks: apt.yml
-#   when: _all_
+- import_tasks: win_template.yml
 
-# - import_tasks: apt_deb.yml
-#   when: _all_
+- import_tasks: win_download.yml
+  when: _all_
 
-# - import_tasks: sync.yml
+- import_tasks: win_unarchive.yml
+  when: _all_
 
-# - import_tasks: template.yml
-
-# - import_tasks: download.yml
-#   when: _all_
-
-# - import_tasks: unarchive.yml
-#   when: _all_
-
-# - import_tasks: remote_copy.yml
-#   when: _all_
-
-# - import_tasks: chmod.yml
-#   when: _all_
-
-# - import_tasks: link.yml
-
-# - import_tasks: locale.yml
+- import_tasks: win_remote_copy.yml
+  when: _all_

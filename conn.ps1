@@ -5,21 +5,25 @@ $ErrorActionPreference = 'Stop'
 
 
 function basic {
+  # UTC BIOS
+  Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name 'RealTimeIsUniversal' -Type 'DWord' -Value 1
+
   # Allow Scripting
   Set-ExecutionPolicy -ExecutionPolicy 'Unrestricted'
 
-  # UTC BIOS
-  Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name 'RealTimeIsUniversal' -Type 'DWord' -Value 1
+  # Private Firewall
+  Set-NetConnectionProfile -NetworkCategory 'Private'
+
+  # Allow Ping
+  Set-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv4-In)' -Enabled "$true"
+  Set-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv6-In)' -Enabled "$true"
+
+  # NoPassword
+  Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa' -Name 'LimitBlankPasswordUse' -Type 'DWord' -Value 0
 }
 
 
 function winrm {
-  # Allow AllowUnencrypted
-  Set-NetConnectionProfile -NetworkCategory 'Private'
-
-  # NoPassword
-  Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa' -Name 'LimitBlankPasswordUse' -Type 'DWord' -Value 0
-
   Set-Service -Name 'WinRM' -StartupType 'Automatic' -Status 'Running'
 
   Set-Item -Path 'WSMan:\localhost\Service\Auth\Basic' -Value $true
@@ -75,11 +79,12 @@ function rdp {
 
   # RDP Firewall
   Enable-NetFirewallRule -Name 'RemoteDesktop*'
-
-  # Allow Ping
-  Set-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv4-In)' -Enabled "$true"
-  Set-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv6-In)' -Enabled "$true"
 }
+
+
+basic
+ssh
+rdp
 
 
 Remove-Item -Path Function:basic Function:winrm Function:ssh Function:rdp
