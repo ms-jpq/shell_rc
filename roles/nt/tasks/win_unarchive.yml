@@ -1,1 +1,6 @@
 ---
+- name: unarchive packages
+  loop: "{{ target_archives }}"
+  community.windows.win_unzip:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"

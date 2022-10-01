@@ -1,6 +1,6 @@
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 'Latest'
 
-Set-PSReadLineOption -EditMode Emacs
+Set-PSReadLineOption -EditMode 'Emacs'
 
 
-Invoke-Expression (&starship init powershell)
+Invoke-Expression (&starship 'init' 'powershell')
