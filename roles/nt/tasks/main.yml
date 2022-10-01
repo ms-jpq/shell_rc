@@ -1,14 +1,22 @@
 ---
-- import_tasks: win_tmp_dir.yml
-
 - import_tasks: winget.yml
   when: _all_
 
+- import_tasks: win_git.yml
+  when: _git_ or _all_
+
+- import_tasks: win_tmp_dir.yml
+
+- import_tasks: win_mkdir.yml
+
 - import_tasks: win_sync.yml
 
-- import_tasks: win_template.yml
+# - import_tasks: win_template.yml
 
 - import_tasks: win_download.yml
+  when: _all_
+
+- import_tasks: win_packages.yml
   when: _all_
 
 - import_tasks: win_unarchive.yml

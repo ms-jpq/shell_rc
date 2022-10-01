@@ -7,7 +7,7 @@
     owner: False
     times: False
     recursive: True
-    links: True
+    copy_links: True
     perms: True
     delete: "{{ item.delete | default(False) }}"
     src: "{{ item.src }}"

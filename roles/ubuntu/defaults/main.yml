@@ -10,7 +10,10 @@ target_templates:
     dest: "/"
 
 target_links:
-  []
+  - src: "/usr/local/bin/bat"
+    dest: "/bin/batcat"
+  - src: "/usr/local/bin/fd"
+    dest: "/bin/fdfind"
   # - src: "/etc/localtime"
   #   dest: "/usr/share/zoneinfo/{{ time_zone }}"
 

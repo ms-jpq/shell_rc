@@ -1,6 +1,21 @@
 ---
-- name: unarchive packages
+- name: download archives
   loop: "{{ target_archives }}"
+  when: item.src.startswith("http")
+  ansible.windows.win_get_url:
+    url: "{{ item.src }}"
+    dest: "{{ build_tmp }}/{{ item.src | hash('sha1') }}{{ item.src | splitext | last }}"
+
+- name: unarchive packages from tmp
+  loop: "{{ target_archives }}"
+  when: item.src.startswith("http")
+  community.windows.win_unzip:
+    src: "{{ build_tmp }}/{{ item.src | hash('sha1') }}{{ item.src | splitext | last }}"
+    dest: "{{ item.dest }}"
+
+- name: unarchive packages straight up
+  loop: "{{ target_archives }}"
+  when: not item.src.startswith("http")
   community.windows.win_unzip:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

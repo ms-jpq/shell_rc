@@ -20,29 +20,33 @@ git_repos:
   - src: "https://github.com/zsh-users/zsh-history-substring-search"
     dest: "{{ _zsh_dir_ }}/zsh-history-substring-search"
 
-  - src: "https://github.com/junegunn/fzf.git"
+  - src: "https://github.com/junegunn/fzf"
     dest: "{{ _zsh_dir_  }}/fzf"
 
-  - src: "https://github.com/Aloxaf/fzf-tab.git"
+  - src: "https://github.com/Aloxaf/fzf-tab"
     dest: "{{ _zsh_dir_ }}/fzf-tab"
 
-  - src: "https://github.com/rupa/z.git"
+  - src: "https://github.com/rupa/z"
     dest: "{{ _zsh_dir_ }}/z"
 
   - src: "https://github.com/seebi/dircolors-solarized"
     dest: "{{ _zsh_dir_ }}/dircolors-solarized"
 
-  - src: "https://github.com/asdf-vm/asdf.git"
+  - src: "https://github.com/asdf-vm/asdf"
     dest: "{{ _xdg_data_home_ }}/asdf"
 
-  - src: "https://github.com/ms-jpq/tmux_rc.git"
+  - src: "https://github.com/ms-jpq/tmux_rc"
     dest: "{{ _xdg_conf_home_ }}/tmux"
 
-  - src: "https://github.com/ms-jpq/isomorphic-copy.git"
+  - src: "https://github.com/ms-jpq/isomorphic-copy"
     dest: "{{ _xdg_conf_home_ }}/isomorphic-copy"
 
-  - src: "https://github.com/ms-jpq/nvim_rc.git"
+  - src: "https://github.com/ms-jpq/nvim_rc"
     dest: "{{ _xdg_conf_home_ }}/nvim"
+
+target_links:
+  - src: "~/.zshenv"
+    dest: "{{ _zsh_dir_ }}/rc.d/.zshenv"
 
 target_files:
   - src: "home/"
@@ -67,5 +71,3 @@ git_conf:
 target_lines:
   - file: "~/.ssh/config"
     line: "Include ~/.config/ssh/*.conf"
-
-target_links: []
