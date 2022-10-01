@@ -45,7 +45,7 @@ jobs:
         run: pip3 install -- ansible
 
       - name: Build
-        run: ./run.sh local.macos.yml -e all=true
+        run: ansible-playbook local.macos.yml -e all=true
 
   windows:
     runs-on: windows-latest
@@ -58,4 +58,4 @@ jobs:
         run: pip install -- ansible
 
       - name: Build
-        run: ./run.sh local.windows.yml -e all=true
+        run: python3 -m ansible-playbook local.windows.yml -e all=true
