@@ -8,5 +8,8 @@
     # ansible_password: ""
 
   tasks:
+    - assert:
+        that: ansible_facts.os_family == 'Windows'
+
     - import_role:
         name: nt

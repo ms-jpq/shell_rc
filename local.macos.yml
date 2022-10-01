@@ -4,7 +4,7 @@
 
   tasks:
     - assert:
-        that: ansible_distribution == 'MacOSX'
+        that: ansible_facts.os_family == 'Darwin'
 
     - import_role:
         name: _unix
