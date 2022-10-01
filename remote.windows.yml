@@ -1,0 +1,11 @@
+---
+- hosts: windows
+  vars:
+    ansible_connection: winrm
+    ansible_winrm_port: 5985
+    ansible_user: Administrator
+    ansible_password: ""
+
+  tasks:
+    - import_role:
+        name: nt
