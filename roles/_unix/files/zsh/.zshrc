@@ -2,16 +2,6 @@
 
 setopt nullglob
 
-#################### ##################### ####################
-#################### Instant Prompt Region ####################
-#################### ##################### ####################
-
-if [[ -r "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh" ]]
-then
-  source "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-
 #################### ############## ####################
 #################### Loading Region ####################
 #################### ############## ####################
@@ -28,7 +18,7 @@ pathprepend() {
 
 
 zsh_main() {
-  local os=""
+  local os=''
   if [[ "$OSTYPE" =~ 'darwin' ]]
   then
     os='darwin'
@@ -45,6 +35,8 @@ zsh_main() {
     docker
   )
 
+  pathprepend "$HOME/.local/bin"
+
   for target in "${zrc_targets[@]}"
   do
     local rcs="$ZDOTDIR/$target"
@@ -53,12 +45,12 @@ zsh_main() {
     if [[ -d "$fns" ]]
     then
       fpath=("$fns" "${fpath[@]}")
-    fi
 
-    for fn in "$fns"/**/*
-    do
-      autoload -Uz "$fn"
-    done
+      for fn in "$fns"/**/*
+      do
+        autoload -Uz "$fn"
+      done
+    fi
 
     for rc in "$rcs"/**/*.zsh
     do
@@ -67,8 +59,6 @@ zsh_main() {
 
     pathprepend "$rcs/bin"
   done
-
-  pathprepend "$HOME/.local/bin"
 }
 
 zsh_main

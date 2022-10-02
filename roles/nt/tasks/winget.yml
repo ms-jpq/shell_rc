@@ -1,5 +1,5 @@
 ---
 - name: install winget packages
   ansible.windows.win_command:
-    argv: "{{ ['powershell.exe', build_tmp ~ '/winget.ps1'] + winget_packages }}"
+    argv: "{{ ['powershell.exe', ansible_env.APPDATA ~ '/WinInstall.ps1'] + winget_packages }}"
   register: __winget_packages

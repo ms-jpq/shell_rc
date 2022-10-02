@@ -8,9 +8,6 @@ packages:
   - zsh
 
 git_repos:
-  - src: "https://github.com/romkatv/powerlevel10k"
-    dest: "{{ _zsh_dir_ }}/powerlevel10k"
-
   - src: "https://github.com/zsh-users/zsh-syntax-highlighting"
     dest: "{{ _zsh_dir_ }}/zsh-syntax-highlighting"
 

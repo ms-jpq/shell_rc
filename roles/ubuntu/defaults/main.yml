@@ -81,7 +81,9 @@ apt_deb_packages:
   - "https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.20.6-{{ ansible_architecture }}-unknown-linux-gnu.deb"
   - "https://github.com/sharkdp/pastel/releases/latest/download/pastel_0.9.0_{{ dpkg_arch }}.deb"
 
-target_downloads: []
+target_downloads:
+  - src: "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64"
+    dest: "{{ _exec_bin_ }}/oh-my-posh"
 
 target_archives:
   - src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.34.0-linux_{{ dpkg_arch }}.tar.gz"
@@ -108,6 +110,5 @@ target_remote_copy:
   #   dest: "{{ _exec_bin_ }}/dog"
 
 target_mods:
-  []
-  # - src: "{{ _exec_bin_ }}/dog"
-  #   mode: "+x"
+  - src: "{{ _exec_bin_ }}/oh-my-posh"
+    mode: "+x"

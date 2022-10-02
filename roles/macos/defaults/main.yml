@@ -41,6 +41,7 @@ brew_packages:
   - htop
   - hyperfine
   - iperf3
+  - jandedobbeleer/oh-my-posh/oh-my-posh
   - jless
   - jq
   - lazygit
