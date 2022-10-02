@@ -67,6 +67,26 @@ blocks:
 
   - type: rprompt
     segments:
+      - type: project
+        style: plain
+        foreground: darkGray
+
+      - type: ruby
+        style: plain
+        foreground: "#701516"
+
+      - type: python
+        style: plain
+        foreground: "#3572A5"
+
+      - type: rust
+        style: plain
+        foreground: "#dea584"
+
+      - type: os
+        style: plain
+        foreground: darkGray
+
       - type: text
         style: plain
         foreground: green
