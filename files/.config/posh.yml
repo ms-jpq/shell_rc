@@ -1,16 +1,61 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+---
+version: 2
 final_space: true
+transient_prompt:
+  template: "\u276F "
+secondary_prompt:
+  template: &prompt "\u276F"
+
 blocks:
   - type: prompt
     alignment: left
-    newline: False
     segments:
       - type: path
-        style: plain
+        style: diamond
+        template: " \ue5ff {{ .Path }} "
+        leading_diamond: "<lightBlue>{</>"
+        trailing_diamond: "<lightBlue>}</>"
+        foreground: blue
+        properties:
+          style: agnoster_full
 
-  - type: rprompt
-    newline: False
+      - type: git
+        style: diamond
+        foreground: green
+
+  - type: prompt
+    alignment: right
     segments:
+      - type: executiontime
+        style: powerline
+        foreground: yellow
+        properties:
+          threshold: 100
+
+      - type: exit
+        style: diamond
+        template: "{{ if gt .Code 0 }}<red>\uf00d <b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</>{{ end }}"
+        properties:
+          always_enabled: True
+
+      - type: time
+        style: powerline
+        foreground: darkGray
+        template: " <u>{{ .CurrentDate | date .Format }}</u>"
+        properties:
+          time_format: "15:04:05 MST"
+
       - type: session
+        style: powerline
+        template: " {{ if .SSHSession }}\uf817 {{ .UserName }}@{{ .HostName }}{{ end }}"
+        foreground: black
+
+  - type: prompt
+    alignment: left
+    newline: True
+    segments:
+      - type: text
         style: plain
+        foreground: green
+        template: *prompt
