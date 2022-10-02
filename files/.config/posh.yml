@@ -7,13 +7,16 @@ transient_prompt:
 secondary_prompt:
   template: &prompt "\u276F"
 
+console_title_template: |-
+  {{ .Shell }} :: {{ .Folder }}
+
 blocks:
   - type: prompt
     alignment: left
     segments:
       - type: path
         style: plain
-        template: "\ue5ff {{ .Path }}"
+        template: "\ue5ff {{ .Parent }}<lightBlue>{{ .Folder }}</>"
         foreground: blue
         properties:
           style: agnoster_full
