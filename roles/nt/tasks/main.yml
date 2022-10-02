@@ -24,3 +24,5 @@
 
 - import_tasks: win_remote_copy.yml
   when: _all_
+
+- import_tasks: win_assoc.yml

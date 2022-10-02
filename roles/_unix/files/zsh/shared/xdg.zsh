@@ -4,8 +4,6 @@
 #################### XDG Region ####################
 #################### ########## ####################
 
-export LESSHISTFILE="$XDG_CACHE_HOME/less_hist"
-
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"

@@ -5,5 +5,5 @@
 #################### ################ ####################
 
 # INTI #
-source "$ZDOTDIR/../powerlevel10k/powerlevel10k.zsh-theme"
+eval "$(oh-my-posh init zsh --config "$ZDOTDIR/posh.yml")"
 # INIT #

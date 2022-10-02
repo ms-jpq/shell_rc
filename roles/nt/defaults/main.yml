@@ -8,26 +8,23 @@ git_repos:
     dest: "{{ _xdg_conf_home_ }}/nvim"
 
 target_files:
-  - src: "winget.ps1"
-    dest: "{{ build_tmp }}/"
+  - src: "home/"
+    dest: "{{ ansible_facts.env.HOME }}/"
   - src: "pwsh/"
     dest: "{{ ansible_facts.env.HOME }}/Documents/PowerShell/"
 
 winget_packages:
-  # - Cygwin.Cygwin
   - 7zip.7zip
   - Git.Git
   - Insecure.Nmap
+  - JanDeDobbeleer.OhMyPosh
   - Microsoft.PowerShell
   - Microsoft.Sysinternals.Autoruns
   - Neovim.Neovim
   - OpenJS.NodeJS
   - Python.Python.3.10
-  - Starship.Starship
   - gsass1.NTop
   - stedolan.jq
-
-  # - mosh
 
   # universal-ctags
 
