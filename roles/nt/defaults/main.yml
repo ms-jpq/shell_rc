@@ -1,4 +1,18 @@
 ---
+target_dirs:
+  - "{{ _exec_bin_ }}"
+  - "{{ ansible_facts.env.HOME }}/Documents/PowerShell/"
+
+git_repos:
+  - src: https://github.com/ms-jpq/nvim_rc
+    dest: "{{ _xdg_conf_home_ }}/nvim"
+
+target_files:
+  - src: "winget.ps1"
+    dest: "{{ build_tmp }}/"
+  - src: "pwsh/"
+    dest: "{{ ansible_facts.env.HOME }}/Documents/PowerShell/"
+
 winget_packages:
   # - Cygwin.Cygwin
   - 7zip.7zip
@@ -16,18 +30,6 @@ winget_packages:
   # - mosh
 
   # universal-ctags
-
-target_dirs:
-  - "{{ _exec_bin_ }}"
-  - "{{ ansible_facts.env.HOME }}/Documents/PowerShell/"
-
-git_repos:
-  - src: https://github.com/ms-jpq/nvim_rc
-    dest: "{{ _xdg_conf_home_ }}/nvim"
-
-target_files:
-  - src: "pwsh/"
-    dest: "{{ ansible_facts.env.HOME }}/Documents/PowerShell/"
 
 target_templates:
   - src: "templates/"
