@@ -21,33 +21,37 @@ blocks:
           style: agnoster_full
 
       - type: git
-        style: diamond
+        style: plain
         foreground: green
+        properties:
+          fetch_status: True
+          fetch_stash_count: True
+          fetch_upstream_icon: True
 
   - type: prompt
     alignment: right
     segments:
       - type: executiontime
-        style: powerline
+        style: plain
         foreground: yellow
         properties:
           threshold: 100
 
       - type: exit
-        style: diamond
+        style: plain
         template: "{{ if gt .Code 0 }}<red>\uf00d <b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</>{{ end }}"
         properties:
           always_enabled: True
 
       - type: time
-        style: powerline
+        style: plain
         foreground: darkGray
         template: " <u>{{ .CurrentDate | date .Format }}</u>"
         properties:
           time_format: "15:04:05 MST"
 
       - type: session
-        style: powerline
+        style: plain
         template: " {{ if .SSHSession }}\uf817 {{ .UserName }}@{{ .HostName }}{{ end }}"
         foreground: black
 
@@ -59,3 +63,10 @@ blocks:
         style: plain
         foreground: green
         template: *prompt
+
+  - type: rprompt
+    segments:
+      - type: text
+        style: plain
+        foreground: green
+        template: "\u276E"
