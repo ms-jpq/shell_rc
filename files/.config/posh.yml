@@ -67,64 +67,64 @@ blocks:
 
   - type: rprompt
     segments:
-      - type: project
-        style: plain
-        foreground: darkGray
+      # - type: project
+      #   style: plain
+      #   foreground: darkGray
 
-      - type: java
-        style: diamond
-        trailing_diamond: "<#b07219></>"
-        foreground: "#b07219"
+      # - type: java
+      #   style: diamond
+      #   trailing_diamond: "<#b07219></>"
+      #   foreground: "#b07219"
 
-      - type: dotnet
-        style: diamond
-        trailing_diamond: "<#b845fc></>"
-        foreground: "#b845fc"
+      # - type: dotnet
+      #   style: diamond
+      #   trailing_diamond: "<#b845fc></>"
+      #   foreground: "#b845fc"
 
-      - type: npm
-        style: diamond
-        trailing_diamond: "<#f1e05a></>"
-        foreground: "#f1e05a"
+      # - type: npm
+      #   style: diamond
+      #   trailing_diamond: "<#f1e05a></>"
+      #   foreground: "#f1e05a"
 
-      - type: node
-        style: diamond
-        trailing_diamond: "<#f1e05a></>"
-        foreground: "#f1e05a"
+      # - type: node
+      #   style: diamond
+      #   trailing_diamond: "<#f1e05a></>"
+      #   foreground: "#f1e05a"
 
-      - type: ruby
-        style: diamond
-        trailing_diamond: "<#701516></>"
-        foreground: "#701516"
+      # - type: ruby
+      #   style: diamond
+      #   trailing_diamond: "<#701516></>"
+      #   foreground: "#701516"
 
       - type: python
         style: diamond
         trailing_diamond: "<#3572A5></>"
         foreground: "#3572A5"
 
-      - type: r
-        style: diamond
-        trailing_diamond: "<#358a5b>ﳒ</>"
-        foreground: "#358a5b"
+      # - type: r
+      #   style: diamond
+      #   trailing_diamond: "<#358a5b>ﳒ</>"
+      #   foreground: "#358a5b"
 
-      - type: julia
-        style: diamond
-        trailing_diamond: "<#a270ba></>"
-        foreground: "#a270ba"
+      # - type: julia
+      #   style: diamond
+      #   trailing_diamond: "<#a270ba></>"
+      #   foreground: "#a270ba"
 
-      - type: go
-        style: diamond
-        trailing_diamond: "<#00ADD8></>"
-        foreground: "#00ADD8"
+      # - type: go
+      #   style: diamond
+      #   trailing_diamond: "<#00ADD8></>"
+      #   foreground: "#00ADD8"
 
-      - type: rust
-        style: diamond
-        trailing_diamond: "<#dea584></>"
-        foreground: "#dea584"
+      # - type: rust
+      #   style: diamond
+      #   trailing_diamond: "<#dea584></>"
+      #   foreground: "#dea584"
 
-      - type: haskell
-        style: diamond
-        trailing_diamond: "<#5e5086></>"
-        foreground: "#5e5086"
+      # - type: haskell
+      #   style: diamond
+      #   trailing_diamond: "<#5e5086></>"
+      #   foreground: "#5e5086"
 
       - type: text
         style: plain
