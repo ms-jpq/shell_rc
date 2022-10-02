@@ -71,16 +71,34 @@ blocks:
         style: plain
         foreground: darkGray
 
+      - type: npm
+        style: diamond
+        trailing_diamond: ""
+        foreground: "#f1e05a"
+
+      - type: node
+        style: diamond
+        trailing_diamond: ""
+        foreground: "#f1e05a"
+
       - type: ruby
-        style: plain
+        style: diamond
+        trailing_diamond: ""
         foreground: "#701516"
 
       - type: python
-        style: plain
+        style: diamond
+        trailing_diamond: ""
         foreground: "#3572A5"
 
+      - type: go
+        style: diamond
+        trailing_diamond: ""
+        foreground: "#00ADD8"
+
       - type: rust
-        style: plain
+        style: diamond
+        trailing_diamond: ""
         foreground: "#dea584"
 
       - type: root
