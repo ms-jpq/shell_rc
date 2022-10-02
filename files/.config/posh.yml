@@ -40,19 +40,19 @@ blocks:
 
       - type: exit
         style: plain
-        template: "{{ if gt .Code 0 }}<red>\uf00d <b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</>{{ end }}"
+        template: "{{ if gt .Code 0 }}<red>\uf00d <b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</>{{ end }} "
         properties:
           always_enabled: True
 
       - type: session
         style: plain
-        template: " {{ if .SSHSession }}{{ .UserName }}@{{ .HostName }}{{ end }}"
+        template: "{{ if .SSHSession }}{{ .UserName }}@{{ .HostName }}{{ end }}"
         foreground: black
 
       - type: time
         style: plain
         foreground: darkGray
-        template: " <u>{{ .CurrentDate | date .Format }}</u>"
+        template: "<u>{{ .CurrentDate | date .Format }}</u>"
         properties:
           time_format: "15:04:05 MST"
 
@@ -83,11 +83,16 @@ blocks:
         style: plain
         foreground: "#dea584"
 
+      - type: root
+        style: plain
+        template: " !!"
+        foreground: lightRed
+
       - type: os
         style: plain
         foreground: darkGray
 
       - type: text
         style: plain
-        foreground: green
         template: "\u276E"
+        foreground: green
