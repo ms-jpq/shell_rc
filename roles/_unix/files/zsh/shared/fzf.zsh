@@ -48,8 +48,8 @@ _fzf_alt_c_command=(
   --type=symlink
   --type=directory
 )
-export FZF_ALT_C_COMMAND="${_fzf_alt_c_command[*]}"
-export FZF_ALT_C_OPTS="$_fzf_preview_opts --read0"
+FZF_ALT_C_COMMAND="${_fzf_alt_c_command[*]}"
+FZF_ALT_C_OPTS="$_fzf_preview_opts --read0"
 unset _fzf_alt_c_command
 
 _fzf_ctrl_t_command=(
@@ -59,8 +59,8 @@ _fzf_ctrl_t_command=(
   --print0
   --no-ignore
 )
-export FZF_CTRL_T_COMMAND="${_fzf_ctrl_t_command[*]}"
-export FZF_CTRL_T_OPTS="$_fzf_preview_opts --read0"
+FZF_CTRL_T_COMMAND="${_fzf_ctrl_t_command[*]}"
+FZF_CTRL_T_OPTS="$_fzf_preview_opts --read0"
 unset _fzf_preview_opts
 unset _fzf_ctrl_t_command
 
