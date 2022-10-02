@@ -1,0 +1,30 @@
+$Env:FZF_DEFAULT_OPTS = @(
+  '--reverse'
+  '--no-height'
+  '--border'
+  '--cycle'
+  '--tabstop=2'
+  '--preview-window=60%:wrap'
+  '--bind=ctrl-space:toggle'
+  '--bind=tab:down'
+  '--bind=btab:up'
+  '--bind=shift-down:toggle+down'
+  '--bind=shift-up:toggle+up'
+  '--bind=shift-left:preview-up'
+  '--bind=shift-right:preview-down'
+  '--bind=alt-a:select-all'
+  '--bind=alt-l:deselect-all'
+  '--color=light'
+  '--color=bg+:#dfdfdf'
+) | Join-String -Separator ' '
+
+
+$Env:FZF_DEFAULT_COMMAND=@(
+  'fd'
+  '--hidden'
+  '--follow'
+  '--type=file'
+  '--type=symlink'
+) | Join-String -Separator ' '
+
+$Env:FZF_TMUX_HEIGHT = '100%'
