@@ -50,7 +50,10 @@ zsh_main() {
     local rcs="$ZDOTDIR/$target"
     local fns="$rcs/fn"
 
-    fpath=("$fns" "${fpath[@]}")
+    if [[ -d "$fns" ]]
+    then
+      fpath=("$fns" "${fpath[@]}")
+    fi
 
     for fn in "$fns"/**/*
     do

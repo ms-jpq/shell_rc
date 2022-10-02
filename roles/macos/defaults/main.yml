@@ -5,10 +5,9 @@ target_files:
 
 target_templates: []
 
-# TODO -- re-enable when github CI gets M1
-# target_links:
-#   - src: "~/.local/bin/sh"
-#     dest: "/opt/homebrew/bin/dash"
+target_links:
+  - src: "~/.local/bin/sh"
+    dest: "{{ '/opt/homebrew' if ansible_architecture == 'arm64' else '/usr/local' }}/bin/dash"
 
 brew_packages:
   - aha
