@@ -33,7 +33,7 @@ function winrm {
 
 function ssh {
   Add-WindowsCapability -Online -Name 'OpenSSH.Server'
-  Set-Service -Name 'sshd' -StartupType 'Automatic'  -Status 'Running'
+  Set-Service -Name 'sshd' -StartupType 'Automatic' -Status 'Running'
 
   $WIN_ADMIN = if (!(Test-Path variable:global:IsWindows) -Or $IsWindows) {
     $C_USER = [System.Security.Principal.WindowsIdentity]::GetCurrent()

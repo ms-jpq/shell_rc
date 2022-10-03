@@ -47,15 +47,28 @@ jobs:
       - name: Build
         run: ansible-playbook local.macos.yml -e all=true
 
-  # windows:
-  #   runs-on: windows-latest
+  windows:
+    runs-on: windows-latest
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Install Ansible
-  #       run: pip install -- ansible
+      - name: Enable SSHd
+        run: |-
+          Add-WindowsCapability -Online -Name 'OpenSSH.Server'
+          Set-Service -Name 'sshd' -Status 'Running'
 
-  #     - name: Build
-  #       run: ansible-playbook local.windows.yml -e all=true
+      - name: Install Ansible
+        run: |-
+          $pacman Join-Path $Env:SystemDrive 'msys64' 'usr' 'bin' 'pacman.exe'
+          $pacman --sync --needed --noconfirm -- 'ansible'
+
+      - name: Build
+        run: |-
+          $inventory = @"
+          [localwindows]
+          administrator@127.0.0.1
+          "@
+          $inventory | Out-File 'inventory.ni'
+          ansible-playbook local.windows.yml -e all=true
