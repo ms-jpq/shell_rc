@@ -12,7 +12,7 @@
   when: not __git_repos.results[index].stat.exists
   ansible.windows.win_command:
     argv:
-      - git.exe
+      - "{{ ansible_env.SystemDrive ~ '/msys64/usr/bin/git.exe' }}"
       - clone
       - --recurse-submodules
       - --depth=1
@@ -29,7 +29,7 @@
   ansible.windows.win_command:
     chdir: "{{ item.dest }}"
     argv:
-      - git.exe
+      - "{{ ansible_env.SystemDrive ~ '/msys64/usr/bin/git.exe' }}"
       - pull
       - --recurse-submodules
       - --no-tags
