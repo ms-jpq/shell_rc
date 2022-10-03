@@ -54,23 +54,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Enable SSHd
+      - name: Pacman
         run: |-
-          gci env:
-          Add-WindowsCapability -Name 'OpenSSH.Server'
-          Set-Service -Name 'sshd' -Status 'Running'
+          $Env:Path = @(
+            Join-Path $Env:SystemDrive 'msys64' 'usr' 'bin'
+            $Env:Path
+          ) | Join-String -Separator ';'
+          pacman.exe --sync --needed --noconfirm -- 'ansible' 'openssh'
+          ssh-keygen.exe -A
+          $ssh_conf_home = Join-Path $Env:USERPROFILE '.ssh'
+          New-Item -Itemtype Directory $ssh_conf_home
+          ssh-keygen.exe -f (Join-Path $ssh_conf_home 'id_rsa') -t rsa -N '""'
+          Copy-Item (Join-Path $ssh_conf_home 'id_rsa.pub') (Join-Path $ssh_conf_home 'authorized_keys')
 
-  #     - name: Install Ansible
-  #       run: |-
-  #         $pacman Join-Path $Env:SystemDrive 'msys64' 'usr' 'bin' 'pacman.exe'
-  #         $pacman --sync --needed --noconfirm -- 'ansible'
-  #         Get-ChildItem env:
+          $inventory = "[localwindows]`n$Env:USERNAME@localhost"
+          $inventory | Out-File 'inventory.ni'
 
-  #     - name: Build
-  #       run: |-
-  #         $inventory = @"
-  #         [localwindows]
-  #         administrator@127.0.0.1
-  #         "@
-  #         $inventory | Out-File 'inventory.ni'
-  #         ansible-playbook local.windows.yml -e all=true
+      - name: Build
+        run: |-
+          $Env:Path = @(
+            Join-Path $Env:SystemDrive 'msys64' 'usr' 'bin'
+            $Env:Path
+          ) | Join-String -Separator ';'
+          sshd.exe
+          # ssh.exe $Env:USERNAME@localhost
+
+          # ansible-playbook local.windows.yml -e all=true
