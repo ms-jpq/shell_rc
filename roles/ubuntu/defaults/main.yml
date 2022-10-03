@@ -47,11 +47,10 @@ apt_packages:
   - libaa-bin #aafire
   - locales
   - man
-  - man2html
+  - man2html-base
   - moreutils
   - mosh
   - ncdu
-  - neofetch
   - neovim
   - nmap
   - nyancat
