@@ -1,2 +1,5 @@
+assoc .env=EnvFile
+ftype EnvFile=cat.exe -- "%1" %*
+
 assoc .awk=Awk.File
-ftype Awk.File="%ProgramFiles%\Git\usr\bin\awk.exe" --file "%1" %*
+ftype Awk.File=awk.exe --file "%1" %*
