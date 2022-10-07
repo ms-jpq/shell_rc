@@ -76,7 +76,7 @@ jobs:
             Join-Path $Env:SystemDrive 'msys64' 'usr' 'bin'
             $Env:Path
           ) | Join-String -Separator ';'
-          sshd.exe
+          # sshd.exe
           # ssh.exe $Env:USERNAME@localhost
 
           # ansible-playbook local.windows.yml -e all=true
