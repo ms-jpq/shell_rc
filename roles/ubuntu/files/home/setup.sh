@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eux
+set -Eeux
 set -o pipefail
 shopt -s nullglob globstar
 
