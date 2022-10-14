@@ -16,7 +16,7 @@ blocks:
     segments:
       - type: path
         style: plain
-        template: "\ue5ff {{ .Parent }}<lightBlue>{{ if eq .Location .Env.HOME }}~{{ else }}{{ .Folder }}{{ end }}</>"
+        template: "\ue5ff <lightBlue>{{ .Parent }}</>{{ if or (eq .Location .Env.HOME) (eq .Location \"~\") }}~{{ else }}{{ .Folder }}{{ end }}"
         foreground: blue
         properties:
           style: agnoster_full
