@@ -155,17 +155,17 @@ case "$ACTION" in
     ;;
   add)
     check_arg
-    target="$(p_relative "$2")"
+    target="$(realpath -- "$2")"
     add "$target" "$SILENT"
     ;;
   rm|remove)
     check_arg
-    target="$(p_relative "$2")"
+    target="$(realpath -- "$2")"
     remove "$target" "$SILENT"
     ;;
   toggle)
     check_arg
-    target="$(p_relative "$2")"
+    target="$(realpath -- "$2")"
     toggle "$target" "$SILENT"
     ;;
   *)
