@@ -35,6 +35,7 @@ brew_packages:
   - glib-openssl
   - gnu-getopt
   - gnu-sed
+  - gnu-tar
   - gnu-which
   - gnupg
   - grep
