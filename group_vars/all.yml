@@ -10,6 +10,7 @@ _exec_bin_: "{{ (_xdg_data_home_ | win_dirname) if ansible_facts.os_family == 'W
 _xdg_cache_home_: "{{ ansible_env.TMP if ansible_facts.os_family == 'Windows' else ansible_facts.env.HOME ~ '/.cache' }}"
 
 _git_: "{{ git | default(False) | bool }}"
+_nvim_: "{{ nvim | default(False) | bool }}"
 _all_: "{{ all | default(False) | bool }}"
 
 locale: zh_CN

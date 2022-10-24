@@ -68,3 +68,7 @@ git_conf:
 target_lines:
   - file: "~/.ssh/config"
     line: "Include ~/.config/ssh/*.conf"
+
+target_commands:
+  - - "{{ _xdg_conf_home_ }}/nvim/init.py"
+    - "deps"

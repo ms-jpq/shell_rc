@@ -1,0 +1,5 @@
+---
+- name: target commands
+  loop: "{{ target_commands }}"
+  ansible.builtin.command:
+    argv: "{{ item }}"
