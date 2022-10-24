@@ -17,3 +17,6 @@
 - import_tasks: lineinfile.yml
 
 - import_tasks: link.yml
+
+- import_tasks: command.yml
+  when: _nvim_
