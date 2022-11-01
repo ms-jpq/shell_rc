@@ -12,6 +12,7 @@ target_links:
 brew_packages:
   - aha
   - asciiquarium
+  - autossh
   - awk
   - bandwhich
   - bash

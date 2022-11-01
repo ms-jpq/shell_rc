@@ -24,6 +24,7 @@ apt_repos:
 apt_packages:
   - 7zip
   - aha
+  - autossh
   - avahi-daemon
   - bat
   - bb
