@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
-export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+set -Eeu
+set -o pipefail
+shopt -s globstar nullglob
 
-PATH="$PWD/.venv/bin:$PATH"
 
-ansible-playbook "$@"
+cd "$(dirname -- "$0")" || exit 1
+
+export PATH="$PWD/.venv/bin:$PATH"
+
+exec -- ansible-playbook "$@"
