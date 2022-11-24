@@ -17,6 +17,6 @@ z() {
   else
     local C=
     C="$(fp -1 +s --tac <<< "$B")"
-    cd "$C" || return 1
+    cd -- "$C" || return 1
   fi
 }
