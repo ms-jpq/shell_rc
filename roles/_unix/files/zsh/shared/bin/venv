@@ -8,7 +8,6 @@ shopt -s nullglob globstar
 VIRTUAL_ENV="${VIRTUAL_ENV:-""}"
 
 export DEFAULT_VENV_PATH="${DEFAULT_VENV_PATH:-"${2:-"$PWD/.venv"}"}"
-REQUIREMENTS="$PWD/requirements.txt"
 
 PY_EXE="$DEFAULT_VENV_PATH/bin/python3"
 ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
@@ -16,6 +15,39 @@ ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
 
 OP="$1"
 shift
+
+read -r -d '' PYPROJ <<-'PYTHON' || true
+from itertools import chain
+from pathlib import Path
+from subprocess import check_call
+from sys import executable
+from typing import Union
+
+py_project = Path("pyproject.toml")
+requirements = Path("requirements.txt")
+
+
+def pip(*argv: Union[str, Path]) -> None:
+    check_call(
+        (executable, "-m", "pip", "install", "--upgrade", "--require-virtualenv", *argv)
+    )
+
+if py_project.is_file():
+    try:
+        from toml import load
+    except ImportError:
+        pass
+    else:
+        if (toml := load(py_project)) and (project := toml.get("project")):
+            pip(
+                "--",
+                *project.get("dependencies", ()),
+                *chain.from_iterable(project.get("optional-dependencies", {}).values()),
+            )
+
+if requirements.is_file():
+    pip("--requirement", requirements)
+PYTHON
 
 
 case "$OP" in
@@ -25,10 +57,7 @@ init)
     >&2 printf '%s\n' "Virtualenv already initialized"
   else
     >&2 python3 -m venv "$DEFAULT_VENV_PATH"
-    if [[ -f "$REQUIREMENTS" ]]
-    then
-      >&2 "$PY_EXE" -m pip install --requirement "$REQUIREMENTS"
-    fi
+    >&2 "$PY_EXE" <<< "$PYPROJ"
     >&2 printf '%s\n' "Initialized Virtualenv"
     venv on
   fi
