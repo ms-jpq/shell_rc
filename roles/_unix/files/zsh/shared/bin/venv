@@ -25,6 +25,8 @@ from typing import Union
 
 from tomllib import load
 
+pyproject = Path("pyproject.toml")
+
 
 def pip(*argv: Union[str, Path]) -> None:
     check_call(
@@ -32,8 +34,11 @@ def pip(*argv: Union[str, Path]) -> None:
     )
 
 
-with Path("pyproject.toml").open("rb") as fd:
-    if (toml := load(fd)) and (project := toml.get("project")):
+if pyproject.is_file():
+    with pyproject.open("rb") as fd:
+        toml = load(fd)
+
+    if project := toml.get("project"):
         deps = tuple(
             chain(
                 project.get("dependencies", ()),
