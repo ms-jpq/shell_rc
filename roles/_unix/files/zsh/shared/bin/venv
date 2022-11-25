@@ -25,9 +25,6 @@ from typing import Union
 
 from tomllib import load
 
-py_project = Path("pyproject.toml")
-requirements = Path("requirements.txt")
-
 
 def pip(*argv: Union[str, Path]) -> None:
     check_call(
@@ -35,22 +32,19 @@ def pip(*argv: Union[str, Path]) -> None:
     )
 
 
-if py_project.is_file():
-    with py_project.open("rb") as fd:
-        if (toml := load(fd)) and (project := toml.get("project")):
-            deps = tuple(
-                chain(
-                    project.get("dependencies", ()),
-                    chain.from_iterable(
-                        project.get("optional-dependencies", {}).values()
-                    ),
-                )
+with Path("pyproject.toml").open("rb") as fd:
+    if (toml := load(fd)) and (project := toml.get("project")):
+        deps = tuple(
+            chain(
+                project.get("dependencies", ()),
+                chain.from_iterable(project.get("optional-dependencies", {}).values()),
             )
-            if deps:
-                pip("--", *deps)
+        )
+        if deps:
+            pip("--", *deps)
 
-if requirements.is_file():
-    pip("--requirement", requirements)
+for path in Path.cwd().glob("requirements*.txt"):
+    pip("--requirement", path)
 PYTHON
 
 
