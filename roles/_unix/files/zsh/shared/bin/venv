@@ -23,7 +23,7 @@ from subprocess import check_call
 from sys import executable
 from typing import Union
 
-from toml import load
+from tomllib import load
 
 py_project = Path("pyproject.toml")
 requirements = Path("requirements.txt")
@@ -36,15 +36,18 @@ def pip(*argv: Union[str, Path]) -> None:
 
 
 if py_project.is_file():
-    if (toml := load(py_project)) and (project := toml.get("project")):
-        deps = tuple(
-            chain(
-                project.get("dependencies", ()),
-                chain.from_iterable(project.get("optional-dependencies", {}).values()),
+    with py_project.open("rb") as fd:
+        if (toml := load(fd)) and (project := toml.get("project")):
+            deps = tuple(
+                chain(
+                    project.get("dependencies", ()),
+                    chain.from_iterable(
+                        project.get("optional-dependencies", {}).values()
+                    ),
+                )
             )
-        )
-        if deps:
-            pip("--", *deps)
+            if deps:
+                pip("--", *deps)
 
 if requirements.is_file():
     pip("--requirement", requirements)
@@ -58,7 +61,6 @@ init)
     >&2 printf '%s\n' "Virtualenv already initialized"
   else
     >&2 python3 -m venv "$DEFAULT_VENV_PATH"
-    >&2 "$PY_EXE" -m pip install -- toml
     >&2 "$PY_EXE" <<< "$PYPROJ"
     >&2 printf '%s\n' "Initialized Virtualenv"
     venv on
