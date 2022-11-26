@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+#!/usr/bin/env powershell
 
 Set-StrictMode -Version 'Latest'
 $ErrorActionPreference = 'Stop'
@@ -83,10 +83,9 @@ function rdp {
 
 
 basic
-ssh
 rdp
-
-
-Remove-Item -Path Function:basic Function:winrm Function:ssh Function:rdp
+ssh
 
 Write-Output '--> DONE'
+
+# Remove-Item -Path Function:basic Function:winrm Function:ssh Function:rdp
