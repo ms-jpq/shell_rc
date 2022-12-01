@@ -9,43 +9,45 @@ on:
     - cron: "0 0 * * *" # daily
 
 jobs:
-  docker:
-    runs-on: ubuntu-latest
+  # docker:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Build Base
-        uses: docker/build-push-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{ secrets.DOCKER_USERNAME }}/cli
-          tags: base
-          dockerfile: "docker/base/Dockerfile"
+  #     - name: Build Base
+  #       uses: docker/build-push-action@v1
+  #       with:
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_PASSWORD }}
+  #         repository: ${{ secrets.DOCKER_USERNAME }}/cli
+  #         tags: base
+  #         dockerfile: "docker/base/Dockerfile"
 
-      - name: Build Full
-        uses: docker/build-push-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{ secrets.DOCKER_USERNAME }}/cli
-          tags: full
-          dockerfile: "docker/full/Dockerfile"
+  #     - name: Build Full
+  #       uses: docker/build-push-action@v1
+  #       with:
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_PASSWORD }}
+  #         repository: ${{ secrets.DOCKER_USERNAME }}/cli
+  #         tags: full
+  #         dockerfile: "docker/full/Dockerfile"
 
-  macos:
-    runs-on: macos-latest
+  # macos:
+  #   runs-on: macos-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Install Ansible
-        run: brew install -- ansible
+  #     - name: Install Ansible
+  #       run: |-
+  #         pip3 install -- ansible
 
-      - name: Build
-        run: ansible-playbook local.macos.yml -e all=true
+  #     - name: Build
+  #       run: |-
+  #         ansible-playbook local.macos.yml -e all=true
 
   windows:
     runs-on: windows-latest
@@ -54,29 +56,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Pacman
-        run: |-
-          $Env:Path = @(
-            Join-Path $Env:SystemDrive 'msys64' 'usr' 'bin'
-            $Env:Path
-          ) | Join-String -Separator ';'
-          pacman.exe --sync --needed --noconfirm -- 'ansible' 'openssh'
-          ssh-keygen.exe -A
-          $ssh_conf_home = Join-Path $Env:USERPROFILE '.ssh'
-          New-Item -Itemtype Directory $ssh_conf_home
-          ssh-keygen.exe -f (Join-Path $ssh_conf_home 'id_rsa') -t rsa -N '""'
-          Copy-Item (Join-Path $ssh_conf_home 'id_rsa.pub') (Join-Path $ssh_conf_home 'authorized_keys')
+      - name: Install Msys2
+        uses: msys2/setup-msys2@v2
 
-          $inventory = "[localwindows]`n$Env:USERNAME@localhost"
-          $inventory | Out-File 'inventory.ni'
+      - name: Install Ansible
+        run: |-
+          C:\\msys64\usr\bin\pacman.exe --sync --needed --noconfirm -- ansible
 
       - name: Build
+        shell: msys2 ${0}
         run: |-
-          $Env:Path = @(
-            Join-Path $Env:SystemDrive 'msys64' 'usr' 'bin'
-            $Env:Path
-          ) | Join-String -Separator ';'
-          # sshd.exe
-          # ssh.exe $Env:USERNAME@localhost
-
-          # ansible-playbook local.windows.yml -e all=true
+          ansible-playbook local.windows.yml -e all=true
