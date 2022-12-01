@@ -9,45 +9,45 @@ on:
     - cron: "0 0 * * *" # daily
 
 jobs:
-  # docker:
-  #   runs-on: ubuntu-latest
+  docker:
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Build Base
-  #       uses: docker/build-push-action@v1
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
-  #         repository: ${{ secrets.DOCKER_USERNAME }}/cli
-  #         tags: base
-  #         dockerfile: "docker/base/Dockerfile"
+      - name: Build Base
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ secrets.DOCKER_USERNAME }}/cli
+          tags: base
+          dockerfile: "docker/base/Dockerfile"
 
-  #     - name: Build Full
-  #       uses: docker/build-push-action@v1
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
-  #         repository: ${{ secrets.DOCKER_USERNAME }}/cli
-  #         tags: full
-  #         dockerfile: "docker/full/Dockerfile"
+      - name: Build Full
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ secrets.DOCKER_USERNAME }}/cli
+          tags: full
+          dockerfile: "docker/full/Dockerfile"
 
-  # macos:
-  #   runs-on: macos-latest
+  macos:
+    runs-on: macos-latest
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Install Ansible
-  #       run: |-
-  #         pip3 install -- ansible
+      - name: Install Ansible
+        run: |-
+          pip3 install -- ansible
 
-  #     - name: Build
-  #       run: |-
-  #         ansible-playbook local.macos.yml -e all=true
+      - name: Build
+        run: |-
+          ansible-playbook local.macos.yml -e all=true
 
   windows:
     runs-on: windows-latest
@@ -59,11 +59,16 @@ jobs:
       - name: Install Msys2
         uses: msys2/setup-msys2@v2
 
-      - name: Install Ansible
+      - name: Install Pip
         run: |-
-          C:\\msys64\usr\bin\pacman.exe --sync --needed --noconfirm -- ansible
+          C:\\msys64\usr\bin\pacman.exe --sync --needed --noconfirm -- python3-pip gcc libffi
 
-      - name: Build
-        shell: msys2 ${0}
-        run: |-
-          ansible-playbook local.windows.yml -e all=true
+      # - name: Install Ansible
+      #   shell: msys2 ${0}
+      #   run: |-
+      #     PATH="/ucrt64/bin:$PATH" pip3 install -- ansible
+
+      # - name: Build
+      #   shell: msys2 ${0}
+      #   run: |-
+      #     ansible-playbook local.windows.yml -e all=true
