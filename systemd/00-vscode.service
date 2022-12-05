@@ -1,0 +1,12 @@
+# apt install --yes -- libsecret-1-0
+
+[Unit]
+Description=VsCode Server
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=code-server --accept-server-license-terms --disable-telemetry serve-local --host :: --port 80 --without-connection-token
+
+[Install]
+WantedBy=default.target
