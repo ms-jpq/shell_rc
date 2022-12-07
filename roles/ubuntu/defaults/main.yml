@@ -37,7 +37,7 @@ apt_packages:
   - exa
   - fd-find
   - figlet
-  - fzf
+  # - fzf
   - grep
   - hyperfine
   - iftop

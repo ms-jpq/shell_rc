@@ -3,10 +3,10 @@
 
 - import_tasks: win_mkdir.yml
 
-- import_tasks: win_sync.yml
-
 - import_tasks: winget.yml
   when: _all_
+
+- import_tasks: win_sync.yml
 
 - import_tasks: win_pacman.yml
   when: _all_
@@ -14,7 +14,7 @@
 - import_tasks: win_git.yml
   when: _git_ or _all_
 
-# - import_tasks: win_template.yml
+- import_tasks: win_template.yml
 
 - import_tasks: win_download.yml
   when: _all_
