@@ -18,6 +18,7 @@ brew_packages:
   - bash
   - bat
   - bind
+  - btop
   - cmatrix
   - coreutils
   - cowsay
