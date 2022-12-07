@@ -28,6 +28,7 @@ apt_packages:
   - avahi-daemon
   - bat
   - bb
+  - btop
   - cmatrix
   - cowsay
   - curl
@@ -38,7 +39,6 @@ apt_packages:
   - figlet
   - fzf
   - grep
-  - htop
   - hyperfine
   - iftop
   - iotop
