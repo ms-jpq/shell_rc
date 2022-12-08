@@ -70,5 +70,5 @@ target_lines:
     line: "Include ~/.config/ssh/*.conf"
 
 target_commands:
-  - - "{{ _xdg_conf_home_ }}/nvim/init.py"
+  - - "{{ _xdg_conf_home_ }}/nvim/install.sh"
     - "deps"
