@@ -12,5 +12,5 @@ source "$ZDOTDIR/../zsh-autosuggestions/zsh-autosuggestions.zsh"
 # INIT #
 
 
-bindkey '^ ' autosuggest-accept
-bindkey '^[ ' autosuggest-accept
+bindkey '^f' autosuggest-accept
+bindkey '^[f' autosuggest-accept
