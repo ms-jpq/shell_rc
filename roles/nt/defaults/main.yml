@@ -29,6 +29,7 @@ winget_packages:
 
 msys2_packages:
   - git
+  - mingw-w64-ucrt-x86_64-clang
   # - mingw-w64-ucrt-x86_64-universal-ctags-git
   # - tmux
 
