@@ -22,6 +22,7 @@ apt_repos:
   - "ppa:neovim-ppa/unstable"
 
 apt_packages:
+  # - fzf
   - 7zip
   - aha
   - autossh
@@ -37,7 +38,6 @@ apt_packages:
   - exa
   - fd-find
   - figlet
-  # - fzf
   - grep
   - hyperfine
   - iftop
@@ -59,6 +59,7 @@ apt_packages:
   - psmisc
   - pv
   - python3-venv
+  - rdisc6
   - ripgrep
   - rlwrap
   - rsync
