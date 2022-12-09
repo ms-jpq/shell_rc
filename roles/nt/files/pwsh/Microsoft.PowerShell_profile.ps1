@@ -2,6 +2,9 @@ Set-StrictMode -Version 'Latest'
 
 
 function main {
+  #$Env:MSYS = 'winsymlinks:nativestrict'
+  $Env:MSYSTEM = 'MSYS'
+
   $pwsh_targets = @(
     'apriori'
     'shared'
@@ -31,8 +34,9 @@ function main {
 
   $new_paths.AddRange(@(
     Join-Path (Split-path $Env:APPDATA) 'bin'
-    Join-Path $Env:ProgramFiles 'Git' 'usr' 'bin'
     $Env:Path
+    Join-Path $Env:SystemDrive 'msys64' 'ucrt64' 'bin'
+    Join-Path $Env:SystemDrive 'msys64' 'usr' 'bin'
   ))
   $new_mods.Add($Env:PSModulePath)
 
