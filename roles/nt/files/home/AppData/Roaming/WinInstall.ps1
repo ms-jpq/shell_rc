@@ -8,6 +8,6 @@ foreach ($pkg in $args) {
   if ($?) {
     winget upgrade --id $pkg
   } else {
-    winget install --id $pkg
+    winget install --accept-package-agreements --accept-source-agreements --id $pkg
   }
 }
