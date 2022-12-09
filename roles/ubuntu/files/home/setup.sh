@@ -91,7 +91,7 @@ asdf-install --global -- ruby
 
 JPLUGIN='java'
 HAS_JPLUGIN=0
-while read -r line
+while read -r -- line
 do
   if [[ "$line" = "$JPLUGIN" ]]
   then

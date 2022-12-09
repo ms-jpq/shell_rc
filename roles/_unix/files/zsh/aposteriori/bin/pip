@@ -74,7 +74,7 @@ else
   >&2 printf '%s\n' "${EXECUTE[*]}"
   >&2 hr '-' "$COLS"
 
-  read -r -p 'Continue (y/n)?' CONT
+  read -r -p 'Continue (y/n)?' -- CONT
   case "$CONT" in
     1|y|Y)
       exec "${EXECUTE[@]}"
