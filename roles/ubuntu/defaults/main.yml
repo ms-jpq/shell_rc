@@ -52,6 +52,7 @@ apt_packages:
   - moreutils
   - mosh
   - ncdu
+  - ndisc6
   - neovim
   - nmap
   - nyancat
@@ -59,7 +60,6 @@ apt_packages:
   - psmisc
   - pv
   - python3-venv
-  - rdisc6
   - ripgrep
   - rlwrap
   - rsync
