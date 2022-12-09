@@ -10,7 +10,7 @@ $Env:LESS = @(
   '--ignore-case'
   '--no-histdups'
 ) | Join-String -Separator ' '
-$Env:LESSHISTFILE = Join-Path $Env:TMP 'less-hist'
+$Env:LESSHISTFILE = Join-Path -- $Env:TMP 'less-hist'
 
 $Env:TIME_STYLE = 'long-iso'
 $Env:EDITOR = 'nvim'

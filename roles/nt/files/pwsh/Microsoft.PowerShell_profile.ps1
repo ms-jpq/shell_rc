@@ -15,11 +15,11 @@ function main {
   $new_mods = [Collections.ArrayList]@()
 
   foreach ($target in $pwsh_targets) {
-    $rcs = Join-Path (Split-Path $PROFILE) 'rc.d' $target
-    $fns = Join-Path $rcs 'fn'
-    $rc_bin = Join-Path $rcs 'bin'
+    $rcs = Join-Path -- (Split-Path $PROFILE) 'rc.d' $target
+    $fns = Join-Path -- $rcs 'fn'
+    $rc_bin = Join-Path -- $rcs 'bin'
 
-    if (Test-Path -PathType Container $fns) {
+    if (Test-Path -PathType 'Container' $fns) {
       $new_mods.Add($fns)
     }
 
@@ -33,10 +33,10 @@ function main {
   }
 
   $new_paths.AddRange(@(
-    Join-Path (Split-path $Env:APPDATA) 'bin'
+    Join-Path -- (Split-path -- $Env:APPDATA) 'bin'
     $Env:Path
-    Join-Path $Env:SystemDrive 'msys64' 'ucrt64' 'bin'
-    Join-Path $Env:SystemDrive 'msys64' 'usr' 'bin'
+    Join-Path -- $Env:SystemDrive 'msys64' 'ucrt64' 'bin'
+    Join-Path -- $Env:SystemDrive 'msys64' 'usr' 'bin'
   ))
   $new_mods.Add($Env:PSModulePath)
 
