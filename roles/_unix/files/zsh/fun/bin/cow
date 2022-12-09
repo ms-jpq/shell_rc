@@ -8,7 +8,7 @@ shopt -s nullglob globstar
 COLS=$(tput cols)
 WRAP=$((COLS / 3))
 
-readarray -t -d ' ' COWS < <(cowsay -l | tail -n +2)
+readarray -t -d ' ' -- COWS < <(cowsay -l | tail -n +2)
 COW="${COWS[$((RANDOM % ${#COWS[@]}))]}"
 
 STYLES=(-b -d -g -p -s -t -w -y)

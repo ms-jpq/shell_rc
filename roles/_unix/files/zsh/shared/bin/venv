@@ -16,7 +16,7 @@ ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
 OP="$1"
 shift
 
-read -r -d '' PYPROJ <<-'PYTHON' || true
+read -r -d '' -- PYPROJ <<-'PYTHON' || true
 from itertools import chain
 from pathlib import Path
 from subprocess import check_call

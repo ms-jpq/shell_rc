@@ -4,7 +4,7 @@ set -u
 set -o pipefail
 
 
-read -r -d '' AWK <<'EOF'
+read -r -d '' -- AWK <<'EOF'
 BEGIN { 
   printf("\x1BPtmux;")
 }

@@ -44,7 +44,7 @@ then
 fi
 
 
-readarray -t PLUGINS < <(asdf plugin list)
+readarray -t -- PLUGINS < <(asdf plugin list)
 
 
 PLUGIN_INSTALLED=0
@@ -66,7 +66,7 @@ else
 fi
 
 
-readarray -t INSTALLED < <(asdf list "$LANG")
+readarray -t -- INSTALLED < <(asdf list "$LANG")
 
 
 if [[ -z "$VERSION" ]]
