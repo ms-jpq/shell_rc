@@ -15,7 +15,6 @@ target_files:
 
 winget_packages:
   - 7zip.7zip
-  # - Git.Git
   - Insecure.Nmap
   - JanDeDobbeleer.OhMyPosh
   - Microsoft.PowerShell
