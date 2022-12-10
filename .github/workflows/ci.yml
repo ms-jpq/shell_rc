@@ -55,7 +55,7 @@ jobs:
 
       - name: Build
         run: |-
-          ansible-playbook '${{ matrix.env.playbook }}' -e all=true
+          sudo ansible-playbook '${{ matrix.env.playbook }}' -e all=true
 
   windows:
     runs-on: windows-latest
