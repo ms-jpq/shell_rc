@@ -6,6 +6,6 @@
         that: ansible_distribution == 'MacOSX'
 
     - import_role:
-        name: _unix
+        name: unix
     - import_role:
         name: macos
