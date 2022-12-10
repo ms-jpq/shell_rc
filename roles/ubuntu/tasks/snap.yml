@@ -1,10 +1,12 @@
 ---
 - name: install classic snaps
+  become: true
   community.general.snap:
     name: "{{ snap_packages.classic | default([]) }}"
     classic: True
 
 - name: install snaps
+  become: true
   community.general.snap:
     name: "{{ snap_packages.new | default([]) }}"
     classic: True
