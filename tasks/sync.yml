@@ -1,5 +1,6 @@
 ---
 - name: sync files
+  become: "{{ ansible_facts.system == 'Linux' }}"
   loop: "{{ target_files }}"
   ansible.posix.synchronize:
     archive: False
