@@ -34,16 +34,16 @@ jobs:
           tags: full
           dockerfile: "docker/full/Dockerfile"
 
-  # ubuntu:
-  #   runs-on: ubuntu-latest
+  ubuntu:
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Install Ansible
-  #       run: |-
-  #         pip3 install -- ansible
+      - name: Install Ansible
+        run: |-
+          pip3 install -- ansible
 
   #     - name: Build
   #       run: |-
