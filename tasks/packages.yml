@@ -1,5 +1,6 @@
 ---
 - name: "install common packages {{ packages }}"
+  become: "{{ ansible_facts.system == 'Linux' }}"
   ansible.builtin.package:
     name: "{{ packages }}"
     state: present
