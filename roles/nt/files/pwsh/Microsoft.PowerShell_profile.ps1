@@ -14,8 +14,9 @@ function main {
   $new_paths = [Collections.ArrayList]@()
   $new_mods = [Collections.ArrayList]@()
 
+  $profile = Split-Path -- $PROFILE
   foreach ($target in $pwsh_targets) {
-    $rcs = Join-Path -- (Split-Path $PROFILE) 'rc.d' $target
+    $rcs = Join-Path -- $profile 'rc.d' $target
     $fns = Join-Path -- $rcs 'fn'
     $rc_bin = Join-Path -- $rcs 'bin'
 
