@@ -59,6 +59,9 @@ jobs:
       - name: Install Msys2
         uses: msys2/setup-msys2@v2
 
+      - name: Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Ensure openssh
         run: |-
           C:\\msys64\usr\bin\pacman.exe --sync --needed --noconfirm -- openssh
