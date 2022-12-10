@@ -59,16 +59,12 @@ jobs:
       - name: Install Msys2
         uses: msys2/setup-msys2@v2
 
-      - name: Install Pip
+
+      - name: Ensure openssh
         run: |-
-          C:\\msys64\usr\bin\pacman.exe --sync --needed --noconfirm -- python3-pip gcc libffi
+          C:\\msys64\usr\bin\pacman.exe --sync --needed --noconfirm -- openssh
 
-      # - name: Install Ansible
-      #   shell: msys2 ${0}
-      #   run: |-
-      #     PATH="/ucrt64/bin:$PATH" pip3 install -- ansible
+      - name: Run Ansible
+        run: |-
+          ./docker/nt/build.sh
 
-      # - name: Build
-      #   shell: msys2 ${0}
-      #   run: |-
-      #     ansible-playbook local.windows.yml -e all=true
