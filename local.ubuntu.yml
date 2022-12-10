@@ -6,7 +6,8 @@
     - assert:
         that: ansible_distribution == 'Ubuntu'
 
-    - import_role:
+    - become: true
+      import_role:
         name: unix
     - import_role:
         name: ubuntu
