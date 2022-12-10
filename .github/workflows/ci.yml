@@ -63,7 +63,7 @@ jobs:
         run: |-
           C:\\msys64\usr\bin\pacman.exe --sync --needed --noconfirm -- openssh
 
-      - name: Run Ansible
-        shell: bash
-        run: |-
-          ./docker/nt/build.sh
+      # - name: Run Ansible
+      #   shell: bash
+      #   run: |-
+      #     ./docker/nt/build.sh
