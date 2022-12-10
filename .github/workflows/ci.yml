@@ -34,16 +34,8 @@ jobs:
           tags: full
           dockerfile: "docker/full/Dockerfile"
 
-  unix:
-    strategy:
-      matrix:
-        env:
-          - os: ubuntu-latest
-            playbook: local.ubuntu.yml
-          - os: macos-latest
-            playbook: local.macos.yml
-
-    runs-on: ${{ matrix.env.os }}
+  ubuntu:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -55,7 +47,24 @@ jobs:
 
       - name: Build
         run: |-
-          ansible-playbook '${{ matrix.env.playbook }}' -e all=true
+          vic=victim
+          sudo -- useradd --user-group --create-home -- "$vic"
+          ansible-playbook ./local.ubuntu.yml -e all=true --user "$vic"
+
+  macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Ansible
+        run: |-
+          pip3 install -- ansible
+
+      - name: Build
+        run: |-
+          ansible-playbook ./local.macos.yml -e all=true
 
   windows:
     runs-on: windows-latest
