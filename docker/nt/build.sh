@@ -9,4 +9,4 @@ cd -- "$(dirname -- "$0")/../.." || exit 1
 
 TAG='windows-ansible'
 
-docker buildx build --file ./docker/nt/Dockerfile --tag "$TAG"
+docker buildx build --file ./docker/nt/Dockerfile --tag "$TAG" -- .
