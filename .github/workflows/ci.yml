@@ -34,22 +34,22 @@ jobs:
           tags: full
           dockerfile: "docker/full/Dockerfile"
 
-  ubuntu:
-    runs-on: ubuntu-latest
+  # ubuntu:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Install Ansible
-        run: |-
-          pip3 install -- ansible
+  #     - name: Install Ansible
+  #       run: |-
+  #         pip3 install -- ansible
 
-      - name: Build
-        run: |-
-          vic=victim
-          sudo -- useradd --user-group --create-home -- "$vic"
-          ansible-playbook ./local.ubuntu.yml -e all=true --user "$vic"
+  #     - name: Build
+  #       run: |-
+  #         vic=victim
+  #         sudo -- useradd --user-group --create-home --base-dir "$PWD" -- "$vic"
+  #         ansible-playbook ./local.ubuntu.yml -e all=true --user "$vic"
 
   macos:
     runs-on: macos-latest
