@@ -1,14 +1,4 @@
 ---
-target_files:
-  - src: "home/"
-    dest: "~/"
-
-target_templates: []
-
-target_links:
-  - src: "~/.local/bin/sh"
-    dest: "{{ '/opt/homebrew' if ansible_architecture == 'arm64' else '/usr/local' }}/bin/dash"
-
 brew_packages:
   - aha
   - asciiquarium
@@ -82,5 +72,15 @@ brew_packages:
   - watchexec
   - wget
   - xsv
+
+target_files:
+  - src: "home/"
+    dest: "~/"
+
+target_templates: []
+
+target_links:
+  - src: "~/.local/bin/sh"
+    dest: "{{ '/opt/homebrew' if ansible_architecture == 'arm64' else '/usr/local' }}/bin/dash"
 
 target_archives: []

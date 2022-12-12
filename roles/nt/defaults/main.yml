@@ -10,8 +10,6 @@ git_repos:
 target_files:
   - src: "home/"
     dest: "{{ ansible_facts.env.HOME }}/"
-  - src: "pwsh/"
-    dest: "{{ ansible_facts.env.HOME }}/Documents/PowerShell/"
 
 winget_packages:
   - 7zip.7zip

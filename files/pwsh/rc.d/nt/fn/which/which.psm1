@@ -1,3 +1,0 @@
-function which {
-  Get-Command "$@"
-}

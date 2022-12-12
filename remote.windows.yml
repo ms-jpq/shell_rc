@@ -8,4 +8,6 @@
         that: ansible_facts.os_family == 'Windows'
 
     - import_role:
+        name: posix
+    - import_role:
         name: nt
