@@ -1,0 +1,1 @@
+$Env:APPDATA = "$Env:XDG_CONFIG_HOME"
