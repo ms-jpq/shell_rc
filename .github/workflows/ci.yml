@@ -78,7 +78,7 @@ jobs:
 
       - name: Ensure openssh
         run: |-
-          C:\\msys64\usr\bin\pacman.exe --sync --needed --noconfirm -- openssh
+          C:\msys64\usr\bin\pacman.exe --sync --needed --noconfirm -- openssh
 
       # - name: Run Ansible
       #   shell: bash

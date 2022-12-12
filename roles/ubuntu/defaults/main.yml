@@ -106,10 +106,12 @@ target_archives:
 
 target_remote_copy:
   - src: "{{ build_tmp }}/dust-v0.8.3-{{ ansible_architecture }}-unknown-linux-gnu/dust"
-    dest: "{{ _exec_bin_ }}/dog"
+    dest: "{{ _exec_bin_ }}/dust"
   # - src: "{{ build_tmp }}/bin/dog"
   #   dest: "{{ _exec_bin_ }}/dog"
 
 target_mods:
   - src: "{{ _exec_bin_ }}/oh-my-posh"
+    mode: "+x"
+  - src: "{{ _exec_bin_ }}/dust"
     mode: "+x"
