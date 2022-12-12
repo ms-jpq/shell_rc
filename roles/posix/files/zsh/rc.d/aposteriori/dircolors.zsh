@@ -13,7 +13,7 @@ zsh_colours() {
     dircolors --bourne-shell -- "$XDG_CONFIG_HOME/zsh/dircolors-solarized/$colour" > "$colours"
   fi
 
-  source "$colours"
+  source -- "$colours"
 }
 
 zsh_colours 'dircolors.256dark'
