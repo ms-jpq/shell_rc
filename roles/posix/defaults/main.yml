@@ -1,0 +1,64 @@
+---
+_zsh_dir_: "{{ _xdg_conf_home_ }}/zsh"
+_pwsh_dir_: "{{ ansible_facts.env.HOME ~ '/Documents/PowerShell' if _is_win_ else _xdg_conf_home_ ~ '/powershell' }}"
+
+git_repos:
+  - src: "https://github.com/zsh-users/zsh-syntax-highlighting"
+    dest: "{{ _zsh_dir_ }}/zsh-syntax-highlighting"
+
+  - src: "https://github.com/zsh-users/zsh-autosuggestions"
+    dest: "{{ _zsh_dir_ }}/zsh-autosuggestions"
+
+  - src: "https://github.com/zsh-users/zsh-history-substring-search"
+    dest: "{{ _zsh_dir_ }}/zsh-history-substring-search"
+
+  - src: "https://github.com/junegunn/fzf"
+    dest: "{{ _zsh_dir_  }}/fzf"
+
+  - src: "https://github.com/Aloxaf/fzf-tab"
+    dest: "{{ _zsh_dir_ }}/fzf-tab"
+
+  - src: "https://github.com/rupa/z"
+    dest: "{{ _zsh_dir_ }}/z"
+
+  - src: "https://github.com/seebi/dircolors-solarized"
+    dest: "{{ _zsh_dir_ }}/dircolors-solarized"
+
+  - src: "https://github.com/asdf-vm/asdf"
+    dest: "{{ _xdg_data_home_ }}/asdf"
+  - src: "https://github.com/ms-jpq/tmux_rc"
+
+    dest: "{{ _xdg_conf_home_ }}/tmux"
+
+  - src: "https://github.com/ms-jpq/isomorphic-copy"
+    dest: "{{ _xdg_conf_home_ }}/isomorphic-copy"
+
+  - src: "https://github.com/ms-jpq/nvim_rc"
+    dest: "{{ _xdg_conf_home_ }}/nvim"
+
+target_files:
+  - src: "config/"
+    dest: "{{ _xdg_conf_home_ }}/"
+
+  - src: "zsh/rc.d/"
+    dest: "{{ _zsh_dir_ }}/rc.d"
+    delete: True
+
+  - src: "zsh/.zshenv"
+    dest: "{{ ansible_facts.env.HOME }}/.zshenv"
+
+  - src: "pwsh/"
+    dest: "{{ _pwsh_dir_ }}/"
+    delete: True
+
+target_templates:
+  - src: "templates/home/"
+    dest: "~/"
+
+target_touches:
+  - "~/.ssh/config"
+  - "{{ _xdg_conf_home_ }}/git/config"
+  - "{{ _xdg_cache_home_ }}/zz"
+
+target_commands:
+  - - "{{ _xdg_conf_home_ }}/nvim/install.sh"

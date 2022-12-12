@@ -5,5 +5,5 @@
 #################### ################ ####################
 
 # INTI #
-eval -- "$(oh-my-posh init zsh --config "$ZDOTDIR/posh.yml")"
+eval -- "$(oh-my-posh init zsh --config "$XDG_CONFIG_HOME/posh.yml")"
 # INIT #
