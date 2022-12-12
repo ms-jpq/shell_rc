@@ -96,5 +96,4 @@ target_remote_copy:
     dest: "{{ _exec_bin_ }}/dust.exe"
 
 target_commands:
-  - cmd.exe
-  - "{{ ansible_env.APPDATA ~ '/f-assoc.cmd' }}"
+  - - "{{ ansible_env.APPDATA ~ '/f-assoc.cmd' }}"
