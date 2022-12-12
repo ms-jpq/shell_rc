@@ -53,7 +53,7 @@ target_files:
 
 target_templates:
   - src: "templates/zsh/"
-    dest: "{{ _zsh_dir_ }}/rc.d"
+    dest: "{{ _zsh_dir_ }}/"
 
 target_touches:
   - "~/.ssh/config"
