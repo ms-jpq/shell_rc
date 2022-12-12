@@ -6,8 +6,8 @@
         that: ansible_distribution == 'Ubuntu'
 
     - import_role:
-        name: posix
-    - import_role:
         name: unix
+    - import_role:
+        name: posix
     - import_role:
         name: ubuntu
