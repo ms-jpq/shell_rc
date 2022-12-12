@@ -11,32 +11,34 @@ function main {
   ))
   if ($IsWindows) {
     $pwsh_targets.Add('nt')
+  } else {
+    $pwsh_targets.Add('unix')
   }
   $pwsh_targets.AddRange(@(
     'shared'
     'aposteriori'
   ))
 
-  $profile = Split-Path -- $PROFILE
+  $profile_home = Split-Path -- "$PROFILE"
   foreach ($target in $pwsh_targets) {
-    $rcs = Join-Path -- $profile 'rc.d' $target
-    $fns = Join-Path -- $rcs 'fn'
-    $rc_bin = Join-Path -- $rcs 'bin'
+    $rcs = Join-Path -- "$profile_home" 'rc.d' "$target"
+    $fns = Join-Path -- "$rcs" 'fn'
+    $rc_bin = Join-Path -- "$rcs" 'bin'
 
-    if (Test-Path -PathType 'Container' $fns) {
-      $new_mods.Add($fns)
+    if (Test-Path -PathType 'Container' -- "$fns") {
+      $new_mods.Add("$fns")
     }
 
-    foreach ($rc in @(Get-ChildItem -Path $rcs -Filter '*.ps1')) {
-      . $rc
+    foreach ($rc in @(Get-ChildItem -Path "$rcs" -Filter '*.ps1')) {
+      . "$rc"
     }
 
-    if (Test-Path -PathType Container $rc_bin) {
-      $new_paths.Add($rc_bin)
+    if (Test-Path -PathType Container -- "$rc_bin") {
+      $new_paths.Add("$rc_bin")
     }
   }
 
-  $new_mods.Add($Env:PSModulePath)
+  $new_mods.Add("$Env:PSModulePath")
 
   $Env:Path = $new_paths | Join-String -Separator ';'
   $Env:PSModulePath = $new_mods | Join-String -Separator ';'
