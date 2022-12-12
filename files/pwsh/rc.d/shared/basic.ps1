@@ -10,10 +10,8 @@ $Env:LESS = @(
   '--ignore-case'
   '--no-histdups'
 ) | Join-String -Separator ' '
-$Env:LESSHISTFILE = Join-Path -- $Env:TMP 'less-hist'
+$Env:LESSHISTFILE = Join-Path -- ($IsWindows ? $Env:TMP : $Env:XDG_CACHE_HOME) 'less-hist'
 
 $Env:TIME_STYLE = 'long-iso'
 $Env:EDITOR = 'nvim'
 $Env:MANPAGER = 'nvim +Man!'
-
-New-Alias -Force -Name 'cat' -Value 'bat'

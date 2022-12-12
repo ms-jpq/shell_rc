@@ -2,17 +2,20 @@ Set-StrictMode -Version 'Latest'
 
 
 function main {
-  #$Env:MSYS = 'winsymlinks:nativestrict'
-  $Env:MSYSTEM = 'MSYS'
-
-  $pwsh_targets = @(
-    'apriori'
-    'shared'
-    'aposteriori'
-  )
-
+  $pwsh_targets = [Collections.ArrayList]@()
   $new_paths = [Collections.ArrayList]@()
   $new_mods = [Collections.ArrayList]@()
+
+  $pwsh_targets.AddRange(@(
+    'apriori'
+  ))
+  if ($IsWindows) {
+    $pwsh_targets.Add('nt')
+  }
+  $pwsh_targets.AddRange(@(
+    'shared'
+    'aposteriori'
+  ))
 
   $profile = Split-Path -- $PROFILE
   foreach ($target in $pwsh_targets) {
@@ -33,12 +36,6 @@ function main {
     }
   }
 
-  $new_paths.AddRange(@(
-    Join-Path -- (Split-path -- $Env:APPDATA) 'bin'
-    $Env:Path
-    Join-Path -- $Env:SystemDrive 'msys64' 'ucrt64' 'bin'
-    Join-Path -- $Env:SystemDrive 'msys64' 'usr' 'bin'
-  ))
   $new_mods.Add($Env:PSModulePath)
 
   $Env:Path = $new_paths | Join-String -Separator ';'

@@ -27,7 +27,7 @@ then
   do
     printf '%s\0' "$ARG" >> "$_RG_ARGS"
   done
-  rg "${ARGS[@]}" | SHELL="$0" exec fzf "${FZF_ARGS[@]}"
+  rg "${ARGS[@]}" | SHELL="$0" fzf "${FZF_ARGS[@]}"
 else
   ARGS=(
     --color=always
@@ -37,5 +37,5 @@ else
   )
   readarray -t -d $'\0' -- ENV_ARGS < "$RG_ARGS"
   readarray -t -d $'\0' -- RG_PATH < "$2"
-  exec rg "${ARGS[@]}" "${ENV_ARGS[@]}" -- "${RG_PATH[@]}"
+  exec -- rg "${ARGS[@]}" "${ENV_ARGS[@]}" -- "${RG_PATH[@]}"
 fi

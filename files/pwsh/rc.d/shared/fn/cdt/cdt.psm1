@@ -3,5 +3,5 @@ function cdt {
   [string] $name = [System.Guid]::NewGuid()
   $tmp = Join-Path -- $parent $name
   New-Item -ItemType 'Directory' -Path $tmp
-  cd -- $tmp
+  Set-Location -- $tmp
 }

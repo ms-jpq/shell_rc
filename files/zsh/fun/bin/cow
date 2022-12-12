@@ -33,4 +33,4 @@ fi
 
 
 TEXT="${TEXT:-"moo"}"
-exec cowsay "${ARGS[@]}" <<< "$TEXT"
+exec -- cowsay "${ARGS[@]}" <<< "$TEXT"

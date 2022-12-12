@@ -10,7 +10,7 @@ PATH="$(paths --silent remove "$bin")"
 
 
 EXECUTE=(
-  "$(basename "$0")"
+  "$(basename -- "$0")"
   "$@"
   )
 
@@ -64,7 +64,7 @@ hr() {
 
 if [[ $ASK -eq 0 ]]
 then
-  exec "${EXECUTE[@]}"
+  exec -- "${EXECUTE[@]}"
 else
   COLS="$(tput cols)"
   >&2 type -a python3
@@ -77,7 +77,7 @@ else
   read -r -p 'Continue (y/n)?' -- CONT
   case "$CONT" in
     1|y|Y)
-      exec "${EXECUTE[@]}"
+      exec -- "${EXECUTE[@]}"
       ;;
     *)
       exit 1
