@@ -9,13 +9,9 @@ setopt nullglob
 pathprepend() {
   for p in "$@"
   do
-    if [[ -d "$p" ]]
-    then
-      path=("$p" "${path[@]}")
-    fi
+    path=("$p" "${path[@]}")
   done
 }
-
 
 zsh_main() {
   local os=''
@@ -37,8 +33,6 @@ zsh_main() {
     fun
     docker
   )
-
-  pathprepend "$HOME/.local/bin"
 
   for target in "${zrc_targets[@]}"
   do

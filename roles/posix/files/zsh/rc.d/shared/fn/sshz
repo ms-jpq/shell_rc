@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+ssh -t "$@" '%SystemDrive%\msys64\usr\bin\zsh.exe'
