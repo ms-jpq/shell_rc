@@ -53,6 +53,10 @@ target_files:
     dest: "{{ _zsh_dir_ }}/rc.d"
     delete: True
 
+  - src: "pwsh/"
+    dest: "{{ _xdg_conf_home_ }}/powershell"
+    delete: True
+
 target_templates:
   - src: "templates/home/"
     dest: "~/"
