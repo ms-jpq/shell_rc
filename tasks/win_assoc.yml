@@ -1,7 +1,0 @@
----
-- name: windows file assoc
-  ansible.windows.win_command:
-    argv:
-      - cmd.exe
-      - "{{ ansible_env.APPDATA ~ '/f-assoc.cmd' }}"
-  register: __win_assoc

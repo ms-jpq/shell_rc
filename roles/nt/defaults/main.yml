@@ -69,7 +69,8 @@ target_archives:
   - src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.3-x86_64-pc-windows-msvc.zip"
     dest: "{{ build_tmp }}"
 
-win_packages: []
+win_packages:
+  []
   # - "{{ build_tmp }}/gitui.msi"
 
 target_remote_copy:
@@ -93,3 +94,7 @@ target_remote_copy:
     dest: "{{ _exec_bin_ }}/duf.exe"
   - src: "{{ build_tmp }}/dust-v0.8.3-x86_64-pc-windows-msvc/dust.exe"
     dest: "{{ _exec_bin_ }}/dust.exe"
+
+target_commands:
+  - cmd.exe
+  - "{{ ansible_env.APPDATA ~ '/f-assoc.cmd' }}"
