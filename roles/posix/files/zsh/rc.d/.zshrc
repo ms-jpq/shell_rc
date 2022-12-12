@@ -22,8 +22,11 @@ zsh_main() {
   if [[ "$OSTYPE" =~ 'darwin' ]]
   then
     os='darwin'
-  else
+  elif [[ "$OSTYPE" =~ 'linux' ]]
+  then
     os='linux'
+  else
+    os='nt'
   fi
   local zrc_targets=(
     apriori
@@ -54,7 +57,7 @@ zsh_main() {
 
     for rc in "$rcs"/**/*.zsh
     do
-      source "$rc"
+      source -- "$rc"
     done
 
     pathprepend "$rcs/bin"

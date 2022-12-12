@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
 
-exa --group-directories-first --icons --header --classify "$@"
+if command -v -- exa > /dev/null
+then
+  exa --all --group-directories-first --icons --header --classify "$@"
+else
+  command -- ls --almost-all --group-directories-first --human-readable --si --color=auto "$@"
+fi
