@@ -52,7 +52,7 @@ target_archives:
     dest: "{{ build_tmp }}"
   - src: "https://github.com/BurntSushi/ripgrep/releases/latest/download/ripgrep-13.0.0-x86_64-pc-windows-msvc.zip"
     dest: "{{ build_tmp }}"
-  - src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.36.0_Windows_arm64.zip"
+  - src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.36.0_Windows_x86_64.zip"
     dest: "{{ build_tmp }}"
   - src: "https://github.com/dandavison/delta/releases/latest/download/delta-0.15.1-x86_64-pc-windows-msvc.zip"
     dest: "{{ build_tmp }}"
