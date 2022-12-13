@@ -2,7 +2,7 @@
 
 if command -v -- exa > /dev/null
 then
-  exa --all --group-directories-first --icons --header --classify "$@"
+  exa --all --group-directories-first --classify --header --icons "$@"
 else
-  command -- ls --almost-all --group-directories-first --human-readable --si --color=auto "$@"
+  command -- ls --almost-all --group-directories-first --classify --human-readable --si --color=auto "$@"
 fi

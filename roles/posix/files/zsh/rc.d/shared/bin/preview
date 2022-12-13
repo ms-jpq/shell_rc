@@ -11,19 +11,34 @@ export PAGER='tee'
 
 if [[ -d "$TARGET" ]]
 then
-  ARGS=(
-    --color=always
-    --group-directories-first
-    --all
-    --header
-    --classify
-    --icons
-    --oneline
+  if command -v -- exa > /dev/null
+  then
+    ARGS=(
+      exa
+      --all
+      --group-directories-first
+      --classify
+      --header
+      --icons
+      --oneline
+      --color=always
     )
-  exec -- exa "${ARGS[@]}" -- "$TARGET"
+  else
+    ARGS=(
+      ls
+      --almost-all
+      --group-directories-first
+      --classify
+      --human-readable 
+      --si 
+      --color=always
+    )
+  fi
 else
   ARGS=(
+    bat
     --color=always
-    )
-  exec -- bat "${ARGS[@]}" -- "$TARGET"
+  )
 fi
+
+exec -- "${ARGS[@]}" -- "$TARGET"
