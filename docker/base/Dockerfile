@@ -13,7 +13,7 @@ RUN apt-get update && \
 COPY . /_install
 RUN python3 -m venv --system-site-packages /_install/venv && \
     /_install/venv/bin/pip3 install ansible && \
-    /_install/venv/bin/ansible-playbook /_install/docker.yml && \
+    /_install/venv/bin/ansible-playbook /_install/local.ubuntu.yml -e all=true && \
     rm -rf -- /root/.ansible /_install && \
     apt-get autoremove -y && \
     apt-get clean && \
