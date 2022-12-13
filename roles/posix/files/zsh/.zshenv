@@ -9,9 +9,8 @@ then
   export MSYSTEM='MSYS'
   local cpath=''
 
-  path=('/usr/bin' "${path[@]}")
-  cpath="$(cygpath -- "$LOCALAPPDATA")"
-  path=("$(dirname -- "$cpath")/bin" '/ucrt64/bin' "${path[@]}")
+  cpath="$(/usr/bin/cygpath -- "$LOCALAPPDATA")"
+  path=("$(/usr/bin/dirname -- "$cpath")/bin" "${path[@]}" '/ucrt64/bin' '/usr/bin')
 
   export XDG_CONFIG_HOME="$cpath"
   export XDG_DATA_HOME="$cpath"
