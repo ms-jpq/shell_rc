@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 z() {
-  if [[ -z ${_Z_CMD+x} ]]
+  if [[ ! -v _Z_CMD ]]
   then
     _Z_DATA="$XDG_CACHE_HOME/zz"
-    _Z_CMD='__z' . "$ZDOTDIR/../z/z.sh"
+    _Z_CMD='__z' source -- "$ZDOTDIR/../z/z.sh"
   fi
 
   local A=
