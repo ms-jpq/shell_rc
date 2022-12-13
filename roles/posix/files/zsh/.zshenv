@@ -20,6 +20,8 @@ then
 
   export XDG_STATE_HOME="$cpath"
   export XDG_CACHE_HOME="$cpath"
+
+  export SHELL="$(command -v -- zsh)"
 else
   path=("$HOME/.local/bin" "${path[@]}")
 
