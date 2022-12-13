@@ -20,6 +20,9 @@ function basic {
 
   # NoPassword
   Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa' -Name 'LimitBlankPasswordUse' -Type 'DWord' -Value 0
+
+  # Disable Defrag
+  Disable-ScheduledTask -TaskName 'Microsoft\Windows\Defrag\ScheduledDefrag'
 }
 
 
