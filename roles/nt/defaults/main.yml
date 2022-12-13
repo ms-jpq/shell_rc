@@ -22,6 +22,12 @@ winget_packages:
   - msys2.msys2
   - stedolan.jq
 
+target_links:
+  - src: |-
+      {{ ansible_facts.env.HOME }}\.zshenv
+    dest: |-
+      \msys64\home\{{ ansible_facts.env.USERNAME }}\.zshenv
+
 msys2_packages:
   - git
   - mingw-w64-ucrt-x86_64-clang
