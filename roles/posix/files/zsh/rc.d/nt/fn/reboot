@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-ls --group -l "$@"
+shutdown -t 0 -r
