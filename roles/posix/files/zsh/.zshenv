@@ -11,7 +11,7 @@ then
 
   path=('/usr/bin' "${path[@]}")
   cpath="$(cygpath -- "$LOCALAPPDATA")"
-  path=("$cpath/bin" '/ucrt64/bin' "${path[@]}")
+  path=("$(dirname -- "$cpath")/bin" '/ucrt64/bin' "${path[@]}")
 
   export XDG_CONFIG_HOME="$cpath"
   export XDG_DATA_HOME="$cpath"
