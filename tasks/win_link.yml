@@ -1,0 +1,10 @@
+---
+- name: "symbolic link"
+  loop: "{{ target_links }}"
+  ansible.windows.win_command:
+    argv:
+      - cmd.exe
+      - /c
+      - mklink
+      - "{{ item.dest }}"
+      - "{{ item.src }}"

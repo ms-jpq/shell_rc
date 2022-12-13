@@ -10,6 +10,8 @@
 - import_tasks: winget.yml
   when: _all_
 
+- import_tasks: win_link.yml
+
 - import_tasks: win_pacman.yml
   when: _all_
 

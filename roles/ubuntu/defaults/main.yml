@@ -75,12 +75,12 @@ target_templates:
     dest: "/"
 
 target_links:
-  - src: "/usr/local/bin/bat"
-    dest: "/bin/batcat"
-  - src: "/usr/local/bin/fd"
-    dest: "/bin/fdfind"
-  # - src: "/etc/localtime"
-  #   dest: "/usr/share/zoneinfo/{{ time_zone }}"
+  - src: "/bin/batcat"
+    dest: "/usr/local/bin/bat"
+  - src: "/bin/fdfind"
+    dest: "/usr/local/bin/fd"
+  # - src: "/usr/share/zoneinfo/{{ time_zone }}"
+  #   dest: "/etc/localtime"
 
 target_downloads:
   - src: "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64"
