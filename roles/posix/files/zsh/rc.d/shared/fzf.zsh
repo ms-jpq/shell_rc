@@ -30,6 +30,8 @@ unset _fzf_default_opts
 _fzf_preview="$ZDOTDIR/shared/bin/preview {}"
 _fzf_default_command=(
   fd
+  --hidden
+  --follow
   --type=file
   --type=symlink
 )
