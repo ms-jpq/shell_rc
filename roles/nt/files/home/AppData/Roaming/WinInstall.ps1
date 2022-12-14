@@ -11,3 +11,5 @@ foreach ($pkg in $args) {
     winget install --accept-package-agreements --accept-source-agreements --id $pkg
   }
 }
+
+exit $LASTEXITCODE
