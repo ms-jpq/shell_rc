@@ -15,7 +15,7 @@ do
   UNITS+=("$(basename -- "$unit")")
 done
 
-rsync --recursive --links --perms --times --human-readable --info progress2 -- ./systemd/ "$DEST:/usr/local/lib/systemd/user/"
+rsync --recursive --links --perms --times --human-readable --info progress2 -- ./systemd/ "$DEST:/usr/local/lib/systemd/system/"
 
 ssh "$DEST" systemctl --user daemon-reload
 ssh "$DEST" systemctl --user enable --now -- "${UNITS[*]}"
