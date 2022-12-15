@@ -5,7 +5,6 @@ OnSuccess=00-vscode.service
 OnFailure=00-vscode.service
 
 [Service]
-ExitType=cgroup
 Type=oneshot
 Restart=on-failure
 ExecCondition=code-server update --check
