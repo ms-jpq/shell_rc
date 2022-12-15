@@ -6,7 +6,7 @@ Description=VsCode Server
 [Service]
 Type=simple
 Restart=on-failure
-ExecStart=code-server --accept-server-license-terms --disable-telemetry serve-local --host :: --port 80 --without-connection-token
+ExecStart=code-server --disable-telemetry --host :: --port 80 --auth none -- /root
 
 [Install]
 WantedBy=default.target
