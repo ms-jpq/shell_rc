@@ -9,6 +9,7 @@ apt-install() {
   DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends --yes -- "$@"
 }
 
+touch -- "$HOME/.tool-versions"
 
 ##
 ##
