@@ -49,6 +49,7 @@ asdf-install --global -- golang
 
 
 RUBY_DEPS=(
+ libyaml-dev
  libssl-dev
 )
 apt-install "${RUBY_DEPS[@]}"
