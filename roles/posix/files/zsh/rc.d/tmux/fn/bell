@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 # OSC 9 -> Notification
-printf '\e]9;%s\e\' "$*" | tmux-esc
+printf -- '\e]9;%s\e\' "$*" | tmux-esc

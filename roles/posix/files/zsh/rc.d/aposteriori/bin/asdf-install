@@ -39,7 +39,7 @@ done
 
 if [[ -z "$LANG" ]]
 then
-  printf '%s\n' 'Please Enter a Langauge!'
+  printf -- '%s\n' 'Please Enter a Langauge!'
   exit 2
 fi
 

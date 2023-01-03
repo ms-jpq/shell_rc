@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 # OSC 1337 -> iTerm Exts
-printf '\e]1337;RequestAttention=fireworks\e\' | tmux-esc
+printf -- '\e]1337;RequestAttention=fireworks\e\' | tmux-esc

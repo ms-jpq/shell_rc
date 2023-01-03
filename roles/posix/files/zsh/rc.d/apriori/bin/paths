@@ -30,7 +30,7 @@ do
       break
       ;;
     *)
-      >&2 printf '%s\n' '!ERR!'
+      >&2 printf -- '%s\n' '!ERR!'
       exit 2
       ;;
   esac
@@ -39,13 +39,13 @@ ARG_NUM=$#
 
 
 print_path() {
-  printf '%s' "$PATH"
+  printf -- '%s' "$PATH"
 }
 
 print_err() {
   print_path
-  >&2 printf 'paths {show, add, rm|remove, toggle} path\n'
-  >&2 printf '%s\n' "$1"
+  >&2 printf -- 'paths {show, add, rm|remove, toggle} path\n'
+  >&2 printf -- '%s\n' "$1"
   exit 1
 }
 
@@ -68,9 +68,9 @@ p_relative() {
   local target="$1"
   if [[ "$RELATIVE" -eq 0 ]]
   then
-    printf '%s' "$target"
+    printf -- '%s' "$target"
   else
-    printf '%s' "$PWD/$target"
+    printf -- '%s' "$PWD/$target"
   fi
 }
 
@@ -93,11 +93,11 @@ remove() {
   IFS=':'
   local ret="${acc[*]}"
   IFS="$save_ifs"
-  printf '%s' "$ret"
+  printf -- '%s' "$ret"
 
   if [[ "$silent" -eq 0 ]]
   then
-    >&2 printf '%s\n' "REMOVED -- $target"
+    >&2 printf -- '%s\n' "REMOVED -- $target"
   fi
 }
 
@@ -108,10 +108,10 @@ add() {
 
   if [[ -d "$target" ]]
   then
-    printf '%s' "$target:$(remove "$target" 1)"
+    printf -- '%s' "$target:$(remove "$target" 1)"
     if [[ "$silent" -eq 0 ]]
     then
-      >&2 printf '%s\n' "ADDED   -- $target"
+      >&2 printf -- '%s\n' "ADDED   -- $target"
     fi
   else
     print_err "ERR! -- Not a Directory: $target"
