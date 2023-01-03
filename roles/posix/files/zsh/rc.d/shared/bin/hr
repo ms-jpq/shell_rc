@@ -38,5 +38,5 @@ then
     LINE="$LINE$WORD"
   done
 
-  printf '%s\n' "${LINE:0:$COLS}"
+  printf -- '%s\n' "${LINE:0:$COLS}"
 fi

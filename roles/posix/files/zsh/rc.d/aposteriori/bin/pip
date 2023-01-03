@@ -58,7 +58,7 @@ hr() {
   do
     line="$line$rep"
   done
-  printf '%s\n' "$line"
+  printf -- '%s\n' "$line"
 }
 
 
@@ -69,9 +69,9 @@ else
   COLS="$(tput cols)"
   >&2 type -a python3
   >&2 hr '-' "$COLS"
-  >&2 printf '%s\n' 'Not in virtual environment:'
+  >&2 printf -- '%s\n' 'Not in virtual environment:'
   >&2 hr '-' "$COLS"
-  >&2 printf '%s\n' "${EXECUTE[*]}"
+  >&2 printf -- '%s\n' "${EXECUTE[*]}"
   >&2 hr '-' "$COLS"
 
   read -r -p 'Continue (y/n)?' -- CONT

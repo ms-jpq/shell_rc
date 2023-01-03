@@ -13,7 +13,7 @@ z() {
   B="$(sd '^[[\d|\.]|common:]+\s+' '' <<< "$A" | awk '!seen[$0]++')"
   if [[ -z "$B" ]]
   then
-    printf '%s\n' "no such file or directory: $*"
+    printf -- '%s\n' "no such file or directory: $*"
   else
     local C=
     C="$(fp -1 +s --tac <<< "$B")"

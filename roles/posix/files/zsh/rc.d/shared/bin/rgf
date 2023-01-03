@@ -25,7 +25,7 @@ then
   )
   for ARG in "$@"
   do
-    printf '%s\0' "$ARG" >> "$_RG_ARGS"
+    printf -- '%s\0' "$ARG" >> "$_RG_ARGS"
   done
   rg "${ARGS[@]}" | SHELL="$0" fzf "${FZF_ARGS[@]}"
 else

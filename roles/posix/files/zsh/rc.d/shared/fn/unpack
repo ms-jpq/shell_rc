@@ -16,6 +16,6 @@ case "$FILE" in
     unrar -x -- "$FILE"
     ;;
   *)
-    printf '%s\n' "Unknown format :: $FILE"
+    printf -- '%s\n' "Unknown format :: $FILE"
     ;;
 esac

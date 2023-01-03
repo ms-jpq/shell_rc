@@ -6,14 +6,14 @@ set -o pipefail
 
 read -r -d '' -- AWK <<'EOF'
 BEGIN { 
-  printf("\x1BPtmux;")
+  printf --("\x1BPtmux;")
 }
 {
   gsub("\x1B", "\x1B\x1B")
-  printf($0)
+  printf --($0)
 }
 END {
-  printf("\x1B\\")
+  printf --("\x1B\\")
 }
 EOF
 
