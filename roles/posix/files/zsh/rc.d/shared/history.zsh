@@ -5,9 +5,11 @@
 #################### ############## ####################
 
 # INTI #
+# shellcheck disable=SC2034
 HISTORY_SUBSTRING_SEARCH_FUZZY=true
 HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
-source "$ZDOTDIR/../zsh-history-substring-search/zsh-history-substring-search.zsh"
+# shellcheck disable=SC1091
+source -- "$ZDOTDIR/../zsh-history-substring-search/zsh-history-substring-search.zsh"
 # INIT #
 
 

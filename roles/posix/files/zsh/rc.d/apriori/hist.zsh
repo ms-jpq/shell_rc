@@ -16,4 +16,6 @@ setopt share_history          # share command history data
 
 HISTFILE="$XDG_CACHE_HOME/zsh_hist"
 HISTSIZE=50000
+
+# shellcheck disable=SC2034
 SAVEHIST=10000

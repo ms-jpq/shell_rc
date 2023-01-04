@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC1003
 if [[ -v TMUX ]]
 then
   # ??

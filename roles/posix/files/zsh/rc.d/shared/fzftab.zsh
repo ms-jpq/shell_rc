@@ -7,5 +7,6 @@
 zstyle ':fzf-tab:*' fzf-flags '--no-color'
 
 # INTI #
-source "$ZDOTDIR/../fzf-tab/fzf-tab.zsh"
+# shellcheck disable=SC1091
+source -- "$ZDOTDIR/../fzf-tab/fzf-tab.zsh"
 # INIT #

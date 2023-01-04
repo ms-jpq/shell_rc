@@ -46,7 +46,9 @@ _fzf_alt_c_command=(
   --type=symlink
   --type=directory
 )
+# shellcheck disable=SC2034
 FZF_ALT_C_COMMAND="${_fzf_alt_c_command[*]}"
+# shellcheck disable=SC2034
 FZF_ALT_C_OPTS="$_fzf_preview_opts --read0"
 unset _fzf_alt_c_command
 
@@ -55,7 +57,9 @@ _fzf_ctrl_t_command=(
   --print0
   --no-ignore
 )
+# shellcheck disable=SC2034
 FZF_CTRL_T_COMMAND="${_fzf_ctrl_t_command[*]}"
+# shellcheck disable=SC2034
 FZF_CTRL_T_OPTS="$_fzf_preview_opts --read0"
 unset _fzf_preview_opts
 unset _fzf_ctrl_t_command
@@ -87,6 +91,8 @@ _fzf_compgen_dir() {
 }
 
 # INTI #
-source "$ZDOTDIR/../fzf/shell/key-bindings.zsh"
-source "$ZDOTDIR/../fzf/shell/completion.zsh"
+# shellcheck disable=SC1091
+source -- "$ZDOTDIR/../fzf/shell/key-bindings.zsh"
+# shellcheck disable=SC1091
+source -- "$ZDOTDIR/../fzf/shell/completion.zsh"
 # INIT #
