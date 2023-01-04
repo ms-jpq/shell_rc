@@ -35,10 +35,10 @@ def main() -> None:
     j_user, j_host, j_port = _jump(args.jump, default_port=443)
     d_user, d_host, d_port = _jump(args.dest, default_port=22)
 
-    ssh = which("ssh")
-    assert ssh
+    ssh, openssl = which("ssh"), which("openssl")
+    assert ssh and openssl
 
-    l1 = join(("openssl", "s_client", "-quiet", "--", f"{j_host}:{j_port}"))
+    l1 = join((openssl, "s_client", "-quiet", "--", f"[{j_host}]:{j_port}"))
     l2 = join(
         (
             ssh,
