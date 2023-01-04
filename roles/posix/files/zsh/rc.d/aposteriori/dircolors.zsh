@@ -13,6 +13,7 @@ zsh_colours() {
     dircolors --bourne-shell -- "$XDG_CONFIG_HOME/zsh/dircolors-solarized/$colour" > "$colours"
   fi
 
+  # shellcheck disable=SC1090
   source -- "$colours"
 }
 

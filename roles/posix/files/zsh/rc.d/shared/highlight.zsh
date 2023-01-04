@@ -5,5 +5,6 @@
 #################### ########## ####################
 
 # INTI #
-source "$ZDOTDIR/../zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+# shellcheck disable=SC1091
+source -- "$ZDOTDIR/../zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 # INIT #

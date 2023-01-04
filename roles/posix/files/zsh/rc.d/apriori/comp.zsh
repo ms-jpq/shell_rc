@@ -17,6 +17,7 @@ setopt glob_complete     # do not aggressively expand glob
 setopt no_menu_complete  # do not autoselect the first completion entry
 
 
+# shellcheck disable=SC2034
 WORDCHARS=''
 
 

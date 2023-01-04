@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-set -u
+set -Eeu
 set -o pipefail
+shopt -s globstar nullglob
 
 
-read -r -d '' -- AWK <<'EOF'
+read -r -d '' -- AWK <<-'EOF' || true
 BEGIN { 
   printf --("\x1BPtmux;")
 }
