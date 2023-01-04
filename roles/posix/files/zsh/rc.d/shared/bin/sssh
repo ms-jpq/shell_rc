@@ -38,19 +38,33 @@ def main() -> None:
     ssh, openssl = which("ssh"), which("openssl")
     assert ssh and openssl
 
-    l1 = join((openssl, "s_client", "-quiet", "--", f"[{j_host}]:{j_port}"))
+    l1 = join((openssl, "s_client", "-quiet", "--", "[%%h]:%%p"))
     l2 = join(
-        (ssh, "-o", f"ProxyCommand={l1}", "-W", f"localhost:%p", f"{j_user}@{j_host}")
+        (
+            ssh,
+            "-o",
+            f"ProxyCommand={l1}",
+            "-W",
+            f"localhost:%p",
+            "-p",
+            f"{j_port}",
+            "-l",
+            j_user,
+            "--",
+            j_host,
+        )
     )
     argv = (
         ssh,
         "-o",
-        f"ProxyCommand={l2}",  # WARN: % substitution is ONLY performed here
+        f"ProxyCommand={l2}",
         "-p",
         f"{d_port}",
+        "-l",
+        d_user,
         *args.argv,
         "--",
-        f"{d_user}@{d_host}",
+        d_host,
     )
     execl(ssh, *argv)
 
