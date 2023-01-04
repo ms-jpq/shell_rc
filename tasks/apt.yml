@@ -2,5 +2,6 @@
 - name: "install {{ apt_packages }}"
   become: true
   ansible.builtin.apt:
+    install_recommends: false
     name: "{{ apt_packages }}"
   register: __apt

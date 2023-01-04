@@ -55,7 +55,6 @@ apt_packages:
   - universal-ctags
   - unzip
   - wget
-  - zram-config
 
 apt_deb_packages:
   - "https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/packages-microsoft-prod.deb"
