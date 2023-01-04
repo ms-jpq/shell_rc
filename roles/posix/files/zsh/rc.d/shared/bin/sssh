@@ -2,7 +2,7 @@
 
 from argparse import ArgumentParser, Namespace
 from logging import INFO, StreamHandler, getLogger
-from os import execl
+from os import execl, getlogin
 from shlex import join
 from shutil import which
 from typing import Tuple
@@ -23,9 +23,10 @@ def _parse_args() -> Namespace:
 
 def _jump(jump: str, default_port: int) -> Tuple[str, str, int]:
     uri = urlsplit(f"ssh://{jump}")
-    user, host = uri.username, uri.hostname
+    host = uri.hostname
     port = uri.port or default_port
-    assert user and host
+    user = uri.username or getlogin()
+    assert host
     return user, host, port
 
 
