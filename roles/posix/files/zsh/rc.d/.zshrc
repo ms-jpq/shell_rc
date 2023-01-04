@@ -15,15 +15,20 @@ pathprepend() {
 
 zsh_main() {
   local os=''
-  if [[ "$OSTYPE" =~ 'darwin' ]]
-  then
-    os='darwin'
-  elif [[ "$OSTYPE" =~ 'linux' ]]
-  then
-    os='linux'
-  else
-    os='nt'
-  fi
+
+  case "$OSTYPE"
+  in
+    darwin*)
+      os='darwin'
+      ;;
+    linux*)
+      os='linux'
+      ;;
+    *)
+      os='nt'
+      ;;
+  esac
+
   local zrc_targets=(
     apriori
     "$os"
