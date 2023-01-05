@@ -3,8 +3,13 @@
   loop: "{{ target_links }}"
   ansible.windows.win_command:
     argv:
-      - cmd.exe
+      - powershell.exe
       - /c
-      - mklink
-      - "{{ item.dest }}"
+      - New-Item
+      - -ItemType
+      - SymbolicLink
+      - -Force
+      - -Target
       - "{{ item.src }}"
+      - -Path
+      - "{{ item.dest }}"
