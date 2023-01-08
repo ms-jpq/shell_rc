@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-rsync --recursive --links --perms --times --human-readable --info progress2 -- "$@"
+rsync --mkpath --recursive --links --perms --times --human-readable --info progress2 -- "$@"
