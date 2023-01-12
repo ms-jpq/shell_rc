@@ -9,6 +9,6 @@ d() {
     --type=directory
   )
   local dest=
-  dest="$(FZF_DEFAULT_COMMAND="${default_cmd[*]}" fp --read0 -q "${*:-""}")"
+  dest="$(FZF_DEFAULT_COMMAND="${default_cmd[*]}" fp --read0 -q "${*:-}")"
   cd -- "$dest" || return 1
 }
