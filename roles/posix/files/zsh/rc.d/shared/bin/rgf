@@ -5,7 +5,7 @@ set -o pipefail
 shopt -s nullglob globstar
 
 
-RG_ARGS="${_RG_ARGS:-""}"
+RG_ARGS="${_RG_ARGS:-}"
 
 
 if [[ -z "$RG_ARGS" ]]
@@ -15,7 +15,7 @@ then
   ARGS=(
     --line-buffered
     --files-with-matches
-    -0
+    --null
     "$@"
   )
   FZF_ARGS=(

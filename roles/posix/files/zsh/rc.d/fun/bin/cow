@@ -5,10 +5,12 @@ set -o pipefail
 shopt -s nullglob globstar
 
 
-COLS=$(tput cols)
+COLS=$(tput -- cols)
 WRAP=$((COLS / 3))
 
-readarray -t -d ' ' -- COWS < <(cowsay -l | tail -n +2)
+RAW="$(cowsay -l | tail -n +2)"
+NORM="${RAW//$'\n'/' '}"
+readarray -t -d ' ' -- COWS < <(printf -- '%s' "$NORM")
 COW="${COWS[$((RANDOM % ${#COWS[@]}))]}"
 
 STYLES=(-b -d -g -p -s -t -w -y)
@@ -32,5 +34,5 @@ else
 fi
 
 
-TEXT="${TEXT:-"moo"}"
+TEXT="${TEXT:-'moo'}"
 exec -- cowsay "${ARGS[@]}" <<< "$TEXT"

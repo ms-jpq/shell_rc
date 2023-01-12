@@ -5,7 +5,7 @@ set -o pipefail
 shopt -s nullglob globstar
 
 
-VIRTUAL_ENV="${VIRTUAL_ENV:-""}"
+VIRTUAL_ENV="${VIRTUAL_ENV:-}"
 
 export DEFAULT_VENV_PATH="${DEFAULT_VENV_PATH:-"${2:-"$PWD/.venv"}"}"
 
