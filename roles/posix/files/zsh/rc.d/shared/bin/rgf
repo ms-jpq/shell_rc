@@ -33,7 +33,7 @@ else
     --color=always
     --line-number
     --context=3
-    --context-separator="$(hr '-' "$FZF_PREVIEW_COLUMNS")"
+    --context-separator="$(hr '-' "$FZF_PREVIEW_COLUMNS" 2>&1)"
   )
   readarray -t -d $'\0' -- ENV_ARGS < "$RG_ARGS"
   readarray -t -d $'\0' -- RG_PATH < "$2"
