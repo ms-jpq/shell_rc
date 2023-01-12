@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -Eeu
+set -o pipefail
+shopt -s nullglob globstar
+
+
+exec -- sysctl -n hw.physicalcpu
