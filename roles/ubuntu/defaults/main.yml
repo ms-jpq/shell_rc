@@ -25,6 +25,7 @@ apt_packages:
   - iftop
   - iotop
   - iperf3
+  - jid
   - jq
   - language-pack-zh-hans
   - libaa-bin #aafire
