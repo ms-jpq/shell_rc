@@ -4,4 +4,4 @@
 #################### Ansible Region ####################
 #################### ############## ####################
 
-export ANSIBLE_CONFIG="$XDG_CONFIG_HOME/ansible.cfg"
+export -- ANSIBLE_CONFIG="$XDG_CONFIG_HOME/ansible.cfg"

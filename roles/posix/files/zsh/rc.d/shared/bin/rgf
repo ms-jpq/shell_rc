@@ -10,7 +10,7 @@ RG_ARGS="${_RG_ARGS:-}"
 
 if [[ -z "$RG_ARGS" ]]
 then
-  export _RG_ARGS=""
+  export -- _RG_ARGS=""
   _RG_ARGS="$(mktemp)"
   ARGS=(
     --line-buffered

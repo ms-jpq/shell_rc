@@ -4,4 +4,4 @@
 #################### Rg Region ####################
 #################### ######### ####################
 
-export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/rg.conf"
+export -- RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/rg.conf"
