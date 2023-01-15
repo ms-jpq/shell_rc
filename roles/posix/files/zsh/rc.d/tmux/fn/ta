@@ -19,7 +19,7 @@ ta() {
       then
         tmux switch -t "$session"
       else
-        tmux new-session -A -s "${session:-'owo'}"
+        tmux new-session -A -s "${session:-owo}"
       fi
     fi
   fi
