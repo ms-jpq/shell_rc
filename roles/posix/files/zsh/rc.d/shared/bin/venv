@@ -7,7 +7,7 @@ shopt -s nullglob globstar
 
 VIRTUAL_ENV="${VIRTUAL_ENV:-}"
 
-export DEFAULT_VENV_PATH="${DEFAULT_VENV_PATH:-"${2:-"$PWD/.venv"}"}"
+export -- DEFAULT_VENV_PATH="${DEFAULT_VENV_PATH:-"${2:-"$PWD/.venv"}"}"
 
 PY_EXE="$DEFAULT_VENV_PATH/bin/python3"
 ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"

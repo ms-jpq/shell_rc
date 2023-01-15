@@ -15,13 +15,13 @@ _less=(
   --ignore-case
   --no-histdups
 )
-export PAGER='less'
-export LESS="${_less[*]}"
-export LESSHISTFILE="$XDG_CACHE_HOME/less-hist"
+export -- PAGER='less'
+export -- LESS="${_less[*]}"
+export -- LESSHISTFILE="$XDG_CACHE_HOME/less-hist"
 unset _less
 
-export TIME_STYLE='long-iso'
+export -- TIME_STYLE='long-iso'
 
-export EDITOR='nvim'
-export MANPAGER='nvim +Man!'
+export -- EDITOR='nvim'
+export -- MANPAGER='nvim +Man!'
 

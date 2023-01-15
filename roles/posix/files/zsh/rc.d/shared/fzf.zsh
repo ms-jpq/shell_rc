@@ -24,7 +24,7 @@ _fzf_default_opts=(
   --color=light
   --color=bg+:'#dfdfdf'
 )
-export FZF_DEFAULT_OPTS="${_fzf_default_opts[*]}"
+export -- FZF_DEFAULT_OPTS="${_fzf_default_opts[*]}"
 unset _fzf_default_opts
 
 _fzf_preview="$ZDOTDIR/shared/bin/preview {}"
@@ -35,7 +35,7 @@ _fzf_default_command=(
   --type=file
   --type=symlink
 )
-export FZF_DEFAULT_COMMAND="${_fzf_default_command[*]}"
+export -- FZF_DEFAULT_COMMAND="${_fzf_default_command[*]}"
 _fzf_preview_opts="--preview='$_fzf_preview'"
 unset _fzf_default_command
 
@@ -64,7 +64,7 @@ FZF_CTRL_T_OPTS="$_fzf_preview_opts --read0"
 unset _fzf_preview_opts
 unset _fzf_ctrl_t_command
 
-export FZF_TMUX_HEIGHT='100%'
+export -- FZF_TMUX_HEIGHT='100%'
 
 
 #################### ################ ####################
