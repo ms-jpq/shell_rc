@@ -57,39 +57,39 @@ apt-install "${RUBY_DEPS[@]}"
 asdf-install --global -- ruby
 
 
-#R_DEPS=(
-#  build-essential
-#  gfortran
-#  libbz2-1.0
-#  libbz2-dev
-#  libbz2-dev
-#  libcurl3-dev
-#  liblzma-dev
-#  liblzma-dev
-#  liblzma5
-#  libpcre2-dev
-#  libreadline-dev
-#  xorg-dev
-#)
-#R_OPTS=(
-#  --enable-R-shlib
-#  --with-cairo
-#)
-#apt-install "${R_DEPS[@]}"
-#R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
+# R_DEPS=(
+#   build-essential
+#   gfortran
+#   libbz2-1.0
+#   libbz2-dev
+#   libbz2-dev
+#   libcurl3-dev
+#   liblzma-dev
+#   liblzma-dev
+#   liblzma5
+#   libpcre2-dev
+#   libreadline-dev
+#   xorg-dev
+# )
+# R_OPTS=(
+#   --enable-R-shlib
+#   --with-cairo
+# )
+# apt-install "${R_DEPS[@]}"
+# R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
 
 
-#PHP_DEPS=(
-#  autoconf
-#  bison
-#  libcurl4-openssl-dev
-#  libgd-dev
-#  libonig-dev
-#  libzip-dev
-#  re2c
-#)
-#apt-install "${PHP_DEPS[@]}"
-#asdf-install --global -- php
+# PHP_DEPS=(
+#   autoconf
+#   bison
+#   libcurl4-openssl-dev
+#   libgd-dev
+#   libonig-dev
+#   libzip-dev
+#   re2c
+# )
+# apt-install "${PHP_DEPS[@]}"
+# asdf-install --global -- php
 
 JPLUGIN='java'
 HAS_JPLUGIN=0
