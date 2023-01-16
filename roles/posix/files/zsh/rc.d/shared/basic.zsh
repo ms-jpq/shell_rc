@@ -16,9 +16,10 @@ _less=(
   --no-histdups
 )
 export -- PAGER='less'
-export -- LESS="${_less[*]}"
-export -- LESSHISTFILE="$XDG_CACHE_HOME/less-hist"
+LESS="$(join "${_less[@]}")"
 unset _less
+export -- LESS
+export -- LESSHISTFILE="$XDG_CACHE_HOME/less-hist"
 
 export -- TIME_STYLE='long-iso'
 
