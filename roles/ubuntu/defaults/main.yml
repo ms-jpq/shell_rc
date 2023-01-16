@@ -87,7 +87,7 @@ target_downloads:
     dest: "{{ _exec_bin_ }}/oh-my-posh"
 
 target_archives:
-  - src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.35.1-linux_{{ dpkg_arch }}.tar.gz"
+  - src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.36.0-linux_{{ dpkg_arch }}.tar.gz"
     dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-v0.8.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
     dest: "{{ _exec_bin_ }}"
