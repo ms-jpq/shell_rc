@@ -13,6 +13,17 @@ pathprepend() {
   done
 }
 
+quote() {
+  printf -- '%q' "$*"
+}
+
+join() {
+  for arg in "$@"
+  do
+    printf -- '%q ' "$arg"
+  done
+}
+
 zsh_main() {
   local os=''
 
