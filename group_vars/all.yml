@@ -12,6 +12,7 @@ _xdg_cache_home_: "{{ ansible_env.TMP if _is_win_ else ansible_facts.env.HOME ~ 
 _exec_bin_: "{{ (_xdg_data_home_ | win_dirname) if _is_win_ else (_xdg_data_home_ | dirname) }}/bin"
 
 locale: zh_CN
+timezone: America/Vancouver
 
 _git_: "{{ git | default(False) | bool }}"
 _nvim_: "{{ nvim | default(False) | bool }}"
