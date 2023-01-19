@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 
-export -- TZ='{{ timezone }}'
+if [[ -z "$TZ" ]]
+then
+  export -- TZ='{{ timezone }}'
+fi
