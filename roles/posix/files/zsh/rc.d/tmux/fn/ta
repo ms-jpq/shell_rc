@@ -6,10 +6,10 @@ ta() {
   then
     if [[ -v TMUX ]]
     then
-      tmux new-session -d -s "$session"
+      tmux new-session -d -c "$HOME" -s "$session"
       tmux switch -t "$session"
     else
-      tmux new-session -A -s "$session"
+      tmux new-session -A -c "$HOME" -s "$session"
     fi
   else
     session="$(tmux list-sessions -F '#{session_name}' | fzf -0 -1)"
@@ -19,7 +19,7 @@ ta() {
       then
         tmux switch -t "$session"
       else
-        tmux new-session -A -s "${session:-owo}"
+        tmux new-session -A -c "$HOME" -s "${session:-owo}"
       fi
     fi
   fi
