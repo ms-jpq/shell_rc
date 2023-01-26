@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S -- bash
 
 if [[ -z "$LANG" ]] || [[ -z "$LC_ALL" ]]
 then
