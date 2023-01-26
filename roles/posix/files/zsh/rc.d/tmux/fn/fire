@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S -- bash
 
 # OSC 1337 -> iTerm Exts
 # shellcheck disable=SC1003

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S -- bash
 
 # shellcheck disable=SC1003
 if [[ -v TMUX ]]

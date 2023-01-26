@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S -- bash
 
 z() {
   if [[ ! -v _Z_CMD ]]
