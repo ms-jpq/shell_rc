@@ -92,7 +92,7 @@ then
 fi
 
 
-if [[ "$GLOBAL" -ne 0 ]]
+if (( GLOBAL ))
 then
   asdf global "$LANG" "$VERSION"
 fi
