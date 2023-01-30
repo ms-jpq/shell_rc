@@ -4,8 +4,7 @@
 #################### ENV Region ####################
 #################### ########## ####################
 
-if [[ "$OSTYPE" =~ 'msys' ]]
-then
+if [[ "$OSTYPE" =~ 'msys' ]]; then
   export -- MSYSTEM='MSYS'
   local cpath=''
 
@@ -29,6 +28,5 @@ else
   export -- XDG_STATE_HOME="$HOME/.local/state"
   export -- XDG_CACHE_HOME="$HOME/.cache"
 fi
-
 
 ZDOTDIR="$XDG_CONFIG_HOME/zsh/rc.d"

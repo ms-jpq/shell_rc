@@ -25,4 +25,3 @@ export -- TIME_STYLE='long-iso'
 
 export -- EDITOR='nvim'
 export -- MANPAGER='nvim +Man!'
-

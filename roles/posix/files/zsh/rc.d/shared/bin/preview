@@ -4,15 +4,12 @@ set -Eeu
 set -o pipefail
 shopt -s nullglob globstar
 
-
 TARGET="$1"
 
 export -- PAGER='tee'
 
-if [[ -d "$TARGET" ]]
-then
-  if command -v -- exa > /dev/null
-  then
+if [[ -d "$TARGET" ]]; then
+  if command -v -- exa >/dev/null; then
     ARGS=(
       exa
       --all
@@ -29,8 +26,8 @@ then
       --almost-all
       --group-directories-first
       --classify
-      --human-readable 
-      --si 
+      --human-readable
+      --si
       --color=always
     )
   fi

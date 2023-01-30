@@ -2,10 +2,8 @@
 
 ta() {
   local session="$*"
-  if (( $# ))
-  then
-    if [[ -v TMUX ]]
-    then
+  if (($#)); then
+    if [[ -v TMUX ]]; then
       tmux new-session -d -c "$HOME" -s "$session"
       tmux switch -t "$session"
     else
@@ -13,10 +11,8 @@ ta() {
     fi
   else
     session="$(tmux list-sessions -F '#{session_name}' | fzf -0 -1)"
-    if [[ $? -ne 130 ]]
-    then
-      if [[ -v TMUX ]]
-      then
+    if [[ $? -ne 130 ]]; then
+      if [[ -v TMUX ]]; then
         tmux switch -t "$session"
       else
         tmux new-session -A -c "$HOME" -s "${session:-owo}"

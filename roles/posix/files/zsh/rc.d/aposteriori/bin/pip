@@ -4,83 +4,67 @@ set -Eeu
 set -o pipefail
 shopt -s nullglob globstar
 
-
 bin="$(dirname -- "$0")"
 PATH="$(paths --silent remove "$bin")"
-
 
 EXECUTE=(
   "$(basename -- "$0")"
   "$@"
-  )
-
+)
 
 IS_VENV=0
-if [[ -v VIRTUAL_ENV ]]
-then
+if [[ -v VIRTUAL_ENV ]]; then
   IS_VENV=1
 fi
 
-
 IS_INTERACTIVE=0
-if [[ -t 0 ]]
-then
+if [[ -t 0 ]]; then
   IS_INTERACTIVE=1
 fi
 
-
 IS_INSTALL=0
-if [[ $# -gt 0 ]] && [[ "${EXECUTE[1]}" == 'install' ]]
-then
+if [[ $# -gt 0 ]] && [[ "${EXECUTE[1]}" == 'install' ]]; then
   IS_INSTALL=1
 fi
-for ARG in "$@"
-do
-  if [[ "$ARG" == '-h' ]] || [[ "$ARG" == '--help' ]]
-  then
+for ARG in "$@"; do
+  if [[ "$ARG" == '-h' ]] || [[ "$ARG" == '--help' ]]; then
     IS_INSTALL=0
   fi
 done
 
-
 ASK=0
-if [[ $IS_VENV -eq 0 ]] && [[ $IS_INTERACTIVE -eq 1 ]] && [[ $IS_INSTALL -eq 1 ]]
-then
+if [[ $IS_VENV -eq 0 ]] && [[ $IS_INTERACTIVE -eq 1 ]] && [[ $IS_INSTALL -eq 1 ]]; then
   ASK=1
 fi
-
 
 hr() {
   local rep="$1"
   local cols="$2"
   local line=''
-  for ((i=1; i<=cols; i++))
-  do
+  for ((i = 1; i <= cols; i++)); do
     line="$line$rep"
   done
   printf -- '%s\n' "$line" >&2
 }
 
-
-if [[ $ASK -eq 0 ]]
-then
+if [[ $ASK -eq 0 ]]; then
   exec -- "${EXECUTE[@]}"
 else
   COLS="$(tput -- cols)"
-  >&2 type -a python3
+  type >&2 -a python3
   hr '-' "$COLS"
-  >&2 printf -- '%s\n' 'Not in virtual environment:'
+  printf >&2 -- '%s\n' 'Not in virtual environment:'
   hr '-' "$COLS"
-  >&2 printf -- '%s\n' "${EXECUTE[*]}"
+  printf >&2 -- '%s\n' "${EXECUTE[*]}"
   hr '-' "$COLS"
 
   read -r -p 'Continue (y/n)?' -- CONT
   case "$CONT" in
-    1|y|Y)
-      exec -- "${EXECUTE[@]}"
-      ;;
-    *)
-      exit 1
-      ;;
+  1 | y | Y)
+    exec -- "${EXECUTE[@]}"
+    ;;
+  *)
+    exit 1
+    ;;
   esac
 fi
