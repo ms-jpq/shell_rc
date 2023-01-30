@@ -2,7 +2,7 @@
 
 ta() {
   local session="$*"
-  if [[ $# -ne 0 ]]
+  if (( $# ))
   then
     if [[ -v TMUX ]]
     then
