@@ -4,7 +4,6 @@ set -Eeu
 set -o pipefail
 shopt -s globstar nullglob
 
-
 read -r -d '' -- AWK <<-'EOF' || true
 BEGIN { 
   printf("\x1BPtmux;")
@@ -18,17 +17,13 @@ END {
 }
 EOF
 
-
-if [[ -v TMUX ]]
-then
-  if [[ -v SSH_TTY ]]
-  then
+if [[ -v TMUX ]]; then
+  if [[ -v SSH_TTY ]]; then
     awk "$AWK" | awk "$AWK"
   else
     awk "$AWK"
   fi
-elif [[ -v SSH_TTY ]]
-then
+elif [[ -v SSH_TTY ]]; then
   awk "$AWK"
 else
   tee

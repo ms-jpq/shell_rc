@@ -4,14 +4,12 @@ set -Eeu
 set -o pipefail
 shopt -s nullglob globstar
 
-
 VIRTUAL_ENV="${VIRTUAL_ENV:-}"
 
 export -- DEFAULT_VENV_PATH="${DEFAULT_VENV_PATH:-"${2:-"$PWD/.venv"}"}"
 
 PY_EXE="$DEFAULT_VENV_PATH/bin/python3"
 ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
-
 
 OP="$1"
 shift
@@ -52,51 +50,45 @@ for path in Path.cwd().glob("requirements*.txt"):
     pip("--requirement", path)
 PYTHON
 
-
 case "$OP" in
 init)
-  if [[ -d "$DEFAULT_VENV_PATH" ]]
-  then
-    >&2 printf -- '%s\n' "Virtualenv already initialized"
+  if [[ -d "$DEFAULT_VENV_PATH" ]]; then
+    printf >&2 -- '%s\n' "Virtualenv already initialized"
   else
-    >&2 python3 -m venv "$DEFAULT_VENV_PATH"
-    >&2 "$PY_EXE" <<< "$PYPROJ"
-    >&2 printf -- '%s\n' "Initialized Virtualenv"
+    python3 >&2 -m venv "$DEFAULT_VENV_PATH"
+    "$PY_EXE" >&2 <<<"$PYPROJ"
+    printf >&2 -- '%s\n' "Initialized Virtualenv"
     venv on
   fi
   ;;
 on)
-  if [[ -f "$ACTIVATE" ]]
-  then
+  if [[ -f "$ACTIVATE" ]]; then
     venv off
     printf -- '%s\n' "source '$ACTIVATE'"
-    >&2 printf -- '%s\n' "Activated - $DEFAULT_VENV_PATH"
+    printf >&2 -- '%s\n' "Activated - $DEFAULT_VENV_PATH"
   else
     venv init
   fi
   ;;
 off)
-  if [[ -z "$VIRTUAL_ENV" ]]
-  then
+  if [[ -z "$VIRTUAL_ENV" ]]; then
     true
   else
     printf -- '%s\n' 'deactivate'
   fi
-  >&2 printf -- '%s\n' "Deactivating - $VIRTUAL_ENV"
+  printf >&2 -- '%s\n' "Deactivating - $VIRTUAL_ENV"
   ;;
 rm)
-  if [[ -d "$DEFAULT_VENV_PATH" ]]
-  then
-    if [[ "$VIRTUAL_ENV" = "$DEFAULT_VENV_PATH" ]]
-    then
+  if [[ -d "$DEFAULT_VENV_PATH" ]]; then
+    if [[ "$VIRTUAL_ENV" = "$DEFAULT_VENV_PATH" ]]; then
       venv off
     fi
     printf -- '%s\n' "rm -rf '$DEFAULT_VENV_PATH'"
   fi
-  >&2 printf -- '%s\n' "Removed - $DEFAULT_VENV_PATH"
+  printf >&2 -- '%s\n' "Removed - $DEFAULT_VENV_PATH"
   ;;
 *)
-  >&2 printf -- '%s\n' "Invalid argument"
-  >&2 printf -- '%s\n' "venv - [on | off | rm]"
+  printf >&2 -- '%s\n' "Invalid argument"
+  printf >&2 -- '%s\n' "venv - [on | off | rm]"
   ;;
 esac

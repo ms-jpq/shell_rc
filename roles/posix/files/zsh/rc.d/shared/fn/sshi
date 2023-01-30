@@ -5,12 +5,11 @@ sshi() {
   unshift
 
   local argv=
-  if [[ "$file" = '-' ]]
-  then
+  if [[ "$file" = '-' ]]; then
     argv=("$@")
   else
     argv=(-o IdentitiesOnly=yes -i "$file" "$@")
   fi
 
-  ssh "${argv[@]}" 
+  ssh "${argv[@]}"
 }

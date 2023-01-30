@@ -4,12 +4,9 @@ set -Eeu
 set -o pipefail
 shopt -s nullglob globstar
 
-
 RG_ARGS="${_RG_ARGS:-}"
 
-
-if [[ -z "$RG_ARGS" ]]
-then
+if [[ -z "$RG_ARGS" ]]; then
   export -- _RG_ARGS=""
   _RG_ARGS="$(mktemp)"
   ARGS=(
@@ -23,9 +20,8 @@ then
     --print0
     --preview='{f}'
   )
-  for ARG in "$@"
-  do
-    printf -- '%s\0' "$ARG" >> "$_RG_ARGS"
+  for ARG in "$@"; do
+    printf -- '%s\0' "$ARG" >>"$_RG_ARGS"
   done
   rg "${ARGS[@]}" | SHELL="$0" fzf "${FZF_ARGS[@]}"
 else
@@ -35,7 +31,7 @@ else
     --context=3
     --context-separator="$(hr '-' "$FZF_PREVIEW_COLUMNS" 2>&1)"
   )
-  readarray -t -d $'\0' -- ENV_ARGS < "$RG_ARGS"
-  readarray -t -d $'\0' -- RG_PATH < "$2"
+  readarray -t -d $'\0' -- ENV_ARGS <"$RG_ARGS"
+  readarray -t -d $'\0' -- RG_PATH <"$2"
   exec -- rg "${ARGS[@]}" "${ENV_ARGS[@]}" -- "${RG_PATH[@]}"
 fi

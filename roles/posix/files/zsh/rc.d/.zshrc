@@ -7,8 +7,7 @@ setopt nullglob
 #################### ############## ####################
 
 pathprepend() {
-  for p in "$@"
-  do
+  for p in "$@"; do
     path=("$p" "${path[@]}")
   done
 }
@@ -18,8 +17,7 @@ quote() {
 }
 
 join() {
-  for arg in "$@"
-  do
+  for arg in "$@"; do
     printf -- '%q ' "$arg"
   done
 }
@@ -27,17 +25,16 @@ join() {
 zsh_main() {
   local os=''
 
-  case "$OSTYPE"
-  in
-    darwin*)
-      os='darwin'
-      ;;
-    linux*)
-      os='linux'
-      ;;
-    *)
-      os='nt'
-      ;;
+  case "$OSTYPE" in
+  darwin*)
+    os='darwin'
+    ;;
+  linux*)
+    os='linux'
+    ;;
+  *)
+    os='nt'
+    ;;
   esac
 
   local zrc_targets=(
@@ -50,23 +47,19 @@ zsh_main() {
     docker
   )
 
-  for target in "${zrc_targets[@]}"
-  do
+  for target in "${zrc_targets[@]}"; do
     local rcs="$ZDOTDIR/$target"
     local fns="$rcs/fn"
 
-    if [[ -d "$fns" ]]
-    then
+    if [[ -d "$fns" ]]; then
       fpath=("$fns" "${fpath[@]}")
 
-      for fn in "$fns"/**/*
-      do
+      for fn in "$fns"/**/*; do
         autoload -Uz "$fn"
       done
     fi
 
-    for rc in "$rcs"/**/*.zsh
-    do
+    for rc in "$rcs"/**/*.zsh; do
       source -- "$rc"
     done
 
@@ -77,8 +70,6 @@ zsh_main() {
 zsh_main
 unset -f zsh_main
 
-
-if (( SHLVL > 1 ))
-then
+if ((SHLVL > 1)); then
   PATH="$(printf -- '%s' "$PATH" | awk -v 'RS=:' -v 'ORS=' '!seen[$0]++ { if (NR != 1) { print ":"  } print $0 }')"
 fi

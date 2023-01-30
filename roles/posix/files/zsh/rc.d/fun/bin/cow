@@ -4,7 +4,6 @@ set -Eeu
 set -o pipefail
 shopt -s nullglob globstar
 
-
 COLS=$(tput -- cols)
 WRAP=$((COLS / 3))
 
@@ -16,23 +15,19 @@ COW="${COWS[$((RANDOM % ${#COWS[@]}))]}"
 STYLES=(-b -d -g -p -s -t -w -y)
 STYLE="${STYLES[$((RANDOM % ${#STYLES[@]}))]}"
 
-
 ARGS=(
   -W
   "$WRAP"
   -f
   "$COW"
   "$STYLE"
-  )
+)
 
-
-if [[ -t 0 ]]
-then
+if [[ -t 0 ]]; then
   TEXT="$*"
 else
-  TEXT="$(< /dev/stdin)"
+  TEXT="$(</dev/stdin)"
 fi
 
-
 TEXT="${TEXT:-moo}"
-exec -- cowsay "${ARGS[@]}" <<< "$TEXT"
+exec -- cowsay "${ARGS[@]}" <<<"$TEXT"

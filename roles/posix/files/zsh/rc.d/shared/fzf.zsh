@@ -4,9 +4,7 @@
 #################### FZF Region ####################
 #################### ########## ####################
 
-
 export -- FZF_TMUX_HEIGHT='100%'
-
 
 _fzf_default_opts=(
   --reverse
@@ -31,7 +29,6 @@ FZF_DEFAULT_OPTS="$(join "${_fzf_default_opts[@]}")"
 unset _fzf_default_opts
 export -- FZF_DEFAULT_OPTS
 
-
 _fzf_default_command=(
   fd
   --hidden
@@ -42,7 +39,6 @@ _fzf_default_command=(
 FZF_DEFAULT_COMMAND="$(join "${_fzf_default_command[@]}")"
 unset _fzf_default_command
 export -- FZF_DEFAULT_COMMAND
-
 
 _fzf_alt_c_command=(
   fd
@@ -56,7 +52,6 @@ _fzf_alt_c_command=(
 FZF_ALT_C_COMMAND="$(join "${_fzf_alt_c_command[@]}")"
 unset _fzf_alt_c_command
 
-
 _fzf_ctrl_t_command=(
   fd
   --print0
@@ -66,7 +61,6 @@ _fzf_ctrl_t_command=(
 # shellcheck disable=SC2034
 FZF_CTRL_T_COMMAND="$(join "${_fzf_ctrl_t_command[@]}")"
 unset _fzf_ctrl_t_command
-
 
 _fzf_preview=(
   --preview "$(quote "$ZDOTDIR/shared/bin/preview") {}"
@@ -81,7 +75,6 @@ unset _fzf_alt_c_opts
 # shellcheck disable=SC2034
 FZF_CTRL_T_OPTS="$FZF_ALT_C_OPTS"
 
-
 #################### ################ ####################
 #################### Overwrite Region ####################
 #################### ################ ####################
@@ -95,7 +88,6 @@ _fzf_compgen_path() {
   )
   "${local_opts[@]}" "$1"
 }
-
 
 _fzf_compgen_dir() {
   local local_opts=(

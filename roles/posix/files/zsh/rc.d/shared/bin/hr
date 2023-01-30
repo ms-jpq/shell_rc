@@ -4,16 +4,14 @@ set -Eeu
 set -o pipefail
 shopt -s nullglob globstar
 
-
 WORD="${1-"#"}"
 COLS="${2:-"$(tput -- cols)"}"
 
 LEN="${#WORD}"
-REPS=$(( COLS / LEN + 1 ))
+REPS=$((COLS / LEN + 1))
 
 ACC=()
-for (( i = 0; i < REPS; i++ ))
-do
+for ((i = 0; i < REPS; i++)); do
   ACC+=("$WORD")
 done
 

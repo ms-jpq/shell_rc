@@ -4,7 +4,6 @@ set -Eeu
 set -o pipefail
 shopt -s nullglob globstar
 
-
 OPTS='sr'
 LONG_OPTS='silent,relative'
 
@@ -14,29 +13,27 @@ eval set -- "$PARSED"
 SILENT=0
 RELATIVE=0
 
-while true
-do
+while true; do
   case "$1" in
-    -r|--relative)
-      RELATIVE=1
-      shift
-      ;;
-    -s|--silent)
-      SILENT=1
-      shift
-      ;;
-    --)
-      shift
-      break
-      ;;
-    *)
-      >&2 printf -- '%s\n' '!ERR!'
-      exit 2
-      ;;
+  -r | --relative)
+    RELATIVE=1
+    shift
+    ;;
+  -s | --silent)
+    SILENT=1
+    shift
+    ;;
+  --)
+    shift
+    break
+    ;;
+  *)
+    printf >&2 -- '%s\n' '!ERR!'
+    exit 2
+    ;;
   esac
 done
 ARG_NUM=$#
-
 
 print_path() {
   printf -- '%s' "$PATH"
@@ -44,36 +41,30 @@ print_path() {
 
 print_err() {
   print_path
-  >&2 printf -- 'paths {show, add, rm|remove, toggle} path\n'
-  >&2 printf -- '%s\n' "$1"
+  printf >&2 -- 'paths {show, add, rm|remove, toggle} path\n'
+  printf >&2 -- '%s\n' "$1"
   exit 1
 }
 
-
 check_arg() {
-  if [[ $ARG_NUM -ne 2 ]]
-  then
+  if [[ $ARG_NUM -ne 2 ]]; then
     print_err 'ERR! -- # of arguments'
   fi
 }
-
 
 show() {
   print_path
   print_path | awk -v 'RS=:' '!seen[$0]++' >&2
 }
 
-
 p_relative() {
   local target="$1"
-  if [[ "$RELATIVE" -eq 0 ]]
-  then
+  if [[ "$RELATIVE" -eq 0 ]]; then
     printf -- '%s' "$target"
   else
     printf -- '%s' "$PWD/$target"
   fi
 }
-
 
 remove() {
   local target="$1"
@@ -82,10 +73,8 @@ remove() {
   local acc=()
   local arr
   readarray -t -d ':' -- arr < <(print_path)
-  for path in "${arr[@]}"
-  do
-    if [[ "$path" != "$target" ]]
-    then
+  for path in "${arr[@]}"; do
+    if [[ "$path" != "$target" ]]; then
       acc+=("$path")
     fi
   done
@@ -95,29 +84,24 @@ remove() {
   IFS="$save_ifs"
   printf -- '%s' "$ret"
 
-  if [[ "$silent" -eq 0 ]]
-  then
-    >&2 printf -- '%s\n' "REMOVED -- $target"
+  if [[ "$silent" -eq 0 ]]; then
+    printf >&2 -- '%s\n' "REMOVED -- $target"
   fi
 }
-
 
 add() {
   local target="$1"
   local silent="$2"
 
-  if [[ -d "$target" ]]
-  then
+  if [[ -d "$target" ]]; then
     printf -- '%s' "$target:$(remove "$target" 1)"
-    if [[ "$silent" -eq 0 ]]
-    then
-      >&2 printf -- '%s\n' "ADDED   -- $target"
+    if [[ "$silent" -eq 0 ]]; then
+      printf >&2 -- '%s\n' "ADDED   -- $target"
     fi
   else
     print_err "ERR! -- Not a Directory: $target"
   fi
 }
-
 
 toggle() {
   local target="$1"
@@ -126,50 +110,45 @@ toggle() {
   local found=0
   local arr
   readarray -t -d ':' -- arr < <(print_path)
-  for path in "${arr[@]}"
-  do
-    if [[ "$path" == "$target" ]]
-    then
+  for path in "${arr[@]}"; do
+    if [[ "$path" == "$target" ]]; then
       found=1
       break
     fi
   done
 
-  if [[ "$found" -eq 0 ]]
-  then
+  if [[ "$found" -eq 0 ]]; then
     add "$target" "$silent"
   else
     remove "$target" "$silent"
   fi
 }
 
-
-if [[ $ARG_NUM -lt 1 ]]
-then
+if [[ $ARG_NUM -lt 1 ]]; then
   print_err 'ERR! -- # of arguments'
 fi
 ACTION="$1"
 case "$ACTION" in
-  show)
-    show
-    ;;
-  add)
-    check_arg
-    target="$(realpath -- "$2")"
-    add "$target" "$SILENT"
-    ;;
-  rm|remove)
-    check_arg
-    target="$(realpath -- "$2")"
-    remove "$target" "$SILENT"
-    ;;
-  toggle)
-    check_arg
-    target="$(realpath -- "$2")"
-    toggle "$target" "$SILENT"
-    ;;
-  *)
-    print_err 'ERR! -- Must be one of ^'
-    exit 2
-    ;;
+show)
+  show
+  ;;
+add)
+  check_arg
+  target="$(realpath -- "$2")"
+  add "$target" "$SILENT"
+  ;;
+rm | remove)
+  check_arg
+  target="$(realpath -- "$2")"
+  remove "$target" "$SILENT"
+  ;;
+toggle)
+  check_arg
+  target="$(realpath -- "$2")"
+  toggle "$target" "$SILENT"
+  ;;
+*)
+  print_err 'ERR! -- Must be one of ^'
+  exit 2
+  ;;
 esac

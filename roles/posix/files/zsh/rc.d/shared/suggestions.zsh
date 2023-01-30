@@ -13,6 +13,5 @@ ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(autosuggest-accept)
 source -- "$ZDOTDIR/../zsh-autosuggestions/zsh-autosuggestions.zsh"
 # INIT #
 
-
 bindkey '^f' autosuggest-accept
 bindkey '^[f' autosuggest-accept

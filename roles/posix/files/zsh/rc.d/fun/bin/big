@@ -4,12 +4,10 @@ set -Eeu
 set -o pipefail
 shopt -s nullglob globstar
 
-
 COLS=$(tput -- cols)
 
 FONTS=("$(figlet -I 2)"/**.flf)
 FONT="${FONTS[$((RANDOM % ${#FONTS[@]}))]}"
-
 
 ARGS=(
   -c
@@ -17,16 +15,13 @@ ARGS=(
   "$COLS"
   -f
   "$FONT"
-  )
+)
 
-
-if [[ -t 0 ]]
-then
+if [[ -t 0 ]]; then
   TEXT="$*"
 else
-  TEXT="$(< /dev/stdin)"
+  TEXT="$(</dev/stdin)"
 fi
 
-
 TEXT="${TEXT:-BIGLY}"
-exec -- figlet "${ARGS[@]}" <<< "$TEXT"
+exec -- figlet "${ARGS[@]}" <<<"$TEXT"

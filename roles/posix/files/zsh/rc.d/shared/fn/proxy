@@ -1,7 +1,6 @@
 #!/usr/bin/env -S -- bash
 
-if [[ "$#" -eq 0 ]]
-then
+if [[ "$#" -eq 0 ]]; then
   unset http_proxy
   unset https_proxy
   unset HTTP_PROXY

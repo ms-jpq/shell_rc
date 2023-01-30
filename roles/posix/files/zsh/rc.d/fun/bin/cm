@@ -4,7 +4,6 @@ set -Eeu
 set -o pipefail
 shopt -s nullglob globstar
 
-
 COLOURS=(green red blue white yellow cyan magenta black)
 COLOUR="${COLOURS[$((RANDOM % ${#COLOURS[@]}))]}"
 

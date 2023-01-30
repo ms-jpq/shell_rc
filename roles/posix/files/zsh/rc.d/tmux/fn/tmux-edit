@@ -2,5 +2,5 @@
 
 TMP="$(mktemp)"
 trap 'rm --force -- "$TMP"' EXIT
-"$(dirname -- "$0")/tmux-dump" > "$TMP"
+"$(dirname -- "$0")/tmux-dump" >"$TMP"
 "$EDITOR" -- "$TMP"

@@ -4,7 +4,6 @@ set -Eeux
 set -o pipefail
 shopt -s nullglob globstar
 
-
 apt-install() {
   DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends --yes -- "$@"
 }
@@ -14,7 +13,6 @@ touch -- "$HOME/.tool-versions"
 ##
 ##
 ##
-
 
 PYTHON_DEPS=(
   build-essential
@@ -38,24 +36,19 @@ PYTHON_DEPS=(
 apt-install "${PYTHON_DEPS[@]}"
 asdf-install --global -- python
 
-
 mkdir --parent -- "$XDG_DATA_HOME/gnupg"
 NODEJS_CHECK_SIGNATURES=no asdf-install --global -- nodejs
 
-
 asdf-install --global -- rust
-
 
 asdf-install --global -- golang
 
-
 RUBY_DEPS=(
- libyaml-dev
- libssl-dev
+  libyaml-dev
+  libssl-dev
 )
 apt-install "${RUBY_DEPS[@]}"
 asdf-install --global -- ruby
-
 
 # R_DEPS=(
 #   build-essential
@@ -78,7 +71,6 @@ asdf-install --global -- ruby
 # apt-install "${R_DEPS[@]}"
 # R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
 
-
 # PHP_DEPS=(
 #   autoconf
 #   bison
@@ -93,17 +85,14 @@ asdf-install --global -- ruby
 
 JPLUGIN='java'
 HAS_JPLUGIN=0
-while read -r -- line
-do
-  if [[ "$line" = "$JPLUGIN" ]]
-  then
+while read -r -- line; do
+  if [[ "$line" = "$JPLUGIN" ]]; then
     HAS_JPLUGIN=1
     break
   fi
-done <<< "$(asdf plugin list)"
+done <<<"$(asdf plugin list)"
 
-if [[ $HAS_JPLUGIN -eq 0 ]]
-then
+if [[ $HAS_JPLUGIN -eq 0 ]]; then
   asdf plugin add "$JPLUGIN"
 else
   asdf plugin update "$JPLUGIN"
@@ -113,4 +102,3 @@ JPLUGIN_VER="$(asdf list-all "$JPLUGIN" | grep --fixed-strings -- 'openjdk' | ta
 asdf install "$JPLUGIN" "$JPLUGIN_VER"
 asdf global "$JPLUGIN" "$JPLUGIN_VER"
 asdf reshim
-

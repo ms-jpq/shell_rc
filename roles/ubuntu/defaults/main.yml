@@ -99,13 +99,13 @@ target_archives:
     dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-{{ ansible_architecture }}-unknown-linux-musl.tar.gz"
     dest: "{{ _exec_bin_ }}"
-  - src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.3-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
+  - src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.4-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
     dest: "{{ build_tmp }}"
   # - src: "https://github.com/ogham/dog/releases/download/v0.1.0/dog-v0.1.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
   #   dest: "{{ build_tmp }}"
 
 target_remote_copy:
-  - src: "{{ build_tmp }}/dust-v0.8.3-{{ ansible_architecture }}-unknown-linux-gnu/dust"
+  - src: "{{ build_tmp }}/dust-v0.8.4-{{ ansible_architecture }}-unknown-linux-gnu/dust"
     dest: "{{ _exec_bin_ }}/dust"
   # - src: "{{ build_tmp }}/bin/dog"
   #   dest: "{{ _exec_bin_ }}/dog"
