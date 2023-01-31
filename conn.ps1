@@ -39,7 +39,7 @@ function ssh {
     Set-Service -Name 'sshd' -StartupType 'Automatic' -Status 'Running'
 
     $WIN_ADMIN = if (!(Test-Path variable:global:IsWindows) -Or $IsWindows) {
-        $C_USER = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+        $C_USER = [Security.Principal.WindowsIdentity]::GetCurrent()
         $USER_OBJ = New-Object Security.Principal.WindowsPrincipal($C_USER)
         $USER_OBJ.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     }
