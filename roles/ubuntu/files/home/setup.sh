@@ -83,6 +83,15 @@ asdf-install --global -- ruby
 # apt-install "${PHP_DEPS[@]}"
 # asdf-install --global -- php
 
+PROLOG_DEPS=(
+  libarchive-dev
+  libgmp-dev
+  libreadline-dev
+  libunwind-dev
+)
+apt-install "${PROLOG_DEPS[@]}"
+asdf-install --global -- swiprolog
+
 JPLUGIN='java'
 HAS_JPLUGIN=0
 while read -r -- line; do
@@ -102,3 +111,4 @@ JPLUGIN_VER="$(asdf list-all "$JPLUGIN" | grep --fixed-strings -- 'openjdk' | ta
 asdf install "$JPLUGIN" "$JPLUGIN_VER"
 asdf global "$JPLUGIN" "$JPLUGIN_VER"
 asdf reshim
+hr
