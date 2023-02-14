@@ -47,6 +47,8 @@ target_archives:
     dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-x86_64-pc-windows-msvc.zip"
     dest: "{{ _exec_bin_ }}"
+  - src: "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-windows.zip"
+    dest: "{{ _exec_bin_ }}"
 
   - src: "https://github.com/sharkdp/bat/releases/latest/download/bat-v0.22.1-x86_64-pc-windows-msvc.zip"
     dest: "{{ build_tmp }}"
