@@ -43,7 +43,7 @@ target_downloads:
 target_archives:
   - src: "https://github.com/ms-jpq/sad/releases/latest/download/x86_64-pc-windows-msvc.zip"
     dest: "{{ _exec_bin_ }}"
-  - src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.35.1-windows_amd64.zip"
+  - src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.38.0-windows_amd64.zip"
     dest: "{{ _exec_bin_ }}"
   - src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-x86_64-pc-windows-msvc.zip"
     dest: "{{ _exec_bin_ }}"
