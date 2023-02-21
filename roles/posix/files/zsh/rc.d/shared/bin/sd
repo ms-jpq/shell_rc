@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- bash
 
 set -u
-shopt -s nullglob globstar
+shopt -s failglob globstar
 
 if [[ $# -lt 2 ]]; then
   printf >&2 -- '%s\n' 'ERROR -- missing args:
