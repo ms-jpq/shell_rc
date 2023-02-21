@@ -1,4 +1,4 @@
-#!/usr/bin/env -S -- bash -Eeuo pipefail -O nullglob -O globstar
+#!/usr/bin/env -S -- bash -Eeuo pipefail -O failglob -O globstar
 
 COLS=$(tput -- cols)
 WRAP=$((COLS / 3))
