@@ -1,6 +1,6 @@
 #!/usr/bin/env -S -- bash -Eeuo pipefail -O failglob -O globstar
 
-cd -- "$(dirname -- "$0")/../.." || exit 1
+cd -- "$(dirname -- "$0")/../.." 
 
 TAG='windows-ansible'
 
