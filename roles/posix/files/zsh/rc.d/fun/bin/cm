@@ -1,8 +1,4 @@
-#!/usr/bin/env -S -- bash
-
-set -Eeu
-set -o pipefail
-shopt -s nullglob globstar
+#!/usr/bin/env -S -- bash -Eeuo pipefail -O nullglob -O globstar
 
 COLOURS=(green red blue white yellow cyan magenta black)
 COLOUR="${COLOURS[$((RANDOM % ${#COLOURS[@]}))]}"

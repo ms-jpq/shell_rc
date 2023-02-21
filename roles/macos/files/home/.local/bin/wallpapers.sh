@@ -1,8 +1,4 @@
-#!/usr/bin/env -S -- bash
-
-set -Eeu
-set -o pipefail
-shopt -s globstar nullglob
+#!/usr/bin/env -S -- bash -Eeuo pipefail -O nullglob -O globstar
 
 ARGS=(
   rsync

@@ -1,8 +1,4 @@
-#!/usr/bin/env -S -- bash
-
-set -Eeu
-set -o pipefail
-shopt -s nullglob globstar
+#!/usr/bin/env -S -- bash -Eeuo pipefail -O nullglob -O globstar
 
 OPTS='sr'
 LONG_OPTS='silent,relative'
