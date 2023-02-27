@@ -83,7 +83,7 @@ target_links:
   #   dest: "/etc/localtime"
 
 target_downloads:
-  - src: "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64"
+  - src: "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-{{ dpkg_arch }}"
     dest: "{{ _exec_bin_ }}/oh-my-posh"
 
 target_archives:
