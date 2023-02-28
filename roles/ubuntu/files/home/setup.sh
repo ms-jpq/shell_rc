@@ -1,4 +1,4 @@
-#!/usr/bin/env -S -- bash -Eeuo pipefail -O failglob -O globstar
+#!/usr/bin/env -S -- bash -Eeuo pipefail -O dotglob -O failglob -O globstar
 
 apt-install() {
   DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends --yes -- "$@"
