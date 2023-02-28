@@ -1,0 +1,14 @@
+#!/usr/bin/env -S -- bash -Eeuo pipefail -O failglob -O globstar
+
+SNI="$1"
+shift
+
+join() {
+  for arg in "$@"; do
+    printf -- '%q ' "$arg"
+  done
+}
+
+PROXY="$(join exec openssl s_client -quiet -connect '%h:%p' -servername "$SNI")"
+
+exec -- ssh -o ProxyCommand="$PROXY" "$@"
