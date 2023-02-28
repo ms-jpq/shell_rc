@@ -1,5 +1,6 @@
 #!/usr/bin/env -S -- bash
 
+setopt dotglob
 setopt nullglob
 
 #################### ############## ####################
