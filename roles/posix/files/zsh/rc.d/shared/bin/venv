@@ -51,9 +51,9 @@ init)
   if [[ -d "$DEFAULT_VENV_PATH" ]]; then
     printf >&2 -- '%s\n' "Virtualenv already initialized"
   else
-    python3 >&2 -m venv "$DEFAULT_VENV_PATH"
-    "$PY_EXE" >&2 <<<"$PYPROJ"
-    printf >&2 -- '%s\n' "Initialized Virtualenv"
+    python3 -m venv --upgrade -- "$DEFAULT_VENV_PATH" >&2
+    "$PY_EXE" <<<"$PYPROJ" >&2
+    printf -- '%s\n' "Initialized Virtualenv" >&2
     venv on
   fi
   ;;
@@ -61,7 +61,7 @@ on)
   if [[ -f "$ACTIVATE" ]]; then
     venv off
     printf -- '%s\n' "source '$ACTIVATE'"
-    printf >&2 -- '%s\n' "Activated - $DEFAULT_VENV_PATH"
+    printf -- '%s\n' "Activated - $DEFAULT_VENV_PATH" >&2
   else
     venv init
   fi
@@ -72,7 +72,7 @@ off)
   else
     printf -- '%s\n' 'deactivate'
   fi
-  printf >&2 -- '%s\n' "Deactivating - $VIRTUAL_ENV"
+  printf -- '%s\n' "Deactivating - $VIRTUAL_ENV" >&2
   ;;
 rm)
   if [[ -d "$DEFAULT_VENV_PATH" ]]; then
@@ -81,10 +81,10 @@ rm)
     fi
     printf -- '%s\n' "rm -rf '$DEFAULT_VENV_PATH'"
   fi
-  printf >&2 -- '%s\n' "Removed - $DEFAULT_VENV_PATH"
+  printf -- '%s\n' "Removed - $DEFAULT_VENV_PATH" >&2
   ;;
 *)
-  printf >&2 -- '%s\n' "Invalid argument"
-  printf >&2 -- '%s\n' "venv - [on | off | rm]"
+  printf -- '%s\n' "Invalid argument" >&2
+  printf -- '%s\n' "venv - [on | off | rm]" >&2
   ;;
 esac
