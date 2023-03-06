@@ -8,7 +8,6 @@ brew_packages:
   - bash
   - bat
   - bind
-  - btop
   - cmatrix
   - coreutils
   - cowsay
@@ -34,6 +33,7 @@ brew_packages:
   - htmlq
   - htop
   - hyperfine
+  - ipcalc
   - iperf3
   - jandedobbeleer/oh-my-posh/oh-my-posh
   - jid
