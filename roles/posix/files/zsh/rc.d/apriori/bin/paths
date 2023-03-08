@@ -2,9 +2,7 @@
 
 OPTS='sr'
 LONG_OPTS='silent,relative'
-
-PARSED="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
-eval set -- "$PARSED"
+eval set -- "$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 
 SILENT=0
 RELATIVE=0

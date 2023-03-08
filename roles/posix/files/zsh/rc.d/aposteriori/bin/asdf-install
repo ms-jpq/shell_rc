@@ -2,9 +2,7 @@
 
 OPTS='gv:'
 LONG_OPTS='global,version:'
-
-PARSED="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
-eval set -- "$PARSED"
+eval set -- "$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 
 GLOBAL=0
 VERSION=
