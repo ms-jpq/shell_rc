@@ -15,7 +15,7 @@ while true; do
     ;;
   -v | --version)
     VERSION="$2"
-    shift 2
+    shift -- 2
     ;;
   --)
     shift
