@@ -1,19 +1,29 @@
 #!/usr/bin/env -S -- bash -Eeuo pipefail -O dotglob -O nullglob -O globstar
 
 if [[ -t 0 ]]; then
-  TMP="$(mktemp)"
-  for FILE in ./**/*; do
-    case "$FILE" in
-    *.link | *.netdev | *.network | *.socket | *.service | */systemd/**/*.conf)
-      if [[ ! -L "$FILE" ]]; then
-        printf -- '%s\n' "$FILE"
-        "$0" <"$FILE" >"$TMP"
-        mv -- "$TMP" "$FILE"
+  if (($#)); then
+    for FILE in "$@"; do
+      if [[ -f "$FILE" ]]; then
+        printf -- '%s\n' "$FILE" >&2
+        "$0" <"$FILE"
       fi
-      ;;
-    *) ;;
-    esac
-  done
+    done
+  else
+    TMP="$(mktemp)"
+    for FILE in ./**/*; do
+      case "$FILE" in
+      *.link | *.netdev | *.network | *.socket | *.service | */systemd/**/*.conf)
+        if [[ ! -L "$FILE" ]]; then
+          printf -- '%s\n' "$FILE" >&2
+          "$0" <"$FILE" >"$TMP"
+          mv -- "$TMP" "$FILE"
+        fi
+        ;;
+      *) ;;
+      esac
+    done
+  fi
+
 else
   readarray -t -d $'\n' -- LINES </dev/stdin
 
