@@ -107,7 +107,7 @@ target_archives:
   #   dest: "{{ build_tmp }}"
 
 target_remote_copy:
-  - src: "{{ build_tmp }}/dust-v0.8.4-{{ ansible_architecture }}-unknown-linux-gnu/dust"
+  - src: "{{ build_tmp }}/dust-v0.8.5-{{ ansible_architecture }}-unknown-linux-gnu/dust"
     dest: "{{ _exec_bin_ }}/dust"
   # - src: "{{ build_tmp }}/bin/dog"
   #   dest: "{{ _exec_bin_ }}/dog"
