@@ -2,7 +2,7 @@
 
 if [[ -t 0 ]]; then
   TMP="$(mktemp)"
-  for FILE in "$PWD/"**/*; do
+  for FILE in ./**/*; do
     case "$FILE" in
     *.link | *.netdev | *.network | *.socket | *.service | */systemd/**/*.conf)
       if [[ ! -L "$FILE" ]]; then
