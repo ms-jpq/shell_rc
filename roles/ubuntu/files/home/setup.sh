@@ -80,6 +80,7 @@ asdf-install --global -- ruby
 # asdf-install --global -- php
 
 PROLOG_DEPS=(
+  cmake
   libarchive-dev
   libgmp-dev
   libreadline-dev
