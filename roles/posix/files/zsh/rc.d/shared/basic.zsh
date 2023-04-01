@@ -16,7 +16,7 @@ _less=(
   --no-histdups
 )
 export -- PAGER='less'
-LESS="$(join "${_less[@]}")"
+LESS="$(printf -- '%q ' "${_less[@]}")"
 unset _less
 export -- LESS
 export -- LESSHISTFILE="$XDG_CACHE_HOME/less-hist"
