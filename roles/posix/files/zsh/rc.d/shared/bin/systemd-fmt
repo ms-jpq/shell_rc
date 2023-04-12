@@ -25,7 +25,7 @@ if [[ -t 0 ]]; then
   fi
 
 else
-  readarray -t -d $'\n' -- LINES </dev/stdin
+  readarray -t -d $'\n' -- LINES
 
   MAX=0
   for LINE in "${LINES[@]}"; do
