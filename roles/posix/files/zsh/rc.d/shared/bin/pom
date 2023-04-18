@@ -7,9 +7,17 @@ END=$((TTL * 60 + NOW))
 FONT="$(SHOW_FONT=1 big)"
 CLS="$(clear)"
 
+colour() {
+  if command -v -- gay &>/dev/null; then
+    gay
+  else
+    tee
+  fi
+}
+
 fig() {
   HR="$(hr)"
-  FIG="$HR$(figlet -c -w "$COLS" -f "$FONT" -- "$*")"
+  FIG="$HR$(figlet -c -w "$COLS" -f "$FONT" -- "$*" | colour)"
   readarray -t -d $'\n' -- L <<<"$FIG"
   LS="${#L[@]}"
 
