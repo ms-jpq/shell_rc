@@ -1,16 +1,22 @@
 #!/usr/bin/env -S -- bash -Eeuo pipefail -O dotglob -O failglob -O globstar
 
-COLS=$(tput -- cols)
-
 FONTS=("$(figlet -I 2)"/**.flf)
-FONT="${FONTS[$((RANDOM % ${#FONTS[@]}))]}"
+
+if ! [[ -v FONT ]]; then
+  FONT="${FONTS[$((RANDOM % ${#FONTS[@]}))]}"
+fi
+
+if [[ -v SHOW_FONT ]]; then
+  printf -- '%s' "$FONT"
+  exit
+fi
+
+COLS=$(tput -- cols)
 
 ARGS=(
   -c
-  -w
-  "$COLS"
-  -f
-  "$FONT"
+  -w "$COLS"
+  -f "$FONT"
 )
 
 if [[ -t 0 ]]; then
@@ -20,4 +26,11 @@ else
 fi
 
 TEXT="${TEXT:-BIGLY}"
-exec -- figlet "${ARGS[@]}" <<<"$TEXT"
+LINES="$(figlet "${ARGS[@]}" <<<"$TEXT")"
+DEL="$(tr -d '[:space:]' <<<"$LINES")"
+
+if [[ -z "$DEL" ]]; then
+  exec -- "$0" "$@"
+else
+  printf -- '%s\n' "$LINES"
+fi
