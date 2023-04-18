@@ -28,7 +28,7 @@ fig() {
     PAD+=($'\n')
   done
 
-  printf -- '%s%s' "$CLS" "$(printf -- '%s%s\n%s' "${PAD[*]}" "$FIG" "$HR" | colour)"
+  printf -- '%s' "$CLS$(printf -- '%s\n%s' "${PAD[*]}$FIG" "$HR" | colour)"
 }
 
 while true; do
