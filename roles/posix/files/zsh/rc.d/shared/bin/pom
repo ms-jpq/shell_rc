@@ -17,7 +17,7 @@ colour() {
 
 fig() {
   HR="$(hr)"
-  FIG="$HR$(figlet -c -w "$COLS" -f "$FONT" -- "$*" | colour)"
+  FIG="$HR$(figlet -c -w "$COLS" -f "$FONT" -- "$*")"
   readarray -t -d $'\n' -- L <<<"$FIG"
   LS="${#L[@]}"
 
@@ -28,7 +28,7 @@ fig() {
     PAD+=($'\n')
   done
 
-  printf -- '%s%s\n%s' "$CLS${PAD[*]}" "$FIG" "$HR"
+  printf -- '%s%s' "$CLS" "$(printf -- '%s%s\n%s' "${PAD[*]}" "$FIG" "$HR" | colour)"
 }
 
 while true; do
