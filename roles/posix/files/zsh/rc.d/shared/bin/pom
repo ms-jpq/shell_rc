@@ -34,7 +34,7 @@ fig() {
 while true; do
   NOW="$(date -- '+%s')"
   if ((NOW <= END)); then
-    TIME="$(date --date="@$((END - NOW))" -- '+%M:%S')"
+    TIME="$(date --utc --date="@$((END - NOW))" -- '+%H:%M:%S')"
     LINES="$(tput -- lines)"
     COLS="$(tput -- cols)"
     fig "$TIME"
