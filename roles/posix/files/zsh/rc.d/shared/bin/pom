@@ -48,7 +48,7 @@ fig "00:00"
 
 notify() {
   if command -v -- osascript &>/dev/null; then
-    osascript -e 'display notification "🍅🍅🍅" with title "🥫"'
+    osascript -e 'display notification "🍅🍅🍅" with title "🥫" sound name "Frog"'
   else
     :
   fi
