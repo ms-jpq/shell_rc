@@ -40,11 +40,10 @@ while true; do
     fig "$TIME"
     sleep -- 1
   else
+    fig "00:00:00"
     break
   fi
 done
-
-fig "00:00"
 
 notify() {
   if command -v -- osascript &>/dev/null; then
