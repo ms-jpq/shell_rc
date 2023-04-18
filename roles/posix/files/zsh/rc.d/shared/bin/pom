@@ -5,16 +5,29 @@ NOW="$(date -- '+%s')"
 END=$((TTL * 60 + NOW))
 
 FONT="$(SHOW_FONT=1 big)"
+CLS="$(clear)"
+
+fig() {
+  HR="$(hr)"
+  FIG="$CLS$HR$(figlet -c -w "$COLS" -f "$FONT" -- "$*")"
+  printf -- '%s\n%s' "$FIG" "$HR"
+}
 
 while true; do
   NOW="$(date -- '+%s')"
   if ((NOW <= END)); then
     TIME="$(date --date="@$((END - NOW))" -- '+%M:%S')"
     COLS="$(tput -- cols)"
-    clear
-    figlet -c -w "$COLS" -f "$FONT" -- "$TIME"
+    fig "$TIME"
     sleep -- 1
   else
     break
   fi
+done
+
+fig "00:00"
+
+while true; do
+  printf -- '\a'
+  sleep -- 1
 done
