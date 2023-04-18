@@ -1,0 +1,20 @@
+#!/usr/bin/env -S -- bash -Eeuo pipefail -O dotglob -O failglob -O globstar
+
+TTL="$1"
+NOW="$(date -- '+%s')"
+END=$((TTL * 60 + NOW))
+
+FONT="$(SHOW_FONT=1 big)"
+
+while true; do
+  NOW="$(date -- '+%s')"
+  if ((NOW <= END)); then
+    TIME="$(date --date="@$((END - NOW))" -- '+%M:%S')"
+    COLS="$(tput -- cols)"
+    clear
+    figlet -c -w "$COLS" -f "$FONT" -- "$TIME"
+    sleep -- 1
+  else
+    break
+  fi
+done
