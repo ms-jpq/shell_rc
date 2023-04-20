@@ -6,11 +6,11 @@ git:
 gui:
   scrollHeight: 1
   theme:
-    lightTheme: True
     activeBorderColor:
       - blue
     inactiveBorderColor:
       - black
+    lightTheme: True
     optionsTextColor:
       - black
     selectedLineBgColor:
