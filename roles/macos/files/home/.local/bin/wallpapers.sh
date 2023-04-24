@@ -10,7 +10,7 @@ ARGS=(
   --info progress2
   --delete
   --
-  root@freenas.t.home.arpa:/media/wallpapers/
+  root@freenas.lan:/media/wallpapers/
   "$HOME/Library/Mobile Documents/com~apple~CloudDocs/桌面背景/"
 )
 
