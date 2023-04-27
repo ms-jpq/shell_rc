@@ -78,13 +78,13 @@ brew_packages:
   - yank
 
 target_files:
-  - src: "home/"
-    dst: "~/"
+  - dst: "~/"
+    src: "home/"
 
 target_templates: []
 
 target_links:
-  - src: "{{ '/opt/homebrew' if ansible_architecture == 'arm64' else '/usr/local' }}/bin/dash"
-    dst: "~/.local/bin/sh"
+  - dst: "~/.local/bin/sh"
+    src: "{{ '/opt/homebrew' if ansible_architecture == 'arm64' else '/usr/local' }}/bin/dash"
 
 target_archives: []
