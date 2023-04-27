@@ -6,7 +6,7 @@
 - name: build instructions
   loop: "{{ target_templates }}"
   ansible.builtin.set_fact:
-    __target_templates: "{{ __target_templates + [{'prefix': item.src, 'dest': item.dest, 'src': query('community.general.filetree', item.src)}] }}"
+    __target_templates: "{{ __target_templates + [{'prefix': item.src, 'dst': item.dst, 'src': query('community.general.filetree', item.src)}] }}"
 
 - name: mkdir
   with_subelements:
@@ -15,7 +15,7 @@
   when: item[1].state == 'directory'
   ansible.builtin.win_file:
     state: directory
-    path: "{{ item[0].dest + item[1].path }}"
+    path: "{{ item[0].dst + item[1].path }}"
 
 - name: fill templates
   with_subelements:
@@ -24,4 +24,4 @@
   when: item[1].state == 'file'
   ansible.builtin.win_template:
     src: "{{ item[0].prefix + '/' + item[1].path }}"
-    dest: "{{ item[0].dest + item[1].path }}"
+    dest: "{{ item[0].dst + item[1].path }}"

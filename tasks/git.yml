@@ -5,4 +5,4 @@
     depth: 1
     force: True
     repo: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    dest: "{{ item.dst }}"

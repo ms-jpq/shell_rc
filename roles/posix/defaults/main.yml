@@ -4,56 +4,56 @@ _pwsh_dir_: "{{ ansible_facts.env.HOME ~ '/Documents/PowerShell' if _is_win_ els
 
 git_repos:
   - src: "https://github.com/zsh-users/zsh-syntax-highlighting"
-    dest: "{{ _zsh_dir_ }}/zsh-syntax-highlighting"
+    dst: "{{ _zsh_dir_ }}/zsh-syntax-highlighting"
 
   - src: "https://github.com/zsh-users/zsh-autosuggestions"
-    dest: "{{ _zsh_dir_ }}/zsh-autosuggestions"
+    dst: "{{ _zsh_dir_ }}/zsh-autosuggestions"
 
   - src: "https://github.com/zsh-users/zsh-history-substring-search"
-    dest: "{{ _zsh_dir_ }}/zsh-history-substring-search"
+    dst: "{{ _zsh_dir_ }}/zsh-history-substring-search"
 
   - src: "https://github.com/junegunn/fzf"
-    dest: "{{ _zsh_dir_  }}/fzf"
+    dst: "{{ _zsh_dir_  }}/fzf"
 
   - src: "https://github.com/Aloxaf/fzf-tab"
-    dest: "{{ _zsh_dir_ }}/fzf-tab"
+    dst: "{{ _zsh_dir_ }}/fzf-tab"
 
   - src: "https://github.com/rupa/z"
-    dest: "{{ _zsh_dir_ }}/z"
+    dst: "{{ _zsh_dir_ }}/z"
 
   - src: "https://github.com/seebi/dircolors-solarized"
-    dest: "{{ _zsh_dir_ }}/dircolors-solarized"
+    dst: "{{ _zsh_dir_ }}/dircolors-solarized"
 
   - src: "https://github.com/asdf-vm/asdf"
-    dest: "{{ _xdg_data_home_ }}/asdf"
+    dst: "{{ _xdg_data_home_ }}/asdf"
   - src: "https://github.com/ms-jpq/tmux_rc"
 
-    dest: "{{ _xdg_conf_home_ }}/tmux"
+    dst: "{{ _xdg_conf_home_ }}/tmux"
 
   - src: "https://github.com/ms-jpq/isomorphic-copy"
-    dest: "{{ _xdg_conf_home_ }}/isomorphic-copy"
+    dst: "{{ _xdg_conf_home_ }}/isomorphic-copy"
 
   - src: "https://github.com/ms-jpq/nvim_rc"
-    dest: "{{ _xdg_conf_home_ }}/nvim"
+    dst: "{{ _xdg_conf_home_ }}/nvim"
 
 target_files:
   - src: "config/"
-    dest: "{{ _xdg_conf_home_ }}/"
+    dst: "{{ _xdg_conf_home_ }}/"
 
   - src: "zsh/rc.d/"
-    dest: "{{ _zsh_dir_ }}/rc.d"
+    dst: "{{ _zsh_dir_ }}/rc.d"
     delete: True
 
   - src: "zsh/.zshenv"
-    dest: "{{ ansible_facts.env.HOME }}/.zshenv"
+    dst: "{{ ansible_facts.env.HOME }}/.zshenv"
 
   - src: "pwsh/"
-    dest: "{{ _pwsh_dir_ }}/"
+    dst: "{{ _pwsh_dir_ }}/"
     delete: True
 
 target_templates:
   - src: "templates/zsh/"
-    dest: "{{ _zsh_dir_ }}/"
+    dst: "{{ _zsh_dir_ }}/"
 
 target_touches:
   - "~/.ssh/config"

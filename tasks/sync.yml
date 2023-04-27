@@ -12,4 +12,4 @@
     perms: True
     delete: "{{ item.delete | default(False) }}"
     src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    dest: "{{ item.dst }}"

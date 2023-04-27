@@ -4,4 +4,4 @@
   ansible.builtin.copy:
     remote_src: True
     src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    dest: "{{ item.dst }}"
