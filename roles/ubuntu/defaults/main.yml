@@ -59,7 +59,7 @@ apt_packages:
   - yank
 
 apt_deb_packages:
-  - "https://github.com/alexhallam/tv/releases/download/1.4.30/tidy-viewer_1.4.30_{{ dpkg_arch }}.deb"
+  - "https://github.com/alexhallam/tv/releases/latest/download/tidy-viewer_1.4.30_{{ dpkg_arch }}.deb"
   - "https://github.com/dandavison/delta/releases/latest/download/git-delta_0.15.1_{{ dpkg_arch }}.deb"
   - "https://github.com/ms-jpq/sad/releases/latest/download/{{ ansible_architecture }}-unknown-linux-gnu.deb"
   - "https://github.com/sharkdp/pastel/releases/latest/download/pastel_0.9.0_{{ dpkg_arch }}.deb"
@@ -67,55 +67,53 @@ apt_deb_packages:
   - "https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/packages-microsoft-prod.deb"
 
 target_files:
-  - src: "root/"
-    dst: "/"
-  - src: "home/"
-    dst: "~/"
+  - dst: "/"
+    src: "root/"
+  - dst: "~/"
+    src: "home/"
 
 target_templates:
-  - src: "templates/"
-    dst: "/"
+  - dst: "/"
+    src: "templates/"
 
 target_links:
-  - src: "/bin/batcat"
-    dst: "/usr/local/bin/bat"
-  - src: "/bin/fdfind"
-    dst: "/usr/local/bin/fd"
+  - dst: "/usr/local/bin/bat"
+    src: "/bin/batcat"
+  - dst: "/usr/local/bin/fd"
+    src: "/bin/fdfind"
   # - src: "/usr/share/zoneinfo/{{ time_zone }}"
   #   dst: "/etc/localtime"
 
 target_downloads:
-  - src: "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-{{ dpkg_arch }}"
-    dst: "{{ _exec_bin_ }}/oh-my-posh"
+  - dst: "{{ _exec_bin_ }}/oh-my-posh"
+    src: "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-{{ dpkg_arch }}"
 
 target_archives:
-  - src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.39.0-linux_{{ dpkg_arch }}.tar.gz"
-    dst: "{{ _exec_bin_ }}"
-  - src: "https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-v0.8.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
-    dst: "{{ _exec_bin_ }}"
-  - src: "https://github.com/extrawurst/gitui/releases/latest/download/gitui-linux-musl.tar.gz"
-    dst: "{{ _exec_bin_ }}"
-  - src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.37.0_Linux_{{ ansible_architecture }}.tar.gz"
-    dst: "{{ _exec_bin_ }}"
-  - src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
-    dst: "{{ _exec_bin_ }}"
-  - src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-{{ ansible_architecture }}-unknown-linux-musl.tar.gz"
-    dst: "{{ _exec_bin_ }}"
-  - src: "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-linux.tar.gz"
-    dst: "{{ _exec_bin_ }}"
-  - src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.5-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
-    dst: "{{ build_tmp }}"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.39.0-linux_{{ dpkg_arch }}.tar.gz"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-v0.8.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/extrawurst/gitui/releases/latest/download/gitui-linux-musl.tar.gz"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.37.0_Linux_{{ ansible_architecture }}.tar.gz"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-{{ ansible_architecture }}-unknown-linux-musl.tar.gz"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-linux.tar.gz"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.5-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
   # - src: "https://github.com/ogham/dog/releases/download/v0.1.0/dog-v0.1.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
   #   dst: "{{ build_tmp }}"
 
 target_remote_copy:
-  - src: "{{ build_tmp }}/dust-v0.8.5-{{ ansible_architecture }}-unknown-linux-gnu/dust"
-    dst: "{{ _exec_bin_ }}/dust"
-  # - src: "{{ build_tmp }}/bin/dog"
-  #   dst: "{{ _exec_bin_ }}/dog"
+  - dst: "{{ _exec_bin_ }}/dust"
+    src: "{{ build_tmp }}/dust-v0.8.5-{{ ansible_architecture }}-unknown-linux-gnu/dust"
 
 target_mods:
-  - src: "{{ _exec_bin_ }}/oh-my-posh"
-    mode: "+x"
-  - src: "{{ _exec_bin_ }}/dust"
-    mode: "+x"
+  - mode: "+x"
+    src: "{{ _exec_bin_ }}/oh-my-posh"
+  - mode: "+x"
+    src: "{{ _exec_bin_ }}/dust"

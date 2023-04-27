@@ -4,8 +4,8 @@ target_dirs:
   - "{{ ansible_facts.env.HOME }}/Documents/PowerShell/"
 
 target_files:
-  - src: "home/"
-    dst: "{{ ansible_facts.env.HOME }}/"
+  - dst: "{{ ansible_facts.env.HOME }}/"
+    src: "home/"
 
 target_templates: []
 
@@ -23,10 +23,10 @@ winget_packages:
   - stedolan.jq
 
 target_links:
-  - src: |-
-      {{ ansible_facts.env.HOME }}\.zshenv
-    dst: |-
+  - dst: |-
       \msys64\home\{{ ansible_facts.env.USERNAME }}\.zshenv
+    src: |-
+      {{ ansible_facts.env.HOME }}\.zshenv
 
 msys2_packages:
   - git
@@ -35,67 +35,67 @@ msys2_packages:
   # - tmux
 
 target_downloads:
-  - src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-x86_64-pc-windows-msvc.exe"
-    dst: "{{ _exec_bin_ }}/tokei.exe"
-  # - src: "https://github.com/extrawurst/gitui/releases/latest/download/gitui.msi"
-  #   dst: "{{ build_tmp }}/"
+  - dst: "{{ _exec_bin_ }}/tokei.exe"
+    src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-x86_64-pc-windows-msvc.exe"
+  # - dst: "{{ build_tmp }}/"
+  #   src: "https://github.com/extrawurst/gitui/releases/latest/download/gitui.msi"
 
 target_archives:
-  - src: "https://github.com/ms-jpq/sad/releases/latest/download/x86_64-pc-windows-msvc.zip"
-    dst: "{{ _exec_bin_ }}"
-  - src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.39.0-windows_amd64.zip"
-    dst: "{{ _exec_bin_ }}"
-  - src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-x86_64-pc-windows-msvc.zip"
-    dst: "{{ _exec_bin_ }}"
-  - src: "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-windows.zip"
-    dst: "{{ _exec_bin_ }}"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/ms-jpq/sad/releases/latest/download/x86_64-pc-windows-msvc.zip"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.39.0-windows_amd64.zip"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-x86_64-pc-windows-msvc.zip"
+  - dst: "{{ _exec_bin_ }}"
+    src: "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-windows.zip"
 
-  - src: "https://github.com/sharkdp/bat/releases/latest/download/bat-v0.22.1-x86_64-pc-windows-msvc.zip"
-    dst: "{{ build_tmp }}"
-  - src: "https://github.com/sharkdp/fd/releases/latest/download/fd-v8.6.0-x86_64-pc-windows-msvc.zip"
-    dst: "{{ build_tmp }}"
-  - src: "https://github.com/sharkdp/hyperfine/releases/latest/download/hyperfine-v1.15.0-x86_64-pc-windows-msvc.zip"
-    dst: "{{ build_tmp }}"
-  - src: "https://github.com/sharkdp/pastel/releases/latest/download/pastel-v0.9.0-x86_64-pc-windows-msvc.zip"
-    dst: "{{ build_tmp }}"
-  - src: "https://github.com/BurntSushi/ripgrep/releases/latest/download/ripgrep-13.0.0-x86_64-pc-windows-msvc.zip"
-    dst: "{{ build_tmp }}"
-  - src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.36.0_Windows_x86_64.zip"
-    dst: "{{ build_tmp }}"
-  - src: "https://github.com/dandavison/delta/releases/latest/download/delta-0.15.1-x86_64-pc-windows-msvc.zip"
-    dst: "{{ build_tmp }}"
-  - src: "https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.22.2-x86_64-pc-windows-msvc.zip"
-    dst: "{{ build_tmp }}"
-  - src: "https://github.com/muesli/duf/releases/latest/download/duf_0.8.1_Windows_x86_64.zip"
-    dst: "{{ build_tmp }}"
-  - src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.5-x86_64-pc-windows-msvc.zip"
-    dst: "{{ build_tmp }}"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/sharkdp/bat/releases/latest/download/bat-v0.22.1-x86_64-pc-windows-msvc.zip"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/sharkdp/fd/releases/latest/download/fd-v8.6.0-x86_64-pc-windows-msvc.zip"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/sharkdp/hyperfine/releases/latest/download/hyperfine-v1.15.0-x86_64-pc-windows-msvc.zip"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/sharkdp/pastel/releases/latest/download/pastel-v0.9.0-x86_64-pc-windows-msvc.zip"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/BurntSushi/ripgrep/releases/latest/download/ripgrep-13.0.0-x86_64-pc-windows-msvc.zip"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.36.0_Windows_x86_64.zip"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/dandavison/delta/releases/latest/download/delta-0.15.1-x86_64-pc-windows-msvc.zip"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.22.2-x86_64-pc-windows-msvc.zip"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/muesli/duf/releases/latest/download/duf_0.8.1_Windows_x86_64.zip"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.5-x86_64-pc-windows-msvc.zip"
 
 win_packages:
   []
   # - "{{ build_tmp }}/gitui.msi"
 
 target_remote_copy:
-  - src: "{{ build_tmp }}/bat-v0.22.1-x86_64-pc-windows-msvc/bat.exe"
-    dst: "{{ _exec_bin_ }}/bat.exe"
-  - src: "{{ build_tmp }}/fd-v8.6.0-x86_64-pc-windows-msvc/fd.exe"
-    dst: "{{ _exec_bin_ }}/fd.exe"
-  - src: "{{ build_tmp }}/hyperfine-v1.15.0-x86_64-pc-windows-msvc/hyperfine.exe"
-    dst: "{{ _exec_bin_ }}/hyperfine.exe"
-  - src: "{{ build_tmp }}/pastel-v0.9.0-x86_64-pc-windows-msvc/pastel.exe"
-    dst: "{{ _exec_bin_ }}/pastel.exe"
-  - src: "{{ build_tmp }}/ripgrep-13.0.0-x86_64-pc-windows-msvc/rg.exe"
-    dst: "{{ _exec_bin_ }}/rg.exe"
-  - src: "{{ build_tmp }}/lazygit.exe"
-    dst: "{{ _exec_bin_ }}/lazygit.exe"
-  - src: "{{ build_tmp }}/delta-0.15.1-x86_64-pc-windows-msvc/delta.exe"
-    dst: "{{ _exec_bin_ }}/delta.exe"
-  - src: "{{ build_tmp }}/watchexec-1.22.2-x86_64-pc-windows-msvc/watchexec.exe"
-    dst: "{{ _exec_bin_ }}/watchexec.exe"
-  - src: "{{ build_tmp }}/duf.exe"
-    dst: "{{ _exec_bin_ }}/duf.exe"
-  - src: "{{ build_tmp }}/dust-v0.8.5-x86_64-pc-windows-msvc/dust.exe"
-    dst: "{{ _exec_bin_ }}/dust.exe"
+  - dst: "{{ _exec_bin_ }}/bat.exe"
+    src: "{{ build_tmp }}/bat-v0.22.1-x86_64-pc-windows-msvc/bat.exe"
+  - dst: "{{ _exec_bin_ }}/fd.exe"
+    src: "{{ build_tmp }}/fd-v8.6.0-x86_64-pc-windows-msvc/fd.exe"
+  - dst: "{{ _exec_bin_ }}/hyperfine.exe"
+    src: "{{ build_tmp }}/hyperfine-v1.15.0-x86_64-pc-windows-msvc/hyperfine.exe"
+  - dst: "{{ _exec_bin_ }}/pastel.exe"
+    src: "{{ build_tmp }}/pastel-v0.9.0-x86_64-pc-windows-msvc/pastel.exe"
+  - dst: "{{ _exec_bin_ }}/rg.exe"
+    src: "{{ build_tmp }}/ripgrep-13.0.0-x86_64-pc-windows-msvc/rg.exe"
+  - dst: "{{ _exec_bin_ }}/lazygit.exe"
+    src: "{{ build_tmp }}/lazygit.exe"
+  - dst: "{{ _exec_bin_ }}/delta.exe"
+    src: "{{ build_tmp }}/delta-0.15.1-x86_64-pc-windows-msvc/delta.exe"
+  - dst: "{{ _exec_bin_ }}/watchexec.exe"
+    src: "{{ build_tmp }}/watchexec-1.22.2-x86_64-pc-windows-msvc/watchexec.exe"
+  - dst: "{{ _exec_bin_ }}/duf.exe"
+    src: "{{ build_tmp }}/duf.exe"
+  - dst: "{{ _exec_bin_ }}/dust.exe"
+    src: "{{ build_tmp }}/dust-v0.8.5-x86_64-pc-windows-msvc/dust.exe"
 
 target_commands:
   - - "{{ ansible_env.APPDATA ~ '/f-assoc.cmd' }}"
