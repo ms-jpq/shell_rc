@@ -11,7 +11,7 @@
 - name: check git repo exists
   loop: "{{ git_repos }}"
   ansible.windows.win_stat:
-    path: "{{ item.dest }}"
+    path: "{{ item.dst }}"
   register: __git_repos
 
 - name: clone git repos
@@ -30,7 +30,7 @@
       - --shallow-submodules
       - --
       - "{{ item.src }}"
-      - "{{ item.dest }}"
+      - "{{ item.dst }}"
 
 - name: pull git repos
   loop: "{{ git_repos }}"
@@ -38,7 +38,7 @@
     index_var: index
   when: __git_repos.results[index].stat.exists
   ansible.windows.win_command:
-    chdir: "{{ item.dest }}"
+    chdir: "{{ item.dst }}"
     argv:
       - "{{ ansible_env.SystemDrive ~ '/msys64/usr/bin/env.exe' }}"
       - "PATH={{ posix_path }}"

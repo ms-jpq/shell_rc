@@ -3,4 +3,4 @@
   loop: "{{ target_downloads }}"
   ansible.windows.win_get_url:
     url: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    dest: "{{ item.dst }}"

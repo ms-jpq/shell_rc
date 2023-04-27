@@ -5,7 +5,7 @@ packages:
 
 target_files:
   - src: "home/"
-    dest: "~/"
+    dst: "~/"
 
 target_touches:
   - "~/.ssh/config"

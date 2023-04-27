@@ -65,6 +65,7 @@ brew_packages:
   - sl
   - socat
   - termshark
+  - tidy-viewer
   - tmux
   - tokei
   - trash
@@ -74,15 +75,16 @@ brew_packages:
   - watchexec
   - wget
   - xsv
+  - yank
 
 target_files:
   - src: "home/"
-    dest: "~/"
+    dst: "~/"
 
 target_templates: []
 
 target_links:
   - src: "{{ '/opt/homebrew' if ansible_architecture == 'arm64' else '/usr/local' }}/bin/dash"
-    dest: "~/.local/bin/sh"
+    dst: "~/.local/bin/sh"
 
 target_archives: []

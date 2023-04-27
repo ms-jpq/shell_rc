@@ -12,4 +12,4 @@
       - -Target
       - "{{ item.src }}"
       - -Path
-      - "{{ item.dest }}"
+      - "{{ item.dst }}"
