@@ -1,10 +1,10 @@
 gay
-sortd
-https://github.com/ms-jpq/py-dev/archive/dev.tar.gz
-markdown_live_preview
-httpie
-http-prompt
 gdbgui
-speedtest-cli
-tldr
 graphtage
+http-prompt
+httpie
+https://github.com/ms-jpq/py-dev/archive/dev.tar.gz
+lookatme
+markdown_live_preview
+sortd
+tldr
