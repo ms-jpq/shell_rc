@@ -5,5 +5,4 @@
 #################### ########### ####################
 
 export -- ASDF_DATA_DIR="$XDG_DATA_HOME/asdf"
-# shellcheck disable=SC1091
-source -- "$ASDF_DATA_DIR/asdf.sh"
+pathprepend "$ASDF_DATA_DIR/bin" "$ASDF_DATA_DIR/shims"

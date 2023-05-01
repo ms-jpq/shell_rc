@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- bash
 
 ta() {
-  local session="$*"
+  local -- session="$*"
   if (($#)); then
     if [[ -v TMUX ]]; then
       tmux new-session -d -c "$HOME" -s "$session"

@@ -30,7 +30,7 @@ zstyle ':completion::complete:*' use-cache on
 zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh_comp"
 
 __init_zcompdump() {
-  local dump="$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
+  local -- dump="$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
   # zsh extended glob, based on file mod time
   local globbed=("$dump"(Nmh-6))
   if (($#globbed)); then

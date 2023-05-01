@@ -6,7 +6,7 @@
 
 if [[ "$OSTYPE" =~ 'msys' ]]; then
   export -- MSYSTEM='MSYS'
-  local cpath=''
+  local -- cpath=''
 
   cpath="$(/usr/bin/cygpath -- "$LOCALAPPDATA")"
   path=("$(/usr/bin/dirname -- "$cpath")/bin" "${path[@]}" '/ucrt64/bin' '/usr/bin')

@@ -1,10 +1,10 @@
 #!/usr/bin/env -S -- bash
 
 sshi() {
-  local file="$HOME/.ssh/$1"
+  local -- file="$HOME/.ssh/$1"
   unshift
 
-  local argv=
+  local -- argv=
   if [[ "$file" = '-' ]]; then
     argv=("$@")
   else

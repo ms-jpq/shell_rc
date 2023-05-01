@@ -98,10 +98,10 @@ while read -r -- line; do
   fi
 done <<<"$(asdf plugin list)"
 
-if [[ $HAS_JPLUGIN -eq 0 ]]; then
-  asdf plugin add "$JPLUGIN"
-else
+if ((HAS_JPLUGIN)); then
   asdf plugin update "$JPLUGIN"
+else
+  asdf plugin add "$JPLUGIN"
 fi
 
 JPLUGIN_VER="$(asdf list-all "$JPLUGIN" | grep --fixed-strings -- 'openjdk' | tail --lines 1)"

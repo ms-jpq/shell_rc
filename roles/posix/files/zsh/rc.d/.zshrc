@@ -14,7 +14,7 @@ pathprepend() {
 }
 
 zsh_main() {
-  local os=''
+  local -- os=''
 
   case "$OSTYPE" in
   darwin*)
@@ -28,7 +28,7 @@ zsh_main() {
     ;;
   esac
 
-  local zrc_targets=(
+  local -- zrc_targets=(
     apriori
     "$os"
     shared
@@ -39,8 +39,8 @@ zsh_main() {
   )
 
   for target in "${zrc_targets[@]}"; do
-    local rcs="$ZDOTDIR/$target"
-    local fns="$rcs/fn"
+    local -- rcs="$ZDOTDIR/$target"
+    local -- fns="$rcs/fn"
 
     if [[ -d "$fns" ]]; then
       fpath=("$fns" "${fpath[@]}")

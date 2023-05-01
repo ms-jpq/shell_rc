@@ -29,21 +29,21 @@ for ARG in "$@"; do
 done
 
 ASK=0
-if [[ $IS_VENV -eq 0 ]] && [[ $IS_INTERACTIVE -eq 1 ]] && [[ $IS_INSTALL -eq 1 ]]; then
+if ! ((IS_VENV)) && ((IS_INTERACTIVE)) && ((IS_INSTALL)); then
   ASK=1
 fi
 
 hr() {
-  local rep="$1"
-  local cols="$2"
-  local line=''
+  local -- rep="$1"
+  local -- cols="$2"
+  local -- line=''
   for ((i = 1; i <= cols; i++)); do
     line="$line$rep"
   done
   printf -- '%s\n' "$line" >&2
 }
 
-if [[ $ASK -eq 0 ]]; then
+if ! ((ASK)); then
   exec -- "${EXECUTE[@]}"
 else
   COLS="$(tput -- cols)"
