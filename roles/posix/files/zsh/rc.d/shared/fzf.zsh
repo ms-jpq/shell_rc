@@ -80,7 +80,7 @@ FZF_CTRL_T_OPTS="$FZF_ALT_C_OPTS"
 #################### ################ ####################
 
 _fzf_compgen_path() {
-  local local_opts=(
+  local -- local_opts=(
     fd
     --type directory
     --type symlink
@@ -90,7 +90,7 @@ _fzf_compgen_path() {
 }
 
 _fzf_compgen_dir() {
-  local local_opts=(
+  local -- local_opts=(
     fd
     --type directory
   )

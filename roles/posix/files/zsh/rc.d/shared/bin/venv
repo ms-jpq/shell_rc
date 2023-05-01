@@ -51,7 +51,7 @@ init)
   if [[ -d "$DEFAULT_VENV_PATH" ]]; then
     printf >&2 -- '%s\n' "Virtualenv already initialized"
   else
-    python3 -m venv --upgrade -- "$DEFAULT_VENV_PATH" >&2
+    python3 -m venv -- "$DEFAULT_VENV_PATH" >&2
     "$PY_EXE" <<<"$PYPROJ" >&2
     printf -- '%s\n' "Initialized Virtualenv" >&2
     venv on
@@ -60,7 +60,7 @@ init)
 on)
   if [[ -f "$ACTIVATE" ]]; then
     venv off
-    printf -- '%s\n' "source '$ACTIVATE'"
+    printf -- '%q ' 'source' '--' "$ACTIVATE"
     printf -- '%s\n' "Activated - $DEFAULT_VENV_PATH" >&2
   else
     venv init

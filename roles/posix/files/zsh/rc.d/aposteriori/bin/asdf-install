@@ -42,10 +42,10 @@ for PLUGIN in "${PLUGINS[@]}"; do
   fi
 done
 
-if [[ "$PLUGIN_INSTALLED" -eq 0 ]]; then
-  asdf plugin add "$LANG"
-else
+if ((PLUGIN_INSTALLED)); then
   asdf plugin update "$LANG"
+else
+  asdf plugin add "$LANG"
 fi
 
 readarray -t -- INSTALLED < <(asdf list "$LANG")
@@ -62,7 +62,7 @@ for VER in "${INSTALLED[@]}"; do
   fi
 done
 
-if [[ "$VERSION_INSTALLED" -eq 0 ]]; then
+if ! ((VERSION_INSTALLED)); then
   asdf install "$LANG" "$VERSION"
 fi
 
