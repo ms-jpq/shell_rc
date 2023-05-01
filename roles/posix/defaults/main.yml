@@ -3,57 +3,57 @@ _zsh_dir_: "{{ _xdg_conf_home_ }}/zsh"
 _pwsh_dir_: "{{ ansible_facts.env.HOME ~ '/Documents/PowerShell' if _is_win_ else _xdg_conf_home_ ~ '/powershell' }}"
 
 git_repos:
-  - src: "https://github.com/zsh-users/zsh-syntax-highlighting"
-    dst: "{{ _zsh_dir_ }}/zsh-syntax-highlighting"
+  - dst: "{{ _zsh_dir_ }}/zsh-syntax-highlighting"
+    src: "https://github.com/zsh-users/zsh-syntax-highlighting"
 
-  - src: "https://github.com/zsh-users/zsh-autosuggestions"
-    dst: "{{ _zsh_dir_ }}/zsh-autosuggestions"
+  - dst: "{{ _zsh_dir_ }}/zsh-autosuggestions"
+    src: "https://github.com/zsh-users/zsh-autosuggestions"
 
-  - src: "https://github.com/zsh-users/zsh-history-substring-search"
-    dst: "{{ _zsh_dir_ }}/zsh-history-substring-search"
+  - dst: "{{ _zsh_dir_ }}/zsh-history-substring-search"
+    src: "https://github.com/zsh-users/zsh-history-substring-search"
 
-  - src: "https://github.com/junegunn/fzf"
-    dst: "{{ _zsh_dir_  }}/fzf"
+  - dst: "{{ _zsh_dir_  }}/fzf"
+    src: "https://github.com/junegunn/fzf"
 
-  - src: "https://github.com/Aloxaf/fzf-tab"
-    dst: "{{ _zsh_dir_ }}/fzf-tab"
+  - dst: "{{ _zsh_dir_ }}/fzf-tab"
+    src: "https://github.com/Aloxaf/fzf-tab"
 
-  - src: "https://github.com/rupa/z"
-    dst: "{{ _zsh_dir_ }}/z"
+  - dst: "{{ _zsh_dir_ }}/z"
+    src: "https://github.com/rupa/z"
 
-  - src: "https://github.com/seebi/dircolors-solarized"
-    dst: "{{ _zsh_dir_ }}/dircolors-solarized"
+  - dst: "{{ _zsh_dir_ }}/dircolors-solarized"
+    src: "https://github.com/seebi/dircolors-solarized"
 
-  - src: "https://github.com/asdf-vm/asdf"
-    dst: "{{ _xdg_data_home_ }}/asdf"
-  - src: "https://github.com/ms-jpq/tmux_rc"
+  - dst: "{{ _xdg_data_home_ }}/asdf"
+    src: "https://github.com/asdf-vm/asdf"
 
-    dst: "{{ _xdg_conf_home_ }}/tmux"
+  - dst: "{{ _xdg_conf_home_ }}/tmux"
+    src: "https://github.com/ms-jpq/tmux_rc"
 
-  - src: "https://github.com/ms-jpq/isomorphic-copy"
-    dst: "{{ _xdg_conf_home_ }}/isomorphic-copy"
+  - dst: "{{ _xdg_conf_home_ }}/isomorphic-copy"
+    src: "https://github.com/ms-jpq/isomorphic-copy"
 
-  - src: "https://github.com/ms-jpq/nvim_rc"
-    dst: "{{ _xdg_conf_home_ }}/nvim"
+  - dst: "{{ _xdg_conf_home_ }}/nvim"
+    src: "https://github.com/ms-jpq/nvim_rc"
 
 target_files:
-  - src: "config/"
-    dst: "{{ _xdg_conf_home_ }}/"
+  - dst: "{{ _xdg_conf_home_ }}/"
+    src: "config/"
 
-  - src: "zsh/rc.d/"
+  - delete: True
     dst: "{{ _zsh_dir_ }}/rc.d"
-    delete: True
+    src: "zsh/rc.d/"
 
-  - src: "zsh/.zshenv"
-    dst: "{{ ansible_facts.env.HOME }}/.zshenv"
+  - dst: "{{ ansible_facts.env.HOME }}/.zshenv"
+    src: "zsh/.zshenv"
 
-  - src: "pwsh/"
+  - delete: True
     dst: "{{ _pwsh_dir_ }}/"
-    delete: True
+    src: "pwsh/"
 
 target_templates:
-  - src: "templates/zsh/"
-    dst: "{{ _zsh_dir_ }}/"
+  - dst: "{{ _zsh_dir_ }}/"
+    src: "templates/zsh/"
 
 target_touches:
   - "~/.ssh/config"
