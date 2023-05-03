@@ -96,7 +96,7 @@ target_archives:
   - dst: "{{ _exec_bin_ }}"
     src: "https://github.com/extrawurst/gitui/releases/latest/download/gitui-linux-musl.tar.gz"
   - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.38.0_Linux_{{ ansible_architecture }}.tar.gz"
+    src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.38.2_Linux_{{ ansible_architecture }}.tar.gz"
   - dst: "{{ _exec_bin_ }}"
     src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
   - dst: "{{ _exec_bin_ }}"
