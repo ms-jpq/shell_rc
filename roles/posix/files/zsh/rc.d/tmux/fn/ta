@@ -1,6 +1,8 @@
 #!/usr/bin/env -S -- bash
 
 ta() {
+  tmux-ssh
+
   local -- session="$*"
   if (($#)); then
     if [[ -v TMUX ]]; then
