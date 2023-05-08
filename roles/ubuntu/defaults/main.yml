@@ -104,13 +104,13 @@ target_archives:
   - dst: "{{ _exec_bin_ }}"
     src: "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-linux.tar.gz"
   - dst: "{{ build_tmp }}"
-    src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.5-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
+    src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.6-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
   # - src: "https://github.com/ogham/dog/releases/download/v0.1.0/dog-v0.1.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
   #   dst: "{{ build_tmp }}"
 
 target_remote_copy:
   - dst: "{{ _exec_bin_ }}/dust"
-    src: "{{ build_tmp }}/dust-v0.8.5-{{ ansible_architecture }}-unknown-linux-gnu/dust"
+    src: "{{ build_tmp }}/dust-v0.8.6-{{ ansible_architecture }}-unknown-linux-gnu/dust"
 
 target_mods:
   - mode: "+x"

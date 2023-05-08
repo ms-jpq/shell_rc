@@ -69,7 +69,7 @@ target_archives:
   - dst: "{{ build_tmp }}"
     src: "https://github.com/muesli/duf/releases/latest/download/duf_0.8.1_Windows_x86_64.zip"
   - dst: "{{ build_tmp }}"
-    src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.5-x86_64-pc-windows-msvc.zip"
+    src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.6-x86_64-pc-windows-msvc.zip"
 
 win_packages:
   []
@@ -95,7 +95,7 @@ target_remote_copy:
   - dst: "{{ _exec_bin_ }}/duf.exe"
     src: "{{ build_tmp }}/duf.exe"
   - dst: "{{ _exec_bin_ }}/dust.exe"
-    src: "{{ build_tmp }}/dust-v0.8.5-x86_64-pc-windows-msvc/dust.exe"
+    src: "{{ build_tmp }}/dust-v0.8.6-x86_64-pc-windows-msvc/dust.exe"
 
 target_commands:
   - - "{{ ansible_env.APPDATA ~ '/f-assoc.cmd' }}"
