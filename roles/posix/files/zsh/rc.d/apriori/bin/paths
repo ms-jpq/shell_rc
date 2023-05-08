@@ -66,7 +66,7 @@ remove() {
 
   local -- acc=()
   local -- arr
-  readarray -t -d ':' -- arr < <(print_path)
+  IFS=':' read -d '' -r -a arr < <(print_path) || true
   for path in "${arr[@]}"; do
     if [[ "$path" != "$target" ]]; then
       acc+=("$path")
@@ -102,7 +102,7 @@ toggle() {
 
   local -- found=0
   local -- arr
-  readarray -t -d ':' -- arr < <(print_path)
+  IFS=':' read -d '' -r -a arr < <(print_path) || true
   for path in "${arr[@]}"; do
     if [[ "$path" == "$target" ]]; then
       found=1
@@ -117,7 +117,7 @@ toggle() {
   fi
 }
 
-if [[ $ARG_NUM -lt 1 ]]; then
+if ! ((ARG_NUM)); then
   print_err 'ERR! -- # of arguments'
 fi
 ACTION="$1"
@@ -142,6 +142,5 @@ toggle)
   ;;
 *)
   print_err 'ERR! -- Must be one of ^'
-  exit 2
   ;;
 esac
