@@ -12,6 +12,7 @@ apt_packages:
   - bat
   - bb
   - cmatrix
+  - colorized-logs
   - cowsay
   - curl
   - dstat
