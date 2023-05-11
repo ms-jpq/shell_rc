@@ -1,6 +1,6 @@
 #!/usr/bin/env -S -- bash -Eeuo pipefail -O dotglob -O failglob -O globstar
 
-cd -- "$(dirname -- "$0")" 
+cd -- "$(dirname -- "$0")"
 
 DEST="$*"
 SYSTEMD='/usr/local/lib/systemd/system/'
