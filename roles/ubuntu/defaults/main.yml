@@ -64,7 +64,7 @@ apt_deb_packages:
   - "https://github.com/dandavison/delta/releases/latest/download/git-delta_0.15.1_{{ dpkg_arch }}.deb"
   - "https://github.com/ms-jpq/sad/releases/latest/download/{{ ansible_architecture }}-unknown-linux-gnu.deb"
   - "https://github.com/sharkdp/pastel/releases/latest/download/pastel_0.9.0_{{ dpkg_arch }}.deb"
-  - "https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.22.2-{{ ansible_architecture }}-unknown-linux-gnu.deb"
+  - "https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.22.3-{{ ansible_architecture }}-unknown-linux-gnu.deb"
   - "https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/packages-microsoft-prod.deb"
 
 target_files:
