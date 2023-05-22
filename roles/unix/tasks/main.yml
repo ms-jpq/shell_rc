@@ -2,6 +2,7 @@
 # - import_tasks: github_sshkeys.yml
 
 - import_tasks: packages.yml
+  when: _all_
 
 - import_tasks: sync.yml
 

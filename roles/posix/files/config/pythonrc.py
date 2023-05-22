@@ -5,7 +5,10 @@ import argparse
 import array
 import ast
 import asyncio
+import atexit
 import base64
+import bisect
+import builtins
 import calendar
 import cmath
 import cmd
@@ -26,11 +29,15 @@ import difflib
 import email
 import encodings
 import enum
+import errno
 import filecmp
 import fnmatch as fn_match
 import fractions
 import functools
+import gc
+import getpass
 import glob
+import graphlib
 import hashlib
 import hmac
 import html
@@ -44,6 +51,7 @@ import json
 import locale
 import logging
 import math
+import mimetypes
 import multiprocessing
 import ntpath
 import numbers
@@ -51,7 +59,6 @@ import operator
 import os
 import pathlib
 import pdb
-import pickle
 import platform
 import posixpath
 import pprint as pp
@@ -65,7 +72,7 @@ import shutil
 import signal
 import socket
 import sqlite3
-import stat
+import stat as os_stat
 import statistics
 import string
 import subprocess
@@ -130,12 +137,13 @@ from csv import DictReader, DictWriter
 from dataclasses import dataclass, is_dataclass
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from encodings import idna
 from enum import Enum, IntEnum, IntFlag, auto, unique
 from fnmatch import fnmatch, fnmatchcase
 from fractions import Fraction
 from functools import cache, lru_cache, partial, reduce
 from hashlib import blake2b, blake2s, md5, sha1, sha256, sha512
-from http import cookies
+from http import cookiejar, cookies
 from importlib import import_module
 from inspect import getmembers
 from io import BytesIO, StringIO
@@ -177,7 +185,19 @@ from itertools import (
 from locale import getlocale, getpreferredencoding, normalize, strxfrm
 from logging import getLogger
 from math import factorial, inf, nan
-from os import environ, path
+from multiprocessing import cpu_count
+from os import (
+    PathLike,
+    chdir,
+    environ,
+    getcwd,
+    linesep,
+    makedirs,
+    path,
+    renames,
+    stat,
+    walk,
+)
 from os.path import (
     abspath,
     altsep,
@@ -217,7 +237,16 @@ from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
 from platform import uname
 from pprint import pprint
 from queue import SimpleQueue
-from random import choice, random, sample, shuffle
+from random import (
+    choice,
+    choices,
+    randbytes,
+    randint,
+    random,
+    randrange,
+    sample,
+    shuffle,
+)
 from re import compile, findall, finditer, match, search, split, sub, subn
 from shlex import quote
 from shutil import (
@@ -249,7 +278,7 @@ from string import (
     punctuation,
     whitespace,
 )
-from subprocess import CalledProcessError, check_call, check_output
+from subprocess import CalledProcessError, CompletedProcess, check_call, check_output
 from sys import argv, executable, exit, stderr, stdin, stdout
 from tempfile import (
     NamedTemporaryFile,
@@ -263,7 +292,7 @@ from tempfile import (
 from textwrap import dedent
 from threading import Thread, ThreadError
 from time import monotonic, sleep
-from typing import Final, Literal, TypeVar, Union, cast, overload
+from typing import Annotated, Any, Final, Literal, TypeVar, Union, cast, overload
 from urllib import parse, request
 from urllib.parse import urlencode, urlsplit, urlunsplit
 from uuid import UUID, uuid1, uuid3, uuid4, uuid5
@@ -289,3 +318,23 @@ try:
     from typing import LiteralString, Never, assert_never
 except ImportError:
     pass
+
+
+def __init() -> None:
+    import readline
+
+    rh = readline.read_history_file
+    wh = readline.write_history_file
+    ah = readline.append_history_file
+    hist = join(environ["XDG_CACHE_HOME"], "py_hist")
+    readline.read_history_file = lambda _: rh(hist)
+    readline.write_history_file = lambda _: wh(hist)
+    readline.append_history_file = lambda n, _: ah(n, hist)
+
+
+__init()
+del __init
+
+
+def clear() -> None:
+    check_call(("clear",))

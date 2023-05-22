@@ -8,11 +8,13 @@
 %w[
   English
   base64
+  bigdecimal
   cgi
   digest
   erb
   etc
   fcntl
+  fiber
   fileutils
   io/console
   ipaddr
@@ -39,4 +41,14 @@
 Thread.tap do
   _1.abort_on_exception = true
   _1.report_on_exception = false
+end
+
+module Kernel
+  def clear = Kernel.system('clear', '--', exception: true)
+
+  unless respond_to?(:assert)
+    def assert(f, msg = nil)
+      Kernel.raise(msg) unless f
+    end
+  end
 end
