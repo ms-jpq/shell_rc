@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-::IRB.conf[:HISTORY_FILE] = ::File.join(
-  ::ENV.fetch('XDG_CACHE_HOME'),
-  'irb_hist',
-)
+IRB.conf[:HISTORY_FILE] = File.join(ENV.fetch('XDG_CACHE_HOME'), 'irb_hist')
 
 %w[
   English
@@ -46,9 +43,24 @@ end
 module Kernel
   def clear = Kernel.system('clear', '--', exception: true)
 
+  def _ls_methods
+    (methods - Object.methods).sort
+  end
+
   unless respond_to?(:assert)
     def assert(f, msg = nil)
       Kernel.raise(msg) unless f
+    end
+  end
+end
+
+class Method
+  def _edit
+    path, lineno = source_location
+    if File.file?(path.to_s)
+      system(*ENV.fetch('EDITOR').shellsplit, "#{path}:#{lineno}")
+    else
+      Kernel.warn(inspect)
     end
   end
 end
