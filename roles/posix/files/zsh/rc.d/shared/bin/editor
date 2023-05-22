@@ -9,7 +9,11 @@ if [[ "$FILE" =~ (.+):([[:digit:]]+)$ ]]; then
     FILE="$F"
   fi
   LINE="${BASH_REMATCH[2]}"
-  ARGS=("+execute$LINE")
+  ARGS+=("+execute$LINE")
 fi
 
-exec -- nvim "${ARGS[@]}" -- "$FILE"
+if [[ -n "$FILE" ]]; then
+  ARGS+=(-- "$FILE")
+fi
+
+exec -- nvim "${ARGS[@]}"
