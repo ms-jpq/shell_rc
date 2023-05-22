@@ -2,5 +2,41 @@
 
 ::IRB.conf[:HISTORY_FILE] = ::File.join(
   ::ENV.fetch('XDG_CACHE_HOME'),
-  'irb_hist'
+  'irb_hist',
 )
+
+%w[
+  English
+  base64
+  cgi
+  digest
+  erb
+  etc
+  fcntl
+  fileutils
+  io/console
+  ipaddr
+  json
+  logger
+  net/http
+  open3
+  openssl
+  optparse
+  ostruct
+  pathname
+  pp
+  securerandom
+  set
+  shellwords
+  socket
+  stringio
+  tempfile
+  thread
+  uri
+  yaml
+].each(&Kernel.method(:require))
+
+Thread.tap do
+  _1.abort_on_exception = true
+  _1.report_on_exception = false
+end
