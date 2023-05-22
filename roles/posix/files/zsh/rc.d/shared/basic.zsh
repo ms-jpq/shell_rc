@@ -23,5 +23,5 @@ export -- LESSHISTFILE="$XDG_CACHE_HOME/less-hist"
 
 export -- TIME_STYLE='long-iso'
 
-export -- EDITOR='nvim'
-export -- MANPAGER='nvim +Man!'
+export -- EDITOR='editor'
+export -- MANPAGER='nvim +Man! --'

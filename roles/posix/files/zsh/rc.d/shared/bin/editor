@@ -1,0 +1,15 @@
+#!/usr/bin/env -S -- bash -Eeuo pipefail -O dotglob -O failglob -O globstar
+
+FILE="$*"
+
+ARGS=()
+if [[ "$FILE" =~ (.+):([[:digit:]]+)$ ]]; then
+  F="${BASH_REMATCH[1]}"
+  if [[ -f "$F" ]]; then
+    FILE="$F"
+  fi
+  LINE="${BASH_REMATCH[2]}"
+  ARGS=("+execute$LINE")
+fi
+
+exec -- nvim "${ARGS[@]}" -- "$FILE"

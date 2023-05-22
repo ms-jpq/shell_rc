@@ -2,5 +2,5 @@
 
 cd -- "$(mktemp --directory)" || return 1
 if (($#)); then
-  "$EDITOR" -- "$*"
+  "$EDITOR" "$*"
 fi
