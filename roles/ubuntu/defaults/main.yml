@@ -41,6 +41,7 @@ apt_packages:
   - nmap
   - nyancat
   - openssh-server
+  - progress
   - psmisc
   - pv
   - python3-venv
