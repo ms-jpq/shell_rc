@@ -57,6 +57,7 @@ brew_packages:
   - openssh
   - pastel
   - pipes-sh
+  - progress
   - pstree
   - pv
   - ripgrep
