@@ -27,7 +27,7 @@ apt_packages:
   - ipcalc-ng
   - iperf3
   - jid
-  - jq
+  # - jq
   - language-pack-zh-hans
   - libaa-bin #aafire
   - locales
@@ -92,7 +92,7 @@ target_downloads:
 
 target_archives:
   - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.40.0-linux_{{ dpkg_arch }}.tar.gz"
+    src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.41.0-linux_{{ dpkg_arch }}.tar.gz"
   - dst: "{{ _exec_bin_ }}"
     src: "https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-v0.8.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
   - dst: "{{ _exec_bin_ }}"
@@ -104,18 +104,22 @@ target_archives:
   - dst: "{{ _exec_bin_ }}"
     src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-{{ ansible_architecture }}-unknown-linux-musl.tar.gz"
   - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-linux.tar.gz"
+    src: "https://github.com/mgdm/htmlq/releases/latest/download/htmlq-{{ ansible_architecture }}-linux.tar.gz"
+  - dst: "{{ build_tmp }}"
+    src: "https://github.com/itchyny/gojq/releases/latest/download/gojq_v0.12.12_linux_{{ dpkg_arch }}.tar.gz"
   - dst: "{{ build_tmp }}"
     src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.6-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
-  # - src: "https://github.com/ogham/dog/releases/download/v0.1.0/dog-v0.1.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
-  #   dst: "{{ build_tmp }}"
 
 target_remote_copy:
+  - dst: "{{ _exec_bin_ }}/gojq"
+    src: "{{ build_tmp }}/gojq_v0.12.12_linux_{{ dpkg_arch }}/gojq"
   - dst: "{{ _exec_bin_ }}/dust"
     src: "{{ build_tmp }}/dust-v0.8.6-{{ ansible_architecture }}-unknown-linux-gnu/dust"
 
 target_mods:
   - mode: "+x"
     src: "{{ _exec_bin_ }}/oh-my-posh"
+  - mode: "+x"
+    src: "{{ _exec_bin_ }}/gojq"
   - mode: "+x"
     src: "{{ _exec_bin_ }}/dust"

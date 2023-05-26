@@ -29,6 +29,7 @@ brew_packages:
   - gnu-tar
   - gnu-which
   - gnupg
+  - gojq
   - grep
   - htmlq
   - htop
@@ -38,7 +39,7 @@ brew_packages:
   - jandedobbeleer/oh-my-posh/oh-my-posh
   - jid
   - jless
-  - jq
+  # - jq
   - lazygit
   - less
   - lolcat

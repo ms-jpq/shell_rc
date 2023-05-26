@@ -44,11 +44,11 @@ target_archives:
   - dst: "{{ _exec_bin_ }}"
     src: "https://github.com/ms-jpq/sad/releases/latest/download/x86_64-pc-windows-msvc.zip"
   - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.40.0-windows_amd64.zip"
+    src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.41.0-windows_amd64.zip"
   - dst: "{{ _exec_bin_ }}"
     src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-x86_64-pc-windows-msvc.zip"
   - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/mgdm/htmlq/releases/download/v0.4.0/htmlq-x86_64-windows.zip"
+    src: "https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-windows.zip"
 
   - dst: "{{ build_tmp }}"
     src: "https://github.com/sharkdp/bat/releases/latest/download/bat-v0.22.1-x86_64-pc-windows-msvc.zip"
