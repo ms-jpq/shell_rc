@@ -1,5 +1,6 @@
 ---
 brew_packages:
+  # - jq
   - aha
   - asciiquarium
   - autossh
@@ -39,11 +40,11 @@ brew_packages:
   - jandedobbeleer/oh-my-posh/oh-my-posh
   - jid
   - jless
-  # - jq
   - lazygit
   - less
   - lolcat
   - lsof
+  - make
   - man2html
   - moreutils
   - mosh

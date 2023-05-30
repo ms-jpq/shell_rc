@@ -5,6 +5,7 @@ apt_repos:
 
 apt_packages:
   # - fzf
+  # - jq
   - 7zip
   - aha
   - autossh
@@ -27,10 +28,10 @@ apt_packages:
   - ipcalc-ng
   - iperf3
   - jid
-  # - jq
   - language-pack-zh-hans
   - libaa-bin #aafire
   - locales
+  - make
   - man
   - man2html-base
   - moreutils

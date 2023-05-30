@@ -23,7 +23,6 @@ PYTHON_DEPS=(
   libxml2-dev
   libxmlsec1-dev
   llvm
-  make
   tk-dev
   wget
   xz-utils
