@@ -92,7 +92,7 @@ target_downloads:
 
 target_archives:
   - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.41.0-linux_{{ dpkg_arch }}.tar.gz"
+    src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.41.1-linux_{{ dpkg_arch }}.tar.gz"
   - dst: "{{ _exec_bin_ }}"
     src: "https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-v0.8.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
   - dst: "{{ _exec_bin_ }}"
