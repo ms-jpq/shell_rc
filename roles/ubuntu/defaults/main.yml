@@ -107,13 +107,13 @@ target_archives:
   - dst: "{{ _exec_bin_ }}"
     src: "https://github.com/mgdm/htmlq/releases/latest/download/htmlq-{{ ansible_architecture }}-linux.tar.gz"
   - dst: "{{ build_tmp }}"
-    src: "https://github.com/itchyny/gojq/releases/latest/download/gojq_v0.12.12_linux_{{ dpkg_arch }}.tar.gz"
+    src: "https://github.com/itchyny/gojq/releases/latest/download/gojq_v0.12.13_linux_{{ dpkg_arch }}.tar.gz"
   - dst: "{{ build_tmp }}"
     src: "https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.6-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
 
 target_remote_copy:
   - dst: "{{ _exec_bin_ }}/gojq"
-    src: "{{ build_tmp }}/gojq_v0.12.12_linux_{{ dpkg_arch }}/gojq"
+    src: "{{ build_tmp }}/gojq_v0.12.13_linux_{{ dpkg_arch }}/gojq"
   - dst: "{{ _exec_bin_ }}/dust"
     src: "{{ build_tmp }}/dust-v0.8.6-{{ ansible_architecture }}-unknown-linux-gnu/dust"
 
