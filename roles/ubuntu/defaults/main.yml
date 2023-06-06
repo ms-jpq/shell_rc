@@ -63,7 +63,7 @@ apt_packages:
 
 apt_deb_packages:
   - "https://github.com/alexhallam/tv/releases/latest/download/tidy-viewer_1.4.30_{{ dpkg_arch }}.deb"
-  - "https://github.com/dandavison/delta/releases/latest/download/git-delta_0.15.1_{{ dpkg_arch }}.deb"
+  - "https://github.com/dandavison/delta/releases/latest/download/git-delta_0.16.5_{{ dpkg_arch }}.deb"
   - "https://github.com/ms-jpq/sad/releases/latest/download/{{ ansible_architecture }}-unknown-linux-gnu.deb"
   - "https://github.com/sharkdp/pastel/releases/latest/download/pastel_0.9.0_{{ dpkg_arch }}.deb"
   - "https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.22.3-{{ ansible_architecture }}-unknown-linux-gnu.deb"
