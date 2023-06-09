@@ -6,7 +6,6 @@
 
 _paths=(
   '/opt/homebrew/bin'
-  '/opt/homebrew/sbin'
   '/opt/homebrew/opt/bc/bin'
   '/opt/homebrew/opt/coreutils/libexec/gnubin'
   '/opt/homebrew/opt/curl/bin'
@@ -18,9 +17,11 @@ _paths=(
   '/opt/homebrew/opt/grep/libexec/gnubin'
   '/opt/homebrew/opt/icu4c/bin'
   '/opt/homebrew/opt/icu4c/sbin'
+  '/opt/homebrew/opt/libpq/bin'
   '/opt/homebrew/opt/lsof/bin'
   '/opt/homebrew/opt/ncurses/bin'
   '/opt/homebrew/opt/openssl/bin'
+  '/opt/homebrew/sbin'
 )
 pathprepend "${_paths[@]}"
 unset _paths
