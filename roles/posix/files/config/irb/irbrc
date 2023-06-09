@@ -35,11 +35,6 @@ IRB.conf[:HISTORY_FILE] = File.join(ENV.fetch('XDG_CACHE_HOME'), 'irb_hist')
   yaml
 ].each(&method(:require))
 
-Thread.tap do
-  _1.abort_on_exception = true
-  _1.report_on_exception = false
-end
-
 module Kernel
   def clear = system('clear', '--', exception: true)
 
@@ -48,15 +43,15 @@ module Kernel
   end
 
   unless respond_to?(:assert)
-    def assert(f, msg = nil)
-      raise(msg) unless f
+    def assert(c, m = nil, &msg)
+      raise(msg&.call || m) unless c
     end
   end
 end
 
 class Method
   def _edit
-    path, lineno = source_location
+    source_location => [path, lineno]
     if File.file?(path.to_s)
       system(*ENV.fetch('EDITOR').shellsplit, "#{path}:#{lineno}")
     else
