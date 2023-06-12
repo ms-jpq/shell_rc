@@ -33,7 +33,7 @@ IRB.conf[:HISTORY_FILE] = File.join(ENV.fetch("XDG_CACHE_HOME"), "irb_hist")
   thread
   uri
   yaml
-].each(&method(:require))
+].each { require(_1) }
 
 module Kernel
   def clear = system("clear", "--", exception: true)
