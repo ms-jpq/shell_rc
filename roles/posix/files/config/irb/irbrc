@@ -38,8 +38,10 @@ IRB.conf[:HISTORY_FILE] = File.join(ENV.fetch("XDG_CACHE_HOME"), "irb_hist")
 module Kernel
   def clear = system("clear", "--", exception: true)
 
-  def _ls_methods
-    (methods - Object.methods).sort
+  unless respond_to?(:methods!)
+    def methods!
+      (methods - Object.methods).sort
+    end
   end
 
   unless respond_to?(:assert!)
@@ -51,7 +53,7 @@ module Kernel
 end
 
 class Method
-  def _edit
+  def edit!
     source_location => [path, lineno]
     if File.file?(path.to_s)
       system(*ENV.fetch("EDITOR").shellsplit, "#{path}:#{lineno}")
