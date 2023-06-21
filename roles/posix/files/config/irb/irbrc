@@ -30,6 +30,7 @@ IRB.conf[:HISTORY_FILE] = File.join(ENV.fetch("XDG_CACHE_HOME"), "irb_hist")
   shellwords
   socket
   stringio
+  syslog
   tempfile
   thread
   time
