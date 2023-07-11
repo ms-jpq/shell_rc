@@ -1,6 +1,7 @@
+*inventory*
 .DS_Store
 .git/
 .venv/
 .vscode/
 temp
-*inventory*
+tmp/
