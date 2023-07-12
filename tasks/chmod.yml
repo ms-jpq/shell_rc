@@ -1,6 +1,0 @@
----
-- name: chmod
-  loop: "{{ target_mods }}"
-  ansible.builtin.file:
-    path: "{{ item.src }}"
-    mode: "{{ item.mode }}"

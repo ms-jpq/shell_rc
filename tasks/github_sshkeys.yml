@@ -1,6 +1,0 @@
----
-- name: github ssh keys
-  loop: "{{ github_accounts }}"
-  ansible.posix.authorized_key:
-    user: "{{ ansible_user_id }}"
-    key: "{{ lookup('url', 'https://github.com/' ~ item ~ '.keys', split_lines=False) }}"

@@ -1,0 +1,18 @@
+target_files:
+  - dst: "{{ _xdg_conf_home_ }}/"
+    src: "config/"
+
+  - delete: True
+    dst: "{{ _zsh_dir_ }}/rc.d"
+    src: "zsh/rc.d/"
+
+  - dst: "{{ ansible_facts.env.HOME }}/.zshenv"
+    src: "zsh/.zshenv"
+
+  - delete: True
+    dst: "{{ _pwsh_dir_ }}/"
+    src: "pwsh/"
+
+target_templates:
+  - dst: "{{ _zsh_dir_ }}/"
+    src: "templates/zsh/"

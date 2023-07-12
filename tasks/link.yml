@@ -1,7 +1,0 @@
----
-- name: "symbolic link"
-  loop: "{{ target_links }}"
-  ansible.builtin.file:
-    state: link
-    src: "{{ item.src }}"
-    dest: "{{ item.dst }}"

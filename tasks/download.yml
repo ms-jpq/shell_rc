@@ -1,6 +1,0 @@
----
-- name: download from uri
-  loop: "{{ target_downloads }}"
-  ansible.builtin.get_url:
-    url: "{{ item.src }}"
-    dest: "{{ item.dst }}"

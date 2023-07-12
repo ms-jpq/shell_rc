@@ -1,0 +1,7 @@
+---
+git_conf:
+  include.path: user_config
+
+target_lines:
+  - file: "~/.ssh/config"
+    line: "Include ~/.config/ssh/*.conf"

@@ -1,6 +1,0 @@
----
-- name: mkdir
-  loop: "{{ target_dirs }}"
-  ansible.builtin.file:
-    state: directory
-    path: "{{ item }}"

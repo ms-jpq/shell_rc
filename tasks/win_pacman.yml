@@ -1,5 +1,0 @@
----
-- name: install msys2 packages
-  ansible.windows.win_command:
-    argv: "{{ [ansible_env.SystemDrive ~ '/msys64/usr/bin/pacman.exe', '--sync', '--needed', '--noconfirm', '--'] + msys2_packages }}"
-  register: __win_packages
