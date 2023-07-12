@@ -2,18 +2,9 @@
 github_accounts:
   - ms-jpq
 
-ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
-
 _is_win_: "{{ ansible_facts.os_family == 'Windows' }}"
 _xdg_conf_home_: "{{ ansible_env.LOCALAPPDATA if _is_win_ else ansible_facts.env.HOME ~ '/.config' }}"
 _xdg_data_home_: "{{ ansible_env.LOCALAPPDATA if _is_win_ else ansible_facts.env.HOME ~ '/.local/share' }}"
 _xdg_cache_home_: "{{ ansible_env.TMP if _is_win_ else ansible_facts.env.HOME ~ '/.cache' }}"
 
 _exec_bin_: "{{ (_xdg_data_home_ | win_dirname) if _is_win_ else (_xdg_data_home_ | dirname) }}/bin"
-
-locale: zh_CN
-timezone: America/Vancouver
-
-_git_: "{{ git | default(False) | bool }}"
-_nvim_: "{{ nvim | default(False) | bool }}"
-_all_: "{{ all | default(False) | bool }}"

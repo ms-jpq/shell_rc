@@ -1,5 +1,0 @@
----
-- name: target commands
-  loop: "{{ target_commands }}"
-  ansible.windows.win_command:
-    argv: "{{ item }}"

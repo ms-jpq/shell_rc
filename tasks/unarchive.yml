@@ -1,7 +1,0 @@
----
-- name: unarchive packages
-  loop: "{{ target_archives }}"
-  ansible.builtin.unarchive:
-    remote_src: True
-    src: "{{ item.src }}"
-    dest: "{{ item.dst }}"

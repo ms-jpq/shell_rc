@@ -1,8 +1,0 @@
----
-- name: clone git repos
-  loop: "{{ git_repos }}"
-  ansible.builtin.git:
-    depth: 1
-    force: True
-    repo: "{{ item.src }}"
-    dest: "{{ item.dst }}"

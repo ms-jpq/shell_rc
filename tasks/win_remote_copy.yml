@@ -1,8 +1,0 @@
----
-- name: copy remote files
-  loop: "{{ target_remote_copy }}"
-  ansible.windows.win_copy:
-    remote_src: True
-    recurse: True
-    src: "{{ item.src }}"
-    dest: "{{ item.dst }}"

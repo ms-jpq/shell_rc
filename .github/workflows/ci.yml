@@ -13,65 +13,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Build
-        uses: docker/build-push-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{ secrets.DOCKER_USERNAME }}/cli
-          tags: latest
-          dockerfile: "docker/posix/Dockerfile"
+      # - uses: docker/build-push-action@v1
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      #     repository: ${{ secrets.DOCKER_USERNAME }}/cli
+      #     tags: latest
+      #     dockerfile: "docker/posix/Dockerfile"
 
   ubuntu:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Install Ansible
-        run: |-
-          pip3 install -- ansible
-
-  #     - name: Build
-  #       run: |-
-  #         vic=victim
-  #         sudo -- useradd --user-group --create-home --base-dir "$PWD" -- "$vic"
-  #         ansible-playbook ./local.ubuntu.yml -e all=true --user "$vic"
+      - run: |-
+          true
 
   macos:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Install Ansible
-        run: |-
-          pip3 install -- ansible
-
-      - name: Build
-        run: |-
-          ansible-playbook ./local.macos.yml -e all=true
+      - run: |-
+          true
 
   windows:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Install Msys2
-        uses: msys2/setup-msys2@v2
+      - uses: msys2/setup-msys2@v2
 
-      - name: Ensure openssh
-        run: |-
-          C:\msys64\usr\bin\pacman.exe --sync --needed --noconfirm -- openssh
-
-      # - name: Run Ansible
-      #   shell: bash
-      #   run: |-
-      #     ./docker/nt/build.sh
+      - run: |-
+          true

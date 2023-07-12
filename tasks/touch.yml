@@ -1,8 +1,0 @@
----
-- name: ensure file exists
-  loop: "{{ target_touches }}"
-  ansible.builtin.file:
-    state: touch
-    access_time: preserve
-    modification_time: preserve
-    path: "{{ item }}"
