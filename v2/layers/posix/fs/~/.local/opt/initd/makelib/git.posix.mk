@@ -3,11 +3,11 @@
 define GIT_TEMPLATE
 git: $(1)
 $(1):
-	if [[ -d '$(1)' ]]; then
-		cd -- '$(1)'
+	if [[ -d '$$@' ]]; then
+		cd -- '$$@'
 		git pull --recurse-submodules --no-tags
 	else
-		git clone --recurse-submodules --shallow-submodules --depth=1 -- '$(2)' '$(1)'
+		git clone --recurse-submodules --shallow-submodules --depth=1 -- '$(2)' '$$@'
 	fi
 endef
 
@@ -25,6 +25,6 @@ $(OPT)/zsh-history-substring-search https://github.com/zsh-users/zsh-history-sub
 $(OPT)/zsh-syntax-highlighting      https://github.com/zsh-users/zsh-syntax-highlighting
 endef
 
-GIT_REPOS := $(shell sed 's/[[:space:]]\+/#/' <<<'$(GIT_REPOS)')
+GIT_REPOS := $(shell tr -s ' ' '#' <<<'$(GIT_REPOS)')
 
-$(foreach repo,$(GIT_REPOS),$(eval $(call GIT_TEMPLATE,$(firstword $(subst #, ,$(repo))),$(lastword $(subst #, ,$(repo))))))
+$(call META_2D,GIT_REPOS,GIT_TEMPLATE)

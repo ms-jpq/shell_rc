@@ -22,6 +22,10 @@ LOCAL := $(HOME)/.local
 CONFIG := $(HOME)/.config
 OPT := $(LOCAL)/opt
 
+define META_2D
+$(foreach line,$($(1)),$(eval $(call $(2),$(firstword $(subst #, ,$(line))),$(lastword $(subst #, ,$(line))))))
+endef
+
 include makelib/*.mk
 
 all: touch git
