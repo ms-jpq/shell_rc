@@ -2,11 +2,12 @@
 
 set -o pipefail
 
-LONG_OPTS='cpu:,mem:,gui,img:'
+LONG_OPTS='cpu:,mem:,mon:,img:,smbios:'
 GO="$(getopt --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval set -- "$GO"
 
-GUI=0
+MON=
+SMBIOS_OEM=
 while (($#)); do
   case "$1" in
   --cpu)
@@ -17,12 +18,16 @@ while (($#)); do
     MEM="$2"
     shift -- 2
     ;;
-  --gui)
-    GUI=1
-    shift -- 1
+  --mon)
+    MON="$2"
+    shift -- 2
     ;;
   --img)
     IMG="$2"
+    shift -- 2
+    ;;
+  --smbios)
+    SMBIOS_OEM="$2"
     shift -- 2
     ;;
   --)
@@ -45,63 +50,39 @@ ARGV=(
   -m "${MEM:-"size=1G"}"
 )
 
-CONSOLE_ID="virtiocon-$(uuidgen)"
 ARGV+=(
-  -device virtio-serial-pci-non-transitional
-  -chardev "stdio,id=$CONSOLE_ID"
-  -device "virtconsole,chardev=$CONSOLE_ID"
+  -nographic
+  -serial stdio
 )
 
-if ((GUI)); then
-  ARGV+=(
-    -device 'virtio-gpu-pci'
-    -device 'virtio-tablet-pci'
-    -device 'virtio-keyboard-pci'
-  )
-else
-  ARGV+=(
-    -nographic
-  )
+if [[ -n "$MON" ]]; then
+  ARGV+=(-monitor "$MON,server,nowait")
 fi
 
-NIC_ID="tap-$(uuidgen)"
-ARGV+=(
-  -netdev "user,id=$NIC_ID"
-  -device "virtio-net-pci-non-transitional,netdev=$NIC_ID"
-)
+ARGV+=(-nic "user,model=virtio-net-pci-non-transitional")
 
 ARGV+=(-bios "$(brew --prefix)/opt/qemu/share/qemu/edk2-aarch64-code.fd")
 
-DRIVE_ID="drive-$(uuidgen)"
-ARGV+=(
-  -drive "if=none,aio=threads,file=$IMG,id=$DRIVE_ID"
-  -device "virtio-blk-pci-non-transitional,drive=$DRIVE_ID"
-)
+ARGV+=(-drive "if=virtio,aio=threads,file=$IMG")
+
+if [[ -n "$SMBIOS_OEM" ]]; then
+  ARGV+=(-smbios "type=11,path=$SMBIOS_OEM")
+fi
 
 ARGV+=("$@")
 
 pprint() {
   while (($#)); do
-    if ! [[ "${2:-""}" =~ ^- ]]; then
-      break
+    NEXT="${2:-""}"
+    if [[ -n "$NEXT" ]] && ! [[ "$NEXT" =~ ^- ]]; then
+      printf -- '%s ' "$1"
     else
       printf -- '%s\n' "$1"
-      shift -- 1
     fi
-  done
 
-  for ARG in "$@"; do
-    case "$ARG" in
-    -*)
-      printf -- '%s ' "$ARG"
-      ;;
-    *)
-      printf -- '%s\n' "$ARG"
-      ;;
-    esac
-  done
+    shift -- 1
+  done | column -t >&2
 }
 
-pprint "${ARGV[@]}" | column -t >&2
-
+pprint "${ARGV[@]}"
 exec -- "${ARGV[@]}"
