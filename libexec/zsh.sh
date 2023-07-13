@@ -28,10 +28,11 @@ while (($#)); do
   esac
 done
 
-rm -fr -- "$OUT"
 FUNC="$OUT/fn"
 BINS="$OUT/bin"
 BLIB="$OUT/libexec"
+
+rm -fr -- "$OUT"
 mkdir -p -- "$FUNC" "$BINS" "$BLIB"
 
 ZSH=(

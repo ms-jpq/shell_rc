@@ -13,6 +13,7 @@ $(OPT)/pipx/bin/pipx: $(OPT)/pipx
 	'$(OPT)/pipx/bin/pip' install --require-virtualenv --upgrade -- pipx
 
 define PIPX_TEMPLATE
+
 pipx: $$(PIPX)/$(1)
 $$(PIPX)/$(1): $$(OPT)/pipx/bin/pipx
 	if [[ -d '$$@' ]]; then
@@ -21,9 +22,11 @@ $$(PIPX)/$(1): $$(OPT)/pipx/bin/pipx
 		'$$<' install -- '$(2)'
 	fi
 	touch -- '$$@'
+
 endef
 
 define PIP_PKGS
+
 gay                   gay
 graphtage             graphtage
 httpie                httpie
@@ -31,6 +34,7 @@ lookatme              lookatme
 markdown-live-preview markdown_live_preview
 py-dev                https://github.com/ms-jpq/py-dev/archive/dev.tar.gz
 sortd                 sortd
+
 endef
 
 PIP_PKGS := $(shell tr -s ' ' '#' <<<'$(PIP_PKGS)')

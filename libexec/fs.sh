@@ -3,5 +3,3 @@
 set -o pipefail
 
 cd -- "${0%/*}/.."
-
-

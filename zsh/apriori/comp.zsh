@@ -14,9 +14,7 @@ setopt no_menu_complete # do not autoselect the first completion entry
 # shellcheck disable=SC2034
 WORDCHARS=''
 
-# INIT
-autoload -Uz compinit
-# INIT
+autoload -Uz -- compinit
 
 # Case insensitive matches
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
