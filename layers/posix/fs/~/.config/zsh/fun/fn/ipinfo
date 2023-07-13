@@ -1,3 +1,0 @@
-#!/usr/bin/env -S -- bash
-
-curl --no-progress-meter --location -- 'https://ipinfo.io' | jq

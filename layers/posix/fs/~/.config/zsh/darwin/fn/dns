@@ -1,3 +1,0 @@
-#!/usr/bin/env -S -- bash
-
-sudo killall -HUP -- mDNSResponder
