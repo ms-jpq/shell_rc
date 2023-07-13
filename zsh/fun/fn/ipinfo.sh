@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- bash
 
 ipinfo() {
-  local ip
+  local -- ip
   ip="$(curl --no-progress-meter --location -- 'https://ipinfo.io')"
   jq <<<"$ip"
 }

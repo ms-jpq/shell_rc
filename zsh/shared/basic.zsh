@@ -15,7 +15,7 @@ export -- PAGER='less'
 LESS="$(printf -- '%q ' "${_less[@]}")"
 unset _less
 export -- LESS
-export -- LESSHISTFILE="$XDG_CACHE_HOME/less-hist"
+export -- LESSHISTFILE="$XDG_STATE_HOME/less-hist"
 
 export -- TIME_STYLE='long-iso'
 

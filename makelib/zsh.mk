@@ -1,20 +1,16 @@
 .PHONY: zshrc
 
-ZSH := $(shell find ./zsh)
-
-./tmp/dircolors: ./tmp
+$(TMP)/dircolors: $(TMP)
 	if ! [[ -d '$@' ]]; then
 		git clone -- 'https://github.com/seebi/dircolors-solarized' '$@'
 	fi
 	touch -- '$@'
 
-./tmp/dircolors.sh: ./tmp/dircolors
+$(TMP)/dircolors.sh: $(TMP)/dircolors
 	dircolors --bourne-shell -- '$</dircolors.256dark' > '$@'
 
-$(TMP)/~/.config/zsh: $(ZSH)
-	./libexec/zsh.sh --os '$(OS)' --out '$@'
-
-# $(TMP)/~/.cache: $(TMP)/~
-# 	ln -sf -- '$(CURDIR)/zshrc' '$@'
+$(TMP)/~/.config/zsh: ./libexec/zsh.sh $(TMP)/dircolors.sh $(shell find ./zsh)
+	'$<' --os '$(OS)' --out '$@'
+	cat -- '$(TMP)/dircolors.sh' >> '$@/.zshrc'
 
 zshrc: $(TMP)/~/.config/zsh

@@ -59,7 +59,7 @@ FZF_CTRL_T_COMMAND="$(printf -- '%q ' "${_fzf_ctrl_t_command[@]}")"
 unset _fzf_ctrl_t_command
 
 _fzf_preview=(
-  --preview "$(printf -- '%q' "$ZDOTDIR/shared/bin/preview") {}"
+  --preview "$(printf -- '%q' "$ZDOTDIR/libexec/preview.sh") {}"
 )
 _fzf_alt_c_opts=(
   --read0
@@ -70,10 +70,6 @@ FZF_ALT_C_OPTS="$(printf -- '%q ' "${_fzf_alt_c_opts[@]}")"
 unset _fzf_alt_c_opts
 # shellcheck disable=SC2034
 FZF_CTRL_T_OPTS="$FZF_ALT_C_OPTS"
-
-#################### ################ ####################
-#################### Overwrite Region ####################
-#################### ################ ####################
 
 _fzf_compgen_path() {
   local -- local_opts=(
@@ -93,9 +89,6 @@ _fzf_compgen_dir() {
   "${local_opts[@]}" "$1"
 }
 
-# INTI #
 # shellcheck disable=SC1091
-source -- "$ZDOTDIR/../fzf/shell/key-bindings.zsh"
-# shellcheck disable=SC1091
-source -- "$ZDOTDIR/../fzf/shell/completion.zsh"
-# INIT #
+source -- "$HOME/.local/opt/fzf/shell/key-bindings.zsh"
+source -- "$HOME/.local/opt/fzf/shell/completion.zsh"

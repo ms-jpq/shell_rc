@@ -1,3 +1,4 @@
 #!/usr/bin/env -S -- bash
 
-pathprepend "$XDG_CONFIG_HOME/isomorphic-copy/bin"
+# shellcheck disable=SC1091
+source -- "$HOME/.local/opt/isomorphic-copy/bin"

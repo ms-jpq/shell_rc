@@ -1,3 +1,3 @@
 #!/usr/bin/env -S -- bash
 
-LC_ALL=C LANG=C command -- fzf "$@"
+LC_ALL=C command -- fzf "$@"

@@ -1,4 +1,7 @@
 #!/usr/bin/env -S -- bash
 
-# shellcheck disable=SC1090
-source -- <(command -- venv "$@")
+venv() {
+  # shellcheck disable=SC2154
+  # shellcheck disable=SC1090
+  source -- <(command -- "$ZDOTDIR/libexec/venv.sh" "$@")
+}
