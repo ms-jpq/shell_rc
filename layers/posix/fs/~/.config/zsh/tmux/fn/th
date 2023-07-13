@@ -1,4 +1,0 @@
-#!/usr/bin/env -S -- bash
-
-DUMP="$(tmux capture-pane -p -S -)"
-fzf <<<"$DUMP"

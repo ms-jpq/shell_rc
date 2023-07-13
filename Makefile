@@ -12,10 +12,19 @@ SHELL := bash
 
 clean:
 	shopt -u failglob
-	rm -rf --
+	rm -rf -- ./tmp
 
 clobber: clean
 	shopt -u failglob
 	rm -rf --
+
+NOW=$(shell date '+%Y-%m-%d-%H-%M-%S')
+TMP=./tmp/$(OS)_$(NOW)
+
+./tmp:
+	mkdir -p -- '$@'
+
+$(TMP): ./tmp
+	mkdir -p -- '$@'
 
 include makelib/*.mk

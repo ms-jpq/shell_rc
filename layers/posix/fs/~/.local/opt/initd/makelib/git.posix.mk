@@ -22,7 +22,6 @@ define GIT_REPOS
 $(CONFIG)/nvim                      https://github.com/ms-jpq/nvim_rc
 $(CONFIG)/tmux                      https://github.com/ms-jpq/tmux_rc
 $(OPT)/asdf                         https://github.com/asdf-vm/asdf
-$(OPT)/dircolors-solarized          https://github.com/seebi/dircolors-solarized
 $(OPT)/fzf                          https://github.com/junegunn/fzf
 $(OPT)/fzf-tab                      https://github.com/Aloxaf/fzf-tab
 $(OPT)/isomorphic-copy              https://github.com/ms-jpq/isomorphic-copy
@@ -35,3 +34,6 @@ endef
 GIT_REPOS := $(shell tr -s ' ' '#' <<<'$(GIT_REPOS)')
 
 $(call META_2D,GIT_REPOS,GIT_TEMPLATE)
+
+$(OPT)/dircolors-solarized          https://github.com/seebi/dircolors-solarized
+
