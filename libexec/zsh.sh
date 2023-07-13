@@ -68,7 +68,7 @@ done
 
 for BIN in ./zsh/*/libexec/*; do
   B="${BIN##*/}"
-  cp -- "$BLIB" "$BINS/$B"
+  cp -- "$BIN" "$BLIB/$B"
 done
 
 printf -- '%s\n' "${ACC[@]}" >"$OUT/.zshrc"

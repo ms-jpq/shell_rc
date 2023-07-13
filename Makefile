@@ -18,13 +18,9 @@ clobber: clean
 	shopt -u failglob
 	rm -rf --
 
-NOW=$(shell date '+%Y-%m-%d-%H-%M-%S')
-TMP=./tmp/$(OS)_$(NOW)
+TMP := ./tmp/$(OS)
 
-./tmp:
-	mkdir -p -- '$@'
-
-$(TMP): ./tmp
+$(TMP):
 	mkdir -p -- '$@'
 
 include makelib/*.mk
