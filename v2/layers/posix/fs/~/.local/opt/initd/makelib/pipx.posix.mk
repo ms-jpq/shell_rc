@@ -1,22 +1,38 @@
-.PHONY: pipx
+.PHONY: pipx clobber.pipx
 
 PIPX := $(LOCAL)/pipx/venvs
 
-# $(OPT)/pipx:
-# 	python3 -m venv --upgrade -- "$@"
+clobber: clobber.pipx
+clobber.pipx:
+	rm -rf -- '$(OPT)/pipx' '$(PIPX)'
 
-# $(OPT)/pipx/bin/pipx:
-# 	'$(OPT)/pipx/bin/pip' install --require-virtualenv --upgrade -- pipx
+$(OPT)/pipx:
+	python3 -m venv --upgrade -- "$@"
 
-# pipx: $(PIPX)/gay
-# $(PIPX)/gay: $(OPT)/pipx/bin/pipx
-# 	'$<' install -- gay
+$(OPT)/pipx/bin/pipx: $(OPT)/pipx
+	'$(OPT)/pipx/bin/pip' install --require-virtualenv --upgrade -- pipx
 
-# pipx: $(PIPX)/gay
-# $(PIPX)/gay: $(OPT)/pipx/bin/pipx
-# 	'$<' install -- gay
+define PIPX_TEMPLATE
+pipx: $$(PIPX)/$(1)
+$$(PIPX)/$(1): $$(OPT)/pipx/bin/pipx
+	if [[ -d '$$@' ]]; then
+		'$$<' upgrade -- '$(2)'
+	else
+		'$$<' install -- '$(2)'
+	fi
+	touch -- '$$@'
+endef
 
-# pipx: $(PIPX)/gay
-# $(PIPX)/gay: $(OPT)/pipx/bin/pipx
-# 	'$<' install -- gay
+define PIP_PKGS
+gay                   gay
+graphtage             graphtage
+httpie                httpie
+lookatme              lookatme
+markdown-live-preview markdown_live_preview
+py-dev                https://github.com/ms-jpq/py-dev/archive/dev.tar.gz
+sortd                 sortd
+endef
 
+PIP_PKGS := $(shell tr -s ' ' '#' <<<'$(PIP_PKGS)')
+
+$(call META_2D,PIP_PKGS,PIPX_TEMPLATE)
