@@ -1,4 +1,6 @@
-.PHONY: zsh
+.PHONY: zshrc
+
+ZSH := $(shell find ./zsh)
 
 ./tmp/dircolors: ./tmp
 	if ! [[ -d '$@' ]]; then
@@ -9,9 +11,10 @@
 ./tmp/dircolors.sh: ./tmp/dircolors
 	dircolors --bourne-shell -- '$</dircolors.256dark' > '$@'
 
-# $(TMP)/~/.config/zsh: $(TMP)
-# 	mkdir -p -- '$@'
+$(TMP)/~/.config/zsh: $(ZSH)
+	./libexec/zsh.sh --os '$(OS)' --out '$@'
 
 # $(TMP)/~/.cache: $(TMP)/~
 # 	ln -sf -- '$(CURDIR)/zshrc' '$@'
 
+zshrc: $(TMP)/~/.config/zsh
