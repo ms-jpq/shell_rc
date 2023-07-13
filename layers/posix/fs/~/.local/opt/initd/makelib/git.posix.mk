@@ -3,6 +3,7 @@
 clobber: clobber.git
 
 define GIT_TEMPLATE
+
 .PHONY: clobber.git.$(1)
 clobber.git: clobber.git.$(1)
 clobber.git.$(1):
@@ -16,9 +17,11 @@ $(1):
 	else
 		git clone --recurse-submodules --shallow-submodules --depth=1 -- '$(2)' '$$@'
 	fi
+
 endef
 
 define GIT_REPOS
+
 $(CONFIG)/nvim                      https://github.com/ms-jpq/nvim_rc
 $(CONFIG)/tmux                      https://github.com/ms-jpq/tmux_rc
 $(OPT)/asdf                         https://github.com/asdf-vm/asdf
@@ -29,6 +32,7 @@ $(OPT)/z                            https://github.com/rupa/z
 $(OPT)/zsh-autosuggestions          https://github.com/zsh-users/zsh-autosuggestions
 $(OPT)/zsh-history-substring-search https://github.com/zsh-users/zsh-history-substring-search
 $(OPT)/zsh-syntax-highlighting      https://github.com/zsh-users/zsh-syntax-highlighting
+
 endef
 
 GIT_REPOS := $(shell tr -s ' ' '#' <<<'$(GIT_REPOS)')

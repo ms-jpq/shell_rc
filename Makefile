@@ -1,5 +1,6 @@
 MAKEFLAGS += --jobs
 MAKEFLAGS += --no-builtin-rules
+MAKEFLAGS += --shuffle
 MAKEFLAGS += --warn-undefined-variables
 SHELL := bash
 .DELETE_ON_ERROR:
@@ -18,7 +19,8 @@ clobber: clean
 	shopt -u failglob
 	rm -rf --
 
-TMP := ./tmp/$(OS)
+OS := darwin ubuntu nt
+TMP := ./tmp
 
 $(TMP):
 	mkdir -p -- '$@'
