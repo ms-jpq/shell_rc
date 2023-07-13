@@ -34,7 +34,7 @@ BINS="$OUT/bin"
 BLIB="$OUT/libexec"
 mkdir -p -- "$FUNC" "$BINS" "$BLIB"
 
-ZZ=(
+ZSH=(
   ./zsh/apriori/*.zsh
   ./zsh/{shared,tmux}/*.zsh
   ./zsh/"$OS"/*.zsh
@@ -42,22 +42,12 @@ ZZ=(
   ./zsh/{fun,docker}/*.zsh
 )
 
-ACC=()
-
-for ZSH in "${ZZ[@]}"; do
-  read -r -d '' -- Z <<-EOF || true
-# $ZSH
-$(<"$ZSH")
-EOF
-  ACC+=("$Z")
-done
+ACC=("$(cat -- "${ZSH[@]}")")
 
 for FN in ./zsh/*/fn/*.sh; do
   F="${FN%%.sh}"
-  read -r -d '' -- Z <<-EOF || true
-  autoload -Uz -- "\$ZDOTDIR/"'$F'
-EOF
-  ACC+=("$Z")
+  F="${F##*/}"
+  ACC+=("autoload -Uz -- \"\$ZDOTDIR/$F\"")
   cp -- "$FN" "$FUNC/${F##*/}"
 done
 

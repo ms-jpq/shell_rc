@@ -326,7 +326,7 @@ def __init() -> None:
     rh = readline.read_history_file
     wh = readline.write_history_file
     ah = readline.append_history_file
-    hist = join(environ["XDG_CACHE_HOME"], "py_hist")
+    hist = join(environ["XDG_STATE_HOME"], "py_hist")
     readline.read_history_file = lambda _: rh(hist)
     readline.write_history_file = lambda _: wh(hist)
     readline.append_history_file = lambda n, _: ah(n, hist)

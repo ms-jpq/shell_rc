@@ -59,6 +59,9 @@ if (("${#RM[@]}")); then
   linux*)
     apt-get purge --yes -- "${RM[@]}"
     ;;
+  *msys*)
+    exit 1
+    ;;
   *)
     exit 1
     ;;
@@ -66,13 +69,15 @@ if (("${#RM[@]}")); then
 fi
 
 if (("${#ADD[@]}")); then
-
   case "$OSTYPE" in
   darwin*)
     brew install -- "${ADD[@]}"
     ;;
   linux*)
     apt-get install --no-install-recommends --yes -- "${ADD[@]}"
+    ;;
+  *msys*)
+    exit 1
     ;;
   *)
     exit 1

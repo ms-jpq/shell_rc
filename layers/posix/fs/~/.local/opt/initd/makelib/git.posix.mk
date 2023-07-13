@@ -34,6 +34,3 @@ endef
 GIT_REPOS := $(shell tr -s ' ' '#' <<<'$(GIT_REPOS)')
 
 $(call META_2D,GIT_REPOS,GIT_TEMPLATE)
-
-$(OPT)/dircolors-solarized          https://github.com/seebi/dircolors-solarized
-

@@ -1,3 +1,4 @@
 #!/usr/bin/env -S -- bash
 
-editor "$@"
+# shellcheck disable=SC2154
+"$EDITOR" "$@"

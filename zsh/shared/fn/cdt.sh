@@ -1,6 +1,7 @@
 #!/usr/bin/env -S -- bash
 
-cd -- "$(mktemp --directory)" || return 1
-if (($#)); then
-  "$EDITOR" "$*"
-fi
+cdt() {
+  local tmp
+  tmp="$(mktemp --directory)"
+  cd -- "$tmp" || return 1
+}

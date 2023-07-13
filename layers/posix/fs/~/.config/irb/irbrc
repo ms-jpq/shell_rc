@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-IRB.conf[:HISTORY_FILE] = File.join(ENV.fetch("XDG_CACHE_HOME"), "irb_hist")
+IRB.conf[:HISTORY_FILE] = File.join(ENV.fetch("XDG_STATE_HOME"), "irb_hist")
 
 %w[
   English
