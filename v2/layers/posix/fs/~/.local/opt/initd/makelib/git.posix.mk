@@ -1,6 +1,13 @@
-.PHONY: git
+.PHONY: git clobber.git
+
+clobber: clobber.git
 
 define GIT_TEMPLATE
+.PHONY: clobber.git.$(1)
+clobber.git: clobber.git.$(1)
+clobber.git.$(1):
+	rm -rf -- '$(1)'
+
 git: $(1)
 $(1):
 	if [[ -d '$$@' ]]; then
