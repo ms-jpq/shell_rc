@@ -19,4 +19,3 @@ clobber: clean
 	rm -rf --
 
 include makelib/*.mk
-
