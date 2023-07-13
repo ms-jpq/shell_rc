@@ -1,8 +1,9 @@
 .PHONY: tar
+all: tar
 
 KINDS = link fs
 DIRS := root home
-RSYNC := rsync --mkpath --recursive --links --perms --times
+RSYNC := rsync --mkpath --recursive --links --perms
 
 define FS_TEMPLATE
 
@@ -10,14 +11,14 @@ $(1)_$(2)_$(3) := $$(shell find ./layers -regex './layers/\(posix\|$(1)\)/$(2)/$
 
 $$(TMP)/$(1)/$(3).$(2): $$($(1)_$(2)_$(3))
 	LAYERS=(./layers/{posix,$(1)}/$(2)/$(3))
+	mkdir -p -- '$$@'
 	for layer in "$$$${LAYERS[@]}"; do
 		if [[ -d ""$$$$layer"" ]]; then
-			$$(RSYNC) "$$$$layer" '$$@/'
+			$$(RSYNC) "$$$$layer/" '$$@/'
 		fi
 	done
 
 $$(TMP)/$(1)/$(3).$(2).tar: $$(TMP)/$(1)/$(3).$(2)
-	mkdir -p -- '$$<'
 	tar -c -C '$$<' -f '$$@' .
 
 tar: $$(TMP)/$(1)/$(3).$(2).tar
