@@ -22,8 +22,6 @@ execl(
 endef
 export -- PYDEPS
 
-CURL := curl --fail --location --no-progress-meter
-
 ./.venv/bin:
 	python3 -m venv -- './.venv'
 	'$@/python3' <<< "$$PYDEPS"
