@@ -19,12 +19,15 @@ clean:
 
 clobber: clean
 	shopt -u failglob
-	rm -rf --
+	rm -rf -- ./var ./.venv ./node_modules
 
 OS := darwin ubuntu nt
 TMP := ./tmp
 
 $(TMP):
+	mkdir -p -- '$@'
+
+./var/bin:
 	mkdir -p -- '$@'
 
 include makelib/*.mk

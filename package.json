@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "@taplo/cli": "*",
+    "prettier": "*"
+  },
+  "type": "module"
+}

@@ -1,7 +1,7 @@
-*inventory*
 .DS_Store
 .git/
+.mypy_cache/
 .venv/
-.vscode/
-temp
+.venv/
 tmp/
+var/
