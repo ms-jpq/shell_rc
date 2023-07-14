@@ -11,23 +11,11 @@ apt_deb_packages:
   - "https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.22.3-{{ ansible_architecture }}-unknown-linux-gnu.deb"
   - "https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/packages-microsoft-prod.deb"
 
-target_files:
-  - dst: "/"
-    src: "root/"
-  - dst: "~/"
-    src: "home/"
-
-target_templates:
-  - dst: "/"
-    src: "templates/"
-
 target_links:
   - dst: "/usr/local/bin/bat"
     src: "/bin/batcat"
   - dst: "/usr/local/bin/fd"
     src: "/bin/fdfind"
-  # - src: "/usr/share/zoneinfo/{{ time_zone }}"
-  #   dst: "/etc/localtime"
 
 target_downloads:
   - dst: "{{ _exec_bin_ }}/oh-my-posh"

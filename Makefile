@@ -23,6 +23,13 @@ clobber: clean
 
 OS := darwin ubuntu nt
 TMP := ./tmp
+ifeq ($(origin COMSPEC),undefined)
+	EXT :=
+else
+	EXT := .exe
+endif
+
+CURL := curl --fail --location --no-progress-meter
 
 $(TMP):
 	mkdir -p -- '$@'
