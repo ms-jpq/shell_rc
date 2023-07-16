@@ -1,4 +1,4 @@
-.PHONY: tar
+.PHONY: layers tar
 all: tar
 
 KINDS = link fs
@@ -18,12 +18,22 @@ $$(TMP)/$(1)/$(3).$(2): $$($(1)_$(2)_$(3))
 		fi
 	done
 
-$$(TMP)/$(1)/$(3).$(2).tar: $$(TMP)/$(1)/$(3).$(2)
-	tar -c -C '$$<' -f '$$@' .
-
-tar: $$(TMP)/$(1)/$(3).$(2).tar
+layers: $$(TMP)/$(1)/$(3).$(2)
 
 endef
 
 $(foreach kind,$(KINDS),$(foreach dir,$(DIRS),$(foreach os,$(OS),$(eval $(call FS_TEMPLATE,$(os),$(kind),$(dir))))))
 
+
+define TAR_TEMPLATE
+
+$$(TMP)/$(1).$(2).tar: $$(TMP)/$(1)/$(2).link $$(TMP)/$(1)/$(2).fs
+	for layer in $$^; do
+		tar -r -C "$$$$layer" -f '$$@' .
+	done
+
+tar: $$(TMP)/$(1).$(2).tar
+
+endef
+
+$(foreach dir,$(DIRS),$(foreach os,$(OS),$(eval $(call TAR_TEMPLATE,$(os),$(dir)))))
