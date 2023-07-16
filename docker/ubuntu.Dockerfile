@@ -2,11 +2,13 @@ FROM ubuntu:latest
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- \
-  make
+  make \
+  rsync
 
 WORKDIR /srv
 COPY . /srv
-# RUN ./main.sh
+
+RUN make all
 
 # SHELL ["/usr/bin/zsh", "-l", "-c"]
 # ENV TERM=xterm-256color \

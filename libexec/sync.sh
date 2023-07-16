@@ -14,11 +14,11 @@ UNTAR=(
   -C /
   -f -
 )
-APPLY="$(printf -- '%q ' "${UNTAR[@]}")"
 
 if [[ "$DST" == 'localhost' ]]; then
   "${UNTAR[@]}" <"$SRC"
 else
+  APPLY="$(printf -- '%q ' "${UNTAR[@]}")"
   # shellcheck disable=SC2029
   ssh "$@" "$DST" "$APPLY" <"$SRC"
 fi
