@@ -1,4 +1,0 @@
-.PHONY: facts
-
-facts::
-	ls

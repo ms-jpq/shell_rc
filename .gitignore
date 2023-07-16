@@ -2,6 +2,5 @@
 .git/
 .mypy_cache/
 .venv/
-.venv/
 tmp/
 var/
