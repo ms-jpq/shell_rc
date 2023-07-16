@@ -74,7 +74,7 @@ if (("${#ADD[@]}")); then
     brew install -- "${ADD[@]}"
     ;;
   linux*)
-    apt-get install --no-install-recommends --yes -- "${ADD[@]}"
+    DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- "${ADD[@]}"
     ;;
   *msys*)
     exit 1

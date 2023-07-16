@@ -4,7 +4,7 @@ APT_DEPS := /etc/ssl/certs/ca-certificates.crt /usr/bin/curl /usr/bin/gpg /usr/b
 
 apt-deps:
 	apt-get update
-	apt-get install --no-install-recommends --yes -- ca-certificates curl gnupg jq
+	DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- ca-certificates curl gnupg jq
 
 APT_DEPS: apt-deps
 apt: APT_DEPS
