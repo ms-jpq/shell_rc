@@ -34,14 +34,14 @@ darwin*)
 esac
 
 tee <<-EOF
-HOME=$(printf -- '%q' "$HOME")
-HOSTNAME=$(printf -- '%q' "$HOSTNAME")
-HOSTTYPE=$(printf -- '%q' "$HOSTTYPE")
-ID=$(printf -- '%q' "$ID")
-MACHTYPE=$(printf -- '%q' "$MACHTYPE")
-MEMINFO=$MEMINFO
-NPROC=$NPROC
-OSTYPE=$(printf -- '%q' "$OSTYPE")
-VERSION_CODENAME=$(printf -- '%q' "$VERSION_CODENAME")
-VERSION_ID=$(printf -- '%q' "$VERSION_ID")
+ENV_HOME=$(printf -- '%q' "$HOME")
+ENV_HOSTNAME=$(printf -- '%q' "$HOSTNAME")
+ENV_HOSTTYPE=$(printf -- '%q' "$HOSTTYPE")
+ENV_ID=$(printf -- '%q' "$ID")
+ENV_MACHTYPE=$(printf -- '%q' "$MACHTYPE")
+ENV_MEMINFO=$MEMINFO
+ENV_NPROC=$NPROC
+ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")
+ENV_VERSION_CODENAME=$(printf -- '%q' "$VERSION_CODENAME")
+ENV_VERSION_ID=$(printf -- '%q' "$VERSION_ID")
 EOF

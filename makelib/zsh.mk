@@ -10,7 +10,7 @@ ZSH := $(shell find ./zsh)
 define ZSH_TEMPLATE
 
 zshrc: $$(TMP)/$(1)/home.fs/.config/zsh
-$$(TMP)/$(1)/home.fs.tar: $$(TMP)/$(1)/home.fs/.config/zsh
+$$(TMP)/$(1)/home.fs: $$(TMP)/$(1)/home.fs/.config/zsh
 
 $$(TMP)/$(1)/home.fs/.config/zsh: ./libexec/zsh.sh $(ZSH)
 	'$$<' --os $(1) --out '$$@'

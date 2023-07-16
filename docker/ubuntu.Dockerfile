@@ -8,7 +8,7 @@ RUN apt-get update && \
 WORKDIR /srv
 COPY . /srv
 
-RUN make all
+RUN ./main.sh localhost
 
 # SHELL ["/usr/bin/zsh", "-l", "-c"]
 # ENV TERM=xterm-256color \
