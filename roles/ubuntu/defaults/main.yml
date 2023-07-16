@@ -1,8 +1,4 @@
 ---
-apt_repos:
-  - "deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner"
-  - "ppa:neovim-ppa/unstable"
-
 apt_deb_packages:
   - "https://github.com/alexhallam/tv/releases/latest/download/tidy-viewer_1.5.2_{{ dpkg_arch }}.deb"
   - "https://github.com/dandavison/delta/releases/latest/download/git-delta_0.16.5_{{ dpkg_arch }}.deb"
