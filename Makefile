@@ -22,14 +22,9 @@ clobber: clean
 	rm -rf -- ./var ./.venv ./node_modules
 
 OS := darwin ubuntu nt
-TMP := ./tmp
-ifeq ($(origin COMSPEC),undefined)
-	EXT :=
-else
-	EXT := .exe
-endif
-
 CURL := curl --fail --location --no-progress-meter
+
+TMP := ./tmp
 
 $(TMP):
 	mkdir -p -- '$@'
