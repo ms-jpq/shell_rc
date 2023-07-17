@@ -7,16 +7,6 @@ SHELL := bash
 
 .DEFAULT_GOAL := all
 
-.PHONY: clean clobber
-
-clean:
-	shopt -u failglob
-	rm -rf --
-
-clobber: clean
-	shopt -u failglob
-	rm -rf --
-
 CONFIG := $(HOME)/.config
 LOCAL := $(HOME)/.local
 BIN := $(LOCAL)/bin
@@ -46,6 +36,18 @@ else
 	DPKG_ARCH := amd64
 	GO_ARCH := $(MACHTYPE)
 endif
+
+.PHONY: clean clobber
+
+clean:
+	shopt -u failglob
+	rm -rf -- $(TMP)
+
+clobber: clean
+	shopt -u failglob
+	rm -rf --
+
+CURL := curl --fail --location --no-progress-meter
 
 define META_2D
 $(foreach line,$($(1)),$(eval $(call $(2),$(firstword $(subst #, ,$(line))),$(lastword $(subst #, ,$(line))))))
