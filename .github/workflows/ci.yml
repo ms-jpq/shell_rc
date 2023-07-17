@@ -43,7 +43,7 @@ jobs:
 
       - run: |-
           sudo -- mkdir -p -- /opt/homebrew/bin
-          sudo -- touch -- /opt/homebrew/bin/dash
+          sudo -- ln -sf -- /bin/sh /opt/homebrew/bin/dash
           brew install -- bash make
           rm -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 

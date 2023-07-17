@@ -74,7 +74,7 @@ fi
 if (("${#ADD[@]}")); then
   case "$OSTYPE" in
   darwin*)
-    brew install -- "${ADD[@]}"
+    brew install --formula -- "${ADD[@]}"
     ;;
   linux*)
     sudo -- apt-get update
