@@ -11,6 +11,7 @@ CONFIG := $(HOME)/.config
 LOCAL := $(HOME)/.local
 BIN := $(LOCAL)/bin
 OPT := $(LOCAL)/opt
+SHARE := $(LOCAL)/share
 CACHE = $(HOME)/.cache
 TMP := $(CACHE)/initd
 
@@ -56,4 +57,4 @@ $(TMP):
 
 include makelib/*.mk
 
-all: pkg git zsh conf
+all: pkg git zsh tmux conf

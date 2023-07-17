@@ -13,4 +13,4 @@ $$(TMP)/$(1)/home.fs/.config/zsh: ./libexec/zsh.sh $(ZSH)
 
 endef
 
-$(foreach os,$(OS),$(eval $(call ZSH_TEMPLATE,$(os))))
+$(foreach os,$(GOOS),$(eval $(call ZSH_TEMPLATE,$(os))))

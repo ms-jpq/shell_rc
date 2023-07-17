@@ -23,7 +23,6 @@ endef
 define GIT_REPOS
 
 $(CONFIG)/nvim                      https://github.com/ms-jpq/nvim_rc
-$(CONFIG)/tmux                      https://github.com/ms-jpq/tmux_rc
 $(OPT)/asdf                         https://github.com/asdf-vm/asdf
 $(OPT)/dircolors-solarized          https://github.com/seebi/dircolors-solarized
 $(OPT)/fzf                          https://github.com/junegunn/fzf
