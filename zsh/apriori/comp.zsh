@@ -24,16 +24,17 @@ zstyle ':completion::complete:*' use-cache on
 zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh/completion"
 
 __init_zcompdump() {
-  local -- dump="$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
-  # zsh extended glob, based on file mod time
-  local -- globbed=("$dump"(Nmh-6))
-  if (($#globbed)); then
+  local -- dump="$XDG_CACHE_HOME/zsh/zcompdump"
+  local -- file
+  for file in "$dump/"**; do
+    if [[ -f "$file" ]]; then
+      break
+      # rebuild
+      compinit -i -d "$dump"
+    fi
     # found comp < 6 hours
     compinit -i -C -d "$dump"
-  else
-    # rebuild
-    compinit -i -d "$dump"
-  fi
+  done
 }
 __init_zcompdump
 unset -f __init_zcompdump
