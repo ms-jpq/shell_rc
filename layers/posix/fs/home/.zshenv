@@ -27,4 +27,4 @@ case "$OSTYPE" in
   ;;
 esac
 
-ZDOTDIR="$XDG_CONFIG_HOME/zsh/rc.d"
+ZDOTDIR="$XDG_CONFIG_HOME/zsh"
