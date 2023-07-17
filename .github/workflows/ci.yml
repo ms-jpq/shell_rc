@@ -48,7 +48,7 @@ jobs:
           rm -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
       - run: |-
-          PATH="/$(brew --prefix)/opt/make/libexec/gnubin:$PATH"
+          PATH="$(brew --prefix)/opt/make/libexec/gnubin:$PATH"
           ./main.sh localhost
 
   windows:
