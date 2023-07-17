@@ -325,11 +325,14 @@ def __init() -> None:
 
     rh = readline.read_history_file
     wh = readline.write_history_file
-    ah = readline.append_history_file
-    hist = join(environ["XDG_STATE_HOME"], "py_hist")
+
+    hist = join(environ["XDG_STATE_HOME"], "shell_history", "python")
     readline.read_history_file = lambda _: rh(hist)
     readline.write_history_file = lambda _: wh(hist)
-    readline.append_history_file = lambda n, _: ah(n, hist)
+
+    with suppress(AttributeError):
+        ah = readline.append_history_file
+        readline.append_history_file = lambda n, _: ah(n, hist)
 
 
 __init()

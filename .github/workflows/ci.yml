@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - run: |-
-          # make lint
+          make lint
           ./main.sh localhost
           make fmt
           git diff --exit-code
@@ -58,6 +58,7 @@ jobs:
           rm -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
       - run: |-
+          make lint
           ./main.sh localhost
 
   windows:
@@ -66,6 +67,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: |-
+      - shell: bash
+        run: |-
           # ./main.sh localhost
           true
