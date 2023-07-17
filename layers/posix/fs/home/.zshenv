@@ -3,7 +3,6 @@
 case "$OSTYPE" in
 *msys*)
   export -- MSYSTEM='MSYS'
-  local -- cpath=''
 
   cpath="$(/usr/bin/cygpath -- "$LOCALAPPDATA")"
   path=("$(/usr/bin/dirname -- "$cpath")/bin" "${path[@]}" '/ucrt64/bin' '/usr/bin')

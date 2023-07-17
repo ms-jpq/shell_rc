@@ -42,8 +42,11 @@ jobs:
       - uses: actions/checkout@v3
 
       - run: |-
+          set -x
           sudo -- mkdir -p -- /opt/homebrew/bin
           sudo -- touch -- /opt/homebrew/bin/dash
+          cd "$HOME"
+          ls -A -l
           # make lint
           # ./main.sh localhost
           true
