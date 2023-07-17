@@ -62,7 +62,7 @@ jless                                          !!https://github.com/PaulJuliusMa
 lazygit                                        https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.38.2_Linux_$(LAZY_TYPE).tar.gz
 posh-linux-$(GOARCH)                           https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(GOARCH)
 tokei                                          https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-$(MACHTYPE)-unknown-linux-gnu.tar.gz
-xsc                                            !!https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz
+xsv                                            !!https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz
 
 endef
 

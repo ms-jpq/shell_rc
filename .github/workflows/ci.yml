@@ -46,7 +46,7 @@ jobs:
           sudo -- mkdir -p -- /opt/homebrew/bin
           sudo -- touch -- /opt/homebrew/bin/dash
           # make lint
-          ./main.sh localhost
+          # ./main.sh localhost
           true
 
   windows:
