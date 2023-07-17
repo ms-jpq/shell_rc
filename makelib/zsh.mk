@@ -9,7 +9,7 @@ zshrc: $$(TMP)/$(1)/home.fs/.config/zsh
 $$(TMP)/$(1)/home.fs: $$(TMP)/$(1)/home.fs/.config/zsh
 
 $$(TMP)/$(1)/home.fs/.config/zsh: ./libexec/zsh.sh $(ZSH)
-	'$$<' --os $(1) --out '$$@'
+	'$$<' $(1) '$$@'
 
 endef
 
