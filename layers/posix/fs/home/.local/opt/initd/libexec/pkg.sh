@@ -2,9 +2,7 @@
 
 set -o pipefail
 
-cd -- "$HOME"
-
-TXT="$(grep -- '^[^#]' ./.config/packages/*.txt)"
+TXT="$(grep -P -h -- '^(\+|-) .+' "$HOME"/.config/packages/*.txt)"
 readarray -t -d $'\n' -- DESIRED <<<"$TXT"
 
 case "$OSTYPE" in
@@ -39,12 +37,12 @@ for LINE in "${DESIRED[@]}"; do
 
   case "$ACTION" in
   +)
-    if [[ -z "${PRESENT["$PKG"]}" ]]; then
+    if [[ -z "${PRESENT["$PKG"]:-""}" ]]; then
       ADD+=("$PKG")
     fi
     ;;
   -)
-    if [[ -n "${PRESENT["$PKG"]}" ]]; then
+    if [[ -n "${PRESENT["$PKG"]:-""}" ]]; then
       RM+=("$PKG")
     fi
     ;;
@@ -77,6 +75,7 @@ if (("${#ADD[@]}")); then
     brew install -- "${ADD[@]}"
     ;;
   linux*)
+    apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- "${ADD[@]}"
     ;;
   *msys*)

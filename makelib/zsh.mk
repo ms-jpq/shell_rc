@@ -3,10 +3,6 @@ all: zshrc
 
 ZSH := $(shell find ./zsh)
 
-# $(TMP)/dircolors.sh: $(TMP)/dircolors
-# 	dircolors --bourne-shell -- '$</dircolors.256dark' > '$@'
-# 	touch -- '$<' '$@'
-
 define ZSH_TEMPLATE
 
 zshrc: $$(TMP)/$(1)/home.fs/.config/zsh

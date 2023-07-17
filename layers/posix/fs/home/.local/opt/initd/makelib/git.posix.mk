@@ -1,4 +1,4 @@
-.PHONY: git clobber.git
+.PHONY: git git-deps clobber.git
 
 clobber: clobber.git
 
@@ -10,7 +10,7 @@ clobber.git.$(1):
 	rm -rf -- '$(1)'
 
 git: $(1)
-$(1):
+$(1): git-deps
 	if [[ -d '$$@' ]]; then
 		cd -- '$$@'
 		git pull --recurse-submodules --no-tags

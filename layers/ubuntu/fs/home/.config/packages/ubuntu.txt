@@ -22,7 +22,7 @@
 + iperf3
 + jid
 + language-pack-zh-hans
-+ libaa-bin #aafire
++ libaa-bin
 + locales
 + make
 + man
