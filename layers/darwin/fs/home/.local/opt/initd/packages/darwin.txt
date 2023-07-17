@@ -21,7 +21,6 @@
 + fzf
 + gettext
 + gitui
-+ glib-openssl
 + gnu-getopt
 + gnu-sed
 + gnu-tar
