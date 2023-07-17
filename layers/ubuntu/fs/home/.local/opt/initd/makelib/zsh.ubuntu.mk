@@ -11,9 +11,9 @@ zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd $(BIN)/oh-my-posh
 	sudo -- ln -sf -- '$<' '$@'
 
 $(BIN)/oh-my-posh: $(BIN)/posh-linux-$(GOARCH)
-	sudo -- ln -sf -- '$<' '$@'
+	ln -sf -- '$<' '$@'
 
 zsh.ubuntu: /usr/bin/zsh
 	if [[ "$$SHELL" != '$<' ]]; then
-		sudo -- chsh -s '$<' "$$USER"
+		sudo -- chsh -s '$<' "$${USER:-"$$(whoami)"}"
 	fi

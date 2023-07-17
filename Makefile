@@ -21,7 +21,7 @@ clobber: clean
 	shopt -u failglob
 	rm -rf -- ./var ./.venv ./node_modules
 
-OS := darwin ubuntu nt
+GOOS := darwin ubuntu nt
 CURL := curl --fail --location --no-progress-meter
 
 TMP := ./tmp

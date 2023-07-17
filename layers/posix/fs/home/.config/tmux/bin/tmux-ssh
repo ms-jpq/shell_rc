@@ -1,0 +1,18 @@
+#!/usr/bin/env -S -- bash -Eeuo pipefail -O dotglob -O failglob -O globstar
+
+if ! [[ -v TMUX ]]; then
+  exit
+fi
+
+if ! [[ -v SSH_CLIENT ]]; then
+  exit
+fi
+
+DIR='/tmp/tmux-status-line'
+IP="${SSH_CLIENT%% *}"
+TMUX="${TMUX%%,*}"
+NAME="$DIR/${TMUX//\//|}"
+
+mkdir --parents -- "$DIR"
+printf -- '%s' "$IP" >"$NAME.ip2"
+mv -- "$NAME.ip2" "$NAME.ip"

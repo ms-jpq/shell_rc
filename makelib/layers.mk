@@ -23,7 +23,7 @@ layers: $$(TMP)/$(1)/$(3).$(2)
 
 endef
 
-$(foreach kind,$(KINDS),$(foreach dir,$(DIRS),$(foreach os,$(OS),$(eval $(call FS_TEMPLATE,$(os),$(kind),$(dir))))))
+$(foreach kind,$(KINDS),$(foreach dir,$(DIRS),$(foreach os,$(GOOS),$(eval $(call FS_TEMPLATE,$(os),$(kind),$(dir))))))
 
 
 define TAR_TEMPLATE
@@ -37,4 +37,4 @@ tar: $$(TMP)/$(1).$(2).tar
 
 endef
 
-$(foreach dir,$(DIRS),$(foreach os,$(OS),$(eval $(call TAR_TEMPLATE,$(os),$(dir)))))
+$(foreach dir,$(DIRS),$(foreach os,$(GOOS),$(eval $(call TAR_TEMPLATE,$(os),$(dir)))))
