@@ -4,6 +4,7 @@ set -o pipefail
 
 SRC="$1"
 DST="$2"
+NAME=${SRC##*/}
 
 CURL=(
   curl --fail
@@ -14,26 +15,20 @@ CURL=(
 
 case "$SRC" in
 *.tar.gz)
-  UNPACK=(
+  UNTAR=(
     tar -x -z
     -p -o -m
     -C "$DST"
     -f -
     -v
   )
+  "${CURL[@]}" | "${UNTAR[@]}"
   ;;
 *.zip)
-  UNPACK=(
-    unzip
-    -d "$DST"
-    -
-  )
+  "${CURL[@]}" >"$DST/$NAME"
+  unzip -d "$DST" "$DST/$NAME"
   ;;
 *)
-  UNPACK=(
-    dd of="$DST/${SRC##*/}"
-  )
+  "${CURL[@]}" | dd of="$DST/$NAME"
   ;;
 esac
-
-"${CURL[@]}" | "${UNPACK[@]}"
