@@ -28,4 +28,4 @@ endef
 
 include makelib/*.mk
 
-all: pkg git zsh touch
+all: pkg git zsh conf

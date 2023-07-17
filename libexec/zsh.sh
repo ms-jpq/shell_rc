@@ -48,7 +48,7 @@ ACC=("$(cat -- "${ZSH[@]}")")
 for FN in ./zsh/*/fn/*.sh; do
   F="${FN%%.sh}"
   F="${F##*/}"
-  ACC+=("autoload -Uz -- \"\$ZDOTDIR/$F\"")
+  ACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$F\"")
   cp -- "$FN" "$FUNC/${F##*/}"
 done
 

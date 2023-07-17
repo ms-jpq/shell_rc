@@ -2,7 +2,9 @@
 
 zsh: zsh.ubuntu
 
-zsh.ubuntu: pkg.posix
-	if [[ "$$SHELL" != /usr/bin/zsh ]]; then
+/usr/bin/zsh: pkg.posix
+
+zsh.ubuntu: /usr/bin/zsh
+	if [[ "$$SHELL" != '$<' ]]; then
 		chsh -s '$<'
 	fi

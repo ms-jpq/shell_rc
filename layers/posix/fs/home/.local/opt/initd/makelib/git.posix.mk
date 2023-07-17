@@ -2,6 +2,8 @@
 
 clobber: clobber.git
 
+/usr/bin/git: pkg.posix
+
 define GIT_TEMPLATE
 
 .PHONY: clobber.git.$(1)
@@ -10,7 +12,7 @@ clobber.git.$(1):
 	rm -rf -- '$(1)'
 
 git: $(1)
-$(1): git-deps
+$(1): /usr/bin/git
 	if [[ -d '$$@' ]]; then
 		cd -- '$$@'
 		git pull --recurse-submodules --no-tags

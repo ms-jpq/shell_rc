@@ -1,5 +1,6 @@
 FROM ubuntu:latest
 
+# hadolint ignore=DL3009
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- \
   make \
@@ -8,9 +9,11 @@ RUN apt-get update && \
 WORKDIR /srv
 COPY . /srv
 
-RUN ./main.sh localhost
+RUN ./main.sh localhost && \
+  apt-get clean && \
+  rm -rf -- /srv/* /var/lib/apt/lists/* /var/tmp/* /tmp/*
 
-# SHELL ["/usr/bin/zsh", "-l", "-c"]
-# ENV TERM=xterm-256color \
-#     ISOCP_USE_FILE=1
-# ENTRYPOINT ["/usr/bin/zsh", "-l"]
+ENV TERM=xterm-256color \
+  ISOCP_USE_FILE=1
+WORKDIR "$HOME"
+ENTRYPOINT ["/usr/bin/zsh", "-l"]
