@@ -8,7 +8,7 @@ bin="${0%/*}"
 PATH="$("$ZDOTDIR/libexec/path.sh" remove "$bin")"
 
 EXECUTE=(
-  "$(basename -- "$0")"
+  "${0##*/}"
   "$@"
 )
 

@@ -30,7 +30,9 @@ case "$SRC" in
   )
   ;;
 *)
-  exit 1
+  UNPACK=(
+    dd of="$DST/${SRC##*/}"
+  )
   ;;
 esac
 
