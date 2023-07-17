@@ -44,16 +44,23 @@ else
 endif
 
 
+ifeq ($(MACHTYPE), aarch64)
+	LAZY_TYPE := $(GOARCH)
+else
+	LAZY_TYPE := $(MACHTYPE)
+endif
+
+
 define CURL_ARCHIVES
 
 dust-v0.8.6-$(MACHTYPE)-unknown-linux-gnu/dust https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.6-$(MACHTYPE)-unknown-linux-gnu.tar.gz
 fzf                                            https://github.com/junegunn/fzf/releases/latest/download/fzf-0.42.0-linux_$(GOARCH).tar.gz
 gitui                                          https://github.com/extrawurst/gitui/releases/latest/download/gitui-linux-$(GITUI_TYPE).tar.gz
-gojq_v0.12.13_linux_$(GOARCH)/gojq            https://github.com/itchyny/gojq/releases/latest/download/gojq_v0.12.13_linux_$(GOARCH).tar.gz
+gojq_v0.12.13_linux_$(GOARCH)/gojq             https://github.com/itchyny/gojq/releases/latest/download/gojq_v0.12.13_linux_$(GOARCH).tar.gz
 htmlq                                          !!https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-linux.tar.gz
 jless                                          !!https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-v0.9.0-x86_64-unknown-linux-gnu.zip
-lazygit                                        https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.38.2_Linux_$(GOARCH).tar.gz
-posh-linux-$(GOARCH)                          https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(GOARCH)
+lazygit                                        https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.38.2_Linux_$(LAZY_TYPE).tar.gz
+posh-linux-$(GOARCH)                           https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(GOARCH)
 tokei                                          https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-$(MACHTYPE)-unknown-linux-gnu.tar.gz
 xsc                                            !!https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz
 
