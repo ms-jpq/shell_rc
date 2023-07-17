@@ -14,10 +14,9 @@ _less=(
 export -- PAGER='less'
 LESS="$(printf -- '%q ' "${_less[@]}")"
 unset _less
-export -- LESS
-export -- LESSHISTFILE="$XDG_STATE_HOME/less-hist"
+# shellcheck disable=SC2154
+export -- LESS LESSHISTFILE="$XDG_STATE_HOME/shell_history/less"
 
 export -- TIME_STYLE='long-iso'
-
 export -- EDITOR='editor'
 export -- MANPAGER='nvim +Man! --'

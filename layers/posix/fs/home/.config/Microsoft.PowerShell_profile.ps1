@@ -15,4 +15,4 @@ if ($IsWindows) {
 }
 
 
-oh-my-posh init pwsh --config (Join-Path -- ($IsWindows ? $Env:LOCALAPPDATA : $Env:XDG_CONFIG_HOME) 'posh.yml') | Invoke-Expression
+oh-my-posh init pwsh --config (Join-Path -- ($IsWindows ? $Env:LOCALAPPDATA : $Env:XDG_CONFIG_HOME) 'posh' 'config.yml') | Invoke-Expression

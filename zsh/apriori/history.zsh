@@ -9,7 +9,8 @@ setopt append_history         # add commands to HISTFILE in order of execution
 setopt inc_append_history     # add commands to HISTFILE immediately
 setopt share_history          # share command history data
 
-HISTFILE="$XDG_STATE_HOME/zsh_hist"
+# shellcheck disable=SC2154
+HISTFILE="$XDG_STATE_HOME/shell_history/zsh"
 HISTSIZE=50000
 
 # shellcheck disable=SC2034

@@ -91,4 +91,5 @@ _fzf_compgen_dir() {
 
 # shellcheck disable=SC1091
 source -- "$HOME/.local/opt/fzf/shell/key-bindings.zsh"
+# shellcheck disable=SC1091
 source -- "$HOME/.local/opt/fzf/shell/completion.zsh"

@@ -21,6 +21,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 
 # Cache completions:
 zstyle ':completion::complete:*' use-cache on
+# shellcheck disable=SC2154
 zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh/completion"
 
 # __init_zcompdump() {
@@ -36,4 +37,4 @@ zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh/completion"
 # }
 # __init_zcompdump
 # unset -f __init_zcompdump
-compinit -i -d "$dump"
+compinit -i

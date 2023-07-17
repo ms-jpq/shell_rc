@@ -1,3 +1,7 @@
 #!/usr/bin/env -S -- bash
 
-bat "$@"
+if command -v -- bat >/dev/null; then
+  bat "$@"
+else
+  cat "$@"
+fi
