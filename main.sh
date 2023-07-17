@@ -18,7 +18,7 @@ shell() {
   fi
 }
 
-make all
+gmake all
 
 ENV="$(shell bash -c "$(<'./libexec/env.sh')")"
 printf -- '%s\n' "$ENV"
