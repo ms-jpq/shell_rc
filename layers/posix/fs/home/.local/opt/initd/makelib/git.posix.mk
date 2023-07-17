@@ -2,8 +2,6 @@
 
 clobber: clobber.git
 
-/usr/bin/git: pkg.posix
-
 define GIT_TEMPLATE
 
 .PHONY: clobber.git.$(1)
