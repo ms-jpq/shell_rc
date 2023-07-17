@@ -47,13 +47,13 @@ endif
 define CURL_ARCHIVES
 
 dust-v0.8.6-$(MACHTYPE)-unknown-linux-gnu/dust https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.6-$(MACHTYPE)-unknown-linux-gnu.tar.gz
-fzf                                            https://github.com/junegunn/fzf/releases/latest/download/fzf-0.42.0-linux_$(GO_ARCH).tar.gz
+fzf                                            https://github.com/junegunn/fzf/releases/latest/download/fzf-0.42.0-linux_$(GOARCH).tar.gz
 gitui                                          https://github.com/extrawurst/gitui/releases/latest/download/gitui-linux-$(GITUI_TYPE).tar.gz
-gojq_v0.12.13_linux_$(GO_ARCH)/gojq            https://github.com/itchyny/gojq/releases/latest/download/gojq_v0.12.13_linux_$(GO_ARCH).tar.gz
+gojq_v0.12.13_linux_$(GOARCH)/gojq            https://github.com/itchyny/gojq/releases/latest/download/gojq_v0.12.13_linux_$(GOARCH).tar.gz
 htmlq                                          !!https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-linux.tar.gz
 jless                                          !!https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-v0.9.0-x86_64-unknown-linux-gnu.zip
-lazygit                                        https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.38.2_Linux_$(GO_ARCH).tar.gz
-posh-linux-$(GO_ARCH)                          https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(GO_ARCH)
+lazygit                                        https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.38.2_Linux_$(GOARCH).tar.gz
+posh-linux-$(GOARCH)                          https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(GOARCH)
 tokei                                          https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-$(MACHTYPE)-unknown-linux-gnu.tar.gz
 xsc                                            !!https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz
 
@@ -63,9 +63,9 @@ endef
 define CURL_DEBS
 
 /etc/apt/sources.list.d/microsoft-prod.list https://packages.microsoft.com/config/ubuntu/$(VERSION_ID)/packages-microsoft-prod.deb
-/usr/bin/delta                              https://github.com/dandavison/delta/releases/latest/download/git-delta_0.16.5_$(DPKG_ARCH).deb
-/usr/bin/pastel                             https://github.com/sharkdp/pastel/releases/latest/download/pastel_0.9.0_$(DPKG_ARCH).deb
-/usr/bin/tidy-viewer                        !!https://github.com/alexhallam/tv/releases/latest/download/tidy-viewer_1.5.2_$(DPKG_ARCH).deb
+/usr/bin/delta                              https://github.com/dandavison/delta/releases/latest/download/git-delta_0.16.5_$(GOARCH).deb
+/usr/bin/pastel                             https://github.com/sharkdp/pastel/releases/latest/download/pastel_0.9.0_$(GOARCH).deb
+/usr/bin/tidy-viewer                        !!https://github.com/alexhallam/tv/releases/latest/download/tidy-viewer_1.5.2_$(GOARCH).deb
 /usr/bin/watchexec                          https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.22.3-$(MACHTYPE)-unknown-linux-gnu.deb
 /usr/local/bin/sad                          https://github.com/ms-jpq/sad/releases/latest/download/$(MACHTYPE)-unknown-linux-gnu.deb
 

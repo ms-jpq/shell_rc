@@ -30,11 +30,9 @@ endef
 
 MACHTYPE := $(shell $(MACH_DETECT))
 ifeq ($(MACHTYPE), aarch64)
-	DPKG_ARCH := arm64
-	GO_ARCH := arm64
+	GOARCH := arm64
 else
-	DPKG_ARCH := amd64
-	GO_ARCH := $(MACHTYPE)
+	GOARCH := amd64
 endif
 
 .PHONY: clean clobber

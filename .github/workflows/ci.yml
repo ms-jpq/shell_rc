@@ -31,8 +31,8 @@ jobs:
 
       - run: |-
           # make lint build
+          sudo -- ./main.sh localhost
           # make fmt
-          # ./main.sh localhost
           git diff --exit-code
 
   macos:
@@ -45,10 +45,8 @@ jobs:
           set -x
           sudo -- mkdir -p -- /opt/homebrew/bin
           sudo -- touch -- /opt/homebrew/bin/dash
-          cd "$HOME"
-          ls -A -l
           # make lint
-          # ./main.sh localhost
+          ./main.sh localhost
           true
 
   windows:
