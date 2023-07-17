@@ -60,7 +60,7 @@ if (("${#RM[@]}")); then
     brew uninstall -- "${RM[@]}"
     ;;
   linux*)
-    apt-get purge --yes -- "${RM[@]}"
+    sudo -- apt-get purge --yes -- "${RM[@]}"
     ;;
   *msys*)
     exit 1
@@ -77,8 +77,8 @@ if (("${#ADD[@]}")); then
     brew install -- "${ADD[@]}"
     ;;
   linux*)
-    apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- "${ADD[@]}"
+    sudo -- apt-get update
+    DEBIAN_FRONTEND=noninteractive sudo -- apt-get install --no-install-recommends --yes -- "${ADD[@]}"
     ;;
   *msys*)
     winget import --accept-package-agreements --accept-source-agreements --import-file
