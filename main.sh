@@ -43,5 +43,25 @@ msys*)
   ;;
 esac
 
+declare -A -- ROOTS
+ROOTS=(
+  ['root']=/
+  ['home']="$ENV_HOME"
+)
 
-mkdir -p 
+FFS=(root home)
+
+for FS in "${FFS[@]}"; do
+  ROOT="${ROOTS["$FS"]}"
+  SRC="./tmp/$OS.$FS.tar"
+  UNTAR=(
+    tar -x
+    -p -o
+    -C "$ROOT"
+    -f -
+    -v
+  )
+  shell "${UNTAR[@]}" <"$SRC"
+done
+
+shell "$ENV_HOME/.local/opt/initd/make.sh"
