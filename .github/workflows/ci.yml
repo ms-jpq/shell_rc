@@ -45,6 +45,7 @@ jobs:
           sudo -- mkdir -p -- /opt/homebrew/bin
           sudo -- touch -- /opt/homebrew/bin/dash
           brew install -- bash make
+          rm -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
       - run: |-
           PATH="/$(brew --prefix)/opt/make/libexec/gnubin:$PATH"
