@@ -15,6 +15,7 @@
 + fd-find
 + figlet
 + grep
++ htop
 + hyperfine
 + iftop
 + iotop-c
