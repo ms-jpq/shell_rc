@@ -7,31 +7,11 @@ apt_deb_packages:
   - "https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.22.3-{{ ansible_architecture }}-unknown-linux-gnu.deb"
   - "https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/packages-microsoft-prod.deb"
 
-target_links:
-  - dst: "/usr/local/bin/bat"
-    src: "/bin/batcat"
-  - dst: "/usr/local/bin/fd"
-    src: "/bin/fdfind"
-
 target_downloads:
   - dst: "{{ _exec_bin_ }}/oh-my-posh"
     src: "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-{{ dpkg_arch }}"
 
 target_archives:
-  - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/junegunn/fzf/releases/latest/download/fzf-0.42.0-linux_{{ dpkg_arch }}.tar.gz"
-  - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-v0.8.0-{{ ansible_architecture }}-unknown-linux-gnu.zip"
-  - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/extrawurst/gitui/releases/latest/download/gitui-linux-musl.tar.gz"
-  - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.38.2_Linux_{{ ansible_architecture }}.tar.gz"
-  - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
-  - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-{{ ansible_architecture }}-unknown-linux-musl.tar.gz"
-  - dst: "{{ _exec_bin_ }}"
-    src: "https://github.com/mgdm/htmlq/releases/latest/download/htmlq-{{ ansible_architecture }}-linux.tar.gz"
   - dst: "{{ build_tmp }}"
     src: "https://github.com/itchyny/gojq/releases/latest/download/gojq_v0.12.13_linux_{{ dpkg_arch }}.tar.gz"
   - dst: "{{ build_tmp }}"

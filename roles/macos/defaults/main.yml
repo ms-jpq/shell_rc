@@ -1,3 +1,0 @@
-target_links:
-  - dst: "~/.local/bin/sh"
-    src: "{{ '/opt/homebrew' if ansible_architecture == 'arm64' else '/usr/local' }}/bin/dash"
