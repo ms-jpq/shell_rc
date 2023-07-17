@@ -1,8 +1,7 @@
 {
   "devDependencies": {
     "@taplo/cli": "*",
-    "prettier": "^2",
-    "prettier-plugin-awk": "*"
+    "prettier": "*"
   },
   "type": "module"
 }
