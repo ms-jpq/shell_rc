@@ -2,6 +2,6 @@
 
 ipinfo() {
   local -- ip
-  ip="$(curl --no-progress-meter --location -- 'https://ipinfo.io')"
+  ip="$(curl --fail --location --no-progress-meter -- 'https://ipinfo.io')"
   jq <<<"$ip"
 }

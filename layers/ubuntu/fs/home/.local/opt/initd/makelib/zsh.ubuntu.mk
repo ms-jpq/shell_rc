@@ -1,6 +1,6 @@
 .PHONY: zsh.ubuntu
 
-zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd
+zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd $(BIN)/oh-my-posh
 
 /usr/bin/zsh /bin/batcat /bin/fdfind: pkg.posix
 
@@ -8,6 +8,9 @@ zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd
 	ln -sf -- '$<' '$@'
 
 /usr/local/bin/fd: /bin/fdfind
+	ln -sf -- '$<' '$@'
+
+$(BIN)/oh-my-posh: $(BIN)/posh-linux-$(GO_ARCH)
 	ln -sf -- '$<' '$@'
 
 zsh.ubuntu: /usr/bin/zsh

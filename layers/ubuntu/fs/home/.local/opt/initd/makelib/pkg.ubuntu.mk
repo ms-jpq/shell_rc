@@ -1,11 +1,12 @@
 .PHONY: apt-deps
-
+	
+APT_INSTALL := DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes
 APT_DEPS := /etc/ssl/certs/ca-certificates.crt /usr/bin/curl /usr/bin/gpg /usr/bin/jq /usr/bin/git /usr/bin/unzip
 
 apt-deps:
 	APT=(ca-certificates curl gnupg jq git unzip)
 	apt-get update
-	DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- "$${APT[@]}"
+	$(APT_INSTALL) -- "$${APT[@]}"
 
 $(APT_DEPS): apt-deps
 git-deps: $(APT_DEPS)

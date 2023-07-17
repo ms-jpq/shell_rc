@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- bash
 
 # Emacs
-bindkey -- -e
+bindkey -e
 
 bindkey -- '^[[1;3C' emacs-forward-word
 bindkey -- '^[[1;3D' emacs-backward-word
