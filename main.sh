@@ -49,9 +49,11 @@ ROOTS=(
   ['home']="$ENV_HOME"
 )
 
-FFS=(root home)
+declare -A -- FFS
+FFS=([root]=1 [home]=0)
 
-for FS in "${FFS[@]}"; do
+for FS in "${!FFS[@]}"; do
+  SUDO="${FFS["$FS"]}"
   ROOT="${ROOTS["$FS"]}"
   SRC="./tmp/$OS.$FS.tar"
   UNTAR=(
@@ -61,6 +63,12 @@ for FS in "${FFS[@]}"; do
     -f -
     -v
   )
+  if ((SUDO)); then
+    UNTAR=(
+      sudo --
+      "${UNTAR[@]}"
+    )
+  fi
   shell "${UNTAR[@]}" <"$SRC"
 done
 

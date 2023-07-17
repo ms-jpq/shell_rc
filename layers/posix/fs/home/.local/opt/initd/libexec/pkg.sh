@@ -78,7 +78,7 @@ if (("${#ADD[@]}")); then
     ;;
   linux*)
     sudo -- apt-get update
-    DEBIAN_FRONTEND=noninteractive sudo -- apt-get install --no-install-recommends --yes -- "${ADD[@]}"
+    DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --no-install-recommends --yes -- "${ADD[@]}"
     ;;
   *msys*)
     winget import --accept-package-agreements --accept-source-agreements --import-file

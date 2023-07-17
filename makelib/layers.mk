@@ -10,6 +10,7 @@ define FS_TEMPLATE
 $(1)_$(2)_$(3) := $$(shell find ./layers -regex './layers/\(posix\|$(1)\)/$(2)/$(3)/.*')
 
 $$(TMP)/$(1)/$(3).$(2): $$($(1)_$(2)_$(3))
+	set -x
 	LAYERS=(./layers/{posix,$(1)}/$(2)/$(3))
 	mkdir -p -- '$$@'
 	for layer in "$$$${LAYERS[@]}"; do
