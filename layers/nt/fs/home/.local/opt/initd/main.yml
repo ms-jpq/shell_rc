@@ -1,12 +1,4 @@
 ---
-target_dirs:
-  - "{{ _exec_bin_ }}"
-  - "{{ ansible_facts.env.HOME }}/Documents/PowerShell/"
-
-target_files:
-  - dst: "{{ ansible_facts.env.HOME }}/"
-    src: "home/"
-
 target_templates: []
 
 winget_packages:
@@ -19,7 +11,7 @@ winget_packages:
   - OpenJS.NodeJS
   - Python.Python.3.10
   - gsass1.NTop
-  - msys2.msys2
+  # - msys2.msys2
   - stedolan.jq
 
 target_links:
