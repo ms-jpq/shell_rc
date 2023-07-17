@@ -31,7 +31,7 @@ jobs:
 
       - run: |-
           # make lint build
-          sudo -- ./main.sh localhost
+          ./main.sh localhost
           # make fmt
           git diff --exit-code
 
@@ -48,6 +48,7 @@ jobs:
 
       - run: |-
           # make lint
+          echo `which bash`
           ./main.sh localhost
 
   windows:
