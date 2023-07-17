@@ -4,7 +4,7 @@ set -o pipefail
 
 cd -- "${0%/*}/.."
 
-TXT="$(grep -h -- '^(\+|-) .+' ./packages/*.txt)"
+TXT="$(grep -E -h -- '^(\+|-) .+' ./packages/*.txt)"
 readarray -t -d $'\n' -- DESIRED <<<"$TXT"
 
 case "$OSTYPE" in
