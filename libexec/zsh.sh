@@ -4,29 +4,9 @@ set -o pipefail
 
 cd -- "${0%/*}/.."
 
-LONG_OPTS='out:,os:'
-GO="$(getopt --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
-eval set -- "$GO"
-
-while (($#)); do
-  case "$1" in
-  --os)
-    OS="$2"
-    shift -- 2
-    ;;
-  --out)
-    OUT="$2"
-    shift -- 2
-    ;;
-  --)
-    shift -- 1
-    break
-    ;;
-  *)
-    exit 1
-    ;;
-  esac
-done
+OS="$1"
+OUT="$2"
+shift -- 2
 
 FUNC="$OUT/fn"
 BINS="$OUT/bin"
