@@ -45,9 +45,9 @@ jobs:
           set -x
           sudo -- mkdir -p -- /opt/homebrew/bin
           sudo -- touch -- /opt/homebrew/bin/dash
+          brew install -- bash
           # make lint
-          # ./main.sh localhost
-          true
+          ./main.sh localhost
 
   windows:
     runs-on: windows-latest
