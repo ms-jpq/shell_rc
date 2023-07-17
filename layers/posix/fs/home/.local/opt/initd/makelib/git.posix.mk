@@ -1,4 +1,4 @@
-.PHONY: git git-deps clobber.git
+.PHONY: git clobber.git
 
 clobber: clobber.git
 
