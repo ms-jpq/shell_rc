@@ -56,7 +56,7 @@ for FS in "${FFS[@]}"; do
   SRC="./tmp/$OS.$FS.tar"
   UNTAR=(
     tar -x
-    -p -o
+    -p -o -m
     -C "$ROOT"
     -f -
     -v

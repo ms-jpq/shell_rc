@@ -2,7 +2,9 @@
 
 set -o pipefail
 
-TXT="$(grep -P -h -- '^(\+|-) .+' "$HOME"/.config/packages/*.txt)"
+cd -- "${0%/*}/.."
+
+TXT="$(grep -P -h -- '^(\+|-) .+' ./packages/*.txt)"
 readarray -t -d $'\n' -- DESIRED <<<"$TXT"
 
 case "$OSTYPE" in

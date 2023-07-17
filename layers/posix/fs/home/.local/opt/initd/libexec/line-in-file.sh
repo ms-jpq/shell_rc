@@ -20,7 +20,6 @@ END {
 }
 EOF
 
-mkdir -p -- "${FILE%/*}"
 touch -- "$FILE"
 
 NEW="$(awk -v MATCH="$MATCH" -v LINE="$LINE" "$AWK" "$FILE")"
