@@ -23,18 +23,17 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 zstyle ':completion::complete:*' use-cache on
 zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh/completion"
 
-__init_zcompdump() {
-  local -- dump="$XDG_CACHE_HOME/zsh/zcompdump"
-  local -- file
-  for file in "$dump/"**; do
-    if [[ -f "$file" ]]; then
-      break
-      # rebuild
-      compinit -i -d "$dump"
-    fi
-    # found comp < 6 hours
-    compinit -i -C -d "$dump"
-  done
-}
-__init_zcompdump
-unset -f __init_zcompdump
+# __init_zcompdump() {
+#   local -- dump="$XDG_CACHE_HOME/zsh/zcompdump"
+#   local -- file
+#   for file in "$dump/"**; do
+#     if [[ -f "$file" ]]; then
+#       # rebuild
+#     fi
+#     # found comp < 6 hours
+#     compinit -i -C -d "$dump"
+#   done
+# }
+# __init_zcompdump
+# unset -f __init_zcompdump
+compinit -i -d "$dump"

@@ -10,7 +10,13 @@ on:
 
 jobs:
   docker:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          - ubuntu-latest
+          # - windows-latest
+
+    runs-on: ${{ matrix.platform }}
 
     steps:
       - uses: actions/checkout@v3
@@ -23,7 +29,8 @@ jobs:
       #     tags: latest
       #     dockerfile: "docker/posix/Dockerfile"
 
-      - run: |-
+      - shell: bash
+        run: |-
           make build
 
   ubuntu:
