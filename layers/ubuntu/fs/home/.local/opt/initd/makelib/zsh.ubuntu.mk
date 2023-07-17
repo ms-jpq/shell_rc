@@ -10,7 +10,7 @@ zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd $(BIN)/oh-my-posh
 /usr/local/bin/fd: /bin/fdfind
 	ln -sf -- '$<' '$@'
 
-$(BIN)/oh-my-posh: $(BIN)/posh-linux-$(GO_ARCH)
+$(BIN)/oh-my-posh: $(BIN)/posh-linux-$(GOARCH)
 	ln -sf -- '$<' '$@'
 
 zsh.ubuntu: /usr/bin/zsh
