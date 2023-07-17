@@ -15,7 +15,7 @@ pkg.posix: /etc/apt/sources.list.d/ubuntu_partner.list /etc/apt/sources.list.d/p
 
 /etc/apt/sources.list.d/ubuntu_partner.list:
 	source -- /etc/os-release
-	tee -- '$@' <<-EOF
+	sudo -- tee -- '$@' <<-EOF
 	deb http://archive.canonical.com/ubuntu $$VERSION_CODENAME partner
 	EOF
 
