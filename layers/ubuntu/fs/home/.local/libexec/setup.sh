@@ -3,7 +3,7 @@
 set -o pipefail
 
 apt-install() {
-  DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- "$@"
+  DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --no-install-recommends --yes -- "$@"
 }
 
 touch -- "$HOME/.tool-versions"
