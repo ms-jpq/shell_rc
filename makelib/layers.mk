@@ -3,7 +3,7 @@ all: tar
 
 KINDS = link fs
 DIRS := root home
-RSYNC := rsync --mkpath --recursive --links --perms
+RSYNC := rsync --recursive --links --perms
 
 define FS_TEMPLATE
 
