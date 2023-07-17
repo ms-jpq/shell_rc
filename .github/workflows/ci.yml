@@ -44,11 +44,10 @@ jobs:
       - run: |-
           sudo -- mkdir -p -- /opt/homebrew/bin
           sudo -- touch -- /opt/homebrew/bin/dash
-          brew install -- bash
+          brew install -- bash make
 
       - run: |-
-          # make lint
-          echo `which bash`
+          PATH="/$(brew --prefix)/opt/make/libexec/gnubin:$PATH"
           ./main.sh localhost
 
   windows:
