@@ -9,7 +9,6 @@ apt-deps:
 	$(APT_INSTALL) -- "$${APT[@]}"
 
 $(APT_DEPS): apt-deps
-git-deps: $(APT_DEPS)
 
 pkg.posix: /etc/apt/sources.list.d/ubuntu_partner.list /etc/apt/sources.list.d/ppa_neovim-ppa_unstable.list
 
