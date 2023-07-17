@@ -15,5 +15,5 @@ $(BIN)/oh-my-posh: $(BIN)/posh-linux-$(GOARCH)
 
 zsh.ubuntu: /usr/bin/zsh
 	if [[ "$$SHELL" != '$<' ]]; then
-		chsh -s '$<'
+		sudo -- chsh -s '$<' "$$USER"
 	fi
