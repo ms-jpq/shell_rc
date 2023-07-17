@@ -14,6 +14,9 @@ darwin*)
 linux*)
   PKGS="$(dpkg --get-selections | cut --field 1)"
   ;;
+*msys*)
+  winget export --output
+  ;;
 *)
   exit 1
   ;;
@@ -77,6 +80,7 @@ if (("${#ADD[@]}")); then
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- "${ADD[@]}"
     ;;
   *msys*)
+    winget import --accept-package-agreements --accept-source-agreements --import-file
     exit 1
     ;;
   *)
