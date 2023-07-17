@@ -14,7 +14,7 @@ $(CACHE)/zsh/dircolors.sh: $(OPT)/dircolors-solarized pkg.posix
 		DC='dircolors'
 		;;
 	esac
-	"$DC" --bourne-shell -- '$</dircolors.256dark' > '$@'
+	"$$DC" --bourne-shell -- '$</dircolors.256dark' > '$@'
 
 $(HOME)/.local/state/zsh/zz:
 	mkdir -p -- '$(HOME)/.local/state/zsh'
