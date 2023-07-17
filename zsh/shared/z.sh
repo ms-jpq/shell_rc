@@ -1,13 +1,13 @@
 #!/usr/bin/env -S -- bash
 
-z() {
-  # shellcheck disable=SC2154
-  if [[ ! -v _Z_CMD ]]; then
-    _Z_DATA="$XDG_STATE_HOME/zz"
-    # shellcheck disable=SC1091
-    _Z_CMD='__z' source -- "$HOME/.local/opt/z/z.sh"
-  fi
+# shellcheck disable=SC2154
+if [[ ! -v _Z_CMD ]]; then
+  _Z_DATA="$XDG_STATE_HOME/zsh/zz"
+  # shellcheck disable=SC1091
+  _Z_CMD='__z' source -- "$HOME/.local/opt/z/z.sh"
+fi
 
+z() {
   local -- acc
   acc="$(_z -l "$*" 2>&1)"
   acc="$(sd 's/^[[:digit:]]\+[[:space:]]\+\|common://g' <<<"$acc")"

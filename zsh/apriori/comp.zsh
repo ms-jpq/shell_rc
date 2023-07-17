@@ -21,7 +21,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 
 # Cache completions:
 zstyle ':completion::complete:*' use-cache on
-zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh_comp"
+zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh/completion"
 
 __init_zcompdump() {
   local -- dump="$XDG_CACHE_HOME/zcompdump-$ZSH_VERSION"
