@@ -9,7 +9,7 @@ readarray -t -d $'\n' -- DESIRED <<<"$TXT"
 
 case "$OSTYPE" in
 darwin*)
-  PKGS="$(brew list --formula -1)"
+  PKGS="$(brew list --formula --full-name -1)"
   ;;
 linux*)
   PKGS="$(dpkg --get-selections | cut --field 1)"
