@@ -35,8 +35,7 @@ if [[ -z "$LANG" ]]; then
   exit 2
 fi
 
-LIST="$(asdf plugin list)"
-readarray -t -- PLUGINS <<<"$LIST"
+readarray -t -- PLUGINS < <(asdf plugin list || :)
 
 PLUGIN_INSTALLED=0
 for PLUGIN in "${PLUGINS[@]}"; do
