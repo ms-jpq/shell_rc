@@ -6,7 +6,7 @@ $ErrorActionPreference = 'Stop'
 
 function basic {
     # UTC BIOS
-    Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name 'RealTimeIsUniversal' -Type 'DWord' -Value 1
+    #Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name 'RealTimeIsUniversal' -Type 'DWord' -Value 1
 
     # Allow Scripting
     Set-ExecutionPolicy -ExecutionPolicy 'Unrestricted'
@@ -21,16 +21,12 @@ function basic {
     # NoPassword
     Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa' -Name 'LimitBlankPasswordUse' -Type 'DWord' -Value 0
 
+    # Show File Ext
+    Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'HideFileExt' -Type 'DWord' -Value 0
+    # Stop-Process -Force -ProcessName: 'Explorer'
+
     # Disable Defrag
     Disable-ScheduledTask -TaskName 'Microsoft\Windows\Defrag\ScheduledDefrag'
-}
-
-
-function winrm {
-    Set-Service -Name 'WinRM' -StartupType 'Automatic' -Status 'Running'
-
-    Set-Item -Path 'WSMan:\localhost\Service\Auth\Basic' -Value $true
-    Set-Item -Path 'WSMan:\localhost\Service\AllowUnencrypted' -Value $true
 }
 
 
