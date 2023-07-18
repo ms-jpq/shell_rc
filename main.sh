@@ -1,4 +1,4 @@
-#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob
+#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob
 
 set -o pipefail
 
@@ -76,8 +76,13 @@ for FS in "${!FFS[@]}"; do
     shell "${EX[@]}" bash -c "$(<"$LINKS")"
   fi
 
-  # shellcheck disable=SC2185
-  if find -empty -maxdepth 0 "$SRC"; then
+  EMPTY=1
+  for _ in "$SRC"*; do
+    EMPTY=0
+    break
+  done
+
+  if ! ((EMPTY)); then
     "${EX[@]}" rsync --recursive --links --perms --keep-dirlinks -- "$SRC" "$RDST$ROOT/"
   fi
 done

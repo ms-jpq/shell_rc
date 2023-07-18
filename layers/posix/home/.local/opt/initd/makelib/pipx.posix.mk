@@ -21,7 +21,6 @@ $$(PIPX)/$(1): $$(OPT)/pipx/bin/pipx
 	else
 		'$$<' install -- '$(2)'
 	fi
-	touch -- '$$@'
 
 endef
 
@@ -32,7 +31,7 @@ graphtage             graphtage
 httpie                httpie
 lookatme              lookatme
 markdown-live-preview markdown_live_preview
-py-dev                https://github.com/ms-jpq/py-dev/archive/dev.tar.gz
+py-dev                py-dev@https://github.com/ms-jpq/py-dev/archive/dev.tar.gz
 sortd                 sortd
 
 endef
