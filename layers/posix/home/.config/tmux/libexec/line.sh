@@ -5,4 +5,4 @@ set -o pipefail
 cd -- "${0%/*}/.."
 
 # shellcheck disable=SC2154
-"$XDG_DATA_HOME/tmux/bin/python3" -m libexec "$@"
+exec -- "$XDG_DATA_HOME/tmux/bin/python3" -m libexec "$@"

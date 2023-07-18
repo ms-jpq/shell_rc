@@ -7,9 +7,17 @@ cd -- "${0%/*}"
 DST="$1"
 shift -- 1
 
+if [[ "$DST" == 'localhost' ]]; then
+  LOCAL=1
+  RDST=""
+else
+  LOCAL=0
+  RDST="$DST:"
+fi
+
 shell() {
   local sh
-  if [[ "$DST" == 'localhost' ]]; then
+  if ((LOCAL)); then
     "$@"
   else
     sh="$(printf -- '%q ' "$@")"
@@ -52,25 +60,25 @@ ROOTS=(
 declare -A -- FFS
 FFS=([root]=1 [home]=0)
 
-if [[ "$DST" == 'localhost' ]]; then
-  RDST=""
-else
-  RDST="$DST:"
-fi
-
 for FS in "${!FFS[@]}"; do
-  # SUDO="${FFS["$FS"]}"
+  SUDO="${FFS["$FS"]}"
   ROOT="${ROOTS["$FS"]}"
   SRC="./tmp/$OS/$FS/"
 
-  LINKS="./layers/$OS/$FS.sh"
-  if [[ -x "$LINKS" ]]; then
-    shell bash -c "$(<"$LINKS")"
+  if ((SUDO)) && ((LOCAL)); then
+    EX=(sudo --)
+  else
+    EX=()
   fi
 
-  FOUND="$(find "$SRC")"
-  if [[ -n "$FOUND" ]]; then
-    rsync --recursive --links --perms --keep-dirlinks -- "$SRC" "$RDST$ROOT/"
+  LINKS="./layers/$OS/$FS.sh"
+  if [[ -x "$LINKS" ]]; then
+    shell "${EX[@]}" bash -c "$(<"$LINKS")"
+  fi
+
+  # shellcheck disable=SC2185
+  if find -empty -maxdepth 0 "$SRC"; then
+    "${EX[@]}" rsync --recursive --links --perms --keep-dirlinks -- "$SRC" "$RDST$ROOT/"
   fi
 done
 

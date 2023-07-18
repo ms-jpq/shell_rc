@@ -3,4 +3,4 @@ name    = "sh"
 version = "0"
 
 [project.optional-dependencies]
-dev = ["mypy", "types-PyYAML", "black", "isort"]
+dev = ["mypy", "types-PyYAML", "types-psutil", "black", "isort"]
