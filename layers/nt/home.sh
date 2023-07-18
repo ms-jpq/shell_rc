@@ -6,8 +6,16 @@ cd -- ~
 
 mkdir -p -- "$HOME/.local"
 
-ln -sf -- "$HOME/AppData/Local" "$HOME/.local/share"
-ln -sf -- "$HOME/AppData/LocalHigh" "$HOME/.local/opt"
-ln -sf -- "$HOME/AppData/LocalLow" "$HOME/.cache"
-ln -sf -- "$HOME/AppData/LocalLow" "$HOME/.local/state"
-ln -sf -- "$HOME/AppData/Roaming" "$HOME/.config"
+link() {
+  local -- src="$1" dst="$2"
+
+  if ! [[ -L "$dst" ]]; then
+    ln -sf -- "$src" "$dst"
+  fi
+}
+
+link "$HOME/AppData/Local" "$HOME/.local/share"
+link "$HOME/AppData/LocalHigh" "$HOME/.local/opt"
+link "$HOME/AppData/LocalLow" "$HOME/.cache"
+link "$HOME/AppData/LocalLow" "$HOME/.local/state"
+link "$HOME/AppData/Roaming" "$HOME/.config"

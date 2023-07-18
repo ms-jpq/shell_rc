@@ -1,3 +1,4 @@
+# + man
 # + yank
 + 7zip
 + aha
@@ -26,7 +27,6 @@
 + libaa-bin
 + locales
 + make
-+ man
 + man2html-base
 + moreutils
 + mosh
