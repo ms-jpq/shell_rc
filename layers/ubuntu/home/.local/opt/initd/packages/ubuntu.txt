@@ -9,7 +9,6 @@
 + cmatrix
 + colorized-logs
 + cowsay
-+ curl
 + dstat
 + duf
 + exa
@@ -26,7 +25,6 @@
 + language-pack-zh-hans
 + libaa-bin
 + locales
-+ make
 + man2html-base
 + moreutils
 + mosh
@@ -39,7 +37,6 @@
 + progress
 + psmisc
 + pv
-+ python3-venv
 + ripgrep
 + rlwrap
 + rsync
