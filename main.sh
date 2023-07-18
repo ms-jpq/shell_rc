@@ -55,29 +55,15 @@ FFS=([root]=1 [home]=0)
 for FS in "${!FFS[@]}"; do
   SUDO="${FFS["$FS"]}"
   ROOT="${ROOTS["$FS"]}"
-  SRC="./tmp/$OS.$FS.tar"
-  UNTAR=(
-    tar -x
-    -p -o -m
-    -C "$ROOT"
-    -f -
-    -v
-  )
-  if ((SUDO)); then
-    UNTAR=(
-      sudo --
-      "${UNTAR[@]}"
-    )
+  SRC="./tmp/$OS/$FS/"
+
+  LINKS="./layers/$OS/$FS.sh"
+  if [[ -x "$LINKS" ]]; then
+    shell bash -c "$(<"$LINKS")"
   fi
 
-  local -- links="./layers/$OS/$FS.sh"
-
-  if [[ -x "$links" ]]; then
-    shell bash -c "$(<"$links")"
-  fi
-
-  if [[ -n "$(tar -t -f "$SRC")" ]]; then
-    shell "${UNTAR[@]}" <"$SRC"
+  if ! ((SUDO)); then
+    rsync --recursive --links --perms --keep-dirlinks -- "$SRC" "$ROOT/"
   fi
 done
 
