@@ -2,15 +2,7 @@
 
 set -o pipefail
 
-bin="${0%/*}"
-
-# shellcheck disable=SC2154
-PATH="$("$ZDOTDIR/libexec/path.sh" remove "$bin")"
-
-EXECUTE=(
-  "${0##*/}"
-  "$@"
-)
+EXECUTE=(pip "$@")
 
 IS_VENV=0
 if [[ -v VIRTUAL_ENV ]]; then
@@ -23,7 +15,7 @@ if [[ -t 0 ]]; then
 fi
 
 IS_INSTALL=0
-if [[ $# -gt 0 ]] && [[ "${EXECUTE[1]}" == 'install' ]]; then
+if (($#)) && [[ "${EXECUTE[1]}" == 'install' ]]; then
   IS_INSTALL=1
 fi
 for ARG in "$@"; do
@@ -40,6 +32,7 @@ fi
 if ! ((ASK)); then
   exec -- "${EXECUTE[@]}"
 else
+  # shellcheck disable=SC2154
   HR="$("$ZDOTDIR/libexec/hr.sh" '-')"
 
   type >&2 -a python3

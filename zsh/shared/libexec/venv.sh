@@ -56,17 +56,17 @@ init)
     python3 -m venv -- "$DEFAULT_VENV_PATH" >&2
     "$PY_EXE" <<<"$PYPROJ" >&2
     printf -- '%s\n' "Initialized Virtualenv" >&2
-    venv on
   fi
+  "$0" on
   ;;
 on)
   if [[ -f "$ACTIVATE" ]]; then
-    venv off
-    printf -- '%q ' 'source' '--' "$ACTIVATE"
-    printf -- '%s\n' "Activated - $DEFAULT_VENV_PATH" >&2
+    "$0" off
   else
-    venv init
+    "$0" init
   fi
+  printf -- '%q ' 'source' '--' "$ACTIVATE"
+  printf -- '%s\n' "Activated - $DEFAULT_VENV_PATH" >&2
   ;;
 off)
   if [[ -z "$VIRTUAL_ENV" ]]; then
@@ -79,7 +79,7 @@ off)
 rm)
   if [[ -d "$DEFAULT_VENV_PATH" ]]; then
     if [[ "$VIRTUAL_ENV" = "$DEFAULT_VENV_PATH" ]]; then
-      venv off
+      "$0" off
     fi
     printf -- '%q ' 'rm' '-rf' '--' "$DEFAULT_VENV_PATH"
   fi
