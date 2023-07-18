@@ -1,17 +1,14 @@
 .PHONY: layers tar
 all: tar
 
-KINDS = link fs
 DIRS := root home
 RSYNC := rsync --recursive --links --perms
 
 define FS_TEMPLATE
 
-$(1)_$(2)_$(3) := $$(shell find ./layers -regex './layers/\(posix\|$(1)\)/$(2)/$(3)/.*')
-
-$$(TMP)/$(1)/$(3).$(2): $$($(1)_$(2)_$(3))
+$(TMP)/$(1)/$(2): $$(shell find ./layers -regex './layers/\(posix\|$(1)\)/$(2)/.*')
 	set -x
-	LAYERS=(./layers/{posix,$(1)}/$(2)/$(3))
+	LAYERS=(./layers/{posix,$(1)}/$(2))
 	mkdir -p -- '$$@'
 	for layer in "$$$${LAYERS[@]}"; do
 		if [[ -d ""$$$$layer"" ]]; then
@@ -19,21 +16,21 @@ $$(TMP)/$(1)/$(3).$(2): $$($(1)_$(2)_$(3))
 		fi
 	done
 
-layers: $$(TMP)/$(1)/$(3).$(2)
+layers: $(TMP)/$(1)/$(2)
 
 endef
 
-$(foreach kind,$(KINDS),$(foreach dir,$(DIRS),$(foreach os,$(GOOS),$(eval $(call FS_TEMPLATE,$(os),$(kind),$(dir))))))
+$(foreach dir,$(DIRS),$(foreach os,$(GOOS),$(eval $(call FS_TEMPLATE,$(os),$(dir)))))
 
 
 define TAR_TEMPLATE
 
-$$(TMP)/$(1).$(2).tar: $$(TMP)/$(1)/$(2).link $$(TMP)/$(1)/$(2).fs
+$(TMP)/$(1).$(2).tar: $(TMP)/$(1)/$(2)
 	for layer in $$^; do
 		tar -r -C "$$$$layer" -f '$$@' .
 	done
 
-tar: $$(TMP)/$(1).$(2).tar
+tar: $(TMP)/$(1).$(2).tar
 
 endef
 

@@ -69,7 +69,10 @@ for FS in "${!FFS[@]}"; do
       "${UNTAR[@]}"
     )
   fi
-  shell "${UNTAR[@]}" <"$SRC"
+
+  if [[ -n "$(tar -t -f "$SRC")" ]]; then
+    shell "${UNTAR[@]}" <"$SRC"
+  fi
 done
 
 shell "$ENV_HOME/.local/opt/initd/make.sh"
