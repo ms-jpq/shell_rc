@@ -70,6 +70,12 @@ for FS in "${!FFS[@]}"; do
     )
   fi
 
+  local -- links="./layers/$OS/$FS.sh"
+
+  if [[ -x "$links" ]]; then
+    shell bash -c "$(<"$links")"
+  fi
+
   if [[ -n "$(tar -t -f "$SRC")" ]]; then
     shell "${UNTAR[@]}" <"$SRC"
   fi
