@@ -18,5 +18,6 @@ unset _less
 export -- LESS LESSHISTFILE="$XDG_STATE_HOME/shell_history/less"
 
 export -- TIME_STYLE='long-iso'
-export -- EDITOR='editor'
+# shellcheck disable=SC2154
+export -- EDITOR="$ZDOTDIR/libexec/edit.sh"
 export -- MANPAGER='nvim +Man! --'
