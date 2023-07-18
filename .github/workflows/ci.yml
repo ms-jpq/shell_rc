@@ -31,7 +31,7 @@ jobs:
 
       - shell: bash
         run: |-
-          make build
+          gmake build
 
   ubuntu:
     runs-on: ubuntu-latest
@@ -40,9 +40,9 @@ jobs:
       - uses: actions/checkout@v3
 
       - run: |-
-          make lint
+          gmake lint
           ./main.sh localhost
-          make fmt
+          gmake fmt
           git diff --exit-code
 
   macos:
@@ -58,7 +58,7 @@ jobs:
           rm -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
       - run: |-
-          make lint
+          gmake lint
           ./main.sh localhost
 
   windows:
@@ -69,5 +69,5 @@ jobs:
 
       - shell: bash
         run: |-
-          # ./main.sh localhost
+          ./main.sh localhost
           true
