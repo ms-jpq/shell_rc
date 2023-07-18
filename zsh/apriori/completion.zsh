@@ -37,4 +37,5 @@ zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh/completion"
 # }
 # __init_zcompdump
 # unset -f __init_zcompdump
-compinit -i
+
+compinit -i -d "$XDG_CACHE_HOME/zsh/zcompdump"

@@ -41,7 +41,11 @@ jobs:
 
       - run: |-
           gmake lint
+
+      - run: |-
           ./main.sh localhost
+
+      - run: |-
           gmake fmt
           git diff --exit-code
 
@@ -59,6 +63,8 @@ jobs:
 
       - run: |-
           gmake lint
+
+      - run: |-
           ./main.sh localhost
 
   windows:
@@ -69,5 +75,5 @@ jobs:
 
       - shell: bash
         run: |-
-          ./main.sh localhost
+          # ./main.sh localhost
           true

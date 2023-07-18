@@ -42,7 +42,7 @@ export -- PYDEPS
 	esac
 	URI="https://github.com/koalaman/shellcheck/releases/latest/download/shellcheck-$$VERSION.$$FILE.tar.xz"
 	$(CURL) -- "$$URI" | tar --extract --xz --file - --directory './var/bin' --strip-components 1 "shellcheck-$$VERSION/shellcheck"
-	chmod +x -- '$@'
+	chmod +x '$@'
 	touch -- '$@'
 
 ./var/bin/hadolint: ./var/bin
@@ -56,7 +56,7 @@ export -- PYDEPS
 	esac
 	URI="https://github.com/hadolint/hadolint/releases/latest/download/$$FILE"
 	$(CURL) --output '$@' -- "$$URI"
-	chmod +x -- '$@'
+	chmod +x '$@'
 
 ./var/bin/shfmt: ./var/bin
 	VERSION='v3.7.0'
@@ -70,4 +70,4 @@ export -- PYDEPS
 	esac
 	URI="https://github.com/mvdan/sh/releases/latest/download/shfmt_$${VERSION}_$$FILE"
 	$(CURL) --output '$@' -- "$$URI"
-	chmod +x -- '$@'
+	chmod +x '$@'
