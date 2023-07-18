@@ -41,7 +41,7 @@ export -- PYDEPS
 		;;
 	esac
 	URI="https://github.com/koalaman/shellcheck/releases/latest/download/shellcheck-$$VERSION.$$FILE.tar.xz"
-	$(CURL) -- "$$URI" | tar --extract --xz --file - --directory './var/bin' --strip-components 1 --wildcards 'shellcheck-*/shellcheck'
+	$(CURL) -- "$$URI" | tar --extract --xz --file - --directory './var/bin' --strip-components 1 "shellcheck-$$VERSION/shellcheck"
 	chmod +x -- '$@'
 	touch -- '$@'
 
