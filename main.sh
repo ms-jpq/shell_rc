@@ -52,8 +52,14 @@ ROOTS=(
 declare -A -- FFS
 FFS=([root]=1 [home]=0)
 
+if [[ "$DST" == 'localhost' ]]; then
+  RDST=""
+else
+  RDST="$DST:"
+fi
+
 for FS in "${!FFS[@]}"; do
-  SUDO="${FFS["$FS"]}"
+  # SUDO="${FFS["$FS"]}"
   ROOT="${ROOTS["$FS"]}"
   SRC="./tmp/$OS/$FS/"
 
@@ -62,8 +68,9 @@ for FS in "${!FFS[@]}"; do
     shell bash -c "$(<"$LINKS")"
   fi
 
-  if ! ((SUDO)); then
-    rsync --recursive --links --perms --keep-dirlinks -- "$SRC" "$ROOT/"
+  FOUND="$(find "$SRC")"
+  if [[ -n "$FOUND" ]]; then
+    rsync --recursive --links --perms --keep-dirlinks -- "$SRC" "$RDST$ROOT/"
   fi
 done
 

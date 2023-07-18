@@ -10,6 +10,7 @@ fi
 z() {
   local -- acc
   acc="$(_z -l "$*" 2>&1)"
+  # shellcheck disable=SC2001
   acc="$(sed 's/^\([[:digit:]]\+\|common:\)[[:space:]]\+//g' <<<"$acc")"
   acc="$(awk '!seen[$0]++' <<<"$acc")"
 
