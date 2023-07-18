@@ -12,7 +12,7 @@ COPY . /srv
 
 RUN ./main.sh localhost && \
   apt-get clean && \
-  rm -rf -- /srv/* /var/lib/apt/lists/* /var/tmp/* /tmp/* /root/.cache/initd/*
+  rm -rf -- /srv/* /var/lib/apt/lists/* /var/tmp/* /tmp/* /root/.cache/initd/* /root/.cache/pip/*
 
 WORKDIR /root
 ENV TERM=xterm-256color \

@@ -7,9 +7,7 @@ build: build.ubuntu
 endif
 
 build.ubuntu: ./docker/ubuntu.Dockerfile
-	@echo $(MACHTYPE)-$(OS)
 	docker buildx build --progress plain --tag 'shell' --file '$<' -- .
 
 build.nt: ./docker/nt.Dockerfile
-	@echo $(MACHTYPE)-$(OS)
 	docker build --progress plain --tag 'shell' --file '$<' -- .
