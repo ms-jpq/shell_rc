@@ -14,7 +14,7 @@ from subprocess import DEVNULL, CalledProcessError, TimeoutExpired, check_call
 from sys import stdout
 from tempfile import NamedTemporaryFile, gettempdir
 from time import monotonic, sleep, time
-from typing import Iterator, Mapping
+from typing import Iterator, Mapping, Optional, Tuple
 
 from psutil import (
     cpu_times,
@@ -80,7 +80,7 @@ def _human_readable_size(size: float, precision: int = 3) -> str:
         raise ValueError(f"unit over flow: {size}")
 
 
-def _ip() -> str | None:
+def _ip() -> Optional[str]:
     try:
         ip = _path().with_suffix(".ip").read_text()
     except FileNotFoundError:
@@ -93,7 +93,7 @@ def _ip() -> str | None:
         return ip
 
 
-def _ssh(timeout: float) -> float | None:
+def _ssh(timeout: float) -> Optional[float]:
     if ip := _ip():
         t = str(max(round(timeout), 1))
         now = monotonic()
@@ -111,7 +111,7 @@ def _ssh(timeout: float) -> float | None:
         return None
 
 
-def _load() -> _Snapshot | None:
+def _load() -> Optional[_Snapshot]:
     try:
         raw = _path().read_text()
         json = loads(raw)
@@ -139,7 +139,7 @@ def _snap() -> _Snapshot:
     return snapshot
 
 
-def _states(interval: int) -> tuple[_Snapshot, _Snapshot, int | None]:
+def _states(interval: int) -> Tuple[_Snapshot, _Snapshot, Optional[int]]:
     s1 = _load() or _snap()
     battery = sensors_battery()
     sleep(max(0, interval - (time() - s1.time)))

@@ -6,8 +6,16 @@ cd -- ~
 
 mkdir -p -- "$HOME/.local"
 
-ln -sf -- "$HOME/Applications" "$HOME/.local/opt"
-ln -sf -- "$HOME/Library/Application Support" "$HOME/.local/share"
-ln -sf -- "$HOME/Library/Caches" "$HOME/.cache"
-ln -sf -- "$HOME/Library/Caches" "$HOME/.local/state"
-ln -sf -- "$HOME/Library/Preferences" "$HOME/.config"
+link() {
+  local -- src="$1" dst="$2"
+
+  if ! [[ -L "$dst" ]]; then
+    ln -sf -- "$src" "$dst"
+  fi
+}
+
+link "$HOME/Applications" "$HOME/.local/opt"
+link "$HOME/Library/Application Support" "$HOME/.local/share"
+link "$HOME/Library/Caches" "$HOME/.cache"
+link "$HOME/Library/Caches" "$HOME/.local/state"
+link "$HOME/Library/Preferences" "$HOME/.config"
