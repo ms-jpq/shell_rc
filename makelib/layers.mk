@@ -1,8 +1,8 @@
 .PHONY: layers tar
-all: tar
+all: layers
 
 DIRS := root home
-RSYNC := rsync --recursive --links --perms
+RSYNC := rsync --recursive --links --perms --keep-dirlinks
 
 define FS_TEMPLATE
 
