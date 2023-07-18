@@ -5,10 +5,10 @@ ZSH := $(shell find ./zsh)
 
 define ZSH_TEMPLATE
 
-zshrc: $$(TMP)/$(1)/home.fs/.config/zsh
-$$(TMP)/$(1)/home.fs: $$(TMP)/$(1)/home.fs/.config/zsh
+zshrc: $$(TMP)/$(1)/home/.config/zsh
+$$(TMP)/$(1)/home: $$(TMP)/$(1)/home/.config/zsh
 
-$$(TMP)/$(1)/home.fs/.config/zsh: ./libexec/zsh.sh $(ZSH)
+$$(TMP)/$(1)/home/.config/zsh: ./libexec/zsh.sh $(ZSH)
 	'$$<' $(1) '$$@'
 
 endef
