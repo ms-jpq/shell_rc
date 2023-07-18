@@ -1,0 +1,11 @@
+# + Microsoft.Sysinternals.Autoruns
+# + msys2.msys2
++ 7zip.7zip
++ Insecure.Nmap
++ JanDeDobbeleer.OhMyPosh
++ Microsoft.PowerShell
++ Neovim.Neovim
++ OpenJS.NodeJS
++ Python.Python.3.10
++ gsass1.NTop
++ stedolan.jq
