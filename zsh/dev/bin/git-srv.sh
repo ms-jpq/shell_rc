@@ -2,22 +2,15 @@
 
 set -o pipefail
 
-export -- GIT_EXEC_PATH GIT_DIR
-
 GIT_EXEC_PATH="$(git --exec-path)"
 GIT_DIR="$(git --no-optional-locks rev-parse --path-format=absolute --git-common-dir)"
 WEB_DIR="$GIT_DIR/gitweb"
-export -- GITWEB_CONFIG="$WEB_DIR/gitweb_config.perl"
+GITWEB_CONFIG="$WEB_DIR/gitweb_config.perl"
 TMP="$WEB_DIR/tmp"
 CGI_BIN="$WEB_DIR/cgi-bin"
-
 INFO="$(git --info-path)"
 WEB="${INFO%/*}/gitweb"
-CGI="$WEB/gitweb.cgi"
-STATIC="$WEB/static"
-
-SRV="$(realpath -- "${0%/*}/../libexec/git-instaweb.py")"
-ROOT="$(git --no-optional-locks rev-parse --show-toplevel)"
+ROOT="$(git --no-optional-locks rev-parse --path-format=absolute --show-toplevel)"
 NAME="${ROOT##*/}"
 
 link() {
@@ -29,8 +22,8 @@ link() {
 }
 
 mkdir -p -- "$CGI_BIN" "$TMP"
-link "$STATIC" "$CGI_BIN/static"
-link "$CGI" "$CGI_BIN/gitweb.cgi"
+link "$WEB/static" "$CGI_BIN/static"
+link "$WEB/gitweb.cgi" "$CGI_BIN/gitweb.cgi"
 
 read -r -d '' -- PERL <<-EOF || true
 our \$projectroot = "$ROOT";
@@ -49,5 +42,7 @@ EOF
 
 printf -- '%s\n' "$PERL" >"$GITWEB_CONFIG"
 
+SRV="$(realpath -- "${0%/*}/../libexec/git-instaweb.py")"
+export -- GIT_EXEC_PATH GIT_DIR GITWEB_CONFIG
 cd -- "$WEB_DIR"
 exec -- "$SRV"
