@@ -292,32 +292,62 @@ from tempfile import (
 from textwrap import dedent
 from threading import Thread, ThreadError
 from time import monotonic, sleep
-from typing import Annotated, Any, Final, Literal, TypeVar, Union, cast, overload
+from typing import (
+    IO,
+    Annotated,
+    Any,
+    AnyStr,
+    BinaryIO,
+    ClassVar,
+    Final,
+    Generic,
+    Literal,
+    NewType,
+    NoReturn,
+    Optional,
+    Protocol,
+    TextIO,
+    TypedDict,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+    runtime_checkable,
+)
 from urllib import parse, request
 from urllib.parse import urlencode, urlsplit, urlunsplit
 from uuid import UUID, uuid1, uuid3, uuid4, uuid5
 from weakref import WeakKeyDictionary, WeakSet, WeakValueDictionary
 
-try:
+if sys.version_info >= (3, 10):
     from contextlib import aclosing
-except ImportError:
-    pass
-
-try:
     from itertools import pairwise
-except ImportError:
-    pass
+    from typing import (
+        Concatenate,
+        NamedTuple,
+        ParamSpec,
+        ParamSpecArgs,
+        ParamSpecKwargs,
+        TypeAlias,
+        TypeGuard,
+    )
 
 
-try:
+if sys.version_info >= (3, 11):
     import tomllib
-except ImportError:
-    pass
-
-try:
-    from typing import LiteralString, Never, assert_never
-except ImportError:
-    pass
+    from typing import (
+        LiteralString,
+        Never,
+        NotRequired,
+        Required,
+        Self,
+        TypeVarTuple,
+        Unpack,
+        assert_never,
+        assert_type,
+        dataclass_transform,
+        reveal_type,
+    )
 
 
 def __init() -> None:
