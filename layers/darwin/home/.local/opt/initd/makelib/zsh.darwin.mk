@@ -1,6 +1,6 @@
 zsh: $(BIN)/sh
 
-/opt/homebrew/bin/dash: pkg.posix
+$(BREW_PREFIX)/bin/dash: pkg.posix
 
-$(BIN)/sh: /opt/homebrew/bin/dash
+$(BIN)/sh: $(BREW_PREFIX)/bin/dash
 	ln -sf -- '$<' '$@'
