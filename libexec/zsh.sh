@@ -17,10 +17,10 @@ mkdir -p -- "$FUNC" "$BINS" "$BLIB"
 
 ZSH=(
   ./zsh/apriori/*.zsh
-  ./zsh/{shared,tmux}/*.zsh
+  ./zsh/{iso,tmux}/*.zsh
   ./zsh/"$OS"/*.zsh
   ./zsh/aposteriori/*.zsh
-  ./zsh/{fun,docker}/*.zsh
+  ./zsh/{dev,fun,docker}/*.zsh
 )
 
 ACC=("$(cat -- "${ZSH[@]}")")

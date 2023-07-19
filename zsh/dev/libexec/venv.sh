@@ -62,6 +62,7 @@ init)
 on)
   if [[ -f "$ACTIVATE" ]]; then
     "$0" off
+    printf -- '\n'
   else
     "$0" init
   fi
