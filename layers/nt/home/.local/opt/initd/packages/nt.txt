@@ -1,5 +1,6 @@
 # + Git.MinGit
 # + Microsoft.Sysinternals.Autoruns
+# + Microsoft.Sysinternals.BGInfo
 # + Microsoft.WindowsTerminal
 # + msys2.msys2
 + 7zip.7zip
@@ -16,12 +17,14 @@
 + JanDeDobbeleer.OhMyPosh
 + JesseDuffield.lazygit
 + Microsoft.PowerShell
++ Microsoft.Sysinternals.Autoruns
 + Neovim.Neovim
 + OpenJS.NodeJS
 + Python.Python.3.11
 + Rclone.Rclone
 + UniversalCtags.Ctags
 + dandavison.delta
++ gerardog.gsudo
 + gsass1.NTop
 + junegunn.fzf
 + muesli.duf
