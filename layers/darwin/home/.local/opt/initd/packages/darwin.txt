@@ -45,7 +45,6 @@
 + moreutils
 + mosh
 + mpv
-+ ms-jpq/sad/sad
 + muesli/tap/duf
 + ncdu
 + neofetch
@@ -61,6 +60,7 @@
 + ripgrep
 + rlwrap
 + rsync
++ sad
 + sl
 + socat
 + termshark
