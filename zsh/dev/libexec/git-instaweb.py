@@ -13,8 +13,6 @@ from urllib.parse import urlsplit
 from webbrowser import open
 
 _POSIX_ROOT = PurePosixPath(sep)
-
-_CGI_BIN = _POSIX_ROOT
 _CGI_SCRIPT = _POSIX_ROOT / "cgi-bin" / "gitweb.cgi"
 
 
@@ -33,7 +31,7 @@ def _redirect(handler: CGIHTTPRequestHandler) -> bool:
 
 
 def _rewrite(handler: CGIHTTPRequestHandler) -> None:
-    if _path(handler) == _CGI_BIN:
+    if _path(handler) == _POSIX_ROOT:
         handler.path = normpath(_POSIX_ROOT)
 
 
