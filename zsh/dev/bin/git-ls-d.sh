@@ -6,13 +6,12 @@ parse() {
   LINE="$(</dev/stdin)"
   SHA="${LINE%% *}"
   FILE="${LINE##* }"
-
 }
 
 case "${SCRIPT_MODE:-""}" in
 preview)
   parse
-  git show "$SHA^:$FILE" | bat --color always --file-name "$FILE"
+  git show --relative "$SHA^:$FILE" | bat --color always --file-name "$FILE"
   ;;
 execute)
   parse
@@ -20,9 +19,9 @@ execute)
   ;;
 *)
   ARGV=(
-    git
-    log
+    git log
     --relative
+    --all
     --diff-filter=D
     --name-only
     --pretty='format:%Cgreen%h%Creset %Cblue%ad%Creset'

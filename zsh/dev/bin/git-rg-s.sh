@@ -17,14 +17,18 @@ execute)
   printf -- '%q\n' "$SHA"
   ;;
 *)
+  SEARCH=()
+  for RE in "$@"; do
+    SEARCH+=(-G "$RE")
+  done
   ARGV=(
     git log
     --relative
     --all
     --pretty='format:%Cgreen%h%Creset %Cblue%ad%Creset %s'
     -z
-    "$@"
+    "${SEARCH[@]}"
   )
-  "${ARGV[@]}" | "${0%/*}/../libexec/fzf-lr.sh" "$0" "$@"
+  "${ARGV[@]}" | "${0%/*}/../libexec/fzf-lr.sh" "$0" "${SEARCH[@]}"
   ;;
 esac

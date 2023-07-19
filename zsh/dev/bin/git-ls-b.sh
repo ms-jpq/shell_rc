@@ -13,6 +13,12 @@ execute)
   printf -- '%q\n' "$LINE"
   ;;
 *)
-  git ls-files --recurse-submodules -z "$@" | "${0%/*}/../libexec/fzf-lr.sh" "$0"
+  ARGV=(
+    git ls-files
+    --recurse-submodules
+    -z
+    "$@"
+  )
+  "${ARGV[@]}" | "${0%/*}/../libexec/fzf-lr.sh" "$0"
   ;;
 esac
