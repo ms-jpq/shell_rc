@@ -10,11 +10,11 @@ parse() {
 case "${SCRIPT_MODE:-""}" in
 preview)
   parse
-  git show "$SHA" "$@" | delta
+  git diff --relative "$SHA^" "$SHA" -- "$*" | delta
   ;;
 execute)
   parse
-  printf -- '%q\n' "$SHA"
+  printf -- '%q\n' "$SHA" "$*"
   ;;
 *)
   ARGV=(
@@ -23,8 +23,9 @@ execute)
     --all
     --pretty='format:%Cgreen%h%Creset %Cblue%ad%Creset %s'
     -z
-    "$@"
+    --
+    "$*"
   )
-  "${ARGV[@]}" | "${0%/*}/../libexec/fzf-lr.sh" "$0" "$@"
+  "${ARGV[@]}" | "${0%/*}/../libexec/fzf-lr.sh" "$0" "$*"
   ;;
 esac
