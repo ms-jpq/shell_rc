@@ -1,11 +1,30 @@
+# + Git.MinGit
 # + Microsoft.Sysinternals.Autoruns
+# + Microsoft.WindowsTerminal
 # + msys2.msys2
 + 7zip.7zip
++ BurntSushi.ripgrep.MSVC
++ Git.Git
++ GnuWin32.FindUtils
++ GnuWin32.Grep
++ GnuWin32.Make
++ GnuWin32.Tar
++ GnuWin32.Tree
++ GnuWin32.UnZip
++ GnuWin32.Zip
 + Insecure.Nmap
 + JanDeDobbeleer.OhMyPosh
++ JesseDuffield.lazygit
 + Microsoft.PowerShell
 + Neovim.Neovim
 + OpenJS.NodeJS
-+ Python.Python.3.10
++ Python.Python.3.11
++ Rclone.Rclone
++ UniversalCtags.Ctags
++ dandavison.delta
 + gsass1.NTop
++ junegunn.fzf
++ muesli.duf
++ sharkdp.fd
++ sharkdp.hyperfine
 + stedolan.jq
