@@ -1,6 +1,6 @@
 #!/usr/bin/env -S -- bash
 
-_paths=(
+path=(
   '/opt/homebrew/bin'
   '/opt/homebrew/opt/bc/bin'
   '/opt/homebrew/opt/coreutils/libexec/gnubin'
@@ -19,6 +19,5 @@ _paths=(
   '/opt/homebrew/opt/ncurses/bin'
   '/opt/homebrew/opt/openssl/bin'
   '/opt/homebrew/sbin'
+  "${path[@]}"
 )
-pathprepend "${_paths[@]}"
-unset _paths
