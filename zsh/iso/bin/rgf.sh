@@ -2,11 +2,11 @@
 
 set -o pipefail
 
+SEP=$'\4'
 RG_ARGS="${_RG_ARGS:-}"
 
 if [[ -z "$RG_ARGS" ]]; then
   export -- _RG_ARGS=""
-  _RG_ARGS="$(mktemp)"
   ARGS=(
     --line-buffered
     --files-with-matches
@@ -18,10 +18,8 @@ if [[ -z "$RG_ARGS" ]]; then
     --print0
     --preview='{f}'
   )
-  for ARG in "$@"; do
-    printf -- '%s\0' "$ARG" >>"$_RG_ARGS"
-  done
-  rg "${ARGS[@]}" | SHELL="$0" fzf "${FZF_ARGS[@]}"
+  IFS="$SEP"
+  rg "${ARGS[@]}" | SHELL="$0" _RG_ARGS="$*" fzf "${FZF_ARGS[@]}"
 else
   ARGS=(
     --color=always
@@ -29,7 +27,7 @@ else
     --context=3
     --context-separator="$("$ZDOTDIR/libexec/hr.sh" '-' "$FZF_PREVIEW_COLUMNS")"
   )
-  readarray -t -d $'\0' -- ENV_ARGS <"$RG_ARGS"
+  readarray -t -d "$SEP" -- ENV_ARGS < <(printf -- '%s' "$RG_ARGS")
   readarray -t -d $'\0' -- RG_PATH <"$2"
   exec -- rg "${ARGS[@]}" "${ENV_ARGS[@]}" -- "${RG_PATH[@]}"
 fi

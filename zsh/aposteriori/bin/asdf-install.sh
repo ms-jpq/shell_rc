@@ -35,7 +35,7 @@ if [[ -z "$LANG" ]]; then
   exit 2
 fi
 
-readarray -t -- PLUGINS < <(asdf plugin list || :)
+readarray -t -d $'\n' -- PLUGINS < <(asdf plugin list || :)
 
 PLUGIN_INSTALLED=0
 for PLUGIN in "${PLUGINS[@]}"; do
@@ -52,7 +52,7 @@ else
 fi
 
 LIST="$(asdf list "$LANG")"
-readarray -t -- INSTALLED <<<"$LIST"
+readarray -t -d $'\n' -- INSTALLED <<<"$LIST"
 
 if [[ -z "$VERSION" ]]; then
   VERSION="$(asdf latest "$LANG")"
