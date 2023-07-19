@@ -65,6 +65,7 @@ asdf-install.sh --global -- ruby
 # R_OPTS=(
 #   --enable-R-shlib
 #   --with-cairo
+#   --with-x=no
 # )
 # apt-install "${R_DEPS[@]}"
 # R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install.sh --global -- R
