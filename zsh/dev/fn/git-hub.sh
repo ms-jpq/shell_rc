@@ -9,5 +9,8 @@ git-hub() {
     uri="${uri##'git@github.com:'}"
     uri="https://github.com/$uri"
   fi
-  open "${uri%%'.git'}/tree/${upstream#*/}"
+  uri="${uri%%'.git'}/tree/${upstream#*/}"
+
+  printf -- '%s\n' "$uri"
+  open "$uri"
 }
