@@ -24,7 +24,7 @@ execute)
     --all
     --diff-filter=D
     --name-only
-    --pretty='format:%Cgreen%h%Creset %Cblue%ad%Creset'
+    --color --pretty='format:%Cgreen%h%Creset %Cblue%ad%Creset'
     -z
     "$@"
   )

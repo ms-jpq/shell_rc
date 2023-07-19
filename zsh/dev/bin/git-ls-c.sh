@@ -21,7 +21,7 @@ execute)
     git log
     --relative
     --all
-    --pretty='format:%Cgreen%h%Creset %Cblue%ad%Creset %s'
+    --color --pretty='format:%Cgreen%h%Creset %Cblue%ad%Creset %s'
     -z
     "$@"
   )
