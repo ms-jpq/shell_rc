@@ -13,7 +13,7 @@ ARGV=(
   --preview-window=right:70%:wrap
   --read0
   # --print0
-  "--bind=return:accept+execute:$EXECUTE_HEAD{+f}"
+  "--bind=return:become:$EXECUTE_HEAD{+f}"
   "--preview=$PREVIEW_HEAD{+f}"
 )
 
