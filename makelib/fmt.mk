@@ -3,7 +3,7 @@
 fmt: shfmt black prettier taplo
 
 shfmt: ./var/bin/shfmt
-	readarray -t -d $$'\0' -- ARRAY < <(git ls-files -z -- '*.*sh')
+	readarray -t -d $$'\0' -- ARRAY < <(git ls-files -z -- '*.sh')
 	'$<' --write --indent 2 -- "$${ARRAY[@]}"
 
 black: ./.venv/bin

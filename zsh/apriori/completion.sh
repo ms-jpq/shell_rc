@@ -14,8 +14,6 @@ setopt no_menu_complete # do not autoselect the first completion entry
 # shellcheck disable=SC2034
 WORDCHARS=''
 
-autoload -Uz -- compinit
-
 # Case insensitive matches
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 
@@ -23,19 +21,3 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 zstyle ':completion::complete:*' use-cache on
 # shellcheck disable=SC2154
 zstyle ':completion::complete:*' cache-path "$XDG_CACHE_HOME/zsh/completion"
-
-# __init_zcompdump() {
-#   local -- dump="$XDG_CACHE_HOME/zsh/zcompdump"
-#   local -- file
-#   for file in "$dump/"**; do
-#     if [[ -f "$file" ]]; then
-#       # rebuild
-#     fi
-#     # found comp < 6 hours
-#     compinit -i -C -d "$dump"
-#   done
-# }
-# __init_zcompdump
-# unset -f __init_zcompdump
-
-compinit -i -d "$XDG_CACHE_HOME/zsh/zcompdump"
