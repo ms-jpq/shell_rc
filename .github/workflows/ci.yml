@@ -73,7 +73,7 @@ jobs:
 
       - shell: bash
         run: |-
-          winget export
+          winget.exe export
           # winget install --exact --id
 
       - shell: bash
