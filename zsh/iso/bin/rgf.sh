@@ -19,7 +19,12 @@ if [[ -z "$RG_ARGS" ]]; then
     --preview='{f}'
   )
   IFS="$SEP"
-  rg "${ARGS[@]}" | SHELL="$0" _RG_ARGS="$*" fzf "${FZF_ARGS[@]}"
+
+  if (($#)); then
+    rg "${ARGS[@]}" | SHELL="$0" _RG_ARGS="$*" fzf "${FZF_ARGS[@]}"
+  else
+    rg
+  fi
 else
   ARGS=(
     --color=always
