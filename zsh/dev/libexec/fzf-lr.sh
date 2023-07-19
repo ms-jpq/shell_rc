@@ -12,7 +12,7 @@ ARGV=(
   --multi
   --preview-window=right:70%:wrap
   --read0
-  # --print0
+  --print0
   "--bind=return:become:$EXECUTE_HEAD{+f}"
   "--preview=$PREVIEW_HEAD{+f}"
 )
@@ -28,8 +28,11 @@ if [[ -v __FZF_LR_ARGV__ ]]; then
     FILE="${FILE#"$PREVIEW_HEAD"}"
     MODE='preview'
   fi
+  readarray -t -d $'\0' -- FS <"$FILE"
+  IFS=$'\0'
+  F="${FS[*]}"
   # shellcheck disable=SC2154
-  SHELL="$__FZF_LR_SH__" SCRIPT_MODE="$MODE" exec -- "${ARGV[@]}" <"$FILE"
+  SHELL="$__FZF_LR_SH__" SCRIPT_MODE="$MODE" exec -- "${ARGV[@]}" < <(printf -- '%s' "$F")
 else
   IFS="$SEP"
   # shellcheck disable=SC2097,SC2098

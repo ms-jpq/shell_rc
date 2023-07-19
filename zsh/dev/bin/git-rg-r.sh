@@ -27,7 +27,7 @@ execute)
     --relative
     --walk-reflogs
     --remove-empty
-    --pretty='format:%Cgreen%gD%Creset %Cblue%ad%Creset %s'
+    --color --pretty='format:%Cgreen%gD%Creset %Cblue%ad%Creset %s'
     -z
     --all-match
     "${SEARCH[@]}"
