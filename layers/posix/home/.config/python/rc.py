@@ -327,12 +327,25 @@ def __init() -> None:
     wh = readline.write_history_file
 
     hist = join(environ["XDG_STATE_HOME"], "shell_history", "python")
-    readline.read_history_file = lambda _: rh(hist)
-    readline.write_history_file = lambda _: wh(hist)
+
+    def read_history_file(_: Union[str, bytes, PathLike, None] = None) -> None:
+        rh(hist)
+
+    def write_history_file(_: Union[str, bytes, PathLike, None] = None) -> None:
+        wh(hist)
+
+    readline.read_history_file = read_history_file
+    readline.write_history_file = write_history_file
 
     with suppress(AttributeError):
         ah = readline.append_history_file
-        readline.append_history_file = lambda n, _: ah(n, hist)
+
+        def append_history_file(
+            __n: int, _: Union[str, bytes, PathLike, None] = None
+        ) -> None:
+            ah(__n, hist)
+
+        readline.append_history_file = append_history_file
 
 
 __init()
