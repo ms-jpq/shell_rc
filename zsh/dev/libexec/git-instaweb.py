@@ -61,9 +61,12 @@ class _Handler(CGIHTTPRequestHandler):
 
 
 class _Server(ThreadingHTTPServer):
+    address_family = AddressFamily.AF_INET6
+    allow_reuse_address = True
+    allow_reuse_port = True
+
     def server_bind(self) -> None:
-        if self.socket.family == AddressFamily.AF_INET6:
-            self.socket.setsockopt(IPPROTO_IPV6, IPV6_V6ONLY, 0)
+        self.socket.setsockopt(IPPROTO_IPV6, IPV6_V6ONLY, 0)
         TCPServer.server_bind(self)
         _, server_port, *_ = self.socket.getsockname()
         self.server_name = getfqdn()
