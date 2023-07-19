@@ -16,11 +16,12 @@ rm -fr -- "$OUT"
 mkdir -p -- "$FUNC" "$BINS" "$BLIB"
 
 ZSH=(
-  ./zsh/apriori/*.zsh
-  ./zsh/{iso,tmux}/*.zsh
-  ./zsh/"$OS"/*.zsh
-  ./zsh/aposteriori/*.zsh
-  ./zsh/{dev,fun,docker}/*.zsh
+  ./zsh/*.zsh
+  ./zsh/apriori/*.sh
+  ./zsh/{iso,tmux}/*.sh
+  ./zsh/"$OS"/*.sh
+  ./zsh/aposteriori/*.sh
+  ./zsh/{dev,fun,docker}/*.sh
 )
 
 ACC=("$(cat -- "${ZSH[@]}")")
