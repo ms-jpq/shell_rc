@@ -2,6 +2,6 @@
 
 git-home() {
   local -- top
-  top="$(git rev-parse --show-toplevel)"
+  top="$(git --no-optional-locks rev-parse --show-toplevel)"
   cd -- "$top" || return 1
 }
