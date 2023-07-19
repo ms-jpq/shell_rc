@@ -6,13 +6,13 @@ case "${SCRIPT_MODE:-""}" in
 preview)
   LINE="$(</dev/stdin)"
   printf -- '%q\n\n' "$LINE"
-  git blame -w -- "$LINE" | delta "$@"
+  git blame -w -- "$LINE" | delta
   ;;
 execute)
   LINE="$(</dev/stdin)"
   printf -- '%q\n' "$LINE"
   ;;
 *)
-  git ls-files --recurse-submodules -z | "${0%/*}/../libexec/fzf-lr.sh" "$0" "$@"
+  git ls-files --recurse-submodules -z "$@" | "${0%/*}/../libexec/fzf-lr.sh" "$0"
   ;;
 esac

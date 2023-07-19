@@ -2,15 +2,18 @@
 
 set -o pipefail
 
-case "${SCRIPT_MODE:-""}" in
-preview)
+parse() {
   LINE="$(</dev/stdin)"
   SHA="${LINE%% *}"
+}
+
+case "${SCRIPT_MODE:-""}" in
+preview)
+  parse
   git show "$SHA" | delta
   ;;
 execute)
-  LINE="$(</dev/stdin)"
-  SHA="${LINE%% *}"
+  parse
   printf -- '%q\n' "$SHA"
   ;;
 *)
@@ -18,9 +21,10 @@ execute)
     git
     log
     --color
-    '--pretty=format:%Cgreen%h%Creset %Cblue%ad%Creset %s'
+    --pretty='format:%Cgreen%h%Creset %Cblue%ad%Creset %s'
     -z
+    "$@"
   )
-  "${ARGV[@]}" | "${0%/*}/../libexec/fzf-lr.sh" "$0" "$@"
+  "${ARGV[@]}" | "${0%/*}/../libexec/fzf-lr.sh" "$0"
   ;;
 esac
