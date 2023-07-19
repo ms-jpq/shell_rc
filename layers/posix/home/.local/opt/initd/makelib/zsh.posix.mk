@@ -4,7 +4,7 @@ zsh: zsh.posix
 
 zsh.posix: $(CACHE)/zsh/dircolors.sh $(HOME)/.local/state/zsh/zz
 
-$(CACHE)/zsh/dircolors.sh: $(OPT)/dircolors-solarized | pkg.posix
+$(CACHE)/zsh/dircolors.sh: $(OPT)/dircolors-solarized
 	case "$$OSTYPE" in
 	darwin*)
 		DC="$$(brew --prefix)/opt/coreutils/libexec/gnubin/dircolors"

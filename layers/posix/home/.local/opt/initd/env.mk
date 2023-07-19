@@ -33,7 +33,9 @@ MACHTYPE := $(shell $(MACH_DETECT))
 OS := $(shell $(OS_DETECT))
 
 ifeq ($(MACHTYPE), aarch64)
+	BREW_PREFIX := /opt/homebrew
 	GOARCH := arm64
 else
+	BREW_PREFIX := /usr/local
 	GOARCH := amd64
 endif
