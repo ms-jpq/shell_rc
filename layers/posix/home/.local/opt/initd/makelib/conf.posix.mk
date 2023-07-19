@@ -1,9 +1,10 @@
 .PHONY: conf conf.posix conf.posix.ssh conf.posix.git
 
 conf: conf.posix
-conf.posix: conf.posix.git conf.posix.ssh
+conf.posix: $(CONFIG)/git/config conf.posix.ssh
 
-conf.posix.git: /usr/bin/git
+$(CONFIG)/git/config: /usr/bin/git
+	touch -- '$@'
 	'$<' config --global include.path user_config
 
 conf.posix.ssh:

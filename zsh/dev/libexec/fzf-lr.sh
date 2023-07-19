@@ -33,5 +33,5 @@ if [[ -v __FZF_LR_ARGV__ ]]; then
 else
   IFS="$SEP"
   # shellcheck disable=SC2097,SC2098
-  __FZF_LR_SH__="$SHELL" SHELL="$0" __FZF_LR_ARGV__="$*" exec -- fzf "${ARGV[@]}"
+  __FZF_LR_SH__="$SHELL" SHELL="$0" __FZF_LR_ARGV__="$*" LC_ALL=C exec -- fzf "${ARGV[@]}"
 fi

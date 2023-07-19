@@ -2,16 +2,15 @@
 
 set -o pipefail
 
-SCRIPT_MODE="${SCRIPT_MODE:-""}"
-
 case "${SCRIPT_MODE:-""}" in
-execute)
-  FILE="$(</dev/stdin)"
-  printf -- '%q\n' "$FILE"
-  git blame -w -- "$FILE" | delta "$@"
-  ;;
 preview)
-  git blame -w -- "$(</dev/stdin)" | delta "$@"
+  LINE="$(</dev/stdin)"
+  printf -- '%q\n\n' "$LINE"
+  git blame -w -- "$LINE" | delta "$@"
+  ;;
+execute)
+  LINE="$(</dev/stdin)"
+  printf -- '%q\n' "$LINE"
   ;;
 *)
   git ls-files --recurse-submodules -z | "${0%/*}/../libexec/fzf-lr.sh" "$0" "$@"
