@@ -67,7 +67,7 @@ ARGV+=(-nic "user,model=virtio-net-pci-non-transitional")
 
 ARGV+=(-bios "$(brew --prefix)/opt/qemu/share/qemu/edk2-aarch64-code.fd")
 
-ARGV+=(-drive "if=virtio,,aio=threads,file=$IMG")
+ARGV+=(-drive "if=virtio,discard=unmap,aio=threads,file=$IMG")
 
 if [[ -n "$SMBIOS_OEM" ]]; then
   ARGV+=(-smbios "type=11,path=$SMBIOS_OEM")
