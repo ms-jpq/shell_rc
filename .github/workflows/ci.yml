@@ -73,5 +73,10 @@ jobs:
 
       - shell: bash
         run: |-
+          winget export
+          # winget install --exact --id
+
+      - shell: bash
+        run: |-
           # ./main.sh localhost
           true
