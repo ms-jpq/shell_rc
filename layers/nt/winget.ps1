@@ -4,7 +4,13 @@ Set-StrictMode -Version 'Latest'
 $ErrorActionPreference = 'Stop'
 $PSStyle.OutputRendering = 'PlainText'
 
-$has_pkg = $IsWindows ? (Get-AppPackage -name 'Microsoft.DesktopAppInstaller') : $false
+$has_pkg = if ( $IsWindows) {
+    Import-Module Appx
+    Get-AppPackage -name 'Microsoft.DesktopAppInstaller'
+}
+else {
+    $false
+}
 
 if (!$has_pkg) {
     if ($IsWindows) {
