@@ -84,6 +84,8 @@ jobs:
         run: |-
           ./libexec/pacman.sh './var' 'rsync-' "$ProgramFiles/Git"
           choco install rsync
+          ./layers/nt/home.sh
+
 
       - shell: bash
         run: |-
