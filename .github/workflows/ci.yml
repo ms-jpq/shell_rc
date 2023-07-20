@@ -74,7 +74,8 @@ jobs:
       - shell: bash
         run: |-
           ./layers/nt/winget.ps1
-          # winget install --exact --id
+          winget install --exact --id BurntSushi.ripgrep.MSVC
+          winget export
 
       - shell: bash
         run: |-
