@@ -80,6 +80,9 @@ jobs:
           winget export --disable-interactivity --accept-source-agreements --output $TMP
           Get-Content -- $TMP
 
+      - run: |-
+          choco install rsync
+
       - shell: bash
         run: |-
           make all
