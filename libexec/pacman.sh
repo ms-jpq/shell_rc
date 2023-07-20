@@ -1,0 +1,1 @@
+../layers/nt/home/.local/opt/initd/libexec/pacman.sh
