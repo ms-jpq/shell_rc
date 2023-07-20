@@ -74,11 +74,12 @@ jobs:
       - run: |-
           powershell ./layers/nt/winget.ps1
 
-      - run: |-
+      - shell: bash
+        run: |-
           # winget install --exact --id BurntSushi.ripgrep.MSVC
-          $exports = 'exports.json'
-          winget --disable-interactivity export --accept-source-agreements --output $exports
-          Get-Content -Path $exports
+          TMP="$(mktemp)"
+          winget export --disable-interactivity --accept-source-agreements --output "$TMP"
+          cat -- "$TMP"
 
       - shell: bash
         run: |-
