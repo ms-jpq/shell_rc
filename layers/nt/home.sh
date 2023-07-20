@@ -14,8 +14,12 @@ link() {
   fi
 }
 
-link "$HOME/AppData/Local" "$HOME/.local/share"
-link "$HOME/AppData/LocalHigh" "$HOME/.local/opt"
-link "$HOME/AppData/LocalLow" "$HOME/.cache"
-link "$HOME/AppData/LocalLow" "$HOME/.local/state"
-link "$HOME/AppData/Roaming" "$HOME/.config"
+# shellcheck disable=2154
+link "$APPDATA" "$HOMEPATH/.config"
+# shellcheck disable=2154
+link "$LOCALAPPDATA" "$HOMEPATH/.local/share"
+link "${LOCALAPPDATA}Low" "$HOMEPATH/.local/state"
+# shellcheck disable=SC2154
+link "$TEMP" "$HOME/.cache"
+
+# link "$HOME/AppData/LocalHigh" "$HOMEPATH/.local/opt"

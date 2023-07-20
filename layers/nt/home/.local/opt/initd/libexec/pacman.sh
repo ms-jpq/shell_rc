@@ -27,13 +27,28 @@ x86_64*)
   ;;
 esac
 
+mkdir -p -- "$TMP" "$UNPACK"
+
 HTML="$TMP/msys2.html"
 REPO="https://repo.msys2.org/msys/$ARCH"
 
 if ! [[ -f "$HTML" ]]; then
   "${CURL[@]}" "$HTML" -- "$REPO"
 fi
-REF="$(htmlq --attribute href -- "html > body > pre > a[href*='$SEARCH']" <"$HTML")"
+
+if ! command -v -- htmlq >/dev/null; then
+  HTMLQ="$TMP/htmlq.exe"
+  if ! [[ -f "$HTMLQ" ]]; then
+    ZIP="$TMP/htmlq.zip"
+    "${CURL[@]}" "$ZIP" -- 'https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-windows.zip'
+    unzip -d "$TMP" "$ZIP"
+    chmod +x "$HTMLQ"
+  fi
+else
+  HTMLQ=htmlq
+fi
+
+REF="$("$HTMLQ" --attribute href -- "html > body > pre > a[href*='$SEARCH']" <"$HTML")"
 
 readarray -t -d $'\n' -- REFS <<<"$REF"
 LATEST="${REFS[$((${#REFS[@]} - 2))]}"
@@ -45,5 +60,4 @@ if ! [[ -f "$ARCHIVE" ]]; then
   "${CURL[@]}" "$ARCHIVE" -- "$REPO/$LATEST"
 fi
 
-mkdir -p "$UNPACK"
 tar -x -C "$UNPACK" -f "$ARCHIVE"
