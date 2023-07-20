@@ -15,7 +15,9 @@ linux*)
   PKGS="$(dpkg --get-selections | cut --field 1)"
   ;;
 *msys*)
-  winget export --output
+  WG_JSON="$(mktemp)"
+  winget.exe export --accept-source-agreements --output "$WG_JSON"
+  PKGS="$(jq --exit-status --raw-output '.Sources[].Packages[].PackageIdentifier' "$WG_JSON")"
   ;;
 *)
   exit 1
@@ -63,7 +65,9 @@ if (("${#RM[@]}")); then
     sudo -- apt-get purge --yes -- "${RM[@]}"
     ;;
   *msys*)
-    exit 1
+    for DEL in "${RM[@]}"; do
+      winget uninstall --accept-source-agreements --id "$DEL"
+    done
     ;;
   *)
     exit 1
@@ -81,8 +85,9 @@ if (("${#ADD[@]}")); then
     DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --no-install-recommends --yes -- "${ADD[@]}"
     ;;
   *msys*)
-    winget import --accept-package-agreements --accept-source-agreements --import-file
-    exit 1
+    for A in "${ADD[@]}"; do
+      winget instal --accept-source-agreements --accept-package-agreements --exact --id "$A"
+    done
     ;;
   *)
     exit 1
