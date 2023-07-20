@@ -76,7 +76,9 @@ jobs:
 
       - run: |-
           # winget install --exact --id BurntSushi.ripgrep.MSVC
-          winget export
+          $exports = 'exports.json'
+          winget export --output $exports
+          Get-Content -Path $exports
 
       - shell: bash
         run: |-
