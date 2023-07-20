@@ -85,5 +85,7 @@ jobs:
 
       - shell: bash
         run: |-
+          git --exec-path
+          git --info-path
           make all
           # ./main.sh localhost
