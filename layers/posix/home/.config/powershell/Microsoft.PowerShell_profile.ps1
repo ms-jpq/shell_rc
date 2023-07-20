@@ -1,3 +1,5 @@
+#!/usr/bin/env -S -- pwsh -NoProfile -NonInteractive
+
 Set-StrictMode -Version 'Latest'
 
 Set-PSReadLineOption -EditMode 'Emacs'
@@ -15,4 +17,4 @@ if ($IsWindows) {
 }
 
 
-oh-my-posh init pwsh --config (Join-Path -- ($IsWindows ? $Env:LOCALAPPDATA : $Env:XDG_CONFIG_HOME) 'posh' 'config.yml') | Invoke-Expression
+oh-my-posh init pwsh --config (Join-Path -- ([Environment]::GetFolderPath([Environment+SpecialFolder]::ApplicationData)) 'posh' 'config.yml') | Invoke-Expression

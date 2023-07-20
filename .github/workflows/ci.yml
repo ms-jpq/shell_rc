@@ -73,7 +73,7 @@ jobs:
 
       - shell: bash
         run: |-
-          winget.exe export
+          ./layers/nt/winget.ps1
           # winget install --exact --id
 
       - shell: bash
