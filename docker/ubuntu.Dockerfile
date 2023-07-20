@@ -10,7 +10,7 @@ RUN apt-get update && \
 WORKDIR /srv
 COPY . /srv
 
-RUN ./main.sh localhost && \
+RUN PYTHONPYCACHEPREFIX=/tmp ./main.sh localhost && \
   apt-get clean && \
   rm -rf -- /srv/* /var/lib/apt/lists/* /var/tmp/* /tmp/* /root/.cache/initd/* /root/.cache/pip/*
 
