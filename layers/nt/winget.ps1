@@ -23,6 +23,4 @@ if (!$has_pkg) {
     Invoke-WebRequest -Uri $license.browser_download_url -OutFile $t_license
 
     Add-AppxProvisionedPackage -Online -PackagePath $t_bundle -LicensePath $t_license
-
-    winget.exe list --accept-source-agreements
 }

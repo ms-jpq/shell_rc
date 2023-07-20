@@ -77,7 +77,7 @@ jobs:
       - run: |-
           # winget install --exact --id BurntSushi.ripgrep.MSVC
           $exports = 'exports.json'
-          winget --accept-source-agreements export --output $exports
+          winget --disable-interactivity export --accept-source-agreements --output $exports
           Get-Content -Path $exports
 
       - shell: bash
