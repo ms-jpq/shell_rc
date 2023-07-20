@@ -82,5 +82,5 @@ jobs:
 
       - shell: bash
         run: |-
+          make all
           # ./main.sh localhost
-          true
