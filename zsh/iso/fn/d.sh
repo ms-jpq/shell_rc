@@ -8,7 +8,7 @@ d() {
     --print0
     --type directory
   )
-  local -- dest=
-  dest="$(FZF_DEFAULT_COMMAND="$(printf -- '%q ' "${default_cmd[@]}")" fp --read0 --query "${*:-}")"
-  cd -- "$dest" || return 1
+  local -- dst=
+  dst="$(FZF_DEFAULT_COMMAND="$(printf -- '%q ' "${default_cmd[@]}")" fp --read0 --query "${*:-}")"
+  cd -- "$dst" || return 1
 }

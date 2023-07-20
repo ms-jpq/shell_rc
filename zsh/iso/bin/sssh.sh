@@ -3,7 +3,7 @@
 set -o pipefail
 
 JUMP="$1"
-DEST="$2"
+DST="$2"
 shift -- 2
 
 PORT_RE='^([^@]+)@([^:]+):?([0-9]{0,5})$'
@@ -17,12 +17,12 @@ else
   exit 1
 fi
 
-if [[ "$DEST" =~ $PORT_RE ]]; then
+if [[ "$DST" =~ $PORT_RE ]]; then
   D_USER="${BASH_REMATCH[1]}"
   D_HOST="${BASH_REMATCH[2]}"
   D_PORT="${BASH_REMATCH[3]:-22}"
 else
-  printf -- '-x- %s\n' "$DEST" >&2
+  printf -- '-x- %s\n' "$DST" >&2
   exit 1
 fi
 

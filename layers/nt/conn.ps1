@@ -43,22 +43,22 @@ function ssh {
         0
     }
 
-    $SSH_KEY_DEST = if ($WIN_ADMIN) {
+    $SSH_KEY_DST = if ($WIN_ADMIN) {
         Join-Path "$ENV:PROGRAMDATA" 'ssh' | Join-Path -ChildPath 'administrators_authorized_keys'
     }
     else {
         Join-Path '~' '.ssh' | Join-Path -ChildPath 'authorized_keys'
     }
-    Write-Output "$SSH_KEY_DEST"
+    Write-Output "$SSH_KEY_DST"
 
     $SSH_KEY_SRC = New-TemporaryFile
     $GITHUB_USER = Read-Host -Prompt 'Github User'
     Invoke-WebRequest -OutFile $SSH_KEY_SRC -Uri "https://github.com/$GITHUB_USER.keys"
-    Move-Item -Force -Path $SSH_KEY_SRC -Destination $SSH_KEY_DEST
+    Move-Item -Force -Path $SSH_KEY_SRC -Destination $SSH_KEY_DST
 
 
     if ($WIN_ADMIN) {
-        $ACL = Get-Acl $SSH_KEY_DEST
+        $ACL = Get-Acl $SSH_KEY_DST
         $ACL.SetAccessRuleProtection($true, $false)
         $ADMIN_RULE = New-Object system.security.accesscontrol.filesystemaccessrule('Administrators', 'FullControl', 'Allow')
         $SYS_RULE = New-Object system.security.accesscontrol.filesystemaccessrule('SYSTEM', 'FullControl', 'Allow')
