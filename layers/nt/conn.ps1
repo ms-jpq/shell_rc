@@ -44,10 +44,10 @@ function ssh {
     }
 
     $SSH_KEY_DST = if ($WIN_ADMIN) {
-        Join-Path "$ENV:PROGRAMDATA" 'ssh' | Join-Path -ChildPath 'administrators_authorized_keys'
+        Join-Path -Path "$ENV:PROGRAMDATA" 'ssh' | Join-Path -ChildPath 'administrators_authorized_keys'
     }
     else {
-        Join-Path '~' '.ssh' | Join-Path -ChildPath 'authorized_keys'
+        Join-Path -Path '~' '.ssh' | Join-Path -ChildPath 'authorized_keys'
     }
     Write-Output "$SSH_KEY_DST"
 
