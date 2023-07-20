@@ -9,7 +9,7 @@ mkdir -p -- "$HOME/.local"
 link() {
   local -- src="$1" dst="$2"
 
-  if ! [[ -L "$dst" ]]; then
+  if ! [[ -f "$dst" ]]; then
     ln -sf -- "$src" "$dst"
   fi
 }
@@ -19,7 +19,6 @@ link "$APPDATA" "$HOMEPATH/.config"
 # shellcheck disable=2154
 link "$LOCALAPPDATA" "$HOMEPATH/.local/share"
 link "${LOCALAPPDATA}Low" "$HOMEPATH/.local/state"
-# shellcheck disable=SC2154
-link "$TEMP" "$HOME/.cache"
+link "$LOCALAPPDATA/Temp" "$HOMEPATH/.cache"
 
 # link "$HOME/AppData/LocalHigh" "$HOMEPATH/.local/opt"

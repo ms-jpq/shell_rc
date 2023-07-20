@@ -9,12 +9,26 @@ readarray -t -d $'\n' -- DESIRED <<<"$TXT"
 
 case "$OSTYPE" in
 darwin*)
+  if ! command -v -- brew; then
+    URI='https://raw.githubusercontent.com/Homebrew/install/master/install.sh'
+    SH="$(curl --fail --location --no-progress-meter -- "$URI")"
+    bash -c "$SH"
+  fi
   PKGS="$(brew list --formula --full-name -1)"
   ;;
 linux*)
   PKGS="$(dpkg --get-selections | cut --field 1)"
   ;;
 *msys*)
+  WINGET=(
+    winget install
+    --disable-interactivity
+    --accept-source-agreements --accept-package-agreements
+    --exact --id
+  )
+  if ! command -v -- jq; then
+    "${WINGET[@]}" 'stedolan.jq'
+  fi
   WG_JSON="$(mktemp)"
   winget export --disable-interactivity --accept-source-agreements --output "$WG_JSON"
   PKGS="$(jq --exit-status --raw-output '.Sources[].Packages[].PackageIdentifier' "$WG_JSON")"
@@ -86,7 +100,7 @@ if (("${#ADD[@]}")); then
     ;;
   *msys*)
     for A in "${ADD[@]}"; do
-      winget install --disable-interactivity --accept-source-agreements --accept-package-agreements --exact --id "$A"
+      "${WINGET[@]}" "$A"
     done
     ;;
   *)

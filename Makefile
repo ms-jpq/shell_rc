@@ -32,5 +32,4 @@ $(TMP):
 ./var/bin:
 	mkdir -p -- '$@'
 
-include layers/posix/home/.local/opt/initd/env.mk
 include makelib/*.mk

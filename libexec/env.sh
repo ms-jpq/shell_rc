@@ -33,6 +33,8 @@ darwin*)
 *) ;;
 esac
 
+RSYNC="$(command -v -- rsync || true)"
+
 tee <<-EOF
 ENV_HOME=$(printf -- '%q' "$HOME")
 ENV_HOSTNAME=$(printf -- '%q' "$HOSTNAME")
@@ -42,6 +44,7 @@ ENV_MACHTYPE=$(printf -- '%q' "$MACHTYPE")
 ENV_MEMINFO=$MEMINFO
 ENV_NPROC=$NPROC
 ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")
+ENV_RSYNC=$(printf -- '%q' "$RSYNC")
 ENV_VERSION_CODENAME=$(printf -- '%q' "$VERSION_CODENAME")
 ENV_VERSION_ID=$(printf -- '%q' "$VERSION_ID")
 EOF

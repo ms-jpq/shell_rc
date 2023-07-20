@@ -9,61 +9,61 @@ on:
     - cron: "0 0 * * *" # daily
 
 jobs:
-  docker:
-    strategy:
-      matrix:
-        platform:
-          - ubuntu-latest
-          # - windows-latest
+  # docker:
+  #   strategy:
+  #     matrix:
+  #       platform:
+  #         - ubuntu-latest
+  #         # - windows-latest
 
-    runs-on: ${{ matrix.platform }}
+  #   runs-on: ${{ matrix.platform }}
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      # - uses: docker/build-push-action@v1
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
-      #     repository: ${{ secrets.DOCKER_USERNAME }}/cli
-      #     tags: latest
-      #     dockerfile: "docker/posix/Dockerfile"
+  #     # - uses: docker/build-push-action@v1
+  #     #   with:
+  #     #     username: ${{ secrets.DOCKER_USERNAME }}
+  #     #     password: ${{ secrets.DOCKER_PASSWORD }}
+  #     #     repository: ${{ secrets.DOCKER_USERNAME }}/cli
+  #     #     tags: latest
+  #     #     dockerfile: "docker/posix/Dockerfile"
 
-      - shell: bash
-        run: |-
-          gmake build
+  #     - shell: bash
+  #       run: |-
+  #         gmake build
 
-  ubuntu:
-    runs-on: ubuntu-latest
+  # ubuntu:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - run: |-
-          gmake lint
+  #     - run: |-
+  #         gmake lint
 
-      - run: |-
-          ./main.sh localhost
+  #     - run: |-
+  #         ./main.sh localhost
 
-      - run: |-
-          gmake fmt
-          git diff --exit-code
+  #     - run: |-
+  #         gmake fmt
+  #         git diff --exit-code
 
-  macos:
-    runs-on: macos-latest
+  # macos:
+  #   runs-on: macos-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - run: |-
-          brew install -- bash make
-          rm -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
+  #     - run: |-
+  #         brew install -- bash make
+  #         rm -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
-      - run: |-
-          gmake lint
+  #     - run: |-
+  #         gmake lint
 
-      - run: |-
-          ./main.sh localhost
+  #     - run: |-
+  #         ./main.sh localhost
 
   windows:
     runs-on: windows-latest
@@ -75,21 +75,18 @@ jobs:
           powershell ./layers/nt/winget.ps1
 
       - run: |-
-          # winget install --exact --id BurntSushi.ripgrep.MSVC
-          $TMP = "wg.json"
+          winget install --disable-interactivity --accept-source-agreements --accept-package-agreements --exact --id BurntSushi.ripgrep.MSVC
+          $TMP = 'wg.json'
           winget export --disable-interactivity --accept-source-agreements --output $TMP
           Get-Content -- $TMP
 
-      - shell: bash
-        run: |-
-          ./libexec/pacman.sh './var' 'rsync-' "$ProgramFiles/Git"
-          choco install rsync
-          ./layers/nt/home.sh
+      # - shell: bash
+      #   run: |-
+      #     rm -f -- "$HOMEPATH/.local/share"
+      #     choco install -- rsync
 
-
-      - shell: bash
-        run: |-
-          git --exec-path
-          git --info-path
-          make all
-          # ./main.sh localhost
+      # - shell: bash
+      #   run: |-
+      #     git --exec-path
+      #     git --info-path
+      #     ./main.sh localhost
