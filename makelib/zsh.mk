@@ -1,7 +1,7 @@
 .PHONY: zshrc
 all: zshrc
 
-ZSH := $(shell find ./zsh)
+ZSH := $(shell printf -- '%s ' ./zsh/**/*)
 
 define ZSH_TEMPLATE
 

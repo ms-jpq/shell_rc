@@ -6,8 +6,7 @@ RSYNC := rsync --recursive --links --perms --keep-dirlinks
 
 define FS_TEMPLATE
 
-$(TMP)/$(1)/$(2): $$(shell find ./layers -regex './layers/\(posix\|$(1)\)/$(2)/.*')
-	set -x
+$(TMP)/$(1)/$(2): $$(shell shopt -u failglob; printf -- '%s ' ./layers/{posix,$(1)}/$(2)/**/*)
 	LAYERS=(./layers/{posix,$(1)}/$(2))
 	mkdir -p -- '$$@'
 	for layer in "$$$${LAYERS[@]}"; do
