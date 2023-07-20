@@ -71,12 +71,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - shell: bash
-        run: |-
+      - run: |-
           ./layers/nt/winget.ps1
 
-      - shell: bash
-        run: |-
+      - run: |-
           # winget install --exact --id BurntSushi.ripgrep.MSVC
           winget export
 
