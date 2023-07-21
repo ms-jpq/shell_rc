@@ -32,4 +32,5 @@ $(TMP):
 ./var/bin:
 	mkdir -p -- '$@'
 
+include makelib/env.mk
 include makelib/*.mk

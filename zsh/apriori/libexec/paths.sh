@@ -49,11 +49,13 @@ show)
   printf -- '%s' "$PATH" | awk -v 'RS=:' '!seen[$0]++' >&2
   ;;
 add)
-  target="$(realpath -- "${2:-"$PWD"}")"
+  P="${2:-"$PWD"}"
+  target="$(realpath -- "${P%/}" || true)"
   add "$target"
   ;;
 rm | remove)
-  target="$(realpath -- "${2:-"$PWD"}")"
+  P="${2:-"$PWD"}"
+  target="$(realpath -- "${P%/}" || true)"
   remove "$target" 0
   ;;
 *)
