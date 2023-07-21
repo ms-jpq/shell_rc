@@ -4,7 +4,7 @@ set -o pipefail
 
 LONG_OPTS='cpu:,mem:,mon:,img:,smbios:,cloudinit:'
 GO="$(getopt --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
-eval set -- "$GO"
+eval -- set -- "$GO"
 
 MON=
 SMBIOS_OEM=
@@ -73,7 +73,7 @@ if [[ -n "$SMBIOS_OEM" ]]; then
   ARGV+=(-smbios "type=11,path=$SMBIOS_OEM")
 fi
 
-if [[ -n "$CLOUDINIT" ]]; then
+if [[ -v CLOUDINIT ]]; then
   CLOUDISO="./tmp/cidata.iso"
   GENISO=(
     mkisofs

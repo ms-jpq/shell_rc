@@ -3,9 +3,9 @@
 set -Eeu
 set -o pipefail
 shopt -s dotglob
-shopt -s nullglob
 shopt -s extglob
 shopt -s failglob
+shopt -s nullglob
 
 case "$OSTYPE" in
 linux*)

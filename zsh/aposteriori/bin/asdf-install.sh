@@ -5,7 +5,7 @@ set -o pipefail
 OPTS='gv:'
 LONG_OPTS='global,version:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
-eval set -- "$GO"
+eval -- set -- "$GO"
 
 GLOBAL=0
 VERSION=
