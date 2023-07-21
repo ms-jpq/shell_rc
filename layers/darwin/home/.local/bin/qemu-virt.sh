@@ -2,12 +2,12 @@
 
 set -o pipefail
 
-LONG_OPTS='cpu:,mem:,mon:,img:,smbios:,cloudinit:'
+LONG_OPTS='cpu:,mem:,monitor:,gui,drive:,smbios:'
 GO="$(getopt --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
-MON=
-SMBIOS_OEM=
+DRIVES=()
+OEM_STRINGS=()
 while (($#)); do
   case "$1" in
   --cpu)
@@ -18,20 +18,20 @@ while (($#)); do
     MEM="$2"
     shift -- 2
     ;;
-  --mon)
-    MON="$2"
+  --monitor)
+    MONITOR="$2"
     shift -- 2
     ;;
-  --img)
-    IMG="$2"
+  --gui)
+    GUI=1
+    shift -- 1
+    ;;
+  --drive)
+    DRIVES+=("$2")
     shift -- 2
     ;;
   --smbios)
-    SMBIOS_OEM="$2"
-    shift -- 2
-    ;;
-  --cloudinit)
-    CLOUDINIT="$2"
+    OEM_STRINGS+=("$2")
     shift -- 2
     ;;
   --)
@@ -54,39 +54,34 @@ ARGV=(
   -m "${MEM:-"size=1G"}"
 )
 
-ARGV+=(
-  -nographic
-  -serial stdio
-)
+if [[ -v GUI ]]; then
+  ARGV+=(
+    -device 'virtio-gpu-pci'
+    -device 'virtio-tablet-pci'
+    -device 'virtio-keyboard-pci'
+  )
+else
+  ARGV+=(
+    -nographic
+    -serial stdio
+  )
+fi
 
-if [[ -n "$MON" ]]; then
-  ARGV+=(-monitor "$MON,server,nowait")
+if [[ -v MONITOR ]]; then
+  ARGV+=(-monitor "$MONITOR,server,nowait")
 fi
 
 ARGV+=(-nic "user,model=virtio-net-pci-non-transitional")
 
 ARGV+=(-bios "$(brew --prefix)/opt/qemu/share/qemu/edk2-aarch64-code.fd")
 
-ARGV+=(-drive "if=virtio,discard=unmap,aio=threads,file=$IMG")
+for DRIVE in "${DRIVES[@]}"; do
+  ARGV+=(-drive "if=virtio,discard=unmap,aio=threads,file=$DRIVE")
+done
 
-if [[ -n "$SMBIOS_OEM" ]]; then
-  ARGV+=(-smbios "type=11,path=$SMBIOS_OEM")
-fi
-
-if [[ -v CLOUDINIT ]]; then
-  CLOUDISO="./tmp/cidata.iso"
-  GENISO=(
-    mkisofs
-    -volid CIDATA
-    -joliet -rock
-    -output "$CLOUDISO"
-    "$CLOUDINIT"
-  )
-  rm -fr -- "$CLOUDISO"
-  ARGV+=(-drive "format=raw,file=$CLOUDISO")
-else
-  GENISO=(true)
-fi
+for OEM_STRING in "${OEM_STRINGS[@]}"; do
+  ARGV+=(-smbios "type=11,path=$OEM_STRING")
+done
 
 ARGV+=("$@")
 
@@ -103,8 +98,5 @@ pprint() {
   done | column -t >&2
 }
 
-pprint "${GENISO[@]}"
 pprint "${ARGV[@]}"
-
-"${GENISO[@]}"
 exec -- "${ARGV[@]}"
