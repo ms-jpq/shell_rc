@@ -7,4 +7,4 @@ for RE in "$@"; do
   SEARCH+=(-G "$RE")
 done
 
-exec -- "${0%/*}/git-ls-c.sh" --all-match "${SEARCH[@]}"
+exec -- "${0%/*}/git-ls-c" --all-match "${SEARCH[@]}"
