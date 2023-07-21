@@ -21,6 +21,7 @@ link() {
   fi
 }
 
+rm -fr -- "$WEB_DIR"
 mkdir -p -- "$CGI_BIN" "$TMP"
 link "$WEB/static" "$CGI_BIN/static"
 link "$WEB/gitweb.cgi" "$CGI_BIN/gitweb.cgi"
