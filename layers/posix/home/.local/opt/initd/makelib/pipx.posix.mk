@@ -14,8 +14,8 @@ $(OPT)/pipx/bin/pipx: $(OPT)/pipx
 
 define PIPX_TEMPLATE
 
-pipx: .WAIT $$(PIPX)/$(1)
-$$(PIPX)/$(1): $$(OPT)/pipx/bin/pipx
+pipx: .WAIT $(PIPX)/$(1)
+$(PIPX)/$(1): $(OPT)/pipx/bin/pipx
 	if [[ -d '$$@' ]]; then
 		'$$<' upgrade -- '$(2)'
 	else
