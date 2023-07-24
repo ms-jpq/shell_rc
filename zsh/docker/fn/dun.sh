@@ -3,7 +3,8 @@
 # shellcheck disable=SC2046
 dun() {
   local ps
-  ps=(docker ps --all --quiet)
+  # shellcheck disable=SC2207
+  ps=($(docker ps --all --quiet))
   if [[ -n "${ps[*]}" ]]; then
     docker rm --force -- "${ps[@]}"
   fi
