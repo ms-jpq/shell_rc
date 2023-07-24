@@ -9,29 +9,29 @@ deb-dep: | pkg
 
 
 define ARCHIVE_TEMPLATE
-ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$(2)))
+ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$2))
 
-$(TMP)/curl/$(1): $(TMP)/curl /usr/bin/curl /usr/bin/unzip
-	./libexec/curl-unpack.sh '$(subst !!,,$(2))' '$$<'
+$(TMP)/curl/$1: $(TMP)/curl /usr/bin/curl /usr/bin/unzip
+	./libexec/curl-unpack.sh '$(subst !!,,$2)' '$$<'
 
-$(BIN)/$(notdir $(1)): $(TMP)/curl/$(1)
+$(BIN)/$(notdir $1): $(TMP)/curl/$1
 	install --backup -- '$$<' '$$@'
 
-curl: $(BIN)/$(notdir $(1))
+curl: $(BIN)/$(notdir $1)
 
 endif
 endef
 
 
 define DEB_TEMPLATE
-ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$(2)))
+ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$2))
 
-$(TMP)/curl/$(notdir $(2)): $(TMP)/curl /usr/bin/curl
-	$(CURL) --output '$$@' -- '$(subst !!,,$(2))'
+$(TMP)/curl/$(notdir $2): $(TMP)/curl /usr/bin/curl
+	$(CURL) --output '$$@' -- '$(subst !!,,$2)'
 
-deb-dep: $(TMP)/curl/$(notdir $(2))
-$(1): deb-dep
-deb: $(1)
+deb-dep: $(TMP)/curl/$(notdir $2)
+$1: deb-dep
+deb: $1
 
 endif
 endef
