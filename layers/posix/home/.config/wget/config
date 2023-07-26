@@ -1,1 +1,1 @@
-hsts-file = ~/.cache/wget-hsts
+hsts-file = ~/.cache/wget/hsts
