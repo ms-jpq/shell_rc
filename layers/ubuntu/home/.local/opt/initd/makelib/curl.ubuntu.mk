@@ -8,7 +8,7 @@ deb-dep: | pkg
 define ARCHIVE_TEMPLATE
 ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$2))
 
-$(TMP)/curl/$1: $(TMP)/curl /usr/bin/curl /usr/bin/unzip
+$(TMP)/curl/$1: $(TMP)/curl /usr/bin/curl /usr/bin/jq /usr/bin/unzip
 	./libexec/curl-unpack.sh '$(subst !!,,$2)' '$$<'
 
 $(BIN)/$(notdir $1): $(TMP)/curl/$1
@@ -23,7 +23,7 @@ endef
 define DEB_TEMPLATE
 ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$2))
 
-$(TMP)/curl/$(notdir $2): $(TMP)/curl /usr/bin/curl
+$(TMP)/curl/$(notdir $2): $(TMP)/curl /usr/bin/curl /usr/bin/jq
 	$(CURL) --output '$$@' -- '$(subst !!,,$2)'
 
 deb-dep: $(TMP)/curl/$(notdir $2)
