@@ -11,12 +11,12 @@ curl: $(BIN)/$(notdir $1)
 endef
 
 
-V_BAT     = $(shell $(GH_LATEST) sharkdp/bat)
-V_DUF     = $(shell $(GH_LATEST) muesli/duf)
-V_DUST    = $(shell $(GH_LATEST) bootandy/dust)
-V_PASTEL  = $(shell $(GH_LATEST) sharkdp/pastel)
-V_WATCHEX = $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
-V_XSV     = $(shell $(GH_LATEST) BurntSushi/xsv)
+V_BAT     := $(shell $(GH_LATEST) sharkdp/bat)
+V_DUF     =  $(shell $(GH_LATEST) muesli/duf)
+V_DUST    := $(shell $(GH_LATEST) bootandy/dust)
+V_PASTEL  := $(shell $(GH_LATEST) sharkdp/pastel)
+V_WATCHEX := $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
+V_XSV     =  $(shell $(GH_LATEST) BurntSushi/xsv)
 
 
 define CURL_ARCHIVES
