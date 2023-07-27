@@ -11,18 +11,26 @@ curl: $(BIN)/$(notdir $1)
 endef
 
 
+V_BAT     = $(shell $(GH_LATEST) sharkdp/bat)
+V_DUF     = $(shell $(GH_LATEST) muesli/duf)
+V_DUST    = $(shell $(GH_LATEST) bootandy/dust)
+V_PASTEL  = $(shell $(GH_LATEST) sharkdp/pastel)
+V_WATCHEX = $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
+V_XSV     = $(shell $(GH_LATEST) BurntSushi/xsv)
+
+
 define CURL_ARCHIVES
 
-bat-v0.23.0-x86_64-pc-windows-msvc/bat.exe             https://github.com/sharkdp/bat/releases/latest/download/bat-v0.23.0-x86_64-pc-windows-msvc.zip
-duf.exe                                                https://github.com/muesli/duf/releases/latest/download/duf_0.8.1_Windows_x86_64.zip
-dust-v0.8.6-x86_64-pc-windows-msvc/dust.exe            https://github.com/bootandy/dust/releases/latest/download/dust-v0.8.6-x86_64-pc-windows-msvc.zip
-gitui.exe                                              https://github.com/extrawurst/gitui/releases/latest/download/gitui-win.tar.gz
-htmlq.exe                                              https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-windows.zip
-pastel-v0.9.0-x86_64-pc-windows-msvc/pastel.exe        https://github.com/sharkdp/pastel/releases/latest/download/pastel-v0.9.0-x86_64-pc-windows-msvc.zip
-sad.exe                                                https://github.com/ms-jpq/sad/releases/latest/download/x86_64-pc-windows-msvc.zip
-tokei-x86_64-pc-windows-msvc.exe                       https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-x86_64-pc-windows-msvc.exe
-watchexec-1.22.3-x86_64-pc-windows-msvc/watchexec.exe  https://github.com/watchexec/watchexec/releases/latest/download/watchexec-1.22.3-x86_64-pc-windows-msvc.zip
-xsv.exe                                                https://github.com/BurntSushi/xsv/releases/latest/download/xsv-0.13.0-x86_64-pc-windows-msvc.zip
+bat-$(V_BAT)-x86_64-pc-windows-msvc/bat.exe                 https://github.com/sharkdp/bat/releases/latest/download/bat-$(V_BAT)-x86_64-pc-windows-msvc.zip
+duf.exe                                                     https://github.com/muesli/duf/releases/latest/download/duf_$(V_DUF)_Windows_x86_64.zip
+dust-$(V_DUST)-x86_64-pc-windows-msvc/dust.exe              https://github.com/bootandy/dust/releases/latest/download/dust-$(V_DUST)-x86_64-pc-windows-msvc.zip
+gitui.exe                                                   https://github.com/extrawurst/gitui/releases/latest/download/gitui-win.tar.gz
+htmlq.exe                                                   https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-windows.zip
+pastel-$(V_PASTEL)-x86_64-pc-windows-msvc/pastel.exe        https://github.com/sharkdp/pastel/releases/latest/download/pastel-$(V_PASTEL)-x86_64-pc-windows-msvc.zip
+sad.exe                                                     https://github.com/ms-jpq/sad/releases/latest/download/x86_64-pc-windows-msvc.zip
+tokei-x86_64-pc-windows-msvc.exe                            https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-x86_64-pc-windows-msvc.exe
+watchexec-$(V_WATCHEX)-x86_64-pc-windows-msvc/watchexec.exe https://github.com/watchexec/watchexec/releases/latest/download/watchexec-$(V_WATCHEX)-x86_64-pc-windows-msvc.zip
+xsv.exe                                                     https://github.com/BurntSushi/xsv/releases/latest/download/xsv-$(V_XSV)-x86_64-pc-windows-msvc.zip
 
 endef
 
