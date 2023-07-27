@@ -47,16 +47,17 @@ else
 	LAZY_TYPE := $(MACHTYPE)
 endif
 
+V_DELTA   = $(shell $(GH_LATEST) dandavison/delta)
 V_DUST    = $(shell $(GH_LATEST) bootandy/dust)
 V_FZF     = $(shell $(GH_LATEST) junegunn/fzf)
 V_GOJQ    = $(shell $(GH_LATEST) itchyny/gojq)
 V_JLESS   = $(shell $(GH_LATEST) PaulJuliusMartinez/jless)
 V_LAZYGIT = $(patsubst v%,%,$(shell $(GH_LATEST) jesseduffield/lazygit))
-V_XSV     = $(shell $(GH_LATEST) BurntSushi/xsv)
-V_DELTA   = $(shell $(GH_LATEST) dandavison/delta)
 V_PASTEL  = $(patsubst v%,%,$(shell $(GH_LATEST) sharkdp/pastel))
 V_TV      = $(shell $(GH_LATEST) alexhallam/tv)
 V_WATCHEX = $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
+V_XSV     = $(shell $(GH_LATEST) BurntSushi/xsv)
+
 
 define CURL_ARCHIVES
 
