@@ -1,10 +1,3 @@
-.PHONY: curl
-all: curl
-
-$(TMP)/curl: $(TMP)
-	mkdir -p -- '$@'
-
-
 define ARCHIVE_TEMPLATE
 
 $(TMP)/curl/$1: $(TMP)/curl
