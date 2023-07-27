@@ -5,7 +5,10 @@ RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- \
   make \
   rsync \
-  sudo
+  sudo \
+  curl \
+  jq \
+  ca-certificates
 
 WORKDIR /srv
 COPY . /srv
