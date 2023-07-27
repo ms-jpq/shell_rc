@@ -3,6 +3,7 @@
 # shellcheck disable=SC2154
 export -- BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME/bundle"
 export -- BUNDLE_USER_HOME="$XDG_CACHE_HOME/bundle"
+export -- DOTNET_CLI_HOME="$XDG_CACHE_HOME/dotnet"
 export -- GNUPGHOME="$XDG_STATE_HOME/gnupg"
 export -- NODE_REPL_HISTORY="$XDG_STATE_HOME/shell_history/node"
 export -- NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/rc.conf"
