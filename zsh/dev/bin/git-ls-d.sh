@@ -5,7 +5,7 @@ set -o pipefail
 parse() {
   LINE="$(</dev/stdin)"
   SHA="${LINE%% *}"
-  FILE="${LINE##* }"
+  FILE="${LINE#* }"
 }
 
 case "${SCRIPT_MODE:-""}" in
