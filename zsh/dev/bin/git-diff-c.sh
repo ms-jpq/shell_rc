@@ -4,7 +4,7 @@ set -o pipefail
 
 parse() {
   LINE="$(</dev/stdin)"
-  FILE="${LINE##* }"
+  FILE="${LINE#* }"
 }
 
 case "${SCRIPT_MODE:-""}" in

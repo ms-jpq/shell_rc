@@ -51,7 +51,7 @@ RM=()
 
 for LINE in "${DESIRED[@]}"; do
   ACTION="${LINE%% *}"
-  PKG="${LINE##* }"
+  PKG="${LINE#* }"
 
   case "$ACTION" in
   +)
