@@ -10,7 +10,7 @@ unpack() {
   *.7z | *.zip)
     7zz x -- "$FILE"
     ;;
-  *.gz)
+  *.gz | *.xz)
     gzip --decompress --keep -- "$FILE"
     ;;
   *.rar)
