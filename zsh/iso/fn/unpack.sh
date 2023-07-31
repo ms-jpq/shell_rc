@@ -18,6 +18,7 @@ unpack() {
     ;;
   *)
     printf -- '%s\n' "Unknown format :: $FILE"
+    return 127
     ;;
   esac
 }
