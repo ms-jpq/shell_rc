@@ -4,8 +4,32 @@ set -o pipefail
 
 cd -- "${0%/*}"
 
+LONG_OPTS='port:'
+GO="$(getopt --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
+eval -- set -- "$GO"
+
+PORT=22
+while (($#)); do
+  case "$1" in
+  --port)
+    PORT="$2"
+    shift -- 2
+    ;;
+  --)
+    shift -- 1
+    break
+    ;;
+  *)
+    exit 1
+    ;;
+  esac
+done
+
 DST="$1"
 shift -- 1
+
+CONN=(ssh -p $((PORT)))
+RSH="$(printf -- '%q ' "${CONN[@]}")"
 
 if [[ "$DST" == 'localhost' ]]; then
   LOCAL=1
@@ -22,7 +46,7 @@ shell() {
   else
     sh="$(printf -- '%q ' "$@")"
     # shellcheck disable=SC2029
-    ssh "$DST" "$sh"
+    "${CONN[@]}" "$DST" "$sh"
   fi
 }
 
@@ -83,7 +107,7 @@ for FS in "${!FFS[@]}"; do
   done
 
   if ! ((EMPTY)); then
-    "${EX[@]}" rsync --recursive --links --perms --keep-dirlinks -- "$SRC" "$RDST$ROOT/"
+    "${EX[@]}" rsync --recursive --links --perms --keep-dirlinks --rsh "$RSH" -- "$SRC" "$RDST$ROOT/"
   fi
 done
 
