@@ -5,7 +5,6 @@ APT_DEPS := /etc/ssl/certs/ca-certificates.crt /usr/bin/curl /usr/bin/gpg /usr/b
 	APT=(ca-certificates curl gnupg jq git unzip python3-venv)
 	sudo -- apt-get update
 	$(APT_INSTALL) -- "$${APT[@]}"
-	touch -- '$@'
 
 $(APT_DEPS): | /usr/bin/unzip
 

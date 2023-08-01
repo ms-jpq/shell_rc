@@ -13,4 +13,4 @@ if [[ -f "$OS_RELEASE" ]]; then
   set +a
 fi
 
-gmake "$@"
+exec -- gmake "$@"
