@@ -27,7 +27,7 @@ x86_64*)
   ;;
 esac
 
-mkdir -p -- "$TMP" "$UNPACK"
+mkdir -v -p -- "$TMP" "$UNPACK"
 
 HTML="$TMP/msys2.html"
 REPO="https://repo.msys2.org/msys/$ARCH"

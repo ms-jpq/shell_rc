@@ -4,7 +4,7 @@ set -o pipefail
 
 cd -- ~
 
-mkdir -p -- "$HOME/.local"
+mkdir -v -p -- "$HOME/.local"
 
 link() {
   local -- src="$1" dst="$2"

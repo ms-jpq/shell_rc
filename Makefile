@@ -27,10 +27,10 @@ CURL := curl --fail --location --no-progress-meter
 TMP := ./tmp
 
 $(TMP):
-	mkdir -p -- '$@'
+	mkdir -v -p -- '$@'
 
 ./var/bin:
-	mkdir -p -- '$@'
+	mkdir -v -p -- '$@'
 
 include makelib/env.mk
 include makelib/*.mk

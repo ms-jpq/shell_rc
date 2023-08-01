@@ -8,7 +8,7 @@ define FS_TEMPLATE
 
 $(TMP)/$1/$2: $(shell shopt -u failglob; printf -- '%s ' ./layers/{posix,$1}/$2/**/*)
 	LAYERS=(./layers/{posix,$1}/$2)
-	mkdir -p -- '$$@'
+	mkdir -v -p -- '$$@'
 	for layer in "$$$${LAYERS[@]}"; do
 		if [[ -d ""$$$$layer"" ]]; then
 			$(RSYNC) "$$$$layer/" '$$@/'
