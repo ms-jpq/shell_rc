@@ -30,7 +30,7 @@ export -- PYDEPS
 ./node_modules/.bin:
 	npm install --upgrade --no-package-lock
 
-./var/bin/shellcheck: ./var/bin
+./var/bin/shellcheck: | ./var/bin
 	VERSION='v0.9.0'
 	case "$$OSTYPE" in
 	darwin*)
@@ -45,7 +45,7 @@ export -- PYDEPS
 	chmod +x '$@'
 	touch -- '$@'
 
-./var/bin/hadolint: ./var/bin
+./var/bin/hadolint: | ./var/bin
 	case "$$OSTYPE" in
 	darwin*)
 		FILE='hadolint-Darwin-x86_64'
@@ -58,7 +58,7 @@ export -- PYDEPS
 	$(CURL) --output '$@' -- "$$URI"
 	chmod +x '$@'
 
-./var/bin/shfmt: ./var/bin
+./var/bin/shfmt: | ./var/bin
 	VERSION='v3.7.0'
 	case "$$OSTYPE" in
 	darwin*)
