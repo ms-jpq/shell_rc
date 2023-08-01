@@ -2,7 +2,7 @@
 all: deb
 
 deb-dep: | pkg
-	$(APT_INSTALL) $|
+	$(APT_INSTALL)
 
 
 define ARCHIVE_TEMPLATE
