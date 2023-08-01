@@ -19,11 +19,11 @@ TMP := $(CACHE)/initd
 
 clean:
 	shopt -u failglob
-	rm -rf -- $(TMP)
+	rm -v -rf -- $(TMP)
 
 clobber: clean
 	shopt -u failglob
-	rm -rf --
+	rm -v -rf --
 
 CURL := curl --fail --location --no-progress-meter
 
