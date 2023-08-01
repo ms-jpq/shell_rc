@@ -32,7 +32,7 @@ $(foreach line,$($1),$(eval $(call $2,$(firstword $(subst #, ,$(line))),$(lastwo
 endef
 
 $(TMP):
-	mkdir -p -- '$@'
+	mkdir -v -p -- '$@'
 
 include env.mk
 include makelib/*.mk

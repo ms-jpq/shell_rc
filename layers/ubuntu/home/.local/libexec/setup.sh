@@ -34,7 +34,7 @@ apt-install "${PYTHON_DEPS[@]}"
 asdf-install.sh --global -- python
 
 # shellcheck disable=SC2154
-mkdir --parent -- "$XDG_DATA_HOME/gnupg"
+mkdir --verbose --parent -- "$XDG_DATA_HOME/gnupg"
 NODEJS_CHECK_SIGNATURES=no asdf-install.sh --global -- nodejs
 
 asdf-install.sh --global -- rust
