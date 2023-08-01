@@ -1,6 +1,6 @@
 .PHONY: pipx clobber.pipx .WAIT
-
 .WAIT:
+
 PIPX := $(LOCAL)/pipx/venvs
 
 clobber: clobber.pipx
@@ -18,7 +18,7 @@ PIPX_EX := ./libexec/pipx-lock.sh $(OPT)/pipx/bin/pipx
 
 define PIPX_TEMPLATE
 
-$(PIPX)/$1: .WAIT
+$(PIPX)/$1: | .WAIT
 pipx: $(PIPX)/$1
 $(PIPX)/$1: | $(OPT)/pipx/bin/pipx
 	if [[ -d '$$@' ]]; then
