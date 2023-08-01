@@ -1,6 +1,6 @@
 define ARCHIVE_TEMPLATE
 
-$(TMP)/curl/$1: $(TMP)/curl
+$(TMP)/curl/$1: | $(TMP)/curl
 	./libexec/curl-unpack.sh '$(subst !!,,$2)' '$$<'
 
 $(BIN)/$(notdir $1): $(TMP)/curl/$1

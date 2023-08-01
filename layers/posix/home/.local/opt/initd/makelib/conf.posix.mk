@@ -3,7 +3,7 @@
 conf: conf.posix
 conf.posix: $(CONFIG)/git/config conf.posix.ssh
 
-$(CONFIG)/git/config: /usr/bin/git
+$(CONFIG)/git/config: | /usr/bin/git
 	touch -- '$@'
 	'$<' config --global include.path user_config
 
