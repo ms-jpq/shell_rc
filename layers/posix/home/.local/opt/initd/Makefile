@@ -37,4 +37,4 @@ $(TMP):
 include env.mk
 include makelib/*.mk
 
-all: pkg git zsh tmux conf nvim
+all: pkg git zsh tmux conf nvim pipx
