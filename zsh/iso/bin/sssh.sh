@@ -26,7 +26,7 @@ else
   exit 1
 fi
 
-PROXY_1="$(printf -- '%q ' exec openssl s_client -quiet -connect '%%h:%%p' -servername '%%h')"
-PROXY_2="$(printf -- '%q ' exec ssh -o "ProxyCommand=$PROXY_1" -W '[%h]:%p' -p "$J_PORT" -l "$J_USER" -- "$J_HOST")"
+printf -v PROXY_1 -- '%q ' exec openssl s_client -quiet -connect '%%h:%%p' -servername '%%h'
+printf -v PROXY_2 -- '%q ' exec ssh -o "ProxyCommand=$PROXY_1" -W '[%h]:%p' -p "$J_PORT" -l "$J_USER" -- "$J_HOST"
 
 exec -- ssh -o "ProxyCommand=$PROXY_2" -p "$D_PORT" -l "$D_USER" "$@" -- "$D_HOST"

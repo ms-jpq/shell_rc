@@ -29,7 +29,7 @@ DST="$1"
 shift -- 1
 
 CONN=(ssh -p $((PORT)))
-RSH="$(printf -- '%q ' "${CONN[@]}")"
+printf -v RSH -- '%q ' "${CONN[@]}"
 
 if [[ "$DST" == 'localhost' ]]; then
   LOCAL=1
@@ -44,7 +44,7 @@ shell() {
   if ((LOCAL)); then
     "$@"
   else
-    sh="$(printf -- '%q ' "$@")"
+    printf -v sh -- '%q ' "$@"
     # shellcheck disable=SC2029
     "${CONN[@]}" "$DST" "$sh"
   fi

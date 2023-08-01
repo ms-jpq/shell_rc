@@ -12,7 +12,7 @@ _less=(
   --no-histdups
 )
 export -- PAGER='less'
-LESS="$(printf -- '%q ' "${_less[@]}")"
+printf -v LESS -- '%q ' "${_less[@]}"
 unset _less
 # shellcheck disable=SC2154
 export -- LESS LESSHISTFILE="$XDG_STATE_HOME/shell_history/less"
