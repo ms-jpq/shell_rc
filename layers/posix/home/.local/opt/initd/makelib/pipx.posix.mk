@@ -9,7 +9,7 @@ clobber.pipx:
 $(OPT)/pipx:
 	python3 -m venv --upgrade -- '$@'
 
-$(OPT)/pipx/bin/pipx: $(OPT)/pipx
+$(OPT)/pipx/bin/pipx: | $(OPT)/pipx
 	'$(OPT)/pipx/bin/pip' install --require-virtualenv --upgrade -- pipx
 
 define PIPX_TEMPLATE
