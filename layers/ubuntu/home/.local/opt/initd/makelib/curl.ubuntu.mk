@@ -2,14 +2,14 @@
 all: deb
 
 deb-dep: | pkg
-	$(APT_INSTALL) $^
+	$(APT_INSTALL) $|
 
 
 define ARCHIVE_TEMPLATE
 ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$2))
 
 $(TMP)/curl/$1: | $(TMP)/curl /usr/bin/curl /usr/bin/jq /usr/bin/unzip
-	./libexec/curl-unpack.sh '$(subst !!,,$2)' '$$<'
+	./libexec/curl-unpack.sh '$(subst !!,,$2)' '$(TMP)/curl'
 
 $(BIN)/$(notdir $1): $(TMP)/curl/$1
 	install --backup -- '$$<' '$$@'
