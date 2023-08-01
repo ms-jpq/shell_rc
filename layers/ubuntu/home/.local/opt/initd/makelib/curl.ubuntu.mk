@@ -1,10 +1,6 @@
 .PHONY: deb deb-dep
 all: deb
 
-deb-dep: | pkg
-	$(APT_INSTALL)
-
-
 define ARCHIVE_TEMPLATE
 ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$2))
 
