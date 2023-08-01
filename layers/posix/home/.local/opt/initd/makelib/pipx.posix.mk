@@ -4,7 +4,7 @@ PIPX := $(OPT)/pipx/venvs
 
 clobber: clobber.pipx
 clobber.pipx:
-	rm -rf -- '$(OPT)/pipx' '$(PIPX)'
+	rm -v -rf -- '$(OPT)/pipx' '$(PIPX)'
 
 $(OPT)/pipx:
 	python3 -m venv --upgrade -- '$@'

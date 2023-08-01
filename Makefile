@@ -15,11 +15,11 @@ SHELL := bash
 
 clean:
 	shopt -u failglob
-	rm -rf -- ./tmp
+	rm -v -rf -- ./tmp
 
 clobber: clean
 	shopt -u failglob
-	rm -rf -- ./var ./.venv ./node_modules
+	rm -v -rf -- ./var ./.venv ./node_modules
 
 GOOS := darwin ubuntu nt
 CURL := curl --fail --location --no-progress-meter

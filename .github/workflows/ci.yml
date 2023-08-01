@@ -57,7 +57,7 @@ jobs:
 
       - run: |-
           brew install -- bash make gnu-getopt
-          rm -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
+          rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
       - run: |-
           gmake lint
@@ -83,7 +83,7 @@ jobs:
 
       # - shell: bash
       #   run: |-
-      #     rm -f -- "$HOMEPATH/.local/share"
+      #     rm -v -f -- "$HOMEPATH/.local/share"
       #     choco install -- rsync
 
       # - shell: bash
