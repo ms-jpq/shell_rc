@@ -21,7 +21,7 @@ _fzf_default_opts=(
   --color light
   --color bg+:'#dfdfdf'
 )
-FZF_DEFAULT_OPTS="$(printf -- '%q ' "${_fzf_default_opts[@]}")"
+printf -v FZF_DEFAULT_OPTS -- '%q ' "${_fzf_default_opts[@]}"
 unset _fzf_default_opts
 export -- FZF_DEFAULT_OPTS
 
@@ -32,7 +32,7 @@ _fzf_default_command=(
   --type file
   --type symlink
 )
-FZF_DEFAULT_COMMAND="$(printf -- '%q ' "${_fzf_default_command[@]}")"
+printf -v FZF_DEFAULT_COMMAND -- '%q ' "${_fzf_default_command[@]}"
 unset _fzf_default_command
 export -- FZF_DEFAULT_COMMAND
 
@@ -45,7 +45,7 @@ _fzf_alt_c_command=(
   --type directory
 )
 # shellcheck disable=SC2034
-FZF_ALT_C_COMMAND="$(printf -- '%q ' "${_fzf_alt_c_command[@]}")"
+printf -v FZF_ALT_C_COMMAND -- '%q ' "${_fzf_alt_c_command[@]}"
 unset _fzf_alt_c_command
 
 _fzf_ctrl_t_command=(
@@ -55,7 +55,7 @@ _fzf_ctrl_t_command=(
   --no-ignore
 )
 # shellcheck disable=SC2034
-FZF_CTRL_T_COMMAND="$(printf -- '%q ' "${_fzf_ctrl_t_command[@]}")"
+printf -v FZF_CTRL_T_COMMAND -- '%q ' "${_fzf_ctrl_t_command[@]}"
 unset _fzf_ctrl_t_command
 
 _fzf_preview=(
@@ -66,7 +66,7 @@ _fzf_alt_c_opts=(
   "${_fzf_preview[@]}"
 )
 # shellcheck disable=SC2034
-FZF_ALT_C_OPTS="$(printf -- '%q ' "${_fzf_alt_c_opts[@]}")"
+printf -v FZF_ALT_C_OPTS -- '%q ' "${_fzf_alt_c_opts[@]}"
 unset _fzf_alt_c_opts
 # shellcheck disable=SC2034
 FZF_CTRL_T_OPTS="$FZF_ALT_C_OPTS"

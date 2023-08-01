@@ -3,5 +3,5 @@
 SNI="$1"
 shift
 
-PROXY="$(printf -- '%q ' exec openssl s_client -quiet -connect '%h:%p' -servername "$SNI")"
+printf -v PROXY -- '%q ' exec openssl s_client -quiet -connect '%h:%p' -servername "$SNI"
 exec -- ssh -o ProxyCommand="$PROXY" "$@"
