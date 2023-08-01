@@ -1,6 +1,8 @@
 .PHONY: nvim
 
-nvim: $(CONFIG)/nvim/pack/modules/start/chadtree
+NVIM_MVP := $(CONFIG)/nvim/pack/modules/start/chadtree
 
-$(CONFIG)/nvim/pack/modules/start/chadtree: | $(CONFIG)/nvim
+nvim: $(NVIM_MVP)
+
+$(NVIM_MVP): | $(CONFIG)/nvim
 	gmake --directory '$(CONFIG)/nvim' -- mvp
