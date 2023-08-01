@@ -2,7 +2,7 @@
 
 zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd $(BIN)/oh-my-posh
 
-/usr/bin/zsh /bin/batcat /bin/fdfind: pkg.posix
+/usr/bin/zsh /bin/batcat /bin/fdfind: | pkg.posix
 
 /usr/local/bin/bat: | /bin/batcat
 	sudo -- ln -v -sf -- '$|' '$@'

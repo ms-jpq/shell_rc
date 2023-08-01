@@ -1,6 +1,6 @@
 .PHONY: pipx clobber.pipx
 
-PIPX := $(OPT)/pipx/venvs
+PIPX := $(LOCAL)/pipx/venvs
 
 clobber: clobber.pipx
 clobber.pipx:
@@ -14,24 +14,24 @@ $(OPT)/pipx/bin/pipx: | $(OPT)/pipx
 
 define PIPX_TEMPLATE
 
-pipx: .WAIT $(PIPX)/$1
-$(PIPX)/$1: $(OPT)/pipx/bin/pipx
+.NOTPARALLEL: $(PIPX)/$1
+pipx: $(PIPX)/$1
+$(PIPX)/$1: | $(OPT)/pipx/bin/pipx
 	if [[ -d '$$@' ]]; then
-		'$$<' upgrade -- '$2'
+		'$(OPT)/pipx/bin/pipx' upgrade -- '$2'
 	else
-		'$$<' install -- '$2'
+		'$(OPT)/pipx/bin/pipx' install -- '$2'
 	fi
 
 endef
 
+# lookatme              lookatme
 define PIP_PKGS
 
 gay                   gay
 graphtage             graphtage
 httpie                httpie
-lookatme              lookatme
 markdown-live-preview markdown_live_preview
-py-dev                https://github.com/ms-jpq/py-dev/archive/dev.tar.gz
 sortd                 sortd
 
 endef
