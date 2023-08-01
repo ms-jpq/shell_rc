@@ -1,11 +1,6 @@
-#!/usr/bin/env -S -- bash
+#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
 
-set -Eeu
 set -o pipefail
-shopt -s dotglob
-shopt -s extglob
-shopt -s failglob
-shopt -s nullglob
 
 case "$OSTYPE" in
 linux*)

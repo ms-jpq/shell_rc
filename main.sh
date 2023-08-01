@@ -52,7 +52,8 @@ shell() {
 
 gmake all
 
-ENV="$(shell bash -c "$(<'./libexec/env.sh')")"
+BSH=(bash --norc --noprofile -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
+ENV="$(shell "${BSH[@]}" "$(<'./libexec/env.sh')")"
 printf -- '%s\n' "$ENV"
 
 set -a
@@ -97,7 +98,7 @@ for FS in "${!FFS[@]}"; do
 
   LINKS="./layers/$OS/$FS.sh"
   if [[ -x "$LINKS" ]]; then
-    shell "${EX[@]}" bash -c "$(<"$LINKS")"
+    shell "${EX[@]}" "${BSH[@]}" "$(<"$LINKS")"
   fi
 
   EMPTY=1
@@ -111,4 +112,4 @@ for FS in "${!FFS[@]}"; do
   fi
 done
 
-shell "$ENV_HOME/.local/opt/initd/make.sh"
+shell "$ENV_HOME/.local/opt/initd/make.sh" "$@"

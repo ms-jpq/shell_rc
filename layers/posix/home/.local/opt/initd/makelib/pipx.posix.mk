@@ -1,5 +1,6 @@
-.PHONY: pipx clobber.pipx
+.PHONY: pipx clobber.pipx .WAIT
 
+.WAIT:
 PIPX := $(LOCAL)/pipx/venvs
 
 clobber: clobber.pipx
@@ -12,15 +13,18 @@ $(OPT)/pipx:
 $(OPT)/pipx/bin/pipx: | $(OPT)/pipx
 	'$(OPT)/pipx/bin/pip' install --require-virtualenv --upgrade -- pipx
 
+
+PIPX_EX := ./libexec/pipx-lock.sh $(OPT)/pipx/bin/pipx
+
 define PIPX_TEMPLATE
 
-.NOTPARALLEL: $(PIPX)/$1
+$(PIPX)/$1: .WAIT
 pipx: $(PIPX)/$1
 $(PIPX)/$1: | $(OPT)/pipx/bin/pipx
 	if [[ -d '$$@' ]]; then
-		'$(OPT)/pipx/bin/pipx' upgrade -- '$2'
+		$(PIPX_EX) upgrade -- '$2'
 	else
-		'$(OPT)/pipx/bin/pipx' install -- '$2'
+		$(PIPX_EX) install -- '$2'
 	fi
 
 endef
