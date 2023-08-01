@@ -6,7 +6,7 @@ clobber: clobber.pipx
 clobber.pipx:
 	rm -v -rf -- '$(OPT)/pipx' '$(PIPX)'
 
-$(OPT)/pipx:
+$(OPT)/pipx: | /usr/share/doc/python3-venv
 	python3 -m venv --upgrade -- '$@'
 
 $(OPT)/pipx/bin/pipx: | $(OPT)/pipx
