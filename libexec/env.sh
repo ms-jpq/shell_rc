@@ -25,30 +25,25 @@ darwin*)
   fi
 
   trim() {
-    local -- v="$1"
+    local -- v
+    v="$(tr --delete '\r' | tr --delete $'\n')"
     v="${v#* }"
     v="${v##+([[:space:]])}"
     v="${v%%+([[:space:]])}"
     printf -- '%s' "$v"
   }
 
-  ID="$(wmic os get Version | tr --delete '\r' | tr --delete $'\n')"
-  ID="$(trim "$ID")"
-
-  VERSION_ID="$(wmic os get Caption | tr --delete '\r' | tr --delete $'\n')"
-  VERSION_ID="$(trim "$VERSION_ID")"V
+  ID="$(wmic os get Caption | trim)"
+  VERSION_ID="$(wmic os get Version | trim)"
   VERSION_CODENAME="$VERSION_ID"
 
   # shellcheck disable=SC2154
   NPROC="$("$PSH" -command '(Get-WmiObject -Class Win32_Processor).NumberOfCores')"
 
-  MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | tr --delete '\r' | tr --delete $'\n')"
-  MEMINFO="$(trim "$MEMINFO")"
+  MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
   ;;
 *) ;;
 esac
-
-RSYNC="$(command -v -- rsync || true)"
 
 tee <<-EOF
 ENV_HOME=$(printf -- '%q' "$HOME")
@@ -59,7 +54,6 @@ ENV_MACHTYPE=$(printf -- '%q' "$MACHTYPE")
 ENV_MEMINFO=$(printf -- '%q' "$MEMINFO")
 ENV_NPROC=$(printf -- '%q' "$NPROC")
 ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")
-ENV_RSYNC=$(printf -- '%q' "$RSYNC")
 ENV_VERSION_CODENAME=$(printf -- '%q' "$VERSION_CODENAME")
 ENV_VERSION_ID=$(printf -- '%q' "$VERSION_ID")
 EOF

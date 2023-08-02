@@ -1,7 +1,7 @@
 define ARCHIVE_TEMPLATE
 
 $(TMP)/curl/$1: | $(TMP)/curl
-	./libexec/curl-unpack.sh '$(subst !!,,$2)' '$$|'
+	./libexec/curl-unpack.sh '$(subst **,,$2)' '$$|'
 
 $(BIN)/$(notdir $1): $(TMP)/curl/$1
 	install --backup -- '$$<' '$$@'
@@ -35,5 +35,5 @@ xsv.exe                                                     https://github.com/B
 endef
 
 
-CURL_ARCHIVES := $(shell tr -s ' ' '#' <<<'$(CURL_ARCHIVES)')
+CURL_ARCHIVES := $(shell tr -s ' ' '!' <<<'$(CURL_ARCHIVES)')
 $(call META_2D,CURL_ARCHIVES,ARCHIVE_TEMPLATE)

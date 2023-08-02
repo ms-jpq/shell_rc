@@ -35,6 +35,6 @@ $(OPT)/zsh-syntax-highlighting      https://github.com/zsh-users/zsh-syntax-high
 
 endef
 
-GIT_REPOS := $(shell tr -s ' ' '#' <<<'$(GIT_REPOS)')
+GIT_REPOS := $(shell tr -s ' ' '!' <<<'$(GIT_REPOS)')
 
 $(call META_2D,GIT_REPOS,GIT_TEMPLATE)

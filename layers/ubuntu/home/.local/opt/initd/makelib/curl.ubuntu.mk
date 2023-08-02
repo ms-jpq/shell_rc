@@ -2,10 +2,10 @@
 all: deb
 
 define ARCHIVE_TEMPLATE
-ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$2))
+ifneq (aarch64**,$(MACHTYPE)$(findstring **,$2))
 
 $(TMP)/curl/$1: | $(TMP)/curl /usr/bin/curl /usr/bin/jq /usr/bin/unzip
-	./libexec/curl-unpack.sh '$(subst !!,,$2)' '$(TMP)/curl'
+	./libexec/curl-unpack.sh '$(subst **,,$2)' '$(TMP)/curl'
 
 $(BIN)/$(notdir $1): $(TMP)/curl/$1
 	install --backup -- '$$<' '$$@'
@@ -17,10 +17,10 @@ endef
 
 
 define DEB_TEMPLATE
-ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$2))
+ifneq (aarch64**,$(MACHTYPE)$(findstring **,$2))
 
 $(TMP)/curl/$(notdir $2): | $(TMP)/curl /usr/bin/curl /usr/bin/jq
-	$(CURL) --output '$$@' -- '$(subst !!,,$2)'
+	$(CURL) --output '$$@' -- '$(subst **,,$2)'
 
 $1: | .WAIT $(TMP)/curl/$(notdir $2) $(APT_DEPS) pkg.posix
 	$$(APT_INSTALL) -o DPkg::Lock::Timeout=-1 -- '$$<'
@@ -61,12 +61,12 @@ dust-$(V_DUST)-$(MACHTYPE)-unknown-linux-gnu/dust https://github.com/bootandy/du
 fzf                                               https://github.com/junegunn/fzf/releases/latest/download/fzf-$(V_FZF)-linux_$(GOARCH).tar.gz
 gitui                                             https://github.com/extrawurst/gitui/releases/latest/download/gitui-linux-$(GITUI_TYPE).tar.gz
 gojq_$(V_GOJQ)_linux_$(GOARCH)/gojq               https://github.com/itchyny/gojq/releases/latest/download/gojq_$(V_GOJQ)_linux_$(GOARCH).tar.gz
-htmlq                                             !!https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-linux.tar.gz
-jless                                             !!https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-$(V_JLESS)-x86_64-unknown-linux-gnu.zip
+htmlq                                             **https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-linux.tar.gz
+jless                                             **https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-$(V_JLESS)-x86_64-unknown-linux-gnu.zip
 lazygit                                           https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_$(V_LAZYGIT)_Linux_$(LAZY_TYPE).tar.gz
 posh-linux-$(GOARCH)                              https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(GOARCH)
 tokei                                             https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-$(MACHTYPE)-unknown-linux-gnu.tar.gz
-xsv                                               !!https://github.com/BurntSushi/xsv/releases/latest/download/xsv-$(V_XSV)-x86_64-unknown-linux-musl.tar.gz
+xsv                                               **https://github.com/BurntSushi/xsv/releases/latest/download/xsv-$(V_XSV)-x86_64-unknown-linux-musl.tar.gz
 
 endef
 
@@ -76,14 +76,14 @@ define CURL_DEBS
 /etc/apt/sources.list.d/microsoft-prod.list https://packages.microsoft.com/config/ubuntu/$(VERSION_ID)/packages-microsoft-prod.deb
 /usr/bin/delta                              https://github.com/dandavison/delta/releases/latest/download/git-delta_$(V_DELTA)_$(GOARCH).deb
 /usr/bin/pastel                             https://github.com/sharkdp/pastel/releases/latest/download/pastel_$(V_PASTEL)_$(GOARCH).deb
-/usr/bin/tidy-viewer                        !!https://github.com/alexhallam/tv/releases/latest/download/tidy-viewer_$(V_TV)_$(GOARCH).deb
+/usr/bin/tidy-viewer                        **https://github.com/alexhallam/tv/releases/latest/download/tidy-viewer_$(V_TV)_$(GOARCH).deb
 /usr/bin/watchexec                          https://github.com/watchexec/watchexec/releases/latest/download/watchexec-$(V_WATCHEX)-$(MACHTYPE)-unknown-linux-gnu.deb
 /usr/local/bin/sad                          https://github.com/ms-jpq/sad/releases/latest/download/$(MACHTYPE)-unknown-linux-gnu.deb
 
 endef
 
 
-CURL_ARCHIVES := $(shell tr -s ' ' '#' <<<'$(CURL_ARCHIVES)')
-CURL_DEBS := $(shell tr -s ' ' '#' <<<'$(CURL_DEBS)')
+CURL_ARCHIVES := $(shell tr -s ' ' '!' <<<'$(CURL_ARCHIVES)')
+CURL_DEBS := $(shell tr -s ' ' '!' <<<'$(CURL_DEBS)')
 $(call META_2D,CURL_ARCHIVES,ARCHIVE_TEMPLATE)
 $(call META_2D,CURL_DEBS,DEB_TEMPLATE)
