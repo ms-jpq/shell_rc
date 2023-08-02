@@ -19,18 +19,9 @@ darwin*)
 linux*)
   PKGS="$(dpkg --get-selections | cut --field 1)"
   ;;
-*msys*)
-  WINGET=(
-    winget install
-    --disable-interactivity
-    --accept-source-agreements --accept-package-agreements
-    --exact --id
-  )
-  if ! command -v -- jq; then
-    "${WINGET[@]}" 'stedolan.jq'
-  fi
+msys*)
   WG_JSON="$(mktemp)"
-  winget export --disable-interactivity --accept-source-agreements --output "$WG_JSON"
+  winget.exe export --disable-interactivity --accept-source-agreements --output "$WG_JSON"
   PKGS="$(jq --exit-status --raw-output '.Sources[].Packages[].PackageIdentifier' "$WG_JSON")"
   ;;
 *)
@@ -80,7 +71,7 @@ if (("${#RM[@]}")); then
     ;;
   *msys*)
     for DEL in "${RM[@]}"; do
-      winget uninstall --disable-interactivity --accept-source-agreements --id "$DEL"
+      winget.exe uninstall --disable-interactivity --accept-source-agreements --id "$DEL"
     done
     ;;
   *)
@@ -100,7 +91,14 @@ if (("${#ADD[@]}")); then
     ;;
   *msys*)
     for A in "${ADD[@]}"; do
-      "${WINGET[@]}" "$A"
+      WINGET=(
+        winget.exe install
+        --disable-interactivity
+        --accept-source-agreements --accept-package-agreements
+        --exact
+        --id "$A"
+      )
+      "${WINGET[@]}"
     done
     ;;
   *)
