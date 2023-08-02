@@ -57,17 +57,17 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
     def cont() -> Iterator[str]:
         lex = shlex(val, posix=True)
         lex.whitespace = ""
-        tmp: MutableSequence[str] = []
+        acc: MutableSequence[str] = []
 
         for token in lex:
             if token.isspace():
-                yield Template("".join(tmp)).substitute(env)
-                tmp.clear()
+                yield Template("".join(acc)).substitute(env)
+                acc.clear()
                 yield token
             else:
-                tmp.append(token)
+                acc.append(token)
 
-        yield Template("".join(tmp)).substitute(env)
+        yield Template("".join(acc)).substitute(env)
 
     try:
         parsed = "".join(cont())
