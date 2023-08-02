@@ -4,13 +4,14 @@ from argparse import ArgumentParser, Namespace
 from configparser import RawConfigParser
 from contextlib import contextmanager
 from itertools import chain
+from json import dumps
 from logging import INFO, StreamHandler, getLogger
 from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
-from shlex import quote, shlex
+from shlex import shlex
 from shutil import which
-from string import Template, whitespace
+from string import Template
 from sys import exit
 from typing import (
     Iterable,
@@ -21,6 +22,7 @@ from typing import (
     Optional,
     Tuple,
 )
+from unicodedata import normalize
 from uuid import uuid4
 
 log = getLogger()
@@ -83,12 +85,8 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
 
 
 def _print(key: str, val: str) -> None:
-    ws = {*whitespace}
-    lhs = "".join(
-        char.encode("unicode_escape").decode("utf-8") if char in ws else char
-        for char in key
-    )
-    rhs = quote(val)
+    lhs = dumps(key, ensure_ascii=False)[1:-1]
+    rhs = dumps(val, ensure_ascii=False)[1:-1]
     log.info("%s", f">> {lhs}={rhs}")
 
 
@@ -134,8 +132,9 @@ def main() -> None:
     env_path = Path(args.path)
     dotenv = "" if env_path == PurePath("-") else env_path.read_text("utf-8")
 
+    norm = normalize("NFKD", dotenv)
     p_env = {**environ}
-    env = _trans(_parse(dotenv), env=p_env)
+    env = _trans(_parse(norm), env=p_env)
 
     if cmd := which(args.arg0):
         execle(cmd, normcase(cmd), *args.argv, {**env, **p_env})
