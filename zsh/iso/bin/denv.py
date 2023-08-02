@@ -3,17 +3,23 @@
 from argparse import ArgumentParser, Namespace
 from configparser import RawConfigParser
 from itertools import chain
-from json import dumps
-from locale import strxfrm
 from logging import INFO, StreamHandler, getLogger
 from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
-from shlex import shlex
+from shlex import quote, shlex
 from shutil import which
 from string import Template, whitespace
 from sys import exit
-from typing import Iterable, Iterator, Mapping, MutableMapping, MutableSequence, Tuple
+from typing import (
+    Iterable,
+    Iterator,
+    Mapping,
+    MutableMapping,
+    MutableSequence,
+    Optional,
+    Tuple,
+)
 from uuid import uuid4
 
 log = getLogger()
@@ -21,7 +27,7 @@ log.setLevel(INFO)
 log.addHandler(StreamHandler())
 
 
-def _parse(text: str) -> Iterator[Tuple[str, str]]:
+def _parse(text: str) -> Iterator[Tuple[str, Optional[str]]]:
     class _Parser(RawConfigParser):
         def optionxform(self, optionstr: str) -> str:
             return optionstr
@@ -34,9 +40,16 @@ def _parse(text: str) -> Iterator[Tuple[str, str]]:
         comment_prefixes=("#",),
         delimiters=("=",),
     )
-    parser.read_string(lines)
-    for section in parser.values():
-        yield from section.items()
+
+    try:
+        parser.read_string(lines)
+    except AttributeError:
+        ls = linesep.join(f">! {line}" for line in text.splitlines())
+        log.error("%s", ls)
+        exit(True)
+    else:
+        for section in parser.values():
+            yield from section.items()
 
 
 def _subst(val: str, env: Mapping[str, str]) -> str:
@@ -58,41 +71,38 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
     try:
         parsed = "".join(cont())
     except (KeyError, ValueError) as e:
-        log.error(
-            f"> %s{linesep}%s",
-            e,
-            dumps(val, ensure_ascii=False),
-        )
+        es = repr(type(e)(val))
+        log.error("%s", f">! {es}")
         exit(True)
     else:
         return parsed.encode("utf-8").decode("unicode_escape")
 
 
+def _print(key: str, val: str) -> None:
+    ws = {*whitespace}
+    lhs = "".join(
+        char.encode("unicode_escape").decode("utf-8") if char in ws else char
+        for char in key
+    )
+    rhs = quote(val)
+    log.info("%s", f">> {lhs}={rhs}")
+
+
 def _trans(
-    stream: Iterable[Tuple[str, str]], env: Mapping[str, str]
+    stream: Iterable[Tuple[str, Optional[str]]], env: Mapping[str, str]
 ) -> Mapping[str, str]:
     seen: MutableMapping[str, str] = {}
     for key, val in stream:
+        if val is None:
+            es = repr(ValueError(key))
+            log.error("%s", f">! {es}")
+            exit(True)
+
         if key not in env:
-            seen[key] = _subst(val, env={**seen, **env})
+            seen[key] = val = _subst(val, env={**seen, **env})
+        _print(key, val)
 
     return seen
-
-
-def _print(env: Mapping[str, str]) -> None:
-    ws = {*whitespace}
-
-    def cont() -> Iterable[str]:
-        ordered = sorted(env.items(), key=lambda kv: tuple(map(strxfrm, kv)))
-        for key, val in ordered:
-            lhs = "".join(
-                char.encode("unicode_escape").decode("utf-8") if char in ws else char
-                for char in key
-            )
-            rhs = dumps(val, ensure_ascii=False)
-            yield f"{lhs}={rhs}"
-
-    log.info("%s", linesep.join(cont()))
 
 
 def _arg_parse() -> Namespace:
@@ -112,7 +122,6 @@ def main() -> None:
     p_env = {**environ}
     env = _trans(_parse(dotenv), env=p_env)
 
-    _print(env)
     if cmd := which(args.arg0):
         execle(cmd, normcase(cmd), *args.argv, {**env, **p_env})
     else:
