@@ -10,4 +10,4 @@ build.ubuntu: ./docker/ubuntu.Dockerfile
 	docker buildx build --progress plain --tag 'shell' --file '$<' -- .
 
 build.nt: ./docker/nt.Dockerfile
-	docker build --progress plain --tag 'shell' --file '$<' -- .
+	docker build --tag 'shell' --file '$<' -- .

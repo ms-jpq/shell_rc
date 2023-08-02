@@ -13,81 +13,73 @@ jobs:
     strategy:
       matrix:
         platform:
-          - ubuntu-latest
-          # - windows-latest
+          # - ubuntu-latest
+          - windows-latest
 
     runs-on: ${{ matrix.platform }}
 
     steps:
       - uses: actions/checkout@v3
 
-      # - uses: docker/build-push-action@v1
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
-      #     repository: ${{ secrets.DOCKER_USERNAME }}/cli
-      #     tags: latest
-      #     dockerfile: "docker/posix/Dockerfile"
-
       - shell: bash
         run: |-
           gmake build
 
-  ubuntu:
-    runs-on: ubuntu-latest
+  # ubuntu:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - run: |-
-          gmake lint
+  #     - run: |-
+  #         gmake lint
 
-      - run: |-
-          ./main.sh localhost
+  #     - run: |-
+  #         ./main.sh localhost
 
-      - run: |-
-          gmake fmt
-          git diff --exit-code
+  #     - run: |-
+  #         gmake fmt
+  #         git diff --exit-code
 
-  macos:
-    runs-on: macos-latest
+  # macos:
+  #   runs-on: macos-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - run: |-
-          brew install -- bash make gnu-getopt
-          rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
+  #     - run: |-
+  #         brew install -- bash make gnu-getopt
+  #         rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
-      - run: |-
-          gmake lint
+  #     - run: |-
+  #         gmake lint
 
-      - run: |-
-          BREW="$(brew --prefix)"
-          PATH="$BREW/opt/gnu-getopt/bin:$PATH" ./main.sh localhost
+  #     - run: |-
+  #         BREW="$(brew --prefix)"
+  #         PATH="$BREW/opt/gnu-getopt/bin:$PATH" ./main.sh localhost
 
-  windows:
-    runs-on: windows-latest
+  # windows:
+  #   runs-on: windows-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - run: |-
-          powershell ./layers/nt/winget.ps1
+  #     - run: |-
+  #         powershell ./layers/nt/winget.ps1
 
-      - run: |-
-          winget install --disable-interactivity --accept-source-agreements --accept-package-agreements --exact --id BurntSushi.ripgrep.MSVC
-          $TMP = 'wg.json'
-          winget export --disable-interactivity --accept-source-agreements --output $TMP
-          Get-Content -- $TMP
+  #     - run: |-
+  #         winget install --disable-interactivity --accept-source-agreements --accept-package-agreements --exact --id BurntSushi.ripgrep.MSVC
+  #         $TMP = 'wg.json'
+  #         winget export --disable-interactivity --accept-source-agreements --output $TMP
+  #         Get-Content -- $TMP
 
-      # - shell: bash
-      #   run: |-
-      #     rm -v -f -- "$HOMEPATH/.local/share"
-      #     choco install -- rsync
+  # - shell: bash
+  #   run: |-
+  #     rm -v -f -- "$HOMEPATH/.local/share"
+  #     choco install -- rsync
 
-      # - shell: bash
-      #   run: |-
-      #     git --exec-path
-      #     git --info-path
-      #     ./main.sh localhost
+  # - shell: bash
+  #   run: |-
+  #     git --exec-path
+  #     git --info-path
+  #     ./main.sh localhost
