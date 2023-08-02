@@ -1,5 +1,5 @@
-FROM mcr.microsoft.com/powershell:latest
+FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
 WORKDIR /
 COPY ./layers/nt/winget.ps1 ./
-RUN .\winget.ps1
+RUN powershell -File winget.ps1
