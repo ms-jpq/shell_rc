@@ -2,8 +2,6 @@
 
 set -o pipefail
 
-cd -- ~
-
 mkdir -v -p -- "$HOME/.local"
 
 link() {
