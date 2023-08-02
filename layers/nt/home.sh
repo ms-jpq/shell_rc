@@ -15,7 +15,7 @@ link() {
   local -- src="$1" dst="$2"
 
   if ! [[ -L "$dst" ]]; then
-    ln -v -sf -- "$src" "$dst" || true
+    ln -v -sf -- "$src" "$dst"
   fi
 }
 
