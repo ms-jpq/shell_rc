@@ -57,23 +57,23 @@ def _parse(text: str) -> Iterator[Tuple[str, Optional[str]]]:
 
 
 def _subst(val: str, env: Mapping[str, str]) -> str:
+    if val.startswith("'") and val.endswith("'"):
+        return val[1:-1]
+
     def cont() -> Iterator[str]:
-        if val.startswith("'") and val.endswith("'"):
-            yield val[1:-1]
-        else:
-            lex = shlex(val, posix=True)
-            lex.whitespace = ""
-            acc: MutableSequence[str] = []
+        lex = shlex(val, posix=True)
+        lex.whitespace = ""
+        acc: MutableSequence[str] = []
 
-            for token in lex:
-                if token.isspace():
-                    yield Template("".join(acc)).substitute(env)
-                    acc.clear()
-                    yield token
-                else:
-                    acc.append(token)
+        for token in lex:
+            if token.isspace():
+                yield Template("".join(acc)).substitute(env)
+                acc.clear()
+                yield token
+            else:
+                acc.append(token)
 
-            yield Template("".join(acc)).substitute(env)
+        yield Template("".join(acc)).substitute(env)
 
     try:
         parsed = "".join(cont())
