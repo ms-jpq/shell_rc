@@ -18,12 +18,14 @@ darwin*)
   MEMINFO="$(sysctl -n hw.memsize)"
   ;;
 *msys*)
-  ID="$(wmic os get Caption)"
-  VERSION_ID="$(wmic os get Version)"
+  ID="$(wmic os get Version)"
+  VERSION_ID="$(wmic os get Caption)"
   VERSION_CODENAME="$VERSION_ID"
   # shellcheck disable=SC2154
   NPROC="$NUMBER_OF_PROCESSORS"
-  MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory)"
+  MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | tr --delete $'\r' | tr --delete $'\n')"
+  MEMINFO="${MEMINFO##* }"
+  MEMINFO="${MEMINFO%% *}"
   ;;
 *) ;;
 esac
@@ -36,8 +38,8 @@ ENV_HOSTNAME=$(printf -- '%q' "$HOSTNAME")
 ENV_HOSTTYPE=$(printf -- '%q' "$HOSTTYPE")
 ENV_ID=$(printf -- '%q' "$ID")
 ENV_MACHTYPE=$(printf -- '%q' "$MACHTYPE")
-ENV_MEMINFO=$MEMINFO
-ENV_NPROC=$NPROC
+ENV_MEMINFO=$(printf -- '%q' "$MEMINFO")
+ENV_NPROC=$(printf -- '%q' "$NPROC")
 ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")
 ENV_RSYNC=$(printf -- '%q' "$RSYNC")
 ENV_VERSION_CODENAME=$(printf -- '%q' "$VERSION_CODENAME")
