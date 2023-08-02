@@ -68,7 +68,6 @@ jobs:
           powershell ./layers/nt/winget.ps1
 
       - run: |-
-          winget install --disable-interactivity --accept-source-agreements --accept-package-agreements --exact --id BurntSushi.ripgrep.MSVC
           $TMP = 'wg.json'
           winget export --disable-interactivity --accept-source-agreements --output $TMP
           Get-Content -- $TMP
