@@ -5,11 +5,11 @@ from configparser import RawConfigParser
 from contextlib import contextmanager
 from itertools import chain
 from json import dumps
-from logging import INFO, StreamHandler, getLogger
+from logging import INFO, StreamHandler, captureWarnings, getLogger
 from os import environ, execle, linesep
 from os.path import normcase
 from pathlib import Path, PurePath
-from shlex import shlex
+from shlex import quote, shlex
 from shutil import which
 from string import Template
 from sys import exit
@@ -25,6 +25,7 @@ from typing import (
 from unicodedata import normalize
 from uuid import uuid4
 
+captureWarnings(True)
 log = getLogger()
 log.setLevel(INFO)
 log.addHandler(StreamHandler())
@@ -81,12 +82,23 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
         log.error("%s", f">! {es}")
         exit(True)
     else:
-        return parsed.encode("utf-8").decode("unicode_escape")
+        try:
+            text = parsed.encode("utf-8").decode("unicode_escape")
+        except UnicodeDecodeError as e:
+            es = repr(type(e))
+            log.error("%s", f">! {es}")
+            exit(True)
+        else:
+            return text
+
+
+def _quote(text: str) -> str:
+    return quote("".join(dumps(ch, ensure_ascii=False)[1:-1] for ch in text))
 
 
 def _print(key: str, val: str) -> None:
-    lhs = dumps(key, ensure_ascii=False)[1:-1]
-    rhs = dumps(val, ensure_ascii=False)[1:-1]
+    lhs = _quote(key)
+    rhs = _quote(val)
     log.info("%s", f">> {lhs}={rhs}")
 
 
