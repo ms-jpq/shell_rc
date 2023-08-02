@@ -23,7 +23,7 @@ $(TMP)/curl/$(notdir $2): | $(TMP)/curl /usr/bin/curl /usr/bin/jq
 	$(CURL) --output '$$@' -- '$(subst !!,,$2)'
 
 $1: | .WAIT $(TMP)/curl/$(notdir $2) $(APT_DEPS) pkg
-	$$(APT_INSTALL) -- '$$<'
+	$$(APT_INSTALL) -o DPkg::Lock::Timeout=-1 -- '$$<'
 deb: $1
 
 endif
