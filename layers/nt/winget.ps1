@@ -2,6 +2,7 @@
 
 Set-StrictMode -Version 'Latest'
 $ErrorActionPreference = 'Stop'
+Set-PSDebug -Trace 1
 
 $has_pkg = Get-AppPackage -name 'Microsoft.DesktopAppInstaller'
 
@@ -15,7 +16,7 @@ if (!$has_pkg) {
 
     Write-Host -- $bundle
     Write-Host -- $license
-    
+
     $t_bundle = $bundle.browser_download_url | Split-Path -Leaf
     $t_license = $license.browser_download_url | Split-Path -Leaf
 

@@ -58,25 +58,25 @@ jobs:
   #         BREW="$(brew --prefix)"
   #         PATH="$BREW/opt/gnu-getopt/bin:$PATH" ./main.sh localhost
 
-  # windows:
-  #   runs-on: windows-latest
+  windows:
+    runs-on: windows-latest
 
-  #   steps:
-  #     - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - run: |-
-  #         powershell ./layers/nt/winget.ps1
+      - run: |-
+          powershell ./layers/nt/winget.ps1
 
-  #     - run: |-
-  #         winget install --disable-interactivity --accept-source-agreements --accept-package-agreements --exact --id BurntSushi.ripgrep.MSVC
-  #         $TMP = 'wg.json'
-  #         winget export --disable-interactivity --accept-source-agreements --output $TMP
-  #         Get-Content -- $TMP
+      - run: |-
+          winget install --disable-interactivity --accept-source-agreements --accept-package-agreements --exact --id BurntSushi.ripgrep.MSVC
+          $TMP = 'wg.json'
+          winget export --disable-interactivity --accept-source-agreements --output $TMP
+          Get-Content -- $TMP
 
-  # - shell: bash
-  #   run: |-
-  #     rm -v -f -- "$HOMEPATH/.local/share"
-  #     choco install -- rsync
+      - shell: bash
+        run: |-
+          rm -v -f -- "$HOMEPATH/.local/share"
+          choco install -- rsync
 
   # - shell: bash
   #   run: |-
