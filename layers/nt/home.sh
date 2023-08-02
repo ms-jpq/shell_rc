@@ -21,6 +21,6 @@ link() {
 
 link "$APPDATA" "$HOMEPATH/.config"
 link "$LOCALAPPDATA" "$HOMEPATH/.local/share"
-link "$LOCALLO" "$HOMEPATH/.local/state"
 link "$TEMP" "$HOMEPATH/.cache"
+link "$LOCALLO" "$HOMEPATH/.local/state"
 link "$LOCALHI" "$HOMEPATH/.local/opt"

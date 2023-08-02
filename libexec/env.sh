@@ -23,16 +23,24 @@ darwin*)
   else
     PSH=powershell
   fi
-  ID="$(wmic os get Version | tr --delete $'\r' | tr --delete $'\n')"
-  VERSION_ID="$(wmic os get Caption | tr --delete $'\r' | tr --delete $'\n')"
-  VERSION_ID="${VERSION_ID##* }"
-  VERSION_ID="${VERSION_ID%% *}"
+  ID="$(wmic os get Version | tr --delete '\r' | tr --delete $'\n')"
+  ID="${ID#* }"
+  ID="${ID##+([[:space:]])}"
+  ID="${ID%%+([[:space:]])}"
+
+  VERSION_ID="$(wmic os get Caption | tr --delete '\r' | tr --delete $'\n')"
+  VERSION_ID="${VERSION_ID#* }"
+  VERSION_ID="${VERSION_ID##+([[:space:]])}"
+  VERSION_ID="${VERSION_ID%%+([[:space:]])}"
   VERSION_CODENAME="$VERSION_ID"
+
   # shellcheck disable=SC2154
   NPROC="$("$PSH" -command '(Get-WmiObject -Class Win32_Processor).NumberOfCores')"
-  MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | tr --delete $'\r' | tr --delete $'\n')"
-  MEMINFO="${MEMINFO##* }"
-  MEMINFO="${MEMINFO%% *}"
+
+  MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | tr --delete '\r' | tr --delete $'\n')"
+  MEMINFO="${MEMINFO#* }"
+  MEMINFO="${MEMINFO##+([[:space:]])}"
+  MEMINFO="${MEMINFO%%+([[:space:]])}"
   ;;
 *) ;;
 esac
