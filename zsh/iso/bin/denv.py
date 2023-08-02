@@ -1,7 +1,8 @@
-#!/usr/bin/env -S -- PYTHONSAFEPATH= python3
+#!/usr/bin/env -S -- PYTHONSAFEPATH= /usr/bin/python3
 
 from argparse import ArgumentParser, Namespace
 from configparser import RawConfigParser
+from contextlib import contextmanager
 from itertools import chain
 from logging import INFO, StreamHandler, getLogger
 from os import environ, execle, linesep
@@ -88,19 +89,30 @@ def _print(key: str, val: str) -> None:
     log.info("%s", f">> {lhs}={rhs}")
 
 
+@contextmanager
+def _man() -> Iterator[None]:
+    log.info("%s", f"<<")
+    try:
+        yield None
+    finally:
+        log.info("%s", f"<<")
+
+
 def _trans(
     stream: Iterable[Tuple[str, Optional[str]]], env: Mapping[str, str]
 ) -> Mapping[str, str]:
     seen: MutableMapping[str, str] = {}
-    for key, val in stream:
-        if val is None:
-            es = repr(ValueError(key))
-            log.error("%s", f">! {es}")
-            exit(True)
 
-        if key not in env:
-            seen[key] = val = _subst(val, env={**seen, **env})
-        _print(key, val)
+    with _man():
+        for key, val in stream:
+            if val is None:
+                es = repr(ValueError(key))
+                log.error("%s", f">! {es}")
+                exit(True)
+
+            if key not in env:
+                seen[key] = val = _subst(val, env={**seen, **env})
+            _print(key, val)
 
     return seen
 
