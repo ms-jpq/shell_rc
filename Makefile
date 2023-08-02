@@ -15,7 +15,7 @@ SHELL := bash
 
 clean:
 	shopt -u failglob
-	rm -v -rf -- ./tmp
+	rm -v -rf -- '$(TMP)'
 
 clobber: clean
 	shopt -u failglob
