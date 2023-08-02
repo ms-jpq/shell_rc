@@ -4,20 +4,32 @@ Set-StrictMode -Version 'Latest'
 $ErrorActionPreference = 'Stop'
 Set-PSDebug -Trace 1
 
-$has_pkg = Get-AppPackage -name 'Microsoft.DesktopAppInstaller'
+$go = $($ENV:DOCKER -eq 1) -or !$(Get-AppPackage -name 'Microsoft.DesktopAppInstaller')
 
-if (!$has_pkg) {
+if ($go) {
     $vc_libs = 'https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx'
     $xaml_ui = 'https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.7.3/Microsoft.UI.Xaml.2.7.x64.appx'
 
     $t_vc_libs = $vc_libs | Split-Path -Leaf
     $t_xaml_ui = $xaml_ui | Split-Path -Leaf
 
+    Write-Host -- $t_vc_libs
+    Write-Host -- $t_xaml_ui
+
     Invoke-WebRequest -Uri $vc_libs -OutFile $t_vc_libs
     Invoke-WebRequest -Uri $xaml_ui -OutFile $t_xaml_ui
 
     Add-AppxPackage -Path $t_vc_libs
     Add-AppxPackage -Path $t_xaml_ui
+
+    #$vc = 'https://aka.ms/vs/16/release/vc_redist.x64.exe'
+    #$t_vc = $vc | Split-Path -Leaf
+
+    #Write-Host -- $t_vc
+
+    #Invoke-WebRequest -Uri $vc -OutFile $t_vc
+
+    #Start-Process -Wait -FilePath $t_vc -ArgumentList '/install', '/quiet', '/norestart'
 
     $releases = Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest'
     $bundle = $releases.assets | Where-Object { $_.browser_download_url.EndsWith('msixbundle') } | Select-Object -First 1
