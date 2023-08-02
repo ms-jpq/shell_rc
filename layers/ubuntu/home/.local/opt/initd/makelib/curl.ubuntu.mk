@@ -1,4 +1,4 @@
-.PHONY: deb deb-dep
+.PHONY: deb
 all: deb
 
 define ARCHIVE_TEMPLATE
@@ -22,8 +22,8 @@ ifneq (aarch64!!,$(MACHTYPE)$(findstring !!,$2))
 $(TMP)/curl/$(notdir $2): | $(TMP)/curl /usr/bin/curl /usr/bin/jq
 	$(CURL) --output '$$@' -- '$(subst !!,,$2)'
 
-deb-dep: $(TMP)/curl/$(notdir $2)
-$1: deb-dep
+$1: | .WAIT $(TMP)/curl/$(notdir $2)
+	$$(APT_INSTALL) -- '$$<'
 deb: $1
 
 endif

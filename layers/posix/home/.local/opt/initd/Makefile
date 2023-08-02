@@ -6,6 +6,7 @@ SHELL := bash
 .SHELLFLAGS := --norc --noprofile -Eeuo pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c
 
 .DEFAULT_GOAL := all
+.PHONY: .WAIT
 
 CONFIG := $(HOME)/.config
 LOCAL := $(HOME)/.local

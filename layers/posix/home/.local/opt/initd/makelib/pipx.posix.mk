@@ -1,5 +1,4 @@
-.PHONY: pipx clobber.pipx .WAIT
-.WAIT:
+.PHONY: pipx clobber.pipx
 
 PIPX := $(LOCAL)/pipx/venvs
 
@@ -14,7 +13,7 @@ $(OPT)/pipx/bin/pipx: | $(OPT)/pipx
 	'$(OPT)/pipx/bin/pip' install --require-virtualenv --upgrade -- pipx
 
 
-PIPX_EX := ./libexec/pipx-lock.sh $(OPT)/pipx/bin/pipx
+PIPX_EX := ./libexec/linux-lock.sh $(OPT)/pipx/bin/pipx
 
 define PIPX_TEMPLATE
 
