@@ -18,13 +18,18 @@ darwin*)
   MEMINFO="$(sysctl -n hw.memsize)"
   ;;
 *msys*)
+  if command -v -- pwsh >/dev/null; then
+    PSH=pwsh
+  else
+    PSH=powershell
+  fi
   ID="$(wmic os get Version | tr --delete $'\r' | tr --delete $'\n')"
   VERSION_ID="$(wmic os get Caption | tr --delete $'\r' | tr --delete $'\n')"
   VERSION_ID="${VERSION_ID##* }"
   VERSION_ID="${VERSION_ID%% *}"
   VERSION_CODENAME="$VERSION_ID"
   # shellcheck disable=SC2154
-  NPROC="$NUMBER_OF_PROCESSORS"
+  NPROC="$("$PSH" -command '(Get-WmiObject -Class Win32_Processor).NumberOfCores')"
   MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | tr --delete $'\r' | tr --delete $'\n')"
   MEMINFO="${MEMINFO##* }"
   MEMINFO="${MEMINFO%% *}"

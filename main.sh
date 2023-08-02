@@ -67,8 +67,6 @@ set -a
 eval -- "$ENV"
 set +a
 
-set -x
-
 # shellcheck disable=SC2154
 case "$ENV_OSTYPE" in
 darwin*)

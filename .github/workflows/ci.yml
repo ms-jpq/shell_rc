@@ -64,19 +64,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: |-
-          powershell ./layers/nt/winget.ps1
-
-      - run: |-
-          $TMP = 'wg.json'
-          winget export --disable-interactivity --accept-source-agreements --output $TMP
-          Get-Content -- $TMP
+      # - run: |-
+      #     powershell ./layers/nt/winget.ps1
+      #     $TMP = 'wg.json'
+      #     winget export --disable-interactivity --accept-source-agreements --output $TMP
+      #     Get-Content -- $TMP
 
       - shell: bash
         run: |-
-          choco install -- rsync
-          rm -v -f -- "$HOME/.local/share"
-
-      - shell: bash
-        run: |-
+          SYSTEMDRIVE="${SYSTEMDRIVE%%:}"
+          SYSTEMDRIVE="${SYSTEMDRIVE,,}"
+          PATH="/$SYSTEMDRIVE/msys64/usr/bin:$PATH"
+          pacman --sync --refresh --noconfirm -- rsync
           ./main.sh localhost || true

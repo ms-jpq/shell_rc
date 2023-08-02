@@ -4,7 +4,11 @@ set -o pipefail
 
 cd -- ~
 
-# shellcheck disable=2154
+HOMEPATH="${HOMEPATH:-"$HOME"}"
+APPDATA="${APPDATA:-"$HOMEPATH/AppData/Roaming"}"
+LOCALAPPDATA="${LOCALAPPDATA:-"$HOMEPATH/AppData/Local"}"
+TEMP="${TEMP:-"$LOCALAPPDATA/Temp"}"
+
 mkdir -v -p -- "$HOMEPATH/.local"
 
 link() {
@@ -15,12 +19,10 @@ link() {
   fi
 }
 
-# shellcheck disable=2154
 link "$APPDATA" "$HOMEPATH/.config"
-# shellcheck disable=2154
 link "$LOCALAPPDATA" "$HOMEPATH/.local/share"
 link "${LOCALAPPDATA}Low" "$HOMEPATH/.local/state"
-link "$LOCALAPPDATA/Temp" "$HOMEPATH/.cache"
+link "$TEMP" "$HOMEPATH/.cache"
 LOCALHI="$HOME/AppData/LocalHigh"
 mkdir -v -p -- "$LOCALHI"
 link "$LOCALHI" "$HOMEPATH/.local/opt"
