@@ -12,7 +12,6 @@ endef
 
 
 V_BAT     := $(shell $(GH_LATEST) sharkdp/bat)
-V_DUF     =  $(shell $(GH_LATEST) muesli/duf)
 V_DUST    := $(shell $(GH_LATEST) bootandy/dust)
 V_PASTEL  := $(shell $(GH_LATEST) sharkdp/pastel)
 V_WATCHEX := $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
@@ -22,7 +21,6 @@ V_XSV     =  $(shell $(GH_LATEST) BurntSushi/xsv)
 define CURL_ARCHIVES
 
 bat-$(V_BAT)-x86_64-pc-windows-msvc/bat.exe                 https://github.com/sharkdp/bat/releases/latest/download/bat-$(V_BAT)-x86_64-pc-windows-msvc.zip
-duf.exe                                                     https://github.com/muesli/duf/releases/latest/download/duf_$(V_DUF)_Windows_x86_64.zip
 dust-$(V_DUST)-x86_64-pc-windows-msvc/dust.exe              https://github.com/bootandy/dust/releases/latest/download/dust-$(V_DUST)-x86_64-pc-windows-msvc.zip
 gitui.exe                                                   https://github.com/extrawurst/gitui/releases/latest/download/gitui-win.tar.gz
 htmlq.exe                                                   https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-windows.zip

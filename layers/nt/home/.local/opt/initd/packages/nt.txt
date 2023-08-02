@@ -1,14 +1,14 @@
+# + Git.Git
 # + Git.MinGit
+# + GnuWin32.Make
 # + Microsoft.Sysinternals.Autoruns
 # + Microsoft.Sysinternals.BGInfo
 # + Microsoft.WindowsTerminal
 # + msys2.msys2
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
-+ Git.Git
 + GnuWin32.FindUtils
 + GnuWin32.Grep
-+ GnuWin32.Make
 + GnuWin32.Tar
 + GnuWin32.Tree
 + GnuWin32.UnZip
