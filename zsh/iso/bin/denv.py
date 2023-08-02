@@ -25,6 +25,8 @@ from typing import (
 from unicodedata import normalize
 from uuid import uuid4
 
+_CODEC = "utf-8"
+
 captureWarnings(True)
 log = getLogger()
 log.setLevel(INFO)
@@ -56,12 +58,39 @@ def _parse(text: str) -> Iterator[Tuple[str, Optional[str]]]:
             yield from section.items()
 
 
+def _decode(text: str) -> str:
+    return text.encode(_CODEC).decode("unicode_escape")
+
+
+def _codec(text: str) -> str:
+    def cont() -> Iterator[str]:
+        acc: MutableSequence[str] = []
+        for ch in text:
+            if ch.isascii():
+                acc.append(ch)
+            else:
+                yield _decode("".join(acc))
+                acc.clear()
+                yield ch
+
+        yield _decode("".join(acc))
+
+    try:
+        return "".join(cont())
+    except UnicodeDecodeError as e:
+        es = repr(type(e))
+        log.error("%s", f">! {es}")
+        exit(True)
+
+
 def _subst(val: str, env: Mapping[str, str]) -> str:
     if val.startswith("'") and val.endswith("'"):
         return val[1:-1]
+    else:
+        text = _codec(val)
 
     def cont() -> Iterator[str]:
-        lex = shlex(val, posix=True)
+        lex = shlex(text, posix=True)
         lex.whitespace = ""
         acc: MutableSequence[str] = []
 
@@ -78,18 +107,11 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
     try:
         parsed = "".join(cont())
     except (KeyError, ValueError) as e:
-        es = repr(type(e)(val))
+        es = repr(type(e)(text))
         log.error("%s", f">! {es}")
         exit(True)
     else:
-        try:
-            text = parsed.encode("utf-8").decode("unicode_escape")
-        except UnicodeDecodeError as e:
-            es = repr(type(e))
-            log.error("%s", f">! {es}")
-            exit(True)
-        else:
-            return text
+        return parsed
 
 
 def _quote(text: str) -> str:
@@ -142,7 +164,7 @@ def main() -> None:
     args = _arg_parse()
 
     env_path = Path(args.path)
-    dotenv = "" if env_path == PurePath("-") else env_path.read_text("utf-8")
+    dotenv = "" if env_path == PurePath("-") else env_path.read_text(_CODEC)
 
     norm = normalize("NFKD", dotenv)
     p_env = {**environ}
