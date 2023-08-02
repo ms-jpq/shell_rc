@@ -2,14 +2,14 @@
 
 set -o pipefail
 
-cd -- ~
-
 HOMEPATH="${HOMEPATH:-"$HOME"}"
 APPDATA="${APPDATA:-"$HOMEPATH/AppData/Roaming"}"
 LOCALAPPDATA="${LOCALAPPDATA:-"$HOMEPATH/AppData/Local"}"
 TEMP="${TEMP:-"$LOCALAPPDATA/Temp"}"
+LOCALLO="$HOME/AppData/LocalLow"
+LOCALHI="$HOME/AppData/LocalHigh"
 
-mkdir -v -p -- "$HOMEPATH/.local"
+mkdir -v -p -- "$HOMEPATH/.local" "$APPDATA" "$LOCALAPPDATA" "$TEMP" "$LOCALLO" "$LOCALHI"
 
 link() {
   local -- src="$1" dst="$2"
@@ -21,8 +21,6 @@ link() {
 
 link "$APPDATA" "$HOMEPATH/.config"
 link "$LOCALAPPDATA" "$HOMEPATH/.local/share"
-link "${LOCALAPPDATA}Low" "$HOMEPATH/.local/state"
+link "$LOCALLO" "$HOMEPATH/.local/state"
 link "$TEMP" "$HOMEPATH/.cache"
-LOCALHI="$HOME/AppData/LocalHigh"
-mkdir -v -p -- "$LOCALHI"
 link "$LOCALHI" "$HOMEPATH/.local/opt"
