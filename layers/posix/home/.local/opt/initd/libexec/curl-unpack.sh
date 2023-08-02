@@ -1,6 +1,7 @@
 #!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
 
 set -o pipefail
+set -x
 
 SRC="$1"
 DST="$2"
@@ -25,8 +26,15 @@ case "$SRC" in
   "${CURL[@]}" | "${UNTAR[@]}"
   ;;
 *.zip)
-  "${CURL[@]}" >"$DST/$NAME"
-  unzip -d "$DST" "$DST/$NAME"
+  FILE="$DST/$NAME"
+  "${CURL[@]}" >"$FILE"
+
+  if command -v -- cygpath >/dev/null; then
+    DST="$(cygpath --windows -- "$DST")"
+    FILE="$(cygpath --windows -- "$FILE")"
+  fi
+
+  unzip -d "$DST" "$FILE"
   ;;
 *)
   "${CURL[@]}" | dd of="$DST/$NAME"
