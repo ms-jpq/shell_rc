@@ -9,54 +9,61 @@ on:
     - cron: "0 0 * * *" # daily
 
 jobs:
-  # docker:
-  #   strategy:
-  #     matrix:
-  #       platform:
-  #         - ubuntu-latest
-  #         # - windows-latest
+  docker:
+    strategy:
+      matrix:
+        platform:
+          - ubuntu-latest
+          # - windows-latest
 
-  #   runs-on: ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
 
-  #   steps:
-  #     - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - shell: bash
-  #       run: |-
-  #         gmake build
+      # - shell: bash
+      #   run: |-
+      #     gmake build
 
-  # ubuntu:
-  #   runs-on: ubuntu-latest
+  ubuntu:
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - run: |-
-  #         gmake lint
+      # - run: |-
+      #     gmake lint
 
-  #     - run: |-
-  #         ./main.sh localhost
+      # - run: |-
+      #     ./main.sh localhost
 
-  #     - run: |-
-  #         gmake fmt
-  #         git diff --exit-code
+      # - run: |-
+      #     ./main.sh localhost
 
-  # macos:
-  #   runs-on: macos-latest
+      # - run: |-
+      #     gmake fmt
+      #     git diff --exit-code
 
-  #   steps:
-  #     - uses: actions/checkout@v3
+  macos:
+    runs-on: macos-latest
 
-  #     - run: |-
-  #         brew install -- bash make gnu-getopt
-  #         rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - run: |-
-  #         gmake lint
+      # - run: |-
+      #     brew install -- bash make gnu-getopt
+      #     rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
-  #     - run: |-
-  #         BREW="$(brew --prefix)"
-  #         PATH="$BREW/opt/gnu-getopt/bin:$PATH" ./main.sh localhost
+      # - run: |-
+      #     gmake lint
+
+      # - run: |-
+      #     BREW="$(brew --prefix)"
+      #     PATH="$BREW/opt/gnu-getopt/bin:$PATH" ./main.sh localhost
+
+      # - run: |-
+      #     BREW="$(brew --prefix)"
+      #     PATH="$BREW/opt/gnu-getopt/bin:$PATH" ./main.sh localhost
 
   windows:
     runs-on: windows-latest
@@ -64,11 +71,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - run: |-
-      #     powershell ./layers/nt/winget.ps1
-      #     $TMP = 'wg.json'
-      #     winget export --disable-interactivity --accept-source-agreements --output $TMP
-      #     Get-Content -- $TMP
+      - run: |-
+          powershell ./layers/nt/winget.ps1
+          $TMP = 'wg.json'
 
       - shell: bash
         run: |-
@@ -77,4 +82,9 @@ jobs:
           PATH="/$SYSTEMDRIVE/msys64/usr/bin:$PATH"
           pacman --sync --refresh --noconfirm -- rsync
           command -v -- gmake
+          command -v -- winget.exe
+          ./main.sh localhost || true
+
+      - shell: bash
+        run: |-
           ./main.sh localhost || true
