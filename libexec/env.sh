@@ -18,8 +18,10 @@ darwin*)
   MEMINFO="$(sysctl -n hw.memsize)"
   ;;
 *msys*)
-  ID="$(wmic os get Version)"
-  VERSION_ID="$(wmic os get Caption)"
+  ID="$(wmic os get Version | tr --delete $'\r' | tr --delete $'\n')"
+  VERSION_ID="$(wmic os get Caption | tr --delete $'\r' | tr --delete $'\n')"
+  VERSION_ID="${VERSION_ID##* }"
+  VERSION_ID="${VERSION_ID%% *}"
   VERSION_CODENAME="$VERSION_ID"
   # shellcheck disable=SC2154
   NPROC="$NUMBER_OF_PROCESSORS"

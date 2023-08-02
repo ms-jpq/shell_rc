@@ -4,13 +4,14 @@ set -o pipefail
 
 cd -- ~
 
-mkdir -v -p -- "$HOME/.local"
+# shellcheck disable=2154
+mkdir -v -p -- "$HOMEPATH/.local"
 
 link() {
   local -- src="$1" dst="$2"
 
-  if ! [[ -f "$dst" ]]; then
-    ln -v -sf -- "$src" "$dst"
+  if ! [[ -L "$dst" ]]; then
+    ln -v -sf -- "$src" "$dst" || true
   fi
 }
 
@@ -20,5 +21,4 @@ link "$APPDATA" "$HOMEPATH/.config"
 link "$LOCALAPPDATA" "$HOMEPATH/.local/share"
 link "${LOCALAPPDATA}Low" "$HOMEPATH/.local/state"
 link "$LOCALAPPDATA/Temp" "$HOMEPATH/.cache"
-
-# link "$HOME/AppData/LocalHigh" "$HOMEPATH/.local/opt"
+link "$HOME/AppData/LocalHigh" "$HOMEPATH/.local/opt"

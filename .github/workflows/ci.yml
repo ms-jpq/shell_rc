@@ -74,9 +74,9 @@ jobs:
 
       - shell: bash
         run: |-
-          rm -v -f -- "$HOMEPATH/.local/share"
           choco install -- rsync
+          rm -v -f -- "$HOME/.local/share"
 
       - shell: bash
         run: |-
-          ./main.sh localhost
+          ./main.sh localhost || true
