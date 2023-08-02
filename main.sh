@@ -52,7 +52,7 @@ shell() {
 
 gmake all
 
-BSH=(bash -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
+BSH=(bash --norc --noprofile -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
 ENV="$(shell "${BSH[@]}" "$(<'./libexec/env.sh')")"
 printf -- '%s\n' "$ENV"
 
