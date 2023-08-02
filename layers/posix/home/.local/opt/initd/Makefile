@@ -8,6 +8,7 @@ SHELL := bash
 .DEFAULT_GOAL := all
 .PHONY: .WAIT
 
+HOME := $(shell ./libexec/which-home.sh)
 CONFIG := $(HOME)/.config
 LOCAL := $(HOME)/.local
 BIN := $(LOCAL)/bin

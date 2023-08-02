@@ -20,7 +20,7 @@ darwin*)
 linux*)
   printf -- '%s' linux
   ;;
-*msys*)
+msys*)
   printf -- '%s' nt
   ;;
 *)

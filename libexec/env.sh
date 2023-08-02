@@ -17,7 +17,7 @@ darwin*)
   NPROC="$(sysctl -n hw.physicalcpu)"
   MEMINFO="$(sysctl -n hw.memsize)"
   ;;
-*msys*)
+msys*)
   if command -v -- pwsh >/dev/null; then
     PSH=pwsh
   else
@@ -36,13 +36,12 @@ darwin*)
   ID="$(wmic os get Caption | trim)"
   VERSION_ID="$(wmic os get Version | trim)"
   VERSION_CODENAME="$VERSION_ID"
-
-  # shellcheck disable=SC2154
   NPROC="$("$PSH" -command '(Get-WmiObject -Class Win32_Processor).NumberOfCores')"
-
   MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
   ;;
-*) ;;
+*)
+  exit 1
+  ;;
 esac
 
 tee <<-EOF

@@ -76,4 +76,5 @@ jobs:
           SYSTEMDRIVE="${SYSTEMDRIVE,,}"
           PATH="/$SYSTEMDRIVE/msys64/usr/bin:$PATH"
           pacman --sync --refresh --noconfirm -- rsync
+          command -v -- gmake
           ./main.sh localhost || true
