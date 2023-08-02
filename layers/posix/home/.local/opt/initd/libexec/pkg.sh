@@ -95,8 +95,9 @@ if (("${#ADD[@]}")); then
     brew install --formula -- "${ADD[@]}"
     ;;
   linux*)
-    sudo -- apt-get update
-    DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --no-install-recommends --yes -- "${ADD[@]}"
+    LOCK=(-o DPkg::Lock::Timeout=-1)
+    sudo -- apt-get update "${LOCK[@]}"
+    DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install "${LOCK[@]}" --no-install-recommends --yes -- "${ADD[@]}"
     ;;
   *msys*)
     for A in "${ADD[@]}"; do
