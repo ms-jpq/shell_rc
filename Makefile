@@ -24,12 +24,12 @@ clobber: clean
 GOOS := darwin ubuntu nt
 CURL := curl --fail --location --no-progress-meter
 
-TMP := ./tmp
-
-$(TMP):
-	mkdir -v -p -- '$@'
+TMP := ./var/tmp
 
 ./var/bin:
+	mkdir -v -p -- '$@'
+
+$(TMP):
 	mkdir -v -p -- '$@'
 
 include makelib/env.mk

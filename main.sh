@@ -28,7 +28,14 @@ done
 DST="$1"
 shift -- 1
 
-CONN=(ssh -p $((PORT)))
+CTL="$PWD/var/tmp"
+mkdir -p -- "$CTL"
+CONN=(ssh
+  -o 'ControlMaster=auto'
+  -o "ControlPath=$CTL/%r@%h:%p"
+  -o 'ControlPersist=60'
+  -p $((PORT))
+)
 printf -v RSH -- '%q ' "${CONN[@]}"
 
 if [[ "$DST" == 'localhost' ]]; then
