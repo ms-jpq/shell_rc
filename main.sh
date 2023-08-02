@@ -95,7 +95,7 @@ FFS=([root]=1 [home]=0)
 for FS in "${!FFS[@]}"; do
   SUDO="${FFS["$FS"]}"
   ROOT="${ROOTS["$FS"]}"
-  SRC="./tmp/$OS/$FS/"
+  SRC="./var/tmp/$OS/$FS/"
 
   if ((SUDO)) && ((LOCAL)); then
     EX=(sudo --)
