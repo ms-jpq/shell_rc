@@ -23,24 +23,27 @@ darwin*)
   else
     PSH=powershell
   fi
+
+  trim() {
+    local -- v="$1"
+    v="${v#* }"
+    v="${v##+([[:space:]])}"
+    v="${v%%+([[:space:]])}"
+    printf -- '%s' "$v"
+  }
+
   ID="$(wmic os get Version | tr --delete '\r' | tr --delete $'\n')"
-  ID="${ID#* }"
-  ID="${ID##+([[:space:]])}"
-  ID="${ID%%+([[:space:]])}"
+  ID="$(trim "$ID")"
 
   VERSION_ID="$(wmic os get Caption | tr --delete '\r' | tr --delete $'\n')"
-  VERSION_ID="${VERSION_ID#* }"
-  VERSION_ID="${VERSION_ID##+([[:space:]])}"
-  VERSION_ID="${VERSION_ID%%+([[:space:]])}"
+  VERSION_ID="$(trim "$VERSION_ID")"V
   VERSION_CODENAME="$VERSION_ID"
 
   # shellcheck disable=SC2154
   NPROC="$("$PSH" -command '(Get-WmiObject -Class Win32_Processor).NumberOfCores')"
 
   MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | tr --delete '\r' | tr --delete $'\n')"
-  MEMINFO="${MEMINFO#* }"
-  MEMINFO="${MEMINFO##+([[:space:]])}"
-  MEMINFO="${MEMINFO%%+([[:space:]])}"
+  MEMINFO="$(trim "$MEMINFO")"
   ;;
 *) ;;
 esac
