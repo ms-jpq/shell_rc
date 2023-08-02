@@ -115,7 +115,7 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
 
 
 def _quote(text: str) -> str:
-    return quote("".join(dumps(ch, ensure_ascii=False)[1:-1] for ch in text))
+    return quote(dumps(text, ensure_ascii=False)[1:-1])
 
 
 def _print(key: str, val: str) -> None:
