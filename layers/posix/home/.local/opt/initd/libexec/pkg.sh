@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+set -x
+
 cd -- "${0%/*}/.."
 
 TXT="$(grep -E -h -- '^(\+|-) .+' ./packages/*.txt)"
@@ -21,7 +23,7 @@ linux*)
   ;;
 msys*)
   WG_JSON="$(mktemp)"
-  winget.exe export --disable-interactivity --accept-source-agreements --output "$WG_JSON"
+  winget export --disable-interactivity --accept-source-agreements --output "$WG_JSON"
   PKGS="$(jq --exit-status --raw-output '.Sources[].Packages[].PackageIdentifier' "$WG_JSON")"
   ;;
 *)
@@ -71,7 +73,7 @@ if (("${#RM[@]}")); then
     ;;
   *msys*)
     for DEL in "${RM[@]}"; do
-      winget.exe uninstall --disable-interactivity --accept-source-agreements --id "$DEL"
+      winget uninstall --disable-interactivity --accept-source-agreements --id "$DEL"
     done
     ;;
   *)
@@ -92,7 +94,7 @@ if (("${#ADD[@]}")); then
   *msys*)
     for A in "${ADD[@]}"; do
       WINGET=(
-        winget.exe install
+        winget install
         --disable-interactivity
         --accept-source-agreements --accept-package-agreements
         --exact

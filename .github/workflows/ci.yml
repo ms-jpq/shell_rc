@@ -82,7 +82,7 @@ jobs:
           PATH="/$SYSTEMDRIVE/msys64/usr/bin:$PATH"
           pacman --sync --refresh --noconfirm -- rsync
           command -v -- gmake
-          command -v -- winget.exe
+          command -v -- winget
           ./main.sh localhost || true
 
       - shell: bash
