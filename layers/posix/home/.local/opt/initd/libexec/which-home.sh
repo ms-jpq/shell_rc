@@ -5,7 +5,12 @@ set -o pipefail
 case "$OSTYPE" in
 msys*)
   printf -v HOMIE -- '%s' ~
-  printf -- '%s' "${HOMIE#"$SYSTEMDRIVE"}"
+  DRIVELESS="${HOMIE#*:}"
+  DRIVE="${HOMIE%%:*}"
+  DRIVE="${DRIVE,,}"
+  NORM="/$DRIVE$DRIVELESS"
+  NORM="${NORM//'\'/'/'}"
+  printf -- '%s' "$NORM"
   ;;
 *)
   printf -- '%s' ~
