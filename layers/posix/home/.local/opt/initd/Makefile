@@ -15,6 +15,7 @@ OPT := $(LOCAL)/opt
 SHARE := $(LOCAL)/share
 CACHE = $(HOME)/.cache
 TMP := $(CACHE)/initd
+NPROC := $(shell ./libexec/nproc.sh)
 
 export -- HOME
 
