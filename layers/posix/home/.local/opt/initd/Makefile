@@ -30,9 +30,15 @@ define META_2D
 $(foreach line,$($1),$(eval $(call $2,$(firstword $(subst !, ,$(line))),$(lastword $(subst !, ,$(line))))))
 endef
 
+ifeq ($(OS),nt)
 define UNESC_DRIVE
 $(subst \:,:,$(subst /,\,$1))
 endef
+else
+define UNESC_DRIVE
+$1
+endef
+endif
 
 clean:
 	shopt -u failglob

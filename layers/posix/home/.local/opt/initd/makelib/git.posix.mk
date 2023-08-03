@@ -4,18 +4,19 @@ clobber: clobber.git
 
 define GIT_TEMPLATE
 
-.PHONY: clobber.git.$1
-clobber.git: clobber.git.$1
-clobber.git.$1:
-	rm -v -rf -- '$1'
+.PHONY: clobber.git.$(notdir $1)
+clobber.git: clobber.git.$(notdir $1)
+clobber.git.$(notdir $1):
+	rm -v -rf -- '$(call UNESC_DRIVE,$1)'
 
 git: $1
 $1: | $(GIT_BIN)
-	if [[ -d '$$@' ]]; then
-		cd -- '$$@'
+	DIR='$(call UNESC_DRIVE,$1)'
+	if [[ -d "$$$$DIR" ]]; then
+		cd -- "$$$$DIR"
 		git pull --recurse-submodules --no-tags '--jobs=$(NPROC)'
 	else
-		git clone --recurse-submodules --shallow-submodules --depth=1 '--jobs=$(NPROC)' -- '$2' '$$@'
+		git clone --recurse-submodules --shallow-submodules --depth=1 '--jobs=$(NPROC)' -- '$2' "$$$$DIR"
 	fi
 
 endef
