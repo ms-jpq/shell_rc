@@ -100,6 +100,7 @@ if (("${#ADD[@]}")); then
         --exact
         --id "$A"
       )
+      printf -- '%s%q\n' '> --id ' "$A" >&2
       "${WINGET[@]}"
     done
     ;;
