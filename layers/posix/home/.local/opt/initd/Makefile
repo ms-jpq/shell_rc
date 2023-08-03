@@ -16,7 +16,7 @@ SHARE := $(LOCAL)/share
 CACHE = $(HOME)/.cache
 TMP := $(CACHE)/initd
 
-.PHONY: clean clobber
+.PHONY: clean clobber .WAIT
 
 clean:
 	shopt -u failglob

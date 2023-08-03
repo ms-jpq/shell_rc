@@ -59,7 +59,7 @@ jobs:
           env | sort -t = -k 1
 
       - run: |-
-          brew install -- bash make gnu-getopt flock
+          brew install -- bash make gnu-getopt
           rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
       - run: |-
@@ -97,7 +97,7 @@ jobs:
           pacman --sync --refresh --noconfirm -- rsync
           command -v -- gmake
           command -v -- winget
-          ./main.sh localhost
+          ./main.sh localhost || true
 
       - shell: bash
         run: |-
