@@ -36,8 +36,6 @@ jobs:
 
       - run: |-
           ./main.sh localhost
-
-      - run: |-
           ./main.sh localhost -- --debug
 
       - run: |-
@@ -59,11 +57,12 @@ jobs:
 
       - run: |-
           BREW="$(brew --prefix)"
-          PATH="$BREW/opt/gnu-getopt/bin:$PATH" ./main.sh localhost
+          PATH="$BREW/opt/gnu-getopt/bin:$PATH"
+          ./main.sh localhost
+          ./main.sh localhost -- --debug
 
       - run: |-
           BREW="$(brew --prefix)"
-          PATH="$BREW/opt/gnu-getopt/bin:$PATH" ./main.sh localhost -- --debug
 
   windows:
     runs-on: windows-latest
@@ -84,10 +83,4 @@ jobs:
           command -v -- gmake
           command -v -- winget
           ./main.sh localhost
-
-      - shell: bash
-        run: |-
-          SYSTEMDRIVE="${SYSTEMDRIVE%%:}"
-          SYSTEMDRIVE="${SYSTEMDRIVE,,}"
-          PATH="/$SYSTEMDRIVE/msys64/usr/bin:$PATH"
           ./main.sh localhost -- --debug || true
