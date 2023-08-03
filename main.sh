@@ -84,8 +84,6 @@ msys*)
   ;;
 esac
 
-set -x
-
 declare -A -- ROOTS
 ROOTS=(
   ['root']=/
@@ -111,14 +109,15 @@ for FS in "${!FFS[@]}"; do
     shell "${EX[@]}" "${BSH[@]}" "$(<"$LINKS")"
   fi
 
-  EMPTY=1
-  for _ in "$SRC"*; do
-    EMPTY=0
+  F=''
+  for F in "$SRC"*; do
     break
   done
 
-  if ! ((EMPTY)); then
-    "${EX[@]}" rsync --recursive --links --perms --keep-dirlinks --rsh "$RSH" -- "$SRC" "$RDST$ROOT/"
+  if [[ -n "$F" ]]; then
+    SINK="$RDST$ROOT/"
+    printf -- '%q%s%q\n' "$SRC" '->' "$SINK"
+    "${EX[@]}" rsync --recursive --links --perms --keep-dirlinks --rsh "$RSH" -- "$SRC" "$SINK"
   fi
 done
 
