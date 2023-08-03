@@ -22,9 +22,9 @@ ifneq (aarch64**,$(MACHTYPE)$(findstring **,$2))
 $(TMP)/curl/$(notdir $2): | $(TMP)/curl /usr/bin/curl /usr/bin/jq
 	$(CURL) --output '$$@' -- '$(subst **,,$2)'
 
+deb: .WAIT $1
 $1: | $(TMP)/curl/$(notdir $2) pkg.posix
 	$$(APT_INSTALL) -o DPkg::Lock::Timeout=-1 -- '$(TMP)/curl/$(notdir $2)'
-deb: $1
 
 endif
 endef

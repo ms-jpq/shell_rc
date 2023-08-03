@@ -23,7 +23,7 @@ PIPX_EX := ./libexec/linux-lock.sh $(OPT)/pipx/$(PY_BIN)/pipx
 
 define PIPX_TEMPLATE
 
-pipx: $(PIPX)/$1
+pipx: .WAIT $(PIPX)/$1
 $(PIPX)/$1: | $(OPT)/pipx/$(PY_BIN)/pipx
 	if [[ -d '$$@' ]]; then
 		$(PIPX_EX) upgrade -- '$2'
