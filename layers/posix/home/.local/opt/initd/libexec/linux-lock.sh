@@ -2,7 +2,6 @@
 
 set -o pipefail
 
-# TODO: remove this on ubuntu 24.04, when .WAIT is supported
 if ! [[ -v LOCKED ]] && command -v -- flock >/dev/null; then
   ARG0="$1"
   LOCKED=1 exec -- flock "$ARG0" "$0" "$@"

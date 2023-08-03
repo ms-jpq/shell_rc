@@ -24,8 +24,8 @@
 + dandavison.delta
 + gerardog.gsudo
 + gsass1.NTop
++ jqlang.jq
 + junegunn.fzf
 + muesli.duf
 + sharkdp.fd
 + sharkdp.hyperfine
-+ stedolan.jq

@@ -17,6 +17,7 @@ CACHE = $(HOME)/.cache
 TMP := $(CACHE)/initd
 NPROC := $(shell ./libexec/nproc.sh)
 
+# TODO: gnumake 4.4 .WAIT
 .PHONY: clean clobber .WAIT
 
 clean:

@@ -36,6 +36,7 @@
 + iperf3
 + jid
 + jless
++ jq
 + lazygit
 + less
 + lsof
