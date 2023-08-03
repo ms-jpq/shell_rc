@@ -94,9 +94,12 @@ jobs:
           SYSTEMDRIVE="${SYSTEMDRIVE,,}"
           PATH="/$SYSTEMDRIVE/msys64/usr/bin:$PATH"
           unset -- PIPX_HOME
+
           pacman --sync --refresh --noconfirm -- rsync
           command -v -- gmake
+          command -v -- python3
           command -v -- winget
+
           ./main.sh localhost || true
 
       - shell: bash
@@ -105,4 +108,5 @@ jobs:
           SYSTEMDRIVE="${SYSTEMDRIVE,,}"
           PATH="/$SYSTEMDRIVE/msys64/usr/bin:$PATH"
           unset -- PIPX_HOME
+
           ./main.sh localhost -- --debug || true
