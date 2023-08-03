@@ -33,7 +33,16 @@ case "$SRC" in
     FILE="$(cygpath --windows -- "$FILE")"
   fi
 
-  unzip -d "$DST" "$FILE"
+  case "$OSTYPE" in
+  msys*)
+    # "${0%/*}/pwsh.sh"
+    unzip -d "$DST" "$FILE"
+    ;;
+  *)
+    unzip -d "$DST" "$FILE"
+    ;;
+  esac
+
   ;;
 *)
   "${CURL[@]}" >"$DST/$NAME"
