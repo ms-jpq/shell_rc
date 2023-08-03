@@ -1,7 +1,7 @@
 .PHONY: pipx clobber.pipx
 
 ifeq (nt, $(OS))
-PY_BIN := Script
+PY_BIN := Scripts
 else
 PY_BIN := bin
 endif
