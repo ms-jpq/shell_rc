@@ -3,7 +3,7 @@ define ARCHIVE_TEMPLATE
 $(TMP)/curl/$1: | $(TMP)/curl
 	./libexec/curl-unpack.sh '$(subst **,,$2)' '$$|'
 
-$(BIN)/$(notdir $1): $(TMP)/curl/$1
+$(BIN)/$(notdir $1): | $(TMP)/curl/$1
 	install --backup -- '$$<' '$$@'
 
 curl: $(BIN)/$(notdir $1)

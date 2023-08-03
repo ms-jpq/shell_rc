@@ -13,12 +13,7 @@ msys*)
   if command -v -- nproc >/dev/null; then
     nproc
   else
-    if command -v -- pwsh >/dev/null; then
-      PSH='pwsh'
-    elif command -v -- powershell >/dev/null; then
-      PSH='powershell'
-    fi
-    "$PSH" --command 'Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -ExpandProperty NumberOfProcessors'
+    "${0%/*}/pwsh.sh" 'Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -ExpandProperty NumberOfProcessors'
   fi
   ;;
 *)
