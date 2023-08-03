@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-cd -- "${0%/*}"
+cd -- "$(dirname -- "$0")"
 
 LONG_OPTS='port:'
 GO="$(getopt --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
@@ -83,6 +83,8 @@ msys*)
   exit 1
   ;;
 esac
+
+set -x
 
 declare -A -- ROOTS
 ROOTS=(

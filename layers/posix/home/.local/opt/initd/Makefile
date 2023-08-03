@@ -17,8 +17,6 @@ CACHE = $(HOME)/.cache
 TMP := $(CACHE)/initd
 NPROC := $(shell ./libexec/nproc.sh)
 
-$(info HOME=$(HOME))
-
 .PHONY: clean clobber .WAIT
 
 clean:
@@ -41,4 +39,4 @@ $(TMP):
 include env.mk
 include makelib/*.mk
 
-all: pkg git zsh tmux conf nvim pipx
+all: pkg git zsh tmux conf nvim
