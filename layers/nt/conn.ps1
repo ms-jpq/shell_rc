@@ -1,4 +1,4 @@
-#!/usr/bin/env -S -- powershell
+#!/usr/bin/env -S -- powershell -nologo -noprofile
 
 Set-StrictMode -Version 'Latest'
 $ErrorActionPreference = 'Stop'
