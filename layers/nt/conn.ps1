@@ -66,7 +66,7 @@ function ssh {
         $ACL.SetAccessRule($SYS_RULE)
         $ACL | Set-Acl
 
-        Write-Output '--> ACL SET'
+        Write-Output --% '--> ACL SET'
     }
 }
 
@@ -87,6 +87,6 @@ basic
 rdp
 ssh
 
-Write-Output '--> DONE'
+Write-Output --% '--> DONE'
 
 # Remove-Item -Path Function:basic Function:winrm Function:ssh Function:rdp
