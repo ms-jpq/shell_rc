@@ -7,7 +7,7 @@ SHELL := bash
 
 .DEFAULT_GOAL := all
 
-HOME := $(shell ./libexec/which-home.sh)
+HOME := $(shell printf -- '%s' ~)
 CONFIG := $(HOME)/.config
 LOCAL := $(HOME)/.local
 BIN := $(LOCAL)/bin
@@ -17,7 +17,7 @@ CACHE = $(HOME)/.cache
 TMP := $(CACHE)/initd
 NPROC := $(shell ./libexec/nproc.sh)
 
-export -- HOME
+$(info HOME=$(HOME))
 
 .PHONY: clean clobber .WAIT
 

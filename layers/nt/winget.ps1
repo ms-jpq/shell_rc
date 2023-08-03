@@ -13,7 +13,7 @@ if ($go) {
     # $vc = 'https://aka.ms/vs/16/release/vc_redist.x64.exe'
     # $t_vc = $vc | Split-Path -Leaf
 
-    # Write-Host -- $t_vc
+    # Write-Host --% $t_vc
 
     # Invoke-WebRequest -Uri $vc -OutFile $t_vc
 
@@ -23,8 +23,8 @@ if ($go) {
     $bundle = $releases.assets | Where-Object { $_.browser_download_url.EndsWith('msixbundle') } | Select-Object -First 1
     $license = $releases.assets | Where-Object { $_.browser_download_url.EndsWith('License1.xml') } | Select-Object -First 1
 
-    Write-Host -- $bundle
-    Write-Host -- $license
+    Write-Host --% $bundle
+    Write-Host --% $license
 
     $t_bundle = $bundle.browser_download_url | Split-Path -Leaf
     $t_license = $license.browser_download_url | Split-Path -Leaf
