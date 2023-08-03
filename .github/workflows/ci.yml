@@ -91,7 +91,7 @@ jobs:
           & $pacman @argv
 
       - run: |-
-          powershell ./layers/nt/winget.ps1
+          & powershell './layers/nt/winget.ps1'
 
       - run: |-
           $Env:Path = @(
@@ -105,7 +105,7 @@ jobs:
           Get-Command -- winget
           Get-Command -- rsync
 
-          bash .\main.sh localhost
+          & sh '-c' './main.sh localhost'
 
       - run: |-
           $Env:Path = @(
@@ -118,4 +118,4 @@ jobs:
           & 'winget' 'export' '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
           Get-Content -Path $tmp
 
-          # bash .\main.sh localhost -- --debug
+          & sh '-c' './main.sh localhost -- --debug'
