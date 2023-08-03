@@ -83,7 +83,7 @@ jobs:
           pacman --sync --refresh --noconfirm -- rsync
           command -v -- gmake
           command -v -- winget
-          ./main.sh localhost || true
+          ./main.sh localhost
 
       - shell: bash
         run: |-
