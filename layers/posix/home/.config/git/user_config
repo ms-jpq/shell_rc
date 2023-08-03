@@ -1,68 +1,78 @@
-[submodule]
-  fetchJobs = 0
-  recurse = True
-
-[core]
-	# fsmonitor = true
-  pager     = delta
-
-[core "whitespace"]
-  tabwidth = 4
-
-[column]
-  ui = auto
-
-[delta]
-  light = True
-
-[diff]
-  algorithm        = histogram
-  colorMoved       = dimmed-zebra
-  colorMovedWS     = ignore-space-change
-  dirstat          = files,cumulative
-  #renames         = copy
-  wsErrorHighlight = all
-
-[feature]
-	manyFiles = True
-
-[grep]
-  column      = True
-  lineNumber  = True
-  patternType = perl
-
-[log]
-  date = format:%Y-%m-%d %H:%M:%S
-
-[init]
-  defaultBranch = main
-
-[checkout]
-  thresholdForParallelism = 1
-  workers                 = 0
+[blame]
+coloring = true
 
 [branch]
-  autosetuprebase = always
+autosetuprebase = "always"
+
+[checkout]
+thresholdForParallelism = 1
+workers                 = 0
+
+[clone]
+filterSubmodules = true
+
+[column]
+ui = "auto"
+
+[core]
+pager = "delta"
+
+[delta]
+light = true
+
+[diff]
+algorithm        = "histogram"
+colorMoved       = "dimmed-zebra"
+colorMovedWS     = "ignore-space-change"
+dirstat          = "files,cumulative"
+wsErrorHighlight = "all"
+
+[feature]
+manyFiles = true
 
 [fetch]
-  parallel = 0
-  pruneTags = True
+parallel          = 0
+pruneTags         = true
+recurseSubmodules = true
 
-[pull]
-  ff = only
+[grep]
+column      = true
+lineNumber  = true
+patternType = "perl"
+
+[init]
+defaultBranch = "main"
+
+[log]
+abbrevCommit = true
+date         = "format:%Y-%m-%d %H:%M:%S"
 
 [merge]
-  autostash     = True
-  conflictstyle = diff3
-  ff            = only
+autostash     = true
+conflictstyle = "diff3"
+ff            = "only"
 
-[rebase]
-  autostash = True
-
-[rerere]
-  autoUpdate = True
-  enabled    = True
+[pull]
+ff = "only"
 
 [push]
-  autoSetupRemote = True
-  followTags = True
+autoSetupRemote   = true
+followTags        = true
+recurseSubmodules = "check"
+
+[rebase]
+autoStash = true
+
+[rerere]
+autoUpdate = true
+enabled    = true
+
+[status]
+submoduleSummary = true
+
+[submodule]
+fetchJobs = 0
+recurse   = true
+
+[core.whitespace]
+tabwidth = 2
