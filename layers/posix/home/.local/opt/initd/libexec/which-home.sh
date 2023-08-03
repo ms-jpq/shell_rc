@@ -9,6 +9,7 @@ msys*)
   DRIVE="${HOMIE%%:*}"
   DRIVE="${DRIVE,,}"
   NORM="/$DRIVE$DRIVELESS"
+  # shellcheck disable=SC1003
   NORM="${NORM//'\'/'/'}"
   printf -- '%s' "$NORM"
   ;;
