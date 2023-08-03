@@ -47,4 +47,4 @@ $(TMP):
 
 include makelib/*.mk
 
-all: pkg curl git zsh tmux conf nvim
+all: curl git zsh tmux conf nvim pkg
