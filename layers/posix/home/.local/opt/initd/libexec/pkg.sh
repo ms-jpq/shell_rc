@@ -1,7 +1,6 @@
 #!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
 
 set -o pipefail
-set -x
 
 cd -- "${0%/*}/.."
 
@@ -101,7 +100,7 @@ if (("${#ADD[@]}")); then
         --id "$A"
       )
       printf -- '%s%q\n' '> --id ' "$A" >&2
-      "${WINGET[@]}"
+      "${WINGET[@]}" || true
     done
     ;;
   *)
