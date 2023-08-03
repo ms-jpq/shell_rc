@@ -16,6 +16,8 @@ SHARE := $(LOCAL)/share
 CACHE = $(HOME)/.cache
 TMP := $(CACHE)/initd
 
+export -- HOME
+
 .PHONY: clean clobber .WAIT
 
 clean:
