@@ -24,7 +24,7 @@ linux*)
 msys*)
   WG_JSON="$(mktemp)"
   winget export --disable-interactivity --accept-source-agreements --output "$WG_JSON"
-  PKGS="$(jq --exit-status --raw-output '.Sources[].Packages[].PackageIdentifier' "$WG_JSON")"
+  PKGS="$(jq --exit-status --raw-output '.Sources[].Packages[].PackageIdentifier' "$WG_JSON" | tr --delete '\r')"
   ;;
 *)
   exit 1
