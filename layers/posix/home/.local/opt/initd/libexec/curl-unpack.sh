@@ -28,10 +28,10 @@ case "$SRC" in
   FILE="$DST/$NAME"
   "${CURL[@]}" >"$FILE"
 
-  if command -v -- cygpath >/dev/null; then
-    DST="$(cygpath --windows -- "$DST")"
-    FILE="$(cygpath --windows -- "$FILE")"
-  fi
+  # if command -v -- cygpath >/dev/null; then
+  #   DST="$(cygpath --windows -- "$DST")"
+  #   FILE="$(cygpath --windows -- "$FILE")"
+  # fi
 
   unzip -d "$DST" "$FILE"
   ;;
