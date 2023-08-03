@@ -101,7 +101,7 @@ if (("${#ADD[@]}")); then
         --id "$A"
       )
       printf -- '%s%q\n' '> --id ' "$A" >&2
-      "${WINGET[@]}" || true
+      "${WINGET[@]}"
     done
     ;;
   *)
