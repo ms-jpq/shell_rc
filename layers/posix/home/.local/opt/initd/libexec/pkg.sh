@@ -1,6 +1,7 @@
 #!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
 
 set -o pipefail
+set -x
 
 cd -- "${0%/*}/.."
 
@@ -56,6 +57,7 @@ for LINE in "${DESIRED[@]}"; do
     fi
     ;;
   *)
+    printf -- '%s%q\n' '>! ' "$LINE" >&2
     exit 1
     ;;
   esac
