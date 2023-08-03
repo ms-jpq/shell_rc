@@ -32,9 +32,11 @@ jobs:
       - uses: actions/checkout@v3
 
       - run: |-
+          env
           gmake lint
 
       - run: |-
+          unset -- PIPX_HOME
           ./main.sh localhost
           ./main.sh localhost -- --debug
 
@@ -53,16 +55,17 @@ jobs:
           rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
       - run: |-
+          env
           gmake lint
 
       - run: |-
-          BREW="$(brew --prefix)"
-          PATH="$BREW/opt/gnu-getopt/bin:$PATH"
+          PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
+          unset -- PIPX_HOME
           ./main.sh localhost
           ./main.sh localhost -- --debug
 
       - run: |-
-          BREW="$(brew --prefix)"
+          PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
 
   windows:
     runs-on: windows-latest
@@ -72,13 +75,17 @@ jobs:
 
       - run: |-
           powershell ./layers/nt/winget.ps1
-          $TMP = 'wg.json'
+
+      - shell: bash
+        run: |-
+          env
 
       - shell: bash
         run: |-
           SYSTEMDRIVE="${SYSTEMDRIVE%%:}"
           SYSTEMDRIVE="${SYSTEMDRIVE,,}"
           PATH="/$SYSTEMDRIVE/msys64/usr/bin:$PATH"
+          unset -- PIPX_HOME
           pacman --sync --refresh --noconfirm -- rsync
           command -v -- gmake
           command -v -- winget
