@@ -1,10 +1,10 @@
 define ARCHIVE_TEMPLATE
 
 $(TMP)/curl/$1: | $(TMP)/curl
-	./libexec/curl-unpack.sh '$(subst **,,$2)' '$$|'
+	./libexec/curl-unpack.sh '$(subst **,,$2)' '$$(call UNESC_DRIVE,$$|)'
 
 $(BIN)/$(notdir $1): | $(TMP)/curl/$1
-	install --backup -- '$(TMP)/curl/$1' '$$@'
+	install --backup -- '$(call UNESC_DRIVE,$(TMP)/curl/$1)' '$$(call UNESC_DRIVE,$$@)'
 
 curl: $(BIN)/$(notdir $1)
 

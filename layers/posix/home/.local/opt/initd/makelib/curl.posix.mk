@@ -1,5 +1,4 @@
 .PHONY: curl
-all: curl
 
 $(TMP)/curl: | $(TMP)
 	mkdir -v -p -- '$@'
