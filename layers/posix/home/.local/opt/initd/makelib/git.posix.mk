@@ -13,9 +13,9 @@ git: $1
 $1: | $(GIT_BIN)
 	if [[ -d '$$@' ]]; then
 		cd -- '$$@'
-		git pull --recurse-submodules --no-tags --jobs=0
+		git pull --recurse-submodules --no-tags '--jobs=$(NPROC)'
 	else
-		git clone --recurse-submodules --shallow-submodules --depth=1 --jobs=0 -- '$2' '$$@'
+		git clone --recurse-submodules --shallow-submodules --depth=1 '--jobs=$(NPROC)' -- '$2' '$$@'
 	fi
 
 endef
