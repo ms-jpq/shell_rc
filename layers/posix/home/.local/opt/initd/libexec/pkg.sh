@@ -72,6 +72,7 @@ if (("${#RM[@]}")); then
     ;;
   *msys*)
     for DEL in "${RM[@]}"; do
+      printf -- '%s%q\n' '> --id ' "$DEL" >&2
       winget uninstall --disable-interactivity --accept-source-agreements --id "$DEL"
     done
     ;;

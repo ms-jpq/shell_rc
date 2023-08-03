@@ -25,7 +25,6 @@
 + language-pack-zh-hans
 + libaa-bin
 + locales
-+ man
 + man2html-base
 + moreutils
 + mosh

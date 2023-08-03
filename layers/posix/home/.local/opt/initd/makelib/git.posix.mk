@@ -10,7 +10,7 @@ clobber.git.$1:
 	rm -v -rf -- '$1'
 
 git: $1
-$1: | /usr/bin/git
+$1: | $(GIT_BIN)
 	if [[ -d '$$@' ]]; then
 		cd -- '$$@'
 		git pull --recurse-submodules --no-tags
