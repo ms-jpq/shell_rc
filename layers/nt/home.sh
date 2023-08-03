@@ -14,7 +14,7 @@ mkdir -v -p -- "$HOMEPATH/.local" "$APPDATA" "$LOCALAPPDATA" "$TEMP" "$LOCALLO" 
 link() {
   local -- src="$1" dst="$2"
 
-  if ! [[ -L "$dst" ]]; then
+  if ! [[ -d "$dst" ]]; then
     ln -v -sf -- "$src" "$dst"
   fi
 }

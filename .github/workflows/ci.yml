@@ -38,7 +38,7 @@ jobs:
       #     ./main.sh localhost
 
       # - run: |-
-      #     ./main.sh localhost
+      #     ./main.sh localhost -- --debug
 
       # - run: |-
       #     gmake fmt
@@ -63,7 +63,7 @@ jobs:
 
       # - run: |-
       #     BREW="$(brew --prefix)"
-      #     PATH="$BREW/opt/gnu-getopt/bin:$PATH" ./main.sh localhost
+      #     PATH="$BREW/opt/gnu-getopt/bin:$PATH" ./main.sh localhost -- --debug
 
   windows:
     runs-on: windows-latest
@@ -87,4 +87,7 @@ jobs:
 
       - shell: bash
         run: |-
-          ./main.sh localhost || true
+          SYSTEMDRIVE="${SYSTEMDRIVE%%:}"
+          SYSTEMDRIVE="${SYSTEMDRIVE,,}"
+          PATH="/$SYSTEMDRIVE/msys64/usr/bin:$PATH"
+          ./main.sh localhost -- --debug || true
