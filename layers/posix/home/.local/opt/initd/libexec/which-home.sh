@@ -2,8 +2,12 @@
 
 set -o pipefail
 
-if command -v -- cygpath >/dev/null; then
-  cygpath --unix -- ~
-else
+case "$OSTYPE" in
+msys*)
+  printf -v HOMIE -- '%s' ~
+  printf -- '%s' "${HOMIE#"$SYSTEMDRIVE"}"
+  ;;
+*)
   printf -- '%s' ~
-fi
+  ;;
+esac
