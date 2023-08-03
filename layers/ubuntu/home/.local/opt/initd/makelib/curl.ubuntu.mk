@@ -8,7 +8,7 @@ $(TMP)/curl/$1: | $(TMP)/curl /usr/bin/curl /usr/bin/jq /usr/bin/unzip
 	./libexec/curl-unpack.sh '$(subst **,,$2)' '$(TMP)/curl'
 
 $(BIN)/$(notdir $1): | $(TMP)/curl/$1
-	install --backup -- '$$<' '$$@'
+	install --backup -- '$(TMP)/curl/$1' '$$@'
 
 curl: $(BIN)/$(notdir $1)
 
