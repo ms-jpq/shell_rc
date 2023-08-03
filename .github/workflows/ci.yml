@@ -33,11 +33,16 @@ jobs:
 
       - run: |-
           env
+
+      - run: |-
           gmake lint
 
       - run: |-
           unset -- PIPX_HOME
           ./main.sh localhost
+
+      - run: |-
+          unset -- PIPX_HOME
           ./main.sh localhost -- --debug
 
       - run: |-
@@ -51,21 +56,24 @@ jobs:
       - uses: actions/checkout@v3
 
       - run: |-
+          env
+
+      - run: |-
           brew install -- bash make gnu-getopt
           rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
       - run: |-
-          env
           gmake lint
 
       - run: |-
           PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
           unset -- PIPX_HOME
           ./main.sh localhost
-          ./main.sh localhost -- --debug
 
       - run: |-
           PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
+          unset -- PIPX_HOME
+          ./main.sh localhost -- --debug
 
   windows:
     runs-on: windows-latest
@@ -73,12 +81,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: |-
-          powershell ./layers/nt/winget.ps1
-
       - shell: bash
         run: |-
           env
+
+      - run: |-
+          powershell ./layers/nt/winget.ps1
 
       - shell: bash
         run: |-
@@ -90,4 +98,11 @@ jobs:
           command -v -- gmake
           command -v -- winget
           ./main.sh localhost
+
+      - shell: bash
+        run: |-
+          SYSTEMDRIVE="${SYSTEMDRIVE%%:}"
+          SYSTEMDRIVE="${SYSTEMDRIVE,,}"
+          PATH="/$SYSTEMDRIVE/msys64/usr/bin:$PATH"
+          unset -- PIPX_HOME
           ./main.sh localhost -- --debug || true
