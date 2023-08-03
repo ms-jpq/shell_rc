@@ -7,7 +7,7 @@ SHELL := bash
 
 .DEFAULT_GOAL := all
 
-HOME := $(shell printf -- '%s' ~)
+HOME := $(subst :,\:,$(HOME))
 CONFIG := $(HOME)/.config
 LOCAL := $(HOME)/.local
 BIN := $(LOCAL)/bin
