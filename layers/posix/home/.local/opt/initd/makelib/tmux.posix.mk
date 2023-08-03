@@ -5,6 +5,6 @@ tmux: $(SHARE)/tmux
 endif
 
 $(SHARE)/tmux:
-	/usr/bin/python3 -m venv --upgrade -- '$@'
+	python3 -m venv --upgrade -- '$@'
 	'$@/bin/pip' install --require-virtualenv --upgrade --requirement '$(CONFIG)/tmux/requirements.txt'
 	touch -- '$@'
