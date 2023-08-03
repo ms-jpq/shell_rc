@@ -2,8 +2,6 @@
 
 set -o pipefail
 
-set -x
-
 cd -- "${0%/*}/.."
 
 TXT="$(grep -E -h -- '^(\+|-) .+' ./packages/*.txt)"
