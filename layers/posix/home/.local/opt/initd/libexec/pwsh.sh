@@ -10,4 +10,4 @@ else
   exit 127
 fi
 
-"$PSH" --command "$*"
+"$PSH" -nologo -noprofile -command "$*"

@@ -35,8 +35,7 @@ case "$SRC" in
 
   case "$OSTYPE" in
   msys*)
-    # "${0%/*}/pwsh.sh"
-    unzip -d "$DST" "$FILE"
+    "${0%/*}/pwsh.sh" Expand-Archive -Force -Path "$FILE" -DestinationPath "$DST"
     ;;
   *)
     unzip -d "$DST" "$FILE"
