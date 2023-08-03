@@ -1,5 +1,11 @@
 .PHONY: pipx clobber.pipx
 
+ifeq (nt, $(OS))
+PY_BIN := Script
+else
+PY_BIN := bin
+endif
+
 PIPX := $(LOCAL)/pipx/venvs
 
 clobber: clobber.pipx
@@ -9,17 +15,17 @@ clobber.pipx:
 $(OPT)/pipx:
 	python3 -m venv --upgrade -- '$@'
 
-$(OPT)/pipx/bin/pipx: | $(OPT)/pipx
-	'$(OPT)/pipx/bin/pip' install --require-virtualenv --upgrade -- pipx
+$(OPT)/pipx/$(PY_BIN)/pipx: | $(OPT)/pipx
+	'$(OPT)/pipx/$(PY_BIN)/pip' install --require-virtualenv --upgrade -- pipx
 
 
-PIPX_EX := ./libexec/linux-lock.sh $(OPT)/pipx/bin/pipx
+PIPX_EX := ./libexec/linux-lock.sh $(OPT)/pipx/$(PY_BIN)/pipx
 
 define PIPX_TEMPLATE
 
 $(PIPX)/$1: | .WAIT
 pipx: $(PIPX)/$1
-$(PIPX)/$1: | $(OPT)/pipx/bin/pipx
+$(PIPX)/$1: | $(OPT)/pipx/$(PY_BIN)/pipx
 	if [[ -d '$$@' ]]; then
 		$(PIPX_EX) upgrade -- '$2'
 	else
