@@ -104,7 +104,7 @@ jobs:
       - shell: cmd
         run: |-
           assoc .sh=Shell.File
-          ftype Shell.File=%ProgramFiles%\Git\bin\bash.exe "%1" %*
+          ftype Shell.File=%ProgramFiles%\Git\bin\sh.exe "%1" %*
 
       - run: |-
           $Env:Path = @(
