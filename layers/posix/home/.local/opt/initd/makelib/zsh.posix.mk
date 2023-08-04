@@ -2,7 +2,7 @@
 
 zsh: zsh.posix
 
-zsh.posix: $(CACHE)/zsh/dircolors.sh $(HOMEPATH)/.local/state/zsh/zz
+zsh.posix: $(CACHE)/zsh/dircolors.sh $(STATE)/zsh/zz
 
 $(CACHE)/zsh/dircolors.sh: $(OPT)/dircolors-solarized
 	case "$$OSTYPE" in
