@@ -127,4 +127,3 @@ jobs:
           $tmp = 'out.json'
           & 'winget' 'export' '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
           Get-Content -Path $tmp
-
