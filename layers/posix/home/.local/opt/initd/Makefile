@@ -9,7 +9,11 @@ SHELL := bash
 
 include env.mk
 
-HOMEPATH := $(subst :,\:,$(HOME))
+ifeq ($(OS),nt)
+HOMEPATH := $(subst :,\:,$(HOMEDRIVE)$(HOMEPATH))
+else
+HOMEPATH := $(HOME)
+endif
 CONFIG := $(HOMEPATH)/.config
 LOCAL := $(HOMEPATH)/.local
 BIN := $(LOCAL)/bin
