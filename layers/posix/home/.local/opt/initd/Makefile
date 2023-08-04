@@ -9,15 +9,14 @@ SHELL := bash
 
 include env.mk
 
-ifeq ($(OS),nt)
-HOME := $(subst :,\:,$(HOME))
-endif
-CONFIG := $(HOME)/.config
-LOCAL := $(HOME)/.local
+HOMEPATH := $(subst :,\:,$(HOME))
+CONFIG := $(HOMEPATH)/.config
+LOCAL := $(HOMEPATH)/.local
 BIN := $(LOCAL)/bin
 OPT := $(LOCAL)/opt
 SHARE := $(LOCAL)/share
-CACHE = $(HOME)/.cache
+CACHE := $(HOMEPATH)/.cache
+STATE := $(LOCAL)/state
 TMP := $(CACHE)/initd
 NPROC := $(shell ./libexec/nproc.sh)
 
@@ -53,9 +52,9 @@ $(TMP):
 
 include makelib/*.mk
 
-all: git curl zsh tmux conf nvim pkg
+all: git curl zsh tmux conf nvim
 
 ifneq ($(OS),nt)
-all: pipx
+all: pipx pkg
 endif
 

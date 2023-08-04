@@ -11,7 +11,6 @@ clobber.git.$(notdir $1):
 
 git: $1
 $1: | $(CONFIG)/git/config
-	export -- HOME='$(call UNESC_DRIVE,$(HOME))'
 	DIR='$(call UNESC_DRIVE,$1)'
 	if [[ -d "$$$$DIR" ]]; then
 		cd -- "$$$$DIR"
