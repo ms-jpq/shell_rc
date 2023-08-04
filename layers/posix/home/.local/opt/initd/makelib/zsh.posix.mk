@@ -15,6 +15,8 @@ $(CACHE)/zsh/dircolors.sh: $(OPT)/dircolors-solarized
 	esac
 	TERM=xterm-256color "$$DC" --bourne-shell -- '$</dircolors.256dark' > '$@'
 
-$(HOME)/.local/state/zsh/zz:
-	mkdir -v -p -- '$$(dir $@)'
+$(HOME)/.local/state/zsh:
+	mkdir -v -p -- '$@'
+
+$(HOME)/.local/state/zsh/zz: | $(HOME)/.local/state/zsh
 	touch -- '$@'
