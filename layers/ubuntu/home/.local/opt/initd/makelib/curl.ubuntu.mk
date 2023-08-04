@@ -4,11 +4,11 @@ all: deb
 define ARCHIVE_TEMPLATE
 ifneq (aarch64**,$(MACHTYPE)$(findstring **,$2))
 
-$(TMP)/curl/$1: | $(TMP)/curl /usr/bin/curl /usr/bin/jq /usr/bin/unzip
-	./libexec/curl-unpack.sh '$(subst **,,$2)' '$(TMP)/curl'
+$(TP)/curl/$1: | $(TP)/curl /usr/bin/curl /usr/bin/jq /usr/bin/unzip
+	./libexec/curl-unpack.sh '$(subst **,,$2)' '$(TP)/curl'
 
-$(BIN)/$(notdir $1): | $(TMP)/curl/$1
-	install --backup -- '$(TMP)/curl/$1' '$$@'
+$(BIN)/$(notdir $1): | $(TP)/curl/$1
+	install --backup -- '$(TP)/curl/$1' '$$@'
 
 curl: $(BIN)/$(notdir $1)
 
@@ -19,12 +19,12 @@ endef
 define DEB_TEMPLATE
 ifneq (aarch64**,$(MACHTYPE)$(findstring **,$2))
 
-$(TMP)/curl/$(notdir $2): | $(TMP)/curl /usr/bin/curl /usr/bin/jq
+$(TP)/curl/$(notdir $2): | $(TP)/curl /usr/bin/curl /usr/bin/jq
 	$(CURL) --output '$$@' -- '$(subst **,,$2)'
 
 deb: .WAIT $1
-$1: | $(TMP)/curl/$(notdir $2) pkg.posix
-	$$(APT_INSTALL) -o DPkg::Lock::Timeout=-1 -- '$(TMP)/curl/$(notdir $2)'
+$1: | $(TP)/curl/$(notdir $2) pkg.posix
+	$$(APT_INSTALL) -o DPkg::Lock::Timeout=-1 -- '$(TP)/curl/$(notdir $2)'
 
 endif
 endef

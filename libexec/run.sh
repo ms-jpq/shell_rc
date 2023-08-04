@@ -121,9 +121,8 @@ for FS in "${!FFS[@]}"; do
   if [[ -n "$F" ]]; then
     SINK="$RDST$ROOT/"
     printf -- '%q%s%q\n' "$SRC" ' >>> ' "$SINK"
-    "${EX[@]}" rsync -v --recursive --links --perms --keep-dirlinks --rsh "$RSH" -- "$SRC" "$SINK"
+    "${EX[@]}" rsync --recursive --links --perms --keep-dirlinks --rsh "$RSH" -- "$SRC" "$SINK"
   fi
 done
 
-ls -A -- "$ENV_HOME"
 shell "$ENV_HOME/.local/opt/initd/make.sh" "$@"
