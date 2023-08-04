@@ -4,7 +4,7 @@ $(TMP)/curl/$1: | $(TMP)/curl
 	./libexec/curl-unpack.sh '$(subst **,,$2)' '$$(call UNESC_DRIVE,$$|)'
 
 $(BIN)/$(notdir $1): | $(TMP)/curl/$1
-	install --backup -- '$(call UNESC_DRIVE,$(TMP)/curl/$1)' '$$(call UNESC_DRIVE,$$@)'
+	install --backup -- '$(call UNESC_DRIVE,$(TMP)/curl/$1)' '$$@'
 
 curl: $(BIN)/$(notdir $1)
 
