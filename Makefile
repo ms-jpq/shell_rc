@@ -11,7 +11,7 @@ SHELL := bash
 
 .DEFAULT_GOAL := help
 
-.PHONY: clean clobber
+.PHONY: clean clobber localhost
 
 clean:
 	shopt -u failglob
@@ -23,8 +23,8 @@ clobber: clean
 
 GOOS := darwin ubuntu nt
 CURL := curl --fail --location --no-progress-meter
-
 TMP := ./var/tmp
+ARGV ?=
 
 ./var/bin:
 	mkdir -v -p -- '$@'
@@ -34,3 +34,6 @@ $(TMP):
 
 include makelib/env.mk
 include makelib/*.mk
+
+localhost:
+	./libexec/run.sh '$@' $(ARGV)

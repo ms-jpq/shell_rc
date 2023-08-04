@@ -111,25 +111,23 @@ jobs:
             Join-Path -- $Env:GHCUP_MSYS2 'usr' 'bin'
             $Env:Path
           ) | Join-String -Separator ([IO.Path]::PathSeparator)
-          $Env:PATHEXT = @('.SH', $Env:PATHEXT) | Join-String -Separator ([IO.Path]::PathSeparator)
           $Env:PIPX_HOME = ''
 
           Write-Output -- $Env:PATHEXT
 
           Get-Command -- rsync
 
-          .\main.sh 'localhost'
+          gmake 'localhost'
 
       - run: |-
           $Env:Path = @(
             Join-Path -- $Env:GHCUP_MSYS2 'usr' 'bin'
             $Env:Path
           ) | Join-String -Separator ([IO.Path]::PathSeparator)
-          $Env:PATHEXT = @('.SH', $Env:PATHEXT) | Join-String -Separator ([IO.Path]::PathSeparator)
           $Env:PIPX_HOME = ''
 
           # $tmp = 'out.json'
           # & 'winget' 'export' '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
           # Get-Content -Path $tmp
 
-          .\main.sh 'localhost' '--' '--debug'
+          gmake ARGV='-- --debug'
