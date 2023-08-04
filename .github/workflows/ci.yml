@@ -81,9 +81,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - shell: bash
-        run: |-
-          env | sort -t = -k 1
+      - run: |-
+          Get-ChildItem Env:* | Sort-Object Name
 
       - run: |-
           Get-Command -- cygpath
