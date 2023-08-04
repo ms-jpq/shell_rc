@@ -1,6 +1,6 @@
 .PHONY: curl
 
-$(TMP)/curl: | $(TMP)
+$(TP)/curl: | $(TP)
 	mkdir -v -p -- '$@'
 
-GH_LATEST := ./libexec/gh-latest.sh $(TMP)/curl
+GH_LATEST := ./libexec/gh-latest.sh $(TP)/curl

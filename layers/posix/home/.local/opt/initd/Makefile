@@ -10,18 +10,21 @@ SHELL := bash
 include env.mk
 
 ifeq ($(OS),nt)
-HOMEPATH := $(subst :,\:,$(HOMEDRIVE)$(HOMEPATH))
+HOME := $(HOMEDRIVE)$(HOMEPATH)
+HP := $(subst :,\:,$(HOME))
+export -- HOME
 else
-HOMEPATH := $(HOME)
+HP := $(HOME)
 endif
-CONFIG := $(HOMEPATH)/.config
-LOCAL := $(HOMEPATH)/.local
+
+CONFIG := $(HP)/.config
+LOCAL := $(HP)/.local
 BIN := $(LOCAL)/bin
 OPT := $(LOCAL)/opt
 SHARE := $(LOCAL)/share
-CACHE := $(HOMEPATH)/.cache
+CACHE := $(HP)/.cache
 STATE := $(LOCAL)/state
-TMP := $(CACHE)/initd
+TP := $(CACHE)/initd
 NPROC := $(shell ./libexec/nproc.sh)
 
 # TODO: gnumake 4.4 .WAIT
@@ -51,7 +54,7 @@ clobber: clean
 	shopt -u failglob
 	rm -v -rf --
 
-$(TMP):
+$(TP):
 	mkdir -v -p -- '$@'
 
 include makelib/*.mk

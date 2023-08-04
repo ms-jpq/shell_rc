@@ -101,11 +101,6 @@ jobs:
       # - run: |-
       #     & powershell './layers/nt/winget.ps1'
 
-      - shell: cmd
-        run: |-
-          assoc .sh=Shell.File
-          ftype Shell.File=%ProgramFiles%\Git\bin\sh.exe "%1" %*
-
       - run: |-
           $Env:Path = @(
             Join-Path -- $Env:GHCUP_MSYS2 'usr' 'bin'
@@ -130,4 +125,4 @@ jobs:
           # & 'winget' 'export' '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
           # Get-Content -Path $tmp
 
-          gmake ARGV='-- --debug'
+          gmake 'localhost' ARGV='-- --debug'
