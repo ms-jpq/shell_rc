@@ -10,7 +10,7 @@ GIT_BIN := /usr/bin/git
 endif
 
 $(CONFIG)/git/config: | $(GIT_BIN)
-	touch -- '$$(call UNESC_DRIVE,$$@)'
+	touch -- '$$@'
 	HOME='$(call UNESC_DRIVE,$(HOME))' git config --global include.path user_config
 
 conf.posix.ssh:
