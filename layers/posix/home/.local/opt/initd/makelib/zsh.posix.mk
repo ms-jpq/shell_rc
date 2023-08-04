@@ -2,7 +2,7 @@
 
 zsh: zsh.posix
 
-zsh.posix: $(CACHE)/zsh/dircolors.sh $(HOME)/.local/state/zsh/zz
+zsh.posix: $(CACHE)/zsh/dircolors.sh $(HOMEPATH)/.local/state/zsh/zz
 
 $(CACHE)/zsh/dircolors.sh: $(OPT)/dircolors-solarized
 	case "$$OSTYPE" in
@@ -15,8 +15,8 @@ $(CACHE)/zsh/dircolors.sh: $(OPT)/dircolors-solarized
 	esac
 	TERM=xterm-256color "$$DC" --bourne-shell -- '$</dircolors.256dark' > '$@'
 
-$(HOME)/.local/state/zsh:
+$(STATE)/zsh:
 	mkdir -v -p -- '$@'
 
-$(HOME)/.local/state/zsh/zz: | $(HOME)/.local/state/zsh
+$(STATE)/zsh/zz: | $(STATE)/zsh
 	touch -- '$@'
