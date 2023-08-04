@@ -9,21 +9,21 @@ on:
     - cron: "0 0 * * *" # daily
 
 jobs:
-  # docker:
-  #   strategy:
-  #     matrix:
-  #       platform:
-  #         - ubuntu-latest
-  #         # - windows-latest
+  docker:
+    strategy:
+      matrix:
+        platform:
+          - ubuntu-latest
+          # - windows-latest
 
-  #   runs-on: ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
 
-  #   steps:
-  #     - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - shell: bash
-  #       run: |-
-  #         gmake build
+      - shell: bash
+        run: |-
+          gmake build
 
   # ubuntu:
   #   runs-on: ubuntu-latest
