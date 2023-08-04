@@ -78,7 +78,10 @@ linux*)
   ;;
 msys*)
   OS=nt
+  DRIVE="${ENV_HOME%%:*}"
   ENV_HOME="${ENV_HOME#*:}"
+  # shellcheck disable=SC1003
+  ENV_HOME="/$DRIVE/${ENV_HOME//'\'/'/'}"
   ;;
 *)
   exit 1
@@ -117,7 +120,7 @@ for FS in "${!FFS[@]}"; do
 
   if [[ -n "$F" ]]; then
     SINK="$RDST$ROOT/"
-    printf -- '%q%s%q\n' "$SRC" '->' "$SINK"
+    printf -- '%q%s%q\n' "$SRC" ' >>> ' "$SINK"
     "${EX[@]}" rsync -v --recursive --links --perms --keep-dirlinks --rsh "$RSH" -- "$SRC" "$SINK"
   fi
 done

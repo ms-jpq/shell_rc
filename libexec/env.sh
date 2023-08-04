@@ -33,6 +33,8 @@ msys*)
     printf -- '%s' "$v"
   }
 
+  # shellcheck disable=2154
+  HOME="$HOMEDRIVE$HOMEPATH"
   ID="$(wmic os get Caption | trim)"
   VERSION_ID="$(wmic os get Version | trim)"
   VERSION_CODENAME="$VERSION_ID"
