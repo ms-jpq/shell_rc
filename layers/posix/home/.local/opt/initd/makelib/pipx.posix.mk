@@ -38,7 +38,6 @@ define PIP_PKGS
 
 gay                   gay
 graphtage             graphtage
-httpie                httpie
 markdown-live-preview markdown_live_preview
 sortd                 sortd
 
