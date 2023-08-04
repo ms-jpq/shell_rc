@@ -14,4 +14,4 @@ $(CONFIG)/git/config: | $(GIT_BIN)
 	git config --global include.path user_config
 
 conf.posix.ssh:
-	./libexec/line-in-file.sh '$(call UNESC_DRIVE,$(HOMEPATH))/.ssh/config' 'Include ~/.config/ssh/*.conf'
+	./libexec/line-in-file.sh ~/.ssh/config 'Include ~/.config/ssh/*.conf'
