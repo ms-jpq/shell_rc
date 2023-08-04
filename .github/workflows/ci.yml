@@ -121,8 +121,10 @@ jobs:
           ) | Join-String -Separator ([IO.Path]::PathSeparator)
           $Env:PIPX_HOME = ''
 
-          # $tmp = 'out.json'
-          # & 'winget' 'export' '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
-          # Get-Content -Path $tmp
-
           gmake 'localhost' ARGV='-- --debug'
+
+      - run: |-
+          $tmp = 'out.json'
+          & 'winget' 'export' '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
+          Get-Content -Path $tmp
+
