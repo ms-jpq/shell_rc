@@ -85,9 +85,11 @@ jobs:
           Get-ChildItem Env:* | Sort-Object Name
 
       - run: |-
+          Get-Command -- bash
           Get-Command -- cygpath
           Get-Command -- gmake
           Get-Command -- python3
+          Get-Command -- sh
           Get-Command -- tar
           Get-Command -- unzip
 
@@ -99,26 +101,35 @@ jobs:
       # - run: |-
       #     & powershell './layers/nt/winget.ps1'
 
+      - shell: cmd
+        run: |-
+          assoc .sh=Shell.File
+          ftype Shell.File=%ProgramFiles%\Git\bin\bash.exe "%1" %*
+
       - run: |-
           $Env:Path = @(
             Join-Path -- $Env:GHCUP_MSYS2 'usr' 'bin'
             $Env:Path
           ) | Join-String -Separator ([IO.Path]::PathSeparator)
+          $Env:PATHEXT = @('.SH', $Env:PATHEXT) | Join-String -Separator ([IO.Path]::PathSeparator)
           $Env:PIPX_HOME = ''
+
+          Write-Output -- $Env:PATHEXT
 
           Get-Command -- rsync
 
-          & sh '-c' './main.sh localhost'
+          .\main.sh 'localhost'
 
       - run: |-
           $Env:Path = @(
             Join-Path -- $Env:GHCUP_MSYS2 'usr' 'bin'
             $Env:Path
           ) | Join-String -Separator ([IO.Path]::PathSeparator)
+          $Env:PATHEXT = @('.SH', $Env:PATHEXT) | Join-String -Separator ([IO.Path]::PathSeparator)
           $Env:PIPX_HOME = ''
 
           # $tmp = 'out.json'
           # & 'winget' 'export' '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
           # Get-Content -Path $tmp
 
-          & sh '-c' './main.sh localhost -- --debug'
+          .\main.sh 'localhost' '--' '--debug'
