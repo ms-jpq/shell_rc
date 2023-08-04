@@ -2,7 +2,12 @@
 
 set -o pipefail
 
-ARG0="$(realpath -- "$0")"
+if [[ -L "$0" ]]; then
+  ARG0="$(readlink -- "$0")"
+else
+  ARG0="$0"
+fi
+
 cd -- "${ARG0%/*}/.."
 
 LONG_OPTS='port:'
