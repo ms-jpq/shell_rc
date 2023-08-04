@@ -10,7 +10,7 @@ clobber.git.$(notdir $1):
 	rm -v -rf -- '$(call UNESC_DRIVE,$1)'
 
 git: $1
-$1: | $(GIT_BIN)
+$1: | $(CONFIG)/git/config
 	DIR='$(call UNESC_DRIVE,$1)'
 	if [[ -d "$$$$DIR" ]]; then
 		cd -- "$$$$DIR"
