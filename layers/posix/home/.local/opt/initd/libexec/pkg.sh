@@ -19,7 +19,7 @@ darwin*)
 linux*)
   PKGS="$(dpkg --get-selections | cut --field 1)"
   ;;
-msys*)
+msys)
   WG_JSON="$(mktemp)"
   winget export --disable-interactivity --accept-source-agreements --output "$WG_JSON"
   PKGS="$(jq --exit-status --raw-output '.Sources[].Packages[].PackageIdentifier' "$WG_JSON" | tr --delete '\r')"
@@ -70,7 +70,7 @@ if (("${#RM[@]}")); then
   linux*)
     sudo -- apt-get purge --yes -- "${RM[@]}"
     ;;
-  *msys*)
+  msys)
     for DEL in "${RM[@]}"; do
       printf -- '%s%q\n' '> --id ' "$DEL" >&2
       winget uninstall --disable-interactivity --accept-source-agreements --id "$DEL"
@@ -91,7 +91,7 @@ if (("${#ADD[@]}")); then
     sudo -- apt-get update
     DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --no-install-recommends --yes -- "${ADD[@]}"
     ;;
-  *msys*)
+  msys)
     for A in "${ADD[@]}"; do
       WINGET=(
         winget install

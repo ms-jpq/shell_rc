@@ -4,9 +4,9 @@ conf: conf.posix
 conf.posix: $(CONFIG)/git/config conf.posix.ssh
 
 ifeq (nt, $(OS))
-GIT_BIN :=
+	GIT_BIN :=
 else
-GIT_BIN := /usr/bin/git
+	GIT_BIN := /usr/bin/git
 endif
 
 $(CONFIG)/git/config: | $(GIT_BIN)

@@ -2,7 +2,8 @@
 all: layers
 
 DIRS := root home
-RSYNC := rsync --recursive --links --perms --keep-dirlinks
+RSYNC_EXE ?= rsync
+RSYNC := $(RSYNC_EXE) --recursive --links --perms --keep-dirlinks
 
 define FS_TEMPLATE
 
