@@ -7,7 +7,7 @@ REPO="$2"
 NAME="${REPO/\//.}"
 CACHE="$TMP/$NAME.cache"
 
-mkdir -v -p -- "$TMP"
+mkdir -p -- "$TMP"
 
 if ! [[ -v LOCKED ]] && command -v -- flock >/dev/null; then
   LOCK="$TMP/$NAME.lock"
