@@ -17,10 +17,6 @@ else
 HP := $(HOME)
 endif
 
-$(warning $(HP))
-$(warning $(HOME))
-$(warning $(call UNIX_2_NT,$(HP)))
-
 CONFIG := $(HP)/.config
 LOCAL := $(HP)/.local
 BIN := $(LOCAL)/bin
