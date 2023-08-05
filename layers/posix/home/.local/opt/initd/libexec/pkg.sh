@@ -92,16 +92,16 @@ if (("${#ADD[@]}")); then
     DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --no-install-recommends --yes -- "${ADD[@]}"
     ;;
   msys)
+    WINGET=(
+      winget install
+      --disable-interactivity
+      --accept-source-agreements --accept-package-agreements
+      --exact
+      --id
+    )
     for A in "${ADD[@]}"; do
-      WINGET=(
-        winget install
-        --disable-interactivity
-        --accept-source-agreements --accept-package-agreements
-        --exact
-        --id "$A"
-      )
       printf -- '%s%q\n' '> --id ' "$A" >&2
-      "${WINGET[@]}"
+      "${WINGET[@]}" "$A"
     done
     ;;
   *)

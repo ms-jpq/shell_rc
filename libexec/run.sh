@@ -58,7 +58,7 @@ CONN=(ssh
   -o 'ControlPersist=60'
   -p $((PORT))
 )
-printf -v RSH -- '%q ' 'exec' "${CONN[@]}"
+printf -v RSH -- '%q ' "${CONN[@]}"
 RSYNC=(
   "${RSYNC_EXE:-"rsync"}"
   --recursive
@@ -148,4 +148,5 @@ for FS in "${!FFS[@]}"; do
   "${EX[@]}" "${RSYNC[@]}" "$SRC" "$SINK"
 done
 
-gmake --directory "$ENV_HOME/.local/opt/initd" "$@"
+shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
+shell gmake --directory "$ENV_HOME/.local/opt/initd" "$@"
