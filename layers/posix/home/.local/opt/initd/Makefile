@@ -11,14 +11,11 @@ include env.mk
 
 ifeq ($(OS),nt)
 HOME := $(HOMEDRIVE)$(HOMEPATH)
-HP := $(call ESC_NTPATH,$(HOME))
+HP := $(call NT_2_UNIX,$(HOME))
 export -- HOME
 else
 HP := $(HOME)
 endif
-
-$(warning $(HP))
-$(warning $(HOME))
 
 CONFIG := $(HP)/.config
 LOCAL := $(HP)/.local

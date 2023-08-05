@@ -6,4 +6,4 @@ endif
 
 $(SHARE)/tmux:
 	python3 -m venv --upgrade -- '$@'
-	'$@/$(PY_BIN)/pip' install --require-virtualenv --upgrade --requirement '$(call UNESC_NTPATH,$(CONFIG)/tmux/requirements.txt)'
+	'$@/$(PY_BIN)/pip' install --require-virtualenv --upgrade --requirement '$(call UNIX_2_NT,$(CONFIG)/tmux/requirements.txt)'

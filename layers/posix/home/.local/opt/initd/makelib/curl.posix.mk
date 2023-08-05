@@ -3,4 +3,4 @@
 $(TP)/curl: | $(TP)
 	mkdir -v -p -- '$@'
 
-GH_LATEST := ./libexec/gh-latest.sh $(call UNESC_NTPATH,$(TP)/curl)
+GH_LATEST := ./libexec/gh-latest.sh $(call NT_2_UNIX,$(TP)/curl)
