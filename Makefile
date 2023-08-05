@@ -26,10 +26,7 @@ CURL := curl --fail --location --no-progress-meter
 TMP := ./var/tmp
 ARGV ?=
 
-./var/bin:
-	mkdir -v -p -- '$@'
-
-$(TMP):
+./var/bin $(TMP):
 	mkdir -v -p -- '$@'
 
 include env.mk
