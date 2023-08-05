@@ -31,16 +31,16 @@ endef
 
 
 ifeq ($(MACHTYPE), aarch64)
-	GITUI_TYPE := $(MACHTYPE)
+GITUI_TYPE := $(MACHTYPE)
 else
-	GITUI_TYPE := musl
+GITUI_TYPE := musl
 endif
 
 
 ifeq ($(MACHTYPE), aarch64)
-	LAZY_TYPE := $(GOARCH)
+LAZY_TYPE := $(GOARCH)
 else
-	LAZY_TYPE := $(MACHTYPE)
+LAZY_TYPE := $(MACHTYPE)
 endif
 
 V_DELTA   = $(shell $(GH_LATEST) dandavison/delta)

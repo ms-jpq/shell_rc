@@ -1,9 +1,9 @@
 .PHONY: build build.ubuntu
 
 ifeq (x86_64-nt, $(MACHTYPE)-$(OS))
-	build: build.nt
+build: build.nt
 else
-	build: build.ubuntu
+build: build.ubuntu
 endif
 
 build.ubuntu: ./docker/ubuntu.Dockerfile
