@@ -1,11 +1,5 @@
 .PHONY: pipx clobber.pipx
 
-ifeq (nt, $(OS))
-PY_BIN := Scripts
-else
-PY_BIN := bin
-endif
-
 PIPX := $(LOCAL)/pipx/venvs
 
 clobber: clobber.pipx

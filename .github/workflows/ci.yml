@@ -97,8 +97,8 @@ jobs:
           $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync')
           & $pacman @argv
 
-      # - run: |-
-      #     & powershell './layers/nt/winget.ps1'
+      - run: |-
+          & powershell './layers/nt/winget.ps1'
 
       # - run: |-
       #     $winget = Join-Path -- $Env:LOCALAPPDATA 'Microsoft' 'WindowsApps' 'winget'

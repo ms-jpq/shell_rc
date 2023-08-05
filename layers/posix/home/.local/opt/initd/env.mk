@@ -55,3 +55,9 @@ define UNIX_2_NT
 $1
 endef
 endif
+
+ifeq (nt, $(OS))
+PY_BIN := Scripts
+else
+PY_BIN := bin
+endif
