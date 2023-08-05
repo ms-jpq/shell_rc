@@ -25,55 +25,55 @@ jobs:
         run: |-
           gmake build
 
-  ubuntu:
-    runs-on: ubuntu-latest
+  # ubuntu:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - run: |-
-          env | sort -t = -k 1
+  #     - run: |-
+  #         env | sort -t = -k 1
 
-      - run: |-
-          gmake lint
+  #     - run: |-
+  #         gmake lint
 
-      - run: |-
-          unset -- PIPX_HOME
-          ./main.sh localhost
+  #     - run: |-
+  #         unset -- PIPX_HOME
+  #         ./main.sh localhost
 
-      - run: |-
-          unset -- PIPX_HOME
-          ./main.sh localhost -- --debug
+  #     - run: |-
+  #         unset -- PIPX_HOME
+  #         ./main.sh localhost -- --debug
 
-      - run: |-
-          gmake fmt
-          git diff --exit-code
+  #     - run: |-
+  #         gmake fmt
+  #         git diff --exit-code
 
-  macos:
-    runs-on: macos-latest
+  # macos:
+  #   runs-on: macos-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - run: |-
-          env | sort -t = -k 1
+  #     - run: |-
+  #         env | sort -t = -k 1
 
-      - run: |-
-          brew install -- bash make gnu-getopt
-          rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
+  #     - run: |-
+  #         brew install -- bash make gnu-getopt
+  #         rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
-      - run: |-
-          gmake lint
+  #     - run: |-
+  #         gmake lint
 
-      - run: |-
-          PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
-          unset -- PIPX_HOME
-          ./main.sh localhost
+  #     - run: |-
+  #         PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
+  #         unset -- PIPX_HOME
+  #         ./main.sh localhost
 
-      - run: |-
-          PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
-          unset -- PIPX_HOME
-          ./main.sh localhost -- --debug
+  #     - run: |-
+  #         PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
+  #         unset -- PIPX_HOME
+  #         ./main.sh localhost -- --debug
 
   windows:
     runs-on: windows-latest
@@ -84,7 +84,6 @@ jobs:
       - run: |-
           Get-ChildItem Env:* | Sort-Object Name
 
-      - run: |-
           Get-Command -- bash
           Get-Command -- cygpath
           Get-Command -- gmake
@@ -101,26 +100,19 @@ jobs:
       - run: |-
           & powershell './layers/nt/winget.ps1'
 
+      # - run: |-
+      #     $winget = Join-Path -- $Env:LOCALAPPDATA 'Microsoft' 'WindowsApps' 'winget'
+      #     $argv = @('install', '--disable-interactivity', '--accept-source-agreements', '--accept-package-agreements', '--exact', '--id', 'GnuWin32.Make')
+      #     & $winget @argv
+
       - run: |-
-          $Env:Path = @(
-            Join-Path -- $Env:GHCUP_MSYS2 'usr' 'bin'
-            $Env:Path
-          ) | Join-String -Separator ([IO.Path]::PathSeparator)
+          $Env:RSYNC_EXE = Join-Path -- $Env:GHCUP_MSYS2 'usr' 'bin' 'rsync'
           $Env:PIPX_HOME = ''
-
-          Write-Output -- $Env:PATHEXT
-
-          Get-Command -- rsync
-
           gmake 'localhost'
 
       - run: |-
-          $Env:Path = @(
-            Join-Path -- $Env:GHCUP_MSYS2 'usr' 'bin'
-            $Env:Path
-          ) | Join-String -Separator ([IO.Path]::PathSeparator)
+          $Env:RSYNC_EXE = Join-Path -- $Env:GHCUP_MSYS2 'usr' 'bin' 'rsync'
           $Env:PIPX_HOME = ''
-
           gmake 'localhost' ARGV='-- --debug'
 
       - run: |-

@@ -17,7 +17,7 @@ darwin*)
   NPROC="$(sysctl -n hw.physicalcpu)"
   MEMINFO="$(sysctl -n hw.memsize)"
   ;;
-msys*)
+msys)
   if command -v -- pwsh >/dev/null; then
     PSH=pwsh
   else

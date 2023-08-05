@@ -32,7 +32,7 @@ ARGV ?=
 $(TMP):
 	mkdir -v -p -- '$@'
 
-include makelib/env.mk
+include env.mk
 include makelib/*.mk
 
 localhost:

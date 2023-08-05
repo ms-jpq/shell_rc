@@ -54,6 +54,7 @@ V_TV      = $(shell $(GH_LATEST) alexhallam/tv)
 V_WATCHEX = $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
 V_XSV     = $(shell $(GH_LATEST) BurntSushi/xsv)
 
+VERSION_ID := $(shell perl -w -CAS -ne '/^VERSION_ID="(.+)"$$/ && print $$1' </etc/os-release)
 
 define CURL_ARCHIVES
 

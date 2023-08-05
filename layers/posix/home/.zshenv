@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- bash
 
 case "$OSTYPE" in
-*msys*)
+msys)
   export -- MSYSTEM='MSYS'
 
   cpath="$(/usr/bin/cygpath -- "$LOCALAPPDATA")"

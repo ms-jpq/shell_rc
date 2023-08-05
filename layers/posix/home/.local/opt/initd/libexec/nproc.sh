@@ -9,7 +9,7 @@ darwin*)
 linux*)
   nproc
   ;;
-msys*)
+msys)
   if command -v -- nproc >/dev/null; then
     nproc
   else

@@ -34,15 +34,40 @@ done
 DST="$1"
 shift -- 1
 
-CTL="$PWD/var/tmp"
-mkdir -p -- "$CTL"
+nt2unix() {
+  local -- drive ntpath
+  ntpath="$1"
+  drive="${ntpath%%:*}"
+  ntpath="${ntpath#*:}"
+  # shellcheck disable=SC1003
+  unixpath="/$drive/${ntpath//'\'/'/'}"
+  printf -- '%s' "$unixpath"
+}
+
+if [[ "$OSTYPE" == msys ]] && [[ -v RSYNC_EXE ]]; then
+  RSYNC_EXE="$(nt2unix "$RSYNC_EXE")"
+  export -- RSYNC_EXE
+fi
+
+gmake all
+
+BSH=(bash --norc --noprofile -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
 CONN=(ssh
   -o 'ControlMaster=auto'
-  -o "ControlPath=$CTL/%r@%h:%p"
+  -o "ControlPath=$PWD/var/tmp/%r@%h:%p"
   -o 'ControlPersist=60'
   -p $((PORT))
 )
-printf -v RSH -- '%q ' "${CONN[@]}"
+printf -v RSH -- '%q ' 'exec' "${CONN[@]}"
+RSYNC=(
+  "${RSYNC_EXE:-"rsync"}"
+  --recursive
+  --links
+  --perms
+  --keep-dirlinks
+  --rsh "$RSH"
+  --
+)
 
 if [[ "$DST" == 'localhost' ]]; then
   LOCAL=1
@@ -63,9 +88,6 @@ shell() {
   fi
 }
 
-gmake all
-
-BSH=(bash --norc --noprofile -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
 ENV="$(shell "${BSH[@]}" "$(<'./libexec/env.sh')")"
 printf -- '%s\n' "$ENV"
 
@@ -81,33 +103,28 @@ darwin*)
 linux*)
   OS=ubuntu
   ;;
-msys*)
+msys)
   OS=nt
-  DRIVE="${ENV_HOME%%:*}"
-  ENV_HOME="${ENV_HOME#*:}"
-  # shellcheck disable=SC1003
-  ENV_HOME="/$DRIVE/${ENV_HOME//'\'/'/'}"
+  ENV_HOME="$(nt2unix "$ENV_HOME")"
   ;;
 *)
   exit 1
   ;;
 esac
 
-declare -A -- ROOTS
+declare -A -- FFS ROOTS
+FFS=([root]=1 [home]=0)
 ROOTS=(
   ['root']=/
   ['home']="$ENV_HOME"
 )
-
-declare -A -- FFS
-FFS=([root]=1 [home]=0)
 
 for FS in "${!FFS[@]}"; do
   SUDO="${FFS["$FS"]}"
   ROOT="${ROOTS["$FS"]}"
   SRC="./var/tmp/$OS/$FS/"
 
-  if ((SUDO)) && ((LOCAL)); then
+  if ((SUDO)) && ((LOCAL)) && [[ "$OS" != nt ]]; then
     EX=(sudo --)
   else
     EX=()
@@ -122,12 +139,13 @@ for FS in "${!FFS[@]}"; do
   for F in "$SRC"*; do
     break
   done
-
-  if [[ -n "$F" ]]; then
-    SINK="$RDST$ROOT/"
-    printf -- '%q%s%q\n' "$SRC" ' >>> ' "$SINK"
-    "${EX[@]}" rsync --recursive --links --perms --keep-dirlinks --rsh "$RSH" -- "$SRC" "$SINK"
+  if [[ -z "$F" ]]; then
+    continue
   fi
+
+  SINK="$RDST$ROOT/"
+  printf -- '%q%s%q\n' "$SRC" ' >>> ' "$SINK"
+  "${EX[@]}" "${RSYNC[@]}" "$SRC" "$SINK"
 done
 
-shell "$ENV_HOME/.local/opt/initd/make.sh" "$@"
+gmake --directory "$ENV_HOME/.local/opt/initd" "$@"

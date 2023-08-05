@@ -1,7 +1,7 @@
 .PHONY: tmux
 
 ifneq (aarch64-linux, $(MACHTYPE)-$(OS))
-tmux: $(SHARE)/tmux
+	tmux: $(SHARE)/tmux
 endif
 
 $(SHARE)/tmux:
