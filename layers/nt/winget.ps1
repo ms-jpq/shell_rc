@@ -33,4 +33,17 @@ if ($go) {
     Invoke-WebRequest -Uri $license.browser_download_url -OutFile $t_license
 
     Add-AppxProvisionedPackage -Online -PackagePath $t_bundle -LicensePath $t_license
+
+    $location = Join-Path -Path $Env:LOCALAPPDATA -ChildPath (Join-Path -Path 'Microsoft' -ChildPath (Join-Path -Path 'WindowsApps' -ChildPath 'winget.exe'))
+
+    foreach ($i in 1..60) {
+        if (Test-Path -Path $location) {
+            exit 0
+        }
+
+        Write-Host -- $i
+        Start-Sleep -Seconds 1
+    }
+
+    throw "test -f $location"
 }
