@@ -17,6 +17,9 @@ else
 HP := $(HOME)
 endif
 
+$(warning $(HP))
+$(warning $(HOME))
+
 CONFIG := $(HP)/.config
 LOCAL := $(HP)/.local
 BIN := $(LOCAL)/bin

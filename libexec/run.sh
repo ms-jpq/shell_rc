@@ -40,7 +40,7 @@ nt2unix() {
   drive="${ntpath%%:*}"
   ntpath="${ntpath#*:}"
   # shellcheck disable=SC1003
-  unixpath="/$drive/${ntpath//'\'/'/'}"
+  unixpath="/$drive${ntpath//'\'/'/'}"
   printf -- '%s' "$unixpath"
 }
 
