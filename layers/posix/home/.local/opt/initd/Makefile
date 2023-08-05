@@ -10,11 +10,11 @@ SHELL := bash
 include env.mk
 
 ifeq ($(OS),nt)
-	HOME := $(HOMEDRIVE)$(HOMEPATH)
-	HP := $(call ESC_DRIVE,$(HOME))
-	export -- HOME
+HOME := $(HOMEDRIVE)$(HOMEPATH)
+HP := $(call ESC_NTPATH,$(HOME))
+export -- HOME
 else
-	HP := $(HOME)
+HP := $(HOME)
 endif
 
 CONFIG := $(HP)/.config
@@ -52,6 +52,6 @@ include makelib/*.mk
 all: git curl zsh tmux conf nvim pkg
 
 ifneq ($(OS),nt)
-	all: pipx
+all: pipx
 endif
 
