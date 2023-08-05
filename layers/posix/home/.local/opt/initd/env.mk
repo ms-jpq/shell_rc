@@ -42,10 +42,10 @@ endif
 
 ifeq ($(OS),nt)
 define ESC_NTPATH
-$(subst \,/,$(subst :,\:,$1))
+$(subst :,\:,$(subst \,/,$1))
 endef
 define UNESC_NTPATH
-$(subst \:,:,$(subst /,\,$1))
+$(subst /,\,$(subst \:,:,$1))
 endef
 else
 define ESC_NTPATH
