@@ -41,17 +41,17 @@ GOARCH := amd64
 endif
 
 ifeq ($(OS),nt)
-define ESC_NTPATH
+define NT_2_UNIX
 $(subst :,\:,$(subst \,/,$1))
 endef
-define UNESC_NTPATH
+define UNIX_2_NT
 $(subst /,\,$(subst \:,:,$1))
 endef
 else
-define ESC_NTPATH
+define NT_2_UNIX
 $1
 endef
-define UNESC_NTPATH
+define UNIX_2_NT
 $1
 endef
 endif

@@ -7,11 +7,11 @@ define GIT_TEMPLATE
 .PHONY: clobber.git.$(notdir $1)
 clobber.git: clobber.git.$(notdir $1)
 clobber.git.$(notdir $1):
-	rm -v -rf -- '$(call UNESC_NTPATH,$1)'
+	rm -v -rf -- '$(call UNIX_2_NT,$1)'
 
 git: $1
 $1: | $(CONFIG)/git/config
-	DIR='$(call UNESC_NTPATH,$1)'
+	DIR='$(call UNIX_2_NT,$1)'
 	if [[ -d "$$$$DIR" ]]; then
 		cd -- "$$$$DIR"
 		git pull --recurse-submodules --no-tags '--jobs=$(NPROC)'
