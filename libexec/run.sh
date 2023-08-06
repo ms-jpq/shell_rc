@@ -154,5 +154,5 @@ for FS in "${!FFS[@]}"; do
 done
 
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
-ENVS=(GMAKE="$ENV_MAKE")
+ENVS=(GMAKE="$ENV_MAKE" HOME="$ENV_HOME" USERPROFILE="$ENV_HOME")
 shell "$ENV_MAKE" --directory "$NT_HOME/.local/opt/initd" "${ENVS[@]}" "$@"
