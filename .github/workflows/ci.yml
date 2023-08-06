@@ -97,7 +97,7 @@ jobs:
 
       - run: |-
           $pacman = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'pacman'
-          $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync')
+          $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync', 'make')
           & $pacman @argv
 
       - run: |-
@@ -109,24 +109,23 @@ jobs:
           & $winget @argv
 
       - run: |-
-          Get-Command -- make
-          Get-Command -- gmake
-
-          Get-ChildItem -Force $Env:ProgramFiles
-          Get-ChildItem -Force ${Env:ProgramFiles(x86)}
-
           Get-Command -- winget
 
       - run: |-
-          $Env:RSYNC_EXE = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'rsync'
+          $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
+          $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
-          $make = Join-Path -Path ${Env:ProgramFiles(x86)} 'GnuWin32' 'bin' 'make'
+
+          $make = Join-Path -Path $bin 'make'
           & $make 'localhost'
 
       - run: |-
-          $Env:RSYNC_EXE = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'rsync'
+          $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
+          $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
-          gmake 'localhost' ARGV='-- --debug'
+
+          $make = Join-Path -Path $bin 'make'
+          & $make 'localhost' ARGV='-- --debug'
 
       - run: |-
           $tmp = 'out.json'

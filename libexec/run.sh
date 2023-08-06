@@ -44,12 +44,12 @@ nt2unix() {
   printf -- '%s' "$unixpath"
 }
 
-if [[ "$OSTYPE" == msys ]] && [[ -v RSYNC_EXE ]]; then
-  RSYNC_EXE="$(nt2unix "$RSYNC_EXE")"
-  export -- RSYNC_EXE
+if [[ "$OSTYPE" == msys ]] && [[ -v RSYNC ]]; then
+  RSYNC="$(nt2unix "$RSYNC")"
+  export -- RSYNC
 fi
 
-gmake all
+"${MAKE:-"gmake"}" -- all
 
 BSH=(bash --norc --noprofile -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
 CONN=(ssh
@@ -60,7 +60,7 @@ CONN=(ssh
 )
 printf -v RSH -- '%q ' "${CONN[@]}"
 RSYNC=(
-  "${RSYNC_EXE:-"rsync"}"
+  "${RSYNC:-"rsync"}"
   --recursive
   --links
   --perms
@@ -105,6 +105,8 @@ linux*)
   ;;
 msys)
   OS=nt
+  # shellcheck disable=SC2154
+  ENV_MAKE="$(nt2unix "$ENV_MAKE")"
   ENV_HOME="$(nt2unix "$ENV_HOME")"
   ;;
 *)
@@ -149,4 +151,4 @@ for FS in "${!FFS[@]}"; do
 done
 
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
-shell gmake --directory "$ENV_HOME/.local/opt/initd" "$@"
+shell "$ENV_MAKE" --directory "$ENV_HOME/.local/opt/initd" "$@"
