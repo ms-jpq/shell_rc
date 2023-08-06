@@ -104,28 +104,23 @@ jobs:
           & powershell './layers/nt/winget.ps1'
 
       - run: |-
-          $winget = Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WindowsApps' 'winget'
-          $argv = @('install', '--disable-interactivity', '--accept-source-agreements', '--accept-package-agreements', '--exact', '--id', 'GnuWin32.Make')
-          & $winget @argv
-
-      - run: |-
           Get-Command -- winget
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
+          $Env:GMAKE = Join-Path -Path $bin 'make'
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
-          $make = Join-Path -Path $bin 'make'
-          & $make 'localhost'
+          & $Env:GMAKE 'localhost'
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
+          $Env:GMAKE = Join-Path -Path $bin 'make'
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
-          $make = Join-Path -Path $bin 'make'
-          & $make 'localhost' ARGV='-- --debug'
+          & $Env:GMAKE 'localhost' ARGV='-- --debug'
 
       - run: |-
           $tmp = 'out.json'

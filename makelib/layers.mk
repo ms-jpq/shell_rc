@@ -2,7 +2,9 @@
 all: layers
 
 DIRS := root home
+$(warning $(RSYNC))
 RSYNC ?= rsync
+$(warning $(RSYNC))
 RSY := $(RSYNC) --recursive --links --perms --keep-dirlinks
 
 define FS_TEMPLATE

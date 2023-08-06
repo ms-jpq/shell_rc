@@ -57,6 +57,13 @@ endef
 endif
 
 ifeq (nt, $(OS))
+GMAKE := $(GMAKE)
+GMAKE ?= $(MAKE)
+else
+GMAKE := $(MAKE)
+endif
+
+ifeq (nt, $(OS))
 PY_BIN := Scripts
 else
 PY_BIN := bin

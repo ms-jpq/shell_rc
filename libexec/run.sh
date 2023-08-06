@@ -44,12 +44,12 @@ nt2unix() {
   printf -- '%s' "$unixpath"
 }
 
-if [[ "$OSTYPE" == msys ]] && [[ -v RSYNC ]]; then
+RSYNC="${RSYNC:-"rsync"}"
+if [[ "$OSTYPE" == msys ]]; then
   RSYNC="$(nt2unix "$RSYNC")"
-  export -- RSYNC
 fi
 
-"${MAKE:-"gmake"}" -- all
+"${MAKE:-"gmake"}" -- all RSYNC="$RSYNC"
 
 BSH=(bash --norc --noprofile -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
 CONN=(ssh
@@ -59,8 +59,8 @@ CONN=(ssh
   -p $((PORT))
 )
 printf -v RSH -- '%q ' "${CONN[@]}"
-RSYNC=(
-  "${RSYNC:-"rsync"}"
+RSY=(
+  "$RSYNC"
   --recursive
   --links
   --perms
@@ -147,8 +147,10 @@ for FS in "${!FFS[@]}"; do
 
   SINK="$RDST$ROOT/"
   printf -- '%q%s%q\n' "$SRC" ' >>> ' "$SINK"
-  "${EX[@]}" "${RSYNC[@]}" "$SRC" "$SINK"
+  "${EX[@]}" "${RSY[@]}" "$SRC" "$SINK"
 done
 
+set -x
+
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
-shell "$ENV_MAKE" --directory "$ENV_HOME/.local/opt/initd" "$@"
+shell "$ENV_MAKE" --directory "$ENV_HOME/.local/opt/initd" "RSYNC=$RSYNC" "$@"
