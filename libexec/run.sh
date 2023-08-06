@@ -106,8 +106,8 @@ linux*)
 msys)
   OS=nt
   # shellcheck disable=SC2154
-  ENV_MAKE="$(nt2unix "$ENV_MAKE")"
-  ENV_HOME="$(nt2unix "$ENV_HOME")"
+  E_HOME="$(nt2unix "$ENV_HOMEDRIVE$ENV_HOME")"
+  ENV_MAKE="$(nt2unix "${ENV_MAKE,,}")"
   ;;
 *)
   exit 1
@@ -150,7 +150,6 @@ for FS in "${!FFS[@]}"; do
   "${EX[@]}" "${RSY[@]}" "$SRC" "$SINK"
 done
 
-set -x
-
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
-shell "$ENV_MAKE" --directory "$ENV_HOME/.local/opt/initd" "RSYNC=$RSYNC" "$@"
+ENVS=(RSYNC="$RSYNC" HOMEPATH="$ENV_HOME" HOMEDRIVE="$ENV_HOMEDRIVE")
+shell "$ENV_MAKE" --directory "$E_HOME/.local/opt/initd" "${ENVS[@]}" "$@"

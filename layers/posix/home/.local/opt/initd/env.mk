@@ -57,7 +57,6 @@ endef
 endif
 
 ifeq (nt, $(OS))
-GMAKE := $(GMAKE)
 GMAKE ?= $(MAKE)
 else
 GMAKE := $(MAKE)
