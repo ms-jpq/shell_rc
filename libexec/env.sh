@@ -9,6 +9,7 @@ linux*)
   NPROC="$(nproc)"
   MEMINFO_KB="$(awk '/MemTotal/ { print $2 }' </proc/meminfo)"
   MEMINFO=$((MEMINFO_KB * 1024))
+  MAKE="$(command -v -- gmake)"
   ;;
 darwin*)
   ID="$(sw_vers -productName)"
@@ -16,6 +17,7 @@ darwin*)
   VERSION_CODENAME="$VERSION_ID"
   NPROC="$(sysctl -n hw.physicalcpu)"
   MEMINFO="$(sysctl -n hw.memsize)"
+  MAKE="$(command -v -- gmake)"
   ;;
 msys)
   if command -v -- pwsh >/dev/null; then
@@ -40,6 +42,8 @@ msys)
   VERSION_CODENAME="$VERSION_ID"
   NPROC="$("$PSH" -command '(Get-WmiObject -Class Win32_Processor).NumberOfCores')"
   MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
+  # shellcheck disable=SC2154
+  MAKE="$SystemDrive/msys2/usr/bin/make"
   ;;
 *)
   exit 1
@@ -52,6 +56,7 @@ ENV_HOSTNAME=$(printf -- '%q' "$HOSTNAME")
 ENV_HOSTTYPE=$(printf -- '%q' "$HOSTTYPE")
 ENV_ID=$(printf -- '%q' "$ID")
 ENV_MACHTYPE=$(printf -- '%q' "$MACHTYPE")
+ENV_MAKE=$(printf -- '%q' "$MAKE")
 ENV_MEMINFO=$(printf -- '%q' "$MEMINFO")
 ENV_NPROC=$(printf -- '%q' "$NPROC")
 ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")

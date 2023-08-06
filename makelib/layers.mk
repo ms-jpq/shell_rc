@@ -2,8 +2,8 @@
 all: layers
 
 DIRS := root home
-RSYNC_EXE ?= rsync
-RSYNC := $(RSYNC_EXE) --recursive --links --perms --keep-dirlinks
+RSYNC ?= rsync
+RSY := $(RSYNC) --recursive --links --perms --keep-dirlinks
 
 define FS_TEMPLATE
 
@@ -12,7 +12,7 @@ $(TMP)/$1/$2: $(shell shopt -u failglob; printf -- '%s ' ./layers/{posix,$1}/$2/
 	mkdir -v -p -- '$$@'
 	for layer in "$$$${LAYERS[@]}"; do
 		if [[ -d ""$$$$layer"" ]]; then
-			$(RSYNC) "$$$$layer/" '$$@/'
+			$(RSY) "$$$$layer/" '$$@/'
 		fi
 	done
 
