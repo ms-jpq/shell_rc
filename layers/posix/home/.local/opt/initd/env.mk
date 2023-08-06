@@ -67,5 +67,3 @@ MSYS_PREFIX := /$(subst :,,$(SYSTEMDRIVE))/msys64
 else
 MSYS_PREFIX :=
 endif
-
-$(warning $(MSYS_PREFIX))
