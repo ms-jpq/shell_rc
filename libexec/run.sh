@@ -106,7 +106,7 @@ linux*)
   ;;
 msys)
   OS=nt
-  NT_HOME="$(nt2unix "$ENV_HOMEDRIVE$ENV_HOME")"
+  NT_HOME="$(nt2unix "$ENV_HOME")"
   ENV_MAKE="$(nt2unix "$ENV_MAKE")"
   ENV_RSYNC="$(nt2unix "$ENV_RSYNC")"
   ;;
@@ -152,5 +152,5 @@ for FS in "${!FFS[@]}"; do
 done
 
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
-ENVS=(GMAKE="$ENV_MAKE" RSYNC="$ENV_RSYNC" HOMEPATH="$ENV_HOME" HOMEDRIVE="$ENV_HOMEDRIVE")
+ENVS=(GMAKE="$ENV_MAKE" RSYNC="$ENV_RSYNC" HOME="$ENV_HOME" USERPROFILE="$ENV_HOME")
 shell "$ENV_MAKE" --directory "$NT_HOME/.local/opt/initd" "${ENVS[@]}" "$@"

@@ -2,14 +2,14 @@
 
 set -o pipefail
 
-HOMEPATH="${HOMEPATH:-"$HOME"}"
-APPDATA="${APPDATA:-"$HOMEPATH/AppData/Roaming"}"
-LOCALAPPDATA="${LOCALAPPDATA:-"$HOMEPATH/AppData/Local"}"
+USERPROFILE="${USERPROFILE:-"$HOME"}"
+APPDATA="${APPDATA:-"$USERPROFILE/AppData/Roaming"}"
+LOCALAPPDATA="${LOCALAPPDATA:-"$USERPROFILE/AppData/Local"}"
 TEMP="${TEMP:-"$LOCALAPPDATA/Temp"}"
 LOCALLO="$HOME/AppData/LocalLow"
 LOCALHI="$HOME/AppData/LocalHigh"
 
-mkdir -v -p -- "$HOMEPATH/.local" "$APPDATA" "$LOCALAPPDATA" "$TEMP" "$LOCALLO" "$LOCALHI"
+mkdir -v -p -- "$USERPROFILE/.local" "$APPDATA" "$LOCALAPPDATA" "$TEMP" "$LOCALLO" "$LOCALHI"
 
 link() {
   local -- src="$1" dst="$2"
@@ -19,8 +19,8 @@ link() {
   fi
 }
 
-link "$APPDATA" "$HOMEPATH/.config"
-link "$LOCALAPPDATA" "$HOMEPATH/.local/share"
-link "$TEMP" "$HOMEPATH/.cache"
-link "$LOCALLO" "$HOMEPATH/.local/state"
-link "$LOCALHI" "$HOMEPATH/.local/opt"
+link "$APPDATA" "$USERPROFILE/.config"
+link "$LOCALAPPDATA" "$USERPROFILE/.local/share"
+link "$TEMP" "$USERPROFILE/.cache"
+link "$LOCALLO" "$USERPROFILE/.local/state"
+link "$LOCALHI" "$USERPROFILE/.local/opt"
