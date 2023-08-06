@@ -40,7 +40,7 @@ nt2unix() {
   drive="${ntpath%%:*}"
   ntpath="${ntpath#*:}"
   # shellcheck disable=SC1003
-  unixpath="/$drive${ntpath//'\'/'/'}"
+  unixpath="/${drive,,}${ntpath//'\'/'/'}"
   printf -- '%s' "$unixpath"
 }
 
@@ -106,7 +106,8 @@ msys)
   OS=nt
   # shellcheck disable=SC2154
   E_HOME="$(nt2unix "$ENV_HOMEDRIVE$ENV_HOME")"
-  ENV_MAKE="$(nt2unix "${ENV_MAKE,,}")"
+  ENV_MAKE="$(nt2unix "$ENV_MAKE")"
+  ENV_RSYNC="$(nt2unix "$ENV_RSYNC")"
   ;;
 *)
   exit 1
@@ -150,5 +151,5 @@ for FS in "${!FFS[@]}"; do
 done
 
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
-ENVS=(RSYNC="$RSYNC" HOMEPATH="$ENV_HOME" HOMEDRIVE="$ENV_HOMEDRIVE")
+ENVS=(RSYNC="$ENV_RSYNC" HOMEPATH="$ENV_HOME" HOMEDRIVE="$ENV_HOMEDRIVE")
 shell "$ENV_MAKE" --directory "$E_HOME/.local/opt/initd" "${ENVS[@]}" "$@"

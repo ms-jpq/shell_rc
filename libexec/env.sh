@@ -10,8 +10,8 @@ linux*)
   NPROC="$(nproc)"
   MEMINFO_KB="$(awk '/MemTotal/ { print $2 }' </proc/meminfo)"
   MEMINFO=$((MEMINFO_KB * 1024))
-  MAKE="$(command -v -- gmake || true)"
-  MAKE="${MAKE:-"gmake"}"
+  MAKE='gmake'
+  RSYNC='rsync'
   ;;
 darwin*)
   HOMEDRIVE='/'
@@ -20,8 +20,8 @@ darwin*)
   VERSION_CODENAME="$VERSION_ID"
   NPROC="$(sysctl -n hw.physicalcpu)"
   MEMINFO="$(sysctl -n hw.memsize)"
-  MAKE="$(command -v -- gmake || true)"
-  MAKE="${MAKE:-"gmake"}"
+  MAKE='gmake'
+  RSYNC='rsync'
   ;;
 msys)
   if command -v -- pwsh >/dev/null; then
@@ -48,6 +48,7 @@ msys)
   MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
   # shellcheck disable=SC2154
   MAKE="$SYSTEMDRIVE/msys64/usr/bin/make"
+  RSYNC="$SYSTEMDRIVE/msys64/usr/bin/rsync"
   ;;
 *)
   exit 1
@@ -65,6 +66,7 @@ ENV_MAKE=$(printf -- '%q' "$MAKE")
 ENV_MEMINFO=$(printf -- '%q' "$MEMINFO")
 ENV_NPROC=$(printf -- '%q' "$NPROC")
 ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")
+ENV_RSYNC=$(printf -- '%q' "$RSYNC")
 ENV_VERSION_CODENAME=$(printf -- '%q' "$VERSION_CODENAME")
 ENV_VERSION_ID=$(printf -- '%q' "$VERSION_ID")
 EOF
