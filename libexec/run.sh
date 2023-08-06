@@ -98,14 +98,15 @@ printf -- '%s\n' "$ENV"
 case "$ENV_OSTYPE" in
 darwin*)
   OS=darwin
+  NT_HOME="$ENV_HOME"
   ;;
 linux*)
   OS=ubuntu
+  NT_HOME="$ENV_HOME"
   ;;
 msys)
   OS=nt
-  # shellcheck disable=SC2154
-  E_HOME="$(nt2unix "$ENV_HOMEDRIVE$ENV_HOME")"
+  NT_HOME="$(nt2unix "$ENV_HOMEDRIVE$ENV_HOME")"
   ENV_MAKE="$(nt2unix "$ENV_MAKE")"
   ENV_RSYNC="$(nt2unix "$ENV_RSYNC")"
   ;;
@@ -118,7 +119,7 @@ declare -A -- FFS ROOTS
 FFS=([root]=1 [home]=0)
 ROOTS=(
   ['root']=/
-  ['home']="$E_HOME"
+  ['home']="$NT_HOME"
 )
 
 for FS in "${!FFS[@]}"; do
@@ -151,5 +152,5 @@ for FS in "${!FFS[@]}"; do
 done
 
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
-ENVS=(RSYNC="$ENV_RSYNC" HOMEPATH="$ENV_HOME" HOMEDRIVE="$ENV_HOMEDRIVE")
-shell "$ENV_MAKE" --directory "$E_HOME/.local/opt/initd" "${ENVS[@]}" "$@"
+ENVS=(GMAKE="$ENV_MAKE" RSYNC="$ENV_RSYNC" HOMEPATH="$ENV_HOME" HOMEDRIVE="$ENV_HOMEDRIVE")
+shell "$ENV_MAKE" --directory "$NT_HOME/.local/opt/initd" "${ENVS[@]}" "$@"
