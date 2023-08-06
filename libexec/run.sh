@@ -89,11 +89,10 @@ shell() {
 }
 
 ENV="$(shell "${BSH[@]}" "$(<'./libexec/env.sh')")"
-printf -- '%s\n' "$ENV"
-
 set -a
 eval -- "$ENV"
 set +a
+printf -- '%s\n' "$ENV"
 
 # shellcheck disable=SC2154
 case "$ENV_OSTYPE" in
@@ -118,7 +117,7 @@ declare -A -- FFS ROOTS
 FFS=([root]=1 [home]=0)
 ROOTS=(
   ['root']=/
-  ['home']="$ENV_HOME"
+  ['home']="$E_HOME"
 )
 
 for FS in "${!FFS[@]}"; do
