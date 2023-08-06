@@ -61,3 +61,11 @@ PY_BIN := Scripts
 else
 PY_BIN := bin
 endif
+
+ifeq (nt, $(OS))
+MSYS_PREFIX := /$(subst :,,$(SYSTEMDRIVE))/msys64
+else
+MSYS_PREFIX :=
+endif
+
+$(warning $(MSYS_PREFIX))
