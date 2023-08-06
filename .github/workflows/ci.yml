@@ -100,11 +100,11 @@ jobs:
           $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync', 'make')
           & $pacman @argv
 
-      - run: |-
-          & powershell './layers/nt/winget.ps1'
+      # - run: |-
+      #     & powershell './layers/nt/winget.ps1'
 
-      - run: |-
-          Get-Command -- winget
+      # - run: |-
+      #     Get-Command -- winget
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'

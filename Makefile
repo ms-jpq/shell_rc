@@ -33,4 +33,4 @@ include env.mk
 include makelib/*.mk
 
 localhost:
-	MAKE='$(GMAKE)' RSYNC='$(RSYNC)' ./libexec/run.sh '$@' $(ARGV)
+	GMAKE='$(GMAKE)' RSYNC='$(RSYNC)' ./libexec/run.sh '$@' $(ARGV)

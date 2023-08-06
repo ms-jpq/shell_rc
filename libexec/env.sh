@@ -6,7 +6,6 @@ case "$OSTYPE" in
 linux*)
   # shellcheck disable=SC1091
   source -- /etc/os-release
-  HOMEDRIVE='/'
   NPROC="$(nproc)"
   MEMINFO_KB="$(awk '/MemTotal/ { print $2 }' </proc/meminfo)"
   MEMINFO=$((MEMINFO_KB * 1024))
@@ -14,7 +13,6 @@ linux*)
   RSYNC='rsync'
   ;;
 darwin*)
-  HOMEDRIVE='/'
   ID="$(sw_vers -productName)"
   VERSION_ID="$(sw_vers -productVersion)"
   VERSION_CODENAME="$VERSION_ID"
@@ -40,7 +38,7 @@ msys)
   }
 
   # shellcheck disable=2154
-  HOME="$HOMEPATH"
+  HOME="$USERPROFILE"
   ID="$(wmic os get Caption | trim)"
   VERSION_ID="$(wmic os get Version | trim)"
   VERSION_CODENAME="$VERSION_ID"
@@ -57,7 +55,6 @@ esac
 
 tee <<-EOF
 ENV_HOME=$(printf -- '%q' "$HOME")
-ENV_HOMEDRIVE=$(printf -- '%q' "$HOMEDRIVE")
 ENV_HOSTNAME=$(printf -- '%q' "$HOSTNAME")
 ENV_HOSTTYPE=$(printf -- '%q' "$HOSTTYPE")
 ENV_ID=$(printf -- '%q' "$ID")

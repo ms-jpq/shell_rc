@@ -10,7 +10,7 @@ SHELL := bash
 include env.mk
 
 ifeq ($(OS),nt)
-HOME := $(HOMEDRIVE)$(HOMEPATH)
+HOME := $(USERPROFILE)
 HP := $(call NT_2_UNIX,$(HOME))
 export -- HOME
 else
@@ -49,9 +49,9 @@ $(TP):
 
 include makelib/*.mk
 
-all: git curl zsh tmux conf nvim pkg
+all: git curl zsh tmux conf nvim
 
 ifneq ($(OS),nt)
-all: pipx
+all: pipx pkg
 endif
 
