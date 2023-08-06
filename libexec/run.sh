@@ -156,5 +156,5 @@ done
 set -x
 
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
-ENVS=(RSYNC="$ENV_RSYNC" HOME="$ENV_HOME" USERPROFILE="$ENV_HOME")
+ENVS=(GMAKE="$ENV_MAKE" RSYNC="$ENV_RSYNC" HOME="$ENV_HOME" USERPROFILE="$ENV_HOME")
 shell "$ENV_MAKE" --directory "$NT_HOME/.local/opt/initd" "${ENVS[@]}" "$@"
