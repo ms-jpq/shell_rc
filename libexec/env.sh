@@ -68,5 +68,3 @@ ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")
 ENV_VERSION_CODENAME=$(printf -- '%q' "$VERSION_CODENAME")
 ENV_VERSION_ID=$(printf -- '%q' "$VERSION_ID")
 EOF
-
-env >&2
