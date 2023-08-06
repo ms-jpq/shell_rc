@@ -31,6 +31,3 @@ ARGV ?=
 
 include env.mk
 include makelib/*.mk
-
-localhost:
-	GMAKE='$(GMAKE)' RSYNC='$(RSYNC)' ./libexec/run.sh '$@' $(ARGV)
