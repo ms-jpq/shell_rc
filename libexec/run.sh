@@ -153,8 +153,6 @@ for FS in "${!FFS[@]}"; do
   "${EX[@]}" "${RSY[@]}" "$SRC" "$SINK"
 done
 
-set -x
-
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
-ENVS=(GMAKE="$ENV_MAKE" HOME="$ENV_HOME" USERPROFILE="$ENV_HOME")
+ENVS=(GMAKE="$ENV_MAKE")
 shell "$ENV_MAKE" --directory "$NT_HOME/.local/opt/initd" "${ENVS[@]}" "$@"
