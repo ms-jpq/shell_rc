@@ -112,7 +112,7 @@ jobs:
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
-          & $Env:GMAKE 'localhost'
+          bash .\main.sh localhost
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
@@ -120,7 +120,7 @@ jobs:
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
-          & $Env:GMAKE 'localhost' ARGV='-- --debug'
+          bash .\main.sh localhost -- --debug
 
       - run: |-
           $tmp = 'out.json'

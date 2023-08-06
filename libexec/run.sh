@@ -1,6 +1,8 @@
-#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob
+#!/usr/bin/env -S -- bash
 
+set -Eeu
 set -o pipefail
+shopt -s dotglob nullglob extglob globstar
 
 if [[ -L "$0" ]]; then
   ARG0="$(readlink -- "$0")"
@@ -49,7 +51,7 @@ if [[ "$OSTYPE" == msys ]]; then
   RSYNC="$(nt2unix "$RSYNC")"
 fi
 
-"${MAKE:-"gmake"}" -- all RSYNC="$RSYNC"
+"${GMAKE:-"gmake"}" -- all RSYNC="$RSYNC"
 
 BSH=(bash --norc --noprofile -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
 CONN=(ssh
@@ -151,6 +153,8 @@ for FS in "${!FFS[@]}"; do
   "${EX[@]}" "${RSY[@]}" "$SRC" "$SINK"
 done
 
+set -x
+
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
-ENVS=(GMAKE="$ENV_MAKE" RSYNC="$ENV_RSYNC" HOME="$ENV_HOME" USERPROFILE="$ENV_HOME")
+ENVS=(RSYNC="$ENV_RSYNC" HOME="$ENV_HOME" USERPROFILE="$ENV_HOME")
 shell "$ENV_MAKE" --directory "$NT_HOME/.local/opt/initd" "${ENVS[@]}" "$@"
