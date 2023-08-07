@@ -42,7 +42,6 @@ while (($#)); do
     break
     ;;
   *)
-    printf -- '%s\n' "$@"
     exit 1
     ;;
   esac
@@ -67,4 +66,4 @@ jq <<<"$JSON"
 
 "${ARGV[@]}" <<<"$JSON" | jq
 
-"$0" "${AV[@]}"
+exec -- "$0" "${AV[@]}"
