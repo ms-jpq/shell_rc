@@ -63,7 +63,7 @@ PY_BIN := bin
 endif
 
 ifeq (nt, $(OS))
-MSYS_PREFIX := /$(subst :,,$(SYSTEMDRIVE))/msys64
+MSYS_PREFIX := /$(subst :,,$(SYSTEMDRIVE))/msys64/
 else
 MSYS_PREFIX :=
 endif
