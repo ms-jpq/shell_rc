@@ -10,8 +10,7 @@ GIT_BIN := /usr/bin/git
 endif
 
 $(CONFIG)/git/config: | $(GIT_BIN)
-	touch -- '$$@'
-	git config --global include.path user_config
+	git config --file '$@' -- include.path user_config
 
 conf.posix.ssh:
 	./libexec/line-in-file.sh '$(HOME)/.ssh/config' 'Include ~/.config/ssh/*.conf'
