@@ -2,8 +2,8 @@
 
 set -o pipefail
 
-OPTS='m:,a:,c:,h:'
-LONG_OPTS='method:,auth:,cookie:,header:'
+OPTS='m:,a:,c:,h:,v:'
+LONG_OPTS='method:,auth:,cookie:,header:,var:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
@@ -11,6 +11,7 @@ AV=("$@")
 
 METHOD=POST
 CURL=()
+VAR='{}'
 while (($#)); do
   case "$1" in
   -m | --method)
@@ -29,12 +30,19 @@ while (($#)); do
     CURL+=(--header "Authorization: $2")
     shift -- 2
     ;;
+  -v | --var)
+    KEY="${2%%=*}"
+    VAL="${2#*=}"
+    VAR="$(jq --exit-status --arg key "$KEY" --arg val "$VAL" '.[$key] = $val' <<<"$VAR")"
+    shift -- 2
+    ;;
   --)
     shift -- 1
     CURL+=("$@")
     break
     ;;
   *)
+    printf -- '%s\n' "$@"
     exit 1
     ;;
   esac
@@ -42,7 +50,6 @@ done
 
 ARGV=(
   curl
-  --fail
   --location
   --no-progress-meter
   --request "$METHOD"
@@ -52,15 +59,11 @@ ARGV=(
 )
 
 read -r -d '' -- QUERY
+JSON="$(jq --exit-status --slurp --raw-input --argjson var "$VAR" '{ query: ., variables: $var }' <<<"$QUERY")"
 
-read -r -d '' -- JSON <<-EOF || true
-{
-  "query": "$QUERY"
-}
-EOF
-
-printf -- '%q ' "${CURL[@]}"
+printf -- '%q ' "${ARGV[@]}"
 printf -- '\n'
+jq <<<"$JSON"
 
 "${ARGV[@]}" <<<"$JSON" | jq
 
