@@ -51,11 +51,14 @@ else
   asdf plugin add "$LANG"
 fi
 
-LIST="$(asdf list "$LANG")"
+LIST="$(asdf list "$LANG" || true)"
 readarray -t -d $'\n' -- INSTALLED <<<"$LIST"
 
 if [[ -z "$VERSION" ]]; then
-  VERSION="$(asdf latest "$LANG")"
+  if ! VERSION="$(asdf latest "$LANG")"; then
+    printf -- '%s\n' "?? -v $LANG"
+    asdf list all "$LANG"
+  fi
 fi
 
 VERSION_INSTALLED=0
