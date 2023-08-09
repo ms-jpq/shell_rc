@@ -2,18 +2,7 @@
 
 zsh: zsh.posix
 
-zsh.posix: $(CACHE)/zsh/dircolors.sh $(STATE)/zsh/zz
-
-$(CACHE)/zsh/dircolors.sh: $(OPT)/dircolors-solarized
-	case "$$OSTYPE" in
-	darwin*)
-		DC="$$(brew --prefix)/opt/coreutils/libexec/gnubin/dircolors"
-		;;
-	*)
-		DC='dircolors'
-		;;
-	esac
-	TERM=xterm-256color "$$DC" --bourne-shell -- '$</dircolors.256dark' > '$@'
+zsh.posix: $(STATE)/zsh/zz
 
 $(STATE)/zsh:
 	mkdir -v -p -- '$@'

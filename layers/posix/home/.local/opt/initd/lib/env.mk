@@ -67,3 +67,5 @@ MSYS_PREFIX := /$(subst :,,$(SYSTEMDRIVE))/msys64/
 else
 MSYS_PREFIX :=
 endif
+
+NPROC := $(shell ./libexec/nproc.sh)

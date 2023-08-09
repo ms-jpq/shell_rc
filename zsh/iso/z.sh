@@ -4,7 +4,7 @@
 if [[ ! -v _Z_CMD ]]; then
   _Z_DATA="$XDG_STATE_HOME/zsh/zz"
   # shellcheck disable=SC1091
-  _Z_CMD='__z' source -- "$HOME/.local/opt/z/z.sh"
+  _Z_CMD='__z'
 fi
 
 z() {

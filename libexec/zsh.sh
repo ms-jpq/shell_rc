@@ -6,7 +6,8 @@ cd -- "${0%/*}/.."
 
 OS="$1"
 OUT="$2"
-shift -- 2
+GIT="$3"
+shift -- 3
 
 FUNC="$OUT/fn"
 BINS="$OUT/bin"
@@ -31,8 +32,10 @@ for DIR in "${DIRS[@]}"; do
   BSH+=("$DIR"/*.{sh,bash})
 done
 
-BSH+=(./zsh/aposteriori.{bash,sh})
-ZSH+=(./zsh/aposteriori.{zsh,sh})
+SH=("$GIT/dircolors.sh" "$GIT/z/z.sh")
+FZF="$GIT/fzf/shell"
+BSH+=(./zsh/aposteriori.{bash,sh} "${SH[@]}" "$FZF"/*.bash)
+ZSH+=(./zsh/aposteriori.{zs,sh} "${SH[@]}" "$FZF"/*.zsh)
 
 ZACC=("$(cat -- "${ZSH[@]}")")
 BACC=("$(cat -- "${BSH[@]}")")

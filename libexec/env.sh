@@ -6,7 +6,6 @@ case "$OSTYPE" in
 linux*)
   # shellcheck disable=SC1091
   source -- /etc/os-release
-  NPROC="$(nproc)"
   MEMINFO_KB="$(awk '/MemTotal/ { print $2 }' </proc/meminfo)"
   MEMINFO=$((MEMINFO_KB * 1024))
   MAKE='gmake'
@@ -16,18 +15,11 @@ darwin*)
   ID="$(sw_vers -productName)"
   VERSION_ID="$(sw_vers -productVersion)"
   VERSION_CODENAME="$VERSION_ID"
-  NPROC="$(sysctl -n hw.physicalcpu)"
   MEMINFO="$(sysctl -n hw.memsize)"
   MAKE='gmake'
   RSYNC='rsync'
   ;;
 msys)
-  if command -v -- pwsh >/dev/null; then
-    PSH=pwsh
-  else
-    PSH=powershell
-  fi
-
   trim() {
     local -- v
     v="$(tr --delete '\r' | tr --delete $'\n')"
@@ -42,7 +34,6 @@ msys)
   ID="$(wmic os get Caption | trim)"
   VERSION_ID="$(wmic os get Version | trim)"
   VERSION_CODENAME="$VERSION_ID"
-  NPROC="$("$PSH" -command '(Get-WmiObject -Class Win32_Processor).NumberOfCores')"
   MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
   # shellcheck disable=SC2154
   MAKE="$SYSTEMDRIVE/msys64/usr/bin/make"
@@ -61,7 +52,6 @@ ENV_ID=$(printf -- '%q' "$ID")
 ENV_MACHTYPE=$(printf -- '%q' "$MACHTYPE")
 ENV_MAKE=$(printf -- '%q' "$MAKE")
 ENV_MEMINFO=$(printf -- '%q' "$MEMINFO")
-ENV_NPROC=$(printf -- '%q' "$NPROC")
 ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")
 ENV_RSYNC=$(printf -- '%q' "$RSYNC")
 ENV_VERSION_CODENAME=$(printf -- '%q' "$VERSION_CODENAME")
