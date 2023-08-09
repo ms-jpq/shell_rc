@@ -70,10 +70,10 @@ on)
   printf -- '%s\n' "Activated - $DEFAULT_VENV_PATH" >&2
   ;;
 off)
-  if [[ -z "$VIRTUAL_ENV" ]]; then
-    true
-  else
+  if [[ -v VIRTUAL_ENV ]]; then
     printf -- '%q ' 'deactivate'
+  else
+    true
   fi
   printf -- '%s\n' "Deactivating - $VIRTUAL_ENV" >&2
   ;;

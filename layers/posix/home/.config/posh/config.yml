@@ -56,6 +56,10 @@ blocks:
         properties:
           time_format: "15:04:05 MST"
 
+      - type: shell
+        style: plain
+        foreground: red
+
   - type: prompt
     alignment: left
     newline: True

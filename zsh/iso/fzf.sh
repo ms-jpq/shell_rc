@@ -22,7 +22,7 @@ _fzf_default_opts=(
   --color bg+:'#dfdfdf'
 )
 printf -v FZF_DEFAULT_OPTS -- '%q ' "${_fzf_default_opts[@]}"
-unset _fzf_default_opts
+unset -- _fzf_default_opts
 export -- FZF_DEFAULT_OPTS
 
 _fzf_default_command=(
@@ -33,7 +33,7 @@ _fzf_default_command=(
   --type symlink
 )
 printf -v FZF_DEFAULT_COMMAND -- '%q ' "${_fzf_default_command[@]}"
-unset _fzf_default_command
+unset -- _fzf_default_command
 export -- FZF_DEFAULT_COMMAND
 
 _fzf_alt_c_command=(
@@ -46,7 +46,7 @@ _fzf_alt_c_command=(
 )
 # shellcheck disable=SC2034
 printf -v FZF_ALT_C_COMMAND -- '%q ' "${_fzf_alt_c_command[@]}"
-unset _fzf_alt_c_command
+unset -- _fzf_alt_c_command
 
 _fzf_ctrl_t_command=(
   fd
@@ -56,7 +56,7 @@ _fzf_ctrl_t_command=(
 )
 # shellcheck disable=SC2034
 printf -v FZF_CTRL_T_COMMAND -- '%q ' "${_fzf_ctrl_t_command[@]}"
-unset _fzf_ctrl_t_command
+unset -- _fzf_ctrl_t_command
 
 _fzf_preview=(
   --preview "$(printf -- '%q' "$ZDOTDIR/libexec/preview.sh") {}"
@@ -67,7 +67,7 @@ _fzf_alt_c_opts=(
 )
 # shellcheck disable=SC2034
 printf -v FZF_ALT_C_OPTS -- '%q ' "${_fzf_alt_c_opts[@]}"
-unset _fzf_alt_c_opts
+unset -- _fzf_alt_c_opts
 # shellcheck disable=SC2034
 FZF_CTRL_T_OPTS="$FZF_ALT_C_OPTS"
 
@@ -90,6 +90,14 @@ _fzf_compgen_dir() {
 }
 
 # shellcheck disable=SC1091
-source -- "$HOME/.local/opt/fzf/shell/key-bindings.zsh"
-# shellcheck disable=SC1091
-source -- "$HOME/.local/opt/fzf/shell/completion.zsh"
+if [[ -v BASH ]]; then
+  sh='bash'
+else
+  sh='zsh'
+fi
+
+# shellcheck disable=SC1090,SC1091
+source -- "$HOME/.local/opt/fzf/shell/key-bindings.$sh"
+# shellcheck disable=SC1090,SC1091
+source -- "$HOME/.local/opt/fzf/shell/completion.$sh"
+unset -- sh
