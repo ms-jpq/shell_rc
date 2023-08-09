@@ -12,8 +12,7 @@ msys)
     printf -- '%s' "$unixpath"
   }
 
-  SHELL="$(command -v -- zsh)"
-  export -- MSYSTEM='MSYS' SHELL
+  export -- MSYSTEM='MSYS'
 
   # shellcheck disable=2154
   cpath="$(nt2unix "$LOCALAPPDATA")"

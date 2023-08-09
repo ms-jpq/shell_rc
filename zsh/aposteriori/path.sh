@@ -3,5 +3,14 @@
 path=("$HOME/.local/bin" "$ZDOTDIR/bin" "${path[@]}")
 
 if ((SHLVL > 1)); then
-  PATH="$(printf -- '%s' "$PATH" | awk -v 'RS=:' -v 'ORS=' '!seen[$0]++ { if (NR != 1) { print ":"  } print $0 }')"
+  declare -A -- seen
+  pacc=()
+  for p in "${path[@]}"; do
+    if [[ -z "${seen["$p"]}" ]]; then
+      seen["$p"]=1
+      pacc+=("$p")
+    fi
+  done
+  path=("${pacc[@]}")
+  unset -- seen pacc
 fi

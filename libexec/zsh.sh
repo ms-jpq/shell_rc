@@ -15,15 +15,30 @@ BLIB="$OUT/libexec"
 rm -fr -- "$OUT"
 mkdir -p -- "$FUNC" "$BINS" "$BLIB"
 
-SH=(
-  ./zsh/apriori/*.sh
-  ./zsh/{iso,tmux}/*.sh
-  ./zsh/"$OS"/*.sh
-  ./zsh/aposteriori/*.sh
-  ./zsh/{dev,fun,docker}/*.sh
+DIRS=(
+  ./zsh/apriori
+  ./zsh/{iso,tmux}
+  ./zsh/"$OS"
+  ./zsh/aposteriori
+  ./zsh/{dev,fun,docker}
 )
 
-ZSH=(./zsh/*.zsh)
+SH=()
+ZSH=()
+BSH=(./zsh/apriori.bash ./layers/posix/home/.zshenv)
+
+for DIR in "${DIRS[@]}"; do
+  SH+=("$DIR"/*.sh)
+  ZSH+=("$DIR"/*.zsh)
+  BSH+=("$DIR"/*.bash)
+done
+
+BSH+=(./zsh/aposteriori.bash)
+ZSH+=(./zsh/aposteriori.zsh)
+
+ACC=("$(cat -- "${SH[@]}")")
+ZACC=("${ACC[@]}" "$(cat -- "${ZSH[@]}")")
+BACC=("${ACC[@]}" "$(cat -- "${BSH[@]}")")
 
 for BIN in ./zsh/*/bin/*; do
   B="${BIN##*/}"
@@ -35,9 +50,6 @@ for BIN in ./zsh/*/libexec/*; do
   cp -- "$BIN" "$BLIB/$B"
 done
 
-ACC=("$(cat -- "${SH[@]}")")
-ZACC=("${ACC[@]}" "$(cat -- "${ZSH[@]}")")
-
 for FN in ./zsh/*/fn/*.sh; do
   F="${FN%%.sh}"
   F="${F##*/}"
@@ -47,11 +59,11 @@ for FN in ./zsh/*/fn/*.sh; do
   PAT="$F() {"
   FF="$(<"$FN")"
   if /usr/bin/grep -F -- "$PAT" "$FN" >/dev/null; then
-    ACC+=("$FF")
+    BACC+=("$FF")
   else
-    ACC+=("$PAT" "$FF" '}')
+    BACC+=("$PAT" "$FF" '}')
   fi
 done
 
 printf -- '%s\n' "${ZACC[@]}" >"$OUT/.zshrc"
-printf -- '%s\n' "${ACC[@]}" >"$OUT/.bashrc"
+printf -- '%s\n' "${BACC[@]}" >"$OUT/.bashrc"
