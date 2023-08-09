@@ -31,7 +31,6 @@ $(OPT)/fzf-tab                      https://github.com/Aloxaf/fzf-tab
 $(OPT)/isomorphic-copy              https://github.com/ms-jpq/isomorphic-copy
 $(OPT)/z                            https://github.com/rupa/z
 $(OPT)/zsh-autosuggestions          https://github.com/zsh-users/zsh-autosuggestions
-$(OPT)/zsh-history-substring-search https://github.com/zsh-users/zsh-history-substring-search
 $(OPT)/zsh-syntax-highlighting      https://github.com/zsh-users/zsh-syntax-highlighting
 
 endef
