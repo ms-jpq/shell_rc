@@ -1,6 +1,8 @@
 .PHONY: pipx clobber.pipx
 
 PIPX := $(LOCAL)/pipx/venvs
+PIPX_EX := ./libexec/linux-lock.sh '$(call UNIX_2_NT,$(OPT)/pipx/$(PY_BIN)/pipx)'
+
 
 clobber: clobber.pipx
 clobber.pipx:
@@ -10,10 +12,8 @@ $(OPT)/pipx:
 	python3 -m venv --upgrade -- '$@'
 
 $(OPT)/pipx/$(PY_BIN)/pipx: | $(OPT)/pipx
-	'$(OPT)/pipx/$(PY_BIN)/pip' install --require-virtualenv --upgrade -- pipx
+	'$(call UNIX_2_NT,$(OPT)/pipx/$(PY_BIN)/pip)' install --require-virtualenv --upgrade -- pipx
 
-
-PIPX_EX := ./libexec/linux-lock.sh $(OPT)/pipx/$(PY_BIN)/pipx
 
 define PIPX_TEMPLATE
 
