@@ -4,8 +4,8 @@ set -o pipefail
 
 if ! [[ -v LOCKED ]] && command -v -- flock >/dev/null; then
   LOCK="$1"
-  shift -- 1
   LOCKED=1 exec -- flock "$LOCK" "$0" "$@"
 else
+  shift -- 1
   exec -- "$@"
 fi
