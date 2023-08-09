@@ -33,7 +33,7 @@ if ! ((ASK)); then
   exec -- "${EXECUTE[@]}"
 else
   # shellcheck disable=SC2154
-  HR="$("$ZDOTDIR/libexec/hr.sh" '-')"
+  HR="$("$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '-')"
 
   type >&2 -a python3
   printf >&2 -- '%s\n' "$HR"

@@ -38,4 +38,4 @@ msys)
   ;;
 esac
 
-export -- ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+ZDOTDIR="$XDG_CONFIG_HOME/zsh"

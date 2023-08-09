@@ -59,7 +59,7 @@ printf -v FZF_CTRL_T_COMMAND -- '%q ' "${_fzf_ctrl_t_command[@]}"
 unset -- _fzf_ctrl_t_command
 
 _fzf_preview=(
-  --preview "$(printf -- '%q' "$ZDOTDIR/libexec/preview.sh") {}"
+  --preview "$(printf -- '%q' "$XDG_CONFIG_HOME/zsh/libexec/preview.sh") {}"
 )
 _fzf_alt_c_opts=(
   --read0
