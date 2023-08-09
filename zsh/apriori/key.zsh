@@ -12,7 +12,7 @@ bindkey -- '^[[1;9D' emacs-backward-word
 
 # Edit current line
 autoload -U -- edit-command-line
-zle -N edit-command-line
+zle -N -- edit-command-line
 bindkey -- '\C-x\C-e' edit-command-line
 # Edit current line
 
