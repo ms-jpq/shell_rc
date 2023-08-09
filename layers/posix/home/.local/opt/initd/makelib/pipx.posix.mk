@@ -1,7 +1,8 @@
 .PHONY: pipx clobber.pipx
 
 PIPX := $(LOCAL)/pipx/venvs
-PIPX_EX := ./libexec/linux-lock.sh '$(call UNIX_2_NT,$(OPT)/pipx/$(PY_BIN)/pipx)'
+PIPX_E := $(call UNIX_2_NT,$(OPT)/pipx/$(PY_BIN)/pipx)
+PIPX_EX := ./libexec/linux-lock.sh '$(PIPX_E)' env -- 'HOME=$(HOME)' 'USERPROFILE=$(HOME)' '$(PIPX_E)'
 
 
 clobber: clobber.pipx
