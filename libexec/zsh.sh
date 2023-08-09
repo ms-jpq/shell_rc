@@ -31,8 +31,8 @@ for DIR in "${DIRS[@]}"; do
   BSH+=("$DIR"/*.{sh,bash})
 done
 
-BSH+=(./zsh/aposteriori.bash)
-ZSH+=(./zsh/aposteriori.zsh)
+BSH+=(./zsh/aposteriori.{bash,sh})
+ZSH+=(./zsh/aposteriori.{zsh,sh})
 
 ZACC=("$(cat -- "${ZSH[@]}")")
 BACC=("$(cat -- "${BSH[@]}")")
