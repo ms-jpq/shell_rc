@@ -23,38 +23,35 @@ DIRS=(
   ./zsh/{dev,fun,docker}
 )
 
-SH=()
 ZSH=()
 BSH=(./zsh/apriori.bash ./layers/posix/home/.zshenv)
 
 for DIR in "${DIRS[@]}"; do
-  SH+=("$DIR"/*.sh)
-  ZSH+=("$DIR"/*.zsh)
-  BSH+=("$DIR"/*.bash)
+  ZSH+=("$DIR"/*.{sh,zsh})
+  BSH+=("$DIR"/*.{sh,bash})
 done
 
 BSH+=(./zsh/aposteriori.bash)
 ZSH+=(./zsh/aposteriori.zsh)
 
-ACC=("$(cat -- "${SH[@]}")")
-ZACC=("${ACC[@]}" "$(cat -- "${ZSH[@]}")")
-BACC=("${ACC[@]}" "$(cat -- "${BSH[@]}")")
+ZACC=("$(cat -- "${ZSH[@]}")")
+BACC=("$(cat -- "${BSH[@]}")")
 
 for BIN in ./zsh/*/bin/*; do
   B="${BIN##*/}"
-  cp -- "$BIN" "$BINS/${B%%.*}"
+  cp -f -- "$BIN" "$BINS/${B%%.*}"
 done
 
 for BIN in ./zsh/*/libexec/*; do
   B="${BIN##*/}"
-  cp -- "$BIN" "$BLIB/$B"
+  cp -f -- "$BIN" "$BLIB/$B"
 done
 
 for FN in ./zsh/*/fn/*.sh; do
   F="${FN%%.sh}"
   F="${F##*/}"
   ZACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$F\"")
-  cp -- "$FN" "$FUNC/${F##*/}"
+  cp -f -- "$FN" "$FUNC/${F##*/}"
 
   PAT="$F() {"
   FF="$(<"$FN")"

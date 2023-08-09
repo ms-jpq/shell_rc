@@ -1,6 +1,4 @@
 #!/usr/bin/env -S -- bash
 
-IFS=':'
-# shellcheck disable=SC2154
-PATH="${path[*]}"
-unset -- IFS path
+# shellcheck disable=SC2034
+readarray -t -d ':' -- path < <(printf -- '%s' "$PATH")

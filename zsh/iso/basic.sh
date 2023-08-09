@@ -13,7 +13,7 @@ _less=(
 )
 export -- PAGER='less'
 printf -v LESS -- '%q ' "${_less[@]}"
-unset _less
+unset -- less
 # shellcheck disable=SC2154
 export -- LESS LESSHISTFILE="$XDG_STATE_HOME/shell_history/less"
 
