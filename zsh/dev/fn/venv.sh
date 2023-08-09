@@ -3,6 +3,6 @@
 venv() {
   local -- src
   # shellcheck disable=SC2154
-  src="$("$ZDOTDIR/libexec/venv.sh" "$@")"
+  src="$("$XDG_CONFIG_HOME/zsh/libexec/venv.sh" "$@")"
   eval -- "$src"
 }
