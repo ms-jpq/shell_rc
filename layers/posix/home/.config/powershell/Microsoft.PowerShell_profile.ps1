@@ -2,18 +2,17 @@
 
 Set-StrictMode -Version 'Latest'
 
+$Env:SHELL = (Get-Command -Name pwsh).Path
+
+
 Set-PSReadLineOption -EditMode 'Emacs'
 Set-PSReadLineKeyHandler -Key 'Tab' -Function 'MenuComplete'
 
+Set-PSReadLineOption -HistoryNoDuplicates -HistorySavePath (Join-Path -Path ([Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)) '.local' 'state' 'shell_history' 'pwsh')
 
 if ($IsWindows) {
     $Env:MSYSTEM = 'MSYS'
-    $Env:Path = @(
-        Join-Path -Path $Env:APPDATA 'bin'
-        $Env:Path
-        Join-Path -Path $Env:SystemDrive 'msys64' 'ucrt64' 'bin'
-        Join-Path -Path $Env:SystemDrive 'msys64' 'usr' 'bin'
-    ) | Join-String -Separator ([IO.Path]::PathSeparator)
+    $Env:Path = @(Join-Path -Path $Env:APPDATA 'bin' $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 }
 
 
