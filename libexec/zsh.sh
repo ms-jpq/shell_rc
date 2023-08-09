@@ -15,8 +15,7 @@ BLIB="$OUT/libexec"
 rm -fr -- "$OUT"
 mkdir -p -- "$FUNC" "$BINS" "$BLIB"
 
-ZSH=(
-  ./zsh/*.zsh
+SH=(
   ./zsh/apriori/*.sh
   ./zsh/{iso,tmux}/*.sh
   ./zsh/"$OS"/*.sh
@@ -24,14 +23,7 @@ ZSH=(
   ./zsh/{dev,fun,docker}/*.sh
 )
 
-ACC=("$(cat -- "${ZSH[@]}")")
-
-for FN in ./zsh/*/fn/*.sh; do
-  F="${FN%%.sh}"
-  F="${F##*/}"
-  ACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$F\"")
-  cp -- "$FN" "$FUNC/${F##*/}"
-done
+ZSH=(./zsh/*.zsh)
 
 for BIN in ./zsh/*/bin/*; do
   B="${BIN##*/}"
@@ -43,4 +35,23 @@ for BIN in ./zsh/*/libexec/*; do
   cp -- "$BIN" "$BLIB/$B"
 done
 
-printf -- '%s\n' "${ACC[@]}" >"$OUT/.zshrc"
+ACC=("$(cat -- "${SH[@]}")")
+ZACC=("${ACC[@]}" "$(cat -- "${ZSH[@]}")")
+
+for FN in ./zsh/*/fn/*.sh; do
+  F="${FN%%.sh}"
+  F="${F##*/}"
+  ZACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$F\"")
+  cp -- "$FN" "$FUNC/${F##*/}"
+
+  PAT="$F() {"
+  FF="$(<"$FN")"
+  if /usr/bin/grep -F -- "$PAT" "$FN" >/dev/null; then
+    ACC+=("$FF")
+  else
+    ACC+=("$PAT" "$FF" '}')
+  fi
+done
+
+printf -- '%s\n' "${ZACC[@]}" >"$OUT/.zshrc"
+printf -- '%s\n' "${ACC[@]}" >"$OUT/.bashrc"
