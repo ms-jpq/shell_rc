@@ -20,4 +20,4 @@ RUN PYTHONPYCACHEPREFIX=/tmp ./main.sh localhost && \
 WORKDIR /root
 ENV TERM=xterm-256color \
   ISOCP_USE_FILE=1
-ENTRYPOINT ["/usr/bin/zsh", "-l"]
+# ENTRYPOINT ["/usr/bin/zsh", "-l"]
