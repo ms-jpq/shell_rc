@@ -38,9 +38,9 @@ blocks:
         properties:
           threshold: 100
 
-      - type: exit
+      - type: status
         style: plain
-        template: "{{ if gt .Code 0 }}<red>\uf00d <b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</>{{ end }} "
+        template: "{{ if .Error }}<red>\uf00d <b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</>{{ end }} "
         properties:
           always_enabled: True
 
