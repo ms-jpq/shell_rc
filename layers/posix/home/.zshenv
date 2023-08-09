@@ -2,21 +2,34 @@
 
 case "$OSTYPE" in
 msys)
-  export -- MSYSTEM='MSYS'
+  nt2unix() {
+    local -- drive ntpath
+    ntpath="$1"
+    drive="${ntpath%%:*}"
+    ntpath="${ntpath#*:}"
+    # shellcheck disable=SC1003
+    unixpath="/${drive,,}${ntpath//'\'/'/'}"
+    printf -- '%s' "$unixpath"
+  }
 
-  cpath="$(/usr/bin/cygpath -- "$LOCALAPPDATA")"
-  path=("$(/usr/bin/dirname -- "$cpath")/bin" "${path[@]}" '/ucrt64/bin' '/usr/bin')
+  SHELL="$(command -v -- zsh)"
+  export -- MSYSTEM='MSYS' SHELL
+
+  # shellcheck disable=2154
+  cpath="$(nt2unix "$LOCALAPPDATA")"
+  path=("${cpath%/*}/bin" "${path[@]}")
 
   export -- XDG_CONFIG_HOME="$cpath"
   export -- XDG_DATA_HOME="$cpath"
 
-  cpath="$(cygpath -- "$TMP")"
+  # shellcheck disable=2154
+  cpath="$(nt2unix "$TMP")"
 
   export -- XDG_STATE_HOME="$cpath"
   export -- XDG_CACHE_HOME="$cpath"
 
-  export -- SHELL="$(command -v -- zsh)"
   unset -- cpath
+  unset -f -- nt2unix
   ;;
 *)
   export -- XDG_CONFIG_HOME="$HOME/.config"
