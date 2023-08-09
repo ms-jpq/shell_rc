@@ -17,4 +17,4 @@ _comp_init() {
 }
 
 _comp_init
-unset -f _comp_init
+unset -f -- _comp_init
