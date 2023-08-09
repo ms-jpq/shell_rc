@@ -8,5 +8,5 @@ else
 fi
 
 # shellcheck disable=SC2154,SC2312
-eval -- "$("$HOME/.local/bin/oh-my-posh" init "$sh" --config "$XDG_CONFIG_HOME/posh/config.yml")"
+eval -- "$(oh-my-posh init "$sh" --config "$XDG_CONFIG_HOME/posh/config.yml")"
 unset -- sh
