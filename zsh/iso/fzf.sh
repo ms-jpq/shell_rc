@@ -88,16 +88,3 @@ _fzf_compgen_dir() {
   )
   "${local_opts[@]}" "$1"
 }
-
-# shellcheck disable=SC1091
-if [[ -v BASH ]]; then
-  sh='bash'
-else
-  sh='zsh'
-fi
-
-# shellcheck disable=SC1090,SC1091
-source -- "$HOME/.local/opt/fzf/shell/key-bindings.$sh"
-# shellcheck disable=SC1090,SC1091
-source -- "$HOME/.local/opt/fzf/shell/completion.$sh"
-unset -- sh

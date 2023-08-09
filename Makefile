@@ -29,5 +29,5 @@ ARGV ?=
 ./var/bin $(TMP):
 	mkdir -v -p -- '$@'
 
-include env.mk
+include layers/posix/home/.local/opt/initd/lib/*.mk
 include makelib/*.mk
