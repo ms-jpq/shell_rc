@@ -2,20 +2,25 @@
 
 set -o pipefail
 
-OPTS='x:,a:,c:,h:,v:'
-LONG_OPTS='method:,auth:,cookie:,header:,var:'
+OPTS='x:,m:,a:,c:,h:,t:'
+LONG_OPTS='method:,mime:,auth:,cookie:,header:,tee:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 AV=("$@")
 
 METHOD=POST
+MIME='application/json'
 CURL=()
-VAR='{}'
+TEE=(cat)
 while (($#)); do
   case "$1" in
   -x | --method)
     METHOD="$2"
+    shift -- 2
+    ;;
+  -m | --mime)
+    MIME="$2"
     shift -- 2
     ;;
   -c | --cookie)
@@ -30,10 +35,9 @@ while (($#)); do
     CURL+=(--header "Authorization: $2")
     shift -- 2
     ;;
-  -v | --var)
-    KEY="${2%%=*}"
-    VAL="${2#*=}"
-    VAR="$(jq --exit-status --arg key "$KEY" --arg val "$VAL" '.[$key] = $val' <<<"$VAR")"
+  -t | --tee)
+    # shellcheck disable=SC2206
+    TEE=($2)
     shift -- 2
     ;;
   --)
@@ -52,18 +56,17 @@ ARGV=(
   --location
   --no-progress-meter
   --request "$METHOD"
-  --header 'Content-Type: application/json'
+  --header "Content-Type: $MIME"
   --data @-
   "${CURL[@]}"
 )
 
-read -r -d '' -- QUERY
-JSON="$(jq --exit-status --slurp --raw-input --argjson var "$VAR" '{ query: ., variables: $var }' <<<"$QUERY")"
+read -r -d '' -- BODY
 
 printf -- '\n'
 printf -- '%q ' "${ARGV[@]}"
 printf -- '\n'
-jq <<<"$VAR"
 
-"${ARGV[@]}" <<<"$JSON" | jq
+printf -- '%s' "${BODY[@]}" | "${ARGV[@]}" | "${TEE[@]}"
+printf -- '\n'
 exec -- "$0" "${AV[@]}"
