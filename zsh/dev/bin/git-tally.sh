@@ -7,7 +7,7 @@ ARGV=(
   --relative
   --all
   --name-only
-  --color --pretty='format:%ad'
+  --color --pretty='format:/%Cblue%ad%Creset'
   -z
 )
 
@@ -16,27 +16,35 @@ declare -A -- COUNTS=() TIMES=()
 TMP="$(mktemp)"
 "${ARGV[@]}" >"$TMP"
 
-HEAD=1
 while read -d '' -r LINE; do
+  while :; do
+    case "$LINE" in
+    /*)
+      TIME="${LINE%%$'\n'*}"
+      LINE="${LINE#*$'\n'}"
+      if [[ "$TIME" == "$LINE" ]]; then
+        LINE=''
+        break
+      fi
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+
   if [[ -z "$LINE" ]]; then
-    HEAD=1
     continue
   fi
 
-  if ((HEAD)); then
-    TIME="${LINE%%$'\n'*}"
-    LINE="${LINE#*$'\n'}"
-    HEAD=0
-  else
-    TIMES["$LINE"]="$TIME"
-    COUNT="${COUNTS["$LINE"]:-0}"
-    COUNTS["$LINE"]="$((COUNT + 1))"
-  fi
+  TIME="${TIME#*/}"
+  TIMES["$LINE"]="$TIME"
+  COUNT="${COUNTS["$LINE"]:-0}"
+  COUNTS["$LINE"]="$((COUNT + 1))"
 done <"$TMP"
 
 for LINE in "${!COUNTS[@]}"; do
   COUNT="${COUNTS["$LINE"]}"
   TIME="${TIMES["$LINE"]}"
-  TIME="${TIME//[[:space:]]/'+'}"
   printf -- '%s %s %s\n' "$COUNT" "$TIME" "$LINE"
-done | column -t
+done | sort --key 1 --numeric-sort --reverse | column -t
