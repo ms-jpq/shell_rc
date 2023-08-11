@@ -18,7 +18,7 @@ if [[ -t 0 ]]; then
         if [[ ! -L "$FILE" ]]; then
           printf -- '%s\n' "$FILE" >&2
           "$0" <"$FILE" >"$TMP"
-          mv -- "$TMP" "$FILE"
+          mv -f -- "$TMP" "$FILE"
         fi
         ;;
       *) ;;
