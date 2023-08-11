@@ -106,7 +106,6 @@ linux*)
 msys)
   OS=nt
   NT_HOME="$(nt2unix "$ENV_HOME")"
-  ENV_MAKE="$(nt2unix "$ENV_MAKE")"
   ;;
 *)
   exit 1
@@ -151,4 +150,5 @@ done
 
 shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
 ENVS=(USERPROFILE="$ENV_HOME")
+# shellcheck disable=SC2154
 shell "$ENV_MAKE" --directory "$NT_HOME/.local/opt/initd" "${ENVS[@]}" "$@"

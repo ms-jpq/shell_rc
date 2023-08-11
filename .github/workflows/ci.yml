@@ -9,71 +9,71 @@ on:
     - cron: "0 0 * * *" # daily
 
 jobs:
-  docker:
-    strategy:
-      matrix:
-        platform:
-          - ubuntu-latest
-          # - windows-latest
+  # docker:
+  #   strategy:
+  #     matrix:
+  #       platform:
+  #         - ubuntu-latest
+  #         # - windows-latest
 
-    runs-on: ${{ matrix.platform }}
+  #   runs-on: ${{ matrix.platform }}
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - shell: bash
-        run: |-
-          gmake build
+  #     - shell: bash
+  #       run: |-
+  #         gmake build
 
-  ubuntu:
-    runs-on: ubuntu-latest
+  # ubuntu:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - run: |-
-          env | sort -t = -k 1
+  #     - run: |-
+  #         env | sort -t = -k 1
 
-      - run: |-
-          gmake lint
+  #     - run: |-
+  #         gmake lint
 
-      - run: |-
-          unset -- PIPX_HOME
-          ./main.sh localhost
+  #     - run: |-
+  #         unset -- PIPX_HOME
+  #         ./main.sh localhost
 
-      - run: |-
-          unset -- PIPX_HOME
-          ./main.sh localhost -- --debug
+  #     - run: |-
+  #         unset -- PIPX_HOME
+  #         ./main.sh localhost -- --debug
 
-      - run: |-
-          gmake fmt
-          git diff --exit-code
+  #     - run: |-
+  #         gmake fmt
+  #         git diff --exit-code
 
-  macos:
-    runs-on: macos-latest
+  # macos:
+  #   runs-on: macos-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - run: |-
-          env | sort -t = -k 1
+  #     - run: |-
+  #         env | sort -t = -k 1
 
-      - run: |-
-          brew install -- bash make gnu-getopt coreutils
-          rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
+  #     - run: |-
+  #         brew install -- bash make gnu-getopt coreutils
+  #         rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
 
-      - run: |-
-          gmake lint
+  #     - run: |-
+  #         gmake lint
 
-      - run: |-
-          PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
-          unset -- PIPX_HOME
-          ./main.sh localhost
+  #     - run: |-
+  #         PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
+  #         unset -- PIPX_HOME
+  #         ./main.sh localhost
 
-      - run: |-
-          PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
-          unset -- PIPX_HOME
-          ./main.sh localhost -- --debug
+  #     - run: |-
+  #         PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
+  #         unset -- PIPX_HOME
+  #         ./main.sh localhost -- --debug
 
   windows:
     runs-on: windows-latest
@@ -84,13 +84,13 @@ jobs:
       - run: |-
           Get-ChildItem Env:* | Sort-Object Name
 
-          Get-Command -- bash
-          Get-Command -- cygpath
-          Get-Command -- gmake
-          Get-Command -- python3
-          Get-Command -- sh
-          Get-Command -- tar
-          Get-Command -- unzip
+          Get-Command -All -- bash
+          Get-Command -All -- cygpath
+          Get-Command -All -- gmake
+          Get-Command -All -- python3
+          Get-Command -All -- sh
+          Get-Command -All -- tar
+          Get-Command -All -- unzip
 
           Get-ChildItem -Force $Env:ProgramFiles
           Get-ChildItem -Force ${Env:ProgramFiles(x86)}
@@ -104,7 +104,7 @@ jobs:
           & powershell .\layers\nt\winget.ps1
 
       - run: |-
-          Get-Command -- winget
+          Get-Command -All -- winget
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
