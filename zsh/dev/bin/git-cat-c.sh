@@ -16,7 +16,7 @@ execute)
     git show
     --relative
     --name-only
-    --pretty='format:'
+    --format=''
     -z
     "$@"
   )
