@@ -34,7 +34,8 @@ if ($go) {
 
     Add-AppxProvisionedPackage -Online -PackagePath $t_bundle -LicensePath $t_license
 
-    $location = Join-Path -Path $Env:LOCALAPPDATA -ChildPath (Join-Path -Path 'Microsoft' -ChildPath (Join-Path -Path 'WindowsApps' -ChildPath 'winget.exe'))
+    $localappdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
+    $location = Join-Path -Path $localappdata -ChildPath (Join-Path -Path 'Microsoft' -ChildPath (Join-Path -Path 'WindowsApps' -ChildPath 'winget.exe'))
 
     foreach ($i in 1..60) {
         if (Test-Path -Path $location) {
