@@ -5,9 +5,6 @@ $ErrorActionPreference = 'Stop'
 
 
 function basic {
-    # UTC BIOS
-    #Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name 'RealTimeIsUniversal' -Type 'DWord' -Value 1
-
     # Allow Scripting
     Set-ExecutionPolicy -ExecutionPolicy 'Unrestricted'
 
@@ -30,6 +27,18 @@ function basic {
 }
 
 
+function rdp {
+    # No Sleep on AC
+    POWERCFG /SETACVALUEINDEX SCHEME_CURRENT SUB_NONE CONSOLELOCK 0
+
+    # RDP On
+    Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Type 'DWord' -Value 0
+
+    # RDP Firewall
+    Enable-NetFirewallRule -Name 'RemoteDesktop*'
+}
+
+
 function ssh {
     Add-WindowsCapability -Online -Name 'OpenSSH.Server'
     Set-Service -Name 'sshd' -StartupType 'Automatic' -Status 'Running'
@@ -44,16 +53,16 @@ function ssh {
     }
 
     $SSH_KEY_DST = if ($WIN_ADMIN) {
-        Join-Path -Path "$ENV:PROGRAMDATA" 'ssh' | Join-Path -ChildPath 'administrators_authorized_keys'
+        Join-Path -Path $Env:PROGRAMDATA 'ssh' | Join-Path -ChildPath 'administrators_authorized_keys'
     }
     else {
-        Join-Path -Path '~' '.ssh' | Join-Path -ChildPath 'authorized_keys'
+        Join-Path -Path $home '.ssh' | Join-Path -ChildPath 'authorized_keys'
     }
-    Write-Output "$SSH_KEY_DST"
+    Write-Output -- "$SSH_KEY_DST"
 
     $SSH_KEY_SRC = New-TemporaryFile
     $GITHUB_USER = Read-Host -Prompt 'Github User'
-    Invoke-WebRequest -OutFile $SSH_KEY_SRC -Uri "https://github.com/$GITHUB_USER.keys"
+    Invoke-WebRequest -Uri "https://github.com/$GITHUB_USER.keys" -OutFile $SSH_KEY_SRC
     Move-Item -Force -Path $SSH_KEY_SRC -Destination $SSH_KEY_DST
 
 
@@ -71,22 +80,8 @@ function ssh {
 }
 
 
-function rdp {
-    # No Sleep on AC
-    POWERCFG /SETACVALUEINDEX SCHEME_CURRENT SUB_NONE CONSOLELOCK 0
-
-    # RDP On
-    Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Type 'DWord' -Value 0
-
-    # RDP Firewall
-    Enable-NetFirewallRule -Name 'RemoteDesktop*'
-}
-
-
 basic
 rdp
 ssh
 
 Write-Output --% '--> DONE'
-
-# Remove-Item -Path Function:basic Function:winrm Function:ssh Function:rdp
