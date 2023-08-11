@@ -46,7 +46,6 @@ nt2unix() {
   printf -- '%s' "$unixpath"
 }
 
-set -x
 RSYNC="${RSYNC:-"rsync"}"
 
 "${GMAKE:-"gmake"}" -- all RSYNC="$RSYNC"
