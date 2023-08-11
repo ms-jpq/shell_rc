@@ -11,12 +11,11 @@ clobber.git.$(notdir $1):
 
 git: $1
 $1: | $(CONFIG)/git/config
-	DIR='$(call UNIX_2_NT,$1)'
-	if [[ -d "$$$$DIR" ]]; then
-		cd -- "$$$$DIR"
+	if [[ -d '$$@' ]]; then
+		cd -- '$$@'
 		git pull --recurse-submodules --no-tags '--jobs=$(NPROC)'
 	else
-		git clone --recurse-submodules --shallow-submodules --depth=1 '--jobs=$(NPROC)' -- '$2' "$$$$DIR"
+		git clone --recurse-submodules --shallow-submodules --depth=1 '--jobs=$(NPROC)' -- '$2' '$$@'
 	fi
 
 endef
