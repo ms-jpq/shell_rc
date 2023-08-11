@@ -2,49 +2,69 @@
 
 set -o pipefail
 
-ARGV=(
-  git log
-  --relative
-  --all
-  --name-only
-  --color --pretty='format:/%Cblue%ad%Creset'
-  -z
-)
+parse() {
+  LINE="$(</dev/stdin)"
+  FILE="${LINE#*$'\n'}"
+}
 
-declare -A -- COUNTS=() TIMES=()
+case "${SCRIPT_MODE:-""}" in
+preview)
+  parse
+  printf -- '%s\n\n' "$FILE"
+  git log --relative --all --follow --patch --color -- "$FILE" | delta
+  ;;
+execute)
+  parse
+  printf -- '%q\n' "$FILE"
+  ;;
+*)
+  ARGV=(
+    git log
+    --relative
+    --all
+    --name-only
+    --color --pretty='format:/%Cblue%ad%Creset'
+    -z
+  )
 
-TMP="$(mktemp)"
-"${ARGV[@]}" >"$TMP"
+  declare -A -- COUNTS=() TIMES=()
 
-while read -d '' -r LINE; do
-  while :; do
-    case "$LINE" in
-    /*)
-      TIME="${LINE%%$'\n'*}"
-      LINE="${LINE#*$'\n'}"
-      if [[ "$TIME" == "$LINE" ]]; then
-        LINE=''
+  TMP="$(mktemp)"
+  "${ARGV[@]}" >"$TMP"
+
+  while read -d '' -r LINE; do
+    while :; do
+      case "$LINE" in
+      /*)
+        TIME="${LINE%%$'\n'*}"
+        LINE="${LINE#*$'\n'}"
+        if [[ "$TIME" == "$LINE" ]]; then
+          LINE=''
+          break
+        fi
+        ;;
+      *)
         break
-      fi
-      ;;
-    *)
-      break
-      ;;
-    esac
-  done
+        ;;
+      esac
+    done
 
-  if [[ -z "$LINE" ]]; then
-    continue
-  fi
+    if [[ -z "$LINE" ]]; then
+      continue
+    fi
 
-  TIME="${TIME#*/}"
-  TIMES["$LINE"]="$TIME"
-  COUNT="${COUNTS["$LINE"]:-0}"
-  COUNTS["$LINE"]="$((COUNT + 1))"
-done <"$TMP"
+    TIME="${TIME#*/}"
+    TIMES["$LINE"]="$TIME"
+    COUNT="${COUNTS["$LINE"]:-0}"
+    COUNTS["$LINE"]="$((COUNT + 1))"
+  done <"$TMP"
 
-for LINE in "${!COUNTS[@]}"; do
-  COUNT="${COUNTS["$LINE"]}"
-  TIME="${TIMES["$LINE"]}"
-  printf -- '%s %s %s\n' "$COUNT" "$TIME" "$LINE"
-done | sort --key 1 --numeric-sort --reverse | column -t
+  rm -f -- "$TMP"
+
+  for LINE in "${!COUNTS[@]}"; do
+    COUNT="${COUNTS["$LINE"]}"
+    TIME="${TIMES["$LINE"]}"
+    printf -- '%s %s\n%s\0' "$COUNT" "$TIME" "$LINE"
+  done | sort --zero-terminated --key 1 --numeric-sort --reverse | "${0%/*}/../libexec/fzf-lr.sh" "$0"
+  ;;
+esac
