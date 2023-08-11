@@ -53,7 +53,8 @@ function ssh {
     }
 
     $SSH_KEY_DST = if ($WIN_ADMIN) {
-        Join-Path -Path $Env:PROGRAMDATA 'ssh' | Join-Path -ChildPath 'administrators_authorized_keys'
+        $programdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::CommonApplicationData)
+        Join-Path -Path $programdata 'ssh' | Join-Path -ChildPath 'administrators_authorized_keys'
     }
     else {
         Join-Path -Path $home '.ssh' | Join-Path -ChildPath 'authorized_keys'
