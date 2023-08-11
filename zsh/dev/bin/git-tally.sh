@@ -11,7 +11,7 @@ case "${SCRIPT_MODE:-""}" in
 preview)
   parse
   printf -- '%s\n\n' "$FILE"
-  git log --relative --all --follow --patch --color -- "$FILE" | delta
+  git log --relative --all --follow --stat --color -- "$FILE"
   ;;
 execute)
   parse
