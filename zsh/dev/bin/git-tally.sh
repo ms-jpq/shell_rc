@@ -25,6 +25,7 @@ execute)
     --name-only
     --color --pretty='format:/%Cblue%ad%Creset'
     -z
+    "$@"
   )
 
   declare -A -- COUNTS=() TIMES=()
