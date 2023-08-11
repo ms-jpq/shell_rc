@@ -49,12 +49,12 @@ blocks:
         template: "{{ if .SSHSession }}{{ .UserName }}@{{ .HostName }}{{ end }} "
         foreground: black
 
-      - type: time
-        style: plain
-        foreground: darkGray
-        template: "<u>{{ .CurrentDate | date .Format }}</u>"
-        properties:
-          time_format: "15:04:05 MST"
+      # - type: time
+      #   style: plain
+      #   foreground: darkGray
+      #   template: "<u>{{ .CurrentDate | date .Format }}</u>"
+      #   properties:
+      #     time_format: "15:04:05 MST"
 
       - type: shell
         style: plain
