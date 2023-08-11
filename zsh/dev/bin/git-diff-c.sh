@@ -27,7 +27,7 @@ execute)
 
   HEAD=1
   DOUBLE=0
-  "${ARGV[@]}" | while read -d $'\0' -r LINE; do
+  "${ARGV[@]}" | while read -d '' -r LINE; do
     if ((HEAD)); then
       HEAD=0
       STAT="$LINE"

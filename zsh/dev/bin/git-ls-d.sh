@@ -5,7 +5,7 @@ set -o pipefail
 parse() {
   LINE="$(</dev/stdin)"
   SHA="${LINE%% *}"
-  FILE="${LINE#* }"
+  FILE="${LINE#*$'\n'}"
 }
 
 case "${SCRIPT_MODE:-""}" in
@@ -29,17 +29,17 @@ execute)
     "$@"
   )
   HEAD=1
-  "${ARGV[@]}" | while read -d $'\0' -r LINE; do
+  "${ARGV[@]}" | while read -d '' -r LINE; do
     if [[ -z "$LINE" ]]; then
       HEAD=1
       continue
     fi
     if ((HEAD)); then
-      SHA="${LINE%% *}"
-      LINE="${LINE##*$'\n'}"
+      SHA_TIME="${LINE%%$'\n'*}"
+      LINE="${LINE#*$'\n'}"
       HEAD=0
     fi
-    printf -- '%s\0' "$SHA $LINE"
+    printf -- '%s\n%s\0' "$SHA_TIME" "$LINE"
   done | "${0%/*}/../libexec/fzf-lr.sh" "$0"
   ;;
 esac
