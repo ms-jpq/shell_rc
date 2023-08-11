@@ -46,10 +46,8 @@ nt2unix() {
   printf -- '%s' "$unixpath"
 }
 
+set -x
 RSYNC="${RSYNC:-"rsync"}"
-if [[ "$OSTYPE" == msys ]]; then
-  RSYNC="$(nt2unix "$RSYNC")"
-fi
 
 "${GMAKE:-"gmake"}" -- all RSYNC="$RSYNC"
 
@@ -110,7 +108,6 @@ msys)
   OS=nt
   NT_HOME="$(nt2unix "$ENV_HOME")"
   ENV_MAKE="$(nt2unix "$ENV_MAKE")"
-  ENV_RSYNC="$(nt2unix "$ENV_RSYNC")"
   ;;
 *)
   exit 1

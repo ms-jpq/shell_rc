@@ -9,7 +9,6 @@ linux*)
   MEMINFO_KB="$(awk '/MemTotal/ { print $2 }' </proc/meminfo)"
   MEMINFO=$((MEMINFO_KB * 1024))
   MAKE='gmake'
-  RSYNC='rsync'
   ;;
 darwin*)
   ID="$(sw_vers -productName)"
@@ -17,7 +16,6 @@ darwin*)
   VERSION_CODENAME="$VERSION_ID"
   MEMINFO="$(sysctl -n hw.memsize)"
   MAKE='gmake'
-  RSYNC='rsync'
   ;;
 msys)
   trim() {
@@ -37,7 +35,6 @@ msys)
   MEMINFO="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
   # shellcheck disable=SC2154
   MAKE="$SYSTEMDRIVE/msys64/usr/bin/make"
-  RSYNC="$SYSTEMDRIVE/msys64/usr/bin/rsync"
   ;;
 *)
   exit 1
@@ -53,7 +50,6 @@ ENV_MACHTYPE=$(printf -- '%q' "$MACHTYPE")
 ENV_MAKE=$(printf -- '%q' "$MAKE")
 ENV_MEMINFO=$(printf -- '%q' "$MEMINFO")
 ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")
-ENV_RSYNC=$(printf -- '%q' "$RSYNC")
 ENV_VERSION_CODENAME=$(printf -- '%q' "$VERSION_CODENAME")
 ENV_VERSION_ID=$(printf -- '%q' "$VERSION_ID")
 EOF
