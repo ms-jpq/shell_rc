@@ -1,8 +1,7 @@
 #!/usr/bin/env -S -- bash
 
-setopt -- bad_pattern   # print error message
-setopt -- dotglob       # glob dotfiles
-setopt -- extended_glob # more glob?
-setopt -- no_case_glob  # case insensitive
-setopt -- no_case_match # case insensitive
-setopt -- nullglob      # no glob literal
+setopt -- extended_glob   # More glob?
+setopt -- glob_dots       # Match .*
+setopt -- glob_star_short # Globstar
+setopt -- mark_dirs       # Auto append / to glob results
+setopt -- null_glob       # No glob literal
