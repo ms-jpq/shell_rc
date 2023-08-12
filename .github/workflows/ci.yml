@@ -92,8 +92,8 @@ jobs:
           Get-Command -All -- tar
           Get-Command -All -- unzip
 
-          Get-ChildItem -Force $Env:ProgramFiles
-          Get-ChildItem -Force ${Env:ProgramFiles(x86)}
+      - run: |-
+          Get-ChildItem -Force -- (Join-Path -Path $Env:ProgramFiles 'Git')
 
       - run: |-
           $pacman = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'pacman'

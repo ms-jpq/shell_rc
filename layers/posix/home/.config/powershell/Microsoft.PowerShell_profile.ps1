@@ -8,7 +8,7 @@ $Env:SHELL = (Get-Command -Name pwsh).Path
 Set-PSReadLineOption -EditMode 'Emacs'
 Set-PSReadLineKeyHandler -Key 'Tab' -Function 'MenuComplete'
 
-Set-PSReadLineOption -HistoryNoDuplicates -HistorySavePath (Join-Path -Path $home '.local' 'state' 'shell_history' 'pwsh')
+Set-PSReadLineOption -HistoryNoDuplicates -HistorySavePath (Join-Path -Path $HOME '.local' 'state' 'shell_history' 'pwsh')
 
 $appdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::ApplicationData)
 
