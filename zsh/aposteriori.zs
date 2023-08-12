@@ -18,3 +18,6 @@ _comp_init() {
 
 _comp_init
 unset -f -- _comp_init
+
+# shellcheck disable=SC1091
+source -- "$HOME/.local/opt/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
