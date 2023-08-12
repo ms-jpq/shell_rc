@@ -1,0 +1,5 @@
+[boot]
+systemd = true
+
+[wsl2]
+swap = 0
