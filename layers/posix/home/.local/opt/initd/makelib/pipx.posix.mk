@@ -2,7 +2,7 @@
 
 PIPX := $(LOCAL)/pipx/venvs
 PIPX_E := $(call UNIX_2_NT,$(OPT)/pipx/$(PY_BIN)/pipx)
-PIPX_EX := ./libexec/linux-lock.sh '$(PIPX_E)' env -- 'HOME=$(HOME)' 'USERPROFILE=$(HOME)' '$(PIPX_E)'
+PIPX_EX := env -- 'HOME=$(HOME)' 'USERPROFILE=$(HOME)' ./libexec/flock.sh '$(PIPX_E)' '$(PIPX_E)'
 
 
 clobber: clobber.pipx

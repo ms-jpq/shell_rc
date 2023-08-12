@@ -57,7 +57,7 @@ function ssh {
         Join-Path -Path $programdata 'ssh' | Join-Path -ChildPath 'administrators_authorized_keys'
     }
     else {
-        Join-Path -Path $home '.ssh' | Join-Path -ChildPath 'authorized_keys'
+        Join-Path -Path $HOME '.ssh' | Join-Path -ChildPath 'authorized_keys'
     }
     Write-Output -- "$SSH_KEY_DST"
 
