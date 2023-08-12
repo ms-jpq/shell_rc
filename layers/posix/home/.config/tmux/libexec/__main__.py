@@ -141,7 +141,7 @@ def _snap() -> _Snapshot:
 
 def _states(interval: int) -> Tuple[_Snapshot, _Snapshot, Optional[int]]:
     s1 = _load() or _snap()
-    battery = sensors_battery()
+    battery = sensors_battery()  # type: ignore
     sleep(max(0, interval - (time() - s1.time)))
     s2 = _snap()
 
