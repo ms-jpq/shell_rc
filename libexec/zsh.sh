@@ -24,7 +24,7 @@ DIRS=(
   ./zsh/{dev,fun,docker}
 )
 
-ZSH=()
+ZSH=(./zsh/apriori.zsh)
 BSH=(./zsh/apriori.bash ./layers/posix/home/.zshenv)
 
 for DIR in "${DIRS[@]}"; do
