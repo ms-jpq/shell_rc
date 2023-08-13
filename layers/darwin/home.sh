@@ -12,6 +12,8 @@ link() {
   fi
 }
 
+# TODO: windows??
+link "$HOME/.ignore" "$HOME/.fdignore"
 link "$HOME/Applications" "$HOME/.local/opt"
 link "$HOME/Library/Application Support" "$HOME/.local/share"
 link "$HOME/Library/Caches" "$HOME/.cache"
