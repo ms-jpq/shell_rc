@@ -19,14 +19,15 @@ clean:
 
 clobber: clean
 	shopt -u failglob
-	rm -v -rf -- ./var ./.venv ./node_modules
+	rm -v -rf -- $(VAR) ./.venv ./node_modules
 
 GOOS := darwin ubuntu nt
 CURL := curl --fail --location --no-progress-meter
-TMP := ./var/tmp
+VAR := ./var
+TMP := $(VAR)/tmp
 ARGV ?=
 
-./var/bin $(TMP):
+$(VAR)/bin $(TMP):
 	mkdir -v -p -- '$@'
 
 include layers/posix/home/.local/opt/initd/lib/*.mk
