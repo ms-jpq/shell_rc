@@ -21,7 +21,7 @@ if [[ -z "$RG_ARGS" ]]; then
   IFS="$SEP"
 
   if (($#)); then
-    rg "${ARGS[@]}" | SHELL="$0" _RG_ARGS="$*" fzf "${FZF_ARGS[@]}"
+    rg "${ARGS[@]}" 2>&1 | SHELL="$0" _RG_ARGS="$*" fzf "${FZF_ARGS[@]}"
   else
     rg
   fi
