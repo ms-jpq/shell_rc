@@ -1,31 +1,27 @@
-#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
+#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O globstar
 
 set -o pipefail
 
-if [[ -t 0 ]]; then
-  if (($#)); then
-    for FILE in "$@"; do
-      if [[ -f "$FILE" ]]; then
-        printf -- '%s\n' "$FILE" >&2
-        exec -- "$0" <"$FILE"
-      fi
-    done
-  else
-    TMP="$(mktemp)"
-    for FILE in ./**/*; do
-      case "$FILE" in
-      *.link | *.netdev | *.network | *.socket | *.service | */repart.d/*.conf | */systemd/**/*.conf)
-        if [[ ! -L "$FILE" ]]; then
-          printf -- '%s\n' "$FILE" >&2
-          "$0" <"$FILE" >"$TMP"
-          mv -f -- "$TMP" "$FILE"
-        fi
-        ;;
-      *) ;;
-      esac
-    done
-  fi
-
+if (($#)); then
+  TMP="$(mktemp)"
+  for FILE in "$@"; do
+    if [[ -d "$FILE" ]]; then
+      SYSTEMD_FMT_GLOB="$FILE" "$0"
+    else
+      printf -- '%s\n' "$FILE" >&2
+      "$0" <"$FILE" >"$TMP"
+      mv -f -- "$TMP" "$FILE"
+    fi
+  done
+elif [[ -t 0 ]] || [[ -v SYSTEMD_FMT_GLOB ]]; then
+  TMP="$(mktemp)"
+  DIR="${SYSTEMD_FMT_GLOB:-"."}"
+  unset -- SYSTEMD_FMT_GLOB
+  for FILE in "$DIR"/**/{*.link,*.netdev,*.network,*.socket,*.service,*/repart.d/*.conf,*/systemd/**/*.conf}; do
+    printf -- '%s\n' "$FILE" >&2
+    "$0" <"$FILE" >"$TMP"
+    mv -f -- "$TMP" "$FILE"
+  done
 else
   readarray -t -d $'\n' -- LINES
 
