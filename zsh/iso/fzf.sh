@@ -30,7 +30,6 @@ _fzf_default_command=(
   --hidden
   --follow
   --type file
-  --type symlink
 )
 printf -v FZF_DEFAULT_COMMAND -- '%q ' "${_fzf_default_command[@]}"
 unset -- _fzf_default_command
@@ -40,7 +39,7 @@ _fzf_alt_c_command=(
   command -- fd
   --print0
   --hidden
-  --type symlink
+  --follow
   --type directory
 )
 # shellcheck disable=SC2034
@@ -51,6 +50,7 @@ _fzf_ctrl_t_command=(
   command -- fd
   --print0
   --hidden
+  --follow
 )
 # shellcheck disable=SC2034
 printf -v FZF_CTRL_T_COMMAND -- '%q ' "${_fzf_ctrl_t_command[@]}"
@@ -73,8 +73,8 @@ _fzf_compgen_path() {
   local -- local_opts=(
     command -- fd
     --hidden
+    --follow
     --type directory
-    --type symlink
     --type file
   )
   "${local_opts[@]}" "$1"
@@ -84,6 +84,7 @@ _fzf_compgen_dir() {
   local -- local_opts=(
     command -- fd
     --hidden
+    --follow
     --type directory
   )
   "${local_opts[@]}" "$1"
