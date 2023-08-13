@@ -1,7 +1,5 @@
 #!/usr/bin/env -S -- bash
 
-fpath=("$ZDOTDIR/fn" "${fpath[@]}")
-
 autoload -Uz -- compinit
 
 # shellcheck disable=SC1036,SC2120
