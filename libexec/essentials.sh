@@ -2,27 +2,31 @@
 
 set -o pipefail
 
-if ! hash -- gmake curl jq; then
-  case "$OSTYPE" in
-  darwin*)
+case "$OSTYPE" in
+darwin*)
+  if ! hash -- gmake jq; then
     brew install -- make jq
-    ;;
-  linux*)
+  fi
+  ;;
+linux*)
+  if ! hash -- gmake curl jq; then
     sudo -- apt-get update
     DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --no-install-recommends --yes -- make curl jq
-    ;;
-  msys*)
-    WINGET=(
-      winget install
-      --disable-interactivity
-      --accept-source-agreements --accept-package-agreements
-      --exact
-      --id
-    )
-    "${WINGET[@]}" GnuWin32.Make jqlang.jq
-    ;;
-  *)
-    exit 1
-    ;;
-  esac
-fi
+  fi
+  ;;
+msys*)
+  WINGET=(
+    winget install
+    --disable-interactivity
+    --accept-source-agreements --accept-package-agreements
+    --exact
+    --id
+  )
+  if ! hash -- jq; then
+    "${WINGET[@]}" jqlang.jq
+  fi
+  ;;
+*)
+  exit 1
+  ;;
+esac
