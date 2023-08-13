@@ -37,10 +37,9 @@ unset -- _fzf_default_command
 export -- FZF_DEFAULT_COMMAND
 
 _fzf_alt_c_command=(
-  fd
+  command -- fd
   --print0
   --hidden
-  --no-ignore
   --type symlink
   --type directory
 )
@@ -49,10 +48,9 @@ printf -v FZF_ALT_C_COMMAND -- '%q ' "${_fzf_alt_c_command[@]}"
 unset -- _fzf_alt_c_command
 
 _fzf_ctrl_t_command=(
-  fd
+  command -- fd
   --print0
   --hidden
-  --no-ignore
 )
 # shellcheck disable=SC2034
 printf -v FZF_CTRL_T_COMMAND -- '%q ' "${_fzf_ctrl_t_command[@]}"
@@ -73,7 +71,8 @@ FZF_CTRL_T_OPTS="$FZF_ALT_C_OPTS"
 
 _fzf_compgen_path() {
   local -- local_opts=(
-    fd
+    command -- fd
+    --hidden
     --type directory
     --type symlink
     --type file
@@ -83,7 +82,8 @@ _fzf_compgen_path() {
 
 _fzf_compgen_dir() {
   local -- local_opts=(
-    fd
+    command -- fd
+    --hidden
     --type directory
   )
   "${local_opts[@]}" "$1"

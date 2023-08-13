@@ -1,0 +1,15 @@
+.Trash/
+.cache/
+.cups/
+.docker/
+.local/
+.ssh/
+Applications/
+Desktop/
+Documents/
+Downloads/
+Library/
+Movies/
+Music/
+Pictures/
+Public/
