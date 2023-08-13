@@ -87,6 +87,7 @@ jobs:
           Get-Command -All -- bash
           Get-Command -All -- cygpath
           Get-Command -All -- gmake
+          Get-Command -All -- nproc
           Get-Command -All -- python3
           Get-Command -All -- sh
           Get-Command -All -- tar
