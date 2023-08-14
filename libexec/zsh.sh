@@ -40,7 +40,14 @@ BACC=("$(cat -- "${BSH[@]}")")
 
 for BIN in ./zsh/*/bin/*; do
   B="${BIN##*/}"
-  cp -f -- "$BIN" "$BINS/${B%%.*}"
+  B="${B%%.*}"
+  # shellcheck disable=SC2016
+  BS='"$XDG_CONFIG_HOME/zsh/bin/"'"$B"' "$@"'
+
+  ZACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$B\"")
+  BACC+=("$B() {" "$BS" '}')
+  printf -- '%s\n' "$BS" >"$FUNC/$B"
+  cp -f -- "$BIN" "$BINS/$B"
 done
 
 for BIN in ./zsh/*/libexec/*; do
@@ -49,7 +56,7 @@ for BIN in ./zsh/*/libexec/*; do
 done
 
 for FN in ./zsh/*/fn/*.sh; do
-  F="${FN%%.sh}"
+  F="${FN%.sh}"
   F="${F##*/}"
   ZACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$F\"")
   cp -f -- "$FN" "$FUNC/${F##*/}"

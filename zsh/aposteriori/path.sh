@@ -1,6 +1,6 @@
 #!/usr/bin/env -S -- bash
 
-path=("$HOME/.local/bin" "$XDG_CONFIG_HOME/zsh/bin" "${path[@]}")
+path=("$HOME/.local/bin" "${path[@]}")
 
 if ((SHLVL > 1)); then
   declare -A -- seen

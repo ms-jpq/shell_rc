@@ -3,7 +3,7 @@
 fmt: systemd-fmt shfmt black prettier taplo
 
 systemd-fmt:
-	./zsh/iso/bin/systemd-fmt.sh ./layers
+	./layers/posix/home/.local/bin/systemd-fmt.sh ./layers
 
 shfmt: $(VAR)/bin/shfmt
 	readarray -t -d $$'\0' -- ARRAY < <(git ls-files --deduplicate -z -- '*.*sh')
