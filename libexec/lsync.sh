@@ -14,3 +14,5 @@ for SRC in "$@"; do
     cp -a -f -- "$SRC"/* "$DST"
   fi
 done
+
+touch -- "$DST"
