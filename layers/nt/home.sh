@@ -19,7 +19,6 @@ link() {
   fi
 }
 
-link "$USERPROFILE/.ignore" "$USERPROFILE/.fdignore"
 link "$APPDATA" "$USERPROFILE/.config"
 link "$LOCALAPPDATA" "$USERPROFILE/.local/share"
 link "$TEMP" "$USERPROFILE/.cache"

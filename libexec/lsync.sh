@@ -8,7 +8,6 @@ DST="$1"
 shift -- 1
 
 mkdir -v -p -- "$DST"
-set -x
 
 for SRC in "$@"; do
   if [[ -d "$SRC" ]]; then

@@ -6,8 +6,8 @@ RSYNC ?= rsync
 
 define FS_TEMPLATE
 
-$(TMP)/$1/$2: $(shell shopt -u failglob; printf -- '%s ' ./layers/{posix,$1}/$2/**/*)
-	./libexec/lsync.sh '$$@' ./layers/{posix,$1}/$2/
+$(TMP)/$1/$2: ./libexec/lsync.sh $(shell shopt -u failglob; printf -- '%s ' ./layers/{posix,$1}/$2/**/*)
+	'$$<' '$$@' ./layers/{posix,$1}/$2/
 
 layers: $(TMP)/$1/$2
 
