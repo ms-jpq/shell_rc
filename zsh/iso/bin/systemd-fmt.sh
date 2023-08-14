@@ -31,7 +31,9 @@ elif [[ -t 0 ]] || [[ -v SYSTEMD_FMT_GLOB ]]; then
   for FILE in "$DIR"/**/{*.link,*.netdev,*.network,*.socket,*.service,*/repart.d/*.conf,*/systemd/**/*.conf}; do
     ACC+=("$FILE")
   done
-  exec -- "$0" "${ACC[@]}"
+  if ((${#ACC[@]})); then
+    exec -- "$0" "${ACC[@]}"
+  fi
 else
   readarray -t -d $'\n' -- LINES
 
