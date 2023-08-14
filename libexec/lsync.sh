@@ -2,8 +2,6 @@
 
 set -o pipefail
 
-cd -- "${0%/*}/.."
-
 DST="$1"
 shift -- 1
 
