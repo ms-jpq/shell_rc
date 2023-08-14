@@ -4,7 +4,17 @@ set -o pipefail
 
 if (($#)); then
   TMP="$(mktemp)"
+  declare -A -- SEEN=()
   for FILE in "$@"; do
+    if [[ -v SEEN["$FILE"] ]]; then
+      continue
+    fi
+    if [[ -L "$FILE" ]]; then
+      FILE="$(realpath -- "$FILE")"
+    fi
+
+    SEEN["$FILE"]=1
+
     if [[ -d "$FILE" ]]; then
       SYSTEMD_FMT_GLOB="$FILE" "$0"
     else
@@ -17,11 +27,11 @@ elif [[ -t 0 ]] || [[ -v SYSTEMD_FMT_GLOB ]]; then
   TMP="$(mktemp)"
   DIR="${SYSTEMD_FMT_GLOB:-"."}"
   unset -- SYSTEMD_FMT_GLOB
+  ACC=()
   for FILE in "$DIR"/**/{*.link,*.netdev,*.network,*.socket,*.service,*/repart.d/*.conf,*/systemd/**/*.conf}; do
-    printf -- '%s\n' "$FILE" >&2
-    "$0" <"$FILE" >"$TMP"
-    mv -f -- "$TMP" "$FILE"
+    ACC+=("$FILE")
   done
+  exec -- "$0" "${ACC[@]}"
 else
   readarray -t -d $'\n' -- LINES
 
