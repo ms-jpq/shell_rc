@@ -2,9 +2,7 @@
 
 set -o pipefail
 
-MODE="${SYSTEMD_FMT_MODE:-""}"
-
-if [[ "$MODE" == 'stream' ]]; then
+if [[ "${SYSTEMD_FMT_MODE:-""}" == 'stream' ]]; then
   declare -A -- SEEN=()
   TMP="$(mktemp)"
 
