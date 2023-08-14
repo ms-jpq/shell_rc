@@ -2,8 +2,6 @@
 
 set -o pipefail
 
-cd -- "${0%/*}/.."
-
 OS="$1"
 OUT="$2"
 GIT="$3"
