@@ -7,12 +7,7 @@ RSYNC ?= rsync
 define FS_TEMPLATE
 
 $(TMP)/$1/$2: $(shell shopt -u failglob; printf -- '%s ' ./layers/{posix,$1}/$2/**/*)
-	mkdir -v -p -- '$$@'
-	for layer in ./layers/{posix,$1}/$2/; do
-		if [[ -d ""$$$$layer"" ]]; then
-			'$(RSYNC)' --recursive --links --perms --keep-dirlinks -- "$$$$layer" '$$@/'
-		fi
-	done
+	./libexec/lsync.sh '$$@' ./layers/{posix,$1}/$2/
 
 layers: $(TMP)/$1/$2
 
