@@ -25,7 +25,6 @@ GOOS := darwin ubuntu nt
 CURL := curl --fail --location --no-progress-meter
 VAR := ./var
 TMP := $(VAR)/tmp
-ARGV ?=
 
 $(VAR)/bin $(TMP):
 	mkdir -v -p -- '$@'
