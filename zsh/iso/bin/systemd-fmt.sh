@@ -6,13 +6,12 @@ if (($#)); then
   TMP="$(mktemp)"
   declare -A -- SEEN=()
   for FILE in "$@"; do
-    if [[ -v SEEN["$FILE"] ]]; then
-      continue
-    fi
     if [[ -L "$FILE" ]]; then
       FILE="$(realpath -- "$FILE")"
     fi
-
+    if [[ -v SEEN["$FILE"] ]]; then
+      continue
+    fi
     SEEN["$FILE"]=1
 
     if [[ -d "$FILE" ]]; then
