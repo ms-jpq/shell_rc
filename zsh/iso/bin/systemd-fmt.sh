@@ -2,10 +2,13 @@
 
 set -o pipefail
 
-if (($#)); then
-  TMP="$(mktemp)"
+MODE="${SYSTEMD_FMT_MODE:-""}"
+
+if [[ "$MODE" == 'stream' ]]; then
   declare -A -- SEEN=()
-  for FILE in "$@"; do
+  TMP="$(mktemp)"
+
+  while read -r -d '' -- FILE; do
     if [[ -L "$FILE" ]]; then
       FILE="$(realpath -- "$FILE")"
     fi
@@ -14,25 +17,22 @@ if (($#)); then
     fi
     SEEN["$FILE"]=1
 
+    printf -- '%q\n' "$FILE" >&2
+    SYSTEMD_FMT_MODE='' "$0" <"$FILE" >"$TMP"
+    mv -f -- "$TMP" "$FILE"
+  done
+elif (($#)); then
+  for FILE in "$@"; do
     if [[ -d "$FILE" ]]; then
-      SYSTEMD_FMT_GLOB="$FILE" "$0"
+      for F in "$FILE"/**/{*.link,*.netdev,*.network,*.socket,*.service,*/repart.d/*.conf,*/systemd/**/*.conf}; do
+        printf -- '%s\0' "$F"
+      done
     else
-      printf -- '%s\n' "$FILE" >&2
-      "$0" <"$FILE" >"$TMP"
-      mv -f -- "$TMP" "$FILE"
+      printf -- '%s\0' "$FILE"
     fi
-  done
-elif [[ -t 0 ]] || [[ -v SYSTEMD_FMT_GLOB ]]; then
-  TMP="$(mktemp)"
-  DIR="${SYSTEMD_FMT_GLOB:-"."}"
-  unset -- SYSTEMD_FMT_GLOB
-  ACC=()
-  for FILE in "$DIR"/**/{*.link,*.netdev,*.network,*.socket,*.service,*/repart.d/*.conf,*/systemd/**/*.conf}; do
-    ACC+=("$FILE")
-  done
-  if ((${#ACC[@]})); then
-    exec -- "$0" "${ACC[@]}"
-  fi
+  done | SYSTEMD_FMT_MODE='stream' "$0"
+elif [[ -t 0 ]]; then
+  exec -- "$0" .
 else
   readarray -t -d $'\n' -- LINES
 
