@@ -11,7 +11,6 @@ CURL=(
   --fail-with-body
   --location
   --no-progress-meter
-  -- "$SRC"
 )
 
 case "$OSTYPE" in
@@ -34,14 +33,14 @@ UNTAR=(
 
 case "$SRC" in
 *.tar.gz)
-  "${CURL[@]}" | "${UNTAR[@]}" -z
+  "${CURL[@]}" -- "$SRC" | "${UNTAR[@]}" -z
   ;;
 *.zip)
   FILE="$DST/$NAME"
-  "${CURL[@]}" >"$FILE"
+  "${CURL[@]}" --output "$FILE" -- "$SRC"
   unzip -o -d "$DST" "$FILE"
   ;;
 *)
-  "${CURL[@]}" >"$DST/$NAME"
+  "${CURL[@]}" --output "$DST/$NAME" -- "$SRC"
   ;;
 esac

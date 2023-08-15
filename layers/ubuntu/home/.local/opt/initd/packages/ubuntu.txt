@@ -13,6 +13,7 @@
 + fd-find
 + figlet
 + git
++ glow
 + grep
 + htop
 + hyperfine
