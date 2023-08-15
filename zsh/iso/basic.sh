@@ -19,7 +19,8 @@ export -- LESS LESSHISTFILE="$XDG_STATE_HOME/shell_history/less"
 
 export -- TIME_STYLE='long-iso'
 # shellcheck disable=SC2154
-export -- EDITOR="$XDG_CONFIG_HOME/zsh/libexec/edit.sh"
+printf -v EDITOR -- '%q' "$XDG_CONFIG_HOME/zsh/libexec/edit.sh"
+export -- EDITOR
 export -- MANPAGER='nvim +Man! --'
 
 export -- CURL_HOME="$XDG_CONFIG_HOME/curl"
