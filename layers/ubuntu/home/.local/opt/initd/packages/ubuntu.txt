@@ -1,3 +1,5 @@
+# + libaa-bin
+# + vhs
 # + yank
 + 7zip
 + aha
@@ -15,6 +17,7 @@
 + git
 + glow
 + grep
++ gum
 + htop
 + hyperfine
 + iftop
@@ -23,7 +26,6 @@
 + iperf3
 + jid
 + language-pack-zh-hans
-+ libaa-bin
 + locales
 + man2html-base
 + moreutils

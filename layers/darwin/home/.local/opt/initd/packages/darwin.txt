@@ -1,3 +1,4 @@
+# + vhs
 + aha
 + asciiquarium
 + autossh
@@ -30,6 +31,7 @@
 + gnupg
 + gojq
 + grep
++ gum
 + htmlq
 + htop
 + hyperfine
@@ -77,4 +79,3 @@
 + xsv
 + yank
 + zsh
-
