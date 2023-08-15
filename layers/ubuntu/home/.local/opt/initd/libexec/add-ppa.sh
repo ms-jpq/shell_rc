@@ -16,7 +16,7 @@ FS_NAME="ppa_${DIST}_$NAME"
 GPG_FILE="/etc/apt/trusted.gpg.d/$FS_NAME.gpg"
 SOURCE_FILE="/etc/apt/sources.list.d/$FS_NAME.list"
 
-CURL=(curl --fail --location --no-progress-meter --)
+CURL=(curl --fail-with-body --location --no-progress-meter --)
 
 URI="https://api.launchpad.net/1.0/~$DIST/+archive/$NAME"
 JSON="$("${CURL[@]}" "$URI")"
