@@ -65,7 +65,9 @@ jobs:
       - run: |-
           gmake lint
 
-      - run: |-
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |-
           PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
           unset -- PIPX_HOME
           ./main.sh localhost
