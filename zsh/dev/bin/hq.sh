@@ -2,8 +2,8 @@
 
 set -o pipefail
 
-OPTS='x:,m:,a:,c:,h:,t:'
-LONG_OPTS='method:,mime:,auth:,cookie:,header:,tee:'
+OPTS='x:,m:,a:,b:,c:,h:,t:'
+LONG_OPTS='method:,mime:,auth:,bearer:,cookie:,header:,tee:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
@@ -21,6 +21,10 @@ while (($#)); do
     ;;
   -m | --mime)
     MIME="$2"
+    shift -- 2
+    ;;
+  -b | --bearer)
+    CURL+=(--oauth2-bearer "$2")
     shift -- 2
     ;;
   -c | --cookie)
