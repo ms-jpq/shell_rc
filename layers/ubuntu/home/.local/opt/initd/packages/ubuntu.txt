@@ -3,6 +3,7 @@
 # + yank
 + 7zip
 + aha
++ athena-jot
 + autossh
 + bat
 + bb
