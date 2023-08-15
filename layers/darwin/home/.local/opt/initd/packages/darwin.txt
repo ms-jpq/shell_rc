@@ -22,6 +22,7 @@
 + gettext
 + git
 + gitui
++ glow
 + gnu-getopt
 + gnu-sed
 + gnu-tar
