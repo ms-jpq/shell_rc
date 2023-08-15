@@ -27,7 +27,7 @@ STATE := $(LOCAL)/state
 TP := $(CACHE)/initd
 
 # TODO: gnumake 4.4 .WAIT
-.PHONY: clean clobber .WAIT
+.PHONY: noop clean clobber .WAIT
 
 CURL := curl --fail-with-body --location --no-progress-meter
 
@@ -44,6 +44,7 @@ $(TP):
 
 include makelib/*.mk
 
+noop:
 all: git curl zsh tmux conf nvim pkg
 
 ifneq ($(OS),nt)
