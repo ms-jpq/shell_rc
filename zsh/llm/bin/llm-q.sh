@@ -13,7 +13,6 @@ GPTHIST="${GPTHIST:-"$(mktemp)"}"
 GPTTMP="${GPTTMP:-"$(mktemp)"}"
 
 export -- GPTHIST GPTTMP
-printf -- '%q\n' "$GPTHIST"
 
 MODEL='gpt-3.5-turbo'
 ROLE='system'
@@ -63,6 +62,12 @@ LLMQ=(
 )
 
 JSON="$("${JQ[@]}" <"$GPTHIST")"
+
+# shellcheck disable=SC2154
+"$XDG_CONFIG_HOME/zsh/libexec/hr.sh"
+printf -v LINE -- '%q ' jq '.' "$GPTHIST"
+printf -- '%s\n' "$LINE"
+
 CODE="$(RECURSION=1 "${LLMQ[@]}" <<<"$JSON")"
 
 if ((CODE != 200)); then
