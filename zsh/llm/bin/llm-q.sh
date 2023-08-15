@@ -2,20 +2,19 @@
 
 set -o pipefail
 
-OPTS='m:,t:,r:'
-LONG_OPTS='model:,temperature:,role:'
+OPTS='m:,r:,h:'
+LONG_OPTS='model:,role:,history:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 ARGV=("$@")
 
-GPTHIST="${GPTHIST:-"$(mktemp)"}"
-GPTTMP="${GPTTMP:-"$(mktemp)"}"
-
-export -- GPTHIST GPTTMP
+GPT_HISTORY="${GPT_HISTORY:-"$(mktemp)"}"
+GPT_TMP="${GPT_TMP:-"$(mktemp)"}"
+export -- GPT_HISTORY GPT_TMP
 
 MODEL='gpt-3.5-turbo'
-ROLE='system'
+ROLE='user'
 
 while (($#)); do
   case "$1" in
@@ -23,12 +22,12 @@ while (($#)); do
     MODEL="$2"
     shift -- 2
     ;;
-  -t | --temperature)
-    TEMP="$2"
-    shift -- 2
-    ;;
   -r | --role)
     ROLE="$2"
+    shift -- 2
+    ;;
+  -h | --history)
+    GPT_HISTORY="$2"
     shift -- 2
     ;;
   --)
@@ -41,52 +40,78 @@ while (($#)); do
   esac
 done
 
-read -r -d '' -- MSG
-
 hr() {
   # shellcheck disable=SC2154
-  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh"
+  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" "$@"
 }
 
-TR="$(sed -E 's/[\t\r\n ]+//g' <<<"$MSG")"
-if [[ "$TR" == 'die' ]]; then
-  GPTHIST="$(mktemp)"
-  printf -- '\n'
-  hr !
-  exec -- "$0" "${ARGV[@]}"
-fi
-
-jq --exit-status --raw-input --arg role "$ROLE" '{ role: $role, content: . }' <<<"$MSG" >>"$GPTHIST"
-
 # shellcheck disable=SC2016
-JQ=(
+JQ1=(
+  jq
+  --exit-status
+  --raw-input
+  --arg role "$ROLE"
+  '{ role: $role, content: . }'
+)
+# shellcheck disable=SC2016
+JQ2=(
   jq
   --exit-status
   --slurp
   --arg model "$MODEL"
-  --arg temp "${TEMP:-"$(jot -r -p 1 1 0 2)"}"
-  '{ model: $model, temperature: ($temp | tonumber), messages: . }'
+  '{ model: $model, messages: . }'
 )
-LLMQ=(
+CURL=(
   "${0%%-*}"
   --write-out '%{http_code}'
-  --output "$GPTTMP"
+  --output "$GPT_TMP"
   --data @-
   -- 'https://api.openai.com/v1/chat/completions'
 )
 
-JSON="$("${JQ[@]}" <"$GPTHIST")"
+read -r -d '' -- INPUT
+printf -- '\n'
+read -r -- LINE <<<"$INPUT"
+PRAGMA="$(tr -d ' ' <<<"$LINE")"
+P=1
+REEXEC=0
+case "$PRAGMA" in
+'>die')
+  GPT_HISTORY="$(mktemp)"
+  REEXEC=1
+  ;;
+'>clear')
+  GPT_HISTORY="$(mktemp)"
+  ;;
+'>role'*)
+  ROLE="${PRAGMA#'>role'}"
+  INPUT="$(sed '1d' <<<"$INPUT")"
+  ;;
+*) P=0 ;;
+esac
+
+if ((P)); then
+  hr !
+  printf -- '%s\n' "$LINE"
+  hr !
+  if ((REEXEC)); then
+    exec -- "$0" "${ARGV[@]}"
+  fi
+fi
+
+"${JQ1[@]}" <<<"$INPUT" >>"$GPT_HISTORY"
+QUERY="$("${JQ2[@]}" <"$GPT_HISTORY")"
 
 hr
-printf -v LINE -- '%q ' jq '.' "$GPTHIST"
-printf -- '%s\n' "$LINE"
+printf -v JQHIST -- '%q ' jq '.' "$GPT_HISTORY"
+printf -- '%s\n%s\n' "$JQHIST" "> $ROLE:"
+hr '?'
 
-CODE="$(RECURSION=1 "${LLMQ[@]}" <<<"$JSON")"
-
+CODE="$(RECURSION=1 "${CURL[@]}" <<<"$QUERY")"
 if ((CODE != 200)); then
-  jq <"$GPTTMP" || cat -- "$GPTTMP"
+  jq <"$GPT_TMP" || cat -- "$GPT_TMP"
 else
-  jq --exit-status --raw-output '.choices[].message.content' <"$GPTTMP" | glow
+  jq --exit-status --raw-output '.choices[].message.content' <"$GPT_TMP" | glow
 fi
 
 exec -- "$0" "${ARGV[@]}"
