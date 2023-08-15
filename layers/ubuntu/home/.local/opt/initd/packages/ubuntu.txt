@@ -42,6 +42,7 @@
 + pv
 + ripgrep
 + rlwrap
++ rs
 + rsync
 + sl
 + socat

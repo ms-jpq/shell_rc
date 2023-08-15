@@ -42,6 +42,20 @@ while (($#)); do
 done
 
 read -r -d '' -- MSG
+
+hr() {
+  # shellcheck disable=SC2154
+  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh"
+}
+
+TR="$(sed -E 's/[\t\r\n ]+//g' <<<"$MSG")"
+if [[ "$TR" == 'die' ]]; then
+  GPTHIST="$(mktemp)"
+  printf -- '\n'
+  hr !
+  exec -- "$0" "${ARGV[@]}"
+fi
+
 jq --exit-status --raw-input --arg role "$ROLE" '{ role: $role, content: . }' <<<"$MSG" >>"$GPTHIST"
 
 # shellcheck disable=SC2016
@@ -63,8 +77,7 @@ LLMQ=(
 
 JSON="$("${JQ[@]}" <"$GPTHIST")"
 
-# shellcheck disable=SC2154
-"$XDG_CONFIG_HOME/zsh/libexec/hr.sh"
+hr
 printf -v LINE -- '%q ' jq '.' "$GPTHIST"
 printf -- '%s\n' "$LINE"
 
