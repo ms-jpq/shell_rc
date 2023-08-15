@@ -13,13 +13,14 @@ edit() {
   mkdir -v -p -- "${TOKEN_F%/*}"
   # shellcheck disable=SC2154
   exec -- $EDITOR "$TOKEN_F"
-
 }
 
 if ! [[ -v RECURSION ]]; then
   PROGRAM="${1:-""}"
   case "$PROGRAM" in
-  r | request) ;;
+  r | request)
+    shift -- 1
+    ;;
   e | edit)
     edit
     ;;
