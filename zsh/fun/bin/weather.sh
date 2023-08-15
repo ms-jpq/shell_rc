@@ -12,7 +12,7 @@ URI="${URIS[$((RANDOM % ${#URIS[@]}))]}"
 
 CURL=(
   curl
-  --fail
+  --fail-with-body
   --no-progress-meter
 )
 

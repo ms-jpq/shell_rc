@@ -29,7 +29,7 @@ TP := $(CACHE)/initd
 # TODO: gnumake 4.4 .WAIT
 .PHONY: clean clobber .WAIT
 
-CURL := curl --fail --location --no-progress-meter
+CURL := curl --fail-with-body --location --no-progress-meter
 
 clean:
 	shopt -u failglob

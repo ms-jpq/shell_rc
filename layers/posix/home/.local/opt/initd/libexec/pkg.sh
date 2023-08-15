@@ -11,7 +11,7 @@ case "$OSTYPE" in
 darwin*)
   if ! command -v -- brew; then
     URI='https://raw.githubusercontent.com/Homebrew/install/master/install.sh'
-    SH="$(curl --fail --location --no-progress-meter -- "$URI")"
+    SH="$(curl --fail-with-body --location --no-progress-meter -- "$URI")"
     bash -c "$SH"
   fi
   PKGS="$(brew list --formula --full-name -1)"

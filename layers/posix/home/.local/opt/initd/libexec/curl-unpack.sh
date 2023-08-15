@@ -7,7 +7,8 @@ DST="$2"
 NAME=${SRC##*/}
 
 CURL=(
-  curl --fail
+  curl
+  --fail-with-body
   --location
   --no-progress-meter
   -- "$SRC"
