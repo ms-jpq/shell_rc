@@ -49,7 +49,6 @@ done
 
 ARGV=(
   curl
-  --location
   --no-progress-meter
   --request "$METHOD"
   --header 'Content-Type: application/json'

@@ -53,7 +53,6 @@ done
 
 ARGV=(
   curl
-  --location
   --no-progress-meter
   --request "$METHOD"
   --header "Content-Type: $MIME"
