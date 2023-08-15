@@ -21,3 +21,5 @@ export -- TIME_STYLE='long-iso'
 # shellcheck disable=SC2154
 export -- EDITOR="$XDG_CONFIG_HOME/zsh/libexec/edit.sh"
 export -- MANPAGER='nvim +Man! --'
+
+export -- CURL_HOME="$XDG_CONFIG_HOME/curl"
