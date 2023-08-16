@@ -2,8 +2,8 @@
 
 set -o pipefail
 
-OPTS='m:'
-LONG_OPTS='model:'
+OPTS='m:,p:,t:'
+LONG_OPTS='model:,prompt:,tee:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
@@ -11,9 +11,11 @@ ARGV=("$@")
 
 GPT_HISTORY="${GPT_HISTORY:-"$(mktemp)"}"
 GPT_TMP="${GPT_TMP:-"$(mktemp)"}"
-export -- GPT_HISTORY GPT_TMP
+GPT_LVL="${GPT_LVL:-1}"
+export -- GPT_HISTORY GPT_TMP GPT_LVL
 
 MODEL='gpt-3.5-turbo'
+PROMPTS=()
 while (($#)); do
   case "$1" in
   --)
@@ -24,13 +26,24 @@ while (($#)); do
     MODEL="$2"
     shift -- 2
     ;;
+  -p | --prompt)
+    PROMPTS+=("$2")
+    shift -- 2
+    ;;
+  -t | --tee)
+    TEE="$2"
+    shift -- 2
+    ;;
   *)
     exit 1
     ;;
   esac
 done
 
-SYS="$*"
+SYS=("$*")
+for PROMPT in "${PROMPTS[@]}"; do
+  SYS+=("$(<"$PROMPT")")
+done
 
 # shellcheck disable=SC2016
 JQ1=(
@@ -52,7 +65,7 @@ JQ2=(
 )
 
 if ! [[ -s "$GPT_HISTORY" ]]; then
-  "${JQ1[@]}" system <<<"$SYS" >"$GPT_HISTORY"
+  "${JQ1[@]}" system <<<"${SYS[@]}" >"$GPT_HISTORY"
 fi
 
 if [[ -t 0 ]]; then
@@ -65,11 +78,17 @@ fi >>"$GPT_HISTORY"
 if [[ -t 1 ]]; then
   printf -v JQHIST -- '%q ' jq '.' "$GPT_HISTORY"
   printf -- '\n%s\n' "$JQHIST"
-fi
+fi >&2
 
 QUERY="$("${JQ2[@]}")"
-"${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY"
+if [[ -v TEE ]]; then
+  mkdir -v -p -- "$TEE" >&2
+  "${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY" | tee -- "$TEE/$GPT_LVL.txt"
+else
+  "${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY"
+fi
 
 if [[ -t 0 ]]; then
+  ((GPT_LVL++))
   exec -- "$0" "${ARGV[@]}"
 fi

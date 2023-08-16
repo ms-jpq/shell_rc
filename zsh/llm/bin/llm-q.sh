@@ -42,7 +42,7 @@ done
 
 hr() {
   # shellcheck disable=SC2154
-  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" "$@"
+  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" "$@" >&2
 }
 
 # shellcheck disable=SC2016
@@ -85,7 +85,7 @@ esac
 
 if ((P)); then
   hr !
-  printf -- '%s\n' "$LINE"
+  printf -- '%s\n' "$LINE" >&2
   hr !
   if ((REEXEC)); then
     exec -- "$0" "${ARGV[@]}"
@@ -97,7 +97,7 @@ QUERY="$("${JQ2[@]}" <"$GPT_HISTORY")"
 
 hr
 printf -v JQHIST -- '%q ' jq '.' "$GPT_HISTORY"
-printf -- '%s\n%s\n' "$JQHIST" "> $ROLE:"
+printf -- '%s\n%s\n' "$JQHIST" "> $ROLE:" >&2
 
 "${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY"
 
