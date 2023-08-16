@@ -76,8 +76,8 @@ case "$PRAGMA" in
 '>clear')
   GPT_HISTORY="$(mktemp)"
   ;;
-'>role'*)
-  ROLE="${PRAGMA#'>role'}"
+'>user' | '>system')
+  ROLE="${PRAGMA#>}"
   INPUT="$(sed '1d' <<<"$INPUT")"
   ;;
 *) P=0 ;;
