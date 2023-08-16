@@ -5,8 +5,10 @@ IFS=':'
 
 print_err() {
   printf -- '%q' "$PATH"
-  printf >&2 -- 'paths {show, add, rm|remove} path\n'
-  printf >&2 -- '%s\n' "$1"
+  {
+    printf -- 'paths {show, add, rm|remove} path\n'
+    printf -- '%s\n' "$1"
+  } >&2
   exit 1
 }
 
@@ -25,7 +27,7 @@ remove() {
   printf -- '%q' "$ret"
 
   if ! ((slient)); then
-    printf >&2 -- '%s\n' "REMOVED -- $target"
+    printf -- '%s\n' "REMOVED -- $target" >&2
   fi
 }
 
@@ -36,7 +38,7 @@ add() {
   if [[ -d "$target" ]]; then
     dedup="$target:$(remove "$target" 1)"
     printf -- '%q' "$dedup"
-    printf >&2 -- '%s\n' "ADDED   -- $target"
+    printf -- '%s\n' "ADDED   -- $target" >&2
   else
     print_err "ERR! -- Not a Directory: $target"
   fi

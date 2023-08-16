@@ -11,7 +11,7 @@ ARGV=("$@")
 
 GPT_HISTORY="${GPT_HISTORY:-"$(mktemp)"}"
 GPT_TMP="${GPT_TMP:-"$(mktemp)"}"
-GPT_LVL="${GPT_LVL:-1}"
+GPT_LVL="${GPT_LVL:-0}"
 export -- GPT_HISTORY GPT_TMP GPT_LVL
 
 MODEL='gpt-3.5-turbo'
@@ -45,7 +45,6 @@ SYS=("$*")
 for PROMPT in "${PROMPTS[@]}"; do
   SYS+=("$(<"$PROMPT")")
 done
-SYSTEM="${SYS[*]}"
 
 # shellcheck disable=SC2016
 JQ1=(
@@ -70,13 +69,15 @@ TEEF=(tee --)
 if [[ -v TEE ]]; then
   TEEF+=("$TEE/$GPT_LVL.tx.txt")
 
-  if ((GPT_LVL == 1)); then
-    printf '%s' "$SYSTEM" >"$TEE/_.txt"
+  if ! ((GPT_LVL)); then
+    printf -- '%s\n' "${SYS[@]}" >"$TEE/_.txt"
   fi
 fi
 
 if ! [[ -s "$GPT_HISTORY" ]]; then
-  "${JQ1[@]}" system <<<"${SYS[@]}" >"$GPT_HISTORY"
+  for S in "${SYS[@]}"; do
+    "${JQ1[@]}" system <<<"$S" >>"$GPT_HISTORY"
+  done
 fi
 
 if [[ -t 0 ]]; then
@@ -99,6 +100,6 @@ else
 fi
 
 if [[ -t 0 ]]; then
-  ((GPT_LVL++))
+  ((++GPT_LVL))
   exec -- "$0" "${ARGV[@]}"
 fi
