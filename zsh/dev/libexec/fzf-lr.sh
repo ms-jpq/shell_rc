@@ -18,7 +18,7 @@ ARGV=(
 )
 
 if [[ -v __FZF_LR_ARGV__ ]]; then
-  readarray -t -d "$SEP" -- ARGV < <(printf '%s' "$__FZF_LR_ARGV__")
+  readarray -t -d "$SEP" -- ARGV < <(printf -- '%s' "$__FZF_LR_ARGV__")
   unset -- _FZF_LR_ARGV__
   FILE="$2"
   if [[ "$FILE" == "$EXECUTE_HEAD"* ]]; then

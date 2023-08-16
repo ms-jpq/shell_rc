@@ -35,12 +35,14 @@ else
   # shellcheck disable=SC2154
   HR="$("$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '-')"
 
-  type >&2 -a python3
-  printf >&2 -- '%s\n' "$HR"
-  printf >&2 -- '%s\n' 'Not in virtual environment:'
-  printf >&2 -- '%s\n' "$HR"
-  printf >&2 -- '%s\n' "${EXECUTE[*]}"
-  printf >&2 -- '%s\n' "$HR"
+  {
+    type -a python3
+    printf -- '%s\n' "$HR"
+    printf -- '%s\n' 'Not in virtual environment:'
+    printf -- '%s\n' "$HR"
+    printf -- '%s\n' "${EXECUTE[*]}"
+    printf -- '%s\n' "$HR"
+  } >&2
 
   read -r -p 'Continue (y/n)?' -- CONT
   case "$CONT" in
