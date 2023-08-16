@@ -32,6 +32,7 @@ while (($#)); do
     ;;
   -t | --tee)
     TEE="$2"
+    mkdir -v -p -- "$TEE" >&2
     shift -- 2
     ;;
   *)
@@ -44,6 +45,7 @@ SYS=("$*")
 for PROMPT in "${PROMPTS[@]}"; do
   SYS+=("$(<"$PROMPT")")
 done
+SYSTEM="${SYS[*]}"
 
 # shellcheck disable=SC2016
 JQ1=(
@@ -63,6 +65,14 @@ JQ2=(
   '{ model: $model, messages: . }'
   "$GPT_HISTORY"
 )
+TEEF=(tee --)
+if [[ -v TEE ]]; then
+  TEEF+=("$TEE/$GPT_LVL.tx.txt")
+
+  if ((GPT_LVL == 1)); then
+    printf '%s' "$SYSTEM" >"$TEE/_.txt"
+  fi
+fi
 
 if ! [[ -s "$GPT_HISTORY" ]]; then
   "${JQ1[@]}" system <<<"${SYS[@]}" >"$GPT_HISTORY"
@@ -70,9 +80,9 @@ fi
 
 if [[ -t 0 ]]; then
   read -r -d '' -- INPUT
-  "${JQ1[@]}" user <<<"$INPUT"
+  "${TEEF[@]}" <<<"$INPUT" | "${JQ1[@]}" user
 else
-  "${JQ1[@]}" user
+  "${TEEF[@]}" | "${JQ1[@]}" user
 fi >>"$GPT_HISTORY"
 
 if [[ -t 1 ]]; then
@@ -82,8 +92,7 @@ fi >&2
 
 QUERY="$("${JQ2[@]}")"
 if [[ -v TEE ]]; then
-  mkdir -v -p -- "$TEE" >&2
-  "${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY" | tee -- "$TEE/$GPT_LVL.txt"
+  "${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY" | tee -- "$TEE/$GPT_LVL.rx.md"
 else
   "${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY"
 fi
