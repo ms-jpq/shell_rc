@@ -2,8 +2,6 @@
 
 set -o pipefail
 
-cd -- "${0%/*}"
-
 GPT_TMP="$1"
 
 if [[ -t 1 ]]; then
@@ -11,8 +9,17 @@ if [[ -t 1 ]]; then
 else
   PAGER='cat'
 fi
+CURL=(
+  "${0%%-*}"
+  --write-out '%{http_code}'
+  --output "$GPT_TMP"
+  --data @-
+  -- 'https://api.openai.com/v1/chat/completions'
+)
 
-CODE="$(</dev/stdin)"
+"${0%/*}/../libexec/hr.sh" '?'
+CODE="$(RECURSION=1 "${CURL[@]}")"
+
 if ((CODE != 200)); then
   jq <"$GPT_TMP" || cat -- "$GPT_TMP"
 else

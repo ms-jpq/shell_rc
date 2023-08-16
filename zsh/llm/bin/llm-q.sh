@@ -61,13 +61,6 @@ JQ2=(
   --arg model "$MODEL"
   '{ model: $model, messages: . }'
 )
-CURL=(
-  "${0%%-*}"
-  --write-out '%{http_code}'
-  --output "$GPT_TMP"
-  --data @-
-  -- 'https://api.openai.com/v1/chat/completions'
-)
 
 read -r -d '' -- INPUT
 printf -- '\n'
@@ -105,8 +98,7 @@ QUERY="$("${JQ2[@]}" <"$GPT_HISTORY")"
 hr
 printf -v JQHIST -- '%q ' jq '.' "$GPT_HISTORY"
 printf -- '%s\n%s\n' "$JQHIST" "> $ROLE:"
-hr '?'
 
-RECURSION=1 "${CURL[@]}" <<<"$QUERY" | "${0%%-*}-pager" "$GPT_TMP"
+"${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY"
 
 exec -- "$0" "${ARGV[@]}"

@@ -32,12 +32,14 @@ done
 
 SYS="$*"
 
+# shellcheck disable=SC2016
 JQ1=(
   jq
   --exit-status
   --raw-input
-  '{ role: "user", content: . }'
+  '{ role: $role, content: . }'
   --slurp
+  --arg role
 )
 # shellcheck disable=SC2016
 JQ2=(
@@ -45,28 +47,28 @@ JQ2=(
   --exit-status
   --slurp
   --arg model "$MODEL"
-  --arg sys "$SYS"
-  '{ model: $model, messages: ([{ role: "system", content: $sys }] + .) }'
+  '{ model: $model, messages: . }'
   "$GPT_HISTORY"
 )
-CURL=(
-  "${0%%-*}"
-  --write-out '%{http_code}'
-  --output "$GPT_TMP"
-  --data @-
-  -- 'https://api.openai.com/v1/chat/completions'
-)
 
-read -r -d '' -- INPUT || true
-"${JQ1[@]}" <<<"$INPUT" >>"$GPT_HISTORY"
+if ! [[ -s "$GPT_HISTORY" ]]; then
+  "${JQ1[@]}" system <<<"$SYS" >"$GPT_HISTORY"
+fi
 
 if [[ -t 0 ]]; then
-  # shellcheck disable=SC2154
-  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '?'
+  read -r -d '' -- INPUT
+  "${JQ1[@]}" user <<<"$INPUT"
+else
+  "${JQ1[@]}" user
+fi >>"$GPT_HISTORY"
+
+if [[ -t 1 ]]; then
+  printf -v JQHIST -- '%q ' jq '.' "$GPT_HISTORY"
+  printf -- '\n%s\n' "$JQHIST"
 fi
 
 QUERY="$("${JQ2[@]}")"
-RECURSION=1 "${CURL[@]}" <<<"$QUERY" | "${0%%-*}-pager" "$GPT_TMP"
+"${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY"
 
 if [[ -t 0 ]]; then
   exec -- "$0" "${ARGV[@]}"
