@@ -52,8 +52,8 @@ JQ1=(
   jq
   --exit-status
   --raw-input
-  '{ role: $role, content: . }'
   --slurp
+  '{ role: $role, content: . }'
   --arg role
 )
 # shellcheck disable=SC2016
@@ -65,6 +65,7 @@ JQ2=(
   '{ model: $model, messages: . }'
   "$GPT_HISTORY"
 )
+EXEC=("${0%/*}/../libexec/llm-completion.sh" "$GPT_TMP")
 TEEF=(tee --)
 if [[ -v TEE ]]; then
   TEEF+=("$TEE/$GPT_LVL.tx.txt")
@@ -92,9 +93,9 @@ fi >&2
 
 QUERY="$("${JQ2[@]}")"
 if [[ -v TEE ]]; then
-  "${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY" | tee -- "$TEE/$GPT_LVL.rx.md"
+  "${EXEC[@]}" <<<"$QUERY" | tee -- "$TEE/$GPT_LVL.rx.md"
 else
-  "${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY"
+  "${EXEC[@]}" <<<"$QUERY"
 fi
 
 if [[ -t 0 ]]; then

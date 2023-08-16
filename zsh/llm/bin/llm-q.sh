@@ -11,10 +11,10 @@ ARGV=("$@")
 
 GPT_HISTORY="${GPT_HISTORY:-"$(mktemp)"}"
 GPT_TMP="${GPT_TMP:-"$(mktemp)"}"
-export -- GPT_HISTORY GPT_TMP
+GPT_ROLE="${GPT_ROLE:-""}"
+export -- GPT_HISTORY GPT_TMP GPT_ROLE
 
 MODEL='gpt-3.5-turbo'
-ROLE='user'
 
 while (($#)); do
   case "$1" in
@@ -23,7 +23,7 @@ while (($#)); do
     shift -- 2
     ;;
   -r | --role)
-    ROLE="$2"
+    GPT_ROLE="${GPT_ROLE:-"$2"}"
     shift -- 2
     ;;
   -h | --history)
@@ -50,8 +50,9 @@ JQ1=(
   jq
   --exit-status
   --raw-input
-  --arg role "$ROLE"
+  --slurp
   '{ role: $role, content: . }'
+  --arg role
 )
 # shellcheck disable=SC2016
 JQ2=(
@@ -66,7 +67,7 @@ read -r -d '' -- INPUT
 printf -- '\n'
 read -r -- LINE <<<"$INPUT"
 PRAGMA="$(tr -d ' ' <<<"$LINE")"
-P=1
+DIRECTIVE=1
 REEXEC=0
 case "$PRAGMA" in
 '>die')
@@ -77,13 +78,13 @@ case "$PRAGMA" in
   GPT_HISTORY="$(mktemp)"
   ;;
 '>user' | '>system')
-  ROLE="${PRAGMA#>}"
+  GPT_ROLE="${PRAGMA#>}"
   INPUT="$(sed '1d' <<<"$INPUT")"
   ;;
-*) P=0 ;;
+*) DIRECTIVE=0 ;;
 esac
 
-if ((P)); then
+if ((DIRECTIVE)); then
   hr !
   printf -- '%s\n' "$LINE" >&2
   hr !
@@ -92,13 +93,13 @@ if ((P)); then
   fi
 fi
 
-"${JQ1[@]}" <<<"$INPUT" >>"$GPT_HISTORY"
+"${JQ1[@]}" "${GPT_ROLE:-"user"}" <<<"$INPUT" >>"$GPT_HISTORY"
 QUERY="$("${JQ2[@]}" <"$GPT_HISTORY")"
 
 hr
 printf -v JQHIST -- '%q ' jq '.' "$GPT_HISTORY"
-printf -- '%s\n%s\n' "$JQHIST" "> $ROLE:" >&2
+printf -- '%s\n%s\n' "$JQHIST" "> $GPT_ROLE:" >&2
 
-"${0%%-*}-completion" "$GPT_TMP" <<<"$QUERY"
+"${0%/*}/../libexec/llm-completion.sh" "$GPT_TMP" <<<"$QUERY"
 
 exec -- "$0" "${ARGV[@]}"
