@@ -57,12 +57,6 @@ CURL=(
   -- 'https://api.openai.com/v1/chat/completions'
 )
 
-if [[ -t 1 ]]; then
-  PAGER='glow'
-else
-  PAGER='cat'
-fi
-
 read -r -d '' -- INPUT || true
 "${JQ1[@]}" <<<"$INPUT" >>"$GPT_HISTORY"
 
@@ -72,12 +66,7 @@ if [[ -t 0 ]]; then
 fi
 
 QUERY="$("${JQ2[@]}")"
-CODE="$(RECURSION=1 "${CURL[@]}" <<<"$QUERY")"
-if ((CODE != 200)); then
-  jq <"$GPT_TMP" || cat -- "$GPT_TMP"
-else
-  jq --exit-status --raw-output '.choices[].message.content' <"$GPT_TMP" | "$PAGER"
-fi
+RECURSION=1 "${CURL[@]}" <<<"$QUERY" | "${0%%-*}-pager" "$GPT_TMP"
 
 if [[ -t 0 ]]; then
   exec -- "$0" "${ARGV[@]}"

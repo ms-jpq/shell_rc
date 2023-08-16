@@ -107,11 +107,6 @@ printf -v JQHIST -- '%q ' jq '.' "$GPT_HISTORY"
 printf -- '%s\n%s\n' "$JQHIST" "> $ROLE:"
 hr '?'
 
-CODE="$(RECURSION=1 "${CURL[@]}" <<<"$QUERY")"
-if ((CODE != 200)); then
-  jq <"$GPT_TMP" || cat -- "$GPT_TMP"
-else
-  jq --exit-status --raw-output '.choices[].message.content' <"$GPT_TMP" | glow
-fi
+RECURSION=1 "${CURL[@]}" <<<"$QUERY" | "${0%%-*}-pager" "$GPT_TMP"
 
 exec -- "$0" "${ARGV[@]}"
