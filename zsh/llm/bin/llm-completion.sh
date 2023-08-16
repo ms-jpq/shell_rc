@@ -3,12 +3,16 @@
 set -o pipefail
 
 GPT_TMP="$1"
+PAGER="${2:-""}"
 
-if [[ -t 1 ]]; then
-  PAGER='glow'
-else
-  PAGER='cat'
+if [[ -z "$PAGER" ]]; then
+  if [[ -t 1 ]]; then
+    PAGER='glow'
+  else
+    PAGER='cat'
+  fi
 fi
+
 CURL=(
   "${0%%-*}"
   --write-out '%{http_code}'
@@ -17,7 +21,7 @@ CURL=(
   -- 'https://api.openai.com/v1/chat/completions'
 )
 
-"${0%/*}/../libexec/hr.sh" '?'
+"${0%/*}/../libexec/hr.sh" '?' >&2
 CODE="$(RECURSION=1 "${CURL[@]}")"
 
 if ((CODE != 200)); then
