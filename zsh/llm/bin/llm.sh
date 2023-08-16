@@ -3,7 +3,14 @@
 set -o pipefail
 
 if ! (($#)); then
-  printf -- '%q\n' "$0"*
+  printf -- 'llm %s\n' request token
+  for F in "$0"*; do
+    F="${F##*/}"
+    F="${F/-/ }"
+    if [[ "$F" != 'llm' ]]; then
+      printf -- '%s\n' "$F"
+    fi
+  done
   exit
 fi
 
@@ -21,7 +28,7 @@ if ! [[ -v RECURSION ]]; then
   r | request)
     shift -- 1
     ;;
-  e | edit)
+  t | token)
     edit
     ;;
   *)

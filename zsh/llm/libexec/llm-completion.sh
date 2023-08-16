@@ -14,7 +14,7 @@ if [[ -z "$PAGER" ]]; then
 fi
 
 CURL=(
-  "${0%%-*}"
+  "${0%/*}/../bin/llm"
   --write-out '%{http_code}'
   --output "$GPT_TMP"
   --data @-
