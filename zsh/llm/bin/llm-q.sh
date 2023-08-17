@@ -74,9 +74,6 @@ case "$PRAGMA" in
   GPT_HISTORY="$(mktemp)"
   REEXEC=1
   ;;
-'>clear')
-  GPT_HISTORY="$(mktemp)"
-  ;;
 '>user' | '>system')
   GPT_ROLE="${PRAGMA#>}"
   INPUT="$(sed '1d' <<<"$INPUT")"

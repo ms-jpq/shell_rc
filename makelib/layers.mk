@@ -2,7 +2,6 @@
 all: layers
 
 DIRS := root home
-RSYNC ?= rsync
 
 define FS_TEMPLATE
 

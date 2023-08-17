@@ -40,8 +40,7 @@ nt2unix() {
   printf -- '%s' "$unixpath"
 }
 
-RSYNC="${RSYNC:-"rsync"}"
-"${GMAKE:-"gmake"}" -- all RSYNC="$RSYNC"
+"${GMAKE:-"gmake"}" -- all
 
 BSH=(bash --norc --noprofile -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
 CONN=(ssh
@@ -52,7 +51,7 @@ CONN=(ssh
 )
 printf -v RSH -- '%q ' "${CONN[@]}"
 RSY=(
-  "$RSYNC"
+  "${RSYNC:-"rsync"}"
   --recursive
   --links
   --perms
