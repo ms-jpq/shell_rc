@@ -1,6 +1,7 @@
 #!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
 
 set -o pipefail
+set -x
 
 TMP="$1"
 REPO="$2"
@@ -23,9 +24,7 @@ if ! [[ -f "$CACHE" ]]; then
     --max-time 60
   )
   if [[ -v GH_TOKEN ]]; then
-    CURL+=(
-      --header "Authorization: Bearer $GH_TOKEN"
-    )
+    CURL+=(--oauth2-bearer "$GH_TOKEN")
   fi
   CURL+=(
     -- "https://api.github.com/repos/$REPO/releases/latest"
