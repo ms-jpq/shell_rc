@@ -28,6 +28,7 @@
 + jid
 + language-pack-zh-hans
 + locales
++ m4
 + man2html-base
 + moreutils
 + mosh
