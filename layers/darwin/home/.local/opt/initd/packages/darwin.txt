@@ -43,6 +43,7 @@
 + lazygit
 + less
 + lsof
++ m4
 + make
 + man2html
 + moreutils
