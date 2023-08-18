@@ -3,7 +3,7 @@
 set -o pipefail
 
 fmt() {
-  readarray -t -d $'\n' -- LINES
+  readarray -t -- LINES
 
   MAX=0
   for LINE in "${LINES[@]}"; do

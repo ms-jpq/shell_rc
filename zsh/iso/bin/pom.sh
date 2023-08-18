@@ -22,7 +22,7 @@ fig() {
   HR="$("$XDG_CONFIG_HOME/zsh/libexec/hr.sh")"
 
   FIG="$HR$(figlet -c -w "$COLS" -f "$FONT" -- "$*")"
-  readarray -t -d $'\n' -- L <<<"$FIG"
+  readarray -t -- L <<<"$FIG"
   LS="${#L[@]}"
 
   P=$(((LINES - LS - 1) / 2))
