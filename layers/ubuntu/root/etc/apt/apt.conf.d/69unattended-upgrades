@@ -2,4 +2,3 @@ Unattended-Upgrade::Remove-Unused-Dependencies "true";
 Unattended-Upgrade::Allowed-Origins {
   "*:*";
 };
-
