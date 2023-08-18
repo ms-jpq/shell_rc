@@ -5,7 +5,7 @@ set -o pipefail
 cd -- "${0%/*}/.."
 
 TXT="$(grep -E -h -- '^(\+|-) .+' ./packages/*.txt)"
-readarray -t -d $'\n' -- DESIRED <<<"$TXT"
+readarray -t -- DESIRED <<<"$TXT"
 
 case "$OSTYPE" in
 darwin*)
@@ -30,7 +30,7 @@ msys)
   ;;
 esac
 
-readarray -t -d $'\n' -- INSTALLED <<<"$PKGS"
+readarray -t -- INSTALLED <<<"$PKGS"
 
 declare -A -- PRESENT=()
 
