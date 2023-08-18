@@ -3,7 +3,7 @@
 tmux-edit() {
   local -- tmp
   tmp="$(mktemp)"
-  "$(dirname -- "$0")/tmux-dump" >"$tmp"
+  tmux-dump >"$tmp"
   # shellcheck disable=SC2154
   "$EDITOR" "$tmp"
 }
