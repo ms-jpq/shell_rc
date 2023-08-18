@@ -358,10 +358,14 @@ def __init() -> None:
 
     hist = join(environ["XDG_STATE_HOME"], "shell_history", "python")
 
-    def read_history_file(_: Union[str, bytes, PathLike, None] = None) -> None:
+    def read_history_file(
+        _: Union[str, bytes, PathLike[str], PathLike[bytes], None] = None
+    ) -> None:
         rh(hist)
 
-    def write_history_file(_: Union[str, bytes, PathLike, None] = None) -> None:
+    def write_history_file(
+        _: Union[str, bytes, PathLike[str], PathLike[bytes], None] = None
+    ) -> None:
         wh(hist)
 
     readline.read_history_file = read_history_file
@@ -371,7 +375,7 @@ def __init() -> None:
         ah = readline.append_history_file
 
         def append_history_file(
-            __n: int, _: Union[str, bytes, PathLike, None] = None
+            __n: int, _: Union[str, bytes, PathLike[str], PathLike[bytes], None] = None
         ) -> None:
             ah(__n, hist)
 
