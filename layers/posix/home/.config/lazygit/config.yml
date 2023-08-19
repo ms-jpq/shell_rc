@@ -10,7 +10,6 @@ gui:
       - blue
     inactiveBorderColor:
       - black
-    lightTheme: True
     optionsTextColor:
       - black
     selectedLineBgColor:
