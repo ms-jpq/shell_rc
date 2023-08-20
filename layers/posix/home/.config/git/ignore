@@ -1,5 +1,9 @@
+*.env
+*.tfstate
 .DS_Store
 .git/
+.terraform/
 .venv/
 __pycache__/
 node_modules/
+vendor/
