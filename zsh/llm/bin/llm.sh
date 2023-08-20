@@ -14,15 +14,17 @@ if ! (($#)); then
   exit
 fi
 
-TOKEN_F="$HOME/.netrc"
+NETRC="$HOME/.netrc"
 edit() {
-  mkdir -v -p -- "${TOKEN_F%/*}"
+  mkdir -v -p -- "${NETRC%/*}"
+  touch -- "$NETRC"
+  chmod 0600 "$NETRC"
   # shellcheck disable=SC2154
-  exec -- $EDITOR "$TOKEN_F"
+  exec -- $EDITOR "$NETRC"
 }
 
-if ! [[ -s "$TOKEN_F" ]]; then
-  tee -- "$TOKEN_F" <<-EOF
+if ! [[ -s "$NETRC" ]]; then
+  tee -- "$NETRC" <<-EOF
 machine api.openai.com
 password
 EOF
