@@ -14,13 +14,20 @@ if ! (($#)); then
   exit
 fi
 
-# shellcheck disable=SC2154
-TOKEN_F="$XDG_STATE_HOME/gpt/token"
+TOKEN_F="$HOME/.netrc"
 edit() {
   mkdir -v -p -- "${TOKEN_F%/*}"
   # shellcheck disable=SC2154
   exec -- $EDITOR "$TOKEN_F"
 }
+
+if ! [[ -s "$TOKEN_F" ]]; then
+  tee -- "$TOKEN_F" <<-EOF
+machine api.openai.com
+password
+EOF
+  edit
+fi
 
 if ! [[ -v RECURSION ]]; then
   PROGRAM="${1:-""}"
@@ -38,16 +45,9 @@ if ! [[ -v RECURSION ]]; then
   esac
 fi
 
-if ! [[ -f "$TOKEN_F" ]]; then
-  edit
-fi
-
-TOKEN="$(<"$TOKEN_F")"
-
 CURL=(
   curl
   --header 'Content-Type: application/json'
-  --oauth2-bearer "$TOKEN"
   --no-progress-meter
   "$@"
 )
