@@ -5,7 +5,6 @@ setopt -- auto_menu        # Show completion menu on successive tab press
 setopt -- auto_param_slash # Add trailing / to folder names
 setopt -- list_ambiguous   # Only list if ambiguous
 
-
 setopt -- complete_in_word # Comp both ends of words
 setopt -- glob_complete    # Do not aggressively expand glob
 
