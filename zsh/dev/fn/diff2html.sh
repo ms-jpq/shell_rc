@@ -1,3 +1,9 @@
 #!/usr/bin/env -S -- bash
 
-npm exec --yes -- diff2html-cli "$@"
+diff2html() {
+  local -- argv=("$@")
+  if ! ((${#argv[@]})); then
+    argv+=(--input stdin)
+  fi
+  npm exec --yes -- diff2html-cli "${argv[@]}"
+}
