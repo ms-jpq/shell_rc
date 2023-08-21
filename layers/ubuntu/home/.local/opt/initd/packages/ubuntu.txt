@@ -58,3 +58,4 @@
 + zsh
 - lxd-agent-loader
 - snapd
+- vim
