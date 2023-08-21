@@ -2,7 +2,7 @@
 
 diff2html() {
   local -- argv=("$@")
-  if ! ((${#argv[@]})); then
+  if ! [[ -t 0 ]]; then
     argv+=(--input stdin)
   fi
   npm exec --yes -- diff2html-cli "${argv[@]}"
