@@ -40,7 +40,7 @@ nt2unix() {
   printf -- '%s' "$unixpath"
 }
 
-"${GMAKE:-"gmake"}" -- all
+"${GMAKE:-"gmake"}"
 
 BSH=(bash --norc --noprofile -Eeuo pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
 CONN=(ssh

@@ -11,9 +11,8 @@ $(APT_DEPS): | /usr/bin/unzip
 $(SHARE)/tmux $(NVIM_MVP) $(OPT)/pipx: | /usr/share/doc/python3-venv
 
 /etc/apt/sources.list.d/ubuntu_partner.list:
-	source -- /etc/os-release
 	sudo -- tee -- '$@' <<-EOF
-	deb http://archive.canonical.com/ubuntu $$VERSION_CODENAME partner
+	deb http://archive.canonical.com/ubuntu $(VERSION_CODENAME) partner
 	EOF
 
 /etc/apt/sources.list.d/ppa_neovim-ppa_unstable.list: $(APT_DEPS)
