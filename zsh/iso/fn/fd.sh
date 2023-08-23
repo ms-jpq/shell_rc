@@ -1,3 +1,3 @@
 #!/usr/bin/env -S -- bash
 
-command -- fd --hidden --follow "$@"
+command -- fd --hidden "$@"

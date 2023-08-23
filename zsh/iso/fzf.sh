@@ -28,7 +28,7 @@ export -- FZF_DEFAULT_OPTS
 _fzf_default_command=(
   fd
   --hidden
-  --follow
+  # --follow
   --type file
 )
 printf -v FZF_DEFAULT_COMMAND -- '%q ' "${_fzf_default_command[@]}"
@@ -39,7 +39,7 @@ _fzf_alt_c_command=(
   command -- fd
   --print0
   --hidden
-  --follow
+  # --follow
   --type directory
 )
 # shellcheck disable=SC2034
@@ -50,7 +50,7 @@ _fzf_ctrl_t_command=(
   command -- fd
   --print0
   --hidden
-  --follow
+  # --follow
 )
 # shellcheck disable=SC2034
 printf -v FZF_CTRL_T_COMMAND -- '%q ' "${_fzf_ctrl_t_command[@]}"
@@ -73,7 +73,7 @@ _fzf_compgen_path() {
   local -- local_opts=(
     command -- fd
     --hidden
-    --follow
+    # --follow
     --type directory
     --type file
   )
@@ -84,7 +84,7 @@ _fzf_compgen_dir() {
   local -- local_opts=(
     command -- fd
     --hidden
-    --follow
+    # --follow
     --type directory
   )
   "${local_opts[@]}" "$1"
