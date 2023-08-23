@@ -1,6 +1,6 @@
 .PHONY: tmux
 
-ifneq (aarch64-linux, $(MACHTYPE)-$(OS))
+ifneq (aarch64-linux, $(HOSTTYPE)-$(OS))
 tmux: $(SHARE)/tmux
 endif
 
