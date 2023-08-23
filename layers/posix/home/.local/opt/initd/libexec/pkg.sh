@@ -17,7 +17,7 @@ darwin*)
   PKGS="$(brew list --formula --full-name -1)"
   ;;
 linux*)
-  PKGS="$(dpkg --get-selections | cut --field 1)"
+  PKGS="$(dpkg --get-selections | cut --field 1 | cut --delimiter : --field 1)"
   ;;
 msys)
   WG_JSON="$(mktemp)"
