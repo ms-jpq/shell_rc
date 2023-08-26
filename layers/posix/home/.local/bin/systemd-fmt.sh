@@ -89,7 +89,9 @@ elif (($#)); then
   for FILE in "$@"; do
     if [[ -d "$FILE" ]]; then
       for F in "$FILE"/**/{*.link,*.netdev,*.network,*.socket,*.service,*.target,*/repart.d/*.conf,*/systemd/**/*.conf}; do
-        printf -- '%s\0' "$F"
+        if [[ -f "$F" ]]; then
+          printf -- '%s\0' "$F"
+        fi
       done
     else
       printf -- '%s\0' "$FILE"
