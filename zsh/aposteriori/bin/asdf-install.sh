@@ -21,14 +21,16 @@ while true; do
     shift -- 2
     ;;
   --)
-    shift
+    shift -- 1
+    break
     ;;
   *)
-    LANG="$*"
-    break
+    exit 2
     ;;
   esac
 done
+
+LANG="$*"
 
 if [[ -z "$LANG" ]]; then
   printf -- '%s\n' 'Please Enter a Langauge!'
