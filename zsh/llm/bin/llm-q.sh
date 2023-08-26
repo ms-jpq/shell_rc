@@ -76,7 +76,7 @@ case "$PRAGMA" in
   ;;
 '>user' | '>system')
   GPT_ROLE="${PRAGMA#>}"
-  INPUT="$(sed '1d' <<<"$INPUT")"
+  INPUT="$(sed -E '1d' <<<"$INPUT")"
   ;;
 *) DIRECTIVE=0 ;;
 esac
