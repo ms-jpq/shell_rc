@@ -24,7 +24,7 @@ $(TP)/curl/$(notdir $2): | $(TP)/curl /usr/bin/curl /usr/bin/jq
 
 deb: .WAIT $1
 $1: | $(TP)/curl/$(notdir $2) pkg.posix
-	$$(APT_INSTALL) -o DPkg::Lock::Timeout=-1 -- '$(TP)/curl/$(notdir $2)'
+	$$(APT_INSTALL) -o DPkg::Lock::Timeout=-1 -- '$(TP)/curl/$(notdir $2)' </dev/null
 
 endif
 endef
