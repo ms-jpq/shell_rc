@@ -70,6 +70,7 @@ if (("${#RM[@]}")); then
     ;;
   linux*)
     sudo -- apt-get purge --yes -- "${RM[@]}"
+    sudo -- apt-get autoremove --yes
     ;;
   msys)
     for DEL in "${RM[@]}"; do
