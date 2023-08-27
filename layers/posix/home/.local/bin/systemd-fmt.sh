@@ -88,7 +88,7 @@ if [[ "${SYSTEMD_FMT_MODE:-""}" == 'stream' ]]; then
 elif (($#)); then
   for FILE in "$@"; do
     if [[ -d "$FILE" ]]; then
-      for F in "$FILE"/**/{*.link,*.netdev,*.network,*.socket,*.service,*.target,*/repart.d/*.conf,*/systemd/**/*.conf}; do
+      for F in "$FILE"/**/{*.link,*.netdev,*.network,*.socket,*.service,*.target,*.mount,*.automount,*/repart.d/*.conf,*/systemd/**/*.conf}; do
         if [[ -f "$F" ]]; then
           printf -- '%s\0' "$F"
         fi
