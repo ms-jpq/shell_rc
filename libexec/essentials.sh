@@ -9,7 +9,7 @@ darwin*)
   fi
   ;;
 linux*)
-  if ! hash -- gmake curl jq gpg git unzip || ! [[ -f /usr/share/doc/python3-venv ]] || ! [[ -f /etc/ssl/certs/ca-certificates.crt ]]; then
+  if ! hash -- gmake curl jq gpg git unzip || ! [[ -d /usr/share/doc/python3-venv ]] || ! [[ -f /etc/ssl/certs/ca-certificates.crt ]]; then
     PKG=(ca-certificates make curl jq gnupg git unzip python3-venv)
     sudo -- apt-get update
     DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --no-install-recommends --yes -- "${PKG[@]}"
