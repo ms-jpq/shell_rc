@@ -84,6 +84,7 @@ if (("${#RM[@]}")); then
 fi
 
 if (("${#ADD[@]}")); then
+  printf -- '%q\n' "${ADD[@]}"
   case "$OSTYPE" in
   darwin*)
     brew install --formula -- "${ADD[@]}"
