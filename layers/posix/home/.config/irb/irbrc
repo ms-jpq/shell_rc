@@ -48,6 +48,7 @@ IRB.conf[:USE_AUTOCOMPLETE] = false
 module Kernel
   def clear! = system(*%w[clear --], exception: true) unless respond_to?(:clear!)
   def methods! = (methods - Object.methods).sort unless respond_to?(:methods!)
+  def own_methods! = (methods - self.class.superclass.instance_methods).sort unless respond_to?(:own_methods!)
 
   unless respond_to?(:assert!)
     def assert!(c, m = nil, &msg)
