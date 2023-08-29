@@ -2,7 +2,7 @@
 
 sshi() {
   local -- file="$HOME/.ssh/$1"
-  unshift
+  unshift -- 1
 
   local -- argv=
   if [[ "$file" = '-' ]]; then

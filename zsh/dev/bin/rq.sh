@@ -2,10 +2,10 @@
 
 set -o pipefail
 
-PROGRAM="$1"
+A0="$1"
 shift -- 1
 
 read -r -d '' -- SCRIPT
 
-"$PROGRAM" "$SCRIPT" "$@" || true
-exec -- "$0" "$PROGRAM" "$@"
+"$A0" "$SCRIPT" "$@" || true
+exec -- "$0" "$A0" "$@"
