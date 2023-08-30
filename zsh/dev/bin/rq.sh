@@ -3,11 +3,15 @@
 set -o pipefail
 
 A0="$1"
+ARGV=("$A0")
 shift -- 1
 
-read -r -d '' -- SCRIPT
+case "$A0" in
+*) ;;
+esac
 
+read -r -d '' -- SCRIPT
 printf -- '\n>> '
-printf -- '%q ' "$A0" "$@"
-"$A0" "$SCRIPT" "$@" || true
+printf -- '%q ' "${ARGV[@]}" "$@"
+"${ARGV[@]}" "$SCRIPT" "$@" || true
 exec -- "$0" "$A0" "$@"
