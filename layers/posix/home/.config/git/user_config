@@ -1,5 +1,5 @@
-[blame]
-coloring = true
+# [blame]
+# coloring = true
 
 [branch]
 autosetuprebase = "always"
@@ -25,6 +25,7 @@ algorithm        = "histogram"
 colorMoved       = "dimmed-zebra"
 colorMovedWS     = "ignore-space-change"
 dirstat          = "files,cumulative"
+renameLimit      = 999999999
 wsErrorHighlight = "all"
 
 [feature]
