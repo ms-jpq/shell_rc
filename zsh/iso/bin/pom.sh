@@ -6,7 +6,7 @@ TTL="$1"
 NOW="$(date -- '+%s')"
 END=$((TTL * 60 + NOW))
 
-FONT="$(SHOW_FONT=1 big)"
+FONT="$(SHOW_FONT=1 "${0%/*}/big")"
 CLS="$(clear)"
 
 colour() {
