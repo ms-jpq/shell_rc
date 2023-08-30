@@ -18,5 +18,8 @@ psql)
 *) ;;
 esac
 
-"${ARGV[@]}" "$@" <<<"$SCRIPT" || true
+ARGV+=("$@")
+printf -- '\n>> '
+printf -- '%q ' "${ARGV[@]}"
+"${ARGV[@]}" <<<"$SCRIPT" || true
 exec -- "$0" "$A0" "$@"

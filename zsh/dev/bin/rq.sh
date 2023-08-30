@@ -7,5 +7,7 @@ shift -- 1
 
 read -r -d '' -- SCRIPT
 
+printf -- '\n>> '
+printf -- '%q ' "$A0" "$@"
 "$A0" "$SCRIPT" "$@" || true
 exec -- "$0" "$A0" "$@"
