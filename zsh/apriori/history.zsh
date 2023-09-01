@@ -11,8 +11,5 @@ setopt -- hist_verify            # Show command with history expansion to user b
 setopt -- inc_append_history     # Add commands to HISTFILE immediately
 setopt -- share_history          # Share command history data
 
-# shellcheck disable=SC2154
-HISTFILE="$XDG_STATE_HOME/shell_history/zsh"
-
 # shellcheck disable=SC2034
 SAVEHIST=10000
