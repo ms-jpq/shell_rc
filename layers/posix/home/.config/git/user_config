@@ -28,8 +28,8 @@ dirstat          = "files,cumulative"
 renameLimit      = 999999999
 wsErrorHighlight = "all"
 
-[feature]
-manyFiles = true
+# [feature]
+# manyFiles = true
 
 [fetch]
 parallel          = 0
