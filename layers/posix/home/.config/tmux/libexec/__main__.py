@@ -175,7 +175,7 @@ def _measure(s1: _Snapshot, s2: _Snapshot) -> _Stats:
     mem = virtual_memory()
     stats = _Stats(
         cpu=_cpu(cpu_delta) * time_adjust,
-        mem=((mem.total - mem.available) / mem.total) * time_adjust,
+        mem=1 - mem.available / mem.total,
         disk_read=max(0, s2.disk_read - s1.disk_read) * time_adjust,
         disk_write=max(0, s2.disk_write - s1.disk_write) * time_adjust,
         net_sent=max(0, s2.net_sent - s1.net_sent) * time_adjust,
@@ -239,10 +239,10 @@ def _parse_args() -> Namespace:
     parser.add_argument("--lo", type=float, required=True)
     parser.add_argument("--hi", type=float, required=True)
     parser.add_argument("--interval", type=float, required=True)
-    parser.add_argument("--colour-lo", required=True)
-    parser.add_argument("--colour-md", required=True)
-    parser.add_argument("--colour-hi", required=True)
-    parser.add_argument("--colour-tr", required=True)
+    parser.add_argument("--colour-lo", default="")
+    parser.add_argument("--colour-md", default="")
+    parser.add_argument("--colour-hi", default="")
+    parser.add_argument("--colour-tr", default="")
     return parser.parse_args()
 
 
