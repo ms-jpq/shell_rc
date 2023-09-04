@@ -72,7 +72,8 @@ asdf-install --global -- ruby
 #   --with-x=no
 # )
 # apt-install "${R_DEPS[@]}"
-# R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
+# asdf plugin-add r https://github.com/asdf-community/asdf-r.git
+# R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- r
 
 # PHP_DEPS=(
 #   autoconf
