@@ -6,6 +6,10 @@ apt-install() {
   DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --yes -- "$@"
 }
 
+asdf-install() {
+  "$HOME/.config/zsh/bin/asdf-install" "$@"
+}
+
 touch -- "$HOME/.tool-versions"
 
 ##
@@ -31,22 +35,22 @@ PYTHON_DEPS=(
   zlib1g-dev
 )
 apt-install "${PYTHON_DEPS[@]}"
-asdf-install.sh --global -- python
+asdf-install --global -- python
 
 # shellcheck disable=SC2154
 mkdir --verbose --parent -- "$XDG_DATA_HOME/gnupg"
-NODEJS_CHECK_SIGNATURES=no asdf-install.sh --global -- nodejs
+NODEJS_CHECK_SIGNATURES=no asdf-install --global -- nodejs
 
-asdf-install.sh --global -- rust
+asdf-install --global -- rust
 
-asdf-install.sh --global -- golang
+asdf-install --global -- golang
 
 RUBY_DEPS=(
   libyaml-dev
   libssl-dev
 )
 apt-install "${RUBY_DEPS[@]}"
-asdf-install.sh --global -- ruby
+asdf-install --global -- ruby
 
 # R_DEPS=(
 #   build-essential
@@ -68,7 +72,7 @@ asdf-install.sh --global -- ruby
 #   --with-x=no
 # )
 # apt-install "${R_DEPS[@]}"
-# R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install.sh --global -- R
+# R_EXTRA_CONFIGURE_OPTIONS="${R_OPTS[*]}" asdf-install --global -- R
 
 # PHP_DEPS=(
 #   autoconf
@@ -80,7 +84,7 @@ asdf-install.sh --global -- ruby
 #   re2c
 # )
 # apt-install "${PHP_DEPS[@]}"
-# asdf-install.sh --global -- php
+# asdf-install --global -- php
 
 PROLOG_DEPS=(
   cmake
@@ -90,7 +94,7 @@ PROLOG_DEPS=(
   libunwind-dev
 )
 apt-install "${PROLOG_DEPS[@]}"
-asdf-install.sh --global -- swiprolog
+asdf-install --global -- swiprolog
 
 PLUGINS="$(asdf plugin list)"
 JPLUGIN='java'
