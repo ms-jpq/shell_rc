@@ -9,12 +9,12 @@ tmux-ssh() {
     return
   fi
 
-  local -- DIR='/tmp/tmux-status-line'
-  local -- IP="${SSH_CLIENT%% *}"
-  local -- TMUX="${TMUX%%,*}"
-  local -- NAME="$DIR/${TMUX//\//|}"
+  local -- dir='/tmp/tmux-status-line'
+  local -- ip="${SSH_CLIENT%% *}"
+  local -- tmux="${TMUX%%,*}"
+  local -- name="$dir/${tmux//\//|}"
 
-  mkdir -p -- "$DIR"
-  printf -- '%s' "$IP" >"$NAME.ip2"
-  mv -- "$NAME.ip2" "$NAME.ip"
+  command -- mkdir -v -p -- "$dir"
+  printf -- '%s' "$ip" >"$name.ip2"
+  command -- mv -v -f -- "$name.ip2" "$name.ip"
 }
