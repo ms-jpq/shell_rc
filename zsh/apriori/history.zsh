@@ -1,7 +1,6 @@
 #!/usr/bin/env -S -- bash
 
-# setopt -- extended_history     # Record timestamp of command in HISTFILE
-# setopt -- share_history          # Share command history data
+setopt -- share_history          # Share command history data, turns on `extended_history`
 setopt -- append_history         # Add commands to HISTFILE in order of execution
 setopt -- hist_expire_dups_first # Delete duplicates first when HISTFILE size exceeds HISTSIZE
 setopt -- hist_fcntl_lock        # Modern history locking
