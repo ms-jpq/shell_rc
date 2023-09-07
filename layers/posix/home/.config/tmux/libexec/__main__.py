@@ -18,14 +18,6 @@ from tempfile import NamedTemporaryFile, gettempdir
 from time import monotonic, sleep, time
 from typing import Iterator, Mapping, Optional, Tuple, Union
 
-from psutil import (
-    cpu_times,
-    disk_io_counters,
-    net_io_counters,
-    sensors_battery,
-    virtual_memory,
-)
-
 
 @dataclass(frozen=True)
 class _Colours:
@@ -48,7 +40,7 @@ class _Snapshot:
 @dataclass(frozen=True)
 class _Stats:
     cpu: float
-    mem: float
+    mem: Optional[float]
     disk_read: float
     disk_write: float
     net_sent: float
@@ -127,31 +119,43 @@ def _load() -> Optional[_Snapshot]:
         return snapshot
 
 
-def _snap() -> _Snapshot:
-    t = time()
-    cpu = cpu_times()
-    disk = disk_io_counters()
-    net = net_io_counters()
-    snapshot = _Snapshot(
-        time=t,
-        cpu_times=cpu._asdict(),
-        disk_read=disk.read_bytes if disk else 0,
-        disk_write=disk.write_bytes if disk else 0,
-        net_sent=net.bytes_sent,
-        net_recv=net.bytes_recv,
-    )
-    return snapshot
+def _snap() -> Optional[_Snapshot]:
+    try:
+        from psutil import cpu_times, disk_io_counters, net_io_counters
+    except ImportError:
+        return None
+    else:
+        t = time()
+        cpu = cpu_times()
+        disk = disk_io_counters()
+        net = net_io_counters()
+        snapshot = _Snapshot(
+            time=t,
+            cpu_times=cpu._asdict(),
+            disk_read=disk.read_bytes if disk else 0,
+            disk_write=disk.write_bytes if disk else 0,
+            net_sent=net.bytes_sent,
+            net_recv=net.bytes_recv,
+        )
+        return snapshot
 
 
-def _states(interval: int) -> Tuple[_Snapshot, _Snapshot, Optional[int]]:
-    s1 = _load() or _snap()
-    battery = sensors_battery()  # type: ignore
-    sleep(max(0, interval - (time() - s1.time)))
-    s2 = _snap()
+def _states(interval: int) -> Optional[Tuple[_Snapshot, _Snapshot, Optional[int]]]:
+    if s1 := _load() or _snap():
+        try:
+            from psutil import sensors_battery
+        except ImportError:
+            battery = None
+        else:
+            battery = sensors_battery()  # type: ignore
 
-    json = dumps(asdict(s2), check_circular=False, ensure_ascii=False)
-    _dump(_path(), thing=json)
-    return s1, s2, battery.percent if battery else None
+        sleep(max(0, interval - (time() - s1.time)))
+        if s2 := _snap():
+            json = dumps(asdict(s2), check_circular=False, ensure_ascii=False)
+            _dump(_path(), thing=json)
+            return s1, s2, battery.percent if battery else None
+
+    return None
 
 
 def _cpu(delta: Mapping[str, float]) -> float:
@@ -176,10 +180,18 @@ def _measure(s1: _Snapshot, s2: _Snapshot) -> _Stats:
         k: max(0, v2 - v1)
         for (k, v1), (_, v2) in zip(s1.cpu_times.items(), s2.cpu_times.items())
     }
-    mem = virtual_memory()
+    try:
+        from psutil import virtual_memory
+
+        vm = virtual_memory()
+    except ImportError:
+        mem = None
+    else:
+        mem = 1 - vm.available / vm.total
+
     stats = _Stats(
         cpu=_cpu(cpu_delta) * time_adjust,
-        mem=1 - mem.available / mem.total,
+        mem=mem,
         disk_read=max(0, s2.disk_read - s1.disk_read) * time_adjust,
         disk_write=max(0, s2.disk_write - s1.disk_write) * time_adjust,
         net_sent=max(0, s2.net_sent - s1.net_sent) * time_adjust,
@@ -204,23 +216,7 @@ def _style(style: str, text: str) -> str:
 def _stat_lines(
     lo: float, hi: float, interval: int, colours: _Colours
 ) -> Iterator[str]:
-    ssh = _ssh(interval)
-
-    s1, s2, battery = _states(interval)
-    stats = _measure(s1, s2)
-
-    cpu = format(stats.cpu, "4.0%")
-    mem = format(stats.mem, "4.0%")
-
-    hr_dr = _human_readable_size(stats.disk_read, precision=0)
-    hr_dw = _human_readable_size(stats.disk_write, precision=0)
-    hr_ns = _human_readable_size(stats.net_sent, precision=0)
-    hr_nr = _human_readable_size(stats.net_recv, precision=0)
-
-    disk_read, disk_write = f"{hr_dr}B".rjust(5), f"{hr_dw}B".rjust(5)
-    net_sent, net_recv = f"{hr_ns}B".rjust(5), f"{hr_nr}B".rjust(5)
-
-    if ssh:
+    if (ssh := _ssh(interval)) is not None:
         ping = (
             "~ " + format(ssh * 1000, ".1f")
             if isfinite(ssh)
@@ -228,14 +224,30 @@ def _stat_lines(
         )
         yield f"SSH {ping}ms"
 
-    yield f"[⇡ {net_sent}, ⇣ {net_recv}]"
-    yield f"[r {disk_read}, w {disk_write}]"
-    yield _colour(lo, hi, val=stats.cpu, text=f" λ{cpu} ", colours=colours)
-    yield _colour(lo, hi, val=stats.mem, text=f" τ{mem} ", colours=colours)
+    if states := _states(interval):
+        s1, s2, battery = states
+        stats = _measure(s1, s2)
 
-    if battery is not None:
-        yield "|"
-        yield _style("italics", text=f"{battery}%")
+        cpu = format(stats.cpu, "4.0%")
+
+        hr_dr = _human_readable_size(stats.disk_read, precision=0)
+        hr_dw = _human_readable_size(stats.disk_write, precision=0)
+        hr_ns = _human_readable_size(stats.net_sent, precision=0)
+        hr_nr = _human_readable_size(stats.net_recv, precision=0)
+
+        disk_read, disk_write = f"{hr_dr}B".rjust(5), f"{hr_dw}B".rjust(5)
+        net_sent, net_recv = f"{hr_ns}B".rjust(5), f"{hr_nr}B".rjust(5)
+
+        yield f"[⇡ {net_sent}, ⇣ {net_recv}]"
+        yield f"[r {disk_read}, w {disk_write}]"
+        yield _colour(lo, hi, val=stats.cpu, text=f" λ{cpu} ", colours=colours)
+        if stats.mem is not None:
+            mem = format(stats.mem, "4.0%")
+            yield _colour(lo, hi, val=stats.mem, text=f" τ{mem} ", colours=colours)
+
+        if battery is not None:
+            yield "|"
+            yield _style("italics", text=f"{battery}%")
 
 
 def _parse_args() -> Namespace:
