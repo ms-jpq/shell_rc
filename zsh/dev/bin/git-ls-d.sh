@@ -15,7 +15,7 @@ preview)
   ;;
 execute)
   parse
-  printf -- '%q\n' "$SHA^:$FILE"
+  printf -- '%q %q\n' "$SHA^" "$FILE"
   ;;
 *)
   ARGV=(
