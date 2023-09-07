@@ -15,7 +15,7 @@ darwin*)
   ID="$(sw_vers -productName)"
   VERSION_ID="$(sw_vers -productVersion)"
   VERSION_CODENAME="$VERSION_ID"
-  NPROC="$(nproc)"
+  NPROC="$(sysctl -n hw.physicalcpu)"
   MEMBYTES="$(sysctl -n hw.memsize)"
   MAKE='gmake'
   ;;
@@ -34,7 +34,7 @@ msys)
   ID="$(wmic os get Caption | trim)"
   VERSION_ID="$(wmic os get Version | trim)"
   VERSION_CODENAME="$VERSION_ID"
-  NPROC="$(sysctl -n hw.physicalcpu)"
+  NPROC="$(nproc)"
   MEMBYTES="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
   # shellcheck disable=SC2154
   MAKE="$SYSTEMDRIVE/msys64/usr/bin/make"
