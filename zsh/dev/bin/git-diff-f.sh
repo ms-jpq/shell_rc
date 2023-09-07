@@ -10,7 +10,7 @@ parse() {
 case "${SCRIPT_MODE:-""}" in
 preview)
   parse
-  git diff --relative "$SHA^" "$SHA" -- "$*" | delta
+  git diff --relative "$SHA^" "$SHA" -- "$*" | ${GIT_PAGER:-delta}
   ;;
 execute)
   parse

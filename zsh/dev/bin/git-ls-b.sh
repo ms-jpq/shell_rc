@@ -6,7 +6,7 @@ case "${SCRIPT_MODE:-""}" in
 preview)
   LINE="$(</dev/stdin)"
   printf -- '%q\n\n' "$LINE"
-  git blame -w -- "$LINE" | delta
+  git blame -w -- "$LINE" | ${GIT_PAGER:-delta}
   ;;
 execute)
   LINE="$(</dev/stdin)"

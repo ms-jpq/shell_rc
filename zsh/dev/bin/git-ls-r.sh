@@ -10,7 +10,7 @@ parse() {
 case "${SCRIPT_MODE:-""}" in
 preview)
   parse
-  git show "$POINTER" "$@" | delta
+  git show "$POINTER" "$@" | ${GIT_PAGER:-delta}
   ;;
 execute)
   parse

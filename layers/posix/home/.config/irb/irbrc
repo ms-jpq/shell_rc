@@ -5,7 +5,7 @@ IRB.conf[:HISTORY_FILE] = File.join(
   'shell_history',
   'irb'
 )
-IRB.conf[:USE_COLORIZE] = false
+# IRB.conf[:USE_COLORIZE] = false
 IRB.conf[:USE_AUTOCOMPLETE] = false
 
 %w[

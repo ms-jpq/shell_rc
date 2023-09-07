@@ -10,7 +10,7 @@ parse() {
 case "${SCRIPT_MODE:-""}" in
 preview)
   parse
-  git show "$SHA" "$@" | delta
+  git show "$SHA" "$@" | ${GIT_PAGER:-delta}
   ;;
 execute)
   parse

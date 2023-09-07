@@ -2,21 +2,26 @@
 
 set -o pipefail
 
+parse() {
+  LINE="$(</dev/stdin)"
+  SHA="${LINE%% *}"
+}
+
 case "${SCRIPT_MODE:-""}" in
 preview)
-  LINE="$(</dev/stdin)"
-  git show --relative "$@" -- "$LINE" | ${GIT_PAGER:-delta}
+  parse
+  git show --name-only "$SHA" "$@" | delta
   ;;
 execute)
-  LINE="$(</dev/stdin)"
-  printf -- '%q\n' "$LINE"
+  parse
+  printf -- '%q\n' "$SHA"
   ;;
 *)
   ARGV=(
-    git show
+    git log
     --relative
-    --name-only
-    --format=''
+    --all
+    --color --pretty='format:%Cgreen%h%Creset %Cblue%ad%Creset %s'
     -z
     "$@"
   )
