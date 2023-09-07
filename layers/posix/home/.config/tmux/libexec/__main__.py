@@ -1,6 +1,8 @@
 from argparse import ArgumentParser, Namespace
+from contextlib import closing, suppress
 from dataclasses import asdict, dataclass
 from functools import cache, partial
+from ipaddress import IPv4Address, IPv6Address, ip_address
 from itertools import chain, count, repeat
 from json import dumps, loads
 from json.decoder import JSONDecodeError
@@ -10,11 +12,11 @@ from operator import pow
 from os import environ, sep
 from pathlib import Path
 from platform import system
-from subprocess import DEVNULL, CalledProcessError, TimeoutExpired, check_call
+from socket import AddressFamily, socket, timeout
 from sys import stdout
 from tempfile import NamedTemporaryFile, gettempdir
 from time import monotonic, sleep, time
-from typing import Iterator, Mapping, Optional, Tuple
+from typing import Iterator, Mapping, Optional, Tuple, Union
 
 from psutil import (
     cpu_times,
@@ -80,33 +82,35 @@ def _human_readable_size(size: float, precision: int = 3) -> str:
         raise ValueError(f"unit over flow: {size}")
 
 
-def _ip() -> Optional[str]:
+def _ip() -> Union[IPv6Address, IPv4Address, None]:
     try:
         ip = _path().with_suffix(".ip").read_text()
     except FileNotFoundError:
         if client := environ.get("SSH_CLIENT"):
             ip, *_ = client.split()
-            return ip
+            return ip_address(ip)
         else:
             return None
     else:
-        return ip
+        return ip_address(ip)
 
 
-def _ssh(timeout: float) -> Optional[float]:
+def _ssh(deadline: float) -> Optional[float]:
     if ip := _ip():
-        t = str(max(round(timeout), 1))
+        fam = (
+            AddressFamily.AF_INET6
+            if isinstance(ip, IPv6Address)
+            else AddressFamily.AF_INET
+        )
         now = monotonic()
-        try:
-            check_call(
-                ("ping", "-n", "-c", "1", "-w", t, "-q", "--", ip),
-                stdout=DEVNULL,
-                timeout=timeout,
-            )
-        except (CalledProcessError, TimeoutExpired):
-            return inf
-        else:
-            return monotonic() - now
+        with closing(socket(fam)) as sock:
+            sock.settimeout(deadline)
+            with suppress(OSError):
+                try:
+                    sock.connect((str(ip), 22))
+                except timeout:
+                    return inf
+        return (monotonic() - now) * 2
     else:
         return None
 
