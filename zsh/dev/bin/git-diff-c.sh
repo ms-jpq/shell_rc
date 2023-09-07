@@ -10,7 +10,7 @@ parse() {
 case "${SCRIPT_MODE:-""}" in
 preview)
   parse
-  git diff "$@" -- "$FILE" | delta
+  git diff "$@" -- "$FILE" | ${GIT_PAGER:-delta}
   ;;
 execute)
   parse
