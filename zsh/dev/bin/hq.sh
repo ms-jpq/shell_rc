@@ -9,14 +9,13 @@ eval -- set -- "$GO"
 
 AV=("$@")
 
-METHOD=POST
 MIME='application/json'
 CURL=()
 TEE=(cat)
 while (($#)); do
   case "$1" in
   -x | --method)
-    METHOD="$2"
+    CURL+=(--request "$2")
     shift -- 2
     ;;
   -m | --mime)
@@ -58,7 +57,6 @@ done
 ARGV=(
   curl
   --no-progress-meter
-  --request "$METHOD"
   --header "Content-Type: $MIME"
   --data @-
   "${CURL[@]}"
