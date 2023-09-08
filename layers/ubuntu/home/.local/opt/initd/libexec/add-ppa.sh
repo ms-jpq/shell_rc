@@ -32,5 +32,5 @@ URI="https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x$FINGER_PRINT"
 
 # shellcheck disable=SC2154
 tee -- "$SOURCE_FILE" <<-EOF
-deb http://ppa.launchpad.net/neovim-ppa/unstable/ubuntu $VERSION_CODENAME main
+deb http://ppa.launchpad.net/$DIST/$NAME/ubuntu $VERSION_CODENAME main
 EOF
