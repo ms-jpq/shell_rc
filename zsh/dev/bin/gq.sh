@@ -9,13 +9,12 @@ eval -- set -- "$GO"
 
 AV=("$@")
 
-METHOD=POST
 CURL=()
 VAR='{}'
 while (($#)); do
   case "$1" in
   -x | --method)
-    METHOD="$2"
+    CURL+=(--request "$2")
     shift -- 2
     ;;
   -c | --cookie)
@@ -54,7 +53,6 @@ done
 ARGV=(
   curl
   --no-progress-meter
-  --request "$METHOD"
   --header 'Content-Type: application/json'
   --data @-
   "${CURL[@]}"
