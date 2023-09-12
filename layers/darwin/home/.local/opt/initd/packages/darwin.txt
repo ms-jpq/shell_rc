@@ -12,10 +12,8 @@
 + curl
 + dash
 + diffutils
-+ dog
 + duf
 + dust
-+ exa
 + fd
 + figlet
 + findutils
@@ -42,6 +40,7 @@
 + jq
 + lazygit
 + less
++ lsd
 + lsof
 + m4
 + make
