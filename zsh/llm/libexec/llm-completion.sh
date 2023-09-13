@@ -8,6 +8,7 @@ PAGER="${2:-""}"
 if [[ -z "$PAGER" ]]; then
   if [[ -t 1 ]]; then
     PAGER='glow'
+    printf -v PAGER -- '%q ' glow --style light
   else
     PAGER='cat'
   fi
@@ -27,5 +28,5 @@ CODE="$(RECURSION=1 "${CURL[@]}")"
 if ((CODE != 200)); then
   jq <"$GPT_TMP" || cat -- "$GPT_TMP"
 else
-  jq --exit-status --raw-output '.choices[].message.content' <"$GPT_TMP" | "$PAGER"
+  jq --exit-status --raw-output '.choices[].message.content' <"$GPT_TMP" | $PAGER
 fi
