@@ -13,5 +13,6 @@ esac
 read -r -d '' -- SCRIPT
 printf -- '\n>> '
 printf -- '%q ' "${ARGV[@]}" "$@"
+printf -- '\n'
 "${ARGV[@]}" "$SCRIPT" "$@" || true
 exec -- "$0" "$A0" "$@"
