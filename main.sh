@@ -53,9 +53,10 @@ printf -v RSH -- '%q ' "${CONN[@]}"
 RSY=(
   "${RSYNC:-"rsync"}"
   --recursive
+  --keep-dirlinks
   --links
   --perms
-  --keep-dirlinks
+  --times
   --rsh "$RSH"
   --
 )
