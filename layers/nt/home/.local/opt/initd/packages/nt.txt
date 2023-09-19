@@ -17,6 +17,7 @@
 + Rclone.Rclone
 + UniversalCtags.Ctags
 + dandavison.delta
++ eza-community.eza
 + gerardog.gsudo
 + gsass1.NTop
 + jqlang.jq

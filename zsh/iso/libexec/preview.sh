@@ -7,9 +7,9 @@ TARGET="$1"
 export -- PAGER='tee'
 
 if [[ -d "$TARGET" ]]; then
-  if command -v -- exa >/dev/null; then
+  if command -v -- eza >/dev/null; then
     ARGS=(
-      exa
+      eza
       --all
       --group-directories-first
       --classify
