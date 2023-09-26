@@ -7,28 +7,16 @@ TARGET="$1"
 export -- PAGER='tee'
 
 if [[ -d "$TARGET" ]]; then
-  if command -v -- eza >/dev/null; then
-    ARGS=(
-      eza
-      --all
-      --group-directories-first
-      --classify
-      --header
-      --icons
-      --oneline
-      --color=always
-    )
-  else
-    ARGS=(
-      ls
-      --almost-all
-      --group-directories-first
-      --classify
-      --human-readable
-      --si
-      --color=always
-    )
-  fi
+  ARGS=(
+    eza
+    --all
+    --group-directories-first
+    --classify
+    --header
+    --icons
+    --oneline
+    --color=always
+  )
 else
   ARGS=(
     bat

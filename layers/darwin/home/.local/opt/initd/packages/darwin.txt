@@ -14,7 +14,7 @@
 + diffutils
 + duf
 + dust
-# + eza
++ eza
 + fd
 + figlet
 + findutils
