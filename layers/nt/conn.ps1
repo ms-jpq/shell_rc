@@ -5,6 +5,9 @@ $ErrorActionPreference = 'Stop'
 
 
 function basic {
+    # UTC RTC
+    Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name 'RealTimeIsUniversal' -Type 'DWord' -Value 1
+
     # Allow Scripting
     Set-ExecutionPolicy -ExecutionPolicy 'Unrestricted'
 
