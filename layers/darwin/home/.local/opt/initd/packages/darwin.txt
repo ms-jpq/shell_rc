@@ -18,6 +18,7 @@
 + fd
 + figlet
 + findutils
++ flock
 + fzf
 + gettext
 + git
