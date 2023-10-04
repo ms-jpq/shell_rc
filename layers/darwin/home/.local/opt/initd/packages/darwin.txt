@@ -21,6 +21,7 @@
 + fzf
 + gettext
 + git
++ git-delta
 + gitui
 + glow
 + gnu-getopt
