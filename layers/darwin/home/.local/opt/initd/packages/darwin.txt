@@ -63,6 +63,7 @@
 + progress
 + pstree
 + pv
++ qemu
 + ripgrep
 + rlwrap
 + rsync
@@ -75,6 +76,7 @@
 + tokei
 + trash
 + tree
++ unar
 + universal-ctags
 + watch
 + watchexec

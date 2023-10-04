@@ -14,7 +14,7 @@ unpack() {
     gzip --decompress --keep -- "$FILE"
     ;;
   *.rar)
-    unrar -x -- "$FILE"
+    unar -- "$FILE"
     ;;
   *)
     printf -- '%s\n' "Unknown format :: $FILE"
