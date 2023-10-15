@@ -2,6 +2,7 @@
 # + Microsoft.Sysinternals.Autoruns
 # + Microsoft.Sysinternals.BGInfo
 # + Microsoft.WindowsTerminal
+# + OpenJS.NodeJS
 # + msys2.msys2
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
@@ -12,7 +13,6 @@
 + Microsoft.PowerShell
 + Microsoft.Sysinternals.Autoruns
 + Neovim.Neovim
-+ OpenJS.NodeJS
 + Python.Python.3.11
 + Rclone.Rclone
 + UniversalCtags.Ctags
