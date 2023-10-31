@@ -3,7 +3,9 @@
 # + Microsoft.Sysinternals.BGInfo
 # + Microsoft.WindowsTerminal
 # + OpenJS.NodeJS
+# + Python.Python.3.11
 # + msys2.msys2
++ Microsoft.VCRedist.2015+.x64
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
 + Git.Git
@@ -13,7 +15,6 @@
 + Microsoft.PowerShell
 + Microsoft.Sysinternals.Autoruns
 + Neovim.Neovim
-+ Python.Python.3.11
 + Rclone.Rclone
 + UniversalCtags.Ctags
 + dandavison.delta
