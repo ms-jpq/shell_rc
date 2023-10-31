@@ -117,7 +117,7 @@ jobs:
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
-          bash .\main.sh localhost
+          bash .\main.sh localhost -- --debug 
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
