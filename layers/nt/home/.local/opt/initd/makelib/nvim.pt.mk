@@ -1,3 +1,4 @@
-$(ProgramFiles)/Neovim: | pkg.posix
+$(ProgramFiles)/nvim: | pkg.posix
+	env --
 
-$(NVIM_MVP): | $(ProgramFiles)/Neovim
+$(NVIM_MVP): | $(ProgramFiles)/nvim

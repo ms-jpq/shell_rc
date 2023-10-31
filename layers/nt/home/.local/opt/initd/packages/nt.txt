@@ -23,5 +23,5 @@
 + jqlang.jq
 + junegunn.fzf
 + muesli.duf
-+ sharkdp.fd
+# + sharkdp.fd
 # + sharkdp.hyperfine
