@@ -5,7 +5,6 @@
 # + OpenJS.NodeJS
 # + Python.Python.3.11
 # + msys2.msys2
-+ Microsoft.VCRedist.2015+.x64
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
 + Git.Git
@@ -25,4 +24,4 @@
 + junegunn.fzf
 + muesli.duf
 + sharkdp.fd
-+ sharkdp.hyperfine
+# + sharkdp.hyperfine
