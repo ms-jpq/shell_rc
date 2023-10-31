@@ -85,6 +85,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: actions/setup-python@v3
+        # TODO: remove when python updates to 3.12.1
+        with:
+          python-version: "3.11"
+
       - run: |-
           Get-ChildItem Env:* | Sort-Object Name
 
@@ -117,7 +122,7 @@ jobs:
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
-          bash .\main.sh localhost -- --debug 
+          bash .\main.sh localhost -- --debug
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
