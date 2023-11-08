@@ -3,7 +3,7 @@ from contextlib import closing, suppress
 from dataclasses import asdict, dataclass
 from functools import cache, partial
 from ipaddress import IPv4Address, IPv6Address, ip_address
-from itertools import chain, count, repeat
+from itertools import count
 from json import dumps, loads
 from json.decoder import JSONDecodeError
 from locale import str as format_float
@@ -249,7 +249,7 @@ def _stat_lines(
 
         if battery is not None:
             b = _SCALE[int(battery / 100 * (len(_SCALE) - 1))]
-            yield f"| {b}"
+            yield f"┇{b}┇"
 
 
 def _parse_args() -> Namespace:
@@ -270,8 +270,8 @@ def main() -> None:
         lo=args.colour_lo, md=args.colour_md, hi=args.colour_hi, tr=args.colour_tr
     )
     lines = _stat_lines(args.lo, args.hi, interval=args.interval, colours=colours)
-    stream = chain.from_iterable(zip(lines, repeat(" ")))
-    stdout.writelines(stream)
+    stream = " ".join(lines)
+    stdout.write(stream)
 
 
 main()
