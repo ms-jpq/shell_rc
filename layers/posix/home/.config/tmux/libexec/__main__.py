@@ -18,6 +18,8 @@ from tempfile import NamedTemporaryFile, gettempdir
 from time import monotonic, sleep, time
 from typing import Iterator, Mapping, Optional, Tuple, Union
 
+_SCALE = "▁▂▃▄▅▆▇█"
+
 
 @dataclass(frozen=True)
 class _Colours:
@@ -209,8 +211,8 @@ def _colour(lo: float, hi: float, val: float, text: str, colours: _Colours) -> s
         return f"#[bg={colours.hi}]{text}{colours.tr}"
 
 
-def _style(style: str, text: str) -> str:
-    return f"#[{style}]{text}#[none]"
+# def _style(style: str, text: str) -> str:
+#     return f"#[{style}]{text}#[none]"
 
 
 def _stat_lines(
@@ -246,8 +248,8 @@ def _stat_lines(
             yield _colour(lo, hi, val=stats.mem, text=f" τ{mem} ", colours=colours)
 
         if battery is not None:
-            yield "|"
-            yield _style("italics", text=f"{battery}%")
+            b = _SCALE[int(battery / 100 * (len(_SCALE) - 1))]
+            yield f"| {b}"
 
 
 def _parse_args() -> Namespace:
