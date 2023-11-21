@@ -58,6 +58,7 @@
 + nyancat
 + oh-my-posh
 + openssh
++ openvpn
 + pastel
 + pipes-sh
 + progress
@@ -81,6 +82,7 @@
 + watch
 + watchexec
 + wget
++ wireguard-tools
 + xdg-ninja
 + xsv
 + yank
