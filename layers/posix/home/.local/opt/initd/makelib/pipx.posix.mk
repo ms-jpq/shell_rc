@@ -32,11 +32,11 @@ $(PIPX)/$1: | $(OPT)/pipx/$(PY_BIN)/pipx
 endef
 
 # lookatme              lookatme
-# markdown-live-preview markdown_live_preview
 define PIP_PKGS
 
 gay                   gay
 graphtage             graphtage
+markdown-live-preview markdown_live_preview
 sortd                 sortd
 tldr                  tldr
 
