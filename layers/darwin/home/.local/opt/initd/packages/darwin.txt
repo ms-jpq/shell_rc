@@ -59,6 +59,7 @@
 + oh-my-posh
 + openssh
 + openvpn
++ pandoc
 + pastel
 + pipes-sh
 + progress
