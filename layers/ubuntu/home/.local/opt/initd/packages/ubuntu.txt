@@ -27,6 +27,7 @@
 + iperf3
 + jid
 + language-pack-zh-hans
++ libxml2-utils
 + locales
 + m4
 + man2html-base
@@ -55,6 +56,7 @@
 + universal-ctags
 + unzip
 + wget
++ xmlstarlet
 + zsh
 - lxd-agent-loader
 - snapd
