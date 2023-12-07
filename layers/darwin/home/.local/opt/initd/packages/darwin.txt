@@ -85,7 +85,6 @@
 + wget
 + wireguard-tools
 + xdg-ninja
-+ xmllint
 + xmlstarlet
 + xsv
 + yank
