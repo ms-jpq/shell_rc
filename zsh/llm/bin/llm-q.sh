@@ -14,7 +14,7 @@ GPT_TMP="${GPT_TMP:-"$(mktemp)"}"
 GPT_ROLE="${GPT_ROLE:-""}"
 export -- GPT_HISTORY GPT_TMP GPT_ROLE
 
-MODEL='gpt-3.5-turbo'
+MODEL="$(<"${0%/*}/../libexec/model")"
 
 while (($#)); do
   case "$1" in
