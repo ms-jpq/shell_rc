@@ -14,7 +14,8 @@ GPT_TMP="${GPT_TMP:-"$(mktemp)"}"
 GPT_LVL="${GPT_LVL:-0}"
 export -- GPT_HISTORY GPT_TMP GPT_LVL
 
-MODEL='gpt-3.5-turbo'
+MODEL="$(<"${0%/*}/../libexec/model")"
+
 PROMPTS=()
 while (($#)); do
   case "$1" in
