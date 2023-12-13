@@ -6,6 +6,8 @@
 + aha
 + athena-jot
 + autossh
++ avahi-daemon
++ avahi-utils
 + bat
 + bb
 + cmatrix

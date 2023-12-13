@@ -10,5 +10,3 @@ link() {
     ln -v -sf -- "$src" "$dst"
   fi
 }
-
-link /usr/share/doc/avahi-daemon/examples/ssh.service /etc/avahi/services/ssh.service
