@@ -6,6 +6,7 @@ link() {
   local -- src="$1" dst="$2"
 
   if ! [[ -L "$dst" ]]; then
+    mkdir -v -p -- "${dst%/*}"
     ln -v -sf -- "$src" "$dst"
   fi
 }
