@@ -86,10 +86,18 @@ if [[ "${SYSTEMD_FMT_MODE:-""}" == 'stream' ]]; then
     mv -f -- "$TMP" "$FILE"
   done
 elif (($#)); then
+  readarray -t -- IS <<<"${SYSTEMD_FMT_IGNORE:-""}"
+  declare -A -- IGNORE=()
+  for I in "${IS[@]}"; do
+    if [[ -n "$I" ]]; then
+      IGNORE["$I"]=1
+    fi
+  done
+
   for FILE in "$@"; do
     if [[ -d "$FILE" ]]; then
       for F in "$FILE"/**/{*.link,*.netdev,*.network,*.socket,*.service,*.target,*.mount,*.automount,*.dnssd,*/*.network.d/*.conf,*/repart.d/*.conf,*/systemd/**/*.conf}; do
-        if [[ -f "$F" ]]; then
+        if [[ -f "$F" ]] && [[ -z "${IGNORE["$F"]:-""}" ]]; then
           printf -- '%s\0' "$F"
         fi
       done
