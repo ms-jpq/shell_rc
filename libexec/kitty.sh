@@ -8,4 +8,4 @@ read -r -d '' -- JQ <<-'EOF' || true
 to_entries | map("\(.key) \($src[][.value])")[]
 EOF
 
-jq --raw-output --slurpfile src ./layers/posix/home/.config/ttyd/theme.json -- "$JQ" <./layers/posix/home/.config/kitty/map.json
+jq --raw-output --slurpfile src ./layers/posix/home/.config/ttyd/theme.json "$JQ" <./layers/posix/home/.config/kitty/map.json
