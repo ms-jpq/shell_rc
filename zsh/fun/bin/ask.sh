@@ -15,7 +15,18 @@ elif ! [[ -v FZF_PREVIEW_LINES ]]; then
   DOMAIN="$(<"$HOME/.config/searx")"
   QUERY="$(jq --raw-input --raw-output '@uri' <<<"$*")"
   TMP="$(mktemp)"
-  curl --fail --no-progress-meter -- "https://$DOMAIN/search?format=json&q=$QUERY" >"$TMP"
+  HEADERS=(
+  )
+  CURL=(
+    curl
+    --fail-with-body
+    --no-progress-meter
+  )
+  for HEADER in "${HEADERS[@]}"; do
+    CURL+=(--header "$HEADER")
+  done
+  CURL+=(-- "https://$DOMAIN/search?format=json&q=$QUERY")
+  "${CURL[@]}" >"$TMP"
   PREVIEW="$(printf -- '%q ' "$0" "$TMP")"
   EXEC="$(printf -- '%q ' 'XDG_OPEN=1' "$0" "$TMP")"
   FZF=(
