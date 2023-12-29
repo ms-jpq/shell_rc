@@ -1,7 +1,7 @@
-.PHONY: conf conf.posix conf.posix.ssh conf.posix.git
+.PHONY: conf conf.posix
 
 conf: conf.posix
-conf.posix: $(CONFIG)/git/config conf.posix.ssh
+conf.posix: $(CONFIG)/git/config
 
 ifeq (nt, $(OS))
 GIT_BIN :=
@@ -11,6 +11,3 @@ endif
 
 $(CONFIG)/git/config: | $(GIT_BIN)
 	git config --file '$@' -- include.path user_config
-
-conf.posix.ssh:
-	./libexec/line-in-file.sh '$(HOME)/.ssh/config' 'Include ~/.config/ssh/*.conf'
