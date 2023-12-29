@@ -87,15 +87,15 @@ asdf-install --global -- ruby
 # apt-install "${PHP_DEPS[@]}"
 # asdf-install --global -- php
 
-PROLOG_DEPS=(
-  cmake
-  libarchive-dev
-  libgmp-dev
-  libreadline-dev
-  libunwind-dev
-)
-apt-install "${PROLOG_DEPS[@]}"
-asdf-install --global -- swiprolog
+# PROLOG_DEPS=(
+#   cmake
+#   libarchive-dev
+#   libgmp-dev
+#   libreadline-dev
+#   libunwind-dev
+# )
+# apt-install "${PROLOG_DEPS[@]}"
+# asdf-install --global -- swiprolog
 
 PLUGINS="$(asdf plugin list)"
 JPLUGIN='java'
