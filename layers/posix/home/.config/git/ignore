@@ -2,6 +2,7 @@
 *.tfstate
 .DS_Store
 .git/
+.scannerwork/
 .terraform/
 .venv/
 __pycache__/
