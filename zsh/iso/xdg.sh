@@ -1,6 +1,7 @@
 #!/usr/bin/env -S -- bash
 
 # shellcheck disable=SC2154
+export -- MYSQL_HISTFILE="$XDG_STATE_HOME/shell_history/mysql"
 export -- NODE_REPL_HISTORY="$XDG_STATE_HOME/shell_history/node"
 export -- PSQL_HISTORY="$XDG_STATE_HOME/shell_history/psql"
 export -- REDISCLI_HISTFILE="$XDG_STATE_HOME/shell_history/redis"
