@@ -1,5 +1,4 @@
 {
   "data-root": "/mnt/docker",
-  "log-driver": "journald",
-  "storage-driver": "fuse-overlayfs"
+  "log-driver": "journald"
 }
