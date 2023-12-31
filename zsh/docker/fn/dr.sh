@@ -1,3 +1,3 @@
 #!/usr/bin/env -S -- bash
 
-docker run --interactive --tty --rm "$@"
+docker run --rm --interactive --tty "$@"
