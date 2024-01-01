@@ -91,6 +91,7 @@
 + wireguard-tools
 + xdg-ninja
 + xmlstarlet
++ xplr
 + xsv
 + yank
 + zsh
