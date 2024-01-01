@@ -21,10 +21,4 @@ if ! [[ -d "$VENV" ]]; then
   "$PY" -m pip install --require-virtualenv --upgrade --requirement "$PYRADIO/requirements_pipx.txt"
 fi
 
-if (($#)); then
-  ARGV=("$@")
-else
-  ARGV=(--theme black_on_white)
-fi
-
-exec -- env --chdir "$PYRADIO" -- TERM=xterm-256color "$PY" -m pyradio.main "${ARGV[@]}"
+exec -- env --chdir "$PYRADIO" -- TERM=xterm-256color "$PY" -m pyradio.main "$@"
