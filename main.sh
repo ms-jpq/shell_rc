@@ -4,31 +4,38 @@ set -Eeu
 set -o pipefail
 shopt -s dotglob nullglob extglob globstar
 
+if ! [[ -v UNDER ]]; then
+  HOSTS=()
+  while (($#)); do
+    case "$1" in
+    --)
+      shift
+      break
+      ;;
+    *)
+      HOSTS+=("$1")
+      shift
+      ;;
+    esac
+  done
+
+  for HOST in "${HOSTS[@]}"; do
+    UNDER=1 "$0" "$HOST" "$@"
+  done
+  exit
+fi
+
 cd -- "$(dirname -- "$0")"
 
-LONG_OPTS='port:'
-GO="$(getopt --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
-eval -- set -- "$GO"
-
-PORT=22
-while (($#)); do
-  case "$1" in
-  --port)
-    PORT="$2"
-    shift -- 2
-    ;;
-  --)
-    shift -- 1
-    break
-    ;;
-  *)
-    exit 1
-    ;;
-  esac
-done
-
-DST="$1"
+DST_AND_PORT="$1"
 shift -- 1
+
+DST="${DST_AND_PORT%:*}"
+if [[ "$DST_AND_PORT" =~ :(.+)$ ]]; then
+  PORT="${BASH_REMATCH[1]}"
+else
+  PORT=22
+fi
 
 nt2unix() {
   local -- drive ntpath
