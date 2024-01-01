@@ -1,6 +1,5 @@
 # + patat
 # + vhs
-+ 7-zip
 + aha
 + asciiquarium
 + autossh
@@ -75,6 +74,7 @@
 + rlwrap
 + rsync
 + sad
++ sevenzip
 + sl
 + socat
 + termshark

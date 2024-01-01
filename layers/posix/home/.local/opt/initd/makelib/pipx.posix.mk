@@ -24,6 +24,9 @@ $(OPT)/pipx:
 $(OPT)/pipx/$(PY_BIN)/pipx: | $(OPT)/pipx
 	'$(call UNIX_2_NT,$(OPT)/pipx/$(PY_BIN)/pip)' install --require-virtualenv --upgrade -- pipx
 
+pipx: $(BIN)/pipx
+$(BIN)/pipx: $(OPT)/pipx/$(PY_BIN)/pipx
+	ln -sf -- '$<' '$@'
 
 define PIPX_TEMPLATE
 
