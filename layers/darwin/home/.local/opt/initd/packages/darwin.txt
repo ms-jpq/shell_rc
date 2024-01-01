@@ -1,4 +1,6 @@
+# + patat
 # + vhs
++ 7-zip
 + aha
 + asciiquarium
 + autossh
@@ -6,6 +8,7 @@
 + bandwhich
 + bash
 + bat
++ cloc
 + cmatrix
 + coreutils
 + cowsay
@@ -31,6 +34,7 @@
 + gnu-which
 + gnupg
 + gojq
++ gping
 + grep
 + gum
 + htmlq
@@ -51,6 +55,7 @@
 + moreutils
 + mosh
 + mpv
++ mtr
 + ncdu
 + neofetch
 + neovim

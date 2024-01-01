@@ -23,6 +23,7 @@ define CURL_ARCHIVES
 bat-$(V_BAT)-x86_64-pc-windows-msvc/bat.exe                 https://github.com/sharkdp/bat/releases/latest/download/bat-$(V_BAT)-x86_64-pc-windows-msvc.zip
 dust-$(V_DUST)-x86_64-pc-windows-msvc/dust.exe              https://github.com/bootandy/dust/releases/latest/download/dust-$(V_DUST)-x86_64-pc-windows-msvc.zip
 gitui.exe                                                   https://github.com/extrawurst/gitui/releases/latest/download/gitui-win.tar.gz
+gping.exe                                                   https://github.com/orf/gping/releases/latest/download/gping-Windows-x86_64.zip
 htmlq.exe                                                   https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-windows.zip
 pastel-$(V_PASTEL)-x86_64-pc-windows-msvc/pastel.exe        https://github.com/sharkdp/pastel/releases/latest/download/pastel-$(V_PASTEL)-x86_64-pc-windows-msvc.zip
 sad.exe                                                     https://github.com/ms-jpq/sad/releases/latest/download/x86_64-pc-windows-msvc.zip
