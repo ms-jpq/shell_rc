@@ -2,25 +2,17 @@
 
 set -o pipefail
 
-A0='ping'
-ARGV=()
+case "$OSTYPE" in
+darwin*)
+  ARGV=(gping --simple-graphics --color magenta "$@")
+  ;;
+linux*)
+  ARGV=("$@")
+  ;;
+msys)
+  ARGV=("$@")
+  ;;
+*) ;;
+esac
 
-for A in "$@"; do
-  case "$A" in
-  -4)
-    A0=ping
-    ;;
-  -6)
-    A0=ping6
-    ;;
-  *:*)
-    A0=ping6
-    ARGV+=("$A")
-    ;;
-  *)
-    ARGV+=("$A")
-    ;;
-  esac
-done
-
-exec -- "$A0" "${ARGV[@]}"
+exec -- "${ARGV[@]}"
