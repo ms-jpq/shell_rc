@@ -10,3 +10,6 @@ link() {
     ln -v -sf -- "$src" "$dst"
   fi
 }
+
+link /dev/null /usr/local/lib/systemd/system/motd-news.timer
+link /dev/null /usr/local/lib/systemd/system/update-notifier-motd.timer
