@@ -3,7 +3,7 @@
 set -o pipefail
 
 OPTS='m:,r:,h:'
-LONG_OPTS='model:,role:,history:'
+LONG_OPTS='model:,role:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
@@ -24,10 +24,6 @@ while (($#)); do
     ;;
   -r | --role)
     GPT_ROLE="${GPT_ROLE:-"$2"}"
-    shift -- 2
-    ;;
-  -h | --history)
-    GPT_HISTORY="$2"
     shift -- 2
     ;;
   --)
