@@ -3,7 +3,8 @@
 set -o pipefail
 
 PROMPT="$*"
-JSON="$(jq --exit-status --raw-input '{ prompt: . }' <<<"$PROMPT")"
+MODEL='dall-e-3'
+JSON="$(jq --exit-status --raw-input --arg model "$MODEL" '{ prompt: ., model: $model }' <<<"$PROMPT")"
 RESP="$(RECURSION=1 "${0%-*}" --data @- -- 'https://api.openai.com/v1/images/generations' <<<"$JSON")"
 if jq --exit-status '.error' <<<"$RESP" >/dev/null; then
   jq <<<"$RESP" >&2
