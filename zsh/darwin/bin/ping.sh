@@ -7,10 +7,10 @@ darwin*)
   ARGV=(gping --simple-graphics --color magenta "$@")
   ;;
 linux*)
-  ARGV=("$@")
+  ARGV=(/usr/bin/ping "$@")
   ;;
 msys)
-  ARGV=("$@")
+  ARGV=("$0" "$@")
   ;;
 *) ;;
 esac
