@@ -5,7 +5,17 @@ set -o pipefail
 OPT="$HOME/.local/opt"
 PYRADIO="$OPT/pyradio"
 VENV="$PYRADIO/venv"
-PY="$VENV/bin/python"
+
+case "$OSTYPE" in
+msys)
+  BIN="$VENV/Scripts"
+  ;;
+*)
+  BIN="$VENV/bin"
+  ;;
+esac
+
+PY="$BIN/python"
 
 if ! [[ -d "$PYRADIO" ]]; then
   REPO='coderholic/pyradio'
@@ -18,7 +28,8 @@ fi
 
 if ! [[ -d "$VENV" ]]; then
   python3 -m venv --upgrade -- "$VENV"
-  "$PY" -m pip install --require-virtualenv --upgrade --requirement "$PYRADIO/requirements_pipx.txt"
+  mkdir -v -p -- "$PYRADIO/pyradio/__pycache__"
+  "$PY" -m pip install --require-virtualenv --upgrade --requirement "$PYRADIO/requirements_pipx.txt" -- "$PYRADIO"
 fi
 
-PYTHONSAFEPATH=1 PYTHONPATH="$PYRADIO" exec -- "$PY" -m pyradio.main "$@"
+PYTHONSAFEPATH=1 exec -- "$PY" -m pyradio.main "$@"
