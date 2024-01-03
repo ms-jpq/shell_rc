@@ -2,10 +2,14 @@
 
 ta() {
   tmux-ssh
-
-  local -- session="$*" session_names=""
+  local -- session="$*"
+  # shellcheck disable=2154
+  local -- session_names="$XDG_STATE_HOME/tmux/$session.1.sh"
   if (($#)); then
-    if [[ -v TMUX ]]; then
+    if [[ -f "$session_names" ]]; then
+      # shellcheck disable=SC1090
+      source -- "$session_names"
+    elif [[ -v TMUX ]]; then
       tmux new-session -d -c "$HOME" -s "$session"
       tmux switch -t "$session"
     else
