@@ -7,20 +7,14 @@ if ! (($#)); then
 fi
 
 case "$1" in
-/bin/sh | /bin/bash | /usr/bin/bash | /usr/bin/zsh | /opt/homebrew/bin/bash | /opt/homebrew/bin/zsh)
-  shift
-  ;;
-*) ;;
-esac
-
-case "$1" in
-/usr/bin/man | less | nvim)
+man | less | nvim | autossh)
   exit
   ;;
-*) ;;
-esac
-
-case "$1" in
+/bin/sh)
+  if [[ "${2:-""}" == /usr/bin/man ]]; then
+    exit
+  fi
+  ;;
 "$HOME/.local/opt/pyradio/venv/bin/python"*)
   exit
   ;;
