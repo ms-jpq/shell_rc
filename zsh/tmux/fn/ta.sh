@@ -11,7 +11,7 @@ ta() {
       source -- "$session_names"
     elif [[ -v TMUX ]]; then
       tmux new-session -d -c "$HOME" -s "$session"
-      tmux switch -t "$session"
+      tmux switch-client -t "$session"
     else
       tmux new-session -A -c "$HOME" -s "$session"
     fi
