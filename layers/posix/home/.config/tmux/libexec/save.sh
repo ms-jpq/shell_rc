@@ -11,20 +11,13 @@ if ! [[ -v TMUX_SAVE_LOCK ]]; then
   TMUX_SAVE_LOCK=1 exec -- flock "$0" "$0" "$@"
 fi
 
-WHITELIST=(
-  less
-  man
-  nvim
-)
-declare -A -- WHITE=()
-for CMD in "${WHITELIST[@]}"; do
-  WHITE["$CMD"]=1
-done
+PROCFS="${0%/*}/procfs.sh"
+WHITELIST="${0%/*}/whitelist.sh"
 
 # shellcheck disable=SC2154
 TMUX_SESSIONS="$XDG_STATE_HOME/tmux"
 
-declare -A -- SESSIONS=() WINDOWS=() PANES=() LAYOUTS=() WDS=() CMDS=() ACTIVE=() PS_IDS=()
+declare -A -- SESSIONS=() WINDOWS=() PANES=() LAYOUTS=() WDS=() CMDS=() ACTIVE=() PS_IDS=() ARGVS=()
 WS=()
 PS=()
 
@@ -82,10 +75,25 @@ for LINE in "${P_CMDL[@]}"; do
   PID="${LINE%% *}"
   RHS="${LINE#* }"
   PS_ID="${RHS%% *}"
-  # shellcheck disable=SC2034
   PS_IDS["$PID"]="$PS_ID"
   CMD="${RHS#* }"
   CMDS["$PID"]="$CMD"
+done
+
+PROC_LS="$(
+  for PID in "${!PS_IDS[@]}"; do
+    PS_ID="${PS_IDS["$PID"]}"
+    CMD="${CMDS["$PID"]}"
+    printf -- '%s\0' "$PID" "$PS_ID" "$CMD"
+  done | xargs -0 -n 3 -P 0 -- "$PROCFS"
+)"
+
+readarray -t -- PROC_LINES < <(printf -- '%s' "$PROC_LS")
+
+for LINE in "${PROC_LINES[@]}"; do
+  PID="${LINE%% *}"
+  ARGV="${LINE#* }"
+  ARGVS["$PID"]="$ARGV"
 done
 
 for SID in "${!SESSIONS[@]}"; do
@@ -113,7 +121,7 @@ for SID in "${!SESSIONS[@]}"; do
         for PID in "${PS[@]}"; do
           if [[ "${PANES["$PID"]}" == "$WID" ]]; then
             WD="${WDS["$PID"]}"
-            CMD="${CMDS["$PID"]}"
+            ARGV="${ARGVS["$PID"]}"
 
             printf -- '%q ' mkdir -p -- "$WD"
             printf -- '\n'
@@ -130,8 +138,9 @@ for SID in "${!SESSIONS[@]}"; do
               printf -- '\n'
             fi
 
-            if [[ -n "${WHITE["$CMD"]:-""}" ]]; then
-              printf -- '%q ' tmux set-buffer -- "$CMD"$'\n'
+            # shellcheck disable=SC2086
+            if "$WHITELIST" $ARGV; then
+              printf -- '%q ' tmux set-buffer -- "$ARGV"$'\n'
               printf -- '\n'
               printf -- '%q ' tmux paste-buffer -d -p
               printf -- '\n'
