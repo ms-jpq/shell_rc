@@ -82,6 +82,7 @@ for LINE in "${P_CMDL[@]}"; do
   PID="${LINE%% *}"
   RHS="${LINE#* }"
   PS_ID="${RHS%% *}"
+  # shellcheck disable=SC2034
   PS_IDS["$PID"]="$PS_ID"
   CMD="${RHS#* }"
   CMDS["$PID"]="$CMD"
@@ -113,6 +114,9 @@ for SID in "${!SESSIONS[@]}"; do
           if [[ "${PANES["$PID"]}" == "$WID" ]]; then
             WD="${WDS["$PID"]}"
             CMD="${CMDS["$PID"]}"
+
+            printf -- '%q ' mkdir -p -- "$WD"
+            printf -- '\n'
 
             if ((J++)); then
               printf -- '%q ' tmux split-window -c "$WD"

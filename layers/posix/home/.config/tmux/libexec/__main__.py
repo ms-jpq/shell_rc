@@ -9,7 +9,7 @@ from json.decoder import JSONDecodeError
 from locale import str as format_float
 from math import inf, isfinite
 from operator import pow
-from os import environ, sep
+from os import environ
 from pathlib import Path
 from platform import system
 from socket import AddressFamily, socket, timeout
@@ -17,6 +17,7 @@ from sys import stdout
 from tempfile import NamedTemporaryFile, gettempdir
 from time import monotonic, sleep, time
 from typing import Iterator, Mapping, Optional, Tuple, Union
+from urllib.parse import quote
 
 _SCALE = "▁▂▃▄▅▆▇█"
 
@@ -52,7 +53,11 @@ class _Stats:
 @cache
 def _path() -> Path:
     mux, _, _ = environ["TMUX"].partition(",")
-    p = Path(gettempdir()) / "tmux-status-line" / mux.replace(sep, "|")
+    p = (
+        Path(environ.get("XDG_RUNTIME_DIR", gettempdir()))
+        / "tmux-status-line"
+        / quote(mux, safe="")
+    )
     return p.with_suffix(".json")
 
 
