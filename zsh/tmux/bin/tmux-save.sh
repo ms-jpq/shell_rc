@@ -132,15 +132,9 @@ for SID in "${!SESSIONS[@]}"; do
   } >>"$F2"
 
   {
-    SNAME="$(uuidgen)"
     printf -- '%q ' tmux new-session -d -s "$SNAME" -- bash -Eeu "$F2"
     printf -- '\n'
     printf -- '%q ' tmux switch -t "$SNAME"
     printf -- '\n'
   } >"$F1"
-
-  {
-    printf -- '%q ' source -- "$F1"
-    printf -- '\n'
-  } >&2
 done
