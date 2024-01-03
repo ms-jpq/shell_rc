@@ -19,9 +19,7 @@ if ! [[ -v UNDER ]]; then
     esac
   done
 
-  for HOST in "${HOSTS[@]}"; do
-    UNDER=1 "$0" "$HOST" "$@"
-  done
+  printf -- '%s\0' "${HOSTS[@]}" | UNDER=1 xargs -0 -I % -n 1 -P 0 -- "$0" % "$@"
   exit
 fi
 
