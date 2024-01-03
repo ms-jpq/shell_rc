@@ -7,8 +7,8 @@ if tmux show-environment -g -h -- "$ENV" >/dev/null 2>&1; then
   exit 0
 fi
 
-if ! [[ -v UNDER ]]; then
-  UNDER=1 exec -- flock "$0" "$0" "$@"
+if ! [[ -v TMUX_SAVE_LOCK ]]; then
+  TMUX_SAVE_LOCK=1 exec -- flock "$0" "$0" "$@"
 fi
 
 WHITELIST=(
