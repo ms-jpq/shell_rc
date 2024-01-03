@@ -21,4 +21,4 @@ if ! [[ -d "$VENV" ]]; then
   "$PY" -m pip install --require-virtualenv --upgrade --requirement "$PYRADIO/requirements_pipx.txt"
 fi
 
-exec -- env --chdir "$PYRADIO" -- TERM=xterm-256color "$PY" -m pyradio.main "$@"
+PYTHONSAFEPATH=1 PYTHONPATH="$PYRADIO" exec -- "$PY" -m pyradio.main "$@"
