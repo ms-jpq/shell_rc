@@ -134,12 +134,17 @@ for SID in "${!SESSIONS[@]}"; do
     printf -- '\n'
   } >>"$F2"
 
-  {
-    printf -- '%q ' tmux new-session -A -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
-    printf -- '\n'
-    printf -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
-    printf -- '\n'
-    printf -- '%q ' tmux switch-client -t "$SNAME"
-    printf -- '\n'
-  } >"$F1"
+  printf -v A -- '%q ' tmux new-session -A -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
+  printf -v B -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
+  printf -v C -- '%q ' tmux switch-client -t "$SNAME"
+
+  cat -- >"$F1" <<-EOF
+if [[ -v TMUX ]]; then
+  $B
+  $C
+else
+  $A
+fi
+EOF
+
 done
