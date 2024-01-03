@@ -138,7 +138,7 @@ for SID in "${!SESSIONS[@]}"; do
   printf -v B -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
   printf -v C -- '%q ' tmux switch-client -t "$SNAME"
 
-  cat -- >"$F1" <<-EOF
+  read -r -d '' -- SH <<-EOF || true
 if [[ -v TMUX ]]; then
   $B
   $C
@@ -147,4 +147,5 @@ else
 fi
 EOF
 
+  printf -- '%s\n' "$SH" >"$F1"
 done
