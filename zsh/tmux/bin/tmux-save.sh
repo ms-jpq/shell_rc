@@ -79,16 +79,17 @@ for SID in "${!SESSIONS[@]}"; do
   I=0
   F1="$FILE.1.sh"
   F2="$FILE.2.sh"
-  AID=0
+  W_MARK=0
 
   rm -fr -- "$FILE".*.sh
   for W_ORD in "${!WS[@]}"; do
     WID="${WS["$W_ORD"]}"
     if [[ "${WINDOWS["$WID"]}" == "$SID" ]]; then
+      ((++I))
       J=0
       LAYOUT="${LAYOUTS["$WID"]}"
       if [[ -n "${ACTIVE["$WID"]:-""}" ]]; then
-        AID=$((I + 1))
+        W_MARK="$I"
       fi
 
       for PID in "${PS[@]}"; do
@@ -126,7 +127,7 @@ for SID in "${!SESSIONS[@]}"; do
   done >"$F2"
 
   {
-    printf -- '%q ' tmux select-window -t "$AID"
+    printf -- '%q ' tmux select-window -t ":-$((I - W_MARK))"
     printf -- '\n'
   } >>"$F2"
 
