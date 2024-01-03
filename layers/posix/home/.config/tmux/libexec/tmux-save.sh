@@ -24,7 +24,7 @@ done
 # shellcheck disable=SC2154
 TMUX_SESSIONS="$XDG_STATE_HOME/tmux"
 
-declare -A -- SESSIONS=() WINDOWS=() PANES=() LAYOUTS=() WDS=() CMDS=() ACTIVE=()
+declare -A -- SESSIONS=() WINDOWS=() PANES=() LAYOUTS=() WDS=() CMDS=() ACTIVE=() PS_IDS=()
 WS=()
 PS=()
 
@@ -32,7 +32,7 @@ S="$(tmux list-sessions -F '#{session_id} #{session_name}')"
 W="$(tmux list-windows -a -F '#{window_id} #{session_id} #{window_active} #{window_layout}')"
 P="$(tmux list-panes -a -F '#{pane_id} #{window_id} #{pane_active}')"
 P_WD="$(tmux list-panes -a -F '#{pane_id} #{?#{pane_path},#{pane_path},#{pane_current_path}}')"
-P_CMD="$(tmux list-panes -a -F '#{pane_id} #{pane_current_command}')"
+P_CMD="$(tmux list-panes -a -F '#{pane_id} #{pane_pid} #{pane_current_command}')"
 
 readarray -t -- SL <<<"$S"
 for LINE in "${SL[@]}"; do
@@ -80,7 +80,10 @@ done
 readarray -t -- P_CMDL <<<"$P_CMD"
 for LINE in "${P_CMDL[@]}"; do
   PID="${LINE%% *}"
-  CMD="${LINE#* }"
+  RHS="${LINE#* }"
+  PS_ID="${RHS%% *}"
+  PS_IDS["$PID"]="$PS_ID"
+  CMD="${RHS#* }"
   CMDS["$PID"]="$CMD"
 done
 
