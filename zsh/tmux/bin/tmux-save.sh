@@ -1,11 +1,23 @@
-#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
+#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O globstar
 
 set -o pipefail
 
-declare -A -- SESSIONS=() WINDOWS=() PANES=() N_PANES=() LAYOUTS=() WDS=() CMDS=()
+WHITELIST=(
+  less
+  man
+  nvim
+)
+declare -A -- WHITE=()
+for CMD in "${WHITELIST[@]}"; do
+  WHITE["$CMD"]=1
+done
+
+declare -A -- SESSIONS=() WINDOWS=() PANES=() LAYOUTS=() WDS=() CMDS=()
+WS=()
+PS=()
 
 S="$(tmux list-sessions -F '#{session_id} #{session_name}')"
-W="$(tmux list-windows -a -F '#{window_id} #{session_id} #{window_panes} #{window_layout}')"
+W="$(tmux list-windows -a -F '#{window_id} #{session_id} #{window_layout}')"
 P="$(tmux list-panes -a -F '#{pane_id} #{window_id}')"
 P_WD="$(tmux list-panes -a -F '#{pane_id} #{?#{pane_path},#{pane_path},#{pane_current_path}}')"
 P_CMD="$(tmux list-panes -a -F '#{pane_id} #{pane_current_command}')"
@@ -23,11 +35,10 @@ for LINE in "${WL[@]}"; do
   RHS="${LINE#* }"
   SID="${RHS%% *}"
   RHS="${RHS#* }"
-  N="${RHS%% *}"
   WINDOWS["$WID"]="$SID"
-  N_PANES["$WID"]="$N"
   LAYOUT="${RHS#* }"
   LAYOUTS["$WID"]="$LAYOUT"
+  WS+=("$WID")
 done
 
 readarray -t -- PL <<<"$P"
@@ -35,6 +46,7 @@ for LINE in "${PL[@]}"; do
   PID="${LINE%% *}"
   WID="${LINE#* }"
   PANES["$PID"]="$WID"
+  PS+=("$PID")
 done
 
 readarray -t -- P_WDL <<<"$P_WD"
@@ -52,17 +64,46 @@ for LINE in "${P_CMDL[@]}"; do
 done
 
 for SID in "${!SESSIONS[@]}"; do
-  printf -- '%s\n' "${SESSIONS["$SID"]}"
-  for WID in "${!WINDOWS[@]}"; do
+  SNAME="${SESSIONS["$SID"]}"
+  # shellcheck disable=SC2154
+  FILE="$XDG_STATE_HOME/tmux/$SNAME"
+  I=0
+  rm -fr -- "$FILE".*.sh
+  F1="$FILE.1.sh"
+  F2="$FILE.2.sh"
+  for W_ORD in "${!WS[@]}"; do
+    WID="${WS["$W_ORD"]}"
     if [[ "${WINDOWS["$WID"]}" == "$SID" ]]; then
-      printf -- '%s\n' "${N_PANES["$WID"]}"
-      printf -- '%s\n' "${LAYOUTS["$WID"]}"
-      for PID in "${!PANES[@]}"; do
+      J=0
+      LAYOUT="${LAYOUTS["$WID"]}"
+
+      if ! ((I++)); then
+        {
+          printf -- '%q ' tmux new-session -s "$(uuidgen)" -- bash -Eeu "$F2"
+          printf -- '\n'
+        } >"$F1"
+      fi
+
+      for PID in "${PS[@]}"; do
         if [[ "${PANES["$PID"]}" == "$WID" ]]; then
-          printf -- '%s\n' "${WDS["$PID"]}"
-          printf -- '%s\n' "${CMDS["$PID"]}"
+          WD="${WDS["$PID"]}"
+          CMD="${CMDS["$PID"]}"
+          if ! ((J++)); then
+            printf -- '%q ' tmux new-window -c "$WD"
+          else
+            printf -- '%q ' tmux split-window -c "$WD"
+          fi
+          printf -- '\n'
+          if [[ -n "${WHITE["$CMD"]:-""}" ]]; then
+            printf -- '%q ' tmux set-buffer -- "$CMD"$'\n'
+            printf -- '\n'
+            printf -- '%q ' tmux paste-buffer -d -p
+            printf -- '\n'
+          fi
         fi
       done
+      printf -- '%q ' tmux select-layout -- "$LAYOUT"
+      printf -- '\n'
     fi
-  done
+  done >"$F2"
 done
