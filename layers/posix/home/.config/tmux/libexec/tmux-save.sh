@@ -2,6 +2,10 @@
 
 set -o pipefail
 
+if ! [[ -v UNDER ]]; then
+  UNDER=1 exec -- flock "$0" "$0" "$@"
+fi
+
 WHITELIST=(
   less
   man
@@ -74,8 +78,6 @@ for LINE in "${P_CMDL[@]}"; do
   CMD="${LINE#* }"
   CMDS["$PID"]="$CMD"
 done
-
-rm -fr -- "$TMUX_SESSIONS"/*.sh
 
 for SID in "${!SESSIONS[@]}"; do
   SNAME="${SESSIONS["$SID"]}"
