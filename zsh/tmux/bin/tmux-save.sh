@@ -97,10 +97,10 @@ for SID in "${!SESSIONS[@]}"; do
           WD="${WDS["$PID"]}"
           CMD="${CMDS["$PID"]}"
 
-          if ! ((J++)); then
-            printf -- '%q ' tmux new-window -c "$WD"
-          else
+          if ((J++)); then
             printf -- '%q ' tmux split-window -c "$WD"
+          else
+            printf -- '%q ' tmux new-window -c "$WD"
           fi
           printf -- '\n'
 
@@ -132,9 +132,9 @@ for SID in "${!SESSIONS[@]}"; do
   } >>"$F2"
 
   {
-    printf -- '%q ' tmux new-session -d -s "$SNAME" -- bash -Eeu "$F2"
+    printf -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
     printf -- '\n'
-    printf -- '%q ' tmux switch -t "$SNAME"
+    printf -- '%q ' tmux switch-client -t "$SNAME"
     printf -- '\n'
   } >"$F1"
 done
