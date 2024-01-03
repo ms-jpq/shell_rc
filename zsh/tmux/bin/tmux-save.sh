@@ -12,6 +12,9 @@ for CMD in "${WHITELIST[@]}"; do
   WHITE["$CMD"]=1
 done
 
+# shellcheck disable=SC2154
+TMUX_SESSIONS="$XDG_STATE_HOME/tmux"
+
 declare -A -- SESSIONS=() WINDOWS=() PANES=() LAYOUTS=() WDS=() CMDS=() ACTIVE=()
 WS=()
 PS=()
@@ -72,16 +75,16 @@ for LINE in "${P_CMDL[@]}"; do
   CMDS["$PID"]="$CMD"
 done
 
+rm -fr -- "$TMUX_SESSIONS"/*.sh
+
 for SID in "${!SESSIONS[@]}"; do
   SNAME="${SESSIONS["$SID"]}"
-  # shellcheck disable=SC2154
-  FILE="$XDG_STATE_HOME/tmux/$SNAME"
-  I=0
+  FILE="$TMUX_SESSIONS/$SNAME"
   F1="$FILE.1.sh"
   F2="$FILE.2.sh"
+  I=0
   W_MARK=0
 
-  rm -fr -- "$FILE".*.sh
   for W_ORD in "${!WS[@]}"; do
     WID="${WS["$W_ORD"]}"
     if [[ "${WINDOWS["$WID"]}" == "$SID" ]]; then
@@ -132,6 +135,8 @@ for SID in "${!SESSIONS[@]}"; do
   } >>"$F2"
 
   {
+    printf -- '%q ' tmux new-session -A -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
+    printf -- '\n'
     printf -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
     printf -- '\n'
     printf -- '%q ' tmux switch-client -t "$SNAME"
