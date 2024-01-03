@@ -1,4 +1,4 @@
 #!/usr/bin/env -S -- bash
 
-autoload -- zmv
+# autoload -- zmv
 setopt -- multibyte # Unicode
