@@ -2,6 +2,11 @@
 
 set -o pipefail
 
+ENV='TMUX_NO_SAVE'
+if tmux show-environment -g -h -- "$ENV" >/dev/null 2>&1; then
+  exit 0
+fi
+
 if ! [[ -v UNDER ]]; then
   UNDER=1 exec -- flock "$0" "$0" "$@"
 fi
@@ -87,54 +92,60 @@ for SID in "${!SESSIONS[@]}"; do
   I=0
   W_MARK=0
 
-  for W_ORD in "${!WS[@]}"; do
-    WID="${WS["$W_ORD"]}"
-    if [[ "${WINDOWS["$WID"]}" == "$SID" ]]; then
-      ((++I))
-      J=0
-      LAYOUT="${LAYOUTS["$WID"]}"
-      if [[ -n "${ACTIVE["$WID"]:-""}" ]]; then
-        W_MARK="$I"
-      fi
-
-      for PID in "${PS[@]}"; do
-        if [[ "${PANES["$PID"]}" == "$WID" ]]; then
-          WD="${WDS["$PID"]}"
-          CMD="${CMDS["$PID"]}"
-
-          if ((J++)); then
-            printf -- '%q ' tmux split-window -c "$WD"
-          else
-            printf -- '%q ' tmux new-window -c "$WD"
-          fi
-          printf -- '\n'
-
-          if [[ -n "${ACTIVE["$PID"]:-""}" ]]; then
-            printf -- '%q ' tmux select-pane -m
-            printf -- '\n'
-          fi
-
-          if [[ -n "${WHITE["$CMD"]:-""}" ]]; then
-            printf -- '%q ' tmux set-buffer -- "$CMD"$'\n'
-            printf -- '\n'
-            printf -- '%q ' tmux paste-buffer -d -p
-            printf -- '\n'
-          fi
-        fi
-      done
-      printf -- '%q ' tmux select-pane -t '{marked}'
-      printf -- '\n'
-      printf -- '%q ' tmux select-pane -M
-      printf -- '\n'
-      printf -- '%q ' tmux select-layout -- "$LAYOUT"
-      printf -- '\n'
-    fi
-  done >"$F2"
-
   {
+    printf -- '%q ' tmux set-environment -g -h -- "$ENV" 1
+    printf -- '\n'
+
+    for W_ORD in "${!WS[@]}"; do
+      WID="${WS["$W_ORD"]}"
+      if [[ "${WINDOWS["$WID"]}" == "$SID" ]]; then
+        ((++I))
+        J=0
+        LAYOUT="${LAYOUTS["$WID"]}"
+        if [[ -n "${ACTIVE["$WID"]:-""}" ]]; then
+          W_MARK="$I"
+        fi
+
+        for PID in "${PS[@]}"; do
+          if [[ "${PANES["$PID"]}" == "$WID" ]]; then
+            WD="${WDS["$PID"]}"
+            CMD="${CMDS["$PID"]}"
+
+            if ((J++)); then
+              printf -- '%q ' tmux split-window -c "$WD"
+            else
+              printf -- '%q ' tmux new-window -c "$WD"
+            fi
+            printf -- '\n'
+
+            if [[ -n "${ACTIVE["$PID"]:-""}" ]]; then
+              printf -- '%q ' tmux select-pane -m
+              printf -- '\n'
+            fi
+
+            if [[ -n "${WHITE["$CMD"]:-""}" ]]; then
+              printf -- '%q ' tmux set-buffer -- "$CMD"$'\n'
+              printf -- '\n'
+              printf -- '%q ' tmux paste-buffer -d -p
+              printf -- '\n'
+            fi
+          fi
+        done
+        printf -- '%q ' tmux select-pane -t '{marked}'
+        printf -- '\n'
+        printf -- '%q ' tmux select-pane -M
+        printf -- '\n'
+        printf -- '%q ' tmux select-layout -- "$LAYOUT"
+        printf -- '\n'
+      fi
+    done
+
     printf -- '%q ' tmux select-window -t ":-$((I - W_MARK))"
     printf -- '\n'
-  } >>"$F2"
+
+    printf -- '%q ' tmux set-environment -g -h -u -- "$ENV"
+    printf -- '\n'
+  } >"$F2"
 
   printf -v A -- '%q ' tmux new-session -A -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
   printf -v B -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
