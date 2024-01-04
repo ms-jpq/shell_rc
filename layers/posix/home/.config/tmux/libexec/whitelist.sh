@@ -21,5 +21,13 @@ man | less | nvim | autossh)
 *) ;;
 esac
 
+# shellcheck disable=SC2154
+case "$*" in
+*"$XDG_CONFIG_HOME/zsh/bin/llm-q")
+  exit
+  ;;
+*) ;;
+esac
+
 printf -- '%s\n' "$@" >&2
 exit 1
