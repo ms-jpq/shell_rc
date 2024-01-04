@@ -13,6 +13,15 @@ darwin*)
   if LINE="$(pgrep -lf -P "$PPS_ID")"; then
     CMD="${LINE#* }"
     readarray -t -d ' ' -- ARGV < <(printf -- '%s' "$CMD")
+
+    for A in "${ARGV[@]}"; do
+      case "$A" in
+      *^* | *\*)
+        exit
+        ;;
+      *) ;;
+      esac
+    done
   fi
   ;;
 linux*)
@@ -30,6 +39,9 @@ esac
 if ((${#ARGV[@]})); then
   printf -v AV -- '%q ' "${ARGV[@]}"
 else
-  AV=''
+  AV="$FALLBACK"
 fi
-printf -- '%s\n' "$PID ${AV:-"$FALLBACK"}"
+
+if "${0%/*}/whitelist.sh" "${ARGV[@]}"; then
+  printf -- '%s\n' "$PID $AV"
+fi
