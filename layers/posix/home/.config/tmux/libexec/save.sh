@@ -12,7 +12,6 @@ if ! [[ -v TMUX_SAVE_LOCK ]]; then
 fi
 
 PROCFS="${0%/*}/procfs.sh"
-WHITELIST="${0%/*}/whitelist.sh"
 
 # shellcheck disable=SC2154
 TMUX_SESSIONS="$XDG_STATE_HOME/tmux"
@@ -121,7 +120,7 @@ for SID in "${!SESSIONS[@]}"; do
         for PID in "${PS[@]}"; do
           if [[ "${PANES["$PID"]}" == "$WID" ]]; then
             WD="${WDS["$PID"]}"
-            ARGV="${ARGVS["$PID"]}"
+            ARGV="${ARGVS["$PID"]:-""}"
 
             printf -- '%q ' mkdir -p -- "$WD"
             printf -- '\n'
@@ -138,12 +137,12 @@ for SID in "${!SESSIONS[@]}"; do
               printf -- '\n'
             fi
 
-            # shellcheck disable=SC2086
-            if "$WHITELIST" $ARGV; then
+            if [[ -n "$ARGV" ]]; then
               printf -- '%q ' tmux set-buffer -- "$ARGV"$'\n'
               printf -- '\n'
               printf -- '%q ' tmux paste-buffer -d -p
               printf -- '\n'
+
             fi
           fi
         done
