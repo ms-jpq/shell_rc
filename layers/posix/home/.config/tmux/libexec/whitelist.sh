@@ -26,7 +26,7 @@ case "$*" in
 *"$XDG_CONFIG_HOME/zsh/bin/llm-q" | *asciiquarium)
   exit
   ;;
-*pipes.sh* | *"$XDG_CONFIG_HOME/zsh/bin/pom"*)
+*"$HOME/.local/opt/pipes.sh/pipes.sh"* | *"$XDG_CONFIG_HOME/zsh/bin/pom"*)
   exit
   ;;
 *) ;;

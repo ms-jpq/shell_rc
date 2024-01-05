@@ -67,7 +67,6 @@
 + openvpn
 + pandoc
 + pastel
-+ pipes-sh
 + progress
 + pstree
 + pv
