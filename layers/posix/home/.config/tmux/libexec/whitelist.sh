@@ -15,7 +15,7 @@ man | less | autossh | htop | btm | nvim | lazygit | cmatrix | ncspot)
     exit
   fi
   ;;
-"$HOME/.local/opt/pyradio/venv/bin/python"*)
+"$HOME/.local/opt/isomorphic-copy/tmp/python"* | "$HOME/.local/opt/pyradio/venv/bin/python"*)
   exit
   ;;
 *) ;;

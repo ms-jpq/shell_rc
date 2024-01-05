@@ -14,9 +14,10 @@ darwin*)
     CMD="${LINE#* }"
     readarray -t -d ' ' -- ARGV < <(printf -- '%s' "$CMD")
 
+    # shellcheck disable=SC1003
     for A in "${ARGV[@]}"; do
       case "$A" in
-      *^* | *\*)
+      *^* | *'\'*)
         exit
         ;;
       *) ;;
