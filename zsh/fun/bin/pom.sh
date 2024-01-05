@@ -2,11 +2,34 @@
 
 set -o pipefail
 
+OPTS='f:'
+LONG_OPTS='font:'
+GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
+eval -- set -- "$GO"
+
+while (($#)); do
+  case "$1" in
+  -f | --font)
+    FONT="$2"
+    shift -- 2
+    ;;
+  --)
+    shift -- 1
+    break
+    ;;
+  *)
+    exit 1
+    ;;
+  esac
+done
+
 TTL="$1"
 NOW="$(date -- '+%s')"
 END=$((TTL * 60 + NOW))
 
-FONT="$(SHOW_FONT=1 "${0%/*}/big")"
+if ! [[ -v FONT ]]; then
+  FONT="$(SHOW_FONT=1 "${0%/*}/big")"
+fi
 CLS="$(clear)"
 
 colour() {

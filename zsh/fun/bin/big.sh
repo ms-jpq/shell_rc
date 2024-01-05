@@ -2,9 +2,29 @@
 
 set -o pipefail
 
-FONTS=("$(figlet -I 2)"/**.flf)
+OPTS='f:'
+LONG_OPTS='font:'
+GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
+eval -- set -- "$GO"
+
+while (($#)); do
+  case "$1" in
+  -f | --font)
+    FONT="$2"
+    shift -- 2
+    ;;
+  --)
+    shift -- 1
+    break
+    ;;
+  *)
+    exit 1
+    ;;
+  esac
+done
 
 if ! [[ -v FONT ]]; then
+  FONTS=("$(figlet -I 2)"/**.flf)
   FONT="${FONTS[$((RANDOM % ${#FONTS[@]}))]}"
 fi
 
