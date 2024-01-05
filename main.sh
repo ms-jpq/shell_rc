@@ -19,6 +19,7 @@ if ! [[ -v UNDER ]]; then
     esac
   done
 
+  "${GMAKE:-"gmake"}"
   printf -- '%s\0' "${HOSTS[@]}" | UNDER=1 xargs -0 -I % -n 1 -P 0 -- "$0" % "$@"
   exit
 fi
@@ -44,8 +45,6 @@ nt2unix() {
   unixpath="/${drive,,}${ntpath//'\'/'/'}"
   printf -- '%s' "$unixpath"
 }
-
-"${GMAKE:-"gmake"}"
 
 BSH=(bash --norc --noprofile -Eeuo pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
 CONN=(ssh
