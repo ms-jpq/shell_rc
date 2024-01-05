@@ -43,6 +43,7 @@ else
 LAZY_TYPE := $(HOSTTYPE)
 endif
 
+V_BTM     = $(shell $(GH_LATEST) ClementTsang/bottom)
 V_DELTA   = $(shell $(GH_LATEST) dandavison/delta)
 V_DUST    = $(shell $(GH_LATEST) bootandy/dust)
 V_FZF     = $(shell $(GH_LATEST) junegunn/fzf)
@@ -75,6 +76,7 @@ endef
 define CURL_DEBS
 
 /etc/apt/sources.list.d/microsoft-prod.list https://packages.microsoft.com/config/ubuntu/$(VERSION_ID)/packages-microsoft-prod.deb
+/usr/bin/btm                                https://github.com/ClementTsang/bottom/releases/latest/download/bottom_$(V_BTM)_$(GOARCH).deb
 /usr/bin/delta                              https://github.com/dandavison/delta/releases/latest/download/git-delta_$(V_DELTA)_$(GOARCH).deb
 /usr/bin/pastel                             https://github.com/sharkdp/pastel/releases/latest/download/pastel_$(V_PASTEL)_$(GOARCH).deb
 /usr/bin/tidy-viewer                        **https://github.com/alexhallam/tv/releases/latest/download/tidy-viewer_$(V_TV)_$(GOARCH).deb

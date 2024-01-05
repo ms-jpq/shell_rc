@@ -7,7 +7,7 @@ if ! (($#)); then
 fi
 
 case "$1" in
-man | less | autossh | nvim | lazygit | cmatrix)
+man | less | autossh | htop | btm | nvim | lazygit | cmatrix | ncspot)
   exit
   ;;
 /bin/sh)
