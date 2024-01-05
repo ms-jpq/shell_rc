@@ -7,6 +7,7 @@
 # + msys2.msys2
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
++ Clement.bottom
 + Git.Git
 + Insecure.Nmap
 + JanDeDobbeleer.OhMyPosh
@@ -20,8 +21,9 @@
 + eza-community.eza
 + gerardog.gsudo
 + gsass1.NTop
++ hpjansson.Chafa
 + jqlang.jq
 + junegunn.fzf
 + muesli.duf
-# + sharkdp.fd
-# + sharkdp.hyperfine
++ sharkdp.fd
++ sharkdp.hyperfine
