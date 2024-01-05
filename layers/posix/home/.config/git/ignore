@@ -9,4 +9,5 @@
 __pycache__/
 node_modules/
 owo.*
+thumbs.db
 vendor/
