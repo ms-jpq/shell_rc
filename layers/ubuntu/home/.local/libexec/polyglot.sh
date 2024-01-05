@@ -116,4 +116,8 @@ fi
 JPLUGIN_VER="$(asdf list-all "$JPLUGIN" | grep --fixed-strings -- 'openjdk' | tail --lines 1)"
 asdf install "$JPLUGIN" "$JPLUGIN_VER"
 asdf global "$JPLUGIN" "$JPLUGIN_VER"
+
+asdf-install --global -- awscli
+asdf-install --global -- opentofu
+
 asdf reshim
