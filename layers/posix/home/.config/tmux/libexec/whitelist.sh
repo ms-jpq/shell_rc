@@ -7,7 +7,7 @@ if ! (($#)); then
 fi
 
 case "$1" in
-man | less | autossh | nvim | lazygit)
+man | less | autossh | nvim | lazygit | cmatrix)
   exit
   ;;
 /bin/sh)
@@ -23,7 +23,7 @@ esac
 
 # shellcheck disable=SC2154
 case "$*" in
-*"$XDG_CONFIG_HOME/zsh/bin/llm-q")
+*"$XDG_CONFIG_HOME/zsh/bin/llm-q" | *asciiquarium)
   exit
   ;;
 *) ;;
