@@ -3,7 +3,7 @@
 set -o pipefail
 
 ARGV=(
-  pipes.sh
+  "$HOME/.local/opt/pipes.sh/pipes.sh"
 )
 
 for ((i = 0; i < 10; i++)); do
