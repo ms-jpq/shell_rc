@@ -3,6 +3,7 @@
 .DS_Store
 .git/
 .scannerwork/
+.terraform.tfstate.lock.info
 .terraform/
 .venv/
 __pycache__/
