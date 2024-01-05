@@ -3,6 +3,8 @@ git:
   paging:
     pager: delta --24-bit-color=never
 
+notARepository: quit
+
 gui:
   scrollHeight: 1
   theme:
