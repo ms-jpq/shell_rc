@@ -35,7 +35,6 @@
 + gnu-tar
 + gnu-which
 + gnupg
-+ gojq
 + gping
 + grep
 + gum
@@ -44,7 +43,6 @@
 + hyperfine
 + ipcalc
 + iperf3
-+ jid
 + jless
 + jq
 + lazygit
