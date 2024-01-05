@@ -14,8 +14,11 @@ if (($#)); then
   ARGV+=("$@")
 else
   ARGV+=(
-    -r 9999
     -p 9
+    -f 99
+    -r 9999
+    -R
+    # -K
   )
 fi
 
