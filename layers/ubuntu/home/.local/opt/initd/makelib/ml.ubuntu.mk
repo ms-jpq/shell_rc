@@ -29,6 +29,6 @@ pkg.posix: /etc/apt/sources.list.d/cuda.list
 pkg.posix: /etc/apt/sources.list.d/nvidia-container-toolkit.list
 /etc/apt/sources.list.d/nvidia-container-toolkit.list: /etc/apt/trusted.gpg.d/nvidia-container-toolkit.gpg
 	sudo -- tee -- '$@' <<-'EOF'
-	deb https://nvidia.github.io/libnvidia-container/stable/deb/$(GOARCH) /
+	deb https://nvidia.github.io/libnvidia-container/stable/deb/$$(ARCH) /
 	EOF
 endif
