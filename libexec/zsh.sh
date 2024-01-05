@@ -30,7 +30,7 @@ for DIR in "${DIRS[@]}"; do
   BSH+=("$DIR"/*.{sh,bash})
 done
 
-SH=("$GIT/dircolors.sh" "$GIT/z/z.sh")
+SH=("$GIT/dircolors.sh" "$GIT/z/z.sh" ./zsh/_*.sh)
 FZF="$GIT/fzf/shell"
 BSH+=(./zsh/aposteriori.{bash,sh} "${SH[@]}" "$FZF"/*.bash)
 ZSH+=(./zsh/aposteriori.{zs,sh} "${SH[@]}" "$FZF"/*.zsh)

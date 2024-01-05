@@ -1,5 +1,6 @@
 #!/usr/bin/env -S -- bash
 
+autoload -Uz -- bashcompinit
 autoload -Uz -- compinit
 
 # shellcheck disable=SC1036,SC2120
@@ -12,6 +13,7 @@ _comp_init() {
     f=(-C)
   fi
   compinit -i "${f[@]}" -d "$dump"
+  bashcompinit
 }
 
 _comp_init
