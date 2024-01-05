@@ -18,10 +18,22 @@ if [[ -d "$TARGET" ]]; then
     --color=always
   )
 else
-  ARGS=(
-    bat
-    --color=always
-  )
+  MIME="$(file --mime-type --brief -- "$TARGET")"
+
+  case "$MIME" in
+  image/*)
+    ARGS=(
+      chafa
+    )
+    ;;
+  *)
+    ARGS=(
+      bat
+      --color=always
+    )
+    ;;
+  esac
+
 fi
 
 exec -- "${ARGS[@]}" -- "$TARGET"

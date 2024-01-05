@@ -1,3 +1,4 @@
+# + catimg
 # + patat
 # + vhs
 + aha
@@ -7,8 +8,8 @@
 + bandwhich
 + bash
 + bat
-+ catimg
 + cgdb
++ chafa
 + cloc
 + cmatrix
 + coreutils

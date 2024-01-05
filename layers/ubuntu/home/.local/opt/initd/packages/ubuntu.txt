@@ -1,3 +1,4 @@
+# + catimg
 # + eza
 # + gping
 # + libaa-bin
@@ -11,8 +12,8 @@
 + avahi-utils
 + bat
 + bb
-+ catimg
 + cgdb
++ chafa
 + cloc
 + cmatrix
 + colorized-logs
