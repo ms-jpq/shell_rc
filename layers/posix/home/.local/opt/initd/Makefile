@@ -7,6 +7,11 @@ SHELL := bash
 
 .DEFAULT_GOAL := all
 
+DIE := $(shell [[ -f /.die ]] && printf -- '%s' 1)
+ifeq ($(DIE),1)
+$(error "DIE")
+endif
+
 include lib/*.mk
 
 ifeq ($(OS),nt)
