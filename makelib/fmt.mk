@@ -6,8 +6,7 @@ systemd-fmt:
 	./layers/posix/home/.local/bin/systemd-fmt.sh ./layers
 
 shfmt: $(VAR)/bin/shfmt
-	readarray -t -d $$'\0' -- ARRAY < <(git ls-files --deduplicate -z -- '*.*sh')
-	'$<' --write --indent 2 -- "$${ARRAY[@]}"
+	git ls-files --deduplicate -z -- '*.*sh' | xargs -0 -- '$<' --write --indent 2 --
 
 black: ./.venv/bin
 	'$</isort' --profile=black --gitignore -- .
@@ -17,5 +16,4 @@ prettier: ./node_modules/.bin
 	'$</prettier' --cache --write -- .
 
 taplo: ./node_modules/.bin
-	readarray -t -d $$'\0' -- ARRAY < <(git ls-files --deduplicate -z -- '*.toml')
-	'$</taplo' format -- "$${ARRAY[@]}"
+	git ls-files --deduplicate -z -- '*.toml' | xargs -0 -- '$</taplo' format --
