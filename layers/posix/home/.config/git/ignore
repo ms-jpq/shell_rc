@@ -1,5 +1,6 @@
 *.env
 *.tfstate
+*.tfstate.backup
 .DS_Store
 .git/
 .scannerwork/
