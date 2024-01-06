@@ -11,4 +11,4 @@ while (($#)); do
   fi
   printf -- "%s$CH" "$1"
   shift -- 1
-done | column --table >&2
+done | column -t >&2
