@@ -3,7 +3,7 @@
 set -o pipefail
 
 OPTS='n:,a:,f:'
-LONG_OPTS='name:,os:,fork:,vnc'
+LONG_OPTS='name:,fork:,vnc'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
@@ -30,13 +30,15 @@ while (($#)); do
     break
     ;;
   *)
-    exec -- gmake -- help >&2
+    exit 2
     ;;
   esac
 done
 
-LIB="$DIR/var/lib"
-CACHE="$DIR/var/cache"
+# shellcheck disable=SC2154
+LIB="$XDG_DATA_HOME/qemu"
+# shellcheck disable=SC2154
+CACHE="$XDG_CACHE_HOME/qemu"
 ROOT="$LIB/$NAME"
 
 QMP_SOCK="$ROOT/qmp.sock"
@@ -46,7 +48,7 @@ VNC_SOCK="$ROOT/vnc.sock"
 
 FS_ROOT='/dev/vda1'
 
-RAW=run.raw
+RAW=vm.raw
 DRIVE="$ROOT/$RAW"
 CLOUD_INIT="$ROOT/cloud-init.iso"
 
@@ -93,7 +95,8 @@ new() {
       mkdir -v -p -- "$ROOT" >&2
       flock --nonblock "$ROOT" cp -v -f -- "$F_DRIVE" "$DRIVE"
     else
-      flock --nonblock "$ROOT" gmake --directory "$DIR" -- NAME="$NAME" run
+      flock --nonblock "$ROOT" cp -v -f -- "$CACHE"/*.raw "$DRIVE"
+      flock --nonblock "$ROOT" qemu-img resize -f raw -- "$DRIVE" +88G
     fi
   } >&2
 }
@@ -119,17 +122,15 @@ r | run)
     new
   fi
 
-  # SMBIOS="$("$DIR/libexec/authorized_keys.sh")"
   SSH_CONN="${SSH:-"127.0.0.1:$("$DIR/libexec/ssh-port.sh")"}"
 
   KERNEL=("$CACHE"/*-vmlinuz-*)
   INITRD=("$CACHE"/*-initrd-*)
 
   QARGV=(
-    "$DIR/libexec/run.sh"
+    "$DIR/libexec/qemu-aarch64.sh"
     --qmp "$QMP_SOCK"
     --monitor "$QM_SOCK"
-    # --smbios "$SMBIOS"
     --ssh "$SSH_CONN"
     --kernel "${KERNEL[@]}"
     --initrd "${INITRD[@]}"
@@ -149,6 +150,9 @@ r | run)
   QARGV+=("$@")
 
   fwait "$ROOT"
+  if ! [[ -f "$CLOUD_INIT" ]]; then
+    "$DIR/libexec/cloud-init.sh" "$NAME" "$CLOUD_INIT"
+  fi
   ssh_pp "$SSH_CONN"
   printf -- '%s' "$SSH_CONN" >"$SSH_LOCATION"
   exec -- flock "$ROOT" "${QARGV[@]}"
@@ -196,7 +200,7 @@ q | qmp)
   SOCK="$QMP_SOCK"
   ;;
 *)
-  exec -- gmake -- help >&2
+  exit 2
   ;;
 esac
 

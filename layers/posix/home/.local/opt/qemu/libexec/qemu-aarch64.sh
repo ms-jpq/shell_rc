@@ -2,10 +2,8 @@
 
 set -o pipefail
 
-BREW="${BREW:-"$(brew --prefix)"}"
-
 LONG_OPTS='sudo,cpu:,mem:,qmp:,console:,monitor:,vnc:,passwd:,kernel:,initrd:,drive:,root:,smbios:,ssh:'
-GO="$("$BREW/opt/gnu-getopt/bin/getopt" --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
+GO="$(getopt --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 SUDO=0
@@ -179,18 +177,5 @@ fi
 
 ARGV+=("$@")
 
-pprint() {
-  while (($#)); do
-    NEXT="${2:-""}"
-    if [[ -n "$NEXT" ]] && ! [[ "$NEXT" =~ ^- ]]; then
-      CH=' '
-    else
-      CH='\n'
-    fi
-    printf -- "%s$CH" "$1"
-    shift -- 1
-  done | column -t >&2
-}
-
-pprint "${ARGV[@]}"
+"${0%/*}/../libexec/pprint.sh" "${ARGV[@]}"
 exec -- "${ARGV[@]}"

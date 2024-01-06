@@ -21,6 +21,8 @@ fi
 SALT="$(uuidgen)"
 PASSWD="$(openssl passwd -1 -salt "$SALT" root | jq --raw-input)"
 AUTHORIZED_KEYS="$(cat -- "${KEYS[@]}" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')"
+
+envsubst ./cloud-init/meta-data.yml >"$TMP/meta-data"
 envsubst ./cloud-init/user-data.yml >"$TMP/user-data"
 cp -a -R -f -- ./cloud-init/scripts "$TMP/scripts"
 
