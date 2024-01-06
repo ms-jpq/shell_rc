@@ -56,13 +56,6 @@ SSH_CMD=(ssh -l root -p)
 
 PASSWD='root'
 
-lsa() {
-  {
-    mkdir -v -p -- "$LIB"
-    ls -AFhl --color=auto -- "$LIB"
-  } >&2
-}
-
 ssh_pp() {
   local -- conn="$1"
   SSH_HOST="${conn%%:*}"
@@ -76,8 +69,8 @@ ssh_pp() {
 
 case "$ACTION" in
 l | ls)
-  lsa
-  exit
+  mkdir -v -p -- "$LIB"
+  exec -- ls -AFhl --color=auto -- "$LIB"
   ;;
 rm | remove)
   {
@@ -110,14 +103,11 @@ n | new)
     if [[ -v FORK ]]; then
       F_DRIVE="$LIB/$FORK/$RAW"
 
-      printf -- '%q%s%q\n' "$F_DRIVE" ' -> ' "$DRIVE"
+      set -x
       if ! [[ -f "$F_DRIVE" ]]; then
-        printf -- '%s%q\n' '>? ' "$F_DRIVE"
         exit 1
       fi
       if [[ -f "$DRIVE" ]]; then
-        printf -- '%s%q\n' '>! ' "$DRIVE"
-        lsa
         exit 1
       fi
 
