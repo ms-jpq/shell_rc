@@ -1,7 +1,6 @@
 #!/usr/bin/env -S -- bash
 
 path=(
-  "$HOME/.local/opt/qemu/bin"
   '/opt/homebrew/bin'
   '/opt/homebrew/opt/bc/bin'
   '/opt/homebrew/opt/coreutils/libexec/gnubin'
