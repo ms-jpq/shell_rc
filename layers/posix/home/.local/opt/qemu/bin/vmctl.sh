@@ -26,7 +26,7 @@ while (($#)); do
     shift -- 1
     ;;
   --)
-    ACTION="${ACTION:-"${2:-run}"}"
+    ACTION="${ACTION:-"${2:-"ls"}"}"
     shift -- 2 || shift -- 1
     break
     ;;
@@ -75,6 +75,27 @@ ssh_pp() {
 }
 
 case "$ACTION" in
+l | ls)
+  lsa
+  exit
+  ;;
+rm | remove)
+  {
+    set -x
+    if ! [[ -k "$ROOT" ]]; then
+      mkdir -p -- "$ROOT"
+      exec -- flock --nonblock "$ROOT" rm -v -rf -- "$ROOT"
+    else
+      exit 1
+    fi
+  } >&2
+  ;;
+pin)
+  exec -- chmod -v +t "$ROOT" >&2
+  ;;
+unpin)
+  exec -- chmod -v -t "$ROOT" >&2
+  ;;
 n | new)
   {
     if ! [[ -v UNDER ]]; then
@@ -109,7 +130,7 @@ n | new)
   exit
   ;;
 r | run)
-  if ! [[ -f "$CLOUD_INIT" ]] || ! [[ -f "$DRIVE" ]] || [[ -v FORK ]]; then
+  if ! [[ -f "$DRIVE" ]] || [[ -v FORK ]]; then
     ACTION=new "$0" "${ARGV[@]}"
   fi
 
@@ -142,26 +163,8 @@ r | run)
 
   ssh_pp "$SSH_CONN"
   printf -- '%s' "$SSH_CONN" >"$SSH_LOCATION"
-  exec -- flock "$ROOT" "${QARGV[@]}"
-  ;;
-l | ls)
-  lsa
-  exit
-  ;;
-rm | remove)
   set -x
-  if ! [[ -k "$ROOT" ]]; then
-    mkdir -p -- "$ROOT" >&2
-    exec -- flock --nonblock "$ROOT" rm -v -rf -- "$ROOT"
-  else
-    exit 1
-  fi
-  ;;
-pin)
-  exec -- chmod -v +t "$ROOT" >&2
-  ;;
-unpin)
-  exec -- chmod -v -t "$ROOT" >&2
+  exec -- flock --nonblock "$ROOT" "${QARGV[@]}"
   ;;
 v | vnc)
   open -u "vnc://:$PASSWD@localhost" >&2
