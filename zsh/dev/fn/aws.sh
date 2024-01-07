@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- bash
 
 if [[ -t 1 ]]; then
-  command -- aws --output table "$@"
+  AWS_DEFAULT_OUTPUT=table command -- aws "$@"
 else
   command -- aws "$@"
 fi

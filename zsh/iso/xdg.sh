@@ -21,6 +21,7 @@ export -- RUBY_DEBUG_HISTORY_FILE="$XDG_STATE_HOME/shell_history/rdbg"
 export -- R_HISTFILE="$XDG_STATE_HOME/shell_history/r"
 export -- SQLITE_HISTORY="$XDG_STATE_HOME/shell_history/sqlite"
 
+export -- AWS_DATA_PATH="$XDG_CACHE_HOME/aws/models"
 export -- BUNDLE_USER_HOME="$XDG_CACHE_HOME/bundle"
 export -- DOTNET_CLI_HOME="$XDG_CACHE_HOME/dotnet"
 export -- PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/python"
