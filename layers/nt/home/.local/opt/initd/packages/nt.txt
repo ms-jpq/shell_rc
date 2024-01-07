@@ -1,4 +1,5 @@
 # + Git.MinGit
+# + Microsoft.BingWallpaper
 # + Microsoft.Sysinternals.Autoruns
 # + Microsoft.Sysinternals.BGInfo
 # + Microsoft.WindowsTerminal
@@ -12,10 +13,12 @@
 + Insecure.Nmap
 + JanDeDobbeleer.OhMyPosh
 + JesseDuffield.lazygit
++ Microsoft.PowerAppsCLI
 + Microsoft.PowerShell
 + Microsoft.Sysinternals.Autoruns
 + Neovim.Neovim
 + Rclone.Rclone
++ SoftwareFreedomConservancy.QEMU
 + UniversalCtags.Ctags
 + dandavison.delta
 + eza-community.eza
