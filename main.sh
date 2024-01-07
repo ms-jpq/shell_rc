@@ -84,7 +84,8 @@ shell() {
   fi
 }
 
-ENV="$(shell "${BSH[@]}" "$(<'./libexec/env.sh')")"
+ENVSH="$(cat -- ./libexec/{die,env}.sh)"
+ENV="$(shell "${BSH[@]}" "$ENVSH")"
 set -a
 eval -- "$ENV"
 set +a
