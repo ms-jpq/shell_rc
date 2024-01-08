@@ -8,12 +8,16 @@
 
 - `[A]` Authenticating:
 
+## Links
+
+- https://www.reddit.com/r/GnuPG/comments/vjas2e/proper_key_management/
+
 ## Primary Key
 
 Never use primary keys for anything except for **certifying** `1:N` subkeys
 
 ```bash
-gpg --fingerprint
+gpg --list-keys --with-subkey-fingerprints
 ```
 
 ```bash
@@ -22,14 +26,23 @@ gpg --batch --passphrase '' --quick-generate-key '<fingerprint>' 'default' 'cert
 ```
 
 ```bash
-gpg --delete-secret-key '<fingerprint>'
-gpg --delete-keys '<fingerprint>'
+gpg --delete-secret-and-public-key '<fingerprint>'
 ```
 
 ## Subkeys
 
-Single purpose keys, ie. one per device / service acc
+Single purpose keys, ie. one per device / service account
 
 ```bash
-gpg --quick-add-key '<id>'
+gpg --batch --passphrase '' --quick-add-key '<public-key>' 'default' 'sign,auth,encr'
+
+# ed25519 -> `sign,auth`
+# cv25519 -> `encr`
 ```
+
+```bash
+# The without `!`, WILL DELETE PRIMARY KEY TOO
+gpg --delete-secret-and-public-key '<fingerprint>'!
+```
+
+## Backup
