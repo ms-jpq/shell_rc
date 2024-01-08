@@ -66,6 +66,10 @@ PRAGMA="$(tr -d ' ' <<<"$LINE")"
 DIRECTIVE=1
 REEXEC=0
 case "$PRAGMA" in
+'>cls')
+  clear
+  REEXEC=1
+  ;;
 '>die')
   GPT_HISTORY="$(mktemp)"
   REEXEC=1

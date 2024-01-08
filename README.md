@@ -1,4 +1,4 @@
-# Ansible Shell
+# Make → SH
 
 ## Windows
 
