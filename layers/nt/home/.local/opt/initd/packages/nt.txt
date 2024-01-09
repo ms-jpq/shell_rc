@@ -5,6 +5,7 @@
 # + Microsoft.WindowsTerminal
 # + OpenJS.NodeJS
 # + Python.Python.3.11
+# + SoftwareFreedomConservancy.QEMU
 # + msys2.msys2
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
@@ -19,7 +20,6 @@
 + Microsoft.Sysinternals.Autoruns
 + Neovim.Neovim
 + Rclone.Rclone
-+ SoftwareFreedomConservancy.QEMU
 + UniversalCtags.Ctags
 + dandavison.delta
 + eza-community.eza
