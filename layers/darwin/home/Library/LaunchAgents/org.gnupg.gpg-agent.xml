@@ -10,9 +10,9 @@
     <key>ProgramArguments</key>
     <array>
       <string>--batch</string>
-      <string>--daemon</string>
       <string>--homedir</string>
       <string>${HOME}/.config/gnupg</string>
+      <string>--daemon</string>
     </array>
     <key>KeepAlive</key>
     <true />
