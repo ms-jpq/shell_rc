@@ -67,9 +67,9 @@ gpg --export-ssh-key -- '<subkey>'!
 
 ```bash
 # All keys
-gpg --armor --export-secret-keys -- '<id>' | gpg --import
+gpg --armor --export-secret-keys --export-options export-backup -- '<id>' | gpg --import
 # Excluding primary key
 gpg --armor --export-secret-subkeys -- '<id>'!
 # Excluding private (sub*)keys
-gpg --armor --export -- '<subkey>'!
+gpg --armor --export --export-options export-minimal -- '<subkey>'!
 ```
