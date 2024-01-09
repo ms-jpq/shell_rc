@@ -63,6 +63,13 @@ gpg --export-ssh-key -- '<subkey>'!
 "$EDITOR" "$GNUPGHOME/sshcontrol"
 ```
 
+## GIT
+
+```bash
+# The without `!`, WILL USE PRIMARY KEY
+git config --global user.signingkey '<subkey>'!
+```
+
 ## Send / Recv
 
 ```bash
