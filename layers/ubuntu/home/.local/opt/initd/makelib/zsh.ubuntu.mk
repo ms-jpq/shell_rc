@@ -13,7 +13,7 @@ zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd $(BIN)/oh-my-posh
 $(BIN)/oh-my-posh: | $(BIN)/posh-linux-$(GOARCH)
 	ln -v -sf -- '$|' '$@'
 
+ifneq ($(shell printf -- '%s' "$$SHELL"),/usr/bin/zsh)
 zsh.ubuntu: /usr/bin/zsh
-	if [[ "$$SHELL" != '$<' ]]; then
-		sudo -- chsh -s '$<' "$${USER:-"$$(whoami)"}"
-	fi
+	sudo -- chsh -s '$<' "$$USER"
+endif
