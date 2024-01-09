@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>org.gnupg.gpg-agent</string>
+    <key>Program</key>
+    <string>/opt/homebrew/bin/gpg-agent</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>--batch</string>
+      <string>--daemon</string>
+      <string>--homedir</string>
+      <string>${HOME}/.config/gnupg</string>
+    </array>
+    <key>KeepAlive</key>
+    <true />
+  </dict>
+</plist>
