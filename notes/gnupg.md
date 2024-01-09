@@ -19,12 +19,12 @@
 Never use primary keys for anything except for **certifying** `1:N` subkeys
 
 ```bash
-gpg --list-keys --with-subkey-fingerprints
+gpg --list-keys --with-subkey-fingerprints --with-keygrip
 ```
 
 ```bash
 # Generate public + private keys
-gpg --batch --passphrase '' --quick-generate-key '<fingerprint>' 'default' 'cert' 'never'
+gpg --batch --passphrase '' --quick-generate-key -- '<fingerprint>' 'default' 'cert' 'never'
 ```
 
 ```bash
@@ -36,7 +36,7 @@ gpg --delete-secret-and-public-key '<fingerprint>'
 Single purpose keys, ie. one per device / service account
 
 ```bash
-gpg --batch --passphrase '' --quick-add-key '<public-key>' 'default' 'sign,auth,encr'
+gpg --batch --passphrase '' --quick-add-key -- '<public-key>' 'default' 'sign,auth,encr'
 
 # ed25519 -> `sign,auth`
 # cv25519 -> `encr`
@@ -44,7 +44,23 @@ gpg --batch --passphrase '' --quick-add-key '<public-key>' 'default' 'sign,auth,
 
 ```bash
 # The without `!`, WILL DELETE PRIMARY KEY TOO
-gpg --delete-secret-and-public-key '<fingerprint>'!
+gpg --delete-secret-and-public-key -- '<subkey>'!
+```
+
+## SSH
+
+### Public Key
+
+```bash
+# The without `!`, WILL USE PRIMARY KEY
+gpg --export-ssh-key -- '<subkey>'!
+```
+
+### Agent
+
+```bash
+# Add '<subkey>' keygrip
+"$EDITOR" "$GNUPGHOME/sshcontrol"
 ```
 
 ## Send / Recv
@@ -53,7 +69,7 @@ gpg --delete-secret-and-public-key '<fingerprint>'!
 # All keys
 gpg --armor --export-secret-keys -- '<id>' | gpg --import
 # Excluding primary key
-gpg --armor --export-secret-subkeys -- '<id>'
+gpg --armor --export-secret-subkeys -- '<id>'!
 # Excluding private (sub*)keys
-gpg --armor --export -- '<id>'
+gpg --armor --export -- '<subkey>'!
 ```
