@@ -4,7 +4,6 @@
 export -- AWS_CONFIG_FILE="$XDG_CONFIG_HOME/aws/config"
 export -- AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/credentials"
 export -- BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME/bundle"
-export -- GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 export -- NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/rc.conf"
 export -- NUGET_PACKAGES="$XDG_DATA_HOME/NuGet/packages"
 export -- PYTHONSTARTUP="$XDG_CONFIG_HOME/python/rc.py"
