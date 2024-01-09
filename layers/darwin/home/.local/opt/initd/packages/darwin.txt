@@ -67,6 +67,7 @@
 + openvpn
 + pandoc
 + pastel
++ pinentry-mac
 + progress
 + pstree
 + pv
