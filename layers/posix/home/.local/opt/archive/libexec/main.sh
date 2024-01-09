@@ -2,8 +2,6 @@
 
 set -o pipefail
 
-cd -- ~
-
 TMP="$(mktemp -d)"
 chmod -v g-rwx,o-rwx "$TMP"
 gpg -v --armor --export-secret-keys --export-options export-backup --output "$TMP/gnupg.asc"
