@@ -15,5 +15,6 @@ $(BIN)/oh-my-posh: | $(BIN)/posh-linux-$(GOARCH)
 
 ifneq ($(shell printf -- '%s' "$$SHELL"),/usr/bin/zsh)
 zsh.ubuntu: /usr/bin/zsh
+	USER="$${USER:-"$$(whoami)"}"
 	sudo -- chsh -s '$<' "$$USER"
 endif
