@@ -10,6 +10,8 @@
 
 ## Links
 
+- https://www.gnupg.org/faq/gnupg-faq.html
+
 - https://www.reddit.com/r/GnuPG/comments/vjas2e/proper_key_management/
 
 ## Primary Key
@@ -45,4 +47,13 @@ gpg --batch --passphrase '' --quick-add-key '<public-key>' 'default' 'sign,auth,
 gpg --delete-secret-and-public-key '<fingerprint>'!
 ```
 
-## Backup
+## Send / Recv
+
+```bash
+# All keys
+gpg --armor --export-secret-keys -- '<id>' | gpg --import
+# Excluding primary key
+gpg --armor --export-secret-subkeys -- '<id>'
+# Excluding private (sub*)keys
+gpg --armor --export -- '<id>'
+```
