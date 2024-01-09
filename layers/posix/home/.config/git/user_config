@@ -1,6 +1,9 @@
 # [blame]
 # coloring = true
 
+# [feature]
+# manyFiles = true
+
 [branch]
 autosetuprebase = "always"
 
@@ -13,6 +16,9 @@ filterSubmodules = true
 
 [column]
 ui = "auto"
+
+[commit]
+gpgsign = true
 
 [core]
 pager = "delta"
@@ -27,9 +33,6 @@ colorMovedWS     = "ignore-space-change"
 dirstat          = "files,cumulative"
 renameLimit      = 999999999
 wsErrorHighlight = "all"
-
-# [feature]
-# manyFiles = true
 
 [fetch]
 parallel          = 0
