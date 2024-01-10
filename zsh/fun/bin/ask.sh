@@ -12,7 +12,12 @@ if [[ -v XDG_OPEN ]]; then
     open -- "$URI"
   fi
 elif ! [[ -v FZF_PREVIEW_LINES ]]; then
-  DOMAIN="$(<"$HOME/.local/state/searx")"
+  F="$HOME/.local/state/searx"
+  if ! [[ -f "$F" ]]; then
+    # shellcheck disable=SC2154
+    "$EDITOR" "$F"
+  fi
+  DOMAIN="$(<"$F")"
   QUERY="$(jq --raw-input --raw-output '@uri' <<<"$*")"
   TMP="$(mktemp)"
   HEADERS=(
