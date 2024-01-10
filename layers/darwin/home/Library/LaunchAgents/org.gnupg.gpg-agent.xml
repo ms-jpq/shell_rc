@@ -6,17 +6,11 @@
     <key>Label</key>
     <string>org.gnupg.gpg-agent</string>
     <key>Program</key>
-    <string>/opt/homebrew/bin/gpg-agent</string>
-    <key>ProgramArguments</key>
-    <array>
-      <string>--batch</string>
-      <string>--homedir</string>
-      <string>${HOME}/.config/gnupg</string>
-      <string>--daemon</string>
-      <string>${HOME}/.config/gnupg/libexec/sleep.sh</string>
-      <string>--log-file</string>
-      <string>${HOME}/.local/state/gnupg/agent.log</string>
-    </array>
+    <string>${HOME}/.config/gnupg/libexec/agent.sh</string>
+    <key>StandardErrorPath</key>
+    <string>${HOME}/.local/state/gnupg/stderr.log</string>
+    <key>StandardOutPath</key>
+    <string>${HOME}/.local/state/gnupg/stdout.log</string>
     <key>KeepAlive</key>
     <true />
   </dict>
