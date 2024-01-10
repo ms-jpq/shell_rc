@@ -1,9 +1,6 @@
-*.asc
 *.env
-*.gpg
 *.key
 *.log
-*.sig
 *.tfstate
 *.tfstate.backup
 .DS_Store
