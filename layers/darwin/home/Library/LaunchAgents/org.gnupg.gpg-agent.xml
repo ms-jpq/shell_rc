@@ -13,6 +13,7 @@
       <string>--homedir</string>
       <string>${HOME}/.config/gnupg</string>
       <string>--daemon</string>
+      <string>${HOME}/.config/gnupg/libexec/sleep.sh</string>
     </array>
     <key>KeepAlive</key>
     <true />
