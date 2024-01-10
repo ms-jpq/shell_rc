@@ -5,12 +5,27 @@
   <dict>
     <key>Label</key>
     <string>org.gnupg.gpg-agent</string>
-    <key>Program</key>
-    <string>${HOME}/.config/gnupg/libexec/agent.sh</string>
     <key>StandardErrorPath</key>
     <string>${HOME}/.local/state/gnupg/stderr.log</string>
     <key>StandardOutPath</key>
     <string>${HOME}/.local/state/gnupg/stdout.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>GNUPGHOME</key>
+      <string>${HOME}/.config/gnupg</string>
+      <key>PATH</key>
+      <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    <key>Program</key>
+    <string>/opt/homebrew/bin/gpg-agent</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>--batch</string>
+      <string>--log-file</string>
+      <string>${HOME}/.local/state/gnupg/agent.log</string>
+      <string>--daemon</string>
+      <string>${HOME}/.config/gnupg/libexec/sleep.sh</string>
+    </array>
     <key>KeepAlive</key>
     <true />
   </dict>
