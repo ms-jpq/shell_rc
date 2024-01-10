@@ -12,7 +12,7 @@ if [[ -v XDG_OPEN ]]; then
     open -- "$URI"
   fi
 elif ! [[ -v FZF_PREVIEW_LINES ]]; then
-  DOMAIN="$(<"$HOME/.config/searx")"
+  DOMAIN="$(<"$HOME/.local/state/searx")"
   QUERY="$(jq --raw-input --raw-output '@uri' <<<"$*")"
   TMP="$(mktemp)"
   HEADERS=(
