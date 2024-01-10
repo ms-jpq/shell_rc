@@ -8,6 +8,7 @@
 *.ex    diff=elixir
 *.exs   diff=elixir
 *.go    diff=golang
+*.gpg   binary
 *.h     diff=cpp
 *.h++   diff=cpp
 *.hh    diff=cpp
