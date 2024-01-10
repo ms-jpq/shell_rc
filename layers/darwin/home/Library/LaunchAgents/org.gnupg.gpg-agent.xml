@@ -14,6 +14,8 @@
       <string>${HOME}/.config/gnupg</string>
       <string>--daemon</string>
       <string>${HOME}/.config/gnupg/libexec/sleep.sh</string>
+      <string>--log-file</string>
+      <string>${HOME}/.local/state/gnupg/agent.log</string>
     </array>
     <key>KeepAlive</key>
     <true />
