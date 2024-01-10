@@ -1,17 +1,16 @@
 # + Git.MinGit
+# + GnuPG.GnuPG
 # + Microsoft.BingWallpaper
 # + Microsoft.Sysinternals.Autoruns
 # + Microsoft.Sysinternals.BGInfo
 # + Microsoft.WindowsTerminal
 # + OpenJS.NodeJS
-# + Python.Python.3.11
-# + SoftwareFreedomConservancy.QEMU
+# + Python.Python.3.12
 # + msys2.msys2
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
 + Clement.bottom
 + Git.Git
-+ GnuPG.GnuPG
 + Insecure.Nmap
 + JanDeDobbeleer.OhMyPosh
 + JesseDuffield.lazygit
@@ -20,6 +19,7 @@
 + Microsoft.Sysinternals.Autoruns
 + Neovim.Neovim
 + Rclone.Rclone
++ SoftwareFreedomConservancy.QEMU
 + UniversalCtags.Ctags
 + dandavison.delta
 + eza-community.eza
