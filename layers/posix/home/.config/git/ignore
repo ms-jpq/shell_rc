@@ -1,4 +1,6 @@
+*.asc
 *.env
+*.gpg
 *.key
 *.log
 *.tfstate
