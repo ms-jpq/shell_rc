@@ -1,2 +1,5 @@
 [flags]
-color = "gruvbox-light"
+color             = "gruvbox-light"
+enable_gpu_memory = true
+group             = true
+network_use_bytes = true
