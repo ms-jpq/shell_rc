@@ -24,7 +24,7 @@ while (($#)); do
 done
 
 TTL="$1"
-NOW="$(date -- '+%s')"
+NOW="${EPOCHREALTIME%%.*}"
 END=$((TTL * 60 + NOW))
 
 if ! [[ -v FONT ]]; then
@@ -60,7 +60,7 @@ fig() {
 }
 
 while true; do
-  NOW="$(date -- '+%s')"
+  NOW="${EPOCHREALTIME%%.*}"
   if ((NOW <= END)); then
     TIME="$(date --utc --date="@$((END - NOW))" -- '+%H:%M:%S')"
     LINES="$(tput -- lines)"
