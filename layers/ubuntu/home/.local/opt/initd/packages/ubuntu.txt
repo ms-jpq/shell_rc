@@ -66,6 +66,3 @@
 + wget
 + xmlstarlet
 + zsh
-- lxd-agent-loader
-- snapd
-- vim-common
