@@ -94,6 +94,7 @@ if (("${#ADD[@]}")); then
     sudo -- apt-get update
     sudo -- env -- DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes
     sudo -- env -- DEBIAN_FRONTEND=noninteractive apt-get install --yes -- "${ADD[@]}" </dev/null
+    sudo -- apt-get clean
     ;;
   msys)
     WINGET=(
