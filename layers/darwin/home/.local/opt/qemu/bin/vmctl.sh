@@ -39,17 +39,10 @@ case $# in
   ;;
 esac
 
-printf -- '%q\n' "$@"
-
-case "$ACTION" in
-'')
-  NAME=''
-  ;;
-*)
-  NAME="$1"
+NAME="${1:-""}"
+if (($#)); then
   shift -- 1
-  ;;
-esac
+fi
 
 # shellcheck disable=SC2154
 LIB="$XDG_DATA_HOME/qemu"
@@ -197,6 +190,9 @@ qmp)
   SOCK="$QMP_SOCK"
   ;;
 *)
+  printf -- '%s' '>? '
+  printf -- '%q ' "$0" "${ARGV[@]}"
+  printf -- '\n'
   exit 2
   ;;
 esac
