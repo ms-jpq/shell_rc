@@ -20,7 +20,6 @@ write_files:
       LinkLocalAddressing = yes
       LLDP                = yes
       EmitLLDP            = customer-bridge
-      IPv6AcceptRA        = yes
 
 runcmd:
   - - rm
