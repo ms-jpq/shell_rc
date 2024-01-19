@@ -2,9 +2,8 @@
 
 set -o pipefail
 
-OPTS='f:'
 LONG_OPTS='fork:,vnc'
-GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
+GO="$(getopt --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 ARGV=("$@")
 
@@ -21,17 +20,6 @@ while (($#)); do
     shift -- 1
     ;;
   --)
-    case $# in
-    1)
-      ACTION='ls'
-      shift -- 1
-      ;;
-    *)
-      ACTION="$2"
-      NAME="$3"
-      shift -- 3
-      ;;
-    esac
     break
     ;;
   *)
@@ -39,6 +27,29 @@ while (($#)); do
     ;;
   esac
 done
+
+case $# in
+1)
+  ACTION=''
+  shift -- 1
+  ;;
+*)
+  ACTION="${ACTION:-"$2"}"
+  shift -- 2
+  ;;
+esac
+
+printf -- '%q\n' "$@"
+
+case "$ACTION" in
+'')
+  NAME=''
+  ;;
+*)
+  NAME="$1"
+  shift -- 1
+  ;;
+esac
 
 # shellcheck disable=SC2154
 LIB="$XDG_DATA_HOME/qemu"
@@ -72,7 +83,7 @@ ssh_pp() {
 }
 
 case "$ACTION" in
-l | ls)
+'')
   mkdir -v -p -- "$LIB"
   LS=(ls -AFhl --color=auto -- "$LIB")
   printf -- '%q ' "${LS[@]}" >&2
@@ -95,7 +106,7 @@ pin)
 unpin)
   exec -- chmod -v -t "$ROOT" >&2
   ;;
-n | new)
+new)
   {
     if ! [[ -v UNDER ]]; then
       mkdir -v -p -- "$ROOT"
@@ -125,7 +136,7 @@ n | new)
   } >&2
   exit
   ;;
-r | run)
+run)
   if ! [[ -f "$DRIVE" ]] || [[ -v FORK ]]; then
     ACTION=new "$0" "${ARGV[@]}"
   fi
@@ -162,14 +173,14 @@ r | run)
   set -x
   exec -- flock --nonblock "$ROOT" "${QARGV[@]}"
   ;;
-v | vnc)
+vnc)
   open -u "vnc://:$PASSWD@localhost" >&2
   exec -- socat 'TCP-LISTEN:5900,reuseaddr,fork' "UNIX-CONNECT:$VNC_SOCK"
   ;;
-c | console)
+console)
   SOCK="$CON_SOCK"
   ;;
-s | ssh)
+ssh)
   LOCATION="$(<"$SSH_LOCATION")"
   ssh_pp "$LOCATION"
   AV=()
@@ -179,10 +190,10 @@ s | ssh)
   fi
   exec -- "${SSH_CMD[@]}" "$SSH_PORT" "$SSH_HOST" "${AV[@]}"
   ;;
-m | monitor)
+monitor)
   SOCK="$QM_SOCK"
   ;;
-q | qmp)
+qmp)
   SOCK="$QMP_SOCK"
   ;;
 *)
