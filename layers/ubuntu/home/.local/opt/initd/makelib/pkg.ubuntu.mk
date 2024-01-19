@@ -1,5 +1,3 @@
-APT_INSTALL := DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --yes
-
 $(SHARE)/tmux $(NVIM_MVP) $(OPT)/pipx: | /usr/share/doc/python3-venv
 
 pkg.posix: /etc/apt/sources.list.d/ubuntu_partner.list
