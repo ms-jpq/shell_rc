@@ -2,21 +2,16 @@
 
 set -o pipefail
 
-OPTS='n:,f:'
-LONG_OPTS='name:,fork:,vnc'
+OPTS='f:'
+LONG_OPTS='fork:,vnc'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 ARGV=("$@")
 
 DIR="${0%/*}/.."
-NAME='_'
 VNC=0
 while (($#)); do
   case "$1" in
-  -n | --name)
-    NAME="$2"
-    shift -- 2
-    ;;
   -f | --fork)
     FORK="$2"
     shift -- 2
@@ -26,8 +21,17 @@ while (($#)); do
     shift -- 1
     ;;
   --)
-    ACTION="${ACTION:-"${2:-"ls"}"}"
-    shift -- 2 || shift -- 1
+    case $# in
+    1)
+      ACTION='ls'
+      shift -- 1
+      ;;
+    *)
+      ACTION="$2"
+      NAME="$3"
+      shift -- 3
+      ;;
+    esac
     break
     ;;
   *)
@@ -70,9 +74,11 @@ ssh_pp() {
 case "$ACTION" in
 l | ls)
   mkdir -v -p -- "$LIB"
-  exec -- ls -AFhl --color=auto -- "$LIB"
+  LS=(ls -AFhl --color=auto -- "$LIB")
+  printf -- '%q ' "${LS[@]}" >&2
+  exec -- "${LS[@]}"
   ;;
-rm | remove)
+remove)
   {
     set -x
     if ! [[ -k "$ROOT" ]]; then
