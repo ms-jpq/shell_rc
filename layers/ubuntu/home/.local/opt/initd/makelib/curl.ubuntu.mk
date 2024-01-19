@@ -1,6 +1,8 @@
 .PHONY: deb
 all: deb
 
+APT_INSTALL := sudo -- env -- DEBIAN_FRONTEND=noninteractive apt-get install --yes
+
 define ARCHIVE_TEMPLATE
 ifneq (aarch64**,$(HOSTTYPE)$(findstring **,$2))
 
