@@ -4,12 +4,12 @@ set -o pipefail
 
 cd -- "${0%/*}/.."
 
-HOSTNAME="$1"
+MACHINE="$1"
 DST="$2"
-export -- HOSTNAME PASSWD AUTHORIZED_KEYS
+export -- HOSTNAME PASSWD AUTHORIZED_KEYS IPV6_TOKEN
 
 TMP="$(mktemp -d)"
-HOSTNAME="$(jq --raw-input <<<"$HOSTNAME")"
+HOSTNAME="$(jq --raw-input <<<"$MACHINE")"
 envsubst <./cloud-init/meta-data.yml >"$TMP/meta-data"
 
 AK=~/.ssh/authorized_keys
@@ -21,9 +21,13 @@ fi
 SALT="$(uuidgen)"
 PASSWD="$(openssl passwd -1 -salt "$SALT" root | jq --raw-input)"
 AUTHORIZED_KEYS="$(cat -- "${KEYS[@]}" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')"
+IPV6_TOKEN="$(./libexec/ip64alloc.sh <<<"$MACHINE")"
 
-envsubst <./cloud-init/meta-data.yml >"$TMP/meta-data"
-envsubst <./cloud-init/user-data.yml >"$TMP/user-data"
+for YML in ./cloud-init/*.yml; do
+  BASENAME="${YML##*/}"
+  STEM="${BASENAME%.*}"
+  envsubst <"$YML" >"$TMP/$STEM"
+done
 cp -a -R -f -- ./cloud-init/scripts "$TMP/scripts"
 
 rm -v -fr -- "$DST"
