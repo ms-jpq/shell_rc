@@ -1,0 +1,24 @@
+#cloud-config
+---
+growpart:
+  ignore_growroot_disabled: false
+
+hostname: ${HOSTNAME}
+
+write_files:
+  - path: /usr/local/lib/systemd/network/00-cloud-init.network
+    content: |
+      [Match]
+      Name                = e*
+      Driver              = virtio_net
+
+      [Network]
+      DHCP                = yes
+      LinkLocalAddressing = yes
+      LLDP                = yes
+      EmitLLDP            = customer-bridge
+      IPv6Token           = static:::${IPV6_TOKEN}
+
+runcmd:
+  - - networkctl
+    - reload
