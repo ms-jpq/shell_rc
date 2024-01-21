@@ -9,7 +9,7 @@ function basic {
     Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name 'RealTimeIsUniversal' -Type 'DWord' -Value 1
 
     # Allow Scripting
-    Set-ExecutionPolicy -ExecutionPolicy 'Unrestricted'
+    Set-ExecutionPolicy -Scope 'CurrentUser' -ExecutionPolicy 'Unrestricted'
 
     # Private Firewall
     Set-NetConnectionProfile -NetworkCategory 'Private'
