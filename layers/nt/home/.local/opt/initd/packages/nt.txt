@@ -21,8 +21,8 @@
 + Rclone.Rclone
 + SoftwareFreedomConservancy.QEMU
 + UniversalCtags.Ctags
-+ WinDirStat.WinDirStat
 + dandavison.delta
++ dundee.gdu
 + eza-community.eza
 + gerardog.gsudo
 + hpjansson.Chafa
