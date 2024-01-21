@@ -16,7 +16,7 @@ while (($#)); do
     shift -- 1
     ;;
   --cpu)
-    CPU="$2"
+    CPUS="$2"
     shift -- 2
     ;;
   --mem)
@@ -81,9 +81,9 @@ if ((SUDO)) && ((UID)); then
   exec -- --preserve-env -- "$0" "$@"
 fi
 
-if ! [[ -v CPU ]]; then
+if [[ -z "${CPUS:-""}" ]]; then
   NPROCS="$(sysctl -n hw.ncpu)"
-  CPU="cpus=$((NPROCS / 2))"
+  CPUS="cpus=$((NPROCS / 2))"
 fi
 
 ARGV=(
@@ -93,7 +93,7 @@ ARGV=(
   -no-user-config
   -machine 'type=virt,acpi=off,accel=hvf'
   -cpu max
-  -smp "$CPU"
+  -smp "$CPUS"
   -m "${MEM:-"size=1G"}"
 )
 
