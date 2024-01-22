@@ -21,6 +21,7 @@
 + Rclone.Rclone
 + SoftwareFreedomConservancy.QEMU
 + UniversalCtags.Ctags
++ bootandy.dust
 + dandavison.delta
 + dundee.gdu
 + eza-community.eza
