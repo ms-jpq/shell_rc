@@ -14,7 +14,8 @@ while (($#)); do
     shift -- 2
     ;;
   --)
-    shift -- 1
+    TTL="$2"
+    shift -- 2
     break
     ;;
   *)
@@ -23,7 +24,6 @@ while (($#)); do
   esac
 done
 
-TTL="$1"
 NOW="${EPOCHREALTIME%%.*}"
 END=$((TTL * 60 + NOW))
 
