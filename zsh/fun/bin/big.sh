@@ -28,11 +28,6 @@ if ! [[ -v FONT ]]; then
   FONT="${FONTS[$((RANDOM % ${#FONTS[@]}))]}"
 fi
 
-if [[ -v SHOW_FONT ]]; then
-  printf -- '%s' "$FONT"
-  exit
-fi
-
 COLS=$(tput -- cols)
 
 ARGS=(

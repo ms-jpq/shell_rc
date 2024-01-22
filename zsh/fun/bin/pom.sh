@@ -27,8 +27,24 @@ TTL="$1"
 NOW="${EPOCHREALTIME%%.*}"
 END=$((TTL * 60 + NOW))
 
+# Legible fonts
+_=(
+  big
+  doom
+  epic
+  larry3d
+  nancyj
+  ogre
+  pawp
+  puffy
+  rounded
+  starwars
+  tinker-toy
+)
+
 if ! [[ -v FONT ]]; then
-  FONT="$(SHOW_FONT=1 "${0%/*}/big")"
+  FONTS=("$(figlet -I 2)"/**.flf)
+  FONT="$(printf -- '%s\0' "${FONTS[@]}" | fzf --read0)"
 fi
 CLS="$(clear)"
 
@@ -73,15 +89,11 @@ while true; do
   fi
 done
 
-notify() {
-  if command -v -- osascript &>/dev/null; then
-    osascript -e 'display notification "🍅🍅🍅" with title "🥫" sound name "Frog"'
+while true; do
+  if command -v -- say &>/dev/null; then
+    say <<<"${*:-"好好学习，天天向上"}"
   else
     :
   fi
-}
-
-while true; do
-  notify
   sleep -- 1
 done
