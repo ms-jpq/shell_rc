@@ -50,7 +50,7 @@ else
     exec -- "${EXECUTE[@]}"
     ;;
   *)
-    exit 1
+    exit 130
     ;;
   esac
 fi
