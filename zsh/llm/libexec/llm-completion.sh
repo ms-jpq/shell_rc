@@ -22,7 +22,15 @@ CURL=(
   -- 'https://api.openai.com/v1/chat/completions'
 )
 
-"${0%/*}/../libexec/hr.sh" '?' >&2
+hr() {
+  {
+    printf -- '\n'
+    "${0%/*}/../libexec/hr.sh" "$@"
+    printf -- '\n'
+  } >&2
+}
+
+hr '?'
 CODE="$(RECURSION=1 "${CURL[@]}")"
 
 if ((CODE != 200)); then
@@ -30,3 +38,5 @@ if ((CODE != 200)); then
 else
   jq --exit-status --raw-output '.choices[].message.content' <"$GPT_TMP" | $PAGER
 fi
+printf -- '\n' >&2
+hr '^'
