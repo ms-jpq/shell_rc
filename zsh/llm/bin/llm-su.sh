@@ -68,6 +68,7 @@ JQ2=(
 EXEC=("${0%/*}/../libexec/llm-completion.sh" "$GPT_TMP")
 TEEF=(tee --)
 if [[ -v TEE ]]; then
+  EXEC+=("$TEE/$GPT_LVL.rx.md")
   TEEF+=("$TEE/$GPT_LVL.tx.txt")
 
   if ! ((GPT_LVL)); then
@@ -94,11 +95,7 @@ if [[ -t 1 ]]; then
 fi >&2
 
 QUERY="$("${JQ2[@]}")"
-if [[ -v TEE ]]; then
-  "${EXEC[@]}" <<<"$QUERY" | tee -- "$TEE/$GPT_LVL.rx.md"
-else
-  "${EXEC[@]}" <<<"$QUERY"
-fi
+"${EXEC[@]}" <<<"$QUERY"
 
 if [[ -t 0 ]]; then
   ((++GPT_LVL))
