@@ -14,7 +14,8 @@ GPT_TMP="${GPT_TMP:-"$(mktemp)"}"
 GPT_ROLE="${GPT_ROLE:-""}"
 export -- GPT_HISTORY GPT_TMP GPT_ROLE
 
-MODEL="$(<"${0%/*}/../libexec/model")"
+LIBEXEC="${0%/*}/../libexec"
+MODEL="$(<"$LIBEXEC/model")"
 
 while (($#)); do
   case "$1" in
@@ -37,7 +38,7 @@ while (($#)); do
 done
 
 hr() {
-  "${0%/*}/../libexec/hr.sh" "$@" >&2
+  "$LIBEXEC/hr.sh" "$@" >&2
 }
 
 # shellcheck disable=SC2016
@@ -58,7 +59,7 @@ JQ2=(
   '{ model: $model, messages: . }'
 )
 
-read -r -d '' -- INPUT
+INPUT="$("$LIBEXEC/llm-wrap.sh" "$0")"
 printf -- '\n'
 read -r -- LINE <<<"$INPUT"
 PRAGMA="$(tr -d ' ' <<<"$LINE")"
@@ -96,6 +97,6 @@ hr
 printf -v JQHIST -- '%q ' jq '.' "$GPT_HISTORY"
 printf -- '%s\n%s\n' "$JQHIST" "> $GPT_ROLE:" >&2
 
-"${0%/*}/../libexec/llm-completion.sh" "$GPT_TMP" <<<"$QUERY"
+"$LIBEXEC/llm-completion.sh" "$GPT_TMP" <<<"$QUERY"
 
 exec -- "$0" "${ARGV[@]}"

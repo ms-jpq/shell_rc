@@ -14,7 +14,8 @@ GPT_TMP="${GPT_TMP:-"$(mktemp)"}"
 GPT_LVL="${GPT_LVL:-0}"
 export -- GPT_HISTORY GPT_TMP GPT_LVL
 
-MODEL="$(<"${0%/*}/../libexec/model")"
+LIBEXEC="${0%/*}/../libexec"
+MODEL="$(<"$LIBEXEC/model")"
 
 PROMPTS=()
 while (($#)); do
@@ -65,7 +66,7 @@ JQ2=(
   '{ model: $model, messages: . }'
   "$GPT_HISTORY"
 )
-EXEC=("${0%/*}/../libexec/llm-completion.sh" "$GPT_TMP")
+EXEC=("$LIBEXEC/llm-completion.sh" "$GPT_TMP")
 TEEF=(tee --)
 if [[ -v TEE ]]; then
   EXEC+=("$TEE/$GPT_LVL.rx.md")
@@ -83,7 +84,7 @@ if ! [[ -s "$GPT_HISTORY" ]]; then
 fi
 
 if [[ -t 0 ]]; then
-  read -r -d '' -- INPUT
+  INPUT="$("$LIBEXEC/llm-wrap.sh" "$0")"
   "${TEEF[@]}" <<<"$INPUT" | "${JQ1[@]}" user
 else
   "${TEEF[@]}" | "${JQ1[@]}" user
@@ -95,7 +96,7 @@ if [[ -t 1 ]]; then
 fi >&2
 
 QUERY="$("${JQ2[@]}")"
-"${0%/*}/../libexec/hr.sh" >&2
+"$LIBEXEC/hr.sh" >&2
 "${EXEC[@]}" <<<"$QUERY"
 
 if [[ -t 0 ]]; then
