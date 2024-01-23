@@ -37,8 +37,7 @@ while (($#)); do
 done
 
 hr() {
-  # shellcheck disable=SC2154
-  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" "$@" >&2
+  "${0%/*}/../libexec/hr.sh" "$@" >&2
 }
 
 # shellcheck disable=SC2016
