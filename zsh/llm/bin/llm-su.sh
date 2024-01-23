@@ -95,6 +95,7 @@ if [[ -t 1 ]]; then
 fi >&2
 
 QUERY="$("${JQ2[@]}")"
+"${0%/*}/../libexec/hr.sh" >&2
 "${EXEC[@]}" <<<"$QUERY"
 
 if [[ -t 0 ]]; then
