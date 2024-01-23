@@ -2,8 +2,8 @@
 
 set -o pipefail
 
-OPTS='x:,m:,a:,b:,c:,h:,t:'
-LONG_OPTS='method:,mime:,auth:,bearer:,cookie:,header:,tee:'
+OPTS='x:,m:,a:,b:,c:,h:,p:'
+LONG_OPTS='method:,mime:,auth:,bearer:,cookie:,header:,pager:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
@@ -11,7 +11,7 @@ AV=("$@")
 
 MIME='application/json'
 CURL=()
-TEE=(cat)
+PAGER=(cat)
 while (($#)); do
   case "$1" in
   -x | --method)
@@ -38,9 +38,9 @@ while (($#)); do
     CURL+=(--header "Authorization: $2")
     shift -- 2
     ;;
-  -t | --tee)
+  -p | --pager)
     # shellcheck disable=SC2206
-    TEE=($2)
+    PAGER=($2)
     shift -- 2
     ;;
   --)
@@ -68,6 +68,6 @@ printf -- '\n'
 printf -- '%q ' "${ARGV[@]}"
 printf -- '\n'
 
-printf -- '%s' "${BODY[@]}" | "${ARGV[@]}" | "${TEE[@]}"
+printf -- '%s' "${BODY[@]}" | "${ARGV[@]}" | "${PAGER[@]}"
 printf -- '\n'
 exec -- "$0" "${AV[@]}"
