@@ -38,36 +38,42 @@ ZSH+=(./zsh/aposteriori.{zs,sh} "${SH[@]}" "$FZF"/*.zsh)
 ZACC=("$(cat -- "${ZSH[@]}")")
 BACC=("$(cat -- "${BSH[@]}")")
 
-for BIN in ./zsh/*/bin/*; do
-  B="${BIN##*/}"
-  B="${B%%.*}"
-  # shellcheck disable=SC2016
-  BS='"$XDG_CONFIG_HOME/zsh/bin/"'"$B"' "$@"'
+for DIR in "${DIRS[@]}"; do
+  for BIN in "$DIR/bin"/*; do
+    B="${BIN##*/}"
+    B="${B%%.*}"
+    # shellcheck disable=SC2016
+    BS='"$XDG_CONFIG_HOME/zsh/bin/"'"$B"' "$@"'
 
-  ZACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$B\"")
-  BACC+=("$B() {" "$BS" '}')
-  printf -- '%s\n' "$BS" >"$FUNC/$B"
-  cp -f -- "$BIN" "$BINS/$B"
+    ZACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$B\"")
+    BACC+=("$B() {" "$BS" '}')
+    printf -- '%s\n' "$BS" >"$FUNC/$B"
+    cp -f -- "$BIN" "$BINS/$B"
+  done
 done
 
-for BIN in ./zsh/*/libexec/*; do
-  B="${BIN##*/}"
-  cp -f -- "$BIN" "$BLIB/$B"
+for DIR in "${DIRS[@]}"; do
+  for BIN in "$DIR/libexec"/*; do
+    B="${BIN##*/}"
+    cp -f -- "$BIN" "$BLIB/$B"
+  done
 done
 
-for FN in ./zsh/*/fn/*.sh; do
-  F="${FN%.sh}"
-  F="${F##*/}"
-  ZACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$F\"")
-  cp -f -- "$FN" "$FUNC/${F##*/}"
+for DIR in "${DIRS[@]}"; do
+  for FN in "$DIR/fn"/*.sh; do
+    F="${FN%.sh}"
+    F="${F##*/}"
+    ZACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$F\"")
+    cp -f -- "$FN" "$FUNC/${F##*/}"
 
-  PAT="$F() {"
-  FF="$(<"$FN")"
-  if /usr/bin/grep -F -- "$PAT" "$FN" >/dev/null; then
-    BACC+=("$FF")
-  else
-    BACC+=("$PAT" "$FF" '}')
-  fi
+    PAT="$F() {"
+    FF="$(<"$FN")"
+    if /usr/bin/grep -F -- "$PAT" "$FN" >/dev/null; then
+      BACC+=("$FF")
+    else
+      BACC+=("$PAT" "$FF" '}')
+    fi
+  done
 done
 
 printf -- '%s\n' "${ZACC[@]}" >"$OUT/.zshrc"
