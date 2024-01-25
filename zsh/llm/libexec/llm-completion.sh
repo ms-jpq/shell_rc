@@ -4,7 +4,6 @@ set -o pipefail
 
 GPT_TMP="$1"
 TEE="${2:-"/dev/null"}"
-printf -v PAGER -- '%q ' glow --style light
 
 CURL=(
   "${0%/*}/../bin/llm"
@@ -28,7 +27,7 @@ CODE="$(RECURSION=1 "${CURL[@]}")"
 if ((CODE != 200)); then
   jq <"$GPT_TMP" || cat -- "$GPT_TMP"
 else
-  jq --exit-status --raw-output '.choices[].message.content' <"$GPT_TMP" | tee -- "$TEE" | $PAGER
+  jq --exit-status --raw-output '.choices[].message.content' <"$GPT_TMP" | tee -- "$TEE" | glow
 fi
 printf -- '\n' >&2
 hr '^'
