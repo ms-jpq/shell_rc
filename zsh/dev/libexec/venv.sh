@@ -52,16 +52,17 @@ def _argv() -> Iterator[str | Path]:
 argv = tuple(_argv())
 print(*map(lambda s: quote(normcase(s)), argv), file=stderr)
 
-execl(
-    executable,
-    executable,
-    "-m",
-    "pip",
-    "install",
-    "--upgrade",
-    "--require-virtualenv",
-    *argv,
-)
+if len(argv) > 1:
+    execl(
+        executable,
+        executable,
+        "-m",
+        "pip",
+        "install",
+        "--upgrade",
+        "--require-virtualenv",
+        *argv,
+    )
 PYTHON
 
 case "$OP" in
