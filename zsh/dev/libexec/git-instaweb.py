@@ -54,8 +54,7 @@ class _Handler(CGIHTTPRequestHandler):
             _rewrite(self)
             super().do_POST()
 
-    def log_message(self, format: str, *args: Any) -> None:
-        ...
+    def log_message(self, format: str, *args: Any) -> None: ...
 
 
 class _Server(ThreadingHTTPServer):
