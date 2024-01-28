@@ -20,6 +20,7 @@
 + cowsay
 + dstat
 + duf
++ entr
 + fd-find
 + figlet
 + git
