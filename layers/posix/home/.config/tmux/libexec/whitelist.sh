@@ -23,7 +23,7 @@ esac
 
 # shellcheck disable=SC2154
 case "$*" in
-*"$XDG_CONFIG_HOME/zsh/bin/llm-q" | *asciiquarium)
+*llm-su.sh | *asciiquarium)
   exit
   ;;
 *"$HOME/.local/opt/pipes.sh/pipes.sh"* | *"$XDG_CONFIG_HOME/zsh/bin/pom"* | *"$XDG_CONFIG_HOME/zsh/bin/mq"* | *"$XDG_CONFIG_HOME/zsh/bin/rq"*)
