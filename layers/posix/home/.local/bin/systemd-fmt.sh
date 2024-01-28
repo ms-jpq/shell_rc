@@ -69,42 +69,40 @@ fmt() {
 }
 
 if [[ "${SYSTEMD_FMT_MODE:-""}" == 'stream' ]]; then
-  declare -A -- SEEN=()
+  FILE="$*"
   TMP="$(mktemp)"
-
-  while read -r -d '' -- FILE; do
-    if [[ -L "$FILE" ]]; then
-      FILE="$(realpath -- "$FILE")"
-    fi
-    if [[ -v SEEN["$FILE"] ]]; then
-      continue
-    fi
-    SEEN["$FILE"]=1
-
-    printf -- '%q\n' "$FILE" >&2
-    SYSTEMD_FMT_MODE='' fmt <"$FILE" >"$TMP"
-    mv -f -- "$TMP" "$FILE"
-  done
+  printf -- '%q\n' "$FILE" >&2
+  fmt <"$FILE" >"$TMP"
+  mv -f -- "$TMP" "$FILE"
 elif (($#)); then
   readarray -t -- IS <<<"${SYSTEMD_FMT_IGNORE:-""}"
-  declare -A -- IGNORE=()
+
+  declare -A -- SEEN=()
   for I in "${IS[@]}"; do
     if [[ -n "$I" ]]; then
-      IGNORE["$I"]=1
+      I="$(realpath -- "$I")"
+      SEEN["$I"]=1
     fi
   done
+
+  unseen() {
+    local F="$*"
+    F="$(realpath -- "$F")"
+    if [[ -f "$F" ]] && [[ -z "${SEEN["$F"]:-""}" ]]; then
+      SEEN["$F"]=1
+      printf -- '%s\0' "$F"
+    fi
+  }
 
   for FILE in "$@"; do
     if [[ -d "$FILE" ]]; then
       for F in "$FILE"/**/{*.link,*.netdev,*.network,*.socket,*.service,*.target,*.mount,*.automount,*.dnssd,*/*.network.d/*.conf,*/repart.d/*.conf,*/systemd/**/*.conf}; do
-        if [[ -f "$F" ]] && [[ -z "${IGNORE["$F"]:-""}" ]]; then
-          printf -- '%s\0' "$F"
-        fi
+        unseen "$F"
       done
     else
-      printf -- '%s\0' "$FILE"
+      unseen "$FILE"
     fi
-  done | SYSTEMD_FMT_MODE='stream' "$0"
+  done | SYSTEMD_FMT_MODE='stream' xargs -0 -n 1 -P 0 -- "$0"
 elif [[ -t 0 ]]; then
   exec -- "$0" .
 else
