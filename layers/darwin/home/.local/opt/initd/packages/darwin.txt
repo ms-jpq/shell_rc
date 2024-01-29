@@ -4,6 +4,7 @@
 + asciiquarium
 + autossh
 + awk
++ b3sum
 + bandwhich
 + bash
 + bat
