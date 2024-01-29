@@ -54,7 +54,7 @@ class _Stats:
 def _path() -> Path:
     mux, _, _ = environ["TMUX"].partition(",")
     p = (
-        Path(environ.get("XDG_RUNTIME_DIR", gettempdir()))
+        Path(environ.get("TMUX_TMPDIR", gettempdir()))
         / "tmux-status-line"
         / quote(mux, safe="")
     )
