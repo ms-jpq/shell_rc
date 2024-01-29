@@ -73,10 +73,16 @@ if (("${#RM[@]}")); then
     sudo -- apt-get autoremove --yes
     ;;
   msys)
+    WINGET=(
+      winget uninstall
+      --disable-interactivity
+      --accept-source-agreements
+      --id
+    )
     for DEL in "${RM[@]}"; do
       printf -- '%s%q\n' '> --id ' "$DEL" >&2
-      winget uninstall --disable-interactivity --accept-source-agreements --id "$DEL"
-    done
+      printf -- '%s\0' "$DEL"
+    done | xargs --null --max-args 1 -- "${WINGET[@]}"
     ;;
   *)
     exit 1
@@ -109,8 +115,8 @@ if (("${#ADD[@]}")); then
     )
     for A in "${ADD[@]}"; do
       printf -- '%s%q\n' '> --id ' "$A" >&2
-      "${WINGET[@]}" "$A"
-    done
+      printf -- '%s\0' "$A"
+    done | xargs --null --max-args 1 -- "${WINGET[@]}"
     ;;
   *)
     exit 1
