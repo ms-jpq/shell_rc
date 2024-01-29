@@ -2,6 +2,4 @@
 
 set -o pipefail
 
-B2="$(b2sum --binary --length 64 -- "$@")"
-B2="${B2% *}"
-exec -- perl -CASD -wpe 's/(.{4})(?=.)/$1:/g' <<<"$B2"
+b3sum --no-names --length 8 -- "$@" | perl -CASD -wpe 's/(.{4})(?=.)/$1:/g'
