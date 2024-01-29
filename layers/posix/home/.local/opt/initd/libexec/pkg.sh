@@ -91,6 +91,7 @@ if (("${#ADD[@]}")); then
     brew update
     brew upgrade
     brew install --formula -- "${ADD[@]}"
+    brew cleanup
     ;;
   linux*)
     sudo -- apt-get update
