@@ -19,6 +19,7 @@
 + cmatrix
 + colorized-logs
 + cowsay
++ dialog
 + dstat
 + duf
 + entr
