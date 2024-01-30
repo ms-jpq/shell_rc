@@ -16,6 +16,7 @@
 + cowsay
 + curl
 + dash
++ dialog
 + diffutils
 + duf
 + dust
