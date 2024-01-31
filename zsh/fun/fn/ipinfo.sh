@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- bash
 
 ipinfo() {
-  local -- ip
-  ip="$(curl --fail-with-body --no-progress-meter -- 'https://ipinfo.io')"
-  jq --sort-keys <<<"$ip"
+  # shellcheck disable=SC2312
+  curl --fail-with-body --no-progress-meter -- 'https://ipinfo.io' | jq --sort-keys
+  curl -6 --fail-with-body --no-progress-meter -- 'https://ifconfig.co'
 }
