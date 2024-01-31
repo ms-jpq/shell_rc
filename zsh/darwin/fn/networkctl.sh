@@ -1,3 +1,4 @@
 #!/usr/bin/env -S -- bash
 
-scutil --nwi "$@"
+networksetup -listallhardwareports
+scutil --nwi
