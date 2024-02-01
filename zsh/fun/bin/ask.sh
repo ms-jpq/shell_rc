@@ -25,6 +25,7 @@ elif ! [[ -v FZF_PREVIEW_LINES ]]; then
   CURL=(
     curl
     --fail-with-body
+    --connect-timeout 6
     --no-progress-meter
   )
   for HEADER in "${HEADERS[@]}"; do
