@@ -32,6 +32,6 @@ $1: | $(GIT_TMP)
 endef
 
 
-GIT_REPOS := $(shell tr -s ' ' '!' <<<'$(GIT_REPOS)')
+GIT_REPOS := $(shell tr -s -- ' ' '!' <<<'$(GIT_REPOS)')
 
 $(call META_2D,GIT_REPOS,GIT_TEMPLATE)

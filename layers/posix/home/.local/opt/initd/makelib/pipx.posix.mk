@@ -52,6 +52,6 @@ tldr                  tldr
 
 endef
 
-PIP_PKGS := $(shell tr -s ' ' '!' <<<'$(PIP_PKGS)')
+PIP_PKGS := $(shell tr -s -- ' ' '!' <<<'$(PIP_PKGS)')
 
 $(call META_2D,PIP_PKGS,PIPX_TEMPLATE)

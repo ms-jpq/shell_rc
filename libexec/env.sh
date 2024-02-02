@@ -22,7 +22,7 @@ darwin*)
 msys)
   trim() {
     local -- v
-    v="$(tr --delete '\r' | tr --delete $'\n')"
+    v="$(tr --delete -- '\r' | tr --delete -- '\n')"
     v="${v#* }"
     v="${v##+([[:space:]])}"
     v="${v%%+([[:space:]])}"
