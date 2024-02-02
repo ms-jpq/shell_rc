@@ -88,7 +88,7 @@ define CURL_DEBS
 endef
 
 
-CURL_ARCHIVES := $(shell tr -s ' ' '!' <<<'$(CURL_ARCHIVES)')
-CURL_DEBS := $(shell tr -s ' ' '!' <<<'$(CURL_DEBS)')
+CURL_ARCHIVES := $(shell tr -s -- ' ' '!' <<<'$(CURL_ARCHIVES)')
+CURL_DEBS := $(shell tr -s -- ' ' '!' <<<'$(CURL_DEBS)')
 $(call META_2D,CURL_ARCHIVES,ARCHIVE_TEMPLATE)
 $(call META_2D,CURL_DEBS,DEB_TEMPLATE)

@@ -34,5 +34,5 @@ xsv.exe                                                     https://github.com/B
 endef
 
 
-CURL_ARCHIVES := $(shell tr -s ' ' '!' <<<'$(CURL_ARCHIVES)')
+CURL_ARCHIVES := $(shell tr -s -- ' ' '!' <<<'$(CURL_ARCHIVES)')
 $(call META_2D,CURL_ARCHIVES,ARCHIVE_TEMPLATE)

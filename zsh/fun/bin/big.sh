@@ -44,7 +44,7 @@ fi
 
 TEXT="${TEXT:-BIGLY}"
 LINES="$(figlet "${ARGS[@]}" <<<"$TEXT")"
-DEL="$(tr -d '[:space:]' <<<"$LINES")"
+DEL="$(tr -d -- '[:space:]' <<<"$LINES")"
 
 if [[ -z "$DEL" ]]; then
   exec -- "$0" "$@"
