@@ -25,6 +25,7 @@
 + entr
 + fd-find
 + figlet
++ gettext-base
 + git
 + glow
 + grep
