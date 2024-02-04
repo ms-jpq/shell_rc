@@ -42,6 +42,10 @@ ADD=()
 RM=()
 
 for LINE in "${DESIRED[@]}"; do
+  if [[ -z "$LINE" ]]; then
+    continue
+  fi
+
   ACTION="${LINE%% *}"
   PKG="${LINE#* }"
 
