@@ -1,11 +1,4 @@
 #!/usr/bin/env -S -- bash
 
-# shellcheck disable=SC2046
-dun() {
-  local ps
-  # shellcheck disable=SC2207
-  ps=($(docker ps --all --quiet))
-  if [[ -n "${ps[*]}" ]]; then
-    docker rm --force -- "${ps[@]}"
-  fi
-}
+# shellcheck disable=SC2312
+docker ps --all --quiet | xargs -- docker rm --force --
