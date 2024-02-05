@@ -30,5 +30,7 @@
 + jqlang.jq
 + junegunn.fzf
 + muesli.duf
++ sharkdp.bat
 + sharkdp.fd
 + sharkdp.hyperfine
++ sharkdp.pastel
