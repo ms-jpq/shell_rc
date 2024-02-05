@@ -53,6 +53,7 @@ V_GOJQ    := $(shell $(GH_LATEST) itchyny/gojq)
 V_JLESS   =  $(shell $(GH_LATEST) PaulJuliusMartinez/jless)
 V_LAZYGIT =  $(patsubst v%,%,$(shell $(GH_LATEST) jesseduffield/lazygit))
 V_PASTEL  =  $(patsubst v%,%,$(shell $(GH_LATEST) sharkdp/pastel))
+V_S5CMD   =  $(patsubst v%,%,$(shell $(GH_LATEST) peak/s5cmd))
 V_TV      =  $(shell $(GH_LATEST) alexhallam/tv)
 V_WATCHEX =  $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
 V_XSV     =  $(shell $(GH_LATEST) BurntSushi/xsv)
@@ -81,6 +82,7 @@ define CURL_DEBS
 /usr/bin/btm                                https://github.com/ClementTsang/bottom/releases/latest/download/bottom_$(V_BTM)_$(GOARCH).deb
 /usr/bin/delta                              https://github.com/dandavison/delta/releases/latest/download/git-delta_$(V_DELTA)_$(GOARCH).deb
 /usr/bin/pastel                             https://github.com/sharkdp/pastel/releases/latest/download/pastel_$(V_PASTEL)_$(GOARCH).deb
+/usr/bin/s5cmd                              https://github.com/peak/s5cmd/releases/latest/download/s5cmd_$(V_S5CMD)_linux_$(GOARCH).deb
 /usr/bin/tidy-viewer                        **https://github.com/alexhallam/tv/releases/latest/download/tidy-viewer_$(V_TV)_$(GOARCH).deb
 /usr/bin/watchexec                          https://github.com/watchexec/watchexec/releases/latest/download/watchexec-$(V_WATCHEX)-$(HOSTTYPE)-unknown-linux-gnu.deb
 /usr/local/bin/sad                          https://github.com/ms-jpq/sad/releases/latest/download/$(HOSTTYPE)-unknown-linux-gnu.deb

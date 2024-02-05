@@ -70,6 +70,7 @@
 + openvpn
 + pandoc
 + pastel
++ peak/tap/s5cmd
 + pinentry-mac
 + progress
 + pstree

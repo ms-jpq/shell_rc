@@ -47,7 +47,6 @@ ast-grep-cli          ast-grep-cli
 gay                   gay
 graphtage             graphtage
 markdown-live-preview markdown_live_preview
-s3cmd                 s3cmd
 sortd                 sortd
 tldr                  tldr
 
