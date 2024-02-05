@@ -14,6 +14,7 @@ endef
 V_BAT     := $(shell $(GH_LATEST) sharkdp/bat)
 V_DUST    := $(shell $(GH_LATEST) bootandy/dust)
 V_PASTEL  := $(shell $(GH_LATEST) sharkdp/pastel)
+V_S5CMD   =  $(patsubst v%,%,$(shell $(GH_LATEST) peak/s5cmd))
 V_WATCHEX := $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
 V_XSV     =  $(shell $(GH_LATEST) BurntSushi/xsv)
 
@@ -26,6 +27,7 @@ gitui.exe                                                   https://github.com/e
 gping.exe                                                   https://github.com/orf/gping/releases/latest/download/gping-Windows-x86_64.zip
 htmlq.exe                                                   https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-windows.zip
 pastel-$(V_PASTEL)-x86_64-pc-windows-msvc/pastel.exe        https://github.com/sharkdp/pastel/releases/latest/download/pastel-$(V_PASTEL)-x86_64-pc-windows-msvc.zip
+s5cmd.exe                                                   https://github.com/ms-jpq/sad/releases/latest/download/$(HOSTTYPE)_Windows-64bit.zip
 sad.exe                                                     https://github.com/ms-jpq/sad/releases/latest/download/x86_64-pc-windows-msvc.zip
 tokei-x86_64-pc-windows-msvc.exe                            https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-x86_64-pc-windows-msvc.exe
 watchexec-$(V_WATCHEX)-x86_64-pc-windows-msvc/watchexec.exe https://github.com/watchexec/watchexec/releases/latest/download/watchexec-$(V_WATCHEX)-x86_64-pc-windows-msvc.zip
