@@ -28,6 +28,7 @@ export -- FZF_DEFAULT_OPTS
 _fzf_default_command=(
   fd
   --hidden
+  --no-ignore-parent
   # --follow
   --type file
 )
@@ -39,6 +40,7 @@ _fzf_alt_c_command=(
   command -- fd
   --print0
   --hidden
+  --no-ignore-parent
   # --follow
   --type directory
 )
@@ -50,6 +52,7 @@ _fzf_ctrl_t_command=(
   command -- fd
   --print0
   --hidden
+  --no-ignore-parent
   # --follow
 )
 # shellcheck disable=SC2034
@@ -73,6 +76,7 @@ _fzf_compgen_path() {
   local -- local_opts=(
     command -- fd
     --hidden
+    --no-ignore-parent
     # --follow
     --type directory
     --type file
@@ -84,6 +88,7 @@ _fzf_compgen_dir() {
   local -- local_opts=(
     command -- fd
     --hidden
+    --no-ignore-parent
     # --follow
     --type directory
   )
