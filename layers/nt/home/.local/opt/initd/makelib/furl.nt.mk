@@ -11,7 +11,6 @@ curl: $(BIN)/$(notdir $1)
 endef
 
 
-V_DUST    := $(shell $(GH_LATEST) bootandy/dust)
 V_S5CMD   =  $(patsubst v%,%,$(shell $(GH_LATEST) peak/s5cmd))
 V_WATCHEX := $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
 V_XSV     =  $(shell $(GH_LATEST) BurntSushi/xsv)
@@ -19,13 +18,11 @@ V_XSV     =  $(shell $(GH_LATEST) BurntSushi/xsv)
 
 define CURL_ARCHIVES
 
-dust-$(V_DUST)-x86_64-pc-windows-msvc/dust.exe              https://github.com/bootandy/dust/releases/latest/download/dust-$(V_DUST)-x86_64-pc-windows-msvc.zip
 gitui.exe                                                   https://github.com/extrawurst/gitui/releases/latest/download/gitui-win.tar.gz
 gping.exe                                                   https://github.com/orf/gping/releases/latest/download/gping-Windows-x86_64.zip
 htmlq.exe                                                   https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-windows.zip
 s5cmd.exe                                                   https://github.com/ms-jpq/sad/releases/latest/download/$(HOSTTYPE)_Windows-64bit.zip
 sad.exe                                                     https://github.com/ms-jpq/sad/releases/latest/download/x86_64-pc-windows-msvc.zip
-tokei-x86_64-pc-windows-msvc.exe                            https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-x86_64-pc-windows-msvc.exe
 watchexec-$(V_WATCHEX)-x86_64-pc-windows-msvc/watchexec.exe https://github.com/watchexec/watchexec/releases/latest/download/watchexec-$(V_WATCHEX)-x86_64-pc-windows-msvc.zip
 xsv.exe                                                     https://github.com/BurntSushi/xsv/releases/latest/download/xsv-$(V_XSV)-x86_64-pc-windows-msvc.zip
 
