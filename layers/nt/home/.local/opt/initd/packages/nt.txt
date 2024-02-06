@@ -23,7 +23,6 @@
 + UniversalCtags.Ctags
 + XAMPPRocky.Tokei
 + bootandy.dust
-+ bootandy.dust
 + dandavison.delta
 + dundee.gdu
 + eza-community.eza
