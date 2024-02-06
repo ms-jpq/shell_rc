@@ -31,8 +31,17 @@ export -- PYDEPS
 	npm install --upgrade --no-package-lock
 
 
+ifeq ($(HOSTTYPE), aarch64)
+S5_TYPE := $(GOARCH)
+else
+S5_TYPE := 64bit
+endif
+
+V_S5CMD      = $(patsubst v%,%,$(shell ./libexec/gh-latest.sh $(VAR) peak/s5cmd))
 V_SHELLCHECK = $(shell ./libexec/gh-latest.sh $(TMP) koalaman/shellcheck)
 V_SHFMT      = $(shell ./libexec/gh-latest.sh $(TMP) mvdan/sh)
+
+S5_OS        = $(shell perl -CASD -wpe 's/([a-z])/\u$$1/;s/Darwin/macOS/' <<<'$(OS)')
 HADO_OS      = $(shell perl -CASD -wpe 's/([a-z])/\u$$1/' <<<'$(OS)')
 
 $(VAR)/bin/shellcheck: | $(VAR)/bin
@@ -48,4 +57,9 @@ $(VAR)/bin/hadolint: | $(VAR)/bin
 $(VAR)/bin/shfmt: | $(VAR)/bin
 	URI='https://github.com/mvdan/sh/releases/latest/download/shfmt_$(V_SHFMT)_$(OS)_$(GOARCH)'
 	$(CURL) --output '$@' -- "$$URI"
+	chmod +x '$@'
+
+$(VAR)/bin/s5cmd: | $(VAR)/bin
+	URI='https://github.com/peak/s5cmd/releases/latest/download/s5cmd_$(V_S5CMD)_$(S5_OS)-$(S5_TYPE).tar.gz'
+	$(CURL) -- "$$URI" | tar --extract --gz --file - --directory '$(VAR)/bin'
 	chmod +x '$@'
