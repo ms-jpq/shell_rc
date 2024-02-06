@@ -51,15 +51,15 @@ push)
     fi
   done
   gpg -v --batch --yes --encrypt-files -- "${SECRETS[@]}"
+
   for F in "${SECRETS[@]}"; do
     F="$F.gpg"
     NAME="$(jq --raw-input --raw-output '@uri' <<<"~${F#"$TMP"}")"
     mv -v -- "$F" "$TMP/$NAME"
   done
-
   rm -v -fr -- "${TMP:?}"/*/ "${TMP:?}"/!(*.gpg)
-  gpg -v --export-secret-keys --export-options export-backup | gpg -v --batch --encrypt --output "$GPG"
 
+  gpg -v --export-secret-keys --export-options export-backup | gpg -v --batch --encrypt --output "$GPG"
   "$S5" sync --delete -- "$TMP/" "$BUCKET"
   ;;
 pull)
@@ -67,6 +67,7 @@ pull)
   "$S5" cp -- "$BUCKET/*" "$TMP"
   FILES=("$TMP"/~*.gpg)
   gpg -v --batch --decrypt-files -- "${FILES[@]}"
+
   for F in "${FILES[@]}"; do
     F="${F%.gpg}"
     F2="${F#"$TMP/"}"
@@ -74,6 +75,7 @@ pull)
     NAME="${NAME//'%2F'/'/'}"
     mv -v -f -- "$F" "$NAME"
   done
+
   gpg -v --batch --decrypt -- "$GPG" | gpg -v --import
   ;;
 rmfr)
