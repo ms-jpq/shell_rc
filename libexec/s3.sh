@@ -31,14 +31,16 @@ case "${1:-""}" in
   ;;
 push)
   FILES=(
-    "$HOME/.ssh"
-    "$HOME/.local/share/ssh"
-    "$HOME/.local/share/it2"
+    "$HOME/.config/aws/credentials"
+    "$HOME/.local/share/it2/"
+    "$HOME/.local/share/ssh/"
+    "$HOME/.netrc"
+    "$HOME/.ssh/"
   )
 
   dir
   for F in "${FILES[@]}"; do
-    "${RSY[@]}" -- "$F/" "$TMP/${F#"$HOME"}"
+    "${RSY[@]}" -- "$F" "$TMP/${F#"$HOME"}"
   done
   gpg -v --armor --export-secret-keys --export-options export-backup --output "$TMP/$GNUPG"
 
@@ -69,7 +71,7 @@ pull)
     NAME="${NAME//'%2F'/'/'}"
     mv -v -f -- "$F" "$NAME"
   done
-  gpg --import -- "$HOME/$GNUPG"
+  gpg -v --import -- "$HOME/$GNUPG"
   ;;
 rmfr)
   read -r -p '>>> (yes/no)?' -- DIE

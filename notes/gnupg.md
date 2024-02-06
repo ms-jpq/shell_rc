@@ -74,7 +74,7 @@ git config --global user.signingkey '<subkey>'!
 
 ```bash
 # All keys
-gpg --armor --export-secret-keys --export-options export-backup -- '<id>' | gpg --import
+gpg --armor --export-secret-keys --export-options export-backup -- '<id>' | gpg -v --import
 # Excluding primary key
 gpg --armor --export-secret-subkeys -- '<id>'!
 # Excluding private (sub*)keys
