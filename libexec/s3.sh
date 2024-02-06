@@ -58,6 +58,7 @@ push)
   done
   rm -v -fr -- "${TMP:?}"/*/ "${TMP:?}"/!(*.gpg)
 
+  bw export --format json --raw | gpg -v --encrypt --output "$TMP/bitwarden.json.gpg"
   gpg -v --export-secret-keys --export-options export-backup | gpg -v --batch --encrypt --output "$GPG"
   "$S5" sync --delete -- "$TMP/" "$BUCKET"
   ;;
