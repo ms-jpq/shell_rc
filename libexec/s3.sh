@@ -6,12 +6,13 @@ cd -- "${0%/*}/.."
 
 BUCKET='s3://chumbucket-home'
 S5="$PWD/var/bin/s5cmd"
-TMP="$PWD/var/gpg"
-GNUPG='.config/gnupg/backup.asc'
+TMP="./var/gpg"
+GPG="$TMP/backup.gpg"
 
 dir() (
   rm -v -fr -- "$TMP"
-  mkdir -v -p -- "$TMP/${GNUPG%/*}"
+  mkdir -v -p -- "$TMP"
+  chmod -v g-rwx,o-rwx "$TMP"
 )
 
 RSY=(
@@ -42,7 +43,6 @@ push)
   for F in "${FILES[@]}"; do
     "${RSY[@]}" -- "$F" "$TMP/${F#"$HOME"}"
   done
-  gpg -v --armor --export-secret-keys --export-options export-backup --output "$TMP/$GNUPG"
 
   SECRETS=()
   for F in "$TMP"/**/*; do
@@ -56,13 +56,16 @@ push)
     NAME="$(jq --raw-input --raw-output '@uri' <<<"~${F#"$TMP"}")"
     mv -v -- "$F" "$TMP/$NAME"
   done
-  rm -v -fr -- "${TMP:?}"/*/
+
+  rm -v -fr -- "${TMP:?}"/*/ "${TMP:?}"/!(*.gpg)
+  gpg -v --export-secret-keys --export-options export-backup | gpg -v --batch --encrypt --output "$GPG"
+
   "$S5" sync --delete -- "$TMP/" "$BUCKET"
   ;;
 pull)
   dir
   "$S5" cp -- "$BUCKET/*" "$TMP"
-  FILES=("$TMP"/*.gpg)
+  FILES=("$TMP"/~*.gpg)
   gpg -v --batch --decrypt-files -- "${FILES[@]}"
   for F in "${FILES[@]}"; do
     F="${F%.gpg}"
@@ -71,7 +74,7 @@ pull)
     NAME="${NAME//'%2F'/'/'}"
     mv -v -f -- "$F" "$NAME"
   done
-  gpg -v --import -- "$HOME/$GNUPG"
+  gpg -v --batch --decrypt -- "$GPG" | gpg -v --import
   ;;
 rmfr)
   read -r -p '>>> (yes/no)?' -- DIE
