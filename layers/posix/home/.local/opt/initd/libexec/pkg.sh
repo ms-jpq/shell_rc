@@ -85,8 +85,8 @@ if (("${#RM[@]}")); then
     )
     for DEL in "${RM[@]}"; do
       printf -- '%s%q\n' '> --id ' "$DEL" >&2
-      printf -- '%s\0' "$DEL"
-    done | xargs --null --max-args 1 -- "${WINGET[@]}"
+      "${WINGET[@]}" "$DEL"
+    done
     ;;
   *)
     exit 1
@@ -121,8 +121,11 @@ if (("${#ADD[@]}")); then
     )
     for A in "${ADD[@]}"; do
       printf -- '%s%q\n' '> --id ' "$A" >&2
-      printf -- '%s\0' "$A"
-    done | xargs --null --max-args 1 -- "${WINGET[@]}"
+      if ! "${WINGET[@]}" "$A"; then
+        printf -- '%s%q\n' '!!! --id ' "$A" >&2
+        exit 1
+      fi
+    done
     ;;
   *)
     exit 1
