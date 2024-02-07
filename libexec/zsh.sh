@@ -7,6 +7,8 @@ OUT="$2"
 GIT="$3"
 shift -- 3
 
+BASE="${0%/*}/.."
+
 FUNC="$OUT/fn"
 BINS="$OUT/bin"
 BLIB="$OUT/libexec"
@@ -37,6 +39,10 @@ ZSH+=(./zsh/aposteriori.{zs,sh} "${SH[@]}" "$FZF"/*.zsh)
 
 ZACC=("$(cat -- "${ZSH[@]}")")
 BACC=("$(cat -- "${BSH[@]}")")
+
+S5=("$BASE/var/bin/s5cmd" --install-completion)
+ZACC+=("$(SHELL=zsh "${S5[@]}")")
+BACC+=("$(SHELL=bash "${S5[@]}")")
 
 for DIR in "${DIRS[@]}"; do
   for BIN in "$DIR/bin"/*; do
