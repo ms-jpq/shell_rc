@@ -98,8 +98,10 @@ if (("${#ADD[@]}")); then
   printf -- '%q\n' "${ADD[@]}"
   case "$OSTYPE" in
   darwin*)
-    brew update
-    brew upgrade
+    if ! [[ -v CI ]]; then
+      brew update
+      brew upgrade
+    fi
     brew install --formula -- "${ADD[@]}"
     brew cleanup
     ;;
