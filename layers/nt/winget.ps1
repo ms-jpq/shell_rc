@@ -29,8 +29,12 @@ if ($go) {
     $t_bundle = $bundle.browser_download_url | Split-Path -Leaf
     $t_license = $license.browser_download_url | Split-Path -Leaf
 
-    Invoke-WebRequest -Uri $bundle.browser_download_url -OutFile $t_bundle
-    Invoke-WebRequest -Uri $license.browser_download_url -OutFile $t_license
+    $curl = @('--fail-with-body', '--location', '--no-progress-meter', '--output')
+    & curl.exe @curl $t_license -- $license.browser_download_url
+    & curl.exe @curl $t_bundle -- $bundle.browser_download_url
+
+    # Invoke-WebRequest -Uri $license.browser_download_url -OutFile $t_license
+    # Invoke-WebRequest -Uri $bundle.browser_download_url -OutFile $t_bundle
 
     Add-AppxProvisionedPackage -Online -PackagePath $t_bundle -LicensePath $t_license
 
