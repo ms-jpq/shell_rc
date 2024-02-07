@@ -37,11 +37,17 @@ else
 S5_TYPE := 64bit
 endif
 
+ifeq ($(OSTYPE), msys)
+S5_EXT := zip
+else
+S5_EXT := tar.gz
+endif
+
 V_S5CMD      = $(patsubst v%,%,$(shell ./libexec/gh-latest.sh $(VAR) peak/s5cmd))
 V_SHELLCHECK = $(shell ./libexec/gh-latest.sh $(TMP) koalaman/shellcheck)
 V_SHFMT      = $(shell ./libexec/gh-latest.sh $(TMP) mvdan/sh)
 
-S5_OS        = $(shell perl -CASD -wpe 's/([a-z])/\u$$1/;s/Darwin/macOS/' <<<'$(OS)')
+S5_OS        = $(shell perl -CASD -wpe 's/([a-z])/\u$$1/;s/Darwin/macOS/;s/Msys/Windows/' <<<'$(OS)')
 HADO_OS      = $(shell perl -CASD -wpe 's/([a-z])/\u$$1/' <<<'$(OS)')
 
 $(VAR)/bin/shellcheck: | $(VAR)/bin
@@ -60,6 +66,15 @@ $(VAR)/bin/shfmt: | $(VAR)/bin
 	chmod +x '$@'
 
 $(VAR)/bin/s5cmd: | $(VAR)/bin
-	URI='https://github.com/peak/s5cmd/releases/latest/download/s5cmd_$(V_S5CMD)_$(S5_OS)-$(S5_TYPE).tar.gz'
-	$(CURL) -- "$$URI" | tar --extract --gz --file - --directory '$(VAR)/bin'
-	chmod +x '$@'
+	URI='https://github.com/peak/s5cmd/releases/latest/download/s5cmd_$(V_S5CMD)_$(S5_OS)-$(S5_TYPE).$(S5_EXT)'
+	case '$(OSTYPE)' in
+	msys)
+		$(CURL) --output '$(TMP)/s5cmd.zip' -- "$$URI"
+		unzip -o -d '$(VAR)/bin' '$(TMP)/s5cmd.zip'
+		chmod +x '$@.exe'
+		;;
+	*)
+		$(CURL) -- "$$URI" | tar --extract --gz --file - --directory '$(VAR)/bin'
+		chmod +x '$@'
+		;;
+	esac
