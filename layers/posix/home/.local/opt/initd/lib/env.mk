@@ -46,6 +46,13 @@ endif
 
 
 ifeq (nt, $(OS))
+OS_EXT := .exe
+else
+OS_EXT :=
+endif
+
+
+ifeq (nt, $(OS))
 PY_BIN := Scripts
 else
 PY_BIN := bin
