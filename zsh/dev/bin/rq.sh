@@ -11,8 +11,13 @@ case "$A0" in
 esac
 
 read -r -d '' -- SCRIPT
-printf -- '\n>> '
-printf -- '%q ' "${ARGV[@]}" "$@"
-printf -- '\n'
+{
+  printf -- '\n>> '
+  printf -- '%q ' "${ARGV[@]}" "$@"
+  printf -- '\n'
+  # shellcheck disable=SC2154
+  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '>'
+} >&2
 "${ARGV[@]}" "$SCRIPT" "$@" || true
+"$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<' >&2
 exec -- "$0" "$A0" "$@"
