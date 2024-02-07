@@ -1,6 +1,7 @@
 #!/usr/bin/env -S -- powershell -nologo -noprofile
 
 Set-StrictMode -Version 'Latest'
+$ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'Stop'
 
 
