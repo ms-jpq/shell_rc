@@ -28,7 +28,13 @@ esac
 ARGV+=("$@")
 
 read -r -d '' -- SCRIPT
-printf -- '\n>> '
-printf -- '%q ' "${ARGV[@]}"
+{
+  printf -- '\n>> '
+  printf -- '%q ' "${ARGV[@]}"
+  printf -- '\n'
+  # shellcheck disable=SC2154
+  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '>'
+} >&2
 "${ARGV[@]}" <<<"$SCRIPT" || true
+"$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<'
 exec -- "$0" "$A0" "$@"
