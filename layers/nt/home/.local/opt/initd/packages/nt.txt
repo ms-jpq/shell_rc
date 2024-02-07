@@ -16,7 +16,6 @@
 + JesseDuffield.lazygit
 + Microsoft.PowerAppsCLI
 + Microsoft.PowerShell
-+ Microsoft.Sysinternals.Autoruns
 + Neovim.Neovim
 + Rclone.Rclone
 + SoftwareFreedomConservancy.QEMU
