@@ -37,7 +37,7 @@ else
 S5_TYPE := 64bit
 endif
 
-ifeq ($(OSTYPE), msys)
+ifeq ($(OS), nt)
 S5_EXT := zip
 else
 S5_EXT := tar.gz
@@ -65,16 +65,15 @@ $(VAR)/bin/shfmt: | $(VAR)/bin
 	$(CURL) --output '$@' -- "$$URI"
 	chmod +x '$@'
 
-$(VAR)/bin/s5cmd: | $(VAR)/bin
+$(VAR)/bin/s5cmd$(OS_EXT): | $(VAR)/bin
 	URI='https://github.com/peak/s5cmd/releases/latest/download/s5cmd_$(V_S5CMD)_$(S5_OS)-$(S5_TYPE).$(S5_EXT)'
 	case '$(OSTYPE)' in
 	msys)
 		$(CURL) --output '$(TMP)/s5cmd.zip' -- "$$URI"
 		unzip -o -d '$(VAR)/bin' '$(TMP)/s5cmd.zip'
-		chmod +x '$@.exe'
 		;;
 	*)
 		$(CURL) -- "$$URI" | tar --extract --gz --file - --directory '$(VAR)/bin'
-		chmod +x '$@'
 		;;
 	esac
+	chmod +x '$@'

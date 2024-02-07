@@ -20,7 +20,7 @@ define ZSH_TEMPLATE
 zshrc: $(TMP)/$1/home/.config/zsh
 $(TMP)/$1/home: $(TMP)/$1/home/.config/zsh
 
-$(TMP)/$1/home/.config/zsh: ./libexec/zsh.sh $(ZSH) $(GIT_TMP)/dircolors.sh $(GIT_TMP)/z $(GIT_TMP)/fzf | $(VAR)/bin/s5cmd
+$(TMP)/$1/home/.config/zsh: ./libexec/zsh.sh $(ZSH) $(GIT_TMP)/dircolors.sh $(GIT_TMP)/z $(GIT_TMP)/fzf | $(S5)
 	'$$<' '$1' '$$@' '$(GIT_TMP)'
 
 endef
