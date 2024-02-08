@@ -65,6 +65,7 @@
 + termshark
 + tmux
 + tree
++ unison
 + universal-ctags
 + unzip
 + wget
