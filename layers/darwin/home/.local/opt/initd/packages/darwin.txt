@@ -91,6 +91,7 @@
 + trash
 + tree
 + unar
++ unison
 + universal-ctags
 + watch
 + watchexec
