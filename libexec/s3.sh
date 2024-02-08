@@ -32,6 +32,7 @@ case "${1:-""}" in
 push)
   FILES=(
     "$HOME/.config/aws/credentials"
+    "$HOME/.config/gnupg/sshcontrol"
     "$HOME/.local/share/it2/"
     "$HOME/.local/share/ssh/"
     "$HOME/.netrc"
