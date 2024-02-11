@@ -25,7 +25,6 @@
 + dandavison.delta
 + dundee.gdu
 + eza-community.eza
-+ gerardog.gsudo
 + hpjansson.Chafa
 + jqlang.jq
 + junegunn.fzf
