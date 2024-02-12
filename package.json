@@ -1,6 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "dependencies": {},
+  "dependencies": {
+    "@bitwarden/cli": "*"
+  },
   "devDependencies": {
     "@taplo/cli": "*",
     "prettier": "*"
