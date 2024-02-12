@@ -1,6 +1,6 @@
 #!/usr/bin/env -S -- bash
 
-path=("$HOME/.local/bin" "${path[@]}")
+path=("$HOME/.local/lbin" "$HOME/.local/bin" "${path[@]}")
 
 if ((SHLVL > 1)); then
   declare -A -- seen
