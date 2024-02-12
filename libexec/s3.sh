@@ -7,9 +7,19 @@ BUCKET='s3://chumbucket-home'
 S5="$BASE/var/bin/s5cmd"
 TMP="$BASE/var/gpg"
 GPG="$TMP/backup.gpg"
+REMOTES="$TMP/git-remotes.txt"
+
+case "$OSTYPE" in
+darwin*)
+  DEV="$HOME/dev.localized"
+  ;;
+*)
+  DEV="$HOME/dev"
+  ;;
+esac
 
 dir() (
-  rm -v -fr -- "$TMP"
+  rm -fr -- "$TMP"
   mkdir -v -p -- "$TMP"
   chmod -v g-rwx,o-rwx "$TMP"
 )
@@ -56,26 +66,37 @@ push)
       SECRETS+=("$F")
     fi
   done
-  gpg -v --batch --yes --encrypt-files -- "${SECRETS[@]}"
 
+  for F in "$DEV"/*/.git/; do
+    F="${F%/*}"
+    GIT="${F%/*}"
+    if REMOTE="$(git remote | xargs -L 1 -- git -C "$F" remote get-url)"; then
+      NAME="$(jq --raw-input --raw-output '@uri' <<<"${GIT#"$DEV/"}")"
+      printf -- '%s\n' "$NAME#$REMOTE"
+    fi
+  done >"$REMOTES"
+
+  gpg --batch --yes --encrypt-files -- "${SECRETS[@]}" "$REMOTES"
   for F in "${SECRETS[@]}"; do
     F="$F.gpg"
     NAME="$(jq --raw-input --raw-output '@uri' <<<"~${F#"$TMP"}")"
-    mv -v -- "$F" "$TMP/$NAME"
+    mv -f -- "$F" "$TMP/$NAME"
   done
-  rm -v -fr -- "${TMP:?}"/*/ "${TMP:?}"/!(*.gpg)
+  rm -fr -- "${TMP:?}"/*/ "${TMP:?}"/!(*.gpg)
 
   BW="$BASE/node_modules/.bin/bw"
   chmod +x "$BW"
-  "$BW" export --format json --raw | gpg -v --batch --encrypt --output "$TMP/bitwarden.json.gpg"
-  gpg -v --export-secret-keys --export-options export-backup | gpg -v --batch --encrypt --output "$GPG"
+  "$BW" export --format json --raw | gpg --batch --encrypt --output "$TMP/bitwarden.json.gpg"
+
+  gpg --export-secret-keys --export-options export-backup | gpg --batch --encrypt --output "$GPG"
+
   "${S5[@]}" sync --delete -- "$TMP/" "$BUCKET"
   ;;
 pull)
   dir
   "${S5[@]}" cp -- "$BUCKET/*" "$TMP"
   FILES=("$TMP"/~*.gpg)
-  gpg -v --batch --decrypt-files -- "${FILES[@]}"
+  gpg --batch --decrypt-files -- "${FILES[@]}" "$REMOTES.gpg"
 
   for F in "${FILES[@]}"; do
     F="${F%.gpg}"
@@ -85,7 +106,16 @@ pull)
     mv -v -f -- "$F" "$NAME"
   done
 
-  gpg -v --batch --decrypt -- "$GPG" | gpg -v --import
+  gpg --batch --decrypt -- "$GPG" | gpg --import
+
+  readarray -t -- LINES <"$REMOTES"
+  for LINE in "${LINES[@]}"; do
+    NAME="$DEV/${LINE%%#*}"
+    URL="${LINE#*#}"
+    if ! [[ -d "$NAME" ]]; then
+      printf -- '%s\0' "$URL" "$NAME"
+    fi
+  done | xargs -0 -n 2 -P 0 -- git clone --recurse-submodules --
   ;;
 rmfr)
   read -r -p '>>> (yes/no)?' -- DIE
