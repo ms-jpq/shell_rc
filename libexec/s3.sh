@@ -35,6 +35,7 @@ push)
     "$HOME/.config/gnupg/sshcontrol"
     "$HOME/.local/share/it2/"
     "$HOME/.local/share/ssh/"
+    "$HOME/.local/share/zsh/"
     "$HOME/.netrc"
     "$HOME/.ssh/"
   )
@@ -59,7 +60,9 @@ push)
   done
   rm -v -fr -- "${TMP:?}"/*/ "${TMP:?}"/!(*.gpg)
 
-  bw export --format json --raw | gpg -v --encrypt --output "$TMP/bitwarden.json.gpg"
+  BW="$BASE/node_modules/.bin/bw"
+  chmod +x "$BW"
+  "$BW" export --format json --raw | gpg -v --encrypt --output "$TMP/bitwarden.json.gpg"
   gpg -v --export-secret-keys --export-options export-backup | gpg -v --batch --encrypt --output "$GPG"
   "$S5" sync --delete -- "$TMP/" "$BUCKET"
   ;;
