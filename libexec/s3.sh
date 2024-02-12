@@ -35,23 +35,23 @@ case "${1:-""}" in
   ;;
 push)
   FILES=(
-    "$HOME/.config/aws/credentials"
-    "$HOME/.config/gnupg/sshcontrol"
-    "$HOME/.local/share/it2/"
-    "$HOME/.local/share/ssh/"
-    "$HOME/.local/share/zsh/"
-    "$HOME/.netrc"
-    "$HOME/.ssh/"
+    .config/aws/credentials
+    .config/gnupg/sshcontrol
+    .local/share/it2/
+    .local/share/ssh/
+    .local/share/zsh/
+    .netrc
+    .ssh/
   )
 
   dir
   for F in "${FILES[@]}"; do
-    "${RSY[@]}" -- "$F" "$TMP/${F#"$HOME"}"
+    "${RSY[@]}" -- "$HOME/$F" "$TMP/$F"
   done
 
   SECRETS=()
   for F in "$TMP"/**/*; do
-    if [[ -f "$F" ]]; then
+    if [[ -f "$F" ]] && ! [[ "$F" =~ \.gitignore$ ]]; then
       SECRETS+=("$F")
     fi
   done
