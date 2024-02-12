@@ -14,6 +14,10 @@ dir() (
   chmod -v g-rwx,o-rwx "$TMP"
 )
 
+S5=(
+  "$BASE/var/bin/s5cmd"
+)
+
 RSY=(
   rsync
   --mkpath
@@ -27,7 +31,7 @@ RSY=(
 
 case "${1:-""}" in
 '')
-  "$S5" ls --humanize -- "$BUCKET" | awk '{ gsub("%2F", "/", $NF); print }' | column -t
+  "${S5[@]}" ls --humanize -- "$BUCKET" | awk '{ gsub("%2F", "/", $NF); print }' | column -t
   ;;
 push)
   FILES=(
@@ -62,13 +66,13 @@ push)
 
   BW="$BASE/node_modules/.bin/bw"
   chmod +x "$BW"
-  "$BW" export --format json --raw | gpg -v --encrypt --output "$TMP/bitwarden.json.gpg"
+  "$BW" export --format json --raw | gpg -v --batch --encrypt --output "$TMP/bitwarden.json.gpg"
   gpg -v --export-secret-keys --export-options export-backup | gpg -v --batch --encrypt --output "$GPG"
-  "$S5" sync --delete -- "$TMP/" "$BUCKET"
+  "${S5[@]}" sync --delete -- "$TMP/" "$BUCKET"
   ;;
 pull)
   dir
-  "$S5" cp -- "$BUCKET/*" "$TMP"
+  "${S5[@]}" cp -- "$BUCKET/*" "$TMP"
   FILES=("$TMP"/~*.gpg)
   gpg -v --batch --decrypt-files -- "${FILES[@]}"
 
@@ -85,7 +89,7 @@ pull)
 rmfr)
   read -r -p '>>> (yes/no)?' -- DIE
   if [[ "$DIE" == 'yes' ]]; then
-    "$S5" rm --all-versions -- "$BUCKET/*"
+    "${S5[@]}" rm --all-versions -- "$BUCKET/*"
   else
     exit 130
   fi
