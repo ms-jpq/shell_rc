@@ -63,6 +63,14 @@ gpg --export-ssh-key -- '<subkey>'!
 "$EDITOR" "$GNUPGHOME/sshcontrol"
 ```
 
+### Forward
+
+```txt
+Host <name>
+  ForwardAgent yes
+  RemoteForward /run/user/0/gnupg/S.gpg-agent ${HOME}/.config/gnupg/S.gpg-agent.extra
+```
+
 ## GIT
 
 ```bash
