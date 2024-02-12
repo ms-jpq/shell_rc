@@ -95,9 +95,11 @@ push)
 pull)
   dir
   "${S5[@]}" cp -- "$BUCKET/*" "$TMP"
+
+  gpg --batch --decrypt -- "$GPG" | gpg --import
+
   FILES=("$TMP"/~*.gpg)
   gpg --batch --decrypt-files -- "${FILES[@]}" "$REMOTES.gpg"
-
   for F in "${FILES[@]}"; do
     F="${F%.gpg}"
     F2="${F#"$TMP/"}"
@@ -105,8 +107,6 @@ pull)
     NAME="${NAME//'%2F'/'/'}"
     mv -v -f -- "$F" "$NAME"
   done
-
-  gpg --batch --decrypt -- "$GPG" | gpg --import
 
   readarray -t -- LINES <"$REMOTES"
   for LINE in "${LINES[@]}"; do
