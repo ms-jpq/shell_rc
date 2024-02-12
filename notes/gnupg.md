@@ -63,7 +63,11 @@ gpg --export-ssh-key -- '<subkey>'!
 "$EDITOR" "$GNUPGHOME/sshcontrol"
 ```
 
-### Forward
+## Forward
+
+```bash
+gpg --export --armor -- '<public-key>' | ssh '<host>' gpg --import
+```
 
 ```txt
 Host <name>
