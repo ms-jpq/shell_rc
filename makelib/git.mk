@@ -23,8 +23,7 @@ GIT_DIRS += $1
 git: $1
 $1: | $(GIT_TMP)
 	if [[ -d '$$@' ]]; then
-		cd -- '$$@'
-		git pull --recurse-submodules --no-tags '--jobs=$(NPROC)'
+		git -C '$$@' pull --recurse-submodules --no-tags '--jobs=$(NPROC)'
 	else
 		git clone --recurse-submodules --shallow-submodules --depth=1 '--jobs=$(NPROC)' -- '$2' '$$@'
 	fi
