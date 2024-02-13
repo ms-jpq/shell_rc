@@ -26,7 +26,7 @@ push)
   for F in "$DEV"/*/.git/; do
     F="${F%/*}"
     GIT="${F%/*}"
-    if REMOTE="$(git remote | xargs -L 1 -- git -C "$F" remote get-url)"; then
+    if REMOTE="$(git -C "$F" remote | xargs -L 1 -- git -C "$F" remote get-url)"; then
       NAME="${GIT#"$DEV/"}"
       printf -- '%s\0' "$NAME#$REMOTE"
     fi
