@@ -12,4 +12,5 @@ link() {
 }
 
 link ~/.config/gnupg ~/.gnupg
+link /dev/null ~/.config/systemd/user/gpg-agent.service
 link /dev/null ~/.config/systemd/user/gpg-agent.socket
