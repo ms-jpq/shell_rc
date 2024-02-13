@@ -102,7 +102,7 @@ elif (($#)); then
     else
       unseen "$FILE"
     fi
-  done | SYSTEMD_FMT_MODE='stream' xargs -0 -n 1 -P 0 -- "$0"
+  done | SYSTEMD_FMT_MODE='stream' xargs -r -0 -n 1 -P 0 -- "$0"
 elif [[ -t 0 ]]; then
   exec -- "$0" .
 else

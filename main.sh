@@ -20,7 +20,7 @@ if ! [[ -v UNDER ]]; then
   done
 
   "${GMAKE:-"gmake"}"
-  printf -- '%s\0' "${HOSTS[@]}" | UNDER=1 xargs -0 -I % -P 0 -- "$0" % "$@"
+  printf -- '%s\0' "${HOSTS[@]}" | UNDER=1 xargs -r -0 -I % -P 0 -- "$0" % "$@"
   exit
 fi
 
