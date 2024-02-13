@@ -84,7 +84,7 @@ PROC_LS="$(
     PS_ID="${PS_IDS["$PID"]}"
     CMD="${CMDS["$PID"]}"
     printf -- '%s\0' "$PID" "$PS_ID" "$CMD"
-  done | xargs -0 -n 3 -P 0 -- "$PROCFS"
+  done | xargs -r -0 -n 3 -P 0 -- "$PROCFS"
 )"
 
 readarray -t -- PROC_LINES < <(printf -- '%s' "$PROC_LS")

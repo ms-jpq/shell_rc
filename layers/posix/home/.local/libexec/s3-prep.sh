@@ -26,19 +26,19 @@ push)
   for F in "$DEV"/*/.git/; do
     F="${F%/*}"
     GIT="${F%/*}"
-    if REMOTE="$(git -C "$F" remote | xargs -L 1 -- git -C "$F" remote get-url)"; then
+    if REMOTE="$(git -C "$F" remote | xargs -r -L 1 -- git -C "$F" remote get-url)"; then
       NAME="${GIT#"$DEV/"}"
       printf -- '%s\0' "$NAME#$REMOTE"
     fi
   done >"$REMOTES"
 
   find "$TMP" -type f -name '.gitignore' -delete
-  find "$TMP" -type f -print0 | xargs -0 -- gpg --batch --yes --encrypt-files --
+  find "$TMP" -type f -print0 | xargs -r -0 -- gpg --batch --yes --encrypt-files --
   find "$TMP" -type f -not -name '*.gpg' -delete
   ;;
 pull)
   REL="$TMP/~"
-  find "$REL" -type f -print0 | xargs -0 -- gpg --batch --yes --decrypt-files -- "$REMOTES.gpg"
+  find "$REL" -type f -print0 | xargs -r -0 -- gpg --batch --yes --decrypt-files -- "$REMOTES.gpg"
   find "$REL" -type f -name '*.gpg' -delete
 
   for F in "$REL"/**/*; do
@@ -58,7 +58,7 @@ pull)
     if ! [[ -d "$NAME" ]]; then
       printf -- '%s\0' "$URL" "$NAME"
     fi
-  done | xargs -0 -n 2 -P 0 -- git clone --recurse-submodules --
+  done | xargs -r -0 -n 2 -P 0 -- git clone --recurse-submodules --
   ;;
 *)
   set -x
