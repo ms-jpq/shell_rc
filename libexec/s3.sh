@@ -9,9 +9,7 @@ S5="$BASE/var/bin/s5cmd"
 TMP="$BASE/var/gpg"
 GPG="$TMP/backup.gpg"
 
-S5=(
-  "$BASE/var/bin/s5cmd"
-)
+S5=("$BASE/var/bin/s5cmd")
 
 dir() {
   rm -fr -- "$TMP"
