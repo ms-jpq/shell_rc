@@ -46,7 +46,7 @@ nt2unix() {
   printf -- '%s' "$unixpath"
 }
 
-BSH=(bash --norc --noprofile -Eeuo pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar -c)
+BSH=(bash --norc --noprofile -Eeuo pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar)
 CONN=(
   ssh
   -o 'ClearAllForwardings=yes'
@@ -87,7 +87,7 @@ shell() {
 }
 
 ENVSH="$(cat -- ./libexec/{die,env}.sh)"
-ENV="$(shell "${BSH[@]}" "$ENVSH")"
+ENV="$(shell "${BSH[@]}" <<<"$ENVSH")"
 set -a
 eval -- "$ENV"
 set +a
@@ -132,7 +132,7 @@ for FS in "${!FFS[@]}"; do
 
   LINKS="./layers/$OS/$FS.sh"
   if [[ -x "$LINKS" ]]; then
-    shell "${EX[@]}" "${BSH[@]}" "$(<"$LINKS")"
+    shell "${EX[@]}" "${BSH[@]}" <<<"$(<"$LINKS")"
   fi
 
   F=''
@@ -148,7 +148,7 @@ for FS in "${!FFS[@]}"; do
   "${EX[@]}" "${RSY[@]}" "$SRC" "$SINK"
 done
 
-shell "${BSH[@]}" "$(<./libexec/essentials.sh)"
+shell "${BSH[@]}" <<<"$(<./libexec/essentials.sh)"
 ENVS=(USERPROFILE="$ENV_HOME")
 # shellcheck disable=SC2154
 shell "$ENV_MAKE" --directory "$NT_HOME/.local/opt/initd" "${ENVS[@]}" "$@"
