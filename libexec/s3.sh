@@ -4,7 +4,7 @@ set -o pipefail
 
 SELF="${0%/*}"
 BASE="$SELF/.."
-BUCKET='s3://chumbucket-home'
+BUCKET='s3://kfc-home'
 S5="$BASE/var/bin/s5cmd"
 TMP="$BASE/var/gpg"
 GPG="$TMP/backup.gpg"
