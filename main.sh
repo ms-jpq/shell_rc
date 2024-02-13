@@ -51,7 +51,7 @@ CONN=(
   ssh
   -o 'ClearAllForwardings=yes'
   -o 'ControlMaster=auto'
-  -o "ControlPath=$PWD/var/tmp/%r@%h:%p"
+  -o "ControlPath=$PWD/var/tmp/%C"
   -o 'ControlPersist=60'
   -p $((PORT))
 )
