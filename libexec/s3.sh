@@ -8,7 +8,6 @@ BUCKET='s3://chumbucket-home'
 S5="$BASE/var/bin/s5cmd"
 TMP="$BASE/var/gpg"
 GPG="$TMP/backup.gpg"
-REMOTES="$TMP/git-remotes.txt"
 
 S5=(
   "$BASE/var/bin/s5cmd"
