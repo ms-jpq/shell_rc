@@ -19,9 +19,9 @@ esac
 case "$ACTION" in
 push)
   for F in "$@"; do
-    NAME="$TMP/~/$F"
+    NAME="$TMP/~/${F#"$HOME"}"
     mkdir -v -p -- "${NAME%/*}"
-    cp -v -R -- "$HOME/$F" "$NAME"
+    cp -v -R -- "$F" "$NAME"
   done
   for F in "$DEV"/*/.git/; do
     F="${F%/*}"
