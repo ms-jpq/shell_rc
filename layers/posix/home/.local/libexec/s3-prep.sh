@@ -20,9 +20,9 @@ case "$ACTION" in
 push)
   for F in "$@"; do
     NAME="$TMP/~/${F#"$HOME"}"
-    mkdir -v -p -- "${NAME%/*}"
+    mkdir -v -p -- "${NAME%/*}" >&2
     cp -v -R -- "$F" "$NAME"
-  done
+  done | column -t
   for F in "$DEV"/*/.git/; do
     F="${F%/*}"
     GIT="${F%/*}"
@@ -44,12 +44,12 @@ pull)
   for F in "$REL"/**/*; do
     NAME="$HOME${F#"$REL"}"
     if [[ -d "$F" ]]; then
-      mkdir -v -p -- "$NAME"
+      mkdir -v -p -- "$NAME" >&2
     else
-      mkdir -v -p -- "${NAME%/*}"
+      mkdir -v -p -- "${NAME%/*}" >&2
       mv -v -- "$F" "$NAME"
     fi
-  done
+  done | column -t
 
   readarray -t -d $'\0' -- LINES <"$REMOTES"
   for LINE in "${LINES[@]}"; do

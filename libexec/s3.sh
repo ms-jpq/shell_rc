@@ -41,11 +41,11 @@ push)
   "$BW" export --format json --raw | gpg --batch --encrypt --output "$TMP/bitwarden.json.gpg"
   gpg --export-secret-keys --export-options export-backup | gpg --batch --encrypt --output "$GPG"
 
-  "${S5[@]}" sync --delete -- "$TMP/" "$BUCKET"
+  "${S5[@]}" sync --delete -- "$TMP/" "$BUCKET" | column -t
   ;;
 pull)
   dir
-  "${S5[@]}" cp -- "$BUCKET/*" "$TMP"
+  "${S5[@]}" cp -- "$BUCKET/*" "$TMP" | column -t
   "$SELF/s3-prep.sh" pull "$TMP" "${FILES[@]}"
   find "$HOME/.local/lbin" -type f -not -name '.*' -print0 | xargs -r -0 -- chmod -v +x
 
