@@ -8,7 +8,7 @@ secondary_prompt:
   template: &prompt "\u276F"
 
 console_title_template: |-
-  {{ .Shell }} :: {{ .Folder }}
+  {{ if or (eq .PWD .Env.HOME) (eq .PWD "~") }}~{{ else }}{{ .Folder }}{{ end }}
 
 blocks:
   - type: prompt
@@ -16,7 +16,7 @@ blocks:
     segments:
       - type: path
         style: plain
-        template: "\ue5ff <lightBlue>{{ .Parent }}</>{{ if or (eq .Location .Env.HOME) (eq .Location \"~\") }}~{{ else }}{{ .Folder }}{{ end }}"
+        template: "\ue5ff <lightBlue>{{ .Parent }}</>{{ if or (eq .PWD .Env.HOME) (eq .PWD \"~\") }}~{{ else }}{{ .Folder }}{{ end }}"
         foreground: blue
         properties:
           style: agnoster_full
