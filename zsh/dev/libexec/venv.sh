@@ -22,13 +22,13 @@ shift -- 1
 
 read -r -d '' -- PYPROJ <<-'PYTHON' || true
 from collections.abc import Iterator
+from contextlib import suppress
 from itertools import chain
 from os import execl
 from os.path import normcase
 from pathlib import Path
 from shlex import quote
 from sys import executable, stderr
-from tomllib import load
 
 
 def _argv() -> Iterator[str | Path]:
@@ -40,13 +40,16 @@ def _argv() -> Iterator[str | Path]:
     yield "--"
 
     if pyproject.is_file():
-        with pyproject.open("rb") as fd:
-            toml = load(fd)
-        project = toml.get("project", {})
-        yield from project.get("dependencies", ())
-        yield from chain.from_iterable(
-            project.get("optional-dependencies", {}).values()
-        )
+        with suppress(ImportError):
+            from tomllib import load
+
+            with pyproject.open("rb") as fd:
+                toml = load(fd)
+            project = toml.get("project", {})
+            yield from project.get("dependencies", ())
+            yield from chain.from_iterable(
+                project.get("optional-dependencies", {}).values()
+            )
 
 
 argv = tuple(_argv())
