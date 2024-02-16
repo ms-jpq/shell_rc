@@ -48,7 +48,6 @@ gay                   gay
 graphtage             graphtage
 markdown-live-preview markdown_live_preview
 sortd                 sortd
-tldr                  tldr
 
 endef
 
