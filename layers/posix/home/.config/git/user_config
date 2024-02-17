@@ -44,6 +44,10 @@ submodule        = "log"
 tool             = "nvimdiff"
 wsErrorHighlight = "all"
 
+[difftool]
+prompt        = false
+trustExitCode = true
+
 [fetch]
 parallel          = 0
 pruneTags         = true
