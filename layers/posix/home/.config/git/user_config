@@ -6,6 +6,7 @@
 
 [branch]
 autosetuprebase = "always"
+sort            = "-committerdate"
 
 [checkout]
 thresholdForParallelism = 1
@@ -97,6 +98,7 @@ recurse   = true
 
 [tag]
 gpgSign = true
+sort    = "-taggerdate"
 
 [transfer]
 fsckObjects = true
