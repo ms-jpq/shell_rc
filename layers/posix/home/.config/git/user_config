@@ -65,6 +65,9 @@ autoCorrect = "prompt"
 [init]
 defaultBranch = "main"
 
+[interactive]
+singleKey = true
+
 [log]
 abbrevCommit = true
 date         = "format-local:%y-%m-%d %H:%M"
