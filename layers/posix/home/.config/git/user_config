@@ -19,6 +19,7 @@ ui = "auto"
 
 [commit]
 gpgSign = true
+verbose = true
 
 [core]
 pager = "delta"
@@ -32,9 +33,11 @@ colorMoved       = "dimmed-zebra"
 colorMovedWS     = "ignore-space-change"
 dirstat          = "files,cumulative"
 renameLimit      = 999999999
+submodule        = "log"
 wsErrorHighlight = "all"
 
 [fetch]
+fsckObjects       = true
 parallel          = 0
 pruneTags         = true
 recurseSubmodules = true
@@ -44,28 +47,41 @@ column      = true
 lineNumber  = true
 patternType = "perl"
 
+[help]
+autoCorrect = "prompt"
+
 [init]
 defaultBranch = "main"
 
 [log]
 abbrevCommit = true
-date         = "format:%Y-%m-%d %H:%M:%S"
+date         = "iso"
 
 [merge]
 autostash     = true
+# TODO: zdiff3?
 conflictstyle = "diff3"
 ff            = "only"
 
 [pull]
-ff = "only"
+rebase = true
 
 [push]
 autoSetupRemote   = true
+default           = "current"
 followTags        = true
+# TODO: github does not currently support this
+# gpgSign           = true
 recurseSubmodules = "check"
 
 [rebase]
-autoStash = true
+autoSquash = true
+autoStash  = true
+stat       = true
+updateRefs = true
+
+[receive]
+fsckObjects = true
 
 [rerere]
 autoUpdate = true
@@ -77,6 +93,12 @@ submoduleSummary = true
 [submodule]
 fetchJobs = 0
 recurse   = true
+
+[tag]
+gpgSign = true
+
+[transfer]
+fsckObjects = true
 
 [worktree]
 guessRemote = false
