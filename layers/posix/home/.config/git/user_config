@@ -37,7 +37,6 @@ submodule        = "log"
 wsErrorHighlight = "all"
 
 [fetch]
-fsckObjects       = true
 parallel          = 0
 pruneTags         = true
 recurseSubmodules = true
@@ -58,8 +57,8 @@ abbrevCommit = true
 date         = "iso"
 
 [merge]
-autostash     = true
 # TODO: zdiff3? (git 2.35, ubuntu 24)
+autostash     = true
 conflictstyle = "diff3"
 ff            = "only"
 
@@ -67,9 +66,9 @@ ff            = "only"
 rebase = true
 
 [push]
-autoSetupRemote   = true
-default           = "current"
-followTags        = true
+autoSetupRemote = true
+default         = "current"
+followTags      = true
 # TODO: github does not currently support this
 # gpgSign           = true
 recurseSubmodules = "check"
@@ -79,9 +78,6 @@ autoSquash = true
 autoStash  = true
 stat       = true
 updateRefs = true
-
-[receive]
-fsckObjects = true
 
 [rerere]
 autoUpdate = true
