@@ -59,7 +59,7 @@ date         = "iso"
 
 [merge]
 autostash     = true
-# TODO: zdiff3?
+# TODO: zdiff3? (git 2.35, ubuntu 24)
 conflictstyle = "diff3"
 ff            = "only"
 
