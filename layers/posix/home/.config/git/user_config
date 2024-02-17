@@ -5,7 +5,7 @@
 # manyFiles = true
 
 [branch]
-autosetuprebase = "always"
+autoSetupRebase = "always"
 sort            = "-committerdate"
 
 [checkout]
@@ -40,7 +40,9 @@ colorMoved       = "dimmed-zebra"
 colorMovedWS     = "ignore-space-change"
 dirstat          = "files,cumulative"
 guitool          = "open"
+noprefix         = true
 renameLimit      = 999999999
+renames          = "copies"
 submodule        = "log"
 tool             = "difftastic"
 wsErrorHighlight = "all"
