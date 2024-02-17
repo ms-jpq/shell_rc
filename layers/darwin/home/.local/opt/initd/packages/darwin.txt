@@ -17,6 +17,7 @@
 + curl
 + dash
 + dialog
++ difftastic
 + diffutils
 + duf
 + dust

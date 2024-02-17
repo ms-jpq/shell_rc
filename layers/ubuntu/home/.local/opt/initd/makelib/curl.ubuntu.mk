@@ -61,8 +61,9 @@ V_XSV     =  $(shell $(GH_LATEST) BurntSushi/xsv)
 
 define CURL_ARCHIVES
 
-eza                                               https://github.com/eza-community/eza/releases/latest/download/eza_$(HOSTTYPE)-unknown-linux-gnu.tar.gz
+difft                                             https://github.com/Wilfred/difftastic/releases/latest/download/difft-$(HOSTTYPE)-unknown-linux-gnu.tar.gz
 dust-$(V_DUST)-$(HOSTTYPE)-unknown-linux-gnu/dust https://github.com/bootandy/dust/releases/latest/download/dust-$(V_DUST)-$(HOSTTYPE)-unknown-linux-gnu.tar.gz
+eza                                               https://github.com/eza-community/eza/releases/latest/download/eza_$(HOSTTYPE)-unknown-linux-gnu.tar.gz
 fzf                                               https://github.com/junegunn/fzf/releases/latest/download/fzf-$(V_FZF)-linux_$(GOARCH).tar.gz
 gitui                                             https://github.com/extrawurst/gitui/releases/latest/download/gitui-linux-$(GITUI_TYPE).tar.gz
 gojq_$(V_GOJQ)_linux_$(GOARCH)/gojq               https://github.com/itchyny/gojq/releases/latest/download/gojq_$(V_GOJQ)_linux_$(GOARCH).tar.gz
