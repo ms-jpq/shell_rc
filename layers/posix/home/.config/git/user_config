@@ -39,6 +39,7 @@ algorithm        = "histogram"
 colorMoved       = "dimmed-zebra"
 colorMovedWS     = "ignore-space-change"
 dirstat          = "files,cumulative"
+guitool          = "open"
 renameLimit      = 999999999
 submodule        = "log"
 tool             = "nvimdiff"
@@ -113,3 +114,6 @@ guessRemote = false
 
 [core.whitespace]
 tabwidth = 2
+
+[difftool.open]
+cmd = "open \"$LOCAL\" \"$REMOTE\""
