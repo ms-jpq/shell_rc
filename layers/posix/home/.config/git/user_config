@@ -42,7 +42,7 @@ dirstat          = "files,cumulative"
 guitool          = "open"
 renameLimit      = 999999999
 submodule        = "log"
-tool             = "nvimdiff"
+tool             = "difftastic"
 wsErrorHighlight = "all"
 
 [difftool]
@@ -114,6 +114,9 @@ guessRemote = false
 
 [core.whitespace]
 tabwidth = 2
+
+[difftool.difftastic]
+cmd = "exec difft --background light \"$LOCAL\" \"$REMOTE\""
 
 [difftool.open]
 cmd = "open \"$LOCAL\" \"$REMOTE\""
