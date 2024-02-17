@@ -66,11 +66,10 @@ ff            = "only"
 rebase = true
 
 [push]
-autoSetupRemote = true
-default         = "current"
-followTags      = true
-# TODO: github does not currently support this
-# gpgSign           = true
+autoSetupRemote   = true
+default           = "current"
+followTags        = true
+gpgSign           = "if-asked"
 recurseSubmodules = "check"
 
 [rebase]
