@@ -41,6 +41,7 @@ colorMovedWS     = "ignore-space-change"
 dirstat          = "files,cumulative"
 renameLimit      = 999999999
 submodule        = "log"
+tool             = "nvimdiff"
 wsErrorHighlight = "all"
 
 [fetch]
