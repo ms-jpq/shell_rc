@@ -22,10 +22,16 @@ gpgSign = true
 verbose = true
 
 [core]
-pager = "delta"
+autocrlf = "input"
+pager    = "delta"
+safecrlf = true
 
 [delta]
-light = true
+hyperlinks     = true
+light          = true
+line-numbers   = true
+navigate       = true
+relative-paths = true
 
 [diff]
 algorithm        = "histogram"
@@ -54,7 +60,7 @@ defaultBranch = "main"
 
 [log]
 abbrevCommit = true
-date         = "iso"
+date         = "iso-local"
 
 [merge]
 # TODO: zdiff3? (git 2.35, ubuntu 24)
