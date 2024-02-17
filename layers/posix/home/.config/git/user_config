@@ -116,7 +116,7 @@ guessRemote = false
 tabwidth = 2
 
 [difftool.difftastic]
-cmd = "exec difft --background light \"$LOCAL\" \"$REMOTE\""
+cmd = "exec difft --display side-by-side-show-both --background light --color always -- \"$LOCAL\" \"$REMOTE\""
 
 [difftool.open]
 cmd = "open \"$LOCAL\" \"$REMOTE\""
