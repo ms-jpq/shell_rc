@@ -67,7 +67,7 @@ defaultBranch = "main"
 
 [log]
 abbrevCommit = true
-date         = "iso-local"
+date         = "format-local:%y-%m-%d %H:%M"
 
 [merge]
 # TODO: zdiff3? (git 2.35, ubuntu 24)
