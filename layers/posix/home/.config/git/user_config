@@ -39,7 +39,7 @@ algorithm        = "histogram"
 colorMoved       = "dimmed-zebra"
 colorMovedWS     = "ignore-space-change"
 dirstat          = "files,cumulative"
-guitool          = "open"
+guitool          = "gui"
 noprefix         = true
 renameLimit      = 999999999
 renames          = "copies"
@@ -123,5 +123,5 @@ tabwidth = 2
 [difftool.difftastic]
 cmd = "exec difft --display side-by-side-show-both --background light --color always -- \"$LOCAL\" \"$REMOTE\""
 
-[difftool.open]
-cmd = "open \"$LOCAL\" \"$REMOTE\""
+[difftool.gui]
+cmd = "gui-diff.sh \"$LOCAL\" \"$REMOTE\""
