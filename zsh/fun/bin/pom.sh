@@ -92,13 +92,22 @@ while true; do
 done
 
 while true; do
-  if command -v -- say &>/dev/null; then
+  case "$OSTYPE" in
+  darwin*)
     TITLE='Pomodoro'
-    MESSAGE="$(fortune | jq --raw-input '@uri' | sed -E -e 's/%20/ /g')"
+    SED=(
+      sed -E
+      -e 's#\\#\\\\#g'
+      -e 's#"#\\"#g'
+      -e '#\n#\\n#g'
+    )
+    MESSAGE="$(fortune | "${SED[@]}")"
     printf -v SCRIPT -- 'display notification "%s" with title "%s"' "$MESSAGE" "$TITLE"
     osascript -e "$SCRIPT"
-  else
-    :
-  fi
+    ;;
+  *)
+    set -x
+    ;;
+  esac
   sleep -- 1
 done
