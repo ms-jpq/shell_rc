@@ -42,6 +42,8 @@ _=(
   tinker-toy
 )
 
+export -- TERM=xterm-256color
+
 if ! [[ -v FONT ]]; then
   FONTS=("$(figlet -I 2)"/**.flf)
   FONT="$(printf -- '%s\0' "${FONTS[@]}" | fzf --read0)"
@@ -91,7 +93,10 @@ done
 
 while true; do
   if command -v -- say &>/dev/null; then
-    say <<<"${*:-"好好学习，天天向上"}"
+    TITLE='Pomodoro'
+    MESSAGE="$(fortune | jq --raw-input '@uri' | sed -E -e 's/%20/ /g')"
+    printf -v SCRIPT -- 'display notification "%s" with title "%s"' "$MESSAGE" "$TITLE"
+    osascript -e "$SCRIPT"
   else
     :
   fi
