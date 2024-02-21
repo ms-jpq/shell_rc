@@ -10,8 +10,8 @@ ARGS=(
   --info progress2
   --delete
   --
-  root@freenas.lan:/media/wallpapers/
-  "$HOME/Library/Mobile Documents/com~apple~CloudDocs/桌面背景/"
+  freenas:/media/wallpapers/
+  "$HOME/桌面背景/"
 )
 
 exec -- "${ARGS[@]}"
