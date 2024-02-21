@@ -91,19 +91,30 @@ while true; do
   fi
 done
 
+read -r -d '' -- JS <<-'JAVASCRIPT' || true
+"use strict";
+
+ObjC.import("stdlib");
+
+const [, , , , arg0, ...argv] = ObjC.unwrap(
+  $.NSProcessInfo.processInfo.arguments,
+).map(ObjC.unwrap);
+
+const app = (() => {
+  const app = Application.currentApplication();
+  app.includeStandardAdditions = true;
+  return app;
+})();
+
+const [withTitle, body, sub] = argv;
+app.displayNotification(body, { withTitle, subtitle: sub ?? "" });
+JAVASCRIPT
+
 while true; do
   case "$OSTYPE" in
   darwin*)
-    TITLE='Pomodoro'
-    SED=(
-      sed -E
-      -e 's#\\#\\\\#g'
-      -e 's#"#\\"#g'
-      -e '#\n#\\n#g'
-    )
-    MESSAGE="$(fortune | "${SED[@]}")"
-    printf -v SCRIPT -- 'display notification "%s" with title "%s"' "$MESSAGE" "$TITLE"
-    osascript -e "$SCRIPT"
+    BODY="$(fortune | tr -- '\n' ' ' | sed -E -e 's/[[:space:]]+/ /g')"
+    osascript -l JavaScript -e "$JS" "Pomodoro" "$BODY"
     ;;
   *)
     set -x
