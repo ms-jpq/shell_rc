@@ -17,7 +17,7 @@ GIT=(
   -- "$LOCAL" "$REMOTE"
 )
 DIFF=(
-  ~/.local/asdf/shims/npm exec
+  npm exec
   --yes
   -- diff2html-cli
   --style side
