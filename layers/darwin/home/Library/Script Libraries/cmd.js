@@ -5,8 +5,8 @@
  */
 const cmd = (arg0, ...argv) => {
   const task = $.NSTask.alloc.init;
-  task.executableURL = $.NSURL.alloc.initFileURLWithPath(arg0);
-  task.arguments = argv;
+  task.executableURL = $.NSURL.alloc.initFileURLWithPath("/usr/bin/env");
+  task.arguments = ["--", arg0, ...argv];
 
   const err = Ref();
   if (!task.launchAndReturnError(err)) {
