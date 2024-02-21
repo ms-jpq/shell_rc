@@ -83,7 +83,7 @@ def _human_readable_size(size: float, precision: int = 3) -> str:
 
 def _ip() -> Union[IPv6Address, IPv4Address, None]:
     try:
-        ip = _path().with_suffix(".ip").read_text()
+        ip = _path().with_suffix(".ip").read_text().strip()
     except FileNotFoundError:
         if client := environ.get("SSH_CLIENT"):
             ip, *_ = client.split()
