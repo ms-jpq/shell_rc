@@ -10,7 +10,7 @@ tmux-ssh() {
   fi
 
   local -- dir="${TMUX_TMPDIR:-/tmp}/tmux-status-line"
-  local -- ip="${SSH_CLIENT%% *}"
+  local -- ip="${*:-"${SSH_CLIENT%% *}"}"
   local -- tmux="${TMUX%%,*}"
   tmux="$(jq --raw-input --raw-output '@uri' <<<"$tmux")"
   local -- name="$dir/$tmux"
