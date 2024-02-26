@@ -1,8 +1,6 @@
 #!/usr/bin/env -S -- bash
 
 ta() {
-  tmux-ssh
-
   local -- session="$*"
   # shellcheck disable=2154
   local -- session_names="$XDG_STATE_HOME/tmux/$session.1.sh"
