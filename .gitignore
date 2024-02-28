@@ -3,4 +3,5 @@
 .mypy_cache/
 .venv/
 package-lock.json
+tsconfig.tsbuildinfo
 var/
