@@ -66,10 +66,12 @@ ARGV=(
 read -r -d '' -- QUERY
 JSON="$(jq --exit-status --slurp --raw-input --argjson var "$VAR" '{ query: ., variables: $var }' <<<"$QUERY")"
 
-printf -- '\n'
-printf -- '%q ' "${ARGV[@]}"
-printf -- '\n'
-jq --sort-keys <<<"$VAR"
+{
+  printf -- '\n'
+  printf -- '%q ' "${ARGV[@]}"
+  printf -- '\n'
+  jq --sort-keys <<<"$VAR"
+} >&2
 
 if ((RAW)); then
   TEE=(tee --)
@@ -78,4 +80,6 @@ else
 fi
 
 "${ARGV[@]}" <<<"$JSON" | "${TEE[@]}"
-exec -- "$0" "${AV[@]}"
+if [[ -t 1 ]]; then
+  exec -- "$0" "${AV[@]}"
+fi

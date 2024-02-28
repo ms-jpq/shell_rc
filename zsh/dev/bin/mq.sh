@@ -37,4 +37,7 @@ read -r -d '' -- SCRIPT
 } >&2
 "${ARGV[@]}" <<<"$SCRIPT" || true
 "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<'
-exec -- "$0" "$A0" "$@"
+
+if [[ -t 1 ]]; then
+  exec -- "$0" "$A0" "$@"
+fi
