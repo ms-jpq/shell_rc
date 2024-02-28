@@ -5,7 +5,9 @@
   },
   "devDependencies": {
     "@taplo/cli": "*",
-    "prettier": "*"
+    "@types/node": "*",
+    "prettier": "*",
+    "typescript": "*"
   },
   "type": "module"
 }
