@@ -2,14 +2,15 @@
 
 set -o pipefail
 
-OPTS='x:,a:,b:,c:,h:,v:'
-LONG_OPTS='method:,auth:,bearer:,cookie:,header:,var:'
+OPTS='x:,a:,b:,c:,h:,v:,r'
+LONG_OPTS='method:,auth:,bearer:,cookie:,header:,var:,raw'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 AV=("$@")
 
 CURL=()
+RAW=0
 VAR='{}'
 while (($#)); do
   case "$1" in
@@ -39,6 +40,10 @@ while (($#)); do
     VAR="$(jq --exit-status --arg key "$KEY" --arg val "$VAL" '.[$key] = $val' <<<"$VAR")"
     shift -- 2
     ;;
+  -r | --raw)
+    RAW=1
+    shift -- 1
+    ;;
   --)
     shift -- 1
     CURL+=("$@")
@@ -66,5 +71,11 @@ printf -- '%q ' "${ARGV[@]}"
 printf -- '\n'
 jq --sort-keys <<<"$VAR"
 
-"${ARGV[@]}" <<<"$JSON" | jq --sort-keys
+if ((RAW)); then
+  TEE=(tee --)
+else
+  TEE=(jq --sort-keys)
+fi
+
+"${ARGV[@]}" <<<"$JSON" | "${TEE[@]}"
 exec -- "$0" "${AV[@]}"
