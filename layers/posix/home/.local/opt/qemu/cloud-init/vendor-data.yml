@@ -18,6 +18,7 @@ write_files:
       LLDP                = yes
       EmitLLDP            = customer-bridge
       IPv6Token           = static:::${IPV6_TOKEN}
+      MulticastDNS        = yes
 
 runcmd:
   - - networkctl
