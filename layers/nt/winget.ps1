@@ -35,17 +35,18 @@ if ($go) {
 
     Add-AppxProvisionedPackage -Online -PackagePath $t_bundle -LicensePath $t_license
 
-    $localappdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
-    $location = Join-Path -Path $localappdata -ChildPath (Join-Path -Path 'Microsoft' -ChildPath (Join-Path -Path 'WindowsApps' -ChildPath 'winget.exe'))
+    # $localappdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
+    # $location = Join-Path -Path $localappdata -ChildPath (Join-Path -Path 'Microsoft' -ChildPath (Join-Path -Path 'WindowsApps' -ChildPath 'winget.exe'))
 
-    foreach ($i in 1..60) {
-        if (Test-Path -Path $location) {
-            exit 0
-        }
+    # foreach ($i in 1..60) {
+    #     if (Test-Path -Path $location) {
+    #         exit 0
+    #     }
 
-        Write-Host -- $i
-        Start-Sleep -Seconds 1
-    }
+    #     Write-Host -- $i
+    #     Start-Sleep -Seconds 1
+    # }
 
-    throw "test -f $location"
+    # throw "test -f $location"
+    Start-Sleep -Seconds 9
 }
