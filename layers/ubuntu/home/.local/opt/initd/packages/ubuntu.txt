@@ -8,6 +8,8 @@
 + aha
 + athena-jot
 + autossh
++ avahi-daemon
++ avahi-utils
 + b3sum
 + bat
 + bb
