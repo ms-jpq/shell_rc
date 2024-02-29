@@ -13,4 +13,3 @@ link() {
 
 link /dev/null /usr/local/lib/systemd/system/motd-news.timer
 link /dev/null /usr/local/lib/systemd/system/update-notifier-motd.timer
-link /usr/share/doc/avahi-daemon/examples/ssh.service /etc/avahi/services/ssh.service
