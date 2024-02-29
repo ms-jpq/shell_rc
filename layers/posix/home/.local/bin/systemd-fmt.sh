@@ -87,10 +87,11 @@ elif (($#)); then
 
   unseen() {
     local F="$*"
-    F="$(realpath -- "$F")"
-    if [[ -f "$F" ]] && [[ -z "${SEEN["$F"]:-""}" ]]; then
-      SEEN["$F"]=1
-      printf -- '%s\0' "$F"
+    if F="$(realpath -- "$F")"; then
+      if [[ -f "$F" ]] && [[ -z "${SEEN["$F"]:-""}" ]]; then
+        SEEN["$F"]=1
+        printf -- '%s\0' "$F"
+      fi
     fi
   }
 

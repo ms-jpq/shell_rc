@@ -3,8 +3,6 @@
 fmt: systemd-fmt shfmt black prettier taplo
 
 systemd-fmt:
-	export -- SYSTEMD_FMT_IGNORE
-	SYSTEMD_FMT_IGNORE="$$(git ls-files -- '*/services/*.service')"
 	./layers/posix/home/.local/bin/systemd-fmt.sh ./layers
 
 shfmt: $(VAR)/bin/shfmt
