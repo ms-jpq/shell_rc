@@ -80,14 +80,15 @@ elif (($#)); then
   declare -A -- SEEN=()
   for I in "${IS[@]}"; do
     if [[ -n "$I" ]]; then
-      I="$(realpath -- "$I")"
-      SEEN["$I"]=1
+      if I="$(realpath -- "$I" 2>/dev/null)"; then
+        SEEN["$I"]=1
+      fi
     fi
   done
 
   unseen() {
     local F="$*"
-    if F="$(realpath -- "$F")"; then
+    if F="$(realpath -- "$F" 2>/dev/null)"; then
       if [[ -f "$F" ]] && [[ -z "${SEEN["$F"]:-""}" ]]; then
         SEEN["$F"]=1
         printf -- '%s\0' "$F"
