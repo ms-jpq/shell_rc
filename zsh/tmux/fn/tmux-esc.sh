@@ -3,7 +3,7 @@
 tmux-esc() {
   local AWK LS
 
-  read -r -d '' -- AWK <<-'EOF' || true
+  read -r -d '' -- AWK <<-'AWK' || true
 BEGIN { 
   printf("\x1BPtmux;")
 }
@@ -14,7 +14,7 @@ BEGIN {
 END {
   printf("\x1B\\")
 }
-EOF
+AWK
 
   if [[ -v TMUX ]]; then
     if [[ -v SSH_TTY ]]; then

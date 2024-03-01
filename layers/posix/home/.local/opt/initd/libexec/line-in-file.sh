@@ -6,7 +6,7 @@ FILE="$1"
 MATCH="$2"
 LINE="${3:-"$MATCH"}"
 
-read -r -d '' -- AWK <<-'EOF' || true
+read -r -d '' -- AWK <<-'AWK' || true
 BEGIN { SEEN = 0 }
 
 {
@@ -18,7 +18,7 @@ BEGIN { SEEN = 0 }
 END {
   if (!SEEN) { print LINE }
 }
-EOF
+AWK
 
 touch -- "$FILE"
 
