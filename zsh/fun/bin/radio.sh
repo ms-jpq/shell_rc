@@ -22,7 +22,7 @@ if ! [[ -d "$PYRADIO" ]]; then
   TMP="$(mktemp -d)"
   LATEST="$("$OPT/initd/libexec/gh-latest.sh" "$TMP" "$REPO")"
   URI="https://github.com/coderholic/pyradio/archive/refs/tags/$LATEST.tar.gz"
-  curl --fail --no-progress-meter -- "$URI" | tar -x -z -C "$TMP"
+  curl --fail-with-body --no-progress-meter -- "$URI" | tar -x -z -C "$TMP"
   mv -f -- "$TMP/pyradio-"* "$PYRADIO"
 fi
 
