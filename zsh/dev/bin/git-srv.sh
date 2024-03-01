@@ -26,7 +26,7 @@ mkdir -v -p -- "$CGI_BIN" "$TMP"
 link "$WEB/static" "$CGI_BIN/static"
 link "$WEB/gitweb.cgi" "$CGI_BIN/gitweb.cgi"
 
-read -r -d '' -- PERL <<-EOF || true
+read -r -d '' -- PERL <<PERL || true
 our \$projectroot = "$ROOT";
 our \$git_temp = "$TMP";
 our \$projects_list = \$projectroot;
@@ -39,7 +39,7 @@ our \$fallback_encoding = "utf-16";
 our \$site_name = "$NAME";
 
 \$feature{'remote_heads'}{'default'} = [1];
-EOF
+PERL
 
 printf -- '%s\n' "$PERL" >"$GITWEB_CONFIG"
 

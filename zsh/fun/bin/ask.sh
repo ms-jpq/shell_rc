@@ -45,9 +45,9 @@ elif ! [[ -v FZF_PREVIEW_LINES ]]; then
 else
   TMP="$1"
   N="$2"
-  read -r -d '' -- JQ <<-'EOF' || true
+  read -r -d '' -- JQ <<-'JQ' || true
 .results[$n] | "<h1>\(.title | @html)</h1><h2>\(.url | @html)</h2>\("<p>\(.content | @html)</p>")"
-EOF
+JQ
   # shellcheck disable=2154
   jq --raw-output --argjson n "$N" "$JQ" "$TMP" | pandoc --from html --to gfm | glow --style light --width "$FZF_PREVIEW_COLUMNS"
 fi
