@@ -49,6 +49,7 @@
 + nmap
 + nyancat
 + openssh-server
++ parallel
 + progress
 + psmisc
 + pv
