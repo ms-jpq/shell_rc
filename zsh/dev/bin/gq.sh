@@ -59,7 +59,7 @@ ARGV=(
   curl
   --no-progress-meter
   --header 'Content-Type: application/json'
-  --data @-
+  --data-binary @-
   "${CURL[@]}"
 )
 
