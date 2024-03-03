@@ -58,7 +58,7 @@ ARGV=(
   curl
   --no-progress-meter
   --header "Content-Type: $MIME"
-  --data @-
+  --data-binary @-
   "${CURL[@]}"
 )
 
