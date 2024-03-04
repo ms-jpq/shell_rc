@@ -79,7 +79,9 @@ else
   TEE=(jq --sort-keys)
 fi
 
-"${ARGV[@]}" <<<"$JSON" | "${TEE[@]}"
+if "${ARGV[@]}" <<<"$JSON" | "${TEE[@]}"; then
+  :
+fi
 if [[ -t 1 ]]; then
   exec -- "$0" "${AV[@]}"
 fi

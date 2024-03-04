@@ -180,7 +180,6 @@ else
   $A
 fi
 EOF
-
   printf -- '%s\n' "$SH" >"$F3"
 
   if ((S_OK)); then
