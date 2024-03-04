@@ -100,8 +100,12 @@ for SID in "${!SESSIONS[@]}"; do
   FILE="$TMUX_SESSIONS/$SNAME"
   F1="$FILE.1.sh"
   F2="$FILE.2.sh"
+  F3="$F1.tmp"
+  F4="$F2.tmp"
   I=0
   W_MARK=0
+
+  S_OK=0
 
   {
     printf -- '%q ' tmux set-environment -g -h -- "$ENV" 1
@@ -112,6 +116,7 @@ for SID in "${!SESSIONS[@]}"; do
       if [[ "${WINDOWS["$WID"]}" == "$SID" ]]; then
         ((++I))
         J=0
+
         LAYOUT="${LAYOUTS["$WID"]}"
         if [[ -n "${ACTIVE["$WID"]:-""}" ]]; then
           W_MARK="$I"
@@ -142,8 +147,9 @@ for SID in "${!SESSIONS[@]}"; do
               printf -- '\n'
               printf -- '%q ' tmux paste-buffer -d -p
               printf -- '\n'
-
             fi
+
+            S_OK=1
           fi
         done
         printf -- '%q ' tmux select-pane -t '{marked}'
@@ -160,7 +166,7 @@ for SID in "${!SESSIONS[@]}"; do
 
     printf -- '%q ' tmux set-environment -g -h -u -- "$ENV"
     printf -- '\n'
-  } >"$F2"
+  } >"$F4"
 
   printf -v A -- '%q ' tmux new-session -A -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
   printf -v B -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
@@ -175,5 +181,10 @@ else
 fi
 EOF
 
-  printf -- '%s\n' "$SH" >"$F1"
+  printf -- '%s\n' "$SH" >"$F3"
+
+  if ((S_OK)); then
+    mv -f -- "$F4" "$F2"
+    mv -f -- "$F3" "$F1"
+  fi
 done
