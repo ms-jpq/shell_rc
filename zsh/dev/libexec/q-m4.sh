@@ -28,6 +28,12 @@ psql)
 node)
   ARGV+=(--input-type=module)
   ;;
+clj)
+  # shellcheck disable=SC2154
+  M2="$XDG_CACHE_HOME/m2"
+  M2="$(jq --exit-status --raw-input <<<"$M2")"
+  ARGV+=(-Sdeps "{:mvn/local-repo $M2}")
+  ;;
 jshell)
   ARGV+=(-)
   ;;
