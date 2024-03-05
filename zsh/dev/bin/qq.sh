@@ -5,9 +5,6 @@ set -o pipefail
 LIBEXEC="${0%/*}/../libexec"
 
 case "$1" in
-jq)
-  SH="$LIBEXEC/q-jq.sh"
-  ;;
 http)
   SH="$LIBEXEC/q-http.sh"
   shift -- 1
