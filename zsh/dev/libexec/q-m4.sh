@@ -10,6 +10,15 @@ case "$A0" in
 m4)
   ARGV+=(--prefix-builtins)
   ;;
+jq)
+  ARGV+=(--null-input --sort-keys)
+  ;;
+awk | gawk)
+  ARGV+=(-f -)
+  ;;
+sed)
+  ARGV+=(-E -f -)
+  ;;
 perl)
   ARGV+=(-CASD -w)
   ;;
@@ -26,8 +35,8 @@ jshell)
 esac
 
 ARGV+=("$@")
-
 read -r -d '' -- SCRIPT
+
 {
   printf -- '\n>> '
   printf -- '%q ' "${ARGV[@]}"
