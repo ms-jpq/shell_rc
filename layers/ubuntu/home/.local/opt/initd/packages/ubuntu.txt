@@ -52,6 +52,7 @@
 + parallel
 + progress
 + psmisc
++ pspg
 + pv
 + ripgrep
 + rlwrap
