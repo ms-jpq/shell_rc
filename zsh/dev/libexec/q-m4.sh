@@ -19,6 +19,9 @@ awk | gawk)
 sed)
   ARGV+=(-E -f -)
   ;;
+python3)
+  export -- PYTHONSAFEPATH=1
+  ;;
 perl)
   ARGV+=(-CASD -w)
   ;;
@@ -27,6 +30,12 @@ psql)
   ;;
 node)
   ARGV+=(--input-type=module)
+  ;;
+pwsh)
+  ARGV+=(-NoProfile -NonInteractive)
+  ;;
+osa)
+  ARGV=(osascript -l JavaScript)
   ;;
 clj)
   # shellcheck disable=SC2154
