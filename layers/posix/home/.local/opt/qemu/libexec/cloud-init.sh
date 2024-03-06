@@ -6,10 +6,10 @@ cd -- "${0%/*}/.."
 
 MACHINE="$1"
 DST="$2"
-export -- HOSTNAME PASSWD AUTHORIZED_KEYS IPV6_TOKEN
+export -- MACHINE_NAME PASSWD AUTHORIZED_KEYS IPV6_TOKEN
 
 TMP="$(mktemp -d)"
-HOSTNAME="$(jq --raw-input <<<"$MACHINE")"
+MACHINE_NAME="$(jq --raw-input <<<"$MACHINE")"
 envsubst <./cloud-init/meta-data.yml >"$TMP/meta-data"
 
 AK=~/.ssh/authorized_keys
@@ -21,7 +21,7 @@ fi
 SALT="$(uuidgen)"
 PASSWD="$(openssl passwd -1 -salt "$SALT" root | jq --raw-input)"
 AUTHORIZED_KEYS="$(cat -- "${KEYS[@]}" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')"
-IPV6_TOKEN="$(./libexec/ip64alloc.sh <<<"$MACHINE")"
+IPV6_TOKEN="$(./libexec/ip64alloc.sh <<<"$MACHINE.$HOSTNAME")"
 
 for YML in ./cloud-init/*.yml; do
   BASENAME="${YML##*/}"
