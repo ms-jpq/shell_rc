@@ -29,7 +29,21 @@ sqlite3)
   ARGV+=(-bail)
   ;;
 psql)
-  ARGV+=(--no-password --single-transaction --expanded)
+  ARGV+=(--no-password --single-transaction)
+  while (($#)); do
+    case "$1" in
+    -t | --tee)
+      export -- PSQL_PAGER='tee'
+      ;;
+    *)
+      ARGV+=("$1")
+      ;;
+    esac
+    shift -- 1
+  done
+  if [[ "$PSQL_PAGER" != 'tee' ]]; then
+    ARGV+=(--expanded)
+  fi
   ;;
 mysql)
   ARGV+=(--show-warnings --safe-updates --auto-vertical-output)
