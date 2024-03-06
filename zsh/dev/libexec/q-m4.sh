@@ -11,7 +11,7 @@ m4)
   ARGV+=(--prefix-builtins)
   ;;
 jq)
-  ARGV+=(--null-input --sort-keys)
+  ARGV+=(--sort-keys --from-file /dev/stdin)
   ;;
 awk | gawk)
   ARGV+=(-f -)
