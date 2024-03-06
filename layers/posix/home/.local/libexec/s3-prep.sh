@@ -36,7 +36,7 @@ push)
   done >"$REMOTES"
 
   find "$TMP" -type f -name '.gitignore' -delete
-  find "$TMP" -type f -print0 | xargs -r -0 -- gpg --batch --yes --encrypt-files --
+  find "$TMP" -type f -exec gpg --batch --yes --encrypt-files -- +
   find "$TMP" -type f -not -name '*.gpg' -delete
   ;;
 pull)
