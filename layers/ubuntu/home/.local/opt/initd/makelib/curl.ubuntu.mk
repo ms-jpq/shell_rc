@@ -71,11 +71,11 @@ htmlq                                             **https://github.com/mgdm/html
 jless                                             **https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-$(V_JLESS)-x86_64-unknown-linux-gnu.zip
 lazygit                                           https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_$(V_LAZYGIT)_Linux_$(LAZY_TYPE).tar.gz
 posh-linux-$(GOARCH)                              https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(GOARCH)
-tokei                                             https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-$(HOSTTYPE)-unknown-linux-gnu.tar.gz
 xsv                                               **https://github.com/BurntSushi/xsv/releases/latest/download/xsv-$(V_XSV)-x86_64-unknown-linux-musl.tar.gz
 
 endef
 
+# tokei                                             https://github.com/XAMPPRocky/tokei/releases/latest/download/tokei-$(HOSTTYPE)-unknown-linux-gnu.tar.gz
 
 define CURL_DEBS
 
