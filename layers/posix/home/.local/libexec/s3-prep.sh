@@ -36,12 +36,12 @@ push)
   done >"$REMOTES"
 
   find "$TMP" -type f -name '.gitignore' -delete
-  find "$TMP" -type f -exec gpg --batch --yes --encrypt-files -- +
+  find "$TMP" -type f -exec gpg --batch --yes --encrypt-files -- '{}' +
   find "$TMP" -type f -not -name '*.gpg' -delete
   ;;
 pull)
   REL="$TMP/~"
-  find "$REL" -type f -print0 | xargs -r -0 -- gpg --batch --yes --decrypt-files -- "$REMOTES.gpg"
+  find "$REL" -type f -print0 -exec gpg --batch --yes --decrypt-files -- "$REMOTES.gpg" '{}' +
   find "$REL" -type f -name '*.gpg' -delete
 
   for F in "$REL"/**/*; do
