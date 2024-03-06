@@ -23,6 +23,7 @@ case "${1:-""}" in
   ;;
 push)
   FILES=(
+    ~/.config/git/config
     ~/.config/gnupg/sshcontrol
     ~/.local/share/ssh
     ~/.ssh
