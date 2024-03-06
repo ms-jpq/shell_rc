@@ -25,8 +25,14 @@ python3)
 perl)
   ARGV+=(-CASD -w)
   ;;
+sqlite3)
+  ARGV+=(-bail)
+  ;;
 psql)
   ARGV+=(--no-password --single-transaction --expanded)
+  ;;
+mysql)
+  ARGV+=(--show-warnings --safe-updates --auto-vertical-output)
   ;;
 node)
   ARGV+=(--input-type=module)
