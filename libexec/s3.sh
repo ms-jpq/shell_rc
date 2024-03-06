@@ -42,7 +42,6 @@ pull)
   dir
   "${S5[@]}" cp -- "$BUCKET/*" "$TMP" | column -t
   "$SELF/s3-prep.sh" pull "$TMP" "${FILES[@]}"
-  find "$HOME/.local/lbin" -type f -not -name '.*' -print0 | xargs -r -0 -- chmod -v +x
 
   gpg --batch --decrypt -- "$GPG" | gpg --import
   ;;
