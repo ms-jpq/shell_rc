@@ -3,7 +3,7 @@
 growpart:
   ignore_growroot_disabled: false
 
-hostname: ${HOSTNAME}
+hostname: ${MACHINE_NAME}
 
 write_files:
   - path: /usr/local/lib/systemd/network/00-cloud-init.network
