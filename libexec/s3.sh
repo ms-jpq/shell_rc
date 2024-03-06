@@ -23,13 +23,8 @@ case "${1:-""}" in
   ;;
 push)
   FILES=(
-    ~/.config/aws/credentials
     ~/.config/gnupg/sshcontrol
-    ~/.local/lbin
-    ~/.local/share/it2
     ~/.local/share/ssh
-    ~/.local/share/zsh
-    ~/.netrc
     ~/.ssh
   )
 
