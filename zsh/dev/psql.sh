@@ -14,4 +14,4 @@ _pspg=(
 )
 printf -v PSPG -- '%q ' "${_pspg[@]}"
 # shellcheck disable=SC2154
-export -- PSPG PSQL_PAGER=pspg PSQLRC="$XDG_CONFIG_HOME/sql/psql.conf"
+export -- PSPG PSQL_PAGER=pspg PSQLRC="$XDG_CONFIG_HOME/psql/psql.conf"
