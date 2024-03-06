@@ -19,10 +19,13 @@ esac
 case "$ACTION" in
 push)
   for F in "$@"; do
-    NAME="$TMP/~/${F#"$HOME"}"
-    mkdir -v -p -- "${NAME%/*}" >&2
-    cp -v -R -- "$F" "$NAME"
-  done | column -t
+    # shellcheck disable=SC2088
+    REL="~/${F#"$HOME"}"
+    NAME="$TMP/$REL"
+    mkdir -p -- "${NAME%/*}"
+    cp -R -- "$F" "$NAME"
+    printf -- '%s\n' "$F" >&2
+  done
   for F in "$DEV"/*/.git/; do
     F="${F%/*}"
     GIT="${F%/*}"
@@ -47,9 +50,10 @@ pull)
       mkdir -v -p -- "$NAME" >&2
     else
       mkdir -v -p -- "${NAME%/*}" >&2
-      mv -v -- "$F" "$NAME"
+      mv -- "$F" "$NAME"
+      printf -- '%s\n' "$NAME" >&2
     fi
-  done | column -t
+  done
 
   readarray -t -d $'\0' -- LINES <"$REMOTES"
   for LINE in "${LINES[@]}"; do
