@@ -23,7 +23,7 @@ esac
 
 # shellcheck disable=SC2154
 case "$*" in
-*'-m iso_cp'* | *llm-su.sh* | *bin/mlp* | *asciiquarium)
+*isomorphic-copy/bin/cssh* | *llm-su.sh* | *bin/mlp* | *asciiquarium)
   exit
   ;;
 *"$HOME/.local/opt/pipes.sh/pipes.sh"* | *"$XDG_CONFIG_HOME/zsh/bin/pom"* | *"$XDG_CONFIG_HOME/zsh/bin/mq"* | *"$XDG_CONFIG_HOME/zsh/bin/rq"*)
