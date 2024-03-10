@@ -32,6 +32,8 @@ psql)
   ARGV+=(--no-password --single-transaction)
   if [[ -t 1 ]]; then
     ARGV+=(--expanded)
+  else
+    ARGV+=(--no-align --tuples-only)
   fi
   ;;
 mysql)
@@ -68,9 +70,12 @@ read -r -d '' -- SCRIPT
   # shellcheck disable=SC2154
   "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '>'
 } >&2
-"${ARGV[@]}" <<<"$SCRIPT" || true
-"$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<'
 
 if [[ -t 1 ]]; then
+  "${ARGV[@]}" <<<"$SCRIPT" || true
+  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<' >&2
   exec -- "$0" "$A0" "$@"
+else
+  "${ARGV[@]}" <<<"$SCRIPT" | tee -- /dev/fd/2
+  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<' >&2
 fi
