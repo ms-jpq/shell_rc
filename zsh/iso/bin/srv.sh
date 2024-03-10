@@ -4,4 +4,13 @@ set -o pipefail
 
 PORT=8080
 printf -- '%s\n' "http://$HOSTNAME:$PORT/"
-exec -- rclone --config /dev/null --copy-links serve http --addr "[::]:$PORT" "$@"
+RCLONE=(
+  rclone
+  --config /dev/null
+  --copy-links
+  serve http
+  --dir-cache-time 0
+  --addr "[::]:$PORT"
+  "$@"
+)
+exec -- "${RCLONE[@]}"
