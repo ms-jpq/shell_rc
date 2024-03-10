@@ -30,18 +30,7 @@ sqlite3)
   ;;
 psql)
   ARGV+=(--no-password --single-transaction)
-  while (($#)); do
-    case "$1" in
-    -t | --tee)
-      export -- PSQL_PAGER='tee'
-      ;;
-    *)
-      ARGV+=("$1")
-      ;;
-    esac
-    shift -- 1
-  done
-  if [[ "$PSQL_PAGER" != 'tee' ]]; then
+  if [[ -t 1 ]]; then
     ARGV+=(--expanded)
   fi
   ;;
