@@ -8,5 +8,7 @@ fi
 
 while true; do
   sleep -- 1
-  "${0%/*}/save.sh" "$@"
+  if "${0%/*}/save.sh" "$@"; then
+    :
+  fi
 done
