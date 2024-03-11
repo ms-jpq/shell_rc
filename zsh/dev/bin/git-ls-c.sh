@@ -5,9 +5,10 @@ set -o pipefail
 case "${SCRIPT_MODE:-""}" in
 preview)
   readarray -t -d '' -- LINES
-  LINE="${LINES[*]}"
-  SHA="${LINE%% *}"
-  git show "$SHA" "$@" | ${GIT_PAGER:-delta}
+  for LINE in "${LINES[@]}"; do
+    SHA="${LINE%% *}"
+    git show "$SHA" "$@"
+  done | ${GIT_PAGER:-delta}
   ;;
 execute)
   readarray -t -d '' -- LINES

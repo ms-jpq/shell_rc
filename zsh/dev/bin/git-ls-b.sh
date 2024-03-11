@@ -5,9 +5,11 @@ set -o pipefail
 case "${SCRIPT_MODE:-""}" in
 preview)
   readarray -t -d '' -- LINES
-  LINE="${LINES[*]}"
-  printf -- '%q\n\n' "$LINE"
-  git blame -w -- "$LINE" | ${GIT_PAGER:-delta}
+  for LINE in "${LINES[@]}"; do
+    printf -- '%q\n\n' "$LINE"
+    git blame -w -- "$LINE" | ${GIT_PAGER:-delta}
+    printf -- '\n'
+  done
   ;;
 execute)
   readarray -t -d '' -- LINES

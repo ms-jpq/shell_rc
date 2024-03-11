@@ -4,10 +4,13 @@ set -o pipefail
 
 case "${SCRIPT_MODE:-""}" in
 preview)
-  LINE="$(</dev/stdin)"
-  FILE="${LINE#*$'\n'}"
-  printf -- '%s\n\n' "$FILE"
-  git log --relative --all --follow --stat --color -- "$FILE"
+  readarray -t -d '' -- LINES
+  for LINE in "${LINES[@]}"; do
+    FILE="${LINE#*$'\n'}"
+    printf -- '%s\n\n' "$FILE"
+    git log --relative --all --follow --stat --color -- "$FILE"
+    printf -- '\n'
+  done
   ;;
 execute)
   readarray -t -d '' -- LINES

@@ -5,17 +5,20 @@ set -o pipefail
 case "${SCRIPT_MODE:-""}" in
 preview)
   readarray -t -d '' -- LINES
-  LINE="${LINES[*]}"
-  SHA="${LINE%% *}"
-  FILE="${LINE#*$'\n'}"
-  git show --relative "$SHA^:$FILE" | bat --color always --file-name "$FILE"
-  ;;
-execute)
-  readarray -t -d '' -- LINES
   for LINE in "${LINES[@]}"; do
     SHA="${LINE%% *}"
     FILE="${LINE#*$'\n'}"
-    printf -- '%q %q\n' "$SHA^" "$FILE"
+    git show --relative "$SHA^:$FILE" | bat --color always --file-name "$FILE"
+  done
+  ;;
+execute)
+  readarray -t -d '' -- LINES
+  TMP="$(mktemp -d -p .)"
+  for LINE in "${LINES[@]}"; do
+    SHA="${LINE%% *}"
+    FILE="${LINE#*$'\n'}"
+    mkdir -p -- "$TMP/${FILE%/*}"
+    git show --relative "$SHA^:$FILE" >"$TMP/$FILE"
   done
   ;;
 *)
