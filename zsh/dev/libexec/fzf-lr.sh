@@ -28,7 +28,7 @@ if [[ -v __FZF_LR_ARGV__ ]]; then
     FILE="${FILE#"$PREVIEW_HEAD"}"
     MODE='preview'
   fi
-  readarray -t -d $'\0' -- FS <"$FILE"
+  readarray -t -d '' -- FS <"$FILE"
   IFS=$'\0'
   F="${FS[*]}"
   # shellcheck disable=SC2154

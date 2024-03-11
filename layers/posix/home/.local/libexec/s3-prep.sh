@@ -55,7 +55,7 @@ pull)
     fi
   done
 
-  readarray -t -d $'\0' -- LINES <"$REMOTES"
+  readarray -t -d '' -- LINES <"$REMOTES"
   for LINE in "${LINES[@]}"; do
     NAME="$DEV/${LINE%%#*}"
     URL="${LINE#*#}"
