@@ -78,6 +78,7 @@
 + pstree
 + pv
 + qemu
++ renameutils
 + ripgrep
 + rlwrap
 + rsync
