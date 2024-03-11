@@ -25,6 +25,7 @@ push)
   FILES=(
     ~/.config/git/config
     ~/.config/gnupg/sshcontrol
+    ~/.local/secrets
     ~/.local/share/ssh
     ~/.ssh
   )

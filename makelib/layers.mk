@@ -13,7 +13,7 @@ define FS_TEMPLATE
 $(TMP)/$1/$2: ./libexec/lsync.sh $(shell shopt -u failglob && printf -- '%s ' ./layers/{posix,$1}/$2/**/*) $(REQS)
 	'$$<' '$$@' ./layers/{posix,$1}/$2/
 ifeq ($2,home)
-	chmod -v g-rwx,o-rwx '$$@/.config/gnupg' '$$@/.ssh'
+	chmod -v g-rwx,o-rwx '$$@/.config/gnupg' '$$@/.ssh' '$$@/.local/secrets'
 endif
 
 layers: $(TMP)/$1/$2
