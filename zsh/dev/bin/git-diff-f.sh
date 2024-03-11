@@ -14,7 +14,10 @@ execute)
   readarray -t -d '' -- LINES
   for LINE in "${LINES[@]}"; do
     SHA="${LINE%% *}"
-    printf -- '%q ' "$SHA~" "$*"
+    ARGV=(git restore --source "$SHA~" -- "$*")
+    printf -- '%q\n' "${ARGV[@]}"
+    "${ARGV[@]}"
+    break
   done
   ;;
 *)
