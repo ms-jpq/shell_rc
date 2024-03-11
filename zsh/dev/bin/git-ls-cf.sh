@@ -7,7 +7,7 @@ preview)
   readarray -t -d '' -- LINES
   for LINE in "${LINES[@]}"; do
     SHA="${LINE%% *}"
-    git show --name-only "$SHA" "$@"
+    git show --name-only --color "$SHA" "$@"
     printf -- '\n'
   done | ${GIT_PAGER:-delta}
   ;;
