@@ -4,9 +4,11 @@ set -o pipefail
 
 case "${SCRIPT_MODE:-""}" in
 preview)
-  LINE="$(</dev/stdin)"
-  SHA="${LINE%% *}"
-  git diff --relative "$SHA^" "$SHA" -- "$*" | ${GIT_PAGER:-delta}
+  readarray -t -d '' -- LINES
+  for LINE in "${LINES[@]}"; do
+    SHA="${LINE%% *}"
+    git diff --relative "$SHA^" "$SHA" -- "$*"
+  done | ${GIT_PAGER:-delta}
   ;;
 execute)
   readarray -t -d '' -- LINES

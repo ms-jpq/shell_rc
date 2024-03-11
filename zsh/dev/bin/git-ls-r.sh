@@ -5,9 +5,10 @@ set -o pipefail
 case "${SCRIPT_MODE:-""}" in
 preview)
   readarray -t -d '' -- LINES
-  LINE="${LINES[*]}"
-  POINTER="${LINE%% *}"
-  git show "$POINTER" "$@" | ${GIT_PAGER:-delta}
+  for LINE in "${LINES[@]}"; do
+    POINTER="${LINE%% *}"
+    git show "$POINTER" "$@"
+  done | ${GIT_PAGER:-delta}
   ;;
 execute)
   readarray -t -d '' -- LINES
