@@ -8,7 +8,7 @@ preview)
   for LINE in "${LINES[@]}"; do
     FILE="${LINE#*' '}"
     printf -- '%s\0' "$FILE"
-  done | xargs -r -0 -- git diff "$@" -- | ${GIT_PAGER:-delta}
+  done | xargs -r -0 -- git diff --relative "$@" -- | ${GIT_PAGER:-delta}
   ;;
 execute)
   readarray -t -d '' -- LINES
