@@ -2,20 +2,19 @@
 
 set -o pipefail
 
-parse() {
-  LINE="$(</dev/stdin)"
-  FILE="${LINE#*$'\n'}"
-}
-
 case "${SCRIPT_MODE:-""}" in
 preview)
-  parse
+  LINE="$(</dev/stdin)"
+  FILE="${LINE#*$'\n'}"
   printf -- '%s\n\n' "$FILE"
   git log --relative --all --follow --stat --color -- "$FILE"
   ;;
 execute)
-  parse
-  printf -- '%q\n' "$FILE"
+  readarray -t -d '' -- LINES
+  for LINE in "${LINES[@]}"; do
+    FILE="${LINE#*$'\n'}"
+    printf -- '%q\n' "$FILE"
+  done
   ;;
 *)
   ARGV=(

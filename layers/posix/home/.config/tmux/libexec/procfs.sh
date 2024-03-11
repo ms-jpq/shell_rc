@@ -27,7 +27,7 @@ darwin*)
   ;;
 linux*)
   if PS_ID="$(pgrep -P "$PPS_ID")"; then
-    if readarray -t -d $'\0' -- ARGV <"/proc/$PS_ID/cmdline"; then
+    if readarray -t -d '' -- ARGV <"/proc/$PS_ID/cmdline"; then
       :
     fi
   fi

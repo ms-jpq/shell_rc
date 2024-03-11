@@ -33,6 +33,6 @@ else
     --context-separator="$("$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '-' "$FZF_PREVIEW_COLUMNS")"
   )
   readarray -t -d "$SEP" -- ENV_ARGS < <(printf -- '%s' "$RG_ARGS")
-  readarray -t -d $'\0' -- RG_PATH <"$2"
+  readarray -t -d '' -- RG_PATH <"$2"
   exec -- rg "${ARGS[@]}" "${ENV_ARGS[@]}" -- "${RG_PATH[@]}"
 fi
