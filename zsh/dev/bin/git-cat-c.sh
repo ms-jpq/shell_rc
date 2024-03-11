@@ -4,12 +4,12 @@ set -o pipefail
 
 case "${SCRIPT_MODE:-""}" in
 preview)
-  LINE="$(</dev/stdin)"
-  git show --relative "$@" -- "$LINE" | ${GIT_PAGER:-delta}
+  readarray -t -d '' -- LINES
+  git show --relative "$@" -- "${LINES[@]}" | ${GIT_PAGER:-delta}
   ;;
 execute)
-  LINE="$(</dev/stdin)"
-  printf -- '%q\n' "$LINE"
+  readarray -t -d '' -- LINES
+  printf -- '%q\n' "${LINES[@]}"
   ;;
 *)
   ARGV=(

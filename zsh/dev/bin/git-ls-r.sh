@@ -2,19 +2,19 @@
 
 set -o pipefail
 
-parse() {
-  LINE="$(</dev/stdin)"
-  POINTER="${LINE%% *}"
-}
-
 case "${SCRIPT_MODE:-""}" in
 preview)
-  parse
+  readarray -t -d '' -- LINES
+  LINE="${LINES[*]}"
+  POINTER="${LINE%% *}"
   git show "$POINTER" "$@" | ${GIT_PAGER:-delta}
   ;;
 execute)
-  parse
-  printf -- '%q\n' "$POINTER"
+  readarray -t -d '' -- LINES
+  for LINE in "${LINES[@]}"; do
+    POINTER="${LINE%% *}"
+    printf -- '%q\n' "$POINTER"
+  done
   ;;
 *)
   ARGV=(

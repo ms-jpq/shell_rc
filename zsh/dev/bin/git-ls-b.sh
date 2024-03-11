@@ -4,13 +4,14 @@ set -o pipefail
 
 case "${SCRIPT_MODE:-""}" in
 preview)
-  LINE="$(</dev/stdin)"
+  readarray -t -d '' -- LINES
+  LINE="${LINES[*]}"
   printf -- '%q\n\n' "$LINE"
   git blame -w -- "$LINE" | ${GIT_PAGER:-delta}
   ;;
 execute)
-  LINE="$(</dev/stdin)"
-  printf -- '%q\n' "$LINE"
+  readarray -t -d '' -- LINES
+  printf -- '%q\n' "${LINES[@]}"
   ;;
 *)
   ARGV=(

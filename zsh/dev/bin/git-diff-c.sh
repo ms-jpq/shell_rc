@@ -2,19 +2,20 @@
 
 set -o pipefail
 
-parse() {
-  LINE="$(</dev/stdin)"
-  FILE="${LINE#* }"
-}
-
 case "${SCRIPT_MODE:-""}" in
 preview)
-  parse
-  git diff "$@" -- "$FILE" | ${GIT_PAGER:-delta}
+  readarray -t -d '' -- LINES
+  for LINE in "${LINES[@]}"; do
+    FILE="${LINE#*' '}"
+    printf -- '%s\0' "$FILE"
+  done | xargs -r -0 -- git diff "$@" -- | ${GIT_PAGER:-delta}
   ;;
 execute)
-  parse
-  printf -- '%q\n' "$FILE"
+  readarray -t -d '' -- LINES
+  for LINE in "${LINES[@]}"; do
+    FILE="${LINE#*' '}"
+    printf -- '%q\n' "$FILE"
+  done
   ;;
 *)
   ARGV=(
