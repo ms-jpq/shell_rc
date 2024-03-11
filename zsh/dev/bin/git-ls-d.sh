@@ -2,20 +2,21 @@
 
 set -o pipefail
 
-parse() {
-  LINE="$(</dev/stdin)"
-  SHA="${LINE%% *}"
-  FILE="${LINE#*$'\n'}"
-}
-
 case "${SCRIPT_MODE:-""}" in
 preview)
-  parse
+  readarray -t -d '' -- LINES
+  LINE="${LINES[*]}"
+  SHA="${LINE%% *}"
+  FILE="${LINE#*$'\n'}"
   git show --relative "$SHA^:$FILE" | bat --color always --file-name "$FILE"
   ;;
 execute)
-  parse
-  printf -- '%q %q\n' "$SHA^" "$FILE"
+  readarray -t -d '' -- LINES
+  for LINE in "${LINES[@]}"; do
+    SHA="${LINE%% *}"
+    FILE="${LINE#*$'\n'}"
+    printf -- '%q %q\n' "$SHA^" "$FILE"
+  done
   ;;
 *)
   ARGV=(

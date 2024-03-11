@@ -2,19 +2,19 @@
 
 set -o pipefail
 
-parse() {
-  LINE="$(</dev/stdin)"
-  SHA="${LINE%% *}"
-}
-
 case "${SCRIPT_MODE:-""}" in
 preview)
-  parse
+  readarray -t -d '' -- LINES
+  LINE="${LINES[*]}"
+  SHA="${LINE%% *}"
   git show "$SHA" "$@" | ${GIT_PAGER:-delta}
   ;;
 execute)
-  parse
-  printf -- '%q\n' "$SHA"
+  readarray -t -d '' -- LINES
+  for LINE in "${LINES[@]}"; do
+    SHA="${LINE%% *}"
+    printf -- '%q\n' "$SHA"
+  done
   ;;
 *)
   ARGV=(
