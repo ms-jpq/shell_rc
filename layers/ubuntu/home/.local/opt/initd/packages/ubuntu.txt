@@ -50,6 +50,7 @@
 + nyancat
 + openssh-server
 + parallel
++ pipexec
 + progress
 + psmisc
 + pspg
