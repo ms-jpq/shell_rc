@@ -7,7 +7,7 @@ preview)
   readarray -t -d '' -- LINES
   for LINE in "${LINES[@]}"; do
     SHA="${LINE%% *}"
-    git show "$SHA" "$@"
+    git show --relative "$SHA" "$@"
   done | ${GIT_PAGER:-delta}
   ;;
 execute)

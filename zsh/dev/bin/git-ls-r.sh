@@ -7,7 +7,7 @@ preview)
   readarray -t -d '' -- LINES
   for LINE in "${LINES[@]}"; do
     POINTER="${LINE%% *}"
-    git show "$POINTER" "$@"
+    git show --relative "$POINTER" "$@"
   done | ${GIT_PAGER:-delta}
   ;;
 execute)
