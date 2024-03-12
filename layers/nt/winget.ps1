@@ -20,7 +20,8 @@ if ($go) {
 
     # Start-Process -Wait -FilePath $t_vc -ArgumentList '/install', '/quiet', '/norestart'
 
-    $releases = Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest'
+    # $latest = 'https://api.github.com/repos/microsoft/winget-cli/releases/latest'
+    $releases = Invoke-RestMethod -Uri 'https://github.com/microsoft/winget-cli/releases/tag/v1.6.3482'
     $bundle = $releases.assets | Where-Object { $_.browser_download_url.EndsWith('msixbundle') } | Select-Object -First 1
     $license = $releases.assets | Where-Object { $_.browser_download_url.EndsWith('License1.xml') } | Select-Object -First 1
 
@@ -35,18 +36,18 @@ if ($go) {
 
     Add-AppxProvisionedPackage -Online -PackagePath $t_bundle -LicensePath $t_license
 
-    # $localappdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
-    # $location = Join-Path -Path $localappdata -ChildPath (Join-Path -Path 'Microsoft' -ChildPath (Join-Path -Path 'WindowsApps' -ChildPath 'winget.exe'))
+    $localappdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
+    $location = Join-Path -Path $localappdata -ChildPath (Join-Path -Path 'Microsoft' -ChildPath (Join-Path -Path 'WindowsApps' -ChildPath 'winget.exe'))
 
-    # foreach ($i in 1..60) {
-    #     if (Test-Path -Path $location) {
-    #         exit 0
-    #     }
+    foreach ($i in 1..60) {
+        if (Test-Path -Path $location) {
+            exit 0
+        }
 
-    #     Write-Host -- $i
-    #     Start-Sleep -Seconds 1
-    # }
+        Write-Host -- $i
+        Start-Sleep -Seconds 1
+    }
 
-    # throw "test -f $location"
+    throw "test -f $location"
     Start-Sleep -Seconds 9
 }
