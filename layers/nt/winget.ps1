@@ -21,7 +21,7 @@ if ($go) {
     # Start-Process -Wait -FilePath $t_vc -ArgumentList '/install', '/quiet', '/norestart'
 
     # $latest = 'https://api.github.com/repos/microsoft/winget-cli/releases/latest'
-    $releases = Invoke-RestMethod -Uri 'https://github.com/microsoft/winget-cli/releases/tag/v1.6.3482'
+    $releases = Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/134390706'
     $bundle = $releases.assets | Where-Object { $_.browser_download_url.EndsWith('msixbundle') } | Select-Object -First 1
     $license = $releases.assets | Where-Object { $_.browser_download_url.EndsWith('License1.xml') } | Select-Object -First 1
 
