@@ -150,7 +150,7 @@ if [[ -v SSH ]]; then
 else
   SSH_FWD=''
 fi
-ARGV+=(-nic "user,${NIC}$SSH_FWD")
+ARGV+=(-nic "user,dnssearch=$HOSTNAME,${NIC}$SSH_FWD")
 
 if ! ((UID)); then
   ARGV+=(-nic "vmnet-shared,$NIC")
