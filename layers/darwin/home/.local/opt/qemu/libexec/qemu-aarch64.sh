@@ -40,7 +40,7 @@ while (($#)); do
     shift -- 2
     ;;
   --passwd)
-    PASSWD="$2"
+    PASSWD="$(base64 <<<"$2")"
     shift -- 2
     ;;
   --kernel)
@@ -133,11 +133,11 @@ fi
 if [[ -n "${VNC:-""}" ]]; then
   ID='s0'
   ARGV+=(
-    -object "secret,id=$ID,format=raw,data=$PASSWD"
+    -object "secret,id=$ID,format=base64,data=$PASSWD"
     -vnc "$VNC,password-secret=$ID"
-    -device "ich9-intel-hda"
     -device 'virtio-gpu-pci'
     -device 'virtio-keyboard-pci'
+    -device 'virtio-sound-pci'
     -device 'virtio-tablet-pci'
   )
 else
