@@ -10,11 +10,13 @@ bindkey -- '^[[1;9C' emacs-forward-word
 bindkey -- '^[[1;9D' emacs-backward-word
 # Emacs
 
-# Edit current line
+# Bash
+bindkey -- '\C-u' backward-kill-line
+
 autoload -U -- edit-command-line
 zle -N -- edit-command-line
 bindkey -- '\C-x\C-e' edit-command-line
-# Edit current line
+# Bash
 
 # History Expansion
 bindkey -- ' ' magic-space
