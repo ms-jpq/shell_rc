@@ -148,7 +148,7 @@ run)
     --initrd "${INITRD[@]}"
     --drive "$DRIVE"
     --root '/dev/vda1'
-    --drive "$CLOUD_INIT,readonly=on"
+    --drive "$CLOUD_INIT,read-only=on"
   )
   if ! [[ -t 0 ]]; then
     QARGV+=(--console "$CON_SOCK")
