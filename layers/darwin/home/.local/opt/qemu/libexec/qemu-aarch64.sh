@@ -102,6 +102,7 @@ KERNEL_COMMANDS=(
   panic=-1
   random.trust_cpu=on
   random.trust_bootloader=on
+  console=hvc0
   "root=$ROOT"
 )
 
@@ -111,16 +112,21 @@ ARGV+=(
   -append "${KERNEL_COMMANDS[*]}"
 )
 
+CON='con0'
+ARGV+=(
+  -device 'virtio-serial-device'
+  -device "virtconsole,chardev=$CON"
+)
+if [[ -n "${CONSOLE:-""}" ]]; then
+  ARGV+=(-chardev "socket,server=on,wait=off,id=$CON,path=$CONSOLE")
+else
+  ARGV+=(-chardev "stdio,id=$CON")
+fi
+
 ARGV+=(
   -device virtio-rng-pci-non-transitional
   -device 'virtio-balloon-pci-non-transitional,deflate-on-oom=on,free-page-reporting=on'
 )
-
-if [[ -n "${CONSOLE:-""}" ]]; then
-  ARGV+=(-serial "unix:server=on,wait=off,path=$CONSOLE")
-else
-  ARGV+=(-serial stdio)
-fi
 
 if [[ -n "${QMP:-""}" ]]; then
   ARGV+=(-qmp "unix:$QMP,server,nowait")
@@ -131,7 +137,7 @@ if [[ -n "${MONITOR:-""}" ]]; then
 fi
 
 if [[ -n "${VNC:-""}" ]]; then
-  ID='s0'
+  ID='sec0'
   ARGV+=(
     -object "secret,id=$ID,format=base64,data=$PASSWD"
     -vnc "$VNC,password-secret=$ID"
@@ -144,23 +150,33 @@ else
   ARGV+=(-nographic)
 fi
 
-NIC='model=virtio-net-pci-non-transitional'
 if [[ -v SSH ]]; then
   SSH_FWD=",hostfwd=tcp:$SSH-:22"
 else
   SSH_FWD=''
 fi
-ARGV+=(-nic "user,dnssearch=$HOSTNAME,${NIC}$SSH_FWD")
+
+IDX=0
+NET="net$IDX"
+NIC='virtio-net-pci-non-transitional'
+ARGV+=(
+  -netdev "user,id=$NET,dnssearch=${HOSTNAME}$SSH_FWD"
+  -device "$NIC,netdev=$NET"
+)
 
 if ! ((UID)); then
-  ARGV+=(-nic "vmnet-shared,$NIC")
+  NET="net$((++IDX))"
+  ARGV+=(
+    -netdev "vmnet-shared,id=$NET"
+    -device "$NIC,netdev=$NET"
+  )
 fi
 
 for IDX in "${!DRIVES[@]}"; do
   DRIVE="${DRIVES[$IDX]}"
-  ID="dri$IDX"
+  ID="blk$IDX"
   ARGV+=(
-    -drive "if=none,format=raw,cache=none,id=$ID,file=$DRIVE"
+    -blockdev "driver=raw,file.driver=file,file.aio=threads,node-name=$ID,file.filename=$DRIVE"
     -device "virtio-blk-pci-non-transitional,drive=$ID"
   )
 done
