@@ -179,7 +179,6 @@ BLKDEV_OPTIONS=(
   cache.direct=on
 )
 printf -v BLKOPTS -- '%s,' "${BLKDEV_OPTIONS[@]}"
-
 for IDX in "${!DRIVES[@]}"; do
   DRIVE="${DRIVES[$IDX]}"
   ID="blk$IDX"
