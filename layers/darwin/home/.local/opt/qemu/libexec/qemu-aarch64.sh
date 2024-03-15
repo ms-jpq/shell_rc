@@ -91,8 +91,8 @@ ARGV=(
   -compat 'deprecated-input=crash'
   -nodefaults
   -no-user-config
-  -machine 'type=virt,acpi=off,accel=hvf'
-  -cpu max
+  -machine 'type=virt,gic-version=max,acpi=off,accel=hvf'
+  -cpu 'max'
   -smp "$CPUS"
   -m "${MEM:-"size=1G"}"
 )
