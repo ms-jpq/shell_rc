@@ -172,11 +172,19 @@ if ! ((UID)); then
   )
 fi
 
+BLKDEV_OPTIONS=(
+  driver=raw
+  file.driver=file
+  file.aio=threads
+  cache.direct=on
+)
+printf -v BLKOPTS -- '%s,' "${BLKDEV_OPTIONS[@]}"
+
 for IDX in "${!DRIVES[@]}"; do
   DRIVE="${DRIVES[$IDX]}"
   ID="blk$IDX"
   ARGV+=(
-    -blockdev "driver=raw,file.driver=file,file.aio=threads,node-name=$ID,file.filename=$DRIVE"
+    -blockdev "${BLKOPTS}node-name=$ID,file.filename=$DRIVE"
     -device "virtio-blk-pci-non-transitional,drive=$ID"
   )
 done
