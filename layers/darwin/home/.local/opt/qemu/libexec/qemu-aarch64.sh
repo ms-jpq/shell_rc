@@ -173,7 +173,7 @@ if ! ((UID)); then
 fi
 
 BLKDEV_OPTIONS=(
-  driver=raw
+  raw
   file.driver=file
   file.aio=threads
   cache.direct=on
