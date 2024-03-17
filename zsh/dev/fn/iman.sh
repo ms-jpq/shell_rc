@@ -1,3 +1,7 @@
 #!/usr/bin/env -S -- bash
 
-open -- "https://manpages.org/$*"
+iman() {
+  local q="$*"
+  q="$(jq --exit-status --raw-input --raw-output <<<"$q")"
+  open -- "https://manpages.ubuntu.com/cgi-bin/search.py?q=$q"
+}
