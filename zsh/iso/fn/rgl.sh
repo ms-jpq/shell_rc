@@ -1,3 +1,4 @@
 #!/usr/bin/env -S -- bash
 
-rg --line-buffered --pretty "$@" | less || true
+# shellcheck disable=SC2312
+rg --line-buffered --pretty "$@" | less
