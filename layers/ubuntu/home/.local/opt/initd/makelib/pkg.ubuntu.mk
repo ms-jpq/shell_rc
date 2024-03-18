@@ -6,6 +6,10 @@ pkg.posix: /etc/apt/sources.list.d/ubuntu_partner.list
 	deb http://archive.canonical.com/ubuntu $(VERSION_CODENAME) partner
 	EOF
 
+pkg.posix: /etc/apt/trusted.gpg.d/ms-jpq.gpg
+/etc/apt/trusted.gpg.d/ms-jpq.gpg:
+	$(CURL) -- 'https://ms-jpq.github.io/deb/pubkey.asc' | sudo -- gpg --batch --dearmor --yes --output '$@'
+
 pkg.posix: /etc/apt/sources.list.d/ppa_neovim-ppa_unstable.list
 /etc/apt/sources.list.d/ppa_neovim-ppa_unstable.list:
 	sudo -- ./libexec/add-ppa.sh neovim-ppa/unstable

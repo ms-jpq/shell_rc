@@ -1,0 +1,13 @@
+btm
+difft
+dust
+eza
+fzf
+git-delta
+gitui
+lazygit
+pastel
+s5cmd
+sad
+watchexec-cli
+xsv
