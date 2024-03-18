@@ -49,7 +49,6 @@ V_BTM     =  $(shell $(GH_LATEST) ClementTsang/bottom)
 V_DELTA   =  $(shell $(GH_LATEST) dandavison/delta)
 V_DUST    =  $(shell $(GH_LATEST) bootandy/dust)
 V_FZF     =  $(shell $(GH_LATEST) junegunn/fzf)
-V_GOJQ    := $(shell $(GH_LATEST) itchyny/gojq)
 V_JLESS   =  $(shell $(GH_LATEST) PaulJuliusMartinez/jless)
 V_LAZYGIT =  $(patsubst v%,%,$(shell $(GH_LATEST) jesseduffield/lazygit))
 V_PASTEL  =  $(patsubst v%,%,$(shell $(GH_LATEST) sharkdp/pastel))
@@ -66,7 +65,6 @@ dust-$(V_DUST)-$(HOSTTYPE)-unknown-linux-gnu/dust https://github.com/bootandy/du
 eza                                               https://github.com/eza-community/eza/releases/latest/download/eza_$(HOSTTYPE)-unknown-linux-gnu.tar.gz
 fzf                                               https://github.com/junegunn/fzf/releases/latest/download/fzf-$(V_FZF)-linux_$(GOARCH).tar.gz
 gitui                                             https://github.com/extrawurst/gitui/releases/latest/download/gitui-linux-$(GITUI_TYPE).tar.gz
-gojq_$(V_GOJQ)_linux_$(GOARCH)/gojq               https://github.com/itchyny/gojq/releases/latest/download/gojq_$(V_GOJQ)_linux_$(GOARCH).tar.gz
 htmlq                                             **https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-linux.tar.gz
 jless                                             **https://github.com/PaulJuliusMartinez/jless/releases/latest/download/jless-$(V_JLESS)-x86_64-unknown-linux-gnu.zip
 lazygit                                           https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_$(V_LAZYGIT)_Linux_$(LAZY_TYPE).tar.gz
