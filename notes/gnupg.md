@@ -79,7 +79,7 @@ Host <name>
 
 ```bash
 # The without `!`, WILL USE PRIMARY KEY
-git config --global user.signingkey '<subkey>'!
+git config --global -- user.signingkey '<subkey>'!
 ```
 
 ## Send / Recv
@@ -87,8 +87,8 @@ git config --global user.signingkey '<subkey>'!
 ```bash
 # All keys
 gpg --armor --export-secret-keys --export-options export-backup -- '<id>' | gpg -v --import
+# Public key only
+gpg --armor --export
 # Excluding primary key
 gpg --armor --export-secret-subkeys -- '<id>'!
-# Excluding private (sub*)keys
-gpg --armor --export --export-options export-minimal -- '<subkey>'!
 ```
