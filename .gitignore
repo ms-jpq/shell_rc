@@ -1,3 +1,4 @@
+*.isorted
 .DS_Store
 .git/
 .mypy_cache/
