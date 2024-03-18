@@ -45,17 +45,17 @@ else
 LAZY_TYPE := $(HOSTTYPE)
 endif
 
-V_BTM     =  $(shell $(GH_LATEST) ClementTsang/bottom)
-V_DELTA   =  $(shell $(GH_LATEST) dandavison/delta)
-V_DUST    =  $(shell $(GH_LATEST) bootandy/dust)
-V_FZF     =  $(shell $(GH_LATEST) junegunn/fzf)
-V_JLESS   =  $(shell $(GH_LATEST) PaulJuliusMartinez/jless)
-V_LAZYGIT =  $(patsubst v%,%,$(shell $(GH_LATEST) jesseduffield/lazygit))
-V_PASTEL  =  $(patsubst v%,%,$(shell $(GH_LATEST) sharkdp/pastel))
-V_S5CMD   =  $(patsubst v%,%,$(shell $(GH_LATEST) peak/s5cmd))
-V_TV      =  $(shell $(GH_LATEST) alexhallam/tv)
-V_WATCHEX =  $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
-V_XSV     =  $(shell $(GH_LATEST) BurntSushi/xsv)
+V_BTM     = $(shell $(GH_LATEST) ClementTsang/bottom)
+V_DELTA   = $(shell $(GH_LATEST) dandavison/delta)
+V_DUST    = $(shell $(GH_LATEST) bootandy/dust)
+V_FZF     = $(shell $(GH_LATEST) junegunn/fzf)
+V_JLESS   = $(shell $(GH_LATEST) PaulJuliusMartinez/jless)
+V_LAZYGIT = $(patsubst v%,%,$(shell $(GH_LATEST) jesseduffield/lazygit))
+V_PASTEL  = $(patsubst v%,%,$(shell $(GH_LATEST) sharkdp/pastel))
+V_S5CMD   = $(patsubst v%,%,$(shell $(GH_LATEST) peak/s5cmd))
+V_TV      = $(shell $(GH_LATEST) alexhallam/tv)
+V_WATCHEX = $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
+V_XSV     = $(shell $(GH_LATEST) BurntSushi/xsv)
 
 
 define CURL_ARCHIVES
