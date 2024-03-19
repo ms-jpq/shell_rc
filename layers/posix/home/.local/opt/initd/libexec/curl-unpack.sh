@@ -5,6 +5,7 @@ set -o pipefail
 SRC="$1"
 DST="$2"
 NAME=${SRC##*/}
+shift -- 2
 
 CURL=(
   curl
@@ -29,6 +30,7 @@ UNTAR=(
   -C "$DST"
   -f -
   -v
+  "$@"
 )
 
 case "$SRC" in
@@ -38,7 +40,7 @@ case "$SRC" in
 *.zip)
   FILE="$DST/$NAME"
   "${CURL[@]}" --output "$FILE" -- "$SRC"
-  unzip -o -d "$DST" "$FILE"
+  unzip -o -d "$DST" "$FILE" "$@"
   ;;
 *)
   "${CURL[@]}" --output "$DST/$NAME" -- "$SRC"
