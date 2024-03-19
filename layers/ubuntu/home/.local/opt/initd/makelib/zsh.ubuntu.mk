@@ -1,6 +1,6 @@
 .PHONY: zsh.ubuntu
 
-zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd $(BIN)/oh-my-posh
+zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd
 
 /usr/bin/zsh /bin/batcat /bin/fdfind: | pkg.posix
 
