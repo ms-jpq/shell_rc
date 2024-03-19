@@ -10,9 +10,6 @@ zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd $(BIN)/oh-my-posh
 /usr/local/bin/fd: | /bin/fdfind
 	sudo -- ln -v -sf -- '$|' '$@'
 
-$(BIN)/oh-my-posh: | $(BIN)/posh-linux-$(GOARCH)
-	ln -v -sf -- '$|' '$@'
-
 ifneq ($(shell printf -- '%s' "$$SHELL"),/usr/bin/zsh)
 zsh.ubuntu: /usr/bin/zsh
 	USER="$${USER:-"$$(whoami)"}"
