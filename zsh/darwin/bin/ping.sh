@@ -14,6 +14,9 @@ for A in "$@"; do
   -6)
     SIX=1
     ;;
+  -4)
+    SIX=0
+    ;;
   *)
     ARGV+=("$A")
     ;;
@@ -23,5 +26,5 @@ done
 if ((SIX)); then
   ping6 "${ARGV[@]}"
 else
-  /sbin/ping "$@"
+  /sbin/ping "${ARGV[@]}"
 fi
