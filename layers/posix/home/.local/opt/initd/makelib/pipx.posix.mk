@@ -1,10 +1,10 @@
 .PHONY: pipx clobber.pipx
 
-# ifeq ($(OS),darwin)
-# PIPX := $(LOCAL)/pipx/venvs
-# else
+ifeq ($(OS),darwin)
+PIPX := $(LOCAL)/pipx/venvs
+else
 PIPX := $(LOCAL)/share/pipx/venvs
-# endif
+endif
 
 PIPX_E := $(call UNIX_2_NT,$(OPT)/pipx/$(PY_BIN)/pipx)
 ifeq ($(OS),nt)
@@ -32,6 +32,7 @@ define PIPX_TEMPLATE
 
 pipx: .WAIT $(PIPX)/$1
 $(PIPX)/$1: | $(OPT)/pipx/$(PY_BIN)/pipx
+	export -- PIPX_HOME='$(dir $(PIPX))'
 	if [[ -d '$$@' ]]; then
 		$(PIPX_EX) upgrade -- '$2'
 	else
