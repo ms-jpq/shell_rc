@@ -70,6 +70,7 @@
 + oh-my-posh
 + openssh
 + openvpn
++ pam-reattach
 + pandoc
 + pastel
 + peak/tap/s5cmd
