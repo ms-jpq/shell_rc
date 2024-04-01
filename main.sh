@@ -21,7 +21,8 @@ if ! [[ -v UNDER ]]; then
 
   case "$OSTYPE" in
   msys)
-    make
+    USERPROFILE="${USERPROFILE:-"$HOME"}"
+    "$USERPROFILE/AppData/Local/Microsoft/WinGet/Links/make.exe"
     ;;
   *)
     gmake
