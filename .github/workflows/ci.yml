@@ -36,11 +36,9 @@ jobs:
           gmake lint
 
       - run: |-
-          unset -- PIPX_HOME
-          ./main.sh localhost
+          ./main.sh localhost --
 
       - run: |-
-          unset -- PIPX_HOME
           ./main.sh localhost -- --debug
 
       - run: |-
@@ -69,12 +67,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |-
           PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
-          unset -- PIPX_HOME
-          ./main.sh localhost
+          ./main.sh localhost --
 
       - run: |-
           PATH="$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
-          unset -- PIPX_HOME
           ./main.sh localhost -- --debug
 
   windows:
@@ -105,15 +101,13 @@ jobs:
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
-          $Env:PIPX_HOME = ''
 
-          bash .\main.sh localhost
+          bash .\main.sh localhost --
 
       - run: |-
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
-          $Env:PIPX_HOME = ''
 
           bash .\main.sh localhost -- '--debug'
 
