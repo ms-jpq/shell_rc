@@ -36,8 +36,7 @@ msys)
   VERSION_CODENAME="$VERSION_ID"
   NPROC="$(nproc)"
   MEMBYTES="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
-  # shellcheck disable=SC2154
-  MAKE="$SYSTEMDRIVE/msys64/usr/bin/make"
+  MAKE='make'
   ;;
 *)
   exit 1
