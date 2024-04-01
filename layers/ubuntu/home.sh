@@ -11,6 +11,7 @@ link() {
   fi
 }
 
+link ~/.config/zsh/.bashrc ~/.bashrc
 link ~/.config/gnupg ~/.gnupg
 link /dev/null ~/.config/systemd/user/gpg-agent.service
 link /dev/null ~/.config/systemd/user/gpg-agent.socket
