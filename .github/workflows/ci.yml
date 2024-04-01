@@ -88,16 +88,11 @@ jobs:
       - uses: actions/setup-python@v3
 
       - run: |-
-          Get-ChildItem Env:* | Sort-Object Name
+          powershell.exe .\layers\nt\winget.ps1
 
-          Get-Command -All -- bash
-          Get-Command -All -- cygpath
-          Get-Command -All -- gmake
-          Get-Command -All -- nproc
-          Get-Command -All -- python3
-          Get-Command -All -- sh
-          Get-Command -All -- tar
-          Get-Command -All -- unzip
+      - run: |-
+          winget.exe source update '--force'
+          winget.exe install '--disable-interactivity' '--accept-source-agreements' '--accept-package-agreements' '--exact' '--id' 'ezwinports.make'
 
       - run: |-
           Get-ChildItem -Force -- (Join-Path -Path $Env:ProgramFiles 'Git')
@@ -106,12 +101,6 @@ jobs:
           $pacman = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'pacman'
           $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync')
           & $pacman @argv
-
-      - run: |-
-          powershell.exe .\layers\nt\winget.ps1
-
-      - run: |-
-          winget.exe 'install' '--disable-interactivity' '--accept-source-agreements' '--accept-package-agreements' '--exact' '--id' 'ezwinports.make'
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
@@ -129,5 +118,5 @@ jobs:
 
       - run: |-
           $tmp = 'out.json'
-          & 'winget' 'export' '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
+          'winget' 'export' '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
           Get-Content -Path $tmp
