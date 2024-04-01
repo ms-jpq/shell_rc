@@ -30,4 +30,4 @@ $(VAR)/bin $(TMP):
 	mkdir -v -p -- '$@'
 
 include layers/posix/home/.local/opt/initd/lib/*.mk
-include makelib/*.mk
+include $(shell shopt -u failglob && printf -- '%s ' ./makelib/*.mk)
