@@ -8,6 +8,7 @@ GIT_DIRS :=
 $(GIT_TMP):
 	mkdir -v -p -- '$@'
 
+$(warning $(GIT_TMP))
 
 define GIT_REPOS
 

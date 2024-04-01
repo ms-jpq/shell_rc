@@ -23,7 +23,7 @@ clobber: clean
 
 GOOS := darwin ubuntu nt
 CURL := curl --fail-with-body --location --no-progress-meter
-VAR := ./var
+VAR := var
 TMP := $(VAR)/tmp
 
 $(VAR)/bin $(TMP):
