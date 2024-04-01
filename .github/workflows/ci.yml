@@ -107,7 +107,7 @@ jobs:
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
-          bash .\main.sh localhost -- '--debug'
+          bash .\main.sh localhost
 
       - run: |-
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
