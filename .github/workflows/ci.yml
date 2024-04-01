@@ -95,12 +95,9 @@ jobs:
           winget.exe install '--disable-interactivity' '--accept-source-agreements' '--accept-package-agreements' '--exact' '--id' 'ezwinports.make'
 
       - run: |-
-          Get-ChildItem -Force -- (Join-Path -Path $Env:ProgramFiles 'Git')
-
-      - run: |-
           $pacman = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'pacman'
           $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync')
-          & $pacman @argv
+          $pacman @argv
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
