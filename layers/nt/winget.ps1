@@ -41,7 +41,6 @@ if ($go) {
 
     foreach ($i in 1..60) {
         if (Test-Path -Path $location) {
-            Add-AppxPackage -Path 'https://cdn.winget.microsoft.com/cache/source.msix'
             exit 0
         }
 
