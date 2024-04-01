@@ -14,13 +14,13 @@ $appdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::Application
 
 if ($IsWindows) {
     $Env:MSYSTEM = 'MSYS'
-    $Env:Path = @(Join-Path -Path $appdata 'bin' $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
+    $Env:Path = @((Join-Path -Path $appdata 'bin'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 }
 
-if ($Env:TZ -eq $null) {
+if ($null -eq $Env:TZ) {
     $tz = ""
     [TimeZoneInfo]::TryConvertWindowsIdToIanaId((Get-TimeZone).Id, [ref] $tz) | Out-Null
-    if (! $tz -eq $null) {
+    if (! $null -eq $tz) {
         $Env:TZ = $tz
     }
     Remove-Variable -Name tz
