@@ -36,7 +36,7 @@ msys)
   VERSION_CODENAME="$VERSION_ID"
   NPROC="$(nproc)"
   MEMBYTES="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
-  MAKE='make'
+  MAKE='make.exe'
   ;;
 *)
   exit 1
