@@ -19,7 +19,14 @@ if ! [[ -v UNDER ]]; then
     esac
   done
 
-  make
+  case "$OSTYPE" in
+  msys)
+    make
+    ;;
+  *)
+    gmake
+    ;;
+  esac
   printf -- '%s\0' "${HOSTS[@]}" | UNDER=1 xargs -r -0 -I % -P 0 -- "$0" % "$@"
   exit
 fi
