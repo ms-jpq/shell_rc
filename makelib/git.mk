@@ -16,6 +16,8 @@ $(GIT_TMP)/z                   https://github.com/rupa/z
 
 endef
 
+$(warning $(GIT_REPOS))
+
 define GIT_TEMPLATE
 
 GIT_DIRS += $1
