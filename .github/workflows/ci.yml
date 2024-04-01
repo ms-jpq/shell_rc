@@ -111,6 +111,7 @@ jobs:
           & powershell.exe .\layers\nt\winget.ps1
 
       - run: |-
+          & winget.exe source update --name winget
           & winget.exe install --disable-interactivity --accept-source-agreements --accept-package-agreements --exact --id 'ezwinports.make'
 
       - run: |-
