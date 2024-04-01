@@ -51,7 +51,7 @@ clobber: clean
 $(TP):
 	mkdir -v -p -- '$@'
 
-include makelib/*.mk
+include $(shell shopt -u failglob && printf -- '%s ' ./makelib/*.mk)
 
 noop:
 all: git curl zsh tmux conf nvim pkg
