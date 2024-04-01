@@ -88,11 +88,15 @@ jobs:
       - uses: actions/setup-python@v3
 
       - run: |-
-          Get-Command -All -- bash
-          Get-Command -All -- make
+          powershell.exe .\layers\nt\winget.ps1
 
       - run: |-
-          powershell.exe .\layers\nt\winget.ps1
+          winget.exe source update '--force'
+          winget.exe install '--disable-interactivity' '--accept-source-agreements' '--accept-package-agreements' '--exact' '--id' 'ezwinports.make'
+
+      - run: |-
+          Get-Command -All -- bash
+          Get-Command -All -- make
 
       - run: |-
           $pacman = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'pacman'
