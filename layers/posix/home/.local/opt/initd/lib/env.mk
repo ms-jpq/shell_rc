@@ -59,13 +59,6 @@ PY_BIN := bin
 endif
 
 
-ifeq (nt, $(OS))
-MSYS_PREFIX := /$(subst :,,$(SYSTEMDRIVE))/msys64/
-else
-MSYS_PREFIX :=
-endif
-
-
 ifeq (darwin, $(OS))
 NPROC := $(shell sysctl -n hw.physicalcpu)
 else
