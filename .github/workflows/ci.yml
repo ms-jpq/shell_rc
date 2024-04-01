@@ -91,7 +91,6 @@ jobs:
           powershell.exe .\layers\nt\winget.ps1
 
       - run: |-
-          winget.exe source update '--force'
           winget.exe install '--disable-interactivity' '--accept-source-agreements' '--accept-package-agreements' '--exact' '--id' 'ezwinports.make'
 
       - run: |-
@@ -99,26 +98,28 @@ jobs:
           Get-Command -All -- bash
           Get-Command -All -- make
 
-      # - run: |-
-      #     $pacman = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'pacman'
-      #     $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync')
-      #     & $pacman @argv
+      - run: |-
+          $pacman = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'pacman'
+          $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync')
+          & $pacman @argv
 
-      # - run: |-
-      #     $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
-      #     $Env:RSYNC = Join-Path -Path $bin 'rsync'
-      #     $Env:PIPX_HOME = ''
+      - run: |-
+          $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
+          $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
+          $Env:RSYNC = Join-Path -Path $bin 'rsync'
+          $Env:PIPX_HOME = ''
 
-      #     bash .\main.sh localhost -- '--debug'
+          bash .\main.sh localhost -- '--debug'
 
-      # - run: |-
-      #     $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
-      #     $Env:RSYNC = Join-Path -Path $bin 'rsync'
-      #     $Env:PIPX_HOME = ''
+      - run: |-
+          $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
+          $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
+          $Env:RSYNC = Join-Path -Path $bin 'rsync'
+          $Env:PIPX_HOME = ''
 
-      #     bash .\main.sh localhost -- '--debug'
+          bash .\main.sh localhost -- '--debug'
 
-      # - run: |-
-      #     $tmp = 'out.json'
-      #     winget export '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
-      #     Get-Content -Path $tmp
+      - run: |-
+          $tmp = 'out.json'
+          winget export '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
+          Get-Content -Path $tmp
