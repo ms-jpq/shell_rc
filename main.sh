@@ -4,6 +4,8 @@ set -Eeu
 set -o pipefail
 shopt -s dotglob nullglob extglob globstar
 
+INIT="./libexec/essentials.sh"
+
 if ! [[ -v UNDER ]]; then
   HOSTS=()
   while (($#)); do
@@ -19,6 +21,10 @@ if ! [[ -v UNDER ]]; then
     esac
   done
 
+  if [[ -v CI ]]; then
+    "$INIT"
+  fi
+
   case "$OSTYPE" in
   msys)
     make
@@ -27,6 +33,7 @@ if ! [[ -v UNDER ]]; then
     gmake
     ;;
   esac
+
   printf -- '%s\0' "${HOSTS[@]}" | UNDER=1 xargs -r -0 -I % -P 0 -- "$0" % "$@"
   exit
 fi
@@ -156,7 +163,7 @@ for FS in "${!FFS[@]}"; do
   "${EX[@]}" "${RSY[@]}" "$SRC" "$SINK"
 done
 
-shell "${BSH[@]}" <<<"$(<./libexec/essentials.sh)"
+shell "${BSH[@]}" <<<"$(<"$INIT")"
 ENVS=(USERPROFILE="$ENV_HOME")
 # shellcheck disable=SC2154
 shell "$ENV_MAKE" --directory "$NT_HOME/.local/opt/initd" "${ENVS[@]}" "$@"
