@@ -97,23 +97,23 @@ jobs:
       - run: |-
           $pacman = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'pacman'
           $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync')
-          $pacman @argv
+          & $pacman @argv
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
-          bash .\main.sh localhost -- --debug
+          bash .\main.sh localhost -- '--debug'
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
-          bash .\main.sh localhost -- --debug
+          bash .\main.sh localhost -- '--debug'
 
       - run: |-
           $tmp = 'out.json'
-          'winget' 'export' '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
+          winget export '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
           Get-Content -Path $tmp
