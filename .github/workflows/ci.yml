@@ -104,18 +104,17 @@ jobs:
 
       - run: |-
           $pacman = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin' 'pacman'
-          $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync', 'make')
+          $argv = @('--sync', '--refresh', '--noconfirm', '--', 'rsync')
           & $pacman @argv
 
       - run: |-
-          & powershell .\layers\nt\winget.ps1
+          & powershell.exe .\layers\nt\winget.ps1
 
       - run: |-
-          Get-Command -All -- winget
+          & winget.exe install --disable-interactivity --accept-source-agreements --accept-package-agreements --exact --id 'ezwinports.make'
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
-          $Env:GMAKE = Join-Path -Path $bin 'make'
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
@@ -123,7 +122,6 @@ jobs:
 
       - run: |-
           $bin = Join-Path -Path $Env:GHCUP_MSYS2 'usr' 'bin'
-          $Env:GMAKE = Join-Path -Path $bin 'make'
           $Env:RSYNC = Join-Path -Path $bin 'rsync'
           $Env:PIPX_HOME = ''
 
