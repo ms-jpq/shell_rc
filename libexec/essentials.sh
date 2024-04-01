@@ -23,8 +23,9 @@ msys*)
     --exact
     --id
   )
-  if ! hash -- jq; then
-    "${WINGET[@]}" jqlang.jq
+  if ! hash -- make jq; then
+    PKG=(ezwinports.make jqlang.jq)
+    printf -- '%s\0' "${PKG[@]}" | xargs --no-run-if-empty --null --max-args 1 -- "${WINGET[@]}"
   fi
   ;;
 *)
