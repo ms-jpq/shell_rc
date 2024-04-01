@@ -4,8 +4,7 @@ set -Eeu
 set -o pipefail
 shopt -s dotglob nullglob extglob globstar
 
-INIT="./libexec/essentials.sh"
-
+INIT='./libexec/essentials.sh'
 if ! [[ -v UNDER ]]; then
   HOSTS=()
   while (($#)); do
