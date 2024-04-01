@@ -8,8 +8,6 @@ GIT_DIRS :=
 $(GIT_TMP):
 	mkdir -v -p -- '$@'
 
-$(warning $(GIT_TMP))
-
 define GIT_REPOS
 
 $(GIT_TMP)/dircolors-solarized https://github.com/seebi/dircolors-solarized
