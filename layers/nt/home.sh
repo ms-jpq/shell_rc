@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-export -- MSYSTEM='MSYS'
+export -- MSYSTEM='MSYS' MSYS='winsymlinks:nativestrict'
 
 PATH="/usr/bin:$PATH"
 
@@ -13,7 +13,7 @@ WINTMP="$LOCALAPPDATA/Temp"
 LOCALLO="$USERPROFILE/AppData/LocalLow"
 LOCALHI="$USERPROFILE/AppData/LocalHigh"
 
-CONF="$HOME/.config"
+CONF="$USERPROFILE/.config"
 PWSH="$USERPROFILE/Documents/PowerShell"
 PS1="$CONF/powershell/Microsoft.PowerShell_profile.ps1"
 
@@ -28,21 +28,17 @@ LINKS=(
   ["$USERPROFILE/.local/state"]="$LOCALLO"
 )
 
-if ! [[ -L "$CONF" ]]; then
-  rm -v -fr -- "$CONF"
-fi
+for FROM in "${!LINKS[@]}"; do
+  TO="${LINKS["$FROM"]}"
+  if ! [[ -L "$FROM" ]]; then
+    PARENT="$(dirname -- "$FROM")"
+    mkdir -v -p -- "$PARENT"
+    FROM="$(cygpath --windows -- "$FROM")"
+    TO="$(cygpath --windows -- "$TO")"
+    powershell.exe New-Item -ItemType Junction -Path "$FROM" -Target "$TO"
+  fi
+done
 
 if [[ -f "$PS1" ]]; then
   LINKS["$PWSH/Microsoft.PowerShell_profile.ps1"]="$PS1"
 fi
-
-for FROM in "${!LINKS[@]}"; do
-  TO="${LINKS["$FROM"]}"
-  if ! [[ -L "$FROM" ]]; then
-    FROM="$(/usr/bin/cygpath --absolute -- "$FROM")"
-    TO="$(/usr/bin/cygpath --absolute -- "$TO")"
-    PARENT="$(dirname -- "$FROM")"
-    mkdir -v -p -- "$PARENT"
-    ln -v -sf -- "$TO" "$FROM" || true
-  fi
-done
