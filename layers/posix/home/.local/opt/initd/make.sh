@@ -12,7 +12,15 @@ darwin*)
 msys)
   # shellcheck disable=SC2154
   LOCALAPPDATA="$(/usr/bin/cygpath "$LOCALAPPDATA")"
-  PATH="/usr/bin:$LOCALAPPDATA/Microsoft/WindowsApps:$PATH"
+  PY=(
+    "$LOCALAPPDATA/Programs/Python"/Python*/
+    /usr/bin
+    "$LOCALAPPDATA/Microsoft/WindowsApps"
+    "$PATH"
+  )
+  IFS=':'
+  PATH="${PY[*]}"
+  unset -- IFS
   MAKE='make.exe'
   export -- MSYSTEM='MSYS'
   ;;
