@@ -79,7 +79,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v3
 
       - run: |-
           powershell.exe .\layers\nt\winget.ps1
