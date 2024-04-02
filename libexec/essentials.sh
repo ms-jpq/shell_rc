@@ -15,7 +15,8 @@ linux*)
     sudo -- env -- DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- "${PKG[@]}"
   fi
   ;;
-msys*)
+msys)
+  PATH="/usr/bin:$PATH"
   WINGET=(
     winget install
     --disable-interactivity
@@ -28,6 +29,10 @@ msys*)
     for PKG in "${PKG[@]}"; do
       "${WINGET[@]}" "$PKG"
     done
+  fi
+
+  if ! python --help; then
+    "${WINGET[@]}" python3
   fi
   ;;
 *)
