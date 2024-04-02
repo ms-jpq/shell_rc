@@ -15,9 +15,11 @@ $pf = [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFiles)
 
 if ($IsWindows) {
     $Env:MSYSTEM = 'MSYS'
+    $Env:MSYS = 'winsymlinks:nativestrict'
     $Env:Path = @(
         Join-Path -Path $appdata 'bin'
         Join-Path -Path $pf 'Git' 'usr' 'bin'
+        Join-Path -Path $pf 'Neovim' 'bin'
         $Env:Path
     ) | Join-String -Separator ([IO.Path]::PathSeparator)
 }
