@@ -5,14 +5,18 @@ set -o pipefail
 SRC="$2"
 DST="$3"
 REMOTE="${DST%%:*}"
-SINK="$(sed -E -e 's#:\\#:\\\\#' <<<"${DST#*:}")"
+SINK="${DST#*:}"
+SINK="${SINK%/}"
 
 if [[ "$REMOTE" == 'localhost' ]]; then
   RSH=()
+  SINK="$(sed -E -e 's#\\:#:\\#' <<<"$SINK")"
 else
   # shellcheck disable=SC2206
   RSH=($1 "$REMOTE")
+  SINK="$(sed -E -e 's#:\\#:\\\\#' <<<"$SINK")"
   SINK="\"$SINK\""
 fi
 
+set -x
 tar -c -C "$SRC" -- . | "${RSH[@]}" tar -x -p -C "$SINK"
