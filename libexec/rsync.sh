@@ -9,14 +9,14 @@ SINK="${DST#*:}"
 SINK="${SINK%/}"
 
 set -x
+# shellcheck disable=SC1003
 if [[ "$REMOTE" == 'localhost' ]]; then
   RSH=()
-  SINK="$(sed -E -e 's#\\:#:\\#' <<<"$SINK")"
+  SINK="${SINK/'\:'/':\'}"
 else
   # shellcheck disable=SC2206
   RSH=($1 "$REMOTE")
-  SINK="$(sed -E -e 's#:\\#:\\\\#' <<<"$SINK")"
-  SINK="\"$SINK\""
+  SINK="\"${SINK/':\'/':\\'}\""
 fi
 
 tar -c -C "$SRC" -- . | "${RSH[@]}" tar -x -p -C "$SINK"
