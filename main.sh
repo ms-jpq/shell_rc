@@ -1,7 +1,5 @@
 #!/usr/bin/env -S -- bash
 
-set -x
-
 set -Eeu
 set -o pipefail
 shopt -s dotglob nullglob extglob globstar
@@ -105,6 +103,9 @@ linux*)
 msys)
   OS=nt
   RSY=(./libexec/rsync.sh "$RSH")
+  if ((LOCAL)); then
+    RDST='localhost:'
+  fi
   ;;
 *)
   exit 1

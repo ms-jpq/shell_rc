@@ -1,6 +1,7 @@
 # + Git.MinGit
 # + GnuPG.GnuPG
 # + Microsoft.BingWallpaper
+# + Microsoft.PowerShell
 # + Microsoft.Sysinternals.Autoruns
 # + Microsoft.Sysinternals.BGInfo
 # + Microsoft.WindowsTerminal
@@ -15,7 +16,6 @@
 + JanDeDobbeleer.OhMyPosh
 + JesseDuffield.lazygit
 + Microsoft.PowerAppsCLI
-+ Microsoft.PowerShell
 + Neovim.Neovim
 + Rclone.Rclone
 + SoftwareFreedomConservancy.QEMU
@@ -28,7 +28,7 @@
 + eza-community.eza
 + hpjansson.Chafa
 + jqlang.jq
-+ junegunn.fzf
+# + junegunn.fzf
 + muesli.duf
 + sharkdp.bat
 + sharkdp.fd
