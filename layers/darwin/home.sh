@@ -5,17 +5,18 @@ set -o pipefail
 SCRIPT="$HOME/Library/Script Libraries"
 mkdir -v -p -- "$HOME/.local" "$SCRIPT"
 
-link() {
-  local -- src="$1" dst="$2"
+declare -A -- LINKS=()
+LINKS=(
+  ["$HOME/.cache"]="$HOME/Library/Caches"
+  ["$HOME/.config"]="$HOME/Library/Preferences"
+  ["$HOME/.local/opt"]="$HOME/Applications"
+  ["$HOME/.local/scripts"]="$SCRIPT"
+  ["$HOME/.local/share"]="$HOME/Library/Application Support"
+)
 
-  if ! [[ -L "$dst" ]]; then
-    ln -v -sf -- "$src" "$dst"
+for FROM in "${!LINKS[@]}"; do
+  TO="${LINKS["$FROM"]}"
+  if ! [[ -L "$FROM" ]]; then
+    ln -v -sf -- "$TO" "$FROM"
   fi
-}
-
-link "$HOME/Applications" "$HOME/.local/opt"
-link "$HOME/Library/Application Support" "$HOME/.local/share"
-link "$HOME/Library/Caches" "$HOME/.cache"
-link "$HOME/Library/Caches" "$HOME/.local/state"
-link "$HOME/Library/Preferences" "$HOME/.config"
-link "$SCRIPT" "$HOME/.local/scripts"
+done

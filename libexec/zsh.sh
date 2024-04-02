@@ -3,17 +3,18 @@
 set -o pipefail
 
 OS="$1"
-OUT="$2"
-GIT="$3"
+GIT="$2"
+Z_OUT="$3"
+B_OUT="$4"
 shift -- 3
 
 BASE="${0%/*}/.."
 
-FUNC="$OUT/fn"
-BINS="$OUT/bin"
-BLIB="$OUT/libexec"
+FUNC="$Z_OUT/fn"
+BINS="$Z_OUT/bin"
+BLIB="$Z_OUT/libexec"
 
-rm -fr -- "$OUT"
+rm -fr -- "$Z_OUT"
 mkdir -p -- "$FUNC" "$BINS" "$BLIB"
 
 DIRS=(
@@ -82,5 +83,5 @@ for DIR in "${DIRS[@]}"; do
   done
 done
 
-printf -- '%s\n' "${ZACC[@]}" >"$OUT/.zshrc"
-printf -- '%s\n' "${BACC[@]}" >"$OUT/.bashrc"
+printf -- '%s\n' "${ZACC[@]}" >"$Z_OUT/.zshrc"
+printf -- '%s\n' "${BACC[@]}" >"$B_OUT/.bashrc"
