@@ -2,14 +2,14 @@
 
 set -o pipefail
 
-export -- MSYSTEM='MSYS' MSYS='winsymlinks:nativestrict'
+export -- MSYSTEM='MSYS'
 
 PATH="/usr/bin:$PATH"
 
 USERPROFILE="${USERPROFILE:-"$HOME"}"
 APPDATA="${APPDATA:-"$USERPROFILE/AppData/Roaming"}"
 LOCALAPPDATA="${LOCALAPPDATA:-"$USERPROFILE/AppData/Local"}"
-TEMP="$LOCALAPPDATA/Temp"
+WINTMP="$LOCALAPPDATA/Temp"
 LOCALLO="$USERPROFILE/AppData/LocalLow"
 LOCALHI="$USERPROFILE/AppData/LocalHigh"
 
@@ -20,7 +20,7 @@ mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH"
 
 declare -A -- LINKS=()
 LINKS=(
-  ["$USERPROFILE/.cache"]="$TEMP"
+  ["$USERPROFILE/.cache"]="$WINTMP"
   ["$USERPROFILE/.config"]="$LOCALAPPDATA"
   ["$USERPROFILE/.local/opt"]="$LOCALHI"
   ["$USERPROFILE/.local/share"]="$APPDATA"
@@ -38,6 +38,6 @@ for FROM in "${!LINKS[@]}"; do
     TO="$(/usr/bin/cygpath --absolute -- "$TO")"
     PARENT="$(dirname -- "$FROM")"
     mkdir -v -p -- "$PARENT"
-    ln -v -sf -- "$TO" "$FROM"
+    ln -v -sf -- "$TO" "$FROM" || true
   fi
 done
