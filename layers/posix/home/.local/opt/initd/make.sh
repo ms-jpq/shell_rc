@@ -10,11 +10,11 @@ darwin*)
   MAKE='gmake'
   ;;
 msys)
-  PATH="/usr/bin:$PATH"
   # shellcheck disable=SC2154
-  LOCALAPPDATA="$(cygpath "$LOCALAPPDATA")"
-  PATH="$LOCALAPPDATA/Microsoft/WindowsApps:$PATH"
+  LOCALAPPDATA="$(/usr/bin/cygpath "$LOCALAPPDATA")"
+  PATH="/usr/bin:$LOCALAPPDATA/Microsoft/WindowsApps:$PATH"
   MAKE='make.exe'
+  export -- MSYSTEM='MSYS'
   ;;
 *)
   exit 1

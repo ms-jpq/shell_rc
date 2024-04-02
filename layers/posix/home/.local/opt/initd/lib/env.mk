@@ -53,6 +53,13 @@ endif
 
 
 ifeq (nt, $(OS))
+PY_EXE := python
+else
+PY_EXE := python3
+endif
+
+
+ifeq (nt, $(OS))
 PY_BIN := Scripts
 else
 PY_BIN := bin

@@ -19,10 +19,10 @@ clobber.pipx:
 	rm -v -rf -- '$(OPT)/pipx' '$(PIPX)'
 
 $(OPT)/pipx:
-	python3 -m venv --upgrade -- '$@'
+	'$(PY_EXE)' -m venv --upgrade -- '$@'
 
 $(OPT)/pipx/$(PY_BIN)/pipx: | $(OPT)/pipx
-	'$(call UNIX_2_NT,$(OPT)/pipx/$(PY_BIN)/pip)' install --require-virtualenv --upgrade -- pipx
+	'$(call UNIX_2_NT,$(OPT)/pipx/$(PY_BIN)/$(PY_EXE))' -m pip install --require-virtualenv --upgrade -- pipx
 
 pipx: $(BIN)/pipx
 $(BIN)/pipx: $(OPT)/pipx/$(PY_BIN)/pipx
