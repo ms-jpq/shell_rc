@@ -14,7 +14,7 @@ if [[ "$REMOTE" == 'localhost' ]]; then
 else
   # shellcheck disable=SC2206
   RSH=($1 "$REMOTE")
-  SINK="\"${SINK/':\'/':\\'}\""
+  SINK="\"$SINK\""
 fi
 
 tar -c -C "$SRC" -- . | "${RSH[@]}" tar -x -p -C "$SINK"
