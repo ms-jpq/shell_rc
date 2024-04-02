@@ -1,4 +1,4 @@
-#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O globstar
+#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
 
 set -o pipefail
 
@@ -10,6 +10,7 @@ darwin*)
   MAKE='gmake'
   ;;
 msys)
+  shopt -u failglob
   # shellcheck disable=SC2154
   LOCALAPPDATA="$(/usr/bin/cygpath "$LOCALAPPDATA")"
   PY=(

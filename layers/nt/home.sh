@@ -17,7 +17,7 @@ mkdir -v -p -- "$USERPROFILE/.local" "$APPDATA" "$LOCALAPPDATA" "$TEMP" "$LOCALL
 link() {
   local -- src="$1" dst="$2"
 
-  if ! [[ -d "$dst" ]]; then
+  if ! [[ -e "$dst" ]]; then
     ln -v -sf -- "$src" "$dst" || true
   fi
 }
