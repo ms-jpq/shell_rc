@@ -20,6 +20,7 @@ darwin*)
   MAKE='gmake'
   ;;
 msys)
+  PATH="/usr/bin:$PATH"
   trim() {
     local -- v
     v="$(tr --delete -- '\r' | tr --delete -- '\n')"

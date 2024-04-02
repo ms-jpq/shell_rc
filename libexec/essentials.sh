@@ -25,7 +25,9 @@ msys*)
   )
   if ! hash -- make jq; then
     PKG=(ezwinports.make jqlang.jq)
-    printf -- '%s\0' "${PKG[@]}" | xargs --no-run-if-empty --null --max-args 1 -- "${WINGET[@]}"
+    for PKG in "${PKG[@]}"; do
+      "${WINGET[@]}" "$PKG"
+    done
   fi
   ;;
 *)
