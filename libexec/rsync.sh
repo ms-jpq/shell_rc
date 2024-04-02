@@ -6,13 +6,12 @@ SRC="$2"
 DST="$3"
 REMOTE="${DST%%:*}"
 SINK="${DST#*:}"
-SINK="${SINK%/}"
 
 set -x
 # shellcheck disable=SC1003
 if [[ "$REMOTE" == 'localhost' ]]; then
   RSH=()
-  SINK="${SINK/'\:'/':\'}"
+  SINK="$(/usr/bin/cygpath --absolute --mixed --windows "$SINK")"
 else
   # shellcheck disable=SC2206
   RSH=($1 "$REMOTE")
