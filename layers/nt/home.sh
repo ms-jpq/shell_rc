@@ -10,8 +10,9 @@ LOCALAPPDATA="${LOCALAPPDATA:-"$USERPROFILE/AppData/Local"}"
 TEMP="${TEMP:-"$LOCALAPPDATA/Temp"}"
 LOCALLO="$USERPROFILE/AppData/LocalLow"
 LOCALHI="$USERPROFILE/AppData/LocalHigh"
+PWSH="$USERPROFILE/Documents/PowerShell"
 
-mkdir -v -p -- "$USERPROFILE/.local" "$APPDATA" "$LOCALAPPDATA" "$TEMP" "$LOCALLO" "$LOCALHI"
+mkdir -v -p -- "$USERPROFILE/.local" "$APPDATA" "$LOCALAPPDATA" "$TEMP" "$LOCALLO" "$LOCALHI" "$PWSH"
 
 link() {
   local -- src="$1" dst="$2"
@@ -26,3 +27,4 @@ link "$LOCALAPPDATA" "$USERPROFILE/.local/share"
 link "$TEMP" "$USERPROFILE/.cache"
 link "$LOCALLO" "$USERPROFILE/.local/state"
 link "$LOCALHI" "$USERPROFILE/.local/opt"
+link "$USERPROFILE/.config/powershell/Microsoft.PowerShell_profile.ps1" "$PWSH/Microsoft.PowerShell_profile.ps1"
