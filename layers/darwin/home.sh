@@ -3,7 +3,7 @@
 set -o pipefail
 
 SCRIPT="$HOME/Library/Script Libraries"
-mkdir -v -p -- "$HOME/.local" "$SCRIPT"
+mkdir -v -p -- "$SCRIPT"
 
 declare -A -- LINKS=()
 LINKS=(
@@ -17,6 +17,7 @@ LINKS=(
 for FROM in "${!LINKS[@]}"; do
   TO="${LINKS["$FROM"]}"
   if ! [[ -L "$FROM" ]]; then
+    mkdir -v -p -- "${FROM%/*}"
     ln -v -sf -- "$TO" "$FROM"
   fi
 done

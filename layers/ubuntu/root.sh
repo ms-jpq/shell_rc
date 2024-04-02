@@ -2,15 +2,18 @@
 
 set -o pipefail
 
+SYSTEMD=/usr/local/lib/systemd/system
+
 declare -A -- LINKS=()
 LINKS=(
-  ['/usr/local/lib/systemd/system/motd-news.timer']=/dev/null
-  ['/usr/local/lib/systemd/system/update-notifier-motd.timer']=/dev/null
+  ["$SYSTEMD/motd-news.timer"]=/dev/null
+  ["$SYSTEMD/update-notifier-motd.timer"]=/dev/null
 )
 
 for FROM in "${!LINKS[@]}"; do
   TO="${LINKS["$FROM"]}"
   if ! [[ -L "$FROM" ]]; then
+    mkdir -v -p -- "${FROM%/*}"
     ln -v -sf -- "$TO" "$FROM"
   fi
 done
