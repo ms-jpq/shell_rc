@@ -13,19 +13,24 @@ WINTMP="$LOCALAPPDATA/Temp"
 LOCALLO="$USERPROFILE/AppData/LocalLow"
 LOCALHI="$USERPROFILE/AppData/LocalHigh"
 
+CONF="$HOME/.config"
 PWSH="$USERPROFILE/Documents/PowerShell"
-PS1="$USERPROFILE/.config/powershell/Microsoft.PowerShell_profile.ps1"
+PS1="$CONF/powershell/Microsoft.PowerShell_profile.ps1"
 
 mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH"
 
 declare -A -- LINKS=()
 LINKS=(
+  ["$CONF"]="$LOCALAPPDATA"
   ["$USERPROFILE/.cache"]="$WINTMP"
-  ["$USERPROFILE/.config"]="$LOCALAPPDATA"
   ["$USERPROFILE/.local/opt"]="$LOCALHI"
   ["$USERPROFILE/.local/share"]="$APPDATA"
   ["$USERPROFILE/.local/state"]="$LOCALLO"
 )
+
+if ! [[ -L "$CONF" ]]; then
+  rm -v -fr -- "$CONF"
+fi
 
 if [[ -f "$PS1" ]]; then
   LINKS["$PWSH/Microsoft.PowerShell_profile.ps1"]="$PS1"
