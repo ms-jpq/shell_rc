@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+export -- MSYSTEM='MSYS' MSYS='winsymlinks:nativestrict'
+
 PATH="/usr/bin:$PATH"
 
 USERPROFILE="${USERPROFILE:-"$HOME"}"
@@ -10,6 +12,8 @@ LOCALAPPDATA="${LOCALAPPDATA:-"$USERPROFILE/AppData/Local"}"
 TEMP="${TEMP:-"$LOCALAPPDATA/Temp"}"
 LOCALLO="$USERPROFILE/AppData/LocalLow"
 LOCALHI="$USERPROFILE/AppData/LocalHigh"
+
+CONF="$USERPROFILE/.config"
 PWSH="$USERPROFILE/Documents/PowerShell"
 
 mkdir -v -p -- "$USERPROFILE/.local" "$APPDATA" "$LOCALAPPDATA" "$TEMP" "$LOCALLO" "$LOCALHI" "$PWSH"
@@ -17,12 +21,12 @@ mkdir -v -p -- "$USERPROFILE/.local" "$APPDATA" "$LOCALAPPDATA" "$TEMP" "$LOCALL
 link() {
   local -- src="$1" dst="$2"
 
-  if ! [[ -e "$dst" ]]; then
+  if ! [[ -d "$dst" ]]; then
     ln -v -sf -- "$src" "$dst" || true
   fi
 }
 
-link "$APPDATA" "$USERPROFILE/.config"
+link "$APPDATA" "$CONF"
 link "$LOCALAPPDATA" "$USERPROFILE/.local/share"
 link "$TEMP" "$USERPROFILE/.cache"
 link "$LOCALLO" "$USERPROFILE/.local/state"

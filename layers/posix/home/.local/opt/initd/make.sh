@@ -22,7 +22,7 @@ msys)
   PATH="${PY[*]}"
   unset -- IFS
   MAKE='make.exe'
-  export -- MSYSTEM='MSYS'
+  export -- MSYSTEM='MSYS' MSYS='winsymlinks:nativestrict'
   ;;
 *)
   exit 1
