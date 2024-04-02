@@ -12,7 +12,7 @@ darwin*)
 msys)
   shopt -u failglob
   # shellcheck disable=SC2154
-  LOCALAPPDATA="$(/usr/bin/cygpath "$LOCALAPPDATA")"
+  LOCALAPPDATA="$(/usr/bin/cygpath -- "$LOCALAPPDATA")"
   PY=(
     "$LOCALAPPDATA/Programs/Python"/Python*/
     /usr/bin
