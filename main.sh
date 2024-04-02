@@ -43,16 +43,6 @@ else
   PORT=22
 fi
 
-nt2unix() {
-  local -- drive ntpath
-  ntpath="$1"
-  drive="${ntpath%%:*}"
-  ntpath="${ntpath#*:}"
-  # shellcheck disable=SC1003
-  unixpath="/${drive,,}${ntpath//'\'/'/'}"
-  printf -- '%s' "$unixpath"
-}
-
 BSH=(bash --norc --noprofile -Eeuo pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar)
 CONN=(
   ssh
@@ -64,7 +54,7 @@ CONN=(
 )
 printf -v RSH -- '%q ' "${CONN[@]}"
 RSY=(
-  "${RSYNC:-"rsync"}"
+  rsync
   --recursive
   --keep-dirlinks
   --links
@@ -88,6 +78,9 @@ shell() {
     "$@"
   else
     printf -v sh -- '%q ' "$@"
+    if [[ "$0" == *win.sh ]] && [[ "$sh" == bash* ]]; then
+      sh='"%PROGRAMFILES%\Git\usr\bin\"'"$sh"
+    fi
     # shellcheck disable=SC2029
     "${CONN[@]}" "$DST" "$sh"
   fi
@@ -103,15 +96,13 @@ printf -- '%s\n' "$ENV"
 case "$ENV_OSTYPE" in
 darwin*)
   OS=darwin
-  NT_HOME="$ENV_HOME"
   ;;
 linux*)
   OS=ubuntu
-  NT_HOME="$ENV_HOME"
   ;;
 msys)
   OS=nt
-  NT_HOME="$(nt2unix "$ENV_HOME")"
+  RSY=(./libexec/rsync.sh "$RSH")
   ;;
 *)
   exit 1
@@ -122,13 +113,13 @@ declare -A -- FFS ROOTS
 FFS=([root]=1 [home]=0)
 ROOTS=(
   ['root']=/
-  ['home']="$NT_HOME"
+  ['home']="$ENV_HOME"
 )
 
 for FS in "${!FFS[@]}"; do
   SUDO="${FFS["$FS"]}"
   ROOT="${ROOTS["$FS"]}"
-  SRC="./var/tmp/$OS/$FS/"
+  SRC="var/tmp/$OS/$FS/"
 
   if ((SUDO)) && ((LOCAL)) && [[ "$OS" != nt ]]; then
     EX=(sudo --)
@@ -157,4 +148,4 @@ done
 shell "${BSH[@]}" <<<"$(<./libexec/essentials.sh)"
 ENVS=(USERPROFILE="$ENV_HOME")
 # shellcheck disable=SC2154
-shell "$ENV_MAKE" --directory "$NT_HOME/.local/opt/initd" "${ENVS[@]}" "$@"
+shell "$ENV_MAKE" --directory "$ENV_HOME/.local/opt/initd" "${ENVS[@]}" "$@"

@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+PATH="/usr/bin:$PATH"
+
 USERPROFILE="${USERPROFILE:-"$HOME"}"
 APPDATA="${APPDATA:-"$USERPROFILE/AppData/Roaming"}"
 LOCALAPPDATA="${LOCALAPPDATA:-"$USERPROFILE/AppData/Local"}"
