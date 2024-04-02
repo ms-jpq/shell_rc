@@ -3,7 +3,6 @@
 set -o pipefail
 
 SYSTEMD="$HOME/.config/systemd/user"
-mkdir -v -p -- "$SYSTEMD"
 
 declare -A -- LINKS=()
 LINKS=(
@@ -15,6 +14,7 @@ LINKS=(
 for FROM in "${!LINKS[@]}"; do
   TO="${LINKS["$FROM"]}"
   if ! [[ -L "$FROM" ]]; then
+    mkdir -v -p -- "${FROM%/*}"
     ln -v -sf -- "$TO" "$FROM"
   fi
 done
