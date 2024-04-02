@@ -80,6 +80,7 @@
 + pstree
 + pv
 + qemu
++ recode
 + renameutils
 + ripgrep
 + rlwrap

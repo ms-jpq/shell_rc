@@ -55,6 +55,7 @@
 + psmisc
 + pspg
 + pv
++ recode
 + renameutils
 + ripgrep
 + rlwrap

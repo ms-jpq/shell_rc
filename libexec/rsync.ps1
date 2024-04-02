@@ -4,21 +4,16 @@ Set-StrictMode -Version 'Latest'
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
 
-Write-Output -- $src, $dst
-$rows = Get-ChildItem -Force -Recurse -Path $src
-
-foreach ($row in $rows) {
-    $rel = $row.FullName.Substring($src.Length + 1)
+Get-ChildItem -Force -Recurse -Path $src | ForEach-Object {
+    $rel = $_.FullName.Substring($src.Length + 1)
     $sink = Join-Path -Path $dst $rel
 
-    Write-Output -- $rel
-
-    if ($row.PSIsContainer) {
+    if ($_.PSIsContainer) {
         if (!(Test-Path -Path $sink)) {
             New-Item -Force -ItemType 'Directory' -Path $sink
         }
     }
     else {
-        Copy-Item -Force -Path $row -Destination $sink
+        Copy-Item -Force -Path $_.FullName -Destination $sink
     }
 }
