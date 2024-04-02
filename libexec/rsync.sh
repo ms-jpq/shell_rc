@@ -12,6 +12,7 @@ if [[ "$REMOTE" == 'localhost' ]]; then
   PATH="/usr/bin:$PATH"
   RSH=()
   TAR='tar'
+  SINK="$(cygpath --absolute --mixed --windows "$SINK")"
 else
   # shellcheck disable=SC2206
   RSH=($1 "$REMOTE")
