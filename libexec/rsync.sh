@@ -2,12 +2,16 @@
 
 set -o pipefail
 
-# shellcheck disable=SC2206
-RSH=($1)
-
 SRC="$2"
 DST="$3"
 REMOTE="${DST%%:*}"
 SINK="${DST#*:}"
 
-tar -c -C "$SRC" -- . | "${RSH[@]}" "$REMOTE" tar -x -p -C "$SINK"
+if [[ "$REMOTE" == 'localhost' ]]; then
+  RSH=()
+else
+  # shellcheck disable=SC2206
+  RSH=($1 "$REMOTE")
+fi
+
+tar -c -C "$SRC" -- . | "${RSH[@]}" tar -x -p -C "$SINK"
