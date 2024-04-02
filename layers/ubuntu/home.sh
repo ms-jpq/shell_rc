@@ -2,10 +2,13 @@
 
 set -o pipefail
 
+SYSTEMD="$HOME/.config/systemd/user"
+mkdir -v -p -- "$SYSTEMD"
+
 declare -A -- LINKS=()
 LINKS=(
-  ["$HOME/.config/systemd/user/gpg-agent.service"]=/dev/null
-  ["$HOME/.config/systemd/user/gpg-agent.socket"]=/dev/null
+  ["$SYSTEMD/gpg-agent.service"]=/dev/null
+  ["$SYSTEMD/gpg-agent.socket"]=/dev/null
   ["$HOME/.gnupg"]="$HOME/.config/gnupg"
 )
 

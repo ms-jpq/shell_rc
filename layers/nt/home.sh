@@ -12,32 +12,31 @@ LOCALAPPDATA="${LOCALAPPDATA:-"$USERPROFILE/AppData/Local"}"
 TEMP="$LOCALAPPDATA/Temp"
 LOCALLO="$USERPROFILE/AppData/LocalLow"
 LOCALHI="$USERPROFILE/AppData/LocalHigh"
-
-CONF="$USERPROFILE/.config"
 PWSH="$USERPROFILE/Documents/PowerShell"
 
 mkdir -v -p -- "$USERPROFILE/.local" "$APPDATA" "$LOCALAPPDATA" "$LOCALLO" "$LOCALHI" "$PWSH"
 
-link() {
-  local -- SRC="$1" DST="$2"
+declare -A -- LINKS=()
+LINKS=(
+  ["$USERPROFILE/.cache"]="$TEMP"
+  ["$USERPROFILE/.config"]="$LOCALAPPDATA"
+  ["$USERPROFILE/.local/opt"]="$LOCALHI"
+  ["$USERPROFILE/.local/share"]="$APPDATA"
+  ["$USERPROFILE/.local/state"]="$LOCALLO"
+  ["$USERPROFILE/.config/powershell/Microsoft.PowerShell_profile.ps1"]="$PWSH/Microsoft.PowerShell_profile.ps1"
+)
 
-  if ! [[ -d "$DST" ]]; then
-    SRC="$(/usr/bin/cygpath --absolute --windows "$SRC")"
-    DST="$(/usr/bin/cygpath --absolute --windows "$DST")"
-    if [[ -d "$SRC" ]]; then
-      printf -v LINK -- 'mklink /j "%s" "%s"' "$DST" "$SRC"
+for FROM in "${!LINKS[@]}"; do
+  TO="${LINKS["$FROM"]}"
+  if ! [[ -e "$FROM" ]]; then
+    FROM="$(/usr/bin/cygpath --absolute --windows "$FROM")"
+    TO="$(/usr/bin/cygpath --absolute --windows "$TO")"
+    if [[ -d "$TO" ]]; then
+      printf -v LINK -- 'mklink /j "%s" "%s"' "$TO" "$FROM"
     else
-      printf -v LINK -- 'mklink "%s" "%s"' "$DST" "$SRC"
+      printf -v LINK -- 'mklink "%s" "%s"' "$TO" "$FROM"
     fi
     printf -- '%s\n' "$LINK"
-    cmd "$LINK"
-    # ln -v -sf -- "$SRC" "$DST" || true
+    # cmd "$LINK"
   fi
-}
-
-link "$APPDATA" "$CONF"
-link "$LOCALAPPDATA" "$USERPROFILE/.local/share"
-link "$TEMP" "$USERPROFILE/.cache"
-link "$LOCALLO" "$USERPROFILE/.local/state"
-link "$LOCALHI" "$USERPROFILE/.local/opt"
-link "$USERPROFILE/.config/powershell/Microsoft.PowerShell_profile.ps1" "$PWSH/Microsoft.PowerShell_profile.ps1"
+done
