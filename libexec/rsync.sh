@@ -8,6 +8,7 @@ REMOTE="${DST%%:*}"
 SINK="${DST#*:}"
 SINK="${SINK%/}"
 
+set -x
 if [[ "$REMOTE" == 'localhost' ]]; then
   RSH=()
   SINK="$(sed -E -e 's#\\:#:\\#' <<<"$SINK")"
@@ -18,5 +19,4 @@ else
   SINK="\"$SINK\""
 fi
 
-set -x
 tar -c -C "$SRC" -- . | "${RSH[@]}" tar -x -p -C "$SINK"
