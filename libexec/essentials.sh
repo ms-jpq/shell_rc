@@ -17,21 +17,22 @@ linux*)
   ;;
 msys)
   PATH="/usr/bin:$PATH"
+  LOCALAPPDATA="$(cygpath -- "$LOCALAPPDATA")"
+  PATH="$LOCALAPPDATA/Local/Microsoft/WinGet/Links:$PATH"
+
   WINGET=(
     winget install
     --disable-interactivity
     --accept-source-agreements --accept-package-agreements
-    --exact
-    --id
   )
   if ! hash -- make jq; then
     PKG=(ezwinports.make jqlang.jq)
     for PKG in "${PKG[@]}"; do
-      "${WINGET[@]}" "$PKG"
+      "${WINGET[@]}" --exact --id "$PKG"
     done
   fi
 
-  if ! python --help; then
+  if ! python --help >/dev/null; then
     "${WINGET[@]}" python3
   fi
   ;;
