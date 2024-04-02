@@ -28,11 +28,10 @@ if ! [[ -v UNDER ]]; then
     ;;
   esac
 
+  cd -- "$(dirname -- "$0")"
   printf -- '%s\0' "${HOSTS[@]}" | UNDER=1 xargs -r -0 -I % -P 0 -- "$0" % "$@"
   exit
 fi
-
-cd -- "$(dirname -- "$0")"
 
 DST_AND_PORT="$1"
 shift -- 1
@@ -57,7 +56,6 @@ nt2unix() {
 BSH=(bash --norc --noprofile -Eeuo pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar)
 CONN=(
   ssh
-  # -o 'ForwardAgent=no'
   -o 'ClearAllForwardings=yes'
   -o 'ControlMaster=auto'
   -o "ControlPath=$PWD/var/tmp/%C"
@@ -95,8 +93,7 @@ shell() {
   fi
 }
 
-ENVSH="$(cat -- ./libexec/{die,env}.sh)"
-ENV="$(shell "${BSH[@]}" <<<"$ENVSH")"
+ENV="$(cat -- ./libexec/{die,env}.sh | shell "${BSH[@]}")"
 set -a
 eval -- "$ENV"
 set +a
