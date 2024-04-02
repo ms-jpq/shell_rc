@@ -2,14 +2,15 @@
 
 set -o pipefail
 
-link() {
-  local -- src="$1" dst="$2"
+declare -A -- LINKS=()
+LINKS=(
+  ['/usr/local/lib/systemd/system/motd-news.timer']=/dev/null
+  ['/usr/local/lib/systemd/system/update-notifier-motd.timer']=/dev/null
+)
 
-  if ! [[ -L "$dst" ]]; then
-    mkdir -v -p -- "${dst%/*}"
-    ln -v -sf -- "$src" "$dst"
+for FROM in "${!LINKS[@]}"; do
+  TO="${LINKS["$FROM"]}"
+  if ! [[ -L "$FROM" ]]; then
+    ln -v -sf -- "$TO" "$FROM"
   fi
-}
-
-link /dev/null /usr/local/lib/systemd/system/motd-news.timer
-link /dev/null /usr/local/lib/systemd/system/update-notifier-motd.timer
+done

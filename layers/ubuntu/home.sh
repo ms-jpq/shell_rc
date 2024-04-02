@@ -2,16 +2,16 @@
 
 set -o pipefail
 
-link() {
-  local -- src="$1" dst="$2"
+declare -A -- LINKS=()
+LINKS=(
+  ["$HOME/.config/systemd/user/gpg-agent.service"]=/dev/null
+  ["$HOME/.config/systemd/user/gpg-agent.socket"]=/dev/null
+  ["$HOME/.gnupg"]="$HOME/.config/gnupg"
+)
 
-  if ! [[ -L "$dst" ]]; then
-    mkdir -v -p -- "${dst%/*}"
-    ln -v -sf -- "$src" "$dst"
+for FROM in "${!LINKS[@]}"; do
+  TO="${LINKS["$FROM"]}"
+  if ! [[ -L "$FROM" ]]; then
+    ln -v -sf -- "$TO" "$FROM"
   fi
-}
-
-link ~/.config/zsh/.bashrc ~/.bashrc
-link ~/.config/gnupg ~/.gnupg
-link /dev/null ~/.config/systemd/user/gpg-agent.service
-link /dev/null ~/.config/systemd/user/gpg-agent.socket
+done
