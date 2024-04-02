@@ -9,7 +9,6 @@ linux*)
   NPROC="$(nproc)"
   MEMBYTES_KB="$(awk '/MemTotal/ { print $2 }' </proc/meminfo)"
   MEMBYTES=$((MEMBYTES_KB * 1024))
-  MAKE='gmake'
   ;;
 darwin*)
   ID="$(sw_vers -productName)"
@@ -17,7 +16,6 @@ darwin*)
   VERSION_CODENAME="$VERSION_ID"
   NPROC="$(sysctl -n hw.physicalcpu)"
   MEMBYTES="$(sysctl -n hw.memsize)"
-  MAKE='gmake'
   ;;
 msys)
   PATH="/usr/bin:$PATH"
@@ -37,7 +35,6 @@ msys)
   VERSION_CODENAME="$VERSION_ID"
   NPROC="$(nproc)"
   MEMBYTES="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
-  MAKE='make.exe'
   ;;
 *)
   exit 1
@@ -49,7 +46,6 @@ ENV_HOME=$(printf -- '%q' "$HOME")
 ENV_HOSTNAME=$(printf -- '%q' "$HOSTNAME")
 ENV_HOSTTYPE=$(printf -- '%q' "$HOSTTYPE")
 ENV_ID=$(printf -- '%q' "$ID")
-ENV_MAKE=$(printf -- '%q' "$MAKE")
 ENV_MEMBYTES=$(printf -- '%q' "$MEMBYTES")
 ENV_NPROC=$(printf -- '%q' "$NPROC")
 ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")
