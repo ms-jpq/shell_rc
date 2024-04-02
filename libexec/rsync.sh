@@ -13,17 +13,21 @@ PWSH=(
   powershell.exe
   -NoProfile
   -NonInteractive
+  -EncodedCommand
 )
 
 # shellcheck disable=SC1003
 if [[ "$REMOTE" == 'localhost' ]]; then
-  {
-    tee -- <<-PWSH
+  CMD="$(
+    {
+      tee -- <<-PWSH
 \$src = "$SRC"
 \$dst = "$SINK"
 PWSH
-    cat -- "$DIR/rsync.ps1"
-  } | "${PWSH[@]}"
+      cat -- "$DIR/rsync.ps1"
+    } | recode utf8..utf16le | base64 | tr -d -- '\n'
+  )"
+  "${PWSH[@]}" "$CMD"
 else
   # shellcheck disable=SC2206
   RSH=($1 "$REMOTE")
@@ -33,11 +37,14 @@ else
   "${RSH[@]}" "MKDIR" "$TMP"
   tar -c -C "$SRC" -- . | "${RSH[@]}" tar -x -p -C "$TMP"
 
-  {
-    tee -- <<-PWSH
+  CMD="$(
+    {
+      tee -- <<-PWSH
 \$src = $TMP
 \$dst = "$SINK"
 PWSH
-    cat -- "$DIR/rsync.ps1"
-  } | "${RSH[@]}" "${PWSH[@]}"
+      cat -- "$DIR/rsync.ps1"
+    } | recode utf8..utf16le | base64 | tr -d -- '\n'
+  )"
+  "${RSH[@]}" "${PWSH[@]}" "$CMD"
 fi
