@@ -95,12 +95,12 @@ jobs:
       - run: |-
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 
-          bash .\main.sh localhost --
+          bash .\win.sh localhost --
 
       - run: |-
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 
-          bash .\main.sh localhost -- '--debug'
+          bash .\win.sh localhost -- '--debug'
 
       - run: |-
           $tmp = 'out.json'
