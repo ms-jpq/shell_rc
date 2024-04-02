@@ -148,4 +148,4 @@ done
 shell "${BSH[@]}" <<<"$(<./libexec/essentials.sh)"
 ENVS=(USERPROFILE="$ENV_HOME")
 # shellcheck disable=SC2154
-shell "$ENV_MAKE" --directory "$ENV_HOME/.local/opt/initd" "${ENVS[@]}" "$@"
+shell "${BSH[@]}"  "$ENV_HOME/.local/opt/initd/make.sh" "${ENVS[@]}" "$@"

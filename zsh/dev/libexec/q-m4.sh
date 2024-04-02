@@ -19,7 +19,7 @@ awk | gawk)
 sed)
   ARGV+=(-E -f -)
   ;;
-python3)
+python*)
   export -- PYTHONSAFEPATH=1
   ;;
 perl)
