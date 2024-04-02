@@ -7,7 +7,6 @@ DST="$3"
 REMOTE="${DST%%:*}"
 SINK="${DST#*:}"
 
-set -x
 # shellcheck disable=SC1003
 if [[ "$REMOTE" == 'localhost' ]]; then
   RSH=()
