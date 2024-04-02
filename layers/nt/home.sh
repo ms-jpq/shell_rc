@@ -33,17 +33,11 @@ fi
 
 for FROM in "${!LINKS[@]}"; do
   TO="${LINKS["$FROM"]}"
-  if ! [[ -e "$FROM" ]]; then
-    FROM="$(/usr/bin/cygpath --absolute --windows "$FROM")"
-    TO="$(/usr/bin/cygpath --absolute --windows "$TO")"
+  if ! [[ -L "$FROM" ]]; then
+    FROM="$(/usr/bin/cygpath --absolute -- "$FROM")"
+    TO="$(/usr/bin/cygpath --absolute -- "$TO")"
     PARENT="$(dirname -- "$FROM")"
-    if [[ -d "$TO" ]]; then
-      printf -v LINK -- 'mklink /j "%s" "%s"' "$TO" "$FROM"
-    else
-      printf -v LINK -- 'mklink "%s" "%s"' "$TO" "$FROM"
-    fi
-    printf -- '%s\n' "$LINK"
     mkdir -v -p -- "$PARENT"
-    # cmd "$LINK"
+    ln -v -sf -- "$TO" "$FROM"
   fi
 done
