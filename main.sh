@@ -1,5 +1,7 @@
 #!/usr/bin/env -S -- bash
 
+set -x
+
 set -Eeu
 set -o pipefail
 shopt -s dotglob nullglob extglob globstar
@@ -148,4 +150,4 @@ done
 shell "${BSH[@]}" <<<"$(<./libexec/essentials.sh)"
 ENVS=(USERPROFILE="$ENV_HOME")
 # shellcheck disable=SC2154
-shell "${BSH[@]}"  "$ENV_HOME/.local/opt/initd/make.sh" "${ENVS[@]}" "$@"
+shell "${BSH[@]}" "$ENV_HOME/.local/opt/initd/make.sh" "${ENVS[@]}" "$@"
