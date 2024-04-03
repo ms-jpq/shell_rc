@@ -6,6 +6,8 @@ $Env:SHELL = (Get-Command -Name pwsh).Path
 
 Set-PSReadLineOption -EditMode 'Emacs'
 Set-PSReadLineKeyHandler -Key 'Tab' -Function 'MenuComplete'
+Set-PSReadLineOption -PredictionViewStyle ListView
+Set-PSReadLineOption -MaximumHistoryCount 10000
 
 Set-PSReadLineOption -HistoryNoDuplicates -HistorySavePath (Join-Path -Path $HOME '.local' 'state' 'shell_history' 'pwsh')
 
@@ -36,6 +38,8 @@ if ($null -eq $Env:TZ) {
 }
 
 if ($IsWindows) {
+    Set-PSReadLineOption -TerminateOrphanedConsoleApps
+
     $appdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::ApplicationData)
     $pf = [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFiles)
 
