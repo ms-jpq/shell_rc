@@ -33,9 +33,11 @@ done
 LANG="$*"
 
 if [[ -z "$LANG" ]]; then
-  printf -- '%s\n' 'Please Enter a Langauge!'
+  printf -- '%s\n' 'Please Enter a Language!'
   exit 2
 fi
+
+unset -- CURL_HOME
 
 readarray -t -- PLUGINS < <(asdf plugin list || :)
 
