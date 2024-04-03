@@ -13,13 +13,16 @@ Set-PSReadLineOption -HistoryNoDuplicates -HistorySavePath (Join-Path -Path $HOM
 
 Set-PSReadLineOption -Colors @{
     ContinuationPrompt     = $PSStyle.Foreground.Yellow
+    Default                = $PSStyle.Foreground.Black
     InlinePrediction       = $PSStyle.Foreground.Blue
     ListPredictionSelected = $PSStyle.Foreground.BrightBlack + $PSStyle.Background.Cyan
     ListPredictionTooltip  = $PSStyle.Foreground.BrightBlack
     Member                 = $PSStyle.Foreground.Green
     Number                 = $PSStyle.Foreground.Magenta
-    Type                   = $PSStyle.Foreground.Black
+    Type                   = $PSStyle.Foreground.BrightBlack
 }
+
+$PSStyle.Progress.UseOSCIndicator = $true
 
 if ($null -eq $Env:XDG_CONFIG_HOME) {
     $Env:XDG_CONFIG_HOME = $IsWindows ? $Env:LOCALAPPDATA : (Join-Path -Path $HOME '.config')
