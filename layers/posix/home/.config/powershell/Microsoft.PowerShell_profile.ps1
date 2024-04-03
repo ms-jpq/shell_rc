@@ -14,12 +14,15 @@ $appdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::Application
 $pf = [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFiles)
 
 if ($IsWindows) {
-    $Env:MSYSTEM = 'MSYS'
-    $Env:MSYS = 'winsymlinks:nativestrict'
+    if ($null -eq $Env:MSYSTEM) {
+        $Env:MSYSTEM = 'MSYS'
+    }
+    if ($null -eq $Env:MSYS) {
+        $Env:MSYS = 'winsymlinks:nativestrict'
+    }
     $Env:Path = @(
         Join-Path -Path $appdata 'bin'
         Join-Path -Path $pf 'Git' 'usr' 'bin'
-        Join-Path -Path $pf 'Neovim' 'bin'
         $Env:Path
     ) | Join-String -Separator ([IO.Path]::PathSeparator)
 }
@@ -31,6 +34,22 @@ if ($null -eq $Env:TZ) {
         $Env:TZ = $tz
     }
     Remove-Variable -Name tz
+}
+
+if ($null -eq $Env:XDG_CONFIG_HOME) {
+    $Env:XDG_CONFIG_HOME = $IsWindows ? $Env:LOCALAPPDATA : (Join-Path -Path $HOME '.config')
+}
+
+if ($null -eq $Env:XDG_DATA_HOME) {
+    $Env:XDG_DATA_HOME = $IsWindows ? $Env:LOCALAPPDATA : (Join-Path -Path $HOME '.local' 'share')
+}
+
+if ($null -eq $Env:XDG_STATE_HOME) {
+    $Env:XDG_STATE_HOME = $IsWindows ? $Env:TEMP : (Join-Path -Path $HOME '.local' 'state')
+}
+
+if ($null -eq $Env:XDG_CACHE_HOME) {
+    $Env:XDG_CACHE_HOME = $IsWindows ? $Env:TEMP : (Join-Path -Path $HOME '.cache')
 }
 
 oh-my-posh init pwsh --config (Join-Path -Path $appdata 'posh' 'config.yml') | Invoke-Expression
