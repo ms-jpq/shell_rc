@@ -20,6 +20,9 @@ if ($IsWindows) {
     if ($null -eq $Env:MSYS) {
         $Env:MSYS = 'winsymlinks:nativestrict'
     }
+    if ($Env:TERM -eq 'tmux-256color') {
+        $Env:TERM = 'xterm-256color'
+    }
     $Env:Path = @(
         Join-Path -Path $appdata 'bin'
         Join-Path -Path $pf 'Git' 'usr' 'bin'
