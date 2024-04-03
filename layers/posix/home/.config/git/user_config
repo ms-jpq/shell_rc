@@ -26,6 +26,7 @@ verbose = true
 autocrlf = "input"
 pager    = "delta"
 safecrlf = true
+symlinks = true
 
 [delta]
 hyperlinks     = true
