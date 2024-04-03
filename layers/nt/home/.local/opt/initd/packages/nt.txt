@@ -28,7 +28,7 @@
 + eza-community.eza
 + hpjansson.Chafa
 + jqlang.jq
-# + junegunn.fzf
++ junegunn.fzf
 + muesli.duf
 + sharkdp.bat
 + sharkdp.fd

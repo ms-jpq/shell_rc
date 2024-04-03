@@ -20,10 +20,10 @@ linux*)
   PKGS="$(dpkg --get-selections | cut --field 1 | cut --delimiter : --field 1)"
   ;;
 msys)
-  WG_JSON="$(mktemp)"
-  winget export --disable-interactivity --accept-source-agreements --output "$WG_JSON"
-  PKGS="$(jq --exit-status --raw-output '.Sources[].Packages[].PackageIdentifier' "$WG_JSON" | tr --delete -- '\r')"
-  rm -fr -- "$WG_JSON"
+  S1=(winget list --disable-interactivity --accept-source-agreements)
+  # shellcheck disable=SC2016
+  S2=(awk '{ print $(NF > 3 ? NF-2 : 1) "\n" $(NF > 4 ? NF-3 : 1) }')
+  PKGS="$("${S1[@]}" | "${S2[@]}")"
   ;;
 *)
   exit 1
@@ -35,7 +35,9 @@ readarray -t -- INSTALLED <<<"$PKGS"
 declare -A -- PRESENT=()
 
 for PKG in "${INSTALLED[@]}"; do
-  PRESENT["$PKG"]=1
+  if [[ -n "$PKG" ]]; then
+    PRESENT["$PKG"]=1
+  fi
 done
 
 ADD=()
@@ -95,7 +97,7 @@ if (("${#RM[@]}")); then
 fi
 
 if (("${#ADD[@]}")); then
-  printf -- '%q\n' "${ADD[@]}"
+  printf -- '%q\n' "${ADD[@]}" >&2
   case "$OSTYPE" in
   darwin*)
     if ! [[ -v CI ]]; then

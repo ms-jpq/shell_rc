@@ -16,6 +16,7 @@ LOCALHI="$USERPROFILE/AppData/LocalHigh"
 CONF="$USERPROFILE/.config"
 PWSH="$USERPROFILE/Documents/PowerShell"
 PS1="$CONF/powershell/Microsoft.PowerShell_profile.ps1"
+PSPROFILE="$PWSH/Microsoft.PowerShell_profile.ps1"
 
 mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH"
 
@@ -39,6 +40,6 @@ for FROM in "${!LINKS[@]}"; do
   fi
 done
 
-if [[ -f "$PS1" ]]; then
-  LINKS["$PWSH/Microsoft.PowerShell_profile.ps1"]="$PS1"
+if [[ -f "$PS1" ]] && ! [[ -L "$PSPROFILE" ]]; then
+  ln -v -sf -- "$PS1" "$PSPROFILE"
 fi
