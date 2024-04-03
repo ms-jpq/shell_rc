@@ -1,13 +1,9 @@
-# + Git.MinGit
-# + GnuPG.GnuPG
 # + Microsoft.BingWallpaper
 # + Microsoft.PowerShell
 # + Microsoft.Sysinternals.Autoruns
 # + Microsoft.Sysinternals.BGInfo
 # + Microsoft.WindowsTerminal
 # + OpenJS.NodeJS
-# + Python.Python.3.12
-# + msys2.msys2
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
 + Clement.bottom
