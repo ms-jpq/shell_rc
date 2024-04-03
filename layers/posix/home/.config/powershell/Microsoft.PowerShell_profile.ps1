@@ -12,10 +12,13 @@ Set-PSReadLineOption -MaximumHistoryCount 10000
 Set-PSReadLineOption -HistoryNoDuplicates -HistorySavePath (Join-Path -Path $HOME '.local' 'state' 'shell_history' 'pwsh')
 
 Set-PSReadLineOption -Colors @{
+    ContinuationPrompt     = $PSStyle.Foreground.Yellow
     InlinePrediction       = $PSStyle.Foreground.Blue
-    ListPredictionSelected = $PSStyle.Foreground.Blue
+    ListPredictionSelected = $PSStyle.Foreground.BrightBlack + $PSStyle.Background.Cyan
     ListPredictionTooltip  = $PSStyle.Foreground.BrightBlack
+    Member                 = $PSStyle.Foreground.Green
     Number                 = $PSStyle.Foreground.Magenta
+    Type                   = $PSStyle.Foreground.Black
 }
 
 if ($null -eq $Env:XDG_CONFIG_HOME) {
