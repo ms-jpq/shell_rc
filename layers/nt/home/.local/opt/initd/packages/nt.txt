@@ -1,5 +1,4 @@
 # + Microsoft.BingWallpaper
-# + Microsoft.PowerShell
 # + Microsoft.Sysinternals.Autoruns
 # + Microsoft.Sysinternals.BGInfo
 # + Microsoft.WindowsTerminal
@@ -12,6 +11,7 @@
 + JanDeDobbeleer.OhMyPosh
 + JesseDuffield.lazygit
 + Microsoft.PowerAppsCLI
++ Microsoft.PowerShell
 + Neovim.Neovim
 + Rclone.Rclone
 + SoftwareFreedomConservancy.QEMU
