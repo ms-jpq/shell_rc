@@ -11,6 +11,12 @@ Set-PSReadLineOption -MaximumHistoryCount 10000
 
 Set-PSReadLineOption -HistoryNoDuplicates -HistorySavePath (Join-Path -Path $HOME '.local' 'state' 'shell_history' 'pwsh')
 
+Set-PSReadLineOption -Colors @{
+    InlinePrediction       = $PSStyle.Foreground.Blue
+    ListPredictionSelected = $PSStyle.Foreground.Blue
+    ListPredictionTooltip  = $PSStyle.Foreground.BrightBlack
+    Number                 = $PSStyle.Foreground.Magenta
+}
 
 if ($null -eq $Env:XDG_CONFIG_HOME) {
     $Env:XDG_CONFIG_HOME = $IsWindows ? $Env:LOCALAPPDATA : (Join-Path -Path $HOME '.config')
@@ -61,5 +67,7 @@ if ($IsWindows) {
     Remove-Variable -Name appdata
     Remove-Variable -Name pf
 }
+
+@('cat', 'cp', 'mv', 'rm') | Remove-Alias -ErrorAction 'SilentlyContinue'
 
 oh-my-posh init pwsh --config (Join-Path -Path $Env:XDG_CONFIG_HOME 'posh' 'config.yml') | Invoke-Expression
