@@ -5,7 +5,7 @@ unpack() {
 
   case "$FILE" in
   *.tar.bz | *.tar.bz2 | *.tbz | *.tbz2 | *.tar.gz | *.tgz | *.tar.xz | *.txz | *.tar.zst)
-    tar --extract --auto-compress --no-same-owner --file "$FILE"
+    tar --extract --no-same-owner --file "$FILE"
     ;;
   *.7z | *.zip | *.vsix)
     7zz x -- "$FILE"
