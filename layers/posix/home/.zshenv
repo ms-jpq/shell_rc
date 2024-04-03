@@ -2,33 +2,17 @@
 
 case "$OSTYPE" in
 msys)
-  nt2unix() {
-    local -- drive ntpath
-    ntpath="$1"
-    drive="${ntpath%%:*}"
-    ntpath="${ntpath#*:}"
-    # shellcheck disable=SC1003
-    unixpath="/${drive,,}${ntpath//'\'/'/'}"
-    printf -- '%s' "$unixpath"
-  }
+  export -- MSYSTEM="${MSYSTEM:-"MSYS"}" MSYS="${MSYS:-"winsymlinks:nativestrict"}"
+  path=(/usr/bin "${path[@]}")
 
-  export -- MSYSTEM='MSYS'
+  export -- XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$LOCALAPPDATA"}"
+  export -- XDG_DATA_HOME="${XDG_DATA_HOME:-"$LOCALAPPDATA"}"
+  export -- XDG_STATE_HOME="${XDG_STATE_HOME:-"$LOCALAPPDATA/Temp"}"
+  export -- XDG_CACHE_HOME="${XDG_CACHE_HOME:-"$LOCALAPPDATA/Temp"}"
 
-  # shellcheck disable=2154
-  cpath="$(nt2unix "$LOCALAPPDATA")"
-  path=("${cpath%/*}/bin" "${path[@]}")
-
-  export -- XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$cpath"}"
-  export -- XDG_DATA_HOME="${XDG_DATA_HOME:-"$cpath"}"
-
-  # shellcheck disable=2154
-  cpath="$(nt2unix "$TMP")"
-
-  export -- XDG_STATE_HOME="${XDG_STATE_HOME:-"$cpath"}"
-  export -- XDG_CACHE_HOME="${XDG_CACHE_HOME:-"$cpath"}"
-
-  unset -- cpath
-  unset -f -- nt2unix
+  if [[ "$TERM" == 'tmux-256color' ]]; then
+    TERM='xterm-256color'
+  fi
   ;;
 *)
   export -- XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$HOME/.config"}"

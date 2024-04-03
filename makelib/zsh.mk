@@ -1,7 +1,7 @@
 .PHONY: zshrc
 all: zshrc
 
-ZSH := $(shell printf -- '%s ' ./zsh/**/*)
+ZSH := ./layers/posix/home/.zshenv $(shell printf -- '%s ' ./zsh/**/*)
 
 $(GIT_TMP)/dircolors.sh: $(GIT_TMP)/dircolors-solarized
 	case "$$OSTYPE" in
