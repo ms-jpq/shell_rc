@@ -6,10 +6,9 @@ export -- MSYSTEM='MSYS' MSYS='winsymlinks:nativestrict'
 
 PATH="/usr/bin:$PATH"
 
-USERPROFILE="${USERPROFILE:-"$HOME"}"
-APPDATA="${APPDATA:-"$USERPROFILE/AppData/Roaming"}"
-LOCALAPPDATA="${LOCALAPPDATA:-"$USERPROFILE/AppData/Local"}"
+# shellcheck disable=2154
 WINTMP="$LOCALAPPDATA/Temp"
+# shellcheck disable=2154
 LOCALLO="$USERPROFILE/AppData/LocalLow"
 LOCALHI="$USERPROFILE/AppData/LocalHigh"
 
@@ -17,8 +16,12 @@ CONF="$USERPROFILE/.config"
 PWSH="$USERPROFILE/Documents/PowerShell"
 PS1="$CONF/powershell/Microsoft.PowerShell_profile.ps1"
 PSPROFILE="$PWSH/Microsoft.PowerShell_profile.ps1"
+
+# shellcheck disable=2154
+BAT="$APPDATA/bat"
 BAT="$APPDATA/bat"
 BTM="$APPDATA/bottom"
+CURL="$APPDATA/.curlrc"
 
 mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH"
 
@@ -54,4 +57,8 @@ fi
 if [[ -d "$CONF/bottom" ]] && ! [[ -L "$BTM" ]]; then
   rm -v -fr -- "$BTM"
   ln -v -sf -- "$CONF/bottom" "$BTM"
+fi
+
+if [[ -d "$CONF/curl" ]] && ! [[ -L "$CURL" ]]; then
+  ln -v -sf -- "$CONF/curl/.curlrc" "$CURL"
 fi
