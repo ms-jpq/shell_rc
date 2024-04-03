@@ -17,6 +17,7 @@ CONF="$USERPROFILE/.config"
 PWSH="$USERPROFILE/Documents/PowerShell"
 PS1="$CONF/powershell/Microsoft.PowerShell_profile.ps1"
 PSPROFILE="$PWSH/Microsoft.PowerShell_profile.ps1"
+BTM="$APPDATA/bottom"
 
 mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH"
 
@@ -42,4 +43,9 @@ done
 
 if [[ -f "$PS1" ]] && ! [[ -L "$PSPROFILE" ]]; then
   ln -v -sf -- "$PS1" "$PSPROFILE"
+fi
+
+if [[ -d "$CONF/bottom" ]] && ! [[ -L "$BTM" ]]; then
+  rm -v -fr -- "$BTM"
+  ln -v -sf -- "$CONF/bottom" "$BTM"
 fi
