@@ -40,6 +40,10 @@ if ($null -eq $Env:XDG_CACHE_HOME) {
     $Env:XDG_CACHE_HOME = $IsWindows ? $Env:TEMP : (Join-Path -Path $HOME '.cache')
 }
 
+if ($null -eq $Env:LC_ALL) {
+    $Env:LC_ALL = 'zh_CN.UTF-8'
+}
+
 if ($null -eq $Env:TZ) {
     $tz = ""
     [TimeZoneInfo]::TryConvertWindowsIdToIanaId((Get-TimeZone).Id, [ref] $tz) | Out-Null
