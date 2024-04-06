@@ -75,7 +75,7 @@ for DIR in "${DIRS[@]}"; do
 
     PAT="$F() {"
     FF="$(<"$FN")"
-    if grep -F -- "$PAT" "$FN" >/dev/null; then
+    if grep -q -F -- "$PAT" "$FN"; then
       BACC+=("$FF")
     else
       BACC+=("$PAT" "$FF" '}')
