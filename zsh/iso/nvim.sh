@@ -6,4 +6,7 @@ export -- EDITOR
 printf -v MANPAGER -- '%q ' nvim +Man! --
 export -- MANPAGER
 
-path=("$XDG_CONFIG_HOME/nvim/bin" "${path[@]}")
+path=(
+  "$(nt2unix "$XDG_CONFIG_HOME/nvim/bin")"
+  "${path[@]}"
+)
