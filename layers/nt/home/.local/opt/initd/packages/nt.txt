@@ -15,6 +15,7 @@
 + BurntSushi.ripgrep.MSVC
 + Clement.bottom
 + Git.Git
++ GnuWin32.M4
 + Insecure.Nmap
 + JanDeDobbeleer.OhMyPosh
 + JesseDuffield.lazygit
@@ -27,6 +28,7 @@
 + Wilfred.difftastic
 + XAMPPRocky.Tokei
 + bootandy.dust
++ cURL.cURL
 + charmbracelet.glow
 + charmbracelet.gum
 + dandavison.delta
