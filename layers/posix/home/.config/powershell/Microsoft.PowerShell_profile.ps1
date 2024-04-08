@@ -68,15 +68,15 @@ if ($IsWindows) {
     if ($Env:TERM -eq 'tmux-256color') {
         $Env:TERM = 'xterm-256color'
     }
-    $Env:Path = @(
-        Join-Path -Path $appdata 'bin'
-        Join-Path -Path $pf 'Git' 'usr' 'bin'
-        Join-Path -Path $Env:HOMEDRIVE 'msys64' 'usr' 'bin'
-        $Env:Path
-    ) | Join-String -Separator ([IO.Path]::PathSeparator)
+    $Env:Path = (
+        @(
+            Join-Path -Path $appdata 'bin'
+            Join-Path -Path $pf 'Git' 'usr' 'bin'
+            Join-Path -Path $Env:HOMEDRIVE 'msys64' 'usr' 'bin'
+        ) | Where-Object { Test-Path -PathType 'Container' -Path $_ }
+    ) + @($Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 
-    Remove-Variable -Name appdata
-    Remove-Variable -Name pf
+    Remove-Variable -Name @('appdata', 'pf')
 }
 
 @('cat', 'cp', 'mv', 'rm') | Remove-Alias -ErrorAction 'SilentlyContinue'
