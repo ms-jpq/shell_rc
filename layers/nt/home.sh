@@ -46,7 +46,9 @@ for FROM in "${!LINKS[@]}"; do
     mkdir -v -p -- "$P_FROM" "$P_TO"
     FROM="$(cygpath --windows -- "$FROM")"
     TO="$(cygpath --windows -- "$TO")"
+    set -x
     powershell.exe New-Item -ItemType Junction -Path "$FROM" -Target "$TO"
+    set +x
   fi
 done
 
