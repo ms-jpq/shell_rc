@@ -29,6 +29,7 @@ declare -A -- LINKS=()
 LINKS=(
   ["$CONF"]="$LOCALAPPDATA"
   ["$USERPROFILE/.cache"]="$WINTMP"
+  ["$USERPROFILE/.gnupg"]="$USERPROFILE/.config/gnupg"
   ["$USERPROFILE/.local/opt"]="$LOCALHI"
   ["$USERPROFILE/.local/share"]="$APPDATA"
   ["$USERPROFILE/.local/state"]="$LOCALLO"
