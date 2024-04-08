@@ -1,8 +1,16 @@
+# + GoLang.Go
 # + Microsoft.BingWallpaper
+# + Microsoft.DotNet.SDK.8
+# + Microsoft.OpenJDK.21
 # + Microsoft.Sysinternals.Autoruns
 # + Microsoft.Sysinternals.BGInfo
 # + Microsoft.WindowsTerminal
 # + OpenJS.NodeJS
+# + RProject.R
+# + RubyInstallerTeam.Ruby.3.2
+# + Rustlang.Rustup
+# + SWI-Prolog.SWI-Prolog
+# + commercialhaskell.stack
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
 + Clement.bottom
@@ -19,12 +27,15 @@
 + Wilfred.difftastic
 + XAMPPRocky.Tokei
 + bootandy.dust
++ charmbracelet.glow
++ charmbracelet.gum
 + dandavison.delta
 + dundee.gdu
 + eza-community.eza
 + hpjansson.Chafa
 + jqlang.jq
 + junegunn.fzf
++ koalaman.shellcheck
 + muesli.duf
 + sharkdp.bat
 + sharkdp.fd
