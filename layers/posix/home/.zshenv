@@ -2,6 +2,16 @@
 
 case "$OSTYPE" in
 msys)
+  nt2unix() {
+    local -- drive ntpath
+    ntpath="$*"
+    drive="${ntpath%%:*}"
+    ntpath="${ntpath#*:}"
+    # shellcheck disable=SC1003
+    unixpath="/${drive,,}${ntpath//'\'/'/'}"
+    printf -- '%s' "$unixpath"
+  }
+
   export -- MSYSTEM="${MSYSTEM:-"MSYS"}" MSYS="${MSYS:-"winsymlinks:nativestrict"}"
   path=(/usr/bin "${path[@]}")
 
@@ -15,6 +25,10 @@ msys)
   fi
   ;;
 *)
+  nt2unix() {
+    printf -- '%s' "$*"
+  }
+
   export -- XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$HOME/.config"}"
   export -- XDG_DATA_HOME="${XDG_DATA_HOME:-"$HOME/.local/share"}"
   export -- XDG_STATE_HOME="${XDG_STATE_HOME:-"$HOME/.local/state"}"
