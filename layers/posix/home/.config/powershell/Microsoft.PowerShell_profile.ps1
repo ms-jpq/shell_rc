@@ -2,8 +2,6 @@
 
 Set-StrictMode -Version 'Latest'
 
-$Env:SHELL = (Get-Command -Name pwsh).Path
-
 Set-PSReadLineOption -EditMode 'Emacs'
 Set-PSReadLineKeyHandler -Key 'Tab' -Function 'MenuComplete'
 Set-PSReadLineOption -PredictionViewStyle ListView
@@ -73,10 +71,17 @@ if ($IsWindows) {
             Join-Path -Path $appdata 'bin'
             Join-Path -Path $pf 'Git' 'usr' 'bin'
             Join-Path -Path $Env:HOMEDRIVE 'msys64' 'usr' 'bin'
+            Join-Path -Path $HOME '.cargo' 'bin'
         ) | Where-Object { Test-Path -PathType 'Container' -Path $_ }
     ) + @($Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 
     Remove-Variable -Name @('appdata', 'pf')
+
+    $Env:FZF_DEFAULT_COMMAND = 'fd.exe --hidden --no-ignore-parent --type file'
+    $Env:SHELL = $Env:COMSPEC
+}
+else {
+    $Env:SHELL = (Get-Command -Name pwsh).Path
 }
 
 @('cat', 'cp', 'mv', 'rm') | Remove-Alias -ErrorAction 'SilentlyContinue'
