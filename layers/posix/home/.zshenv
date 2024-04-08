@@ -12,7 +12,6 @@ msys)
   }
 
   export -- MSYSTEM="${MSYSTEM:-"MSYS"}" MSYS="${MSYS:-"winsymlinks:nativestrict"}"
-  path=(/usr/bin "${path[@]}")
 
   export -- XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$LOCALAPPDATA"}"
   export -- XDG_DATA_HOME="${XDG_DATA_HOME:-"$LOCALAPPDATA"}"
