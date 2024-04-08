@@ -9,9 +9,10 @@ PATH="/usr/bin:$PATH"
 # shellcheck disable=2154
 WINTMP="$LOCALAPPDATA/Temp"
 # shellcheck disable=2154
-LOCALLO="$USERPROFILE/AppData/LocalLow"
-LOCALHI="$USERPROFILE/AppData/LocalHigh"
+LOCALLO="${LOCALAPPDATA}Low"
+LOCALHI="${LOCALAPPDATA}High"
 
+# shellcheck disable=2154
 CONF="$USERPROFILE/.config"
 PWSH="$USERPROFILE/Documents/PowerShell"
 PS1="$CONF/powershell/Microsoft.PowerShell_profile.ps1"

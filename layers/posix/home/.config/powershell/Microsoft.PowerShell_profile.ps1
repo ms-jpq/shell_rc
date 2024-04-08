@@ -31,7 +31,7 @@ if ($null -eq $Env:XDG_DATA_HOME) {
 }
 
 if ($null -eq $Env:XDG_STATE_HOME) {
-    $Env:XDG_STATE_HOME = $IsWindows ? $Env:TEMP : (Join-Path -Path $HOME '.local' 'state')
+    $Env:XDG_STATE_HOME = $IsWindows ? ($Env:LOCALAPPDATA + "Low") : (Join-Path -Path $HOME '.local' 'state')
 }
 
 if ($null -eq $Env:XDG_CACHE_HOME) {

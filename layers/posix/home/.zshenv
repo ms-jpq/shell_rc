@@ -3,8 +3,7 @@
 case "$OSTYPE" in
 msys)
   nt2unix() {
-    local -- drive ntpath
-    ntpath="$*"
+    local -- drive ntpath="$*"
     drive="${ntpath%%:*}"
     ntpath="${ntpath#*:}"
     # shellcheck disable=SC1003
@@ -17,8 +16,8 @@ msys)
 
   export -- XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$LOCALAPPDATA"}"
   export -- XDG_DATA_HOME="${XDG_DATA_HOME:-"$LOCALAPPDATA"}"
-  export -- XDG_STATE_HOME="${XDG_STATE_HOME:-"$LOCALAPPDATA/Temp"}"
-  export -- XDG_CACHE_HOME="${XDG_CACHE_HOME:-"$LOCALAPPDATA/Temp"}"
+  export -- XDG_STATE_HOME="${XDG_CACHE_HOME:-"${LOCALAPPDATA}Low"}"
+  export -- XDG_CACHE_HOME="${XDG_STATE_HOME:-"$LOCALAPPDATA/Temp"}"
 
   if [[ "$TERM" == 'tmux-256color' ]]; then
     TERM='xterm-256color'
