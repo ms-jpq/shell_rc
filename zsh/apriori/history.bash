@@ -9,4 +9,4 @@ HISTCONTROL=ignoredups
 HISTTIMEFORMAT='%F %T '
 
 # shellcheck disable=SC2154
-HISTFILE='/dev/null'
+HISTFILE="$XDG_STATE_HOME/shell_history/bash"
