@@ -19,18 +19,20 @@ PS1="$CONF/powershell/Microsoft.PowerShell_profile.ps1"
 PSPROFILE="$PWSH/Microsoft.PowerShell_profile.ps1"
 
 # shellcheck disable=2154
-BAT="$APPDATA/bat"
-BAT="$APPDATA/bat"
-BTM="$APPDATA/bottom"
 CURL="$APPDATA/.curlrc"
+BAT="$CONF/bat"
+BTM="$CONF/bottom"
+GPG="$CONF/gnupg"
 
-mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH"
+mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH" "$BAT" "$BTM" "$GPG"
 
 declare -A -- LINKS=()
 LINKS=(
+  ["$APPDATA/bat"]="$BAT"
+  ["$APPDATA/bottom"]="$BTM"
   ["$CONF"]="$LOCALAPPDATA"
   ["$USERPROFILE/.cache"]="$WINTMP"
-  ["$USERPROFILE/.gnupg"]="$USERPROFILE/.config/gnupg"
+  ["$USERPROFILE/.gnupg"]="$GPG"
   ["$USERPROFILE/.local/opt"]="$LOCALHI"
   ["$USERPROFILE/.local/share"]="$APPDATA"
   ["$USERPROFILE/.local/state"]="$LOCALLO"
@@ -39,8 +41,9 @@ LINKS=(
 for FROM in "${!LINKS[@]}"; do
   TO="${LINKS["$FROM"]}"
   if ! [[ -L "$FROM" ]]; then
-    PARENT="$(dirname -- "$FROM")"
-    mkdir -v -p -- "$PARENT"
+    P_FROM="$(dirname -- "$FROM")"
+    P_TO="$(dirname -- "$TO")"
+    mkdir -v -p -- "$P_FROM" "$P_TO"
     FROM="$(cygpath --windows -- "$FROM")"
     TO="$(cygpath --windows -- "$TO")"
     powershell.exe New-Item -ItemType Junction -Path "$FROM" -Target "$TO"
@@ -49,16 +52,6 @@ done
 
 if [[ -f "$PS1" ]] && ! [[ -L "$PSPROFILE" ]]; then
   ln -v -sf -- "$PS1" "$PSPROFILE"
-fi
-
-if [[ -d "$CONF/bat" ]] && ! [[ -L "$BAT" ]]; then
-  rm -v -fr -- "$BAT"
-  ln -v -sf -- "$CONF/bat" "$BAT"
-fi
-
-if [[ -d "$CONF/bottom" ]] && ! [[ -L "$BTM" ]]; then
-  rm -v -fr -- "$BTM"
-  ln -v -sf -- "$CONF/bottom" "$BTM"
 fi
 
 if [[ -d "$CONF/curl" ]] && ! [[ -L "$CURL" ]]; then
