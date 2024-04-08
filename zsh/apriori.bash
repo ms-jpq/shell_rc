@@ -4,4 +4,5 @@
 
 # shellcheck disable=SC2034
 readarray -t -d ':' -- path < <(printf -- '%s' "$PATH")
-export -- SHELL="$BASH"
+
+export -- SHELL="${COMSPEC:-"$BASH"}"

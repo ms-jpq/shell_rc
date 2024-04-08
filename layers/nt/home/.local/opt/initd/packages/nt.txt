@@ -4,6 +4,7 @@
 # + Microsoft.OpenJDK.21
 # + Microsoft.Sysinternals.Autoruns
 # + Microsoft.Sysinternals.BGInfo
+# + Microsoft.VisualStudio.2022.BuildTools
 # + Microsoft.WindowsTerminal
 # + OpenJS.NodeJS
 # + RProject.R
