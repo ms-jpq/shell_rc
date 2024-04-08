@@ -24,13 +24,16 @@ BAT="$CONF/bat"
 BTM="$CONF/bottom"
 GPG="$CONF/gnupg"
 
-mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH" "$BAT" "$BTM" "$GPG"
+mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH"
+if ! [[ -L "$CONF" ]]; then
+  powershell.exe New-Item -ItemType Junction -Path "$CONF" -Target "$LOCALAPPDATA"
+fi
+mkdir -v -p -- "$BAT" "$BTM" "$GPG"
 
 declare -A -- LINKS=()
 LINKS=(
   ["$APPDATA/bat"]="$BAT"
   ["$APPDATA/bottom"]="$BTM"
-  ["$CONF"]="$LOCALAPPDATA"
   ["$USERPROFILE/.cache"]="$WINTMP"
   ["$USERPROFILE/.gnupg"]="$GPG"
   ["$USERPROFILE/.local/opt"]="$LOCALHI"
@@ -46,9 +49,7 @@ for FROM in "${!LINKS[@]}"; do
     mkdir -v -p -- "$P_FROM" "$P_TO"
     FROM="$(cygpath --windows -- "$FROM")"
     TO="$(cygpath --windows -- "$TO")"
-    set -x
     powershell.exe New-Item -ItemType Junction -Path "$FROM" -Target "$TO"
-    set +x
   fi
 done
 
