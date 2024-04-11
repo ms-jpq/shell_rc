@@ -11,6 +11,6 @@ git-ssh() {
 
   ssh=(ssh -o IdentitiesOnly=yes -i "$ssh_key")
   ssh_key=$(printf -- '%q ' "${ssh[@]}")
-  printf -- '%s\n' "$ssh_key"
+  printf -- '%s\n' "$ssh_key" >&2
   GIT_SSH_COMMAND="$ssh_key" command -- git "$@"
 }
