@@ -7,7 +7,7 @@ preview)
   readarray -t -d '' -- LINES
   for LINE in "${LINES[@]}"; do
     printf -- '%q\n\n' "$LINE"
-    git blame -w -- "$LINE" | ${GIT_PAGER:-delta}
+    git blame -w -C -- "$LINE" | ${GIT_PAGER:-delta}
     printf -- '\n'
   done
   ;;
