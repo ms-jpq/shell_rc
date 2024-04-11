@@ -50,5 +50,5 @@ else
   TEXT="$(</dev/stdin)"
 fi
 
-TEXT="${TEXT:-moo}"
+TEXT="${TEXT:-"$(fortune)"}"
 exec -- cowsay "${ARGS[@]}" <<<"$TEXT"
