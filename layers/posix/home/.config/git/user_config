@@ -1,8 +1,5 @@
-# [blame]
-# coloring = true
-
-# [feature]
-# manyFiles = true
+[blame]
+coloring = "highlightRecent"
 
 [branch]
 autoSetupRebase = "always"
@@ -19,8 +16,9 @@ filterSubmodules = true
 ui = "auto"
 
 [commit]
-gpgSign = true
-verbose = true
+fsmonitor = true
+gpgSign   = true
+verbose   = true
 
 [core]
 autocrlf = "input"
@@ -56,6 +54,7 @@ trustExitCode = true
 parallel          = 0
 pruneTags         = true
 recurseSubmodules = true
+writeCommitGraph  = true
 
 [grep]
 column      = true
