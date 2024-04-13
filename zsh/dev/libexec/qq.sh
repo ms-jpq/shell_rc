@@ -76,6 +76,6 @@ if [[ -t 1 ]]; then
   "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<' >&2
   exec -- "$0" "$A0" "$@"
 else
-  "${ARGV[@]}" <<<"$SCRIPT" | tee -- /dev/fd/2
+  "${ARGV[@]}" <<<"$SCRIPT" | tee -- /dev/stderr
   "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<' >&2
 fi
