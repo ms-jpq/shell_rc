@@ -64,10 +64,12 @@ ARGV=(
 
 read -r -d '' -- BODY
 
-printf -- '\n'
-printf -- '%q ' "${ARGV[@]}"
-printf -- '\n'
+{
+  printf -- '\n'
+  printf -- '%q ' "${ARGV[@]}"
+  printf -- '\n'
+} >&2
 
 printf -- '%s' "${BODY[@]}" | "${ARGV[@]}" | "${PAGER[@]}"
-printf -- '\n'
+printf -- '\n' >&2
 exec -- "$0" "${AV[@]}"
