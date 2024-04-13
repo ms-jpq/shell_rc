@@ -14,7 +14,7 @@ graphql)
   shift -- 1
   ;;
 *)
-  SH="$LIBEXEC/q-m4.sh"
+  SH="$LIBEXEC/qq.sh"
   ;;
 esac
 
