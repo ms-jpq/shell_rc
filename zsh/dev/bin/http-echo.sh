@@ -3,12 +3,12 @@
 set -o pipefail
 
 TXT="${1:-"$TXT"}"
-PORT="${2:-8888}"
-ADDR="${3:-"127.0.0.1"}"
+COMMENT="${2:-"${COMMENT:-"^#"}"}"
+PORT="${3:-8888}"
+ADDR="${4:-"127.0.0.1"}"
 
-COMMENT="${COMMENT:-"^#"}"
 if [[ -t 0 ]]; then
-  export -- TXT
+  export -- TXT COMMENT
   printf -- '%q ' curl -- "http://$ADDR":"$PORT"
   printf -- '\n'
   printf -- '%s%q\n' "body comment: " "$COMMENT"
@@ -39,8 +39,11 @@ EF='.....................................................................'
     esac
   done
   head -c "$BYTES"
-  printf -- '\n%s\n' "$TX"
-} >&2
+  if ((BYTES)); then
+    printf -- '\n'
+  fi
+  printf -- '%s\n' "$TX"
+} | cat -v >&2
 
 read -r -d '' -- AWK <<-'AWK' || true
 BEGIN { CMT="^#" }
