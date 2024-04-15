@@ -35,6 +35,7 @@
 + ipcalc-ng
 + iperf3
 + jid
++ language-pack-en
 + language-pack-zh-hans
 + libxml2-utils
 + locales
