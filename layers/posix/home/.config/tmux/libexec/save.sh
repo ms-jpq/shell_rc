@@ -1,6 +1,7 @@
-#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O globstar
+#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
 
 set -o pipefail
+shopt -u failglob
 
 ENV='TMUX_NO_SAVE'
 if tmux show-environment -g -h -- "$ENV" >/dev/null 2>&1; then
