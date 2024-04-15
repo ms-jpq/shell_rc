@@ -21,3 +21,8 @@ for FROM in "${!LINKS[@]}"; do
     ln -v -sf -- "$TO" "$FROM"
   fi
 done
+
+RESOLVER='/etc/resolver'
+if ! [[ -d "$RESOLVER" ]]; then
+  sudo -- mkdir -v -p -- "$RESOLVER"
+fi

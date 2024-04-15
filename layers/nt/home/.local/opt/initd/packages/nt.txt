@@ -1,4 +1,5 @@
 # + GoLang.Go
+# + Insecure.Nmap
 # + Microsoft.BingWallpaper
 # + Microsoft.DotNet.SDK.8
 # + Microsoft.OpenJDK.21
@@ -17,7 +18,6 @@
 + Clement.bottom
 + Git.Git
 + GnuWin32.M4
-+ Insecure.Nmap
 + JanDeDobbeleer.OhMyPosh
 + JesseDuffield.lazygit
 + Microsoft.PowerAppsCLI
