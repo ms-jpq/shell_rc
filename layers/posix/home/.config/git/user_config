@@ -1,5 +1,5 @@
 [blame]
-coloring = "highlightRecent"
+# coloring = "highlightRecent"
 
 [branch]
 autoSetupRebase = "always"
