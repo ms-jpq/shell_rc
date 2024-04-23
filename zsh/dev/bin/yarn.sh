@@ -3,4 +3,4 @@
 set -o pipefail
 
 # shellcheck disable=SC2154
-exec -- npm exec --yes -- yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config" "$@"
+exec -- "${0%/*}/nx" yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config" "$@"
