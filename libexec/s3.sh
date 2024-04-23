@@ -34,7 +34,8 @@ push)
   dir
   "$SELF/s3-prep.sh" push "$TMP" "${FILES[@]}"
 
-  BW="$BASE/node_modules/.bin/bw"
+  # BW="$BASE/node_modules/.bin/bw"
+  BW='bw'
   chmod +x "$BW"
   "$BW" export --format json --raw | gpg --batch --encrypt --output "$TMP/bitwarden.json.gpg"
   gpg --export-secret-keys --export-options export-backup | gpg --batch --encrypt --output "$GPG"
