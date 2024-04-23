@@ -2,4 +2,4 @@
 
 set -o pipefail
 
-exec -- npm exec --yes -- pnpm "$@"
+exec -- npm exec --yes -- "$@"
