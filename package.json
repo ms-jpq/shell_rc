@@ -1,8 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "dependencies": {
-    "@bitwarden/cli": "*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@taplo/cli": "*",
     "@types/node": "*",
