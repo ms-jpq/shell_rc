@@ -2,6 +2,7 @@
 *.env
 *.gpg
 *.key
+*.lock
 *.log
 *.tfstate
 *.tfstate.backup
