@@ -17,7 +17,7 @@ CUDA := http://developer.download.nvidia.com/compute/cuda/repos/ubuntu$(subst .,
 /etc/apt/trusted.gpg.d/cuda.gpg:
 	sudo -- $(CURL) --output '$@' -- '$(CUDA)/cuda-archive-keyring.gpg'
 
-pkg.posix: /etc/apt/sources.list.d/cuda.list
+# pkg.posix: /etc/apt/sources.list.d/cuda.list
 /etc/apt/sources.list.d/cuda.list: /etc/apt/trusted.gpg.d/cuda.gpg
 	sudo -- tee -- '$@' <<-'EOF'
 	deb $(CUDA) /
