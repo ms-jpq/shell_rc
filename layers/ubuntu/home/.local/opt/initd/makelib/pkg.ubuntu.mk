@@ -1,6 +1,6 @@
 $(SHARE)/tmux $(NVIM_MVP) $(OPT)/pipx: | /usr/share/doc/python3-venv
 
-pkg.posix: /etc/apt/sources.list.d/ubuntu_partner.list
+# pkg.posix: /etc/apt/sources.list.d/ubuntu_partner.list
 /etc/apt/sources.list.d/ubuntu_partner.list:
 	sudo -- tee -- '$@' <<-'EOF'
 	deb http://archive.canonical.com/ubuntu $(VERSION_CODENAME) partner
