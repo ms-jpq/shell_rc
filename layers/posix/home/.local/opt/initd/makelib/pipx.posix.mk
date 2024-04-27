@@ -44,7 +44,6 @@ endef
 # lookatme              lookatme
 define PIP_PKGS
 
-ast-grep-cli          ast-grep-cli
 gay                   gay
 graphtage             graphtage
 markdown-live-preview markdown_live_preview
