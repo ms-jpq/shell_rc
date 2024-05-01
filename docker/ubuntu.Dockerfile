@@ -9,7 +9,8 @@ RUN apt-get update && \
   sudo \
   curl \
   jq \
-  ca-certificates
+  ca-certificates \
+  pcp
 
 WORKDIR /srv
 COPY . /srv
