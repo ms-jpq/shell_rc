@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-PORT=8080
+PORT="${PORT:-8080}"
 printf -- '%s\n' "http://$HOSTNAME:$PORT/"
 RCLONE=(
   rclone
