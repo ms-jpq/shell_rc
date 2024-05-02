@@ -1,4 +1,3 @@
-- cloud-init
 - lxd-agent-loader
 - rsyslog
 - vim-common
