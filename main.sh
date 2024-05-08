@@ -43,11 +43,6 @@ else
   PORT=22
 fi
 
-PREFIX=''
-if [[ "$0" == *macos.sh ]]; then
-  PREFIX='/opt/homebrew/bin'
-fi
-
 BSH=(bash --norc --noprofile -Eeuo pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar)
 CONN=(
   ssh
@@ -83,7 +78,10 @@ shell() {
     "$@"
   else
     printf -v sh -- '%q ' "$@"
-    if [[ "$0" == *win.sh ]] && [[ "$sh" == bash* ]]; then
+    if [[ "$0" == *macos.sh ]]; then
+      # shellcheck disable=SC2016
+      sh='PATH="/opt/homebrew/bin:$PATH"'" $sh"
+    elif [[ "$0" == *win.sh ]] && [[ "$sh" == bash* ]]; then
       sh='"%PROGRAMFILES%\Git\usr\bin\"'"$sh"
     fi
     # shellcheck disable=SC2029
