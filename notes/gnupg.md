@@ -23,7 +23,8 @@ gpg --list-keys --with-subkey-fingerprints --with-keygrip
 ```
 
 ```bash
-# Generate public + private keys
+# Generate primary public + private keys
+# <fingerprint> here means ID
 gpg --batch --passphrase '' --quick-generate-key -- '<fingerprint>' 'default' 'cert' 'never'
 ```
 
@@ -86,9 +87,9 @@ git config --global -- user.signingkey '<subkey>'!
 
 ```bash
 # All keys
-gpg --armor --export-secret-keys --export-options export-backup -- '<id>' | gpg -v --import
+gpg --armor --export-secret-keys --export-options export-backup -- '<fingerprint>' | gpg -v --import
 # Public key only
 gpg --armor --export
 # Excluding primary key
-gpg --armor --export-secret-subkeys -- '<id>'!
+gpg --armor --export-secret-subkeys -- '<fingerprint>'!
 ```
