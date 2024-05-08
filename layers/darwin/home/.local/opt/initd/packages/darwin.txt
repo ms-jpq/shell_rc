@@ -9,6 +9,7 @@
 + bandwhich
 + bash
 + bat
++ bottom
 + cgdb
 + chafa
 + cloc
