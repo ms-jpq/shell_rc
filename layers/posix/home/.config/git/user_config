@@ -21,10 +21,11 @@ gpgSign   = true
 verbose   = true
 
 [core]
-autocrlf = "input"
-pager    = "delta"
-safecrlf = true
-symlinks = true
+autocrlf  = "input"
+fsmonitor = true
+pager     = "delta"
+safecrlf  = true
+symlinks  = true
 
 [delta]
 hyperlinks     = true
