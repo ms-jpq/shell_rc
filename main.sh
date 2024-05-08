@@ -43,6 +43,11 @@ else
   PORT=22
 fi
 
+PREFIX=''
+if [[ "$0" == *macos.sh ]]; then
+  PREFIX='/opt/homebrew/bin'
+fi
+
 BSH=(bash --norc --noprofile -Eeuo pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar)
 CONN=(
   ssh
