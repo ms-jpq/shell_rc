@@ -10,7 +10,9 @@ S5="$BASE/var/bin/s5cmd"
 TMP="$BASE/var/gpg"
 GPG="$TMP/backup.gpg"
 
-S5=("$BASE/var/bin/s5cmd")
+S5=(
+  "$(realpath -- "$BASE/var/bin/s5cmd")"
+)
 
 dir() {
   rm -fr -- "$TMP"
@@ -39,11 +41,14 @@ push)
   "$BW" export --format json --raw | gpg --batch --encrypt --output "$TMP/bitwarden.json.gpg"
   gpg --export-secret-keys --export-options export-backup | gpg --batch --encrypt --output "$GPG"
 
-  "${S5[@]}" sync --delete -- "$TMP/" "$BUCKET" | column -t
+  pushd -- "$TMP"
+  "${S5[@]}" sync --delete -- ./ "$BUCKET" | column -t
   ;;
 pull)
   dir
-  "${S5[@]}" cp -- "$BUCKET/*" "$TMP" | column -t
+  pushd -- "$TMP"
+  "${S5[@]}" cp -- "$BUCKET/*" . | column -t
+  popd
   "$SELF/s3-prep.sh" pull "$TMP" "${FILES[@]}"
 
   gpg --batch --decrypt -- "$GPG" | gpg --import
