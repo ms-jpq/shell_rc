@@ -42,12 +42,12 @@ push)
   gpg --export-secret-keys --export-options export-backup | gpg --batch --encrypt --output "$GPG"
 
   pushd -- "$TMP"
-  "${S5[@]}" sync --delete -- ./ "$BUCKET" | column -t
+  "${S5[@]}" sync --delete -- ./ "$BUCKET" | cut -d ' ' -f -2
   ;;
 pull)
   dir
   pushd -- "$TMP"
-  "${S5[@]}" cp -- "$BUCKET/*" . | column -t
+  "${S5[@]}" cp -- "$BUCKET/*" . | cut -d ' ' -f -2
   popd
   "$SELF/s3-prep.sh" pull "$TMP" "${FILES[@]}"
 
