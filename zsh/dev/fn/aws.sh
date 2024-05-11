@@ -2,7 +2,7 @@
 
 if [[ -t 1 ]]; then
   # shellcheck disable=SC2312
-  AWS_DEFAULT_OUTPUT=yaml command -- aws "$@" | bat --language yaml
+  AWS_DEFAULT_OUTPUT=yaml command -- aws "$@"
 else
   command -- aws "$@"
 fi
