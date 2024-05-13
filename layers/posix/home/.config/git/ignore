@@ -8,6 +8,7 @@
 *.tfstate.backup
 .DS_Store
 .git/
+.ignore
 .scannerwork/
 .terraform.tfstate.lock.info
 .terraform/
