@@ -18,7 +18,6 @@ export -- DOTNET_CLI_HOME="$XDG_CACHE_HOME/dotnet"
 export -- PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/python"
 
 export -- MYSQL_HISTFILE="$XDG_STATE_HOME/shell_history/mysql"
-export -- NODE_REPL_HISTORY="$XDG_STATE_HOME/shell_history/node"
 export -- REDISCLI_HISTFILE="$XDG_STATE_HOME/shell_history/redis"
 export -- RLWRAP_HOME="$XDG_STATE_HOME/rlwrap"
 export -- RUBY_DEBUG_HISTORY_FILE="$XDG_STATE_HOME/shell_history/rdbg"
