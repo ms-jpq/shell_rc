@@ -17,9 +17,7 @@ GIT=(
   -- "$LOCAL" "$REMOTE"
 )
 DIFF=(
-  npm exec
-  --yes
-  -- diff2html-cli
+  diff2html
   --style side
   --input stdin
   --file "$HTML"

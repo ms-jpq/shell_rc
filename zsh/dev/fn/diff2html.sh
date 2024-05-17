@@ -11,5 +11,5 @@ diff2html() {
   if ! [[ -t 1 ]]; then
     argv+=(--output stdout)
   fi
-  npm exec --yes -- diff2html-cli "${argv[@]}"
+  command -- diff2html "${argv[@]}"
 }
