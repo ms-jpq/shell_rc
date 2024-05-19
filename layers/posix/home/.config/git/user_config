@@ -22,7 +22,6 @@ verbose = true
 [core]
 autocrlf          = "input"
 pager             = "delta"
-precomposeUnicode = true
 safecrlf          = true
 symlinks          = true
 
