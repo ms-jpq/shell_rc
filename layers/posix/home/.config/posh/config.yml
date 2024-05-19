@@ -32,12 +32,6 @@ blocks:
   - type: prompt
     alignment: right
     segments:
-      - type: executiontime
-        style: plain
-        foreground: yellow
-        properties:
-          threshold: 99
-
       # - type: project
       #   style: plain
       #   foreground: darkGray
@@ -97,16 +91,6 @@ blocks:
       #   trailing_diamond: "<#5e5086></>"
       #   foreground: "#5e5086"
 
-      - type: text
-        style: plain
-        template: "<u> </u>"
-
-      - type: status
-        style: plain
-        template: "{{ if .Error }}<red>\uf00d <b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</>{{ end }} "
-        properties:
-          always_enabled: True
-
       # - type: time
       #   style: plain
       #   foreground: darkGray
@@ -114,13 +98,27 @@ blocks:
       #   properties:
       #     time_format: "15:04:05 MST"
 
+      - type: executiontime
+        template: " {{ .FormattedMs }}"
+        style: plain
+        foreground: yellow
+        properties:
+          threshold: 99
+
+      - type: status
+        style: plain
+        template: " {{ if .Error }}<red>\uf00d<b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</>{{ end }}"
+        properties:
+          always_enabled: True
+
       - type: shell
         style: plain
+        template: " {{ .Shell }}"
         foreground: red
 
       - type: session
         style: plain
-        template: "{{ if .SSHSession }}{{ .UserName }}@{{ .HostName }}{{ end }}"
+        template: "{{ if .SSHSession }} {{ .UserName }}@{{ .HostName }}{{ end }}"
         foreground: black
 
   - type: prompt
