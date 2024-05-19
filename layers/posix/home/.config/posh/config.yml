@@ -107,11 +107,6 @@ blocks:
         properties:
           always_enabled: True
 
-      - type: session
-        style: plain
-        template: "{{ if .SSHSession }}{{ .UserName }}@{{ .HostName }}{{ end }} "
-        foreground: black
-
       # - type: time
       #   style: plain
       #   foreground: darkGray
@@ -122,6 +117,11 @@ blocks:
       - type: shell
         style: plain
         foreground: red
+
+      - type: session
+        style: plain
+        template: "{{ if .SSHSession }}{{ .UserName }}@{{ .HostName }}{{ end }}"
+        foreground: black
 
   - type: prompt
     alignment: left
