@@ -16,16 +16,15 @@ filterSubmodules = true
 ui = "auto"
 
 [commit]
-fsmonitor = true
-gpgSign   = true
-verbose   = true
+gpgSign = true
+verbose = true
 
 [core]
-autocrlf  = "input"
-fsmonitor = true
-pager     = "delta"
-safecrlf  = true
-symlinks  = true
+autocrlf          = "input"
+pager             = "delta"
+precomposeUnicode = true
+safecrlf          = true
+symlinks          = true
 
 [delta]
 hyperlinks     = true
