@@ -15,6 +15,7 @@ export -- WGETRC="$XDG_CONFIG_HOME/wget/config"
 export -- AWS_DATA_PATH="$XDG_CACHE_HOME/aws/models"
 export -- BUNDLE_USER_HOME="$XDG_CACHE_HOME/bundle"
 export -- DOTNET_CLI_HOME="$XDG_CACHE_HOME/dotnet"
+export -- GRADLE_USER_HOME="$XDG_CACHE_HOME"/gradle
 export -- PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/python"
 
 export -- MYSQL_HISTFILE="$XDG_STATE_HOME/shell_history/mysql"
