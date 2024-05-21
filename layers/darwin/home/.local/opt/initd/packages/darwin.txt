@@ -49,7 +49,6 @@
 + htop
 + httm
 + hyperfine
-+ imagemagick
 + ipcalc
 + iperf3
 + jless
