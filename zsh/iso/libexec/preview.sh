@@ -7,7 +7,7 @@ TARGET="$1"
 export -- PAGER='tee'
 
 if [[ -d "$TARGET" ]]; then
-  ARGS=(
+  ARGV=(
     eza
     --all
     --group-directories-first
@@ -22,22 +22,12 @@ else
 
   case "$MIME" in
   image/*)
-    if [[ -v KITTY_PID ]]; then
-      SIZE="$(kitten icat --print-window-size)"
-      SIZE="${SIZE/x/,}"
-      ARGS=(
-        kitten
-        icat
-        --use-window-size "$FZF_PREVIEW_COLUMNS,$FZF_PREVIEW_LINES,$SIZE"
-      )
-    else
-      ARGS=(
-        chafa
-      )
-    fi
+    ARGV=(
+      "${0%/*}/icat.sh"
+    )
     ;;
   *)
-    ARGS=(
+    ARGV=(
       bat
       --color=always
     )
@@ -46,4 +36,4 @@ else
 
 fi
 
-exec -- "${ARGS[@]}" -- "$TARGET"
+exec -- "${ARGV[@]}" -- "$TARGET"
