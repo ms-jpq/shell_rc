@@ -6,13 +6,16 @@ if [[ -v KITTY_PID ]]; then
   if [[ -v FZF_PREVIEW_COLUMNS ]]; then
     ARGV=(
       --stdin no
-      --transfer-mode memory
       --place "${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES@0x0"
-      "$@"
     )
   else
-    ARGV=("$@")
+    ARGV=()
   fi
+
+  ARGV+=(
+    --transfer-mode memory
+    "$@"
+  )
   exec -- kitten icat "${ARGV[@]}"
 else
   exec -- chafa "$@"
