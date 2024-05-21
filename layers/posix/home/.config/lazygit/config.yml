@@ -1,7 +1,7 @@
 ---
 git:
   paging:
-    pager: delta --24-bit-color=never
+    pager: delta --paging=never --24-bit-color=never
 
 notARepository: quit
 
@@ -15,6 +15,4 @@ gui:
     optionsTextColor:
       - black
     selectedLineBgColor:
-      - reverse
-    selectedRangeBgColor:
       - reverse
