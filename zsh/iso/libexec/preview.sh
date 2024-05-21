@@ -22,9 +22,19 @@ else
 
   case "$MIME" in
   image/*)
-    ARGS=(
-      chafa
-    )
+    if [[ -v KITTY_PID ]]; then
+      SIZE="$(kitten icat --print-window-size)"
+      SIZE="${SIZE/x/,}"
+      ARGS=(
+        kitten
+        icat
+        --use-window-size "$FZF_PREVIEW_COLUMNS,$FZF_PREVIEW_LINES,$SIZE"
+      )
+    else
+      ARGS=(
+        chafa
+      )
+    fi
     ;;
   *)
     ARGS=(
