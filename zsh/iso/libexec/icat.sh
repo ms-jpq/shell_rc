@@ -4,10 +4,10 @@ set -o pipefail
 
 if [[ -v KITTY_PID ]]; then
   if [[ -v FZF_PREVIEW_COLUMNS ]]; then
-    SIZE="$(kitten icat --print-window-size)"
-    SIZE="${SIZE/x/,}"
     ARGV=(
-      --use-window-size "$FZF_PREVIEW_COLUMNS,$FZF_PREVIEW_LINES,$SIZE"
+      --stdin no
+      --transfer-mode memory
+      --place "${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES@0x0"
       "$@"
     )
   else
