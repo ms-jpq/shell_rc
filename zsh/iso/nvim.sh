@@ -2,7 +2,7 @@
 
 # shellcheck disable=SC2154
 printf -v EDITOR -- '%q' "$XDG_CONFIG_HOME/zsh/libexec/edit.sh"
-export -- EDITOR
+export -- EDITOR VUSUAL="$EDITOR"
 printf -v MANPAGER -- '%q ' nvim +Man! --
 export -- MANPAGER
 
