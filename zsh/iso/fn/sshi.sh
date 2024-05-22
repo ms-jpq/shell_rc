@@ -5,7 +5,7 @@ sshi() {
   unshift -- 1
 
   local -- argv=
-  if [[ "$file" = '-' ]]; then
+  if [[ $file == '-' ]]; then
     argv=("$@")
   else
     argv=(-o IdentitiesOnly=yes -i "$file" "$@")

@@ -7,7 +7,7 @@ linux*)
   # shellcheck disable=SC1091
   source -- /etc/os-release
   NPROC="$(nproc)"
-  MEMBYTES_KB="$(awk '/MemTotal/ { print $2 }' </proc/meminfo)"
+  MEMBYTES_KB="$(awk '/MemTotal/ { print $2 }' < /proc/meminfo)"
   MEMBYTES=$((MEMBYTES_KB * 1024))
   ;;
 darwin*)
@@ -41,7 +41,7 @@ msys)
   ;;
 esac
 
-tee <<-EOF
+tee <<- EOF
 ENV_HOME=$(printf -- '%q' "$HOME")
 ENV_HOSTNAME=$(printf -- '%q' "$HOSTNAME")
 ENV_HOSTTYPE=$(printf -- '%q' "$HOSTTYPE")

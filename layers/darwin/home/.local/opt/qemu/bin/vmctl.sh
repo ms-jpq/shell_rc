@@ -85,7 +85,7 @@ case "$ACTION" in
 remove)
   {
     set -x
-    if ! [[ -k "$ROOT" ]]; then
+    if ! [[ -k $ROOT ]]; then
       mkdir -p -- "$ROOT"
       exec -- flock --nonblock "$ROOT" rm -v -rf -- "$ROOT"
     else
@@ -106,7 +106,7 @@ new)
       UNDER=1 exec -- flock --nonblock "$ROOT" "$0" "${ARGV[@]}"
     fi
 
-    if ! [[ -f "$CLOUD_INIT" ]]; then
+    if ! [[ -f $CLOUD_INIT ]]; then
       "$DIR/libexec/cloud-init.sh" "$NAME" "$CLOUD_INIT"
     fi
 
@@ -114,10 +114,10 @@ new)
       F_DRIVE="$LIB/$FORK/$RAW"
 
       set -x
-      if ! [[ -f "$F_DRIVE" ]]; then
+      if ! [[ -f $F_DRIVE ]]; then
         exit 1
       fi
-      if [[ -f "$DRIVE" ]]; then
+      if [[ -f $DRIVE ]]; then
         exit 1
       fi
 
@@ -130,7 +130,7 @@ new)
   exit
   ;;
 run)
-  if ! [[ -f "$DRIVE" ]] || [[ -v FORK ]]; then
+  if ! [[ -f $DRIVE ]] || [[ -v FORK ]]; then
     ACTION=new "$0" "${ARGV[@]}"
   fi
 
@@ -162,7 +162,7 @@ run)
   QARGV+=("$@")
 
   ssh_pp "$SSH_CONN"
-  printf -- '%s' "$SSH_CONN" >"$SSH_LOCATION"
+  printf -- '%s' "$SSH_CONN" > "$SSH_LOCATION"
   set -x
   exec -- flock --nonblock "$ROOT" "${QARGV[@]}"
   ;;
@@ -174,7 +174,7 @@ console)
   SOCK="$CON_SOCK"
   ;;
 ssh)
-  LOCATION="$(<"$SSH_LOCATION")"
+  LOCATION="$(< "$SSH_LOCATION")"
   ssh_pp "$LOCATION"
   AV=()
   if (($#)); then

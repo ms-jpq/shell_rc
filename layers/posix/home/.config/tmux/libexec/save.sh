@@ -4,7 +4,7 @@ set -o pipefail
 shopt -u failglob
 
 ENV='TMUX_NO_SAVE'
-if tmux show-environment -g -h -- "$ENV" >/dev/null 2>&1; then
+if tmux show-environment -g -h -- "$ENV" > /dev/null 2>&1; then
   exit 0
 fi
 
@@ -33,14 +33,14 @@ P="$(tmux list-panes -a -F '#{pane_id} #{window_id} #{pane_active}')"
 P_WD="$(tmux list-panes -a -F '#{pane_id} #{?#{pane_path},#{pane_path},#{pane_current_path}}')"
 P_CMD="$(tmux list-panes -a -F '#{pane_id} #{pane_pid} #{pane_current_command}')"
 
-readarray -t -- SL <<<"$S"
+readarray -t -- SL <<< "$S"
 for LINE in "${SL[@]}"; do
   SID="${LINE%% *}"
   SNAME="${LINE#* }"
   SESSIONS["$SID"]="$SNAME"
 done
 
-readarray -t -- WL <<<"$W"
+readarray -t -- WL <<< "$W"
 for LINE in "${WL[@]}"; do
   WID="${LINE%% *}"
   RHS="${LINE#* }"
@@ -56,7 +56,7 @@ for LINE in "${WL[@]}"; do
   fi
 done
 
-readarray -t -- PL <<<"$P"
+readarray -t -- PL <<< "$P"
 for LINE in "${PL[@]}"; do
   PID="${LINE%% *}"
   RHS="${LINE#* }"
@@ -69,14 +69,14 @@ for LINE in "${PL[@]}"; do
   fi
 done
 
-readarray -t -- P_WDL <<<"$P_WD"
+readarray -t -- P_WDL <<< "$P_WD"
 for LINE in "${P_WDL[@]}"; do
   PID="${LINE%% *}"
   WD="${LINE#* }"
   WDS["$PID"]="$WD"
 done
 
-readarray -t -- P_CMDL <<<"$P_CMD"
+readarray -t -- P_CMDL <<< "$P_CMD"
 for LINE in "${P_CMDL[@]}"; do
   PID="${LINE%% *}"
   RHS="${LINE#* }"
@@ -120,17 +120,17 @@ for SID in "${!SESSIONS[@]}"; do
 
     for W_ORD in "${!WS[@]}"; do
       WID="${WS["$W_ORD"]}"
-      if [[ "${WINDOWS["$WID"]}" == "$SID" ]]; then
+      if [[ ${WINDOWS["$WID"]} == "$SID" ]]; then
         ((++I))
         J=0
 
         LAYOUT="${LAYOUTS["$WID"]}"
-        if [[ -n "${ACTIVE["$WID"]:-""}" ]]; then
+        if [[ -n ${ACTIVE["$WID"]:-""} ]]; then
           W_MARK="$I"
         fi
 
         for PID in "${PS[@]}"; do
-          if [[ "${PANES["$PID"]}" == "$WID" ]]; then
+          if [[ ${PANES["$PID"]} == "$WID" ]]; then
             WD="${WDS["$PID"]}"
             ARGV="${ARGVS["$PID"]:-""}"
 
@@ -144,12 +144,12 @@ for SID in "${!SESSIONS[@]}"; do
             fi
             printf -- '\n'
 
-            if [[ -n "${ACTIVE["$PID"]:-""}" ]]; then
+            if [[ -n ${ACTIVE["$PID"]:-""} ]]; then
               printf -- '%q ' tmux select-pane -m
               printf -- '\n'
             fi
 
-            if [[ -n "$ARGV" ]]; then
+            if [[ -n $ARGV ]]; then
               printf -- '%q ' tmux set-buffer -- "$ARGV"$'\n'
               printf -- '\n'
               printf -- '%q ' tmux paste-buffer -d -p
@@ -173,13 +173,13 @@ for SID in "${!SESSIONS[@]}"; do
 
     printf -- '%q ' tmux set-environment -g -h -u -- "$ENV"
     printf -- '\n'
-  } >"$F4"
+  } > "$F4"
 
   printf -v A -- '%q ' tmux new-session -A -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
   printf -v B -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
   printf -v C -- '%q ' tmux switch-client -t "$SNAME"
 
-  read -r -d '' -- SH <<-EOF || true
+  read -r -d '' -- SH <<- EOF || true
 if [[ -v TMUX ]]; then
   $B
   $C
@@ -187,7 +187,7 @@ else
   $A
 fi
 EOF
-  printf -- '%s\n' "$SH" >"$F3"
+  printf -- '%s\n' "$SH" > "$F3"
 
   if ((S_OK)); then
     mv -f -- "$F4" "$F2"

@@ -5,7 +5,7 @@ set -o pipefail
 LOCK="$1"
 shift -- 1
 
-if command -v -- flock >/dev/null; then
+if command -v -- flock > /dev/null; then
   exec -- flock "$LOCK" "$@"
 else
   exec -- "$@"

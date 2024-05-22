@@ -8,7 +8,7 @@ REMOTE="${DST%%:*}"
 SINK="${DST#*:}"
 
 # shellcheck disable=SC1003
-if [[ "$REMOTE" == 'localhost' ]]; then
+if [[ $REMOTE == 'localhost' ]]; then
   PATH="/usr/bin:$PATH"
   RSH=()
   TAR='tar'

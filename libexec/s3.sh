@@ -55,7 +55,7 @@ pull)
   ;;
 rmfr)
   read -r -p '>>> (yes/no)?' -- DIE
-  if [[ "$DIE" == 'yes' ]]; then
+  if [[ $DIE == 'yes' ]]; then
     "${S5[@]}" rm --all-versions -- "$BUCKET/*"
   else
     exit 130

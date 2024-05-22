@@ -20,7 +20,7 @@ ACTIVATE="$DEFAULT_VENV_PATH/bin/activate"
 OP="$1"
 shift -- 1
 
-read -r -d '' -- PYPROJ <<-'PYTHON' || true
+read -r -d '' -- PYPROJ <<- 'PYTHON' || true
 from collections.abc import Iterator
 from contextlib import suppress
 from itertools import chain
@@ -70,26 +70,26 @@ PYTHON
 
 case "$OP" in
 on)
-  if [[ -f "$ACTIVATE" ]]; then
+  if [[ -f $ACTIVATE ]]; then
     "$0" off
     printf -- '\n'
   else
-    if ! [[ -d "$DEFAULT_VENV_PATH" ]]; then
+    if ! [[ -d $DEFAULT_VENV_PATH ]]; then
       python3 -m venv -- "$DEFAULT_VENV_PATH" >&2
-      "$PY_EXE" <<<"$PYPROJ" >&2
+      "$PY_EXE" <<< "$PYPROJ" >&2
     fi
   fi
   printf -- '%q ' 'source' '--' "$ACTIVATE"
   printf -- '%s\n' "[x] - $DEFAULT_VENV_PATH" >&2
   ;;
 off)
-  if [[ -n "$VIRTUAL_ENV" ]]; then
+  if [[ -n $VIRTUAL_ENV ]]; then
     printf -- '%q ' 'deactivate'
     printf -- '%s\n' "[ ] - $VIRTUAL_ENV" >&2
   fi
   ;;
 rm)
-  if [[ -d "$DEFAULT_VENV_PATH" ]]; then
+  if [[ -d $DEFAULT_VENV_PATH ]]; then
     if [[ "{VIRTUAL_ENV" == "$DEFAULT_VENV_PATH" ]]; then
       "$0" off
     fi

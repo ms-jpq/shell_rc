@@ -40,7 +40,7 @@ while (($#)); do
     shift -- 2
     ;;
   --passwd)
-    PASSWD="$(base64 <<<"$2")"
+    PASSWD="$(base64 <<< "$2")"
     shift -- 2
     ;;
   --kernel)
@@ -81,7 +81,7 @@ if ((SUDO)) && ((UID)); then
   exec -- --preserve-env -- "$0" "$@"
 fi
 
-if [[ -z "${CPUS:-""}" ]]; then
+if [[ -z ${CPUS:-""} ]]; then
   NPROCS="$(sysctl -n hw.ncpu)"
   CPUS="cpus=$((NPROCS / 2))"
 fi
@@ -117,7 +117,7 @@ ARGV+=(
   -device 'virtio-serial-device'
   -device "virtconsole,chardev=$CON"
 )
-if [[ -n "${CONSOLE:-""}" ]]; then
+if [[ -n ${CONSOLE:-""} ]]; then
   ARGV+=(-chardev "socket,server=on,wait=off,id=$CON,path=$CONSOLE")
 else
   ARGV+=(-chardev "stdio,id=$CON")
@@ -128,15 +128,15 @@ ARGV+=(
   -device 'virtio-balloon-pci-non-transitional,deflate-on-oom=on,free-page-reporting=on'
 )
 
-if [[ -n "${QMP:-""}" ]]; then
+if [[ -n ${QMP:-""} ]]; then
   ARGV+=(-qmp "unix:$QMP,server,nowait")
 fi
 
-if [[ -n "${MONITOR:-""}" ]]; then
+if [[ -n ${MONITOR:-""} ]]; then
   ARGV+=(-monitor "unix:$MONITOR,server,nowait")
 fi
 
-if [[ -n "${VNC:-""}" ]]; then
+if [[ -n ${VNC:-""} ]]; then
   ID='sec0'
   ARGV+=(
     -object "secret,id=$ID,format=base64,data=$PASSWD"

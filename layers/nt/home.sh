@@ -25,7 +25,7 @@ BTM="$CONF/bottom"
 GPG="$CONF/gnupg"
 
 mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH"
-if ! [[ -L "$CONF" ]]; then
+if ! [[ -L $CONF ]]; then
   powershell.exe New-Item -ItemType Junction -Path "$CONF" -Target "$LOCALAPPDATA"
 fi
 mkdir -v -p -- "$BAT" "$BTM" "$GPG"
@@ -43,7 +43,7 @@ LINKS=(
 
 for FROM in "${!LINKS[@]}"; do
   TO="${LINKS["$FROM"]}"
-  if ! [[ -L "$FROM" ]]; then
+  if ! [[ -L $FROM ]]; then
     P_FROM="$(dirname -- "$FROM")"
     P_TO="$(dirname -- "$TO")"
     mkdir -v -p -- "$P_FROM" "$P_TO"
@@ -53,10 +53,10 @@ for FROM in "${!LINKS[@]}"; do
   fi
 done
 
-if [[ -f "$PS1" ]] && ! [[ -L "$PSPROFILE" ]]; then
+if [[ -f $PS1 ]] && ! [[ -L $PSPROFILE ]]; then
   ln -v -sf -- "$PS1" "$PSPROFILE"
 fi
 
-if [[ -d "$CONF/curl" ]] && ! [[ -L "$CURL" ]]; then
+if [[ -d "$CONF/curl" ]] && ! [[ -L $CURL ]]; then
   ln -v -sf -- "$CONF/curl/.curlrc" "$CURL"
 fi

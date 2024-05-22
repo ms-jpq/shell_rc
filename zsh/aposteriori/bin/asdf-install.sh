@@ -32,7 +32,7 @@ done
 
 LANG="$*"
 
-if [[ -z "$LANG" ]]; then
+if [[ -z $LANG ]]; then
   printf -- '%s\n' 'Please Enter a Language!'
   exit 2
 fi
@@ -43,7 +43,7 @@ readarray -t -- PLUGINS < <(asdf plugin list || :)
 
 PLUGIN_INSTALLED=0
 for PLUGIN in "${PLUGINS[@]}"; do
-  if [[ "$PLUGIN" = "$LANG" ]]; then
+  if [[ $PLUGIN == "$LANG" ]]; then
     PLUGIN_INSTALLED=1
     break
   fi
@@ -56,9 +56,9 @@ else
 fi
 
 LIST="$(asdf list "$LANG" || true)"
-readarray -t -- INSTALLED <<<"$LIST"
+readarray -t -- INSTALLED <<< "$LIST"
 
-if [[ -z "$VERSION" ]]; then
+if [[ -z $VERSION ]]; then
   if ! VERSION="$(asdf latest "$LANG")"; then
     printf -- '%s\n' "?? -v $LANG"
     asdf list all "$LANG"
@@ -67,7 +67,7 @@ fi
 
 VERSION_INSTALLED=0
 for VER in "${INSTALLED[@]}"; do
-  if [[ "$VER" = "$VERSION" ]]; then
+  if [[ $VER == "$VERSION" ]]; then
     VERSION_INSTALLED=1
     break
   fi

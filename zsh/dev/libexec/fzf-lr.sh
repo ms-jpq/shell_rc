@@ -21,7 +21,7 @@ if [[ -v __FZF_LR_ARGV__ ]]; then
   readarray -t -d "$SEP" -- ARGV < <(printf -- '%s' "$__FZF_LR_ARGV__")
   unset -- _FZF_LR_ARGV__
   FILE="$2"
-  if [[ "$FILE" == "$EXECUTE_HEAD"* ]]; then
+  if [[ $FILE == "$EXECUTE_HEAD"* ]]; then
     FILE="${FILE#"$EXECUTE_HEAD"}"
     MODE='execute'
   else
@@ -29,7 +29,7 @@ if [[ -v __FZF_LR_ARGV__ ]]; then
     MODE='preview'
   fi
   # shellcheck disable=SC2154
-  SHELL="$__FZF_LR_SH__" SCRIPT_MODE="$MODE" exec -- "${ARGV[@]}" <"$FILE"
+  SHELL="$__FZF_LR_SH__" SCRIPT_MODE="$MODE" exec -- "${ARGV[@]}" < "$FILE"
 else
   IFS="$SEP"
   # shellcheck disable=SC2097,SC2098

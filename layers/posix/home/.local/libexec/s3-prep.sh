@@ -33,7 +33,7 @@ push)
       NAME="${GIT#"$DEV/"}"
       printf -- '%s\0' "$NAME#$REMOTE"
     fi
-  done >"$REMOTES"
+  done > "$REMOTES"
 
   find "$TMP" -type f -name '.gitignore' -delete
   find "$TMP" -type f -exec gpg --batch --yes --encrypt-files -- '{}' +
@@ -46,7 +46,7 @@ pull)
 
   for F in "$REL"/**/*; do
     NAME="$HOME${F#"$REL"}"
-    if [[ -d "$F" ]]; then
+    if [[ -d $F ]]; then
       mkdir -v -p -- "$NAME" >&2
     else
       mkdir -v -p -- "${NAME%/*}" >&2
@@ -55,11 +55,11 @@ pull)
     fi
   done
 
-  readarray -t -d '' -- LINES <"$REMOTES"
+  readarray -t -d '' -- LINES < "$REMOTES"
   for LINE in "${LINES[@]}"; do
     NAME="$DEV/${LINE%%#*}"
     URL="${LINE#*#}"
-    if ! [[ -d "$NAME" ]]; then
+    if ! [[ -d $NAME ]]; then
       printf -- '%s\0' "$URL" "$NAME"
     fi
   done | xargs -r -0 -n 2 -P 0 -- git clone --recurse-submodules --

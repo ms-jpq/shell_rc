@@ -51,7 +51,7 @@ fi
 CLS="$(clear)"
 
 colour() {
-  if command -v -- gay &>/dev/null; then
+  if command -v -- gay &> /dev/null; then
     gay
   else
     tee
@@ -63,7 +63,7 @@ fig() {
   HR="$("$XDG_CONFIG_HOME/zsh/libexec/hr.sh")"
 
   FIG="$HR$(figlet -c -w "$COLS" -f "$FONT" -- "$*")"
-  readarray -t -- L <<<"$FIG"
+  readarray -t -- L <<< "$FIG"
   LS="${#L[@]}"
 
   P=$(((LINES - LS - 1) / 2))

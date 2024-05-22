@@ -17,7 +17,7 @@ esac
 
 PY="$BIN/python"
 
-if ! [[ -d "$PYRADIO" ]]; then
+if ! [[ -d $PYRADIO ]]; then
   REPO='coderholic/pyradio'
   TMP="$(mktemp -d)"
   LATEST="$("$OPT/initd/libexec/gh-latest.sh" "$TMP" "$REPO")"
@@ -26,7 +26,7 @@ if ! [[ -d "$PYRADIO" ]]; then
   mv -f -- "$TMP/pyradio-"* "$PYRADIO"
 fi
 
-if ! [[ -d "$VENV" ]]; then
+if ! [[ -d $VENV ]]; then
   python3 -m venv --upgrade -- "$VENV"
   mkdir -v -p -- "$PYRADIO/pyradio/__pycache__"
   "$PY" -m pip install --require-virtualenv --upgrade --requirement "$PYRADIO/requirements_pipx.txt" -- "$PYRADIO"

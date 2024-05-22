@@ -15,7 +15,7 @@ if [[ -t 0 ]]; then
 fi
 
 IS_INSTALL=0
-if [[ "${EXECUTE[1]:-""}" == 'install' ]]; then
+if [[ ${EXECUTE[1]:-""} == 'install' ]]; then
   IS_INSTALL=1
 fi
 for ARG in "$@"; do

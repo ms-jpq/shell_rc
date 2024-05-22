@@ -47,8 +47,8 @@ ARGS=(
 if [[ -t 0 ]]; then
   TEXT="$*"
 else
-  TEXT="$(</dev/stdin)"
+  TEXT="$(< /dev/stdin)"
 fi
 
 TEXT="${TEXT:-"$(fortune)"}"
-exec -- cowsay "${ARGS[@]}" <<<"$TEXT"
+exec -- cowsay "${ARGS[@]}" <<< "$TEXT"

@@ -10,24 +10,24 @@ DST="$2"
 export -- MACHINE_NAME PASSWD AUTHORIZED_KEYS IPV6_TOKEN
 
 TMP="$(mktemp -d)"
-MACHINE_NAME="$(jq --raw-input <<<"$MACHINE")"
-envsubst <./cloud-init/meta-data.yml >"$TMP/meta-data"
+MACHINE_NAME="$(jq --raw-input <<< "$MACHINE")"
+envsubst < ./cloud-init/meta-data.yml > "$TMP/meta-data"
 
 AK=~/.ssh/authorized_keys
 KEYS=(~/.ssh/*.pub)
-if [[ -f "$AK" ]]; then
+if [[ -f $AK ]]; then
   KEYS+=("$AK")
 fi
 
 SALT="$(uuidgen)"
 PASSWD="$(openssl passwd -1 -salt "$SALT" root | jq --raw-input)"
 AUTHORIZED_KEYS="$(cat -- "${KEYS[@]}" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')"
-IPV6_TOKEN="$(./libexec/ip64alloc.sh <<<"$MACHINE.$HOSTNAME")"
+IPV6_TOKEN="$(./libexec/ip64alloc.sh <<< "$MACHINE.$HOSTNAME")"
 
 for YML in ./cloud-init/*.yml; do
   BASENAME="${YML##*/}"
   STEM="${BASENAME%.*}"
-  envsubst <"$YML" >"$TMP/$STEM"
+  envsubst < "$YML" > "$TMP/$STEM"
 done
 cp -a -R -f -- ./cloud-init/scripts "$TMP/scripts"
 

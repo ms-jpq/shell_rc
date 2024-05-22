@@ -6,7 +6,7 @@ cd -- "${0%/*}/.."
 
 # shellcheck disable=SC2154
 PY="$XDG_DATA_HOME/tmux/bin/python3"
-if ! [[ -x "$PY" ]]; then
+if ! [[ -x $PY ]]; then
   PY="$(command -v -- python3)"
 fi
 exec -- "$PY" -m libexec "$@"

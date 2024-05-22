@@ -11,13 +11,13 @@ z() {
   local -- acc
   acc="$(_z -l "$*" 2>&1)"
   # shellcheck disable=SC2001
-  acc="$(sed -E -e 's/^([[:digit:]]+|common:)[[:space:]]+//g' <<<"$acc")"
-  acc="$(awk '!seen[$0]++' <<<"$acc")"
+  acc="$(sed -E -e 's/^([[:digit:]]+|common:)[[:space:]]+//g' <<< "$acc")"
+  acc="$(awk '!seen[$0]++' <<< "$acc")"
 
-  if [[ -z "$acc" ]]; then
+  if [[ -z $acc ]]; then
     printf -- '%s\n' "MIA: $*"
   else
-    acc="$(fp +s --tac <<<"$acc")"
+    acc="$(fp +s --tac <<< "$acc")"
     cd -- "$acc" || return 1
   fi
 }

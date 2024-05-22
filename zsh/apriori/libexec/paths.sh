@@ -19,7 +19,7 @@ remove() {
   local -- arr
   read -d '' -r -a arr < <(printf -- '%s' "$PATH") || true
   for path in "${arr[@]}"; do
-    if [[ "$path" != "$target" ]]; then
+    if [[ $path != "$target" ]]; then
       acc+=("$path")
     fi
   done
@@ -35,7 +35,7 @@ add() {
   local -- target="$1"
   local -- dedup
 
-  if [[ -d "$target" ]]; then
+  if [[ -d $target ]]; then
     dedup="$target:$(remove "$target" 1)"
     printf -- '%q' "$dedup"
     printf -- '%s\n' "ADDED   -- $target" >&2

@@ -3,7 +3,7 @@
 tmux-esc() {
   local AWK LS
 
-  read -r -d '' -- AWK <<-'AWK' || true
+  read -r -d '' -- AWK <<- 'AWK' || true
 BEGIN { 
   printf("\x1BPtmux;")
 }
@@ -19,7 +19,7 @@ AWK
   if [[ -v TMUX ]]; then
     if [[ -v SSH_TTY ]]; then
       LS="$(awk "$AWK")"
-      awk "$AWK" <<<"$LS"
+      awk "$AWK" <<< "$LS"
     else
       awk "$AWK"
     fi

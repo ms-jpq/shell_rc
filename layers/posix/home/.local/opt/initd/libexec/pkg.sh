@@ -5,7 +5,7 @@ set -o pipefail
 cd -- "${0%/*}/.."
 
 TXT="$(sed -E -ne '/^[+-]/p' -- /dev/null ./packages/*.txt)"
-readarray -t -- DESIRED <<<"$TXT"
+readarray -t -- DESIRED <<< "$TXT"
 
 case "$OSTYPE" in
 darwin*)
@@ -30,12 +30,12 @@ msys)
   ;;
 esac
 
-readarray -t -- INSTALLED <<<"$PKGS"
+readarray -t -- INSTALLED <<< "$PKGS"
 
 declare -A -- PRESENT=()
 
 for PKG in "${INSTALLED[@]}"; do
-  if [[ -n "$PKG" ]]; then
+  if [[ -n $PKG ]]; then
     PRESENT["$PKG"]=1
   fi
 done
@@ -44,7 +44,7 @@ ADD=()
 RM=()
 
 for LINE in "${DESIRED[@]}"; do
-  if [[ -z "$LINE" ]]; then
+  if [[ -z $LINE ]]; then
     continue
   fi
 
@@ -53,12 +53,12 @@ for LINE in "${DESIRED[@]}"; do
 
   case "$ACTION" in
   +)
-    if [[ -z "${PRESENT["$PKG"]:-""}" ]]; then
+    if [[ -z ${PRESENT["$PKG"]:-""} ]]; then
       ADD+=("$PKG")
     fi
     ;;
   -)
-    if [[ -n "${PRESENT["$PKG"]:-""}" ]]; then
+    if [[ -n ${PRESENT["$PKG"]:-""} ]]; then
       RM+=("$PKG")
     fi
     ;;
@@ -110,7 +110,7 @@ if (("${#ADD[@]}")); then
   linux*)
     sudo -- apt-get update
     sudo -- env -- DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes
-    sudo -- env -- DEBIAN_FRONTEND=noninteractive apt-get install --yes -- "${ADD[@]}" </dev/null
+    sudo -- env -- DEBIAN_FRONTEND=noninteractive apt-get install --yes -- "${ADD[@]}" < /dev/null
     sudo -- apt-get autoremove --yes
     sudo -- apt-get clean
     ;;
