@@ -27,7 +27,7 @@ EF='.....................................................................'
   while read -r LINE; do
     LINE="${LINE%$'\r'}"
     printf -- '%s\n' "$LINE"
-    if [[ -z "$LINE" ]]; then
+    if [[ -z $LINE ]]; then
       break
     fi
 
@@ -46,11 +46,11 @@ EF='.....................................................................'
   printf -- '%s\n' "$TX"
 } | cat -v >&2
 
-read -r -d '' -- AWK <<-'AWK' || true
+read -r -d '' -- AWK <<- 'AWK' || true
 BEGIN { CMT="^#" }
 /^$/ { CMT=COMMENT }
 $0 !~ CMT { print $0 }
 AWK
 
-awk -v "COMMENT=$COMMENT" "$AWK" <"$TXT" | tee -- /dev/stderr
+awk -v "COMMENT=$COMMENT" "$AWK" < "$TXT" | tee -- /dev/stderr
 printf -- '%s\n' "$EF" >&2

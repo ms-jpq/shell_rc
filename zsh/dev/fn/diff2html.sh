@@ -2,7 +2,7 @@
 
 diff2html() {
   local -- argv=("$@")
-  if [[ -z "$*" ]]; then
+  if [[ -z $* ]]; then
     argv+=(--style side)
   fi
   if ! [[ -t 0 ]]; then

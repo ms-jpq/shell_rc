@@ -6,7 +6,7 @@ FILE="$1"
 MATCH="$2"
 LINE="${3:-"$MATCH"}"
 
-read -r -d '' -- AWK <<-'AWK' || true
+read -r -d '' -- AWK <<- 'AWK' || true
 BEGIN { SEEN = 0 }
 
 {
@@ -23,4 +23,4 @@ AWK
 touch -- "$FILE"
 
 NEW="$(awk -v MATCH="$MATCH" -v LINE="$LINE" "$AWK" "$FILE")"
-printf -- '%s' "$NEW" >"$FILE"
+printf -- '%s' "$NEW" > "$FILE"

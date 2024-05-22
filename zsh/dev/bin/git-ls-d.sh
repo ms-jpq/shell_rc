@@ -18,7 +18,7 @@ execute)
     SHA="${LINE%% *}"
     FILE="${LINE#*$'\n'}"
     mkdir -p -- "$TMP/${FILE%/*}"
-    git show --relative "$SHA^:$FILE" >"$TMP/$FILE"
+    git show --relative "$SHA^:$FILE" > "$TMP/$FILE"
   done
   ;;
 *)
@@ -34,7 +34,7 @@ execute)
   )
   HEAD=1
   "${ARGV[@]}" | while read -d '' -r LINE; do
-    if [[ -z "$LINE" ]]; then
+    if [[ -z $LINE ]]; then
       HEAD=1
       continue
     fi

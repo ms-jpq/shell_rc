@@ -8,7 +8,7 @@ shift -- 1
 mkdir -v -p -- "$DST"
 
 for SRC in "$@"; do
-  if [[ -d "$SRC" ]]; then
+  if [[ -d $SRC ]]; then
     cp -a -f -- "$SRC"/* "$DST"
   fi
 done

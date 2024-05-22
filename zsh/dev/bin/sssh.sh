@@ -8,7 +8,7 @@ shift -- 2
 
 PORT_RE='^([^@]+)@([^:]+):?([0-9]{0,5})$'
 
-if [[ "$JUMP" =~ $PORT_RE ]]; then
+if [[ $JUMP =~ $PORT_RE ]]; then
   J_USER="${BASH_REMATCH[1]}"
   J_HOST="${BASH_REMATCH[2]}"
   J_PORT="${BASH_REMATCH[3]:-443}"
@@ -17,7 +17,7 @@ else
   exit 1
 fi
 
-if [[ "$DST" =~ $PORT_RE ]]; then
+if [[ $DST =~ $PORT_RE ]]; then
   D_USER="${BASH_REMATCH[1]}"
   D_HOST="${BASH_REMATCH[2]}"
   D_PORT="${BASH_REMATCH[3]:-22}"

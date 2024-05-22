@@ -6,7 +6,7 @@ TARGET="$1"
 
 export -- PAGER='tee'
 
-if [[ -d "$TARGET" ]]; then
+if [[ -d $TARGET ]]; then
   ARGV=(
     eza
     --all

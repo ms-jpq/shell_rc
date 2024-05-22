@@ -55,7 +55,7 @@ for DIR in "${DIRS[@]}"; do
 
     ZACC+=("autoload -Uz -- \"\$ZDOTDIR/fn/$B\"")
     BACC+=("$B() {" "$BS" '}')
-    printf -- '%s\n' "$BS" >"$FUNC/$B"
+    printf -- '%s\n' "$BS" > "$FUNC/$B"
     cp -f -- "$BIN" "$BINS/$B"
   done
 done
@@ -75,7 +75,7 @@ for DIR in "${DIRS[@]}"; do
     cp -f -- "$FN" "$FUNC/${F##*/}"
 
     PAT="$F() {"
-    FF="$(<"$FN")"
+    FF="$(< "$FN")"
     if grep -q -F -- "$PAT" "$FN"; then
       BACC+=("$FF")
     else
@@ -84,5 +84,5 @@ for DIR in "${DIRS[@]}"; do
   done
 done
 
-printf -- '%s\n' "${ZACC[@]}" >"$Z_OUT/.zshrc"
-printf -- '%s\n' "${BACC[@]}" >"$B_OUT/.bashrc"
+printf -- '%s\n' "${ZACC[@]}" > "$Z_OUT/.zshrc"
+printf -- '%s\n' "${BACC[@]}" > "$B_OUT/.bashrc"

@@ -33,7 +33,7 @@ execute)
   declare -A -- COUNTS=() TIMES=()
 
   TMP="$(mktemp)"
-  "${ARGV[@]}" >"$TMP"
+  "${ARGV[@]}" > "$TMP"
 
   while read -d '' -r LINE; do
     while :; do
@@ -41,7 +41,7 @@ execute)
       /*)
         TIME="${LINE%%$'\n'*}"
         LINE="${LINE#*$'\n'}"
-        if [[ "$TIME" == "$LINE" ]]; then
+        if [[ $TIME == "$LINE" ]]; then
           LINE=''
           break
         fi
@@ -52,7 +52,7 @@ execute)
       esac
     done
 
-    if [[ -z "$LINE" ]]; then
+    if [[ -z $LINE ]]; then
       continue
     fi
 
@@ -60,7 +60,7 @@ execute)
     TIMES["$LINE"]="$TIME"
     COUNT="${COUNTS["$LINE"]:-0}"
     COUNTS["$LINE"]="$((COUNT + 1))"
-  done <"$TMP"
+  done < "$TMP"
 
   rm -f -- "$TMP"
 

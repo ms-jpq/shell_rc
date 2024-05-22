@@ -101,11 +101,11 @@ PLUGINS="$(asdf plugin list)"
 JPLUGIN='java'
 HAS_JPLUGIN=0
 while read -r -- line; do
-  if [[ "$line" = "$JPLUGIN" ]]; then
+  if [[ $line == "$JPLUGIN" ]]; then
     HAS_JPLUGIN=1
     break
   fi
-done <<<"$PLUGINS"
+done <<< "$PLUGINS"
 
 if ((HAS_JPLUGIN)); then
   asdf plugin update "$JPLUGIN"

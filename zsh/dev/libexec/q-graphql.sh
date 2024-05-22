@@ -37,7 +37,7 @@ while (($#)); do
   -v | --var)
     KEY="${2%%=*}"
     VAL="${2#*=}"
-    VAR="$(jq --exit-status --arg key "$KEY" --arg val "$VAL" '.[$key] = $val' <<<"$VAR")"
+    VAR="$(jq --exit-status --arg key "$KEY" --arg val "$VAL" '.[$key] = $val' <<< "$VAR")"
     shift -- 2
     ;;
   -r | --raw)
@@ -64,13 +64,13 @@ ARGV=(
 )
 
 read -r -d '' -- QUERY
-JSON="$(jq --exit-status --slurp --raw-input --argjson var "$VAR" '{ query: ., variables: $var }' <<<"$QUERY")"
+JSON="$(jq --exit-status --slurp --raw-input --argjson var "$VAR" '{ query: ., variables: $var }' <<< "$QUERY")"
 
 {
   printf -- '\n'
   printf -- '%q ' "${ARGV[@]}"
   printf -- '\n'
-  jq --sort-keys <<<"$VAR"
+  jq --sort-keys <<< "$VAR"
 } >&2
 
 if ((RAW)); then
@@ -79,7 +79,7 @@ else
   TEE=(jq --sort-keys)
 fi
 
-if "${ARGV[@]}" <<<"$JSON" | "${TEE[@]}"; then
+if "${ARGV[@]}" <<< "$JSON" | "${TEE[@]}"; then
   :
 fi
 if [[ -t 1 ]]; then

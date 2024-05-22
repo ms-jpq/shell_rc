@@ -37,7 +37,7 @@ DST_AND_PORT="$1"
 shift -- 1
 
 DST="${DST_AND_PORT%:*}"
-if [[ "$DST_AND_PORT" =~ :(.+)$ ]]; then
+if [[ $DST_AND_PORT =~ :(.+)$ ]]; then
   PORT="${BASH_REMATCH[1]}"
 else
   PORT=22
@@ -64,7 +64,7 @@ RSY=(
   --
 )
 
-if [[ "$DST" == 'localhost' ]]; then
+if [[ $DST == 'localhost' ]]; then
   LOCAL=1
   RDST=""
 else
@@ -78,10 +78,10 @@ shell() {
     "$@"
   else
     printf -v sh -- '%q ' "$@"
-    if [[ "$0" == *macos.sh ]]; then
+    if [[ $0 == *macos.sh ]]; then
       # shellcheck disable=SC2016
       sh='PATH="/opt/homebrew/bin:$PATH"'" $sh"
-    elif [[ "$0" == *win.sh ]] && [[ "$sh" == bash* ]]; then
+    elif [[ $0 == *win.sh ]] && [[ $sh == bash* ]]; then
       sh='"%PROGRAMFILES%\Git\usr\bin\"'"$sh"
     fi
     # shellcheck disable=SC2029
@@ -127,22 +127,22 @@ for FS in "${!FFS[@]}"; do
   ROOT="${ROOTS["$FS"]}"
   SRC="var/tmp/$OS/$FS/"
 
-  if ((SUDO)) && ((LOCAL)) && [[ "$OS" != nt ]]; then
+  if ((SUDO)) && ((LOCAL)) && [[ $OS != nt ]]; then
     EX=(sudo --)
   else
     EX=()
   fi
 
   LINKS="./layers/$OS/$FS.sh"
-  if [[ -x "$LINKS" ]]; then
-    shell "${EX[@]}" "${BSH[@]}" <<<"$(<"$LINKS")"
+  if [[ -x $LINKS ]]; then
+    shell "${EX[@]}" "${BSH[@]}" <<< "$(< "$LINKS")"
   fi
 
   F=''
   for F in "$SRC"*; do
     break
   done
-  if [[ -z "$F" ]]; then
+  if [[ -z $F ]]; then
     continue
   fi
 
@@ -151,7 +151,7 @@ for FS in "${!FFS[@]}"; do
   "${EX[@]}" "${RSY[@]}" "$SRC" "$SINK"
 done
 
-shell "${BSH[@]}" <<<"$(<./libexec/essentials.sh)"
+shell "${BSH[@]}" <<< "$(< ./libexec/essentials.sh)"
 ENVS=(USERPROFILE="$ENV_HOME")
 # shellcheck disable=SC2154
 shell "${BSH[@]}" "$ENV_HOME/.local/opt/initd/make.sh" "${ENVS[@]}" "$@"

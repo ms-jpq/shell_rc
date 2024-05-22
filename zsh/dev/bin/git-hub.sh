@@ -6,11 +6,11 @@ UPSTREAM="$(git --no-optional-locks rev-parse --abbrev-ref --symbolic-full-name 
 URI="$(git remote get-url "${UPSTREAM%%/*}")"
 URI="${URI%%'.git'}/tree/${UPSTREAM#*/}"
 
-if [[ "$URI" =~ ^http ]]; then
+if [[ $URI =~ ^http ]]; then
   :
-elif [[ "$URI" =~ ^([^@]+@?)([^:]+): ]]; then
+elif [[ $URI =~ ^([^@]+@?)([^:]+): ]]; then
   URI="${URI##"${BASH_REMATCH[0]}"}"
-  URI="$(jq --exit-status --raw-input --raw-output '[split("/")[] | @uri] | join("/")' <<<"$URI")"
+  URI="$(jq --exit-status --raw-input --raw-output '[split("/")[] | @uri] | join("/")' <<< "$URI")"
   URI="https://${BASH_REMATCH[2]}/$URI"
 fi
 

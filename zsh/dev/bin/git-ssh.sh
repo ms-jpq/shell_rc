@@ -5,7 +5,7 @@ set -o pipefail
 SSH_KEY="$1"
 shift
 
-if ! [[ "$SSH_KEY" =~ '/' ]]; then
+if ! [[ $SSH_KEY =~ '/' ]]; then
   SSH_KEY="$HOME/.ssh/$SSH_KEY"
 fi
 

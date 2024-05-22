@@ -4,7 +4,7 @@ set -o pipefail
 
 while (($#)); do
   NEXT="${2:-""}"
-  if [[ -n "$NEXT" ]] && ! [[ "$NEXT" =~ ^- ]]; then
+  if [[ -n $NEXT ]] && ! [[ $NEXT =~ ^- ]]; then
     CH=' '
   else
     CH='\n'

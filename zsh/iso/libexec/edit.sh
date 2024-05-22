@@ -5,18 +5,18 @@ set -o pipefail
 FILE="$*"
 
 ARGS=()
-if [[ -f "$FILE" ]]; then
+if [[ -f $FILE ]]; then
   :
-elif [[ "$FILE" =~ (.+)(:|#|@)([[:digit:]]+)$ ]]; then
+elif [[ $FILE =~ (.+)(:|#|@)([[:digit:]]+)$ ]]; then
   F="${BASH_REMATCH[1]}"
-  if [[ -f "$F" ]]; then
+  if [[ -f $F ]]; then
     FILE="$F"
     LINE="${BASH_REMATCH[3]}"
     ARGS+=("+execute $LINE")
   fi
 fi
 
-if [[ -n "$FILE" ]]; then
+if [[ -n $FILE ]]; then
   ARGS+=(-- "$FILE")
 fi
 

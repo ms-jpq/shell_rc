@@ -5,7 +5,7 @@ git-use-ssh() {
   remote="$(git remote)"
   uri="$(git remote get-url "$remote")"
 
-  if [[ "$uri" =~ https://github.com ]]; then
+  if [[ $uri =~ https://github.com ]]; then
     uri="${uri##'https://github.com/'}"
     uri="${uri%%'.git'}"
     uri="git@github.com:$uri.git"

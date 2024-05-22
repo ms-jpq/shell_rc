@@ -2,7 +2,7 @@
 
 export -- LC_ALL TZ
 
-if [[ -z "${LC_ALL:-""}" ]]; then
+if [[ -z ${LC_ALL:-""} ]]; then
   case "$OSTYPE" in
   darwin*)
     case "$(defaults read -g AppleLocale)" in
@@ -20,7 +20,7 @@ if [[ -z "${LC_ALL:-""}" ]]; then
   esac
 fi
 
-if [[ -z "${TZ:-""}" ]]; then
+if [[ -z ${TZ:-""} ]]; then
   case "$OSTYPE" in
   darwin*)
     TZ="$(readlink -- /etc/localtime)"

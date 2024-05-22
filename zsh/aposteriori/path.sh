@@ -6,7 +6,7 @@ if ((SHLVL > 1)); then
   declare -A -- seen
   pacc=()
   for p in "${path[@]}"; do
-    if [[ -z "${seen["$p"]}" ]]; then
+    if [[ -z ${seen["$p"]} ]]; then
       seen["$p"]=1
       pacc+=("$p")
     fi

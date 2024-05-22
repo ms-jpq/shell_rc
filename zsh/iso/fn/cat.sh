@@ -1,6 +1,6 @@
 #!/usr/bin/env -S -- bash
 
-if command -v -- bat >/dev/null; then
+if command -v -- bat > /dev/null; then
   bat "$@"
 else
   cat "$@"

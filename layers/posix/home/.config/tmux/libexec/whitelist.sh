@@ -11,7 +11,7 @@ man | less | autossh | htop | btm | nvim | lazygit | cmatrix | ncspot)
   exit
   ;;
 /bin/sh)
-  if [[ "${2:-""}" == /usr/bin/man ]]; then
+  if [[ ${2:-""} == /usr/bin/man ]]; then
     exit
   fi
   ;;

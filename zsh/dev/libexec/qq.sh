@@ -51,7 +51,7 @@ osa)
 clj)
   # shellcheck disable=SC2154
   M2="$XDG_CACHE_HOME/m2"
-  M2="$(jq --exit-status --raw-input <<<"$M2")"
+  M2="$(jq --exit-status --raw-input <<< "$M2")"
   ARGV+=(-Sdeps "{:mvn/local-repo $M2}")
   ;;
 jshell)
@@ -72,10 +72,10 @@ read -r -d '' -- SCRIPT
 } >&2
 
 if [[ -t 1 ]]; then
-  "${ARGV[@]}" <<<"$SCRIPT" || true
+  "${ARGV[@]}" <<< "$SCRIPT" || true
   "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<' >&2
   exec -- "$0" "$A0" "$@"
 else
-  "${ARGV[@]}" <<<"$SCRIPT" | tee -- /dev/stderr
+  "${ARGV[@]}" <<< "$SCRIPT" | tee -- /dev/stderr
   "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<' >&2
 fi

@@ -26,11 +26,11 @@ CURL=(
 
 URI="https://api.launchpad.net/1.0/~$DIST/+archive/$NAME"
 JSON="$("${CURL[@]}" "$URI")"
-FINGER_PRINT="$(jq --exit-status --raw-output '.signing_key_fingerprint' <<<"$JSON")"
+FINGER_PRINT="$(jq --exit-status --raw-output '.signing_key_fingerprint' <<< "$JSON")"
 URI="https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x$FINGER_PRINT"
 "${CURL[@]}" "$URI" | gpg --batch --dearmor --yes --output "$GPG_FILE"
 
 # shellcheck disable=SC2154
-tee -- "$SOURCE_FILE" <<-EOF
+tee -- "$SOURCE_FILE" <<- EOF
 deb http://ppa.launchpad.net/$DIST/$NAME/ubuntu $VERSION_CODENAME main
 EOF

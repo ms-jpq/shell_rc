@@ -32,7 +32,7 @@ msys)
     done
   fi
 
-  if ! python --help >/dev/null; then
+  if ! python --help > /dev/null; then
     "${WINGET[@]}" python3
   fi
   ;;

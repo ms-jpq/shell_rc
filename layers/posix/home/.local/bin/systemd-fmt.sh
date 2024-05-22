@@ -8,9 +8,9 @@ fmt() {
 
   MAX=0
   for LINE in "${LINES[@]}"; do
-    if [[ "$LINE" =~ ^[[:space:]]*#.*$ ]]; then
+    if [[ $LINE =~ ^[[:space:]]*#.*$ ]]; then
       :
-    elif [[ "$LINE" =~ ^[[:space:]]*([^[:space:]]+)[[:space:]]*=.*$ ]]; then
+    elif [[ $LINE =~ ^[[:space:]]*([^[:space:]]+)[[:space:]]*=.*$ ]]; then
       M="${#BASH_REMATCH[1]}"
       MAX=$((M > MAX ? M : MAX))
     fi
@@ -33,9 +33,9 @@ fmt() {
       esac
 
       printf -- '%s\n' "$LINE"
-    elif [[ "$LINE" =~ ^[[:space:]]*#[[:space:]]*(.*)$ ]]; then
+    elif [[ $LINE =~ ^[[:space:]]*#[[:space:]]*(.*)$ ]]; then
       printf -- '%s\n' "# ${BASH_REMATCH[1]}"
-    elif [[ "$LINE" =~ ^[[:space:]]*([^[:space:]]+)[[:space:]]*=[[:space:]]*(.*)$ ]]; then
+    elif [[ $LINE =~ ^[[:space:]]*([^[:space:]]+)[[:space:]]*=[[:space:]]*(.*)$ ]]; then
       L="${#BASH_REMATCH[1]}"
       RHS="${BASH_REMATCH[2]}"
 
@@ -49,7 +49,7 @@ fmt() {
       *) ;;
       esac
 
-      if [[ -n "$RHS" ]]; then
+      if [[ -n $RHS ]]; then
         RHS=" $RHS"
       fi
 
@@ -60,7 +60,7 @@ fmt() {
       done
 
       printf -- '%s\n' "${BASH_REMATCH[1]}${P}=${RHS}"
-    elif [[ "$LINE" =~ ^[[:space:]]*([^[:space:]]*)[[:space:]]*$ ]]; then
+    elif [[ $LINE =~ ^[[:space:]]*([^[:space:]]*)[[:space:]]*$ ]]; then
       printf -- '%s\n' "${BASH_REMATCH[1]}"
     else
       printf -- '%s\n' "??? --> $LINE" >&2
@@ -69,19 +69,19 @@ fmt() {
   done
 }
 
-if [[ "${SYSTEMD_FMT_MODE:-""}" == 'stream' ]]; then
+if [[ ${SYSTEMD_FMT_MODE:-""} == 'stream' ]]; then
   FILE="$*"
   TMP="$(mktemp)"
   printf -- '%q\n' "$FILE" >&2
-  fmt <"$FILE" >"$TMP"
+  fmt < "$FILE" > "$TMP"
   mv -f -- "$TMP" "$FILE"
 elif (($#)); then
-  readarray -t -- IS <<<"${SYSTEMD_FMT_IGNORE:-""}"
+  readarray -t -- IS <<< "${SYSTEMD_FMT_IGNORE:-""}"
 
   declare -A -- SEEN=()
   for I in "${IS[@]}"; do
-    if [[ -n "$I" ]]; then
-      if I="$(realpath -- "$I" 2>/dev/null)"; then
+    if [[ -n $I ]]; then
+      if I="$(realpath -- "$I" 2> /dev/null)"; then
         SEEN["$I"]=1
       fi
     fi
@@ -89,8 +89,8 @@ elif (($#)); then
 
   unseen() {
     local F="$*"
-    if F="$(realpath -- "$F" 2>/dev/null)"; then
-      if [[ -f "$F" ]] && [[ -z "${SEEN["$F"]:-""}" ]]; then
+    if F="$(realpath -- "$F" 2> /dev/null)"; then
+      if [[ -f $F ]] && [[ -z ${SEEN["$F"]:-""} ]]; then
         SEEN["$F"]=1
         printf -- '%s\0' "$F"
       fi
@@ -98,7 +98,7 @@ elif (($#)); then
   }
 
   for FILE in "$@"; do
-    if [[ -d "$FILE" ]]; then
+    if [[ -d $FILE ]]; then
       for F in "$FILE"/**/{*.link,*.netdev,*.network,*.socket,*.service,*.target,*.mount,*.automount,*.dnssd,*/*.network.d/*.conf,*/repart.d/*.conf,*/systemd/**/*.conf}; do
         unseen "$F"
       done

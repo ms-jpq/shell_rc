@@ -39,14 +39,14 @@ ARGS=(
 if [[ -t 0 ]]; then
   TEXT="$*"
 else
-  TEXT="$(</dev/stdin)"
+  TEXT="$(< /dev/stdin)"
 fi
 
 TEXT="${TEXT:-BIGLY}"
-LINES="$(figlet "${ARGS[@]}" <<<"$TEXT")"
-DEL="$(tr -d -- '[:space:]' <<<"$LINES")"
+LINES="$(figlet "${ARGS[@]}" <<< "$TEXT")"
+DEL="$(tr -d -- '[:space:]' <<< "$LINES")"
 
-if [[ -z "$DEL" ]]; then
+if [[ -z $DEL ]]; then
   exec -- "$0" "$@"
 else
   printf -- '%s\n' "$LINES"
