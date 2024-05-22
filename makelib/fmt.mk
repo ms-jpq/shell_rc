@@ -6,7 +6,7 @@ systemd-fmt:
 	./layers/posix/home/.local/bin/systemd-fmt.sh ./layers
 
 shfmt: $(VAR)/bin/shfmt
-	git ls-files --deduplicate -z -- '*.*sh' | xargs -r -0 -- '$<' --write --indent 2 --
+	git ls-files --deduplicate -z -- '*.*sh' | xargs -r -0 -- '$<' --write --binary-next-line --indent 2 --
 
 black: ./.venv/bin
 	'$</isort' --profile=black --gitignore -- .
