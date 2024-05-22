@@ -20,10 +20,10 @@ gpgSign = true
 verbose = true
 
 [core]
-autocrlf          = "input"
-pager             = "delta"
-safecrlf          = true
-symlinks          = true
+autocrlf = "input"
+pager    = "delta"
+safecrlf = true
+symlinks = true
 
 [delta]
 hyperlinks     = true
@@ -77,10 +77,10 @@ date         = "format-local:%y-%m-%d %H:%M"
 strategy = "incremental"
 
 [merge]
-# TODO: zdiff3? (git 2.35, ubuntu 24)
 autostash     = true
-conflictstyle = "diff3"
+conflictstyle = "zdiff3"
 ff            = "only"
+tool          = "nvimdiff"
 
 [pull]
 rebase = true
