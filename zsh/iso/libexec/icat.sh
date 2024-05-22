@@ -12,8 +12,14 @@ if [[ -v KITTY_PID ]]; then
     ARGV=()
   fi
 
+  if [[ -v SSH_TTY ]] && [[ -t 0 ]]; then
+    MODE=stream
+  else
+    MODE=memory
+  fi
+
   ARGV+=(
-    --transfer-mode memory
+    --transfer-mode "$MODE"
     "$@"
   )
   exec -- kitten icat "${ARGV[@]}"
