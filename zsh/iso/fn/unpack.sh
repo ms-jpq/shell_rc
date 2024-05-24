@@ -7,7 +7,7 @@ unpack() {
   *.tar.bz | *.tar.bz2 | *.tbz | *.tbz2 | *.tar.gz | *.tgz | *.tar.xz | *.txz | *.tar.zst)
     tar --extract --no-same-owner --file "$FILE"
     ;;
-  *.7z | *.zip | *.vsix)
+  *.7z | *.zip | *.vsix | *.jar)
     7zz x -- "$FILE"
     ;;
   *.gz | *.xz)
