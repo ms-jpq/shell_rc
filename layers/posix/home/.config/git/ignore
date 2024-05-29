@@ -4,8 +4,10 @@
 *.key
 *.lock
 *.log
+*.owo
 *.tfstate
 *.tfstate.backup
+*.uwu
 .DS_Store
 .git/
 .ignore
@@ -17,4 +19,5 @@ __pycache__/
 node_modules/
 owo.*
 thumbs.db
+uwu.*
 vendor/
