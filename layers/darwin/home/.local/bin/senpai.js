@@ -17,6 +17,6 @@ const app = (() => {
   return app;
 })();
 
-const [withTitle, sub, bod] = argv;
-const [body, subtitle] = bod ? [bod, sub] : [sub, ""];
+const [withTitle, sub, bod] = argv.length ? argv : [""];
+const [body, subtitle] = bod ? [bod, sub] : [sub ?? "", ""];
 app.displayNotification(body, { withTitle, subtitle });
