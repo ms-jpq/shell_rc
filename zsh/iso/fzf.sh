@@ -16,8 +16,8 @@ _fzf_default_opts=(
   --bind shift-up:toggle+up
   --bind shift-left:preview-up
   --bind shift-right:preview-down
-  --bind alt-a:select-all
-  --bind alt-l:deselect-all
+  --bind ctrl-a:select-all
+  --bind ctrl-l:deselect-all
   --color light
   --color bg+:'#dfdfdf'
 )
