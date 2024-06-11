@@ -36,6 +36,9 @@ case "$SRC" in
 *.tar.gz)
   "${CURL[@]}" -- "$SRC" | "${UNTAR[@]}" -z
   ;;
+*.tar.xz)
+  "${CURL[@]}" -- "$SRC" | "${UNTAR[@]}" -J
+  ;;
 *.zip)
   FILE="$DST/$NAME"
   "${CURL[@]}" --output "$FILE" -- "$SRC"
