@@ -20,6 +20,8 @@
 __pycache__/
 node_modules/
 owo.*
+owo/
 thumbs.db
 uwu.*
+uwu/
 vendor/
