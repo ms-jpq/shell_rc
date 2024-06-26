@@ -56,7 +56,8 @@ trustExitCode = true
 parallel          = 0
 pruneTags         = true
 recurseSubmodules = true
-writeCommitGraph  = true
+# TODO: this segfaults git on ubuntu 24
+# writeCommitGraph  = true
 
 [grep]
 column      = true
