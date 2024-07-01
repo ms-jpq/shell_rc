@@ -45,12 +45,12 @@ asdf-install --global -- rust
 
 asdf-install --global -- golang
 
-# RUBY_DEPS=(
-#   libyaml-dev
-#   libssl-dev
-# )
-# apt-install "${RUBY_DEPS[@]}"
-# asdf-install --global -- ruby
+RUBY_DEPS=(
+  libyaml-dev
+  libssl-dev
+)
+apt-install "${RUBY_DEPS[@]}"
+asdf-install --global -- ruby
 
 # R_DEPS=(
 #   build-essential
