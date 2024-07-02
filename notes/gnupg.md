@@ -67,13 +67,8 @@ gpg --export-ssh-key -- '<subkey>'!
 ## Forward
 
 ```bash
+# See ./layers/posix/home/.config/ssh/9-include.conf for SSH config
 gpg --export --armor -- '<public-key>' | ssh '<host>' gpg --import
-```
-
-```txt
-Host <name>
-  ForwardAgent yes
-  RemoteForward /run/user/0/gnupg/S.gpg-agent ${HOME}/.config/gnupg/S.gpg-agent.extra
 ```
 
 ## GIT
