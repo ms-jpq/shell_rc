@@ -48,6 +48,13 @@ gpg --batch --passphrase '' --quick-add-key -- '<public-key>' 'default' 'sign,au
 gpg --delete-secret-and-public-key -- '<subkey>'!
 ```
 
+## Scripting
+
+```bash
+# List public keys: `getline` skips current line
+gpg --with-colons --list-keys | awk -F: '/^pub:/ { getline; print $10 }'
+```
+
 ## SSH
 
 ### Public Key
@@ -59,6 +66,8 @@ gpg --export-ssh-key -- '<subkey>'!
 
 ### Agent
 
+Must use `[S]` signing subkey's keygrip
+
 ```bash
 # Add '<subkey>' keygrip
 "$EDITOR" "$GNUPGHOME/sshcontrol"
@@ -67,9 +76,10 @@ gpg --export-ssh-key -- '<subkey>'!
 ## Forward
 
 ```bash
-# See ./layers/posix/home/.config/ssh/9-include.conf for SSH config
 gpg --export --armor -- '<public-key>' | ssh '<host>' gpg --import
 ```
+
+SSH: `./layers/posix/home/.config/ssh/9-include.conf`
 
 ## GIT
 
