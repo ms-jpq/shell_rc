@@ -90,11 +90,12 @@ tool          = "nvimdiff"
 rebase = true
 
 [push]
-autoSetupRemote   = true
-default           = "current"
-followTags        = true
-gpgSign           = "if-asked"
-recurseSubmodules = "check"
+autoSetupRemote    = true
+default            = "current"
+followTags         = true
+gpgSign            = "if-asked"
+recurseSubmodules  = "check"
+useForceIfIncludes = true
 
 [rebase]
 autoSquash = true
