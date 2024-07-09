@@ -98,3 +98,10 @@ gpg --armor --export
 # Excluding primary key
 gpg --armor --export-secret-subkeys -- '<fingerprint>'!
 ```
+
+## Test
+
+```bash
+# Generate primary key with [EASC]
+gpg --batch --passphrase '' --quick-generate-key -- '<my-key-name>' 'rsa4096' 'cert,sign,auth,encr' 'never'
+```
