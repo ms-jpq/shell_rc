@@ -4,7 +4,7 @@
 # + libaa-bin
 # + vhs
 # + yank
-+ 7zip
++ 7zip-standalone
 + aha
 + athena-jot
 + autossh
