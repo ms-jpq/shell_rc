@@ -45,9 +45,8 @@ endef
 define PIP_PKGS
 
 gay                   gay
-graphtage             graphtage
 markdown-live-preview markdown_live_preview
-mitmproxy             mitmproxy
+posting               posting
 sortd                 sortd
 
 endef
