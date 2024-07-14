@@ -57,6 +57,7 @@
 + psmisc
 + pspg
 + pv
++ rclone-mnt
 + recode
 + renameutils
 + ripgrep
