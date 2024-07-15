@@ -71,6 +71,7 @@
 + sysstat
 + termshark
 + tmux
++ tokei
 + tree
 + unison
 + universal-ctags
