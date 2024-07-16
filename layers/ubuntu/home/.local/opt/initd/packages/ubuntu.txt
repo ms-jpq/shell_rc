@@ -73,8 +73,8 @@
 + tmux
 + tokei
 + tree
++ uctags
 + unison
-+ universal-ctags
 + unzip
 + wget
 + xmlstarlet

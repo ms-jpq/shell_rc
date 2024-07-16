@@ -16,6 +16,11 @@ darwin*)
   ;;
 esac
 
+GPG_OPTS=()
+if [[ -v GPG_USER ]]; then
+  GPG_OPTS+=(--local-user "$GPG_USER")
+fi
+
 case "$ACTION" in
 push)
   for F in "$@"; do
@@ -36,12 +41,12 @@ push)
   done > "$REMOTES"
 
   find "$TMP" -type f -name '.gitignore' -delete
-  find "$TMP" -type f -exec gpg --batch --yes --encrypt-files -- '{}' +
+  find "$TMP" -type f -exec gpg --batch --yes "${GPG_OPTS[@]}" --encrypt-files -- '{}' +
   find "$TMP" -type f -not -name '*.gpg' -delete
   ;;
 pull)
   REL="$TMP/~"
-  find "$REL" -type f -print0 -exec gpg --batch --yes --decrypt-files -- "$REMOTES.gpg" '{}' +
+  find "$REL" -type f -print0 -exec gpg --batch --yes "${GPG_OPTS[@]}" --decrypt-files -- "$REMOTES.gpg" '{}' +
   find "$REL" -type f -name '*.gpg' -delete
 
   for F in "$REL"/**/*; do
