@@ -16,6 +16,9 @@ unpack() {
   *.rar)
     unar -- "$FILE"
     ;;
+  *.deb)
+    dpkg --extract "$FILE" .
+    ;;
   *)
     printf -- '%s\n' "Unknown format :: $FILE"
     return 127
