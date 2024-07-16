@@ -27,3 +27,12 @@ pkg.posix: /etc/apt/sources.list.d/charm.list
 	sudo -- tee -- '$@' <<-'EOF'
 	deb https://repo.charm.sh/apt/ * *
 	EOF
+
+/etc/apt/trusted.gpg.d/gcp.gpg:
+	$(CURL) -- 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' | sudo -- gpg --batch --dearmor --yes --output '$@'
+
+pkg.posix: /etc/apt/sources.list.d/gcp.list
+/etc/apt/sources.list.d/gcp.list: /etc/apt/trusted.gpg.d/gcp.gpg
+	sudo -- tee -- '$@' <<-'EOF'
+	deb https://packages.cloud.google.com/apt cloud-sdk main
+	EOF
