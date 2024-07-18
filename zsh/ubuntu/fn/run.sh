@@ -1,3 +1,3 @@
 #!/usr/bin/env -S -- bash
 
-systemd-run --user --scope --nice 19 "$@"
+systemd-run --user --scope --property LogLevelMax=notice --nice 19 "$@"
