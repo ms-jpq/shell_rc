@@ -70,7 +70,7 @@ ssh_pp() {
   SSH_PORT="${conn##*:}"
   {
     printf -- '\n%s' '>>> '
-    printf -- '%q ' "${SSH_CMD[@]}" "$SSH_PORT" "$SSH_HOST"
+    printf -- '%q ' "${SSH_CMD[@]}" "$SSH_PORT" -- "$SSH_HOST"
     printf -- '<<<\n\n'
   } >&2
 }
@@ -181,7 +181,7 @@ ssh)
     printf -v A -- '%q ' "$@"
     AV+=("$A")
   fi
-  exec -- "${SSH_CMD[@]}" "$SSH_PORT" "$SSH_HOST" "${AV[@]}"
+  exec -- "${SSH_CMD[@]}" "$SSH_PORT" -- "$SSH_HOST" "${AV[@]}"
   ;;
 monitor)
   SOCK="$QM_SOCK"
