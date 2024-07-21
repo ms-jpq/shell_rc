@@ -1,15 +1,21 @@
 #!/usr/bin/env -S -- bash
 
 _less=(
-  --quit-on-intr
-  --quit-if-one-screen
-  --mouse
-  --RAW-CONTROL-CHARS
-  --tilde
-  --tabs=2
   --QUIET
+  --RAW-CONTROL-CHARS
+  --follow-name
   --ignore-case
+  --incsearch
+  --mouse
   --no-histdups
+  --quit-if-one-screen
+  --quit-on-intr
+  --status-column
+  --tabs=2
+  --tilde
+  --underline-special
+  --use-color
+  --wheel-lines=3
 )
 export -- PAGER='less'
 printf -v LESS -- '%q ' "${_less[@]}"
