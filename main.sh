@@ -51,6 +51,7 @@ CONN=(
   -o "ControlPath=/tmp/%C"
   -o 'ControlPersist=60'
   -p $((PORT))
+  --
 )
 printf -v RSH -- '%q ' "${CONN[@]}"
 RSY=(
