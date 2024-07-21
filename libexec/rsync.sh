@@ -20,4 +20,13 @@ else
   SINK="\"$SINK\""
 fi
 
-tar --create --directory "$SRC" -- . | "${RSH[@]}" "$TAR" --extract --preserve-permissions --keep-directory-symlink --directory "$SINK"
+UNTAR=(
+  "$TAR"
+  --extract
+  --preserve-permissions
+  --keep-directory-symlink
+  --directory
+  "$SINK"
+)
+
+tar --create --directory "$SRC" -- . | "${RSH[@]}" "${UNTAR[@]}"
