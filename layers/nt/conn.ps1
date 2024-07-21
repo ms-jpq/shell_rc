@@ -3,7 +3,7 @@
 Set-StrictMode -Version 'Latest'
 $ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'Stop'
-
+Set-PSDebug -Trace 1
 
 function basic {
     # UTC RTC
