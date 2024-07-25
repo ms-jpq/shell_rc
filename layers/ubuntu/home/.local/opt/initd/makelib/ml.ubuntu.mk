@@ -15,7 +15,7 @@ ifeq (x86_64, $(HOSTTYPE))
 CUDA := http://developer.download.nvidia.com/compute/cuda/repos/ubuntu$(subst .,,$(VERSION_ID))/$(HOSTTYPE)/
 
 /etc/apt/trusted.gpg.d/cuda.gpg:
-	sudo -- $(CURL) --output '$@' -- '$(CUDA)/cuda-archive-keyring.gpg'
+	sudo -- $(CURL) --output '$@' -- '$(CUDA)cuda-archive-keyring.gpg'
 
 # pkg.posix: /etc/apt/sources.list.d/cuda.list
 /etc/apt/sources.list.d/cuda.list: /etc/apt/trusted.gpg.d/cuda.gpg
