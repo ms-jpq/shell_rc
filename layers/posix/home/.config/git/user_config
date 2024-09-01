@@ -121,6 +121,10 @@ sort    = "-taggerdate"
 [transfer]
 fsckObjects = true
 
+[user]
+email = "git@bigly.dog"
+name  = "dogisgreat"
+
 [worktree]
 guessRemote = false
 
