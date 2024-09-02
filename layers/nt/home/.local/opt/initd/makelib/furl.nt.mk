@@ -26,7 +26,6 @@ define CURL_ARCHIVES
 
 gitui.exe                                                   https://github.com/extrawurst/gitui/releases/latest/download/gitui-win.tar.gz
 gping.exe                                                   https://github.com/orf/gping/releases/latest/download/gping-Windows-x86_64.zip
-htmlq.exe                                                   https://github.com/mgdm/htmlq/releases/latest/download/htmlq-x86_64-windows.zip
 s5cmd.exe                                                   https://github.com/peak/s5cmd/releases/latest/download/s5cmd_$(V_S5CMD)_Windows-$(S5_TYPE).zip
 sad.exe                                                     https://github.com/ms-jpq/sad/releases/latest/download/x86_64-pc-windows-msvc.zip
 watchexec-$(V_WATCHEX)-x86_64-pc-windows-msvc/watchexec.exe https://github.com/watchexec/watchexec/releases/latest/download/watchexec-$(V_WATCHEX)-x86_64-pc-windows-msvc.zip

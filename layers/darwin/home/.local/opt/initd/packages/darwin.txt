@@ -45,7 +45,6 @@
 + gping
 + grep
 + gum
-+ htmlq
 + htop
 + httm
 + hyperfine
