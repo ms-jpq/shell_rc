@@ -67,7 +67,7 @@
 + sl
 + socat
 + sudo
-+ swi-prolog-core
++ swi-prolog-nox
 + sysstat
 + termshark
 + tmux
