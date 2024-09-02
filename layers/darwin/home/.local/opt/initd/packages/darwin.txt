@@ -92,6 +92,7 @@
 + sevenzip
 + sl
 + socat
++ swi-prolog
 + termshark
 + tidy-viewer
 + tmux
