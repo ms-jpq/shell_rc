@@ -1,6 +1,4 @@
 # + catimg
-# + eza
-# + gping
 # + libaa-bin
 # + vhs
 # + yank
@@ -18,14 +16,17 @@
 + colorized-logs
 + cowsay
 + dialog
++ diffnav
 + duf
 + entr
++ eza
 + fd-find
 + figlet
 + gdu
 + gettext-base
 + git
 + glow
++ gping
 + grep
 + gum
 + htop
