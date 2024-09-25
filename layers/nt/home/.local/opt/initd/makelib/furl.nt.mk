@@ -12,9 +12,11 @@ endef
 
 
 ifeq ($(HOSTTYPE), aarch64)
-S5_TYPE := $(GOARCH)
+DIFFN_TYPE := arm64
+S5_TYPE    := $(GOARCH)
 else
-S5_TYPE := 64bit
+DIFFN_TYPE := $(HOSTTYPE)
+S5_TYPE    := 64bit
 endif
 
 V_S5CMD   =  $(patsubst v%,%,$(shell $(GH_LATEST) peak/s5cmd))
@@ -24,6 +26,7 @@ V_XSV     =  $(shell $(GH_LATEST) BurntSushi/xsv)
 
 define CURL_ARCHIVES
 
+diffnav.exe                                                 https://github.com/dlvhdr/diffnav/releases/latest/download/diffnav_Windows_$(DIFFN_TYPE).zip
 gitui.exe                                                   https://github.com/extrawurst/gitui/releases/latest/download/gitui-win.tar.gz
 gping.exe                                                   https://github.com/orf/gping/releases/latest/download/gping-Windows-x86_64.zip
 s5cmd.exe                                                   https://github.com/peak/s5cmd/releases/latest/download/s5cmd_$(V_S5CMD)_Windows-$(S5_TYPE).zip
