@@ -1,3 +1,7 @@
 #!/usr/bin/env -S -- bash
 
-open -- "https://command-not-found.com/$*"
+iwhich() {
+  local URI="https://command-not-found.com/$*"
+  printf -- '%s\n' "$URI"
+  open -- "$URI"
+}
