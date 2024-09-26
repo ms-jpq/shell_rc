@@ -29,7 +29,13 @@ CURL=(
   --url "$STATIC_SDK"
   --output "$TMP_SDK"
 )
-TAR=(tar -v --extract --ignore-zeros --gzip --directory "$TMP" --strip-components 1)
+TAR=(
+  tar
+  --extract
+  --gzip
+  --directory "$TMP"
+  --strip-components 1
+)
 
 rm -v -fr -- "$TMP" "$TMP_SDK"
 mkdir -v -p -- "$TMP"
