@@ -15,6 +15,6 @@ for FROM in "${!LINKS[@]}"; do
   TO="${LINKS["$FROM"]}"
   if ! [[ -L $FROM ]]; then
     mkdir -v -p -- "${FROM%/*}"
-    ln -v -sf -- "$TO" "$FROM"
+    ln -v -snf -- "$TO" "$FROM"
   fi
 done

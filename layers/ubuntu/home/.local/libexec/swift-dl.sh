@@ -14,4 +14,4 @@ SWIFT_HOME="$SWIFTS_HOME/$SWIFT_VERSION"
 rm -v -fr -- "$SWIFT_HOME"
 mkdir -v -p -- "$SWIFT_HOME"
 curl --location --fail-with-body --no-progress-meter -- "$URI" | tar -v --extract --gzip --directory "$SWIFT_HOME" --strip-components 1
-ln -sf -- "$SWIFT_HOME" "$SWIFTS_HOME/current"
+ln -snf -- "$SWIFT_HOME" "$SWIFTS_HOME/current"

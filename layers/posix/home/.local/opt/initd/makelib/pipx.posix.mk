@@ -26,7 +26,7 @@ $(OPT)/pipx/$(PY_BIN)/pipx: | $(OPT)/pipx
 
 pipx: $(BIN)/pipx
 $(BIN)/pipx: $(OPT)/pipx/$(PY_BIN)/pipx
-	ln -v -sf -- '$<' '$@'
+	ln -v -snf -- '$<' '$@'
 
 define PIPX_TEMPLATE
 
