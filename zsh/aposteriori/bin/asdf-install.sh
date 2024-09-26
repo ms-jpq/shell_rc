@@ -90,4 +90,6 @@ if ((GLOBAL)); then
   asdf global "$LANG" "$VERSION"
 fi
 
-asdf reshim
+if ((VERSION_INSTALLED + GLOBAL)); then
+  asdf reshim
+fi
