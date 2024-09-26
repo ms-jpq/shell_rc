@@ -15,13 +15,27 @@ TMP="$SWIFT_HOME.tmp"
 # shellcheck disable=SC2154
 TOOLCHAIN="https://download.swift.org/$SWIFT_V/$ID${VERSION_ID//./}/$SWIFT_VERSION/$SWIFT_VERSION-$ID$VERSION_ID.tar.gz"
 STATIC_SDK="https://download.swift.org/$SWIFT_V/static-sdk/$SWIFT_VERSION/${SWIFT_VERSION}_static-linux-0.0.1.artifactbundle.tar.gz"
+TMP_SDK="$SWIFTS_HOME/${STATIC_SDK##*/}"
 printf -- '%s\n' "$TOOLCHAIN" "$STATIC_SDK" >&2
 
-rm -v -fr -- "$TMP"
-mkdir -v -p -- "$TMP"
-curl --no-progress-meter --location --fail-with-body -- "$TOOLCHAIN" | tar -v --extract --ignore-zeros --gzip --directory "$TMP" --strip-components 1
+CURL=(
+  curl
+  --no-progress-meter
+  --location
+  --fail-with-body
+  --url "$TOOLCHAIN"
+  --next
+  --remove-on-error
+  --url "$STATIC_SDK"
+  --output "$TMP_SDK"
+)
+TAR=(tar -v --extract --ignore-zeros --gzip --directory "$TMP" --strip-components 1)
 
-"$SWIFT_HOME/usr/bin/swift" sdk install -- "$STATIC_SDK"
-rm -v -fr -- "$SWIFT_HOME"
+rm -v -fr -- "$TMP" "$TMP_SDK"
+mkdir -v -p -- "$TMP"
+"${CURL[@]}" | "${TAR[@]}"
+
+"$TMP/usr/bin/swift" sdk install -- "$TMP_SDK"
+rm -v -fr -- "$SWIFT_HOME" "$TMP_SDK"
 mv -v -f -- "$TMP" "$SWIFT_HOME"
 ln -snf -- "$SWIFT_HOME" "$SWIFTS_HOME/current"
