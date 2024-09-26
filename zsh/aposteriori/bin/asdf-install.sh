@@ -2,8 +2,8 @@
 
 set -o pipefail
 
-OPTS='gv:'
-LONG_OPTS='global,version:'
+OPTS='lgv:'
+LONG_OPTS='local,global,version:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
@@ -13,12 +13,12 @@ VERSION=
 LANG=
 while true; do
   case "$1" in
-  -g | --global)
-    GLOBAL=1
-    shift
-    ;;
   -l | --local)
     LOCAL=1
+    shift
+    ;;
+  -g | --global)
+    GLOBAL=1
     shift
     ;;
   -v | --version)
@@ -82,12 +82,12 @@ if ! ((VERSION_INSTALLED)); then
   asdf install "$LANG" "$VERSION"
 fi
 
-if ((GLOBAL)); then
-  asdf global "$LANG" "$VERSION"
-fi
-
 if ((LOCAL)); then
   asdf local "$LANG" "$VERSION"
+fi
+
+if ((GLOBAL)); then
+  asdf global "$LANG" "$VERSION"
 fi
 
 asdf reshim
