@@ -2,46 +2,55 @@
 
 set -o pipefail
 
-# shellcheck disable=SC1091
-source -- /etc/os-release
+if [[ -v RECURSION ]]; then
+  TMP="$1"
+  CURL=(
+    curl
+    --location
+    --fail-with-body
+    --no-progress-meter
+    -- "$2"
+  )
+  TAR=(
+    tar
+    --extract
+    --gzip
+    --directory "$TMP"
+    --strip-components "$3"
+  )
 
-SWIFT_VERSION='swift-6.0.1-RELEASE'
-SWIFT_V="${SWIFT_VERSION//'-RELEASE'/'-release'}"
+  rm -v -fr -- "$TMP"
+  mkdir -v -p -- "$TMP"
 
-SWIFTS_HOME=~/".local/opt/swift"
-SWIFT_HOME="$SWIFTS_HOME/$SWIFT_VERSION"
-TMP="$SWIFT_HOME.tmp"
+  "${CURL[@]}" | "${TAR[@]}"
+  exec -- mv -v -f -- "$TMP" "${TMP%'.tmp'}"
+else
+  LINK_HOME=~/.config/swiftpm/swift-sdks
+  SWIFTS_HOME=~/".local/opt/swift"
+  TOOLS_HOME="$SWIFTS_HOME/tools"
+  SDKS_HOME="$SWIFTS_HOME/sdk"
 
-# shellcheck disable=SC2154
-TOOLCHAIN="https://download.swift.org/$SWIFT_V/$ID${VERSION_ID//./}/$SWIFT_VERSION/$SWIFT_VERSION-$ID$VERSION_ID.tar.gz"
-STATIC_SDK="https://download.swift.org/$SWIFT_V/static-sdk/$SWIFT_VERSION/${SWIFT_VERSION}_static-linux-0.0.1.artifactbundle.tar.gz"
-TMP_SDK="$SWIFTS_HOME/${STATIC_SDK##*/}"
-printf -- '%s\n' "$TOOLCHAIN" "$STATIC_SDK" >&2
+  SWIFT_VERSION='swift-6.0.1-RELEASE'
+  SWIFT_V="${SWIFT_VERSION//'-RELEASE'/'-release'}"
 
-CURL=(
-  curl
-  --no-progress-meter
-  --location
-  --fail-with-body
-  --url "$TOOLCHAIN"
-  --next
-  --remove-on-error
-  --url "$STATIC_SDK"
-  --output "$TMP_SDK"
-)
-TAR=(
-  tar
-  --extract
-  --gzip
-  --directory "$TMP"
-  --strip-components 1
-)
+  # shellcheck disable=SC1091
+  source -- /etc/os-release
+  # shellcheck disable=SC2154
+  TOOLCHAIN="https://download.swift.org/$SWIFT_V/$ID${VERSION_ID//./}/$SWIFT_VERSION/$SWIFT_VERSION-$ID$VERSION_ID.tar.gz"
+  STATIC_SDK="https://download.swift.org/$SWIFT_V/static-sdk/$SWIFT_VERSION/${SWIFT_VERSION}_static-linux-0.0.1.artifactbundle.tar.gz"
+  SDK_VERSION="${STATIC_SDK##*/}"
+  SDK_VERSION="${SDK_VERSION%'.tar.gz'}"
 
-rm -v -fr -- "$TMP" "$TMP_SDK"
-mkdir -v -p -- "$TMP"
-"${CURL[@]}" | "${TAR[@]}"
+  TOOL_HOME="$TOOLS_HOME/$SWIFT_VERSION"
 
-"$TMP/usr/bin/swift" sdk install -- "$TMP_SDK"
-rm -v -fr -- "$SWIFT_HOME" "$TMP_SDK"
-mv -v -f -- "$TMP" "$SWIFT_HOME"
-ln -snf -- "$SWIFT_HOME" "$SWIFTS_HOME/current"
+  ARGV=(
+    "$TOOL_HOME.tmp" "$TOOLCHAIN" 1
+    "$SDKS_HOME/$SDK_VERSION.tmp" "$STATIC_SDK" 1
+  )
+
+  printf -- '%s\0' "${ARGV[@]}" | RECURSION=1 xargs --no-run-if-empty --null --max-args 3 --max-procs 0 -- "$0"
+  ln -snf -- "$TOOL_HOME" "$TOOLS_HOME/current"
+  mkdir -v -p -- "$LINK_HOME"
+  find "$LINK_HOME" -mindepth 1 -maxdepth 1 -delete
+  find "$SDKS_HOME" -mindepth 1 -maxdepth 1 -execdir ln -snf -- "$SDKS_HOME/{}" "$LINK_HOME/{}" ';'
+fi
