@@ -8,12 +8,17 @@ GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 GLOBAL=0
+LOCAL=0
 VERSION=
 LANG=
 while true; do
   case "$1" in
   -g | --global)
     GLOBAL=1
+    shift
+    ;;
+  -l | --local)
+    LOCAL=1
     shift
     ;;
   -v | --version)
@@ -79,6 +84,10 @@ fi
 
 if ((GLOBAL)); then
   asdf global "$LANG" "$VERSION"
+fi
+
+if ((LOCAL)); then
+  asdf local "$LANG" "$VERSION"
 fi
 
 asdf reshim
