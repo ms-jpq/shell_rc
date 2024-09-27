@@ -23,5 +23,6 @@ unset -- less
 # shellcheck disable=SC2154
 export -- LESS LESSHISTFILE="$XDG_STATE_HOME/shell_history/less"
 export -- TIME_STYLE='long-iso'
+export -- PERL_UNICODE='ASD'
 # shellcheck disable=SC2154
 export -- CURL_HOME="$XDG_CONFIG_HOME/curl"
