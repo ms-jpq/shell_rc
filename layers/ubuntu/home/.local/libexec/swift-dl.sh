@@ -23,11 +23,11 @@ if [[ -v RECURSION ]]; then
     --strip-components 1
   )
 
-  rm -v -fr -- "$TMP"
-  mkdir -v -p -- "$TMP"
+  rm -fr -- "$TMP"
+  mkdir -p -- "$TMP"
 
   "${CURL[@]}" | "${TAR[@]}"
-  rm -v -fr -- "$DST"
+  rm -fr -- "$DST"
   exec -- mv -v -f -- "$TMP" "$DST"
 else
   LINK_HOME=~/.config/swiftpm/swift-sdks
