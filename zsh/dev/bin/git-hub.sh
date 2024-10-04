@@ -4,7 +4,12 @@ set -o pipefail
 
 UPSTREAM="$(git --no-optional-locks rev-parse --abbrev-ref --symbolic-full-name '@{upstream}')"
 URI="$(git remote get-url "${UPSTREAM%%/*}")"
-URI="${URI%%'.git'}/tree/${UPSTREAM#*/}"
+case "$URI" in
+"https://github.com/"* | "git@github.com:"*)
+  URI="${URI%%'.git'}/tree/${UPSTREAM#*/}"
+  ;;
+*) ;;
+esac
 
 if [[ $URI =~ ^http ]]; then
   :
