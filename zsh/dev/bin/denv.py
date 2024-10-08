@@ -1,6 +1,7 @@
 #!/usr/bin/env -S -- PYTHONSAFEPATH= /usr/bin/python3
 
 from argparse import ArgumentParser, Namespace
+from collections.abc import Iterable, Iterator, Mapping, MutableMapping, MutableSequence
 from configparser import RawConfigParser
 from contextlib import contextmanager
 from itertools import chain
@@ -13,15 +14,6 @@ from shlex import quote, shlex
 from shutil import which
 from string import Template
 from sys import exit
-from typing import (
-    Iterable,
-    Iterator,
-    Mapping,
-    MutableMapping,
-    MutableSequence,
-    Optional,
-    Tuple,
-)
 from unicodedata import normalize
 from uuid import uuid4
 
@@ -33,7 +25,7 @@ log.setLevel(INFO)
 log.addHandler(StreamHandler())
 
 
-def _parse(text: str) -> Iterator[Tuple[str, Optional[str]]]:
+def _parse(text: str) -> Iterator[tuple[str, str | None]]:
     class _Parser(RawConfigParser):
         def optionxform(self, optionstr: str) -> str:
             return optionstr
@@ -134,7 +126,7 @@ def _man() -> Iterator[None]:
 
 
 def _trans(
-    stream: Iterable[Tuple[str, Optional[str]]], env: Mapping[str, str]
+    stream: Iterable[tuple[str, str | None]], env: Mapping[str, str]
 ) -> Mapping[str, str]:
     seen: MutableMapping[str, str] = {}
 
