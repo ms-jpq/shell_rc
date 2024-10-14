@@ -1,10 +1,11 @@
 {
-  "data-root": "/mnt/docker",
+  "data-root": "/media/shared/docker",
   "default-address-pools": [
     {
       "base": "10.69.0.0/16",
       "size": 24
     }
   ],
-  "log-driver": "journald"
+  "log-driver": "journald",
+  "storage-driver": "overlay2"
 }
