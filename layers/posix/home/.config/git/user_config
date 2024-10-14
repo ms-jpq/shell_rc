@@ -118,8 +118,8 @@ recurse   = true
 gpgSign = true
 sort    = "-taggerdate"
 
-[transfer]
-fsckObjects = true
+# [transfer]
+# fsckObjects = true
 
 [user]
 email = "git@bigly.dog"
