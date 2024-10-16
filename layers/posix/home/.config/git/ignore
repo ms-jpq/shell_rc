@@ -17,6 +17,7 @@
 .terraform.tfstate.lock.info
 .terraform/
 .venv/
+Package.resolved
 __pycache__/
 node_modules/
 owo.*
