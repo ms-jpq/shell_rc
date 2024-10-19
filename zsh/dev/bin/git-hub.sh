@@ -24,4 +24,6 @@ elif [[ $URI =~ ^([^@]+@?)([^:]+): ]]; then
 fi
 
 printf -- '%s\n' "$URI"
-open "$URI"
+if command -v -- open; then
+  open "$URI"
+fi
