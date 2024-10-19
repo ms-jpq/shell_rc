@@ -46,7 +46,6 @@ define PIP_PKGS
 
 gay                   gay
 markdown-live-preview markdown_live_preview
-posting               posting
 sortd                 sortd
 
 endef
