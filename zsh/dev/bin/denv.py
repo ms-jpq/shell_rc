@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from itertools import chain
 from json import dumps
 from logging import INFO, StreamHandler, captureWarnings, getLogger
-from os import environ, execle, linesep
+from os import environ, execle, linesep, name
 from os.path import normcase
 from pathlib import Path, PurePath
 from shlex import quote, shlex
@@ -161,9 +161,13 @@ def main() -> None:
     norm = normalize("NFKD", dotenv)
     p_env = {**environ}
     env = _trans(_parse(norm), env=p_env)
+    pass_through = {"PATH"}
+    if name == "nt":
+        pass_through |= {"PATHEXT"}
+    new_env = {**env, **{k: v for k, v in p_env.items() if k in pass_through}}
 
     if cmd := which(args.arg0):
-        execle(cmd, normcase(cmd), *args.argv, {**env, **p_env})
+        execle(cmd, normcase(cmd), *args.argv, new_env)
     else:
         raise OSError(args.arg0)
 
