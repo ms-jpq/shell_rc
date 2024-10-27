@@ -4,6 +4,7 @@ from argparse import ArgumentParser, Namespace
 from collections.abc import Iterable, Iterator, Mapping, MutableMapping, MutableSequence
 from configparser import RawConfigParser
 from contextlib import contextmanager
+from functools import lru_cache
 from itertools import chain
 from json import dumps
 from logging import INFO, StreamHandler, captureWarnings, getLogger
@@ -13,7 +14,7 @@ from pathlib import Path, PurePath
 from shlex import quote, shlex
 from shutil import which
 from string import Template
-from sys import exit
+from sys import exit, stderr, stdout
 from typing import Optional, Tuple
 from unicodedata import normalize
 from uuid import uuid4
@@ -111,19 +112,27 @@ def _quote(text: str) -> str:
     return quote(dumps(text, ensure_ascii=False)[1:-1])
 
 
+@lru_cache(maxsize=None)
+def _isatty() -> bool:
+    return stdout.isatty() and stderr.isatty()
+
+
 def _print(key: str, val: str) -> None:
     lhs = _quote(key)
     rhs = _quote(val)
-    log.info("%s", f">> {lhs}={rhs}")
+    if _isatty():
+        log.info("%s", f">> {lhs}={rhs}")
 
 
 @contextmanager
 def _man() -> Iterator[None]:
-    log.info("%s", f"<<")
+    if _isatty():
+        log.info("%s", f"<<")
     try:
         yield None
     finally:
-        log.info("%s", f"<<")
+        if _isatty():
+            log.info("%s", f"<<")
 
 
 def _trans(
