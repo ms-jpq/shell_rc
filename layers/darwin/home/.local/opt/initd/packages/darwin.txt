@@ -54,6 +54,7 @@
 + jless
 + jnv
 + jq
++ kubernetes-cli
 + lazygit
 + less
 + lsof
