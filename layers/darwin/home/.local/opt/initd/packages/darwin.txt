@@ -54,6 +54,7 @@
 + jless
 + jnv
 + jq
++ k9s
 + kubernetes-cli
 + lazygit
 + less
