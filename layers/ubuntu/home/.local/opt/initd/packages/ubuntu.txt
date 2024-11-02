@@ -38,6 +38,7 @@
 + jid
 + jnv
 + k9s
++ kubectl
 + language-pack-en
 + language-pack-zh-hans
 + libxml2-utils
