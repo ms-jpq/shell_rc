@@ -25,6 +25,7 @@
       <string>${HOME}/.local/state/gnupg/agent.log</string>
       <string>--daemon</string>
       <string>${HOME}/.config/gnupg/libexec/sleep.sh</string>
+      <string>--enable-ssh-support</string>
     </array>
     <key>KeepAlive</key>
     <true />
