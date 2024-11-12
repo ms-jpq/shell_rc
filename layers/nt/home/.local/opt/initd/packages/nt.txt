@@ -17,7 +17,7 @@
 # + commercialhaskell.stack
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
-+ BurntSushi.xsv
++ BurntSushi.xsv.MSVC
 + Clement.bottom
 + Derailed.k9s
 + GnuWin32.M4
