@@ -25,7 +25,6 @@ $(CONFIG)/nvim                 https://github.com/ms-jpq/nvim_rc
 $(OPT)/ai                      https://github.com/ms-jpq/ai
 $(OPT)/asdf                    https://github.com/asdf-vm/asdf
 $(OPT)/fzf-tab                 https://github.com/Aloxaf/fzf-tab
-$(OPT)/isomorphic-copy         https://github.com/ms-jpq/isomorphic-copy
 $(OPT)/pipes.sh                https://github.com/pipeseroni/pipes.sh
 $(OPT)/zsh-autosuggestions     https://github.com/zsh-users/zsh-autosuggestions
 $(OPT)/zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting
