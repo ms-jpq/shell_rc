@@ -17,7 +17,9 @@
 # + commercialhaskell.stack
 + 7zip.7zip
 + BurntSushi.ripgrep.MSVC
++ BurntSushi.xsv
 + Clement.bottom
++ Derailed.k9s
 + GnuWin32.M4
 + JanDeDobbeleer.OhMyPosh
 + JesseDuffield.lazygit
@@ -26,6 +28,7 @@
 + Neovim.Neovim
 + Rclone.Rclone
 + SoftwareFreedomConservancy.QEMU
++ StephanDilly.gitui
 + UniversalCtags.Ctags
 + Wilfred.difftastic
 + XAMPPRocky.Tokei
@@ -40,6 +43,7 @@
 + jqlang.jq
 + junegunn.fzf
 + koalaman.shellcheck
++ ms-jpq.sad
 + muesli.duf
 + sharkdp.bat
 + sharkdp.fd
