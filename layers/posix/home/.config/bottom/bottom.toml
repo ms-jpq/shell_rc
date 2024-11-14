@@ -1,5 +1,7 @@
 [flags]
-color             = "gruvbox-light"
-enable_gpu_memory = true
-group             = true
+enable_gpu        = true
+group_processes   = true
 network_use_bytes = true
+
+[styles]
+theme = "nord-light"
