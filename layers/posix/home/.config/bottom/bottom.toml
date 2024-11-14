@@ -2,6 +2,7 @@
 enable_gpu        = true
 group_processes   = true
 network_use_bytes = true
+process_command   = true
 
 [styles]
 theme = "nord-light"
