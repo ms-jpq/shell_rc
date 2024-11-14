@@ -1,6 +1,5 @@
 [flags]
 enable_gpu              = true
-group_processes         = true
 network_use_bytes       = true
 process_command         = true
 process_memory_as_value = true
