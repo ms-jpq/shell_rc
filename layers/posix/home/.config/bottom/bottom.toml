@@ -1,4 +1,5 @@
 [flags]
+enable_cache_memory     = true
 enable_gpu              = true
 network_use_bytes       = true
 process_command         = true
