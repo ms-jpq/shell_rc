@@ -17,7 +17,7 @@ elif ! [[ -v FZF_PREVIEW_LINES ]]; then
     # shellcheck disable=SC2154
     "$EDITOR" "$F"
   fi
-  DOMAIN="$(< "$F")"
+  URI="$(< "$F")"
   QUERY="$(jq --raw-input --raw-output '@uri' <<< "$*")"
   TMP="$(mktemp)"
   HEADERS=(
@@ -31,7 +31,7 @@ elif ! [[ -v FZF_PREVIEW_LINES ]]; then
   for HEADER in "${HEADERS[@]}"; do
     CURL+=(--header "$HEADER")
   done
-  CURL+=(-- "https://$DOMAIN/search?format=json&q=$QUERY")
+  CURL+=(-- "$URI/search?format=json&q=$QUERY")
   "${CURL[@]}" > "$TMP"
   PREVIEW="$(printf -- '%q ' "$0" "$TMP")"
   EXEC="$(printf -- '%q ' 'XDG_OPEN=1' "$0" "$TMP")"
