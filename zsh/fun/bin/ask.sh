@@ -2,56 +2,31 @@
 
 set -o pipefail
 
-if [[ -v XDG_OPEN ]]; then
-  TMP="$1"
-  N="$2"
-  URI="$(jq --slurp --raw-output --argjson n "$N" '[.[].results[]][$n].url' "$TMP")"
-  if command -v -- xdg-open; then
-    xdg-open "$URI"
-  else
-    open -- "$URI"
-  fi
-elif ! [[ -v FZF_PREVIEW_LINES ]]; then
-  F="$HOME/.local/state/searx"
-  if ! [[ -f $F ]]; then
-    # shellcheck disable=SC2154
-    "$EDITOR" "$F"
-  fi
-  URI="$(< "$F")"
-  QUERY="$(jq --raw-input --raw-output '@uri' <<< "$*")"
-  TMP="$(mktemp)"
-  HEADERS=(
-  )
-  CURL=(
-    curl
-    --fail-with-body
-    --connect-timeout 6
-    --no-progress-meter
-    --no-buffer
-  )
-  for HEADER in "${HEADERS[@]}"; do
-    CURL+=(--header "$HEADER")
-  done
-
-  PREVIEW="$(printf -- '%q ' "$0" "$TMP")"
-  EXEC="$(printf -- '%q ' 'XDG_OPEN=1' "$0" "$TMP")"
-  FZF=(
-    fzf
-    --read0
-    --preview "$PREVIEW {n}"
-    --bind "enter:execute-silent:$EXEC {n}"
-  )
-  {
-    for N in {1..3}; do
-      "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY"
-    done
-  } | tee --append -- "$TMP" | jq --unbuffered --raw-output0 '.results | map(.title)[]' | "${FZF[@]}"
-else
-  TMP="$1"
-  N="$2"
-  read -r -d '' -- JQ <<- 'JQ' || true
-[.[].results[]][$n] | "<h1>\(.title | @html)</h1><h2>\(.url | @html)</h2>\("<p>\(.content | @html)</p>")"
-JQ
-  # shellcheck disable=2154
-  jq --slurp --raw-output --argjson n "$N" "$JQ" "$TMP" | pandoc --from html --to gfm | mdcat --columns "$FZF_PREVIEW_COLUMNS"
+F="$HOME/.local/state/searx"
+if ! [[ -f $F ]]; then
+  # shellcheck disable=SC2154
+  "$EDITOR" "$F"
 fi
+URI="$(< "$F")"
+QUERY="$(jq --raw-input --raw-output '@uri' <<< "$*")"
+CURL=(
+  curl
+  --fail-with-body
+  --connect-timeout 6
+  --no-progress-meter
+  --no-buffer
+)
+
+if [[ -t 1 ]]; then
+  PAGE=(glow)
+else
+  PAGE=(mdcat)
+fi
+
+read -r -d '' -- JQ <<- 'JQ' || true
+.results[] | "# \(.title | @html)\n## [\(if $pager == "glow" then "➜" else .url | @html end)](\(.url | @html))\n\(.content | @html)"
+JQ
+
+for N in {1..1}; do
+  "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY"
+done | jq --unbuffered --raw-output --arg pager "${PAGE[*]}" "$JQ" | "${PAGE[@]}"
