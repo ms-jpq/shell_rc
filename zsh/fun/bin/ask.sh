@@ -49,5 +49,5 @@ else
 .results[$n] | "<h1>\(.title | @html)</h1><h2>\(.url | @html)</h2>\("<p>\(.content | @html)</p>")"
 JQ
   # shellcheck disable=2154
-  jq --raw-output --argjson n "$N" "$JQ" "$TMP" | pandoc --from html --to gfm | glow --width "$FZF_PREVIEW_COLUMNS"
+  jq --raw-output --argjson n "$N" "$JQ" "$TMP" | pandoc --from html --to gfm | mdcat --columns "$FZF_PREVIEW_COLUMNS"
 fi
