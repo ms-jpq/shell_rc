@@ -37,7 +37,7 @@ elif ! [[ -v FZF_PREVIEW_LINES ]]; then
   EXEC="$(printf -- '%q ' 'XDG_OPEN=1' "$0" "$TMP")"
   FZF=(
     fzf
-    # --read0
+    --read0
     --preview "$PREVIEW {n}"
     --bind "enter:execute-silent:$EXEC {n}"
   )
@@ -45,7 +45,7 @@ elif ! [[ -v FZF_PREVIEW_LINES ]]; then
     for N in {1..3}; do
       "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY"
     done
-  } | tee --append -- "$TMP" | jq --raw-output '.results | map(.title)[]' | "${FZF[@]}"
+  } | tee --append -- "$TMP" | jq --unbuffered --raw-output0 '.results | map(.title)[]' | "${FZF[@]}"
 else
   TMP="$1"
   N="$2"
