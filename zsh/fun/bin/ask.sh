@@ -19,17 +19,16 @@ CURL=(
 )
 
 COLS="$(tput -- cols)"
-COLS=$((COLS - 2))
-# PAGE=(glow)
-PAGE=(mdcat --columns "$COLS" --no-pager)
+COLS=$((COLS - 4))
+PAGE=(glow --config /dev/null --style pink --width "$COLS")
 
 read -r -d '' -- JQ <<- 'JQ' || true
-.results[] | "# \(.title | @html)\n> [\(if $pager == "glow" then "➜" else .url | @html end)](\(.url | @html))\n\n\(.content | @html)\n\n---\n"
+.results[] | "# # \(.title | gsub("\\s+"; " ") | @html)\n## [➜](\(.url | @html))\n\(.content | @html)"
 JQ
-J=(jq --unbuffered --raw-output --arg pager "${PAGE[*]}" "$JQ")
+J=(jq --unbuffered --raw-output "$JQ")
 
 for N in {1..2}; do
   # shellcheck disable=SC2154
   FZF_PREVIEW_COLUMNS="$COLS" "$XDG_CONFIG_HOME/zsh/libexec/hr.sh"
-  "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY" | "${J[@]}" | "${PAGE[@]}"
+  "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY" | "${J[@]}" | CLICOLOR_FORCE=1 COLORTERM=truecolor "${PAGE[@]}"
 done | less
