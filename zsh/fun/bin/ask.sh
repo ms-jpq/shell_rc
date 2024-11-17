@@ -5,7 +5,7 @@ set -o pipefail
 if [[ -v XDG_OPEN ]]; then
   TMP="$1"
   N="$2"
-  URI="$(jq --raw-output --argjson n "$N" '.results[$n].url' "$TMP")"
+  URI="$(jq --slurp --raw-output --argjson n "$N" '[.[].results[]][$n].url' "$TMP")"
   if command -v -- xdg-open; then
     xdg-open "$URI"
   else
@@ -27,27 +27,31 @@ elif ! [[ -v FZF_PREVIEW_LINES ]]; then
     --fail-with-body
     --connect-timeout 6
     --no-progress-meter
+    --no-buffer
   )
   for HEADER in "${HEADERS[@]}"; do
     CURL+=(--header "$HEADER")
   done
-  CURL+=(-- "$URI/search?format=json&q=$QUERY")
-  "${CURL[@]}" > "$TMP"
+
   PREVIEW="$(printf -- '%q ' "$0" "$TMP")"
   EXEC="$(printf -- '%q ' 'XDG_OPEN=1' "$0" "$TMP")"
   FZF=(
     fzf
-    --read0
+    # --read0
     --preview "$PREVIEW {n}"
     --bind "enter:execute-silent:$EXEC {n}"
   )
-  jq --raw-output0 '.results | map(.title)[]' "$TMP" | "${FZF[@]}"
+  {
+    for N in {1..3}; do
+      "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY"
+    done
+  } | tee --append -- "$TMP" | jq --raw-output '.results | map(.title)[]' | "${FZF[@]}"
 else
   TMP="$1"
   N="$2"
   read -r -d '' -- JQ <<- 'JQ' || true
-.results[$n] | "<h1>\(.title | @html)</h1><h2>\(.url | @html)</h2>\("<p>\(.content | @html)</p>")"
+[.[].results[]][$n] | "<h1>\(.title | @html)</h1><h2>\(.url | @html)</h2>\("<p>\(.content | @html)</p>")"
 JQ
   # shellcheck disable=2154
-  jq --raw-output --argjson n "$N" "$JQ" "$TMP" | pandoc --from html --to gfm | mdcat --columns "$FZF_PREVIEW_COLUMNS"
+  jq --slurp --raw-output --argjson n "$N" "$JQ" "$TMP" | pandoc --from html --to gfm | mdcat --columns "$FZF_PREVIEW_COLUMNS"
 fi
