@@ -23,7 +23,7 @@ while (($#)); do
   esac
 done
 
-COLS=$(tput -- cols)
+COLS="$(tput -- cols)"
 WRAP=$((COLS / 3))
 
 if ! [[ -v COW ]]; then

@@ -18,11 +18,10 @@ CURL=(
   --no-buffer
 )
 
-if [[ -t 1 ]]; then
-  PAGE=(glow)
-else
-  PAGE=(mdcat)
-fi
+COLS="$(tput -- cols)"
+COLS=$((COLS - 2))
+# PAGE=(glow)
+PAGE=(mdcat --columns "$COLS" --no-pager)
 
 read -r -d '' -- JQ <<- 'JQ' || true
 .results[] | "# \(.title | @html)\n## [\(if $pager == "glow" then "➜" else .url | @html end)](\(.url | @html))\n\(.content | @html)"
@@ -31,6 +30,6 @@ J=(jq --unbuffered --raw-output --arg pager "${PAGE[*]}" "$JQ")
 
 for N in {1..2}; do
   # shellcheck disable=SC2154
-  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh"
+  FZF_PREVIEW_COLUMNS="$COLS" "$XDG_CONFIG_HOME/zsh/libexec/hr.sh"
   "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY" | "${J[@]}" | "${PAGE[@]}"
-done
+done | less
