@@ -10,7 +10,6 @@ _less=(
   --no-histdups
   --quit-if-one-screen
   --quit-on-intr
-  --status-column
   --tabs=2
   --tilde
   --underline-special

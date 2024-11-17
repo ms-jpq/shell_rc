@@ -28,7 +28,8 @@ JQ
 J=(jq --unbuffered --raw-output "$JQ")
 
 for N in {1..3}; do
-  # shellcheck disable=SC2154
-  FZF_PREVIEW_COLUMNS="$COLS" "$XDG_CONFIG_HOME/zsh/libexec/hr.sh"
-  "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY" | "${J[@]}" | CLICOLOR_FORCE=1 COLORTERM=truecolor "${PAGE[@]}"
+  {
+    "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY" | "${J[@]}"
+    printf -- '\n---\n'
+  } | CLICOLOR_FORCE=1 COLORTERM=truecolor "${PAGE[@]}"
 done | less
