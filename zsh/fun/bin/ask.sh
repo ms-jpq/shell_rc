@@ -27,6 +27,8 @@ read -r -d '' -- JQ <<- 'JQ' || true
 .results[] | "# \(.title | @html)\n## [\(if $pager == "glow" then "➜" else .url | @html end)](\(.url | @html))\n\(.content | @html)"
 JQ
 
-for N in {1..1}; do
-  "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY"
-done | jq --unbuffered --raw-output --arg pager "${PAGE[*]}" "$JQ" | "${PAGE[@]}"
+for N in {1..2}; do
+  # shellcheck disable=SC2154
+  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh"
+  "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY" | jq --unbuffered --raw-output --arg pager "${PAGE[*]}" "$JQ" | "${PAGE[@]}"
+done
