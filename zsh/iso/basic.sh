@@ -9,7 +9,6 @@ _less=(
   --mouse
   --no-histdups
   --quit-if-one-screen
-  --quit-on-intr
   --tabs=2
   --tilde
   --underline-special
