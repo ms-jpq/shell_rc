@@ -24,7 +24,7 @@ COLS=$((COLS - 2))
 PAGE=(mdcat --columns "$COLS" --no-pager)
 
 read -r -d '' -- JQ <<- 'JQ' || true
-.results[] | "# \(.title | @html)\n## [\(if $pager == "glow" then "➜" else .url | @html end)](\(.url | @html))\n\(.content | @html)"
+.results[] | "# \(.title | @html)\n## [\(if $pager == "glow" then "➜" else .url | @html end)](\(.url | @html))\n\(.content | @html)\n\n---\n"
 JQ
 J=(jq --unbuffered --raw-output --arg pager "${PAGE[*]}" "$JQ")
 
