@@ -7,6 +7,7 @@ if ! [[ -f $F ]]; then
   # shellcheck disable=SC2154
   "$EDITOR" "$F"
 fi
+
 URI="$(< "$F")"
 QUERY="$(jq --raw-input --raw-output '@uri' <<< "$*")"
 CURL=(
@@ -26,9 +27,10 @@ fi
 read -r -d '' -- JQ <<- 'JQ' || true
 .results[] | "# \(.title | @html)\n## [\(if $pager == "glow" then "➜" else .url | @html end)](\(.url | @html))\n\(.content | @html)"
 JQ
+J=(jq --unbuffered --raw-output --arg pager "${PAGE[*]}" "$JQ")
 
 for N in {1..2}; do
   # shellcheck disable=SC2154
   "$XDG_CONFIG_HOME/zsh/libexec/hr.sh"
-  "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY" | jq --unbuffered --raw-output --arg pager "${PAGE[*]}" "$JQ" | "${PAGE[@]}"
+  "${CURL[@]}" -- "$URI/search?format=json&pageno=$N&q=$QUERY" | "${J[@]}" | "${PAGE[@]}"
 done
