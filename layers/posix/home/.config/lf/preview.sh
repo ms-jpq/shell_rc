@@ -3,9 +3,16 @@
 set -o pipefail
 
 TARGET="$1"
-_WIDTH="$2"
+WIDTH="$2"
 _HEIGHT="$3"
 _H_POS="$4"
 _V_POS="$5"
 
-exec -- bat --color always --- "$TARGET"
+ARGV=(
+  bat
+  --color always
+  --wrap character
+  --terminal-width $((WIDTH - 2))
+)
+
+exec -- "${ARGV[@]}" -- "$TARGET"
