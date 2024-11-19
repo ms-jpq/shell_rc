@@ -1,0 +1,4 @@
+# https://github.com/gokcehan/lf/blob/master/etc/lfrc.example
+
+set locale "*"
+set mouse  true
