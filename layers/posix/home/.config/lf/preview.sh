@@ -12,7 +12,7 @@ ARGV=(
   bat
   --color always
   --wrap character
-  --terminal-width $((WIDTH - 2))
+  --terminal-width $((WIDTH))
 )
 
 exec -- "${ARGV[@]}" -- "$TARGET"
