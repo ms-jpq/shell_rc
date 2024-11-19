@@ -1,6 +1,7 @@
 # https://github.com/gokcehan/lf/blob/master/doc.md
 # https://github.com/gokcehan/lf/blob/master/etc/lfrc.example
 
+set hidden    true
 set locale    "*"
 set mouse     true
 set previewer "~/.config/lf/preview.sh"
