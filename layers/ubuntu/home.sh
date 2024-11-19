@@ -6,9 +6,12 @@ SYSTEMD="$HOME/.config/systemd/user"
 
 declare -A -- LINKS=()
 LINKS=(
+  ["$HOME/.gnupg"]="$HOME/.config/gnupg"
+  ["$SYSTEMD/gpg-agent-browser.socket"]=/dev/null
+  ["$SYSTEMD/gpg-agent-extra.socket"]=/dev/null
+  ["$SYSTEMD/gpg-agent-ssh.socket"]=/dev/null
   ["$SYSTEMD/gpg-agent.service"]=/dev/null
   ["$SYSTEMD/gpg-agent.socket"]=/dev/null
-  ["$HOME/.gnupg"]="$HOME/.config/gnupg"
 )
 
 for FROM in "${!LINKS[@]}"; do
