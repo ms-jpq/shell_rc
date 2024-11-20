@@ -12,4 +12,5 @@ cmd open       &true
 map <s-down>   :toggle; down
 map <s-up>     :toggle; up
 map <space>    :toggle
-map D          delete
+map d          delete
+map x          cut
