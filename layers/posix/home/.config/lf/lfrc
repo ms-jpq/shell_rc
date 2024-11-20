@@ -1,12 +1,14 @@
 # https://github.com/gokcehan/lf/blob/master/doc.md
 # https://github.com/gokcehan/lf/blob/master/etc/lfrc.example
 
-set hidden    true
-set locale    "*"
-set mouse     true
-set previewer "~/.config/lf/preview.sh"
+set hidden     true
+set icons      true
+set locale     "*"
+set mouse      true
+set wrapscroll true
+set previewer  "~/.config/lf/preview.sh"
 
-map <s-down>  :toggle; down
-map <s-up>    :toggle; up
-map <space>   :toggle
-map D         delete
+map <s-down>   :toggle; down
+map <s-up>     :toggle; up
+map <space>    :toggle
+map D          delete

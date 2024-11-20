@@ -12,6 +12,10 @@ REQS += ./layers/posix/home/.config/k9s/skins/rose-pine-dawn.yaml
 ./layers/posix/home/.config/k9s/skins/rose-pine-dawn.yaml: $(GIT_TMP)/k9s
 	cp -v -f -- '$</skins/rose-pine-dawn.yaml' '$@'
 
+REQS += ./layers/posix/home/.config/lf/icons
+./layers/posix/home/.config/lf/icons: $(GIT_TMP)/lf
+	cp -v -f -- '$</etc/icons_colored.example' '$@'
+
 
 define FS_TEMPLATE
 
