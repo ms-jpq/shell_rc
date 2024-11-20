@@ -113,4 +113,5 @@
 + xmlstarlet
 + xsv
 + yank
++ yazi
 + zsh

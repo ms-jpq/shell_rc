@@ -8,6 +8,7 @@ set mouse      true
 set wrapscroll true
 set previewer  "~/.config/lf/preview.sh"
 
+cmd open       &true
 map <s-down>   :toggle; down
 map <s-up>     :toggle; up
 map <space>    :toggle

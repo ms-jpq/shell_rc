@@ -82,4 +82,5 @@
 + unzip
 + wget
 + xmlstarlet
++ yazi
 + zsh
