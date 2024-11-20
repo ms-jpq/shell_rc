@@ -1,12 +1,15 @@
 # https://github.com/gokcehan/lf/blob/master/doc.md
 # https://github.com/gokcehan/lf/blob/master/etc/lfrc.example
 
+set findlen    2
+set globfilter true
+set globsearch true
 set hidden     true
 set icons      true
 set locale     "*"
 set mouse      true
-set wrapscroll true
 set previewer  "~/.config/lf/preview.sh"
+set wrapscroll true
 
 cmd open       &true
 map <s-down>   :toggle; down
