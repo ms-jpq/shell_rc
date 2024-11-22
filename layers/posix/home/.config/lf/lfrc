@@ -29,6 +29,6 @@ map <space>        :toggle
 map F              :setfilter
 map d              delete
 map f              :filter
-map i              ${{fzf --preview "$XDG_CONFIG_HOME/zsh/libexec/preview.sh {}"}}
+map i              ${{fzf --bind 'esc:become(true)' --preview "$XDG_CONFIG_HOME/zsh/libexec/preview.sh {}"}}
 map o              :user-open
 map x              cut
