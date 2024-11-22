@@ -5,7 +5,6 @@ set drawbox        true
 set findlen        2
 set hidden         true
 set icons          true
-set ignorecase     true
 set incfilter      true
 set incsearch      true
 set infotimefmtnew "06-01-02 15:04"
