@@ -1,4 +1,5 @@
---bind 'alt-enter:execute($EDITOR {})'
+--bind "alt-e:execute($EDITOR {})"
+--bind "alt-o:execute-silent(open {})"
 --bind btab:up
 --bind ctrl-l:deselect-all
 --bind ctrl-space:toggle
@@ -16,3 +17,4 @@
 --preview-window 60%:wrap
 --reverse
 --tabstop 2
+--wrap
