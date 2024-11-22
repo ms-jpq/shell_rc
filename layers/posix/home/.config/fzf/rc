@@ -1,0 +1,17 @@
+--bind btab:up
+--bind ctrl-l:deselect-all
+--bind ctrl-space:toggle
+--bind ctrl-w:select-all
+--bind shift-down:toggle+down
+--bind shift-left:preview-up
+--bind shift-right:preview-down
+--bind shift-up:toggle+up
+--bind tab:down
+--border
+--color bg+:'#dfdfdf'
+--color light
+--cycle
+--no-height
+--preview-window 60%:wrap
+--reverse
+--tabstop 2

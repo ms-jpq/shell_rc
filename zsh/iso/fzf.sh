@@ -2,28 +2,8 @@
 
 export -- FZF_TMUX_HEIGHT='100%'
 
-_fzf_default_opts=(
-  --reverse
-  --no-height
-  --border
-  --cycle
-  --tabstop 2
-  --preview-window 60%:wrap
-  --bind ctrl-space:toggle
-  --bind tab:down
-  --bind btab:up
-  --bind shift-down:toggle+down
-  --bind shift-up:toggle+up
-  --bind shift-left:preview-up
-  --bind shift-right:preview-down
-  --bind ctrl-w:select-all
-  --bind ctrl-l:deselect-all
-  --color light
-  --color bg+:'#dfdfdf'
-)
-printf -v FZF_DEFAULT_OPTS -- '%q ' "${_fzf_default_opts[@]}"
-unset -- _fzf_default_opts
-export -- FZF_DEFAULT_OPTS
+# shellcheck disable=SC2154
+export -- FZF_DEFAULT_OPTS_FILE="$XDG_CONFIG_HOME/fzf/rc"
 
 _fzf_default_command=(
   fd
