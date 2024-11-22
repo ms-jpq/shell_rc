@@ -1,19 +1,32 @@
 # https://github.com/gokcehan/lf/blob/master/doc.md
 # https://github.com/gokcehan/lf/blob/master/etc/lfrc.example
 
-set findlen    2
-set globfilter true
-set globsearch true
-set hidden     true
-set icons      true
-set locale     "*"
-set mouse      true
-set previewer  "~/.config/lf/preview.sh"
-set wrapscroll true
+set drawbox        true
+set findlen        2
+set hidden         true
+set icons          true
+set ignorecase     true
+set incfilter      true
+set incsearch      true
+set infotimefmtnew "06-01-02 15:04"
+set infotimefmtold "06-01-02 15:04"
+set locale         "*"
+set mouse          true
+set period         2
+set previewer      "~/.config/lf/preview.sh"
+set roundbox       true
+set scrolloff      3
+set sixel          true
+set tabstop        2
+set timefmt        "06-01-02 15:04"
+set wrapscroll     true
 
-cmd open       &true
-map <s-down>   :toggle; down
-map <s-up>     :toggle; up
-map <space>    :toggle
-map d          delete
-map x          cut
+cmd open           &true
+map <s-down>       :toggle; down
+map <s-up>         :toggle; up
+map <space>        :toggle
+map F              :setfilter
+map d              delete
+map f              :filter
+map x              cut
+map i
