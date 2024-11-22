@@ -21,14 +21,15 @@ set timefmt        "06-01-02 15:04"
 set wrapscroll     true
 
 cmd open           &true
-cmd user-open      &$OPENER "$f"
+cmd user-open      &"$OPENER" "$f"
+cmd user-fzf       ${{fzf --preview "$XDG_CONFIG_HOME/zsh/libexec/preview.sh {}"}}
+
 map <s-down>       :toggle; down
 map <s-up>         :toggle; up
 map <space>        :toggle
 map F              :setfilter
 map d              delete
 map f              :filter
+map i              :user-fzf
 map o              :user-open
 map x              cut
-
-map i
