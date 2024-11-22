@@ -105,7 +105,9 @@ if (("${#ADD[@]}")); then
       brew upgrade
     fi
     brew install --formula -- "${ADD[@]}"
-    brew cleanup
+    if ! [[ -v CI ]]; then
+      brew cleanup
+    fi
     ;;
   linux*)
     sudo -- apt-get update
