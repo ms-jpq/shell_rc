@@ -18,22 +18,10 @@ if [[ -d $TARGET ]]; then
     --color=always
   )
 else
-  MIME="$(file --mime-type --brief -- "$TARGET")"
-
-  case "$MIME" in
-  image/*)
-    ARGV=(
-      "${0%/*}/icat.sh"
-    )
-    ;;
-  *)
-    ARGV=(
-      bat
-      --color=always
-    )
-    ;;
-  esac
-
+  ARGV=(
+    bat
+    --color=always
+  )
 fi
 
 exec -- "${ARGV[@]}" -- "$TARGET"
