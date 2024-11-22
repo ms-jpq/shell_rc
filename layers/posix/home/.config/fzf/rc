@@ -1,3 +1,4 @@
+--bind 'alt-enter:execute($EDITOR {})'
 --bind btab:up
 --bind ctrl-l:deselect-all
 --bind ctrl-space:toggle
