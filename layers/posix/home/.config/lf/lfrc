@@ -27,8 +27,8 @@ map <s-down>       :toggle; down
 map <s-up>         :toggle; up
 map <space>        :toggle
 map F              :setfilter
+map W              ${{fzf --bind 'esc:become(true)' --preview "$XDG_CONFIG_HOME/zsh/libexec/preview.sh {}"}}
 map d              delete
 map f              :filter
-map i              ${{fzf --bind 'esc:become(true)' --preview "$XDG_CONFIG_HOME/zsh/libexec/preview.sh {}"}}
 map o              :user-open
 map x              cut
