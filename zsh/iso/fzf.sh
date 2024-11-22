@@ -3,7 +3,7 @@
 export -- FZF_TMUX_HEIGHT='100%'
 
 # shellcheck disable=SC2154
-export -- FZF_DEFAULT_OPTS_FILE="$XDG_CONFIG_HOME/fzf/rc"
+export -- FZF_DEFAULT_OPTS_FILE="$XDG_CONFIG_HOME/fzf/rc.conf"
 
 _fzf_default_command=(
   fd
