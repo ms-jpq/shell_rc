@@ -107,9 +107,14 @@ blocks:
 
       - type: status
         style: plain
-        template: " {{ if .Error }}<red>\uf00d<b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</>{{ end }}"
+        template: " {{ if .Error }}<red>\uf00d<b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</> {{ end }}"
         properties:
           always_enabled: True
+
+      - type: text
+        style: plain
+        template: "{{ if .Env.LF_LEVEL }} LF{{ .Env.LF_LEVEL }}{{ end }}"
+        foreground: blue
 
       - type: shell
         style: plain
