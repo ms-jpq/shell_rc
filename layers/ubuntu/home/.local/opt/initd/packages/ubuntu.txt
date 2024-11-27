@@ -35,7 +35,6 @@
 + iotop-c
 + ipcalc-ng
 + iperf3
-+ jid
 + jnv
 + k9s
 + kubectl
