@@ -10,6 +10,7 @@
 *.tfvars
 *.uwu
 .DS_Store
+.aider.*
 .git/
 .ignore
 .nvim/
