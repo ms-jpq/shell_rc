@@ -1,5 +1,6 @@
 # + patat
 # + vhs
++ aerc
 + aha
 + asciiquarium
 + autossh
