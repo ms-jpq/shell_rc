@@ -52,6 +52,7 @@
 + mtr
 + ncdu
 + ndisc6
++ neomutt
 + neovim
 + nmap
 + nyancat
