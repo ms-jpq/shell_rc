@@ -5,6 +5,7 @@ path=(
   '/opt/homebrew/opt/bc/bin'
   '/opt/homebrew/opt/coreutils/libexec/gnubin'
   '/opt/homebrew/opt/curl/bin'
+  '/opt/homebrew/opt/cyrus-sasl/sbin'
   '/opt/homebrew/opt/findutils/libexec/gnubin'
   '/opt/homebrew/opt/gnu-getopt/bin'
   '/opt/homebrew/opt/gnu-sed/libexec/gnubin'
