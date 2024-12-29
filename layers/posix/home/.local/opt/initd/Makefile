@@ -54,7 +54,7 @@ $(TP):
 include makelib/*.mk
 
 noop:
-all: git curl zsh tmux conf nvim pkg
+all: git curl zsh tmux conf nvim pkg mail
 
 ifneq ($(OS),nt)
 all: pipx
