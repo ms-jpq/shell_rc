@@ -2,4 +2,4 @@
 
 mail: $(CONFIG)/isyncrc
 $(CONFIG)/isyncrc: | $(CONFIG)/isyncrc.example
-	cp -v -f -- '$<' '$@'
+	cp -v -f -- '$|' '$@'
