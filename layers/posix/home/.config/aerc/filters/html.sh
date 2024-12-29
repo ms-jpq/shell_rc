@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-COLS="$(stty size < /dev/tty | cut -d' ' -f2)"
+COLS="$(stty size < /dev/tty | cut -d ' ' -f 2)"
 
 PANDOC=(
   pandoc
