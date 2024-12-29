@@ -10,7 +10,7 @@ _V_POS="$5"
 
 ARGV=(
   bat
-  --color always
+  --force-colorization
   --wrap character
   --terminal-width $((WIDTH))
 )

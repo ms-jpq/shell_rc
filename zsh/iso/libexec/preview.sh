@@ -20,7 +20,7 @@ if [[ -d $TARGET ]]; then
 else
   ARGV=(
     bat
-    --color=always
+    --force-colorization
   )
 fi
 

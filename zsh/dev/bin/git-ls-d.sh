@@ -8,7 +8,7 @@ preview)
   for LINE in "${LINES[@]}"; do
     SHA="${LINE%% *}"
     FILE="${LINE#*$'\n'}"
-    git show --relative "$SHA^:$FILE" | bat --color always --file-name "$FILE"
+    git show --relative "$SHA^:$FILE" | bat --force-colorization --file-name "$FILE"
   done
   ;;
 execute)
