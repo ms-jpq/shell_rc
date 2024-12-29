@@ -11,8 +11,9 @@ User ${USERNAME}
 Pass ${PASSWORD}
 
 MaildirStore ${ACCOUNT}-local
+SubFolders Verbatim
+Path ~/.local/share/maildir/
 Inbox ~/.local/share/maildir/${ACCOUNT}/
-SubFolders Maildir++
 
 IMAPStore ${ACCOUNT}-remote
 Account ${ACCOUNT}
