@@ -19,6 +19,9 @@ if ((T)); then
   printf -- '\ePtmux;'
 fi
 
+# https://sw.kovidgoyal.net/kitty/desktop-notifications/
+ID=1
+
 {
   if ((T)); then
     # TMUX escape `ESC`
@@ -26,9 +29,9 @@ fi
   fi
 
   # OSC99 start
-  printf -- '\e]99;i=1:d=0;'
+  printf -- '\e]99;e=1:i=%s:d=0:p=title;' "$ID"
   # OSC99 title
-  printf -- '%s' "$*"
+  base64 --wrap 0 <<< "$*"
 
   if ((T)); then
     # TMUX escape `ESC`
@@ -47,9 +50,9 @@ fi
   fi
 
   # OSC99 start
-  printf -- '\e]99;i=1:p=body;'
+  printf -- '\e]99;e=1:i=%s:d=1:p=body;' "$ID"
   # OSC99 body
-  tee --
+  base64 --wrap 0
 
   if ((T)); then
     # TMUX escape `ESC`
