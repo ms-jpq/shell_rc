@@ -26,8 +26,10 @@ case "${1:-""}" in
   ;;
 push)
   FILES=(
+    ~/.config/aerc/accounts.conf
     ~/.config/git/config
     ~/.config/gnupg/sshcontrol
+    ~/.config/isyncrc
     ~/.local/secrets
     ~/.ssh
   )
@@ -35,9 +37,7 @@ push)
   dir
   "$SELF/s3-prep.sh" push "$TMP" "${FILES[@]}"
 
-  # BW="$BASE/node_modules/.bin/bw"
-  # chmod +x "$BW"
-  BW='bw'
+  BW="$BASE/node_modules/.bin/bw"
   "$BW" export --format json --raw | gpg --batch --encrypt --output "$TMP/bitwarden.json.gpg"
   gpg --export-secret-keys --export-options export-backup | gpg --batch --encrypt --output "$GPG"
 
