@@ -52,6 +52,7 @@
 + hyperfine
 + ipcalc
 + iperf3
++ isync
 + jless
 + jnv
 + jq

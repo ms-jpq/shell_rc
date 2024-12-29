@@ -3,6 +3,7 @@
 # + vhs
 # + yank
 + 7zip-standalone
++ aerc
 + aha
 + athena-jot
 + autossh
@@ -35,6 +36,7 @@
 + iotop-c
 + ipcalc-ng
 + iperf3
++ isync
 + jnv
 + k9s
 + kubectl
