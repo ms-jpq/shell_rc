@@ -3,4 +3,16 @@
 set -o pipefail
 
 COLS="$(stty size < /dev/tty | cut -d' ' -f2)"
-exec -- pandoc --read=html --write=plain --columns=$((COLS - 2))
+
+PANDOC=(
+  pandoc
+  --reference-links
+  --reference-location block
+  --eol lf
+  --read html-native_divs-native_spans
+  --write markdown
+  --lua-filter "${0%'.sh'}.lua"
+  --columns $((COLS - 2))
+)
+
+exec -- "${PANDOC[@]}"
