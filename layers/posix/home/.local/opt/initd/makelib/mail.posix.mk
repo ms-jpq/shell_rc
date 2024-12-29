@@ -1,5 +1,5 @@
 .PHONY: mail
 
 mail: $(CONFIG)/isyncrc
-$(CONFIG)/isyncrc:
-	touch -- '$@'
+$(CONFIG)/isyncrc: | $(CONFIG)/isyncrc.example
+	cp -v -f -- '$<' '$@'
