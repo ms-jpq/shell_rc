@@ -94,8 +94,7 @@ done
 while true; do
   case "$OSTYPE" in
   darwin*)
-    BODY="$(fortune | tr -- '\n' ' ' | sed -E -e 's/[[:space:]]+/ /g')"
-    senpai.js '🥫🥫' "$BODY"
+    fortune | tr -- '\n' ' ' | sed -E -e 's/[[:space:]]+/ /g' | ~/.local/libexec/notify.sh '🥫🥫'
     ;;
   *)
     set -x
