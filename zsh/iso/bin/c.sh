@@ -10,6 +10,10 @@ tmux*)
 *) ;;
 esac
 
+if [[ -v TMUX_PANE ]]; then
+  T=1
+fi
+
 if ((T)); then
   # TMUX wrap start
   printf -- '\ePtmux;'
