@@ -71,7 +71,6 @@
 + ncdu
 + ncspot
 + neofetch
-+ neomutt
 + neovim
 + nmap
 + nyancat
