@@ -6,10 +6,10 @@ Expunge Both
 
 IMAPAccount ${ACCOUNT}
 TLSType IMAPS
-AuthMechs PLAIN
+AuthMechs XOAUTH2
 Host ${IMAP_HOST}
 User ${USERNAME}
-Pass ${PASSWORD}
+PassCmd "~/.local/opt/isync/oauth.sh -- ~/.local/state/isync/<email>.oauth.gpg"
 
 MaildirStore ${ACCOUNT}-local
 SubFolders Verbatim
