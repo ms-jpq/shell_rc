@@ -1,16 +1,21 @@
 #!/usr/bin/env -S -- PYTHONSAFEPATH= python3
 
 from argparse import ArgumentParser, Namespace
-from contextlib import suppress
+from collections.abc import Iterator, MutableMapping
+from contextlib import contextmanager, suppress
 from email.errors import HeaderParseError
 from email.header import decode_header
 from email.utils import getaddresses
 from itertools import chain
 from mailbox import Maildir, MaildirMessage
+from os import linesep
 from os.path import pathsep
-from pathlib import Path
+from pathlib import Path, PurePath
 from sys import exit
-from typing import Iterator
+from typing import Callable, TypeVar
+
+_T = TypeVar("_T")
+_U = TypeVar("_U")
 
 
 def _parse_args() -> Namespace:
@@ -20,6 +25,12 @@ def _parse_args() -> Namespace:
         type=Path,
         default=Path.home() / ".local" / "share" / "maildir",
     )
+    parser.add_argument(
+        "--cache",
+        type=Path,
+        default=Path.home() / ".cache" / "maildir",
+    )
+    parser.add_argument("--clear", action="store_true")
     return parser.parse_args()
 
 
@@ -43,11 +54,20 @@ def _decode(name: str) -> Iterator[str]:
                 assert False, (lhs, rhs)
 
 
+def _standardize(addr: str) -> str | None:
+    name, sep, domain = addr.strip().partition("@")
+    if sep != "@":
+        return None
+
+    return name + sep + domain.casefold()
+
+
 def _parse(mail: MaildirMessage) -> Iterator[tuple[str, str]]:
     for hdr in ("from", "to", "cc", "bcc"):
         for label, addr in getaddresses(mail.get_all(hdr, [])):
-            for name in _decode(label):
-                yield addr, name
+            if parsed := _standardize(addr):
+                for name in _decode(label):
+                    yield parsed, name
 
 
 def _iter_keys(root: Path) -> Iterator[tuple[str, Maildir, Iterator[Path]]]:
@@ -56,18 +76,61 @@ def _iter_keys(root: Path) -> Iterator[tuple[str, Maildir, Iterator[Path]]]:
         yield mailbox, maildir, chain.from_iterable(paths)
 
 
-def main() -> None:
-    args = _parse_args()
-    for mailbox, maildir, paths in _iter_keys(Path(args.maildirs)):
-        for path in paths:
-            key, sep, _ = path.name.partition(pathsep)
-            if sep != pathsep:
+@contextmanager
+def _cache(
+    f: Path, l: Callable[[str], _T], r: Callable[[str], _U]
+) -> Iterator[MutableMapping[_T, _U]]:
+    f.touch()
+    cached: MutableMapping[_T, _U] = {}
+    with f.open() as fd:
+        for line in fd:
+            if not line:
                 continue
 
-            with suppress(KeyError):
-                message = maildir[key]
-                for addr, name in _parse(message):
-                    print(addr, name)
+            key, _, value = line.rpartition("\0")
+            with suppress(ValueError):
+                cached[l(key)] = r(value)
+
+    try:
+        yield cached
+    finally:
+        with f.open("w") as fd:
+            fd.writelines(f"{key}\0{val}{linesep}" for key, val in cached.items())
+
+
+def _run(cache_dir: Path, mail_dirs: Path) -> None:
+    with _cache(cache_dir / "messages.txt", l=PurePath, r=float) as cache:
+        for mailbox, maildir, paths in _iter_keys(mail_dirs):
+            with _cache(cache_dir / f"addr.{mailbox}.txt", l=str, r=str) as mcache:
+                for path in paths:
+                    key, sep, _ = path.name.partition(pathsep)
+                    if sep != pathsep:
+                        continue
+
+                    with suppress(FileNotFoundError):
+                        mtime = path.stat().st_mtime
+                        if mtime <= cache.get(path, 0):
+                            continue
+
+                        cache[path] = mtime
+
+                    with suppress(KeyError):
+                        message = maildir[key]
+                        for addr, _ in _parse(message):
+                            mcache[addr] = " "
+
+
+def main() -> None:
+    args = _parse_args()
+    cache_dir = Path(args.cache)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    if args.clear:
+        for path in cache_dir.iterdir():
+            path.unlink()
+        return
+
+    _run(cache_dir, Path(args.maildirs))
 
 
 try:
