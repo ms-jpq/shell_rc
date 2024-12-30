@@ -5,7 +5,8 @@ from collections.abc import Iterator, MutableMapping
 from contextlib import contextmanager, suppress
 from email.errors import HeaderParseError
 from email.header import decode_header
-from email.utils import formataddr, getaddresses, unquote
+from email.utils import getaddresses, unquote
+from hashlib import md5
 from itertools import chain
 from logging import INFO, StreamHandler, captureWarnings, getLogger
 from mailbox import Maildir, MaildirMessage
@@ -74,13 +75,13 @@ def _standardize(addr: str) -> str | None:
     return name + sep + domain.casefold()
 
 
-def _parse(mail: MaildirMessage) -> Iterator[tuple[str, str, str]]:
+def _parse(mail: MaildirMessage) -> Iterator[tuple[str, str]]:
     for hdr in ("from", "to", "cc", "bcc"):
         for label, addr in getaddresses(mail.get_all(hdr, [])):
             if parsed := _standardize(addr):
                 for name in _decode(label):
                     normalized = _normalize(name)
-                    yield normalized, parsed, formataddr((normalized, parsed))
+                    yield parsed, normalized
 
 
 def _iter_keys(root: Path) -> Iterator[tuple[str, Maildir, Iterator[Path]]]:
@@ -100,7 +101,7 @@ def _cache(
             if not line:
                 continue
 
-            key, s, value = line.rpartition(sep)
+            key, s, value = line.partition(sep)
             if s != sep:
                 continue
 
@@ -115,10 +116,10 @@ def _cache(
 
 
 def _run(cache_dir: Path, mail_dirs: Path) -> None:
-    with _cache(cache_dir / "messages.txt", sep=" ", l=PurePath, r=float) as cache:
+    with _cache(cache_dir / "messages.txt", sep="\0", l=PurePath, r=float) as cache:
         for mailbox, maildir, paths in _iter_keys(mail_dirs):
             with _cache(
-                cache_dir / f"addr.{mailbox}.txt", sep="#", l=str, r=str
+                cache_dir / f"addr.{mailbox}.txt", sep="\t", l=str, r=str
             ) as mcache:
                 for path in paths:
                     key, sep, _ = path.name.partition(pathsep)
@@ -134,10 +135,13 @@ def _run(cache_dir: Path, mail_dirs: Path) -> None:
 
                     with suppress(KeyError):
                         message = maildir[key]
-                        for name, email, fmt in _parse(message):
-                            if fmt not in mcache:
+                        for email, name in _parse(message):
+                            row = f"{email}\t{name}"
+                            hashed = md5(row.encode()).hexdigest()
+
+                            if hashed not in mcache:
                                 log.info("%s", f"{email} :: {name}")
-                            mcache[fmt] = name
+                            mcache[hashed] = row
 
 
 def main() -> None:

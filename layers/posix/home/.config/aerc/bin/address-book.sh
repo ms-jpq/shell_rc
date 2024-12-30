@@ -25,4 +25,4 @@ else
   GREP+=("$CACHE"/addr.*.txt)
 fi
 
-"${GREP[@]}" < /dev/null | cut -d '#' -f 1
+"${GREP[@]}" < /dev/null | cut -d $'\t' -f 2-
