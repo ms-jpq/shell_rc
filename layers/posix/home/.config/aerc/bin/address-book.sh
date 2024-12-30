@@ -13,6 +13,7 @@ shift -- 1
 
 GREP=(
   grep
+  --binary-files text
   --no-filename
   --ignore-case
   --fixed-strings
@@ -24,4 +25,4 @@ else
   GREP+=("$CACHE"/addr.*.txt)
 fi
 
-"${GREP[@]}" < /dev/null | sed -E -e 's/ -$//'
+"${GREP[@]}" < /dev/null | cut -d '#' -f 1

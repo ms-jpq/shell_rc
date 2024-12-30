@@ -5,7 +5,7 @@ from collections.abc import Iterator, MutableMapping
 from contextlib import contextmanager, suppress
 from email.errors import HeaderParseError
 from email.header import decode_header
-from email.utils import formataddr, getaddresses
+from email.utils import formataddr, getaddresses, unquote
 from itertools import chain
 from logging import INFO, StreamHandler, captureWarnings, getLogger
 from mailbox import Maildir, MaildirMessage
@@ -63,12 +63,7 @@ def _decode(name: str) -> Iterator[str]:
 
 def _normalize(name: str) -> str:
     norm = normalize("NFKC", " ".join(name.split()))
-    for quot in ('"', "'"):
-        if norm.startswith(quot) and norm.endswith(quot):
-            l = len(quot)
-            return norm[l:-l]
-
-    return norm
+    return unquote(norm)
 
 
 def _standardize(addr: str) -> str | None:
@@ -79,13 +74,13 @@ def _standardize(addr: str) -> str | None:
     return name + sep + domain.casefold()
 
 
-def _parse(mail: MaildirMessage) -> Iterator[str]:
+def _parse(mail: MaildirMessage) -> Iterator[tuple[str, str, str]]:
     for hdr in ("from", "to", "cc", "bcc"):
         for label, addr in getaddresses(mail.get_all(hdr, [])):
             if parsed := _standardize(addr):
                 for name in _decode(label):
                     normalized = _normalize(name)
-                    yield formataddr((normalized, parsed))
+                    yield normalized, parsed, formataddr((normalized, parsed))
 
 
 def _iter_keys(root: Path) -> Iterator[tuple[str, Maildir, Iterator[Path]]]:
@@ -96,7 +91,7 @@ def _iter_keys(root: Path) -> Iterator[tuple[str, Maildir, Iterator[Path]]]:
 
 @contextmanager
 def _cache(
-    f: Path, l: Callable[[str], _T], r: Callable[[str], _U]
+    f: Path, sep: str, l: Callable[[str], _T], r: Callable[[str], _U]
 ) -> Iterator[MutableMapping[_T, _U]]:
     f.touch()
     cached: MutableMapping[_T, _U] = {}
@@ -105,7 +100,10 @@ def _cache(
             if not line:
                 continue
 
-            key, _, value = line.rpartition(" ")
+            key, s, value = line.rpartition(sep)
+            if s != sep:
+                continue
+
             with suppress(ValueError):
                 cached[l(key)] = r(value)
 
@@ -113,13 +111,15 @@ def _cache(
         yield cached
     finally:
         with f.open("w") as fd:
-            fd.writelines(f"{key} {val}{linesep}" for key, val in cached.items())
+            fd.writelines(f"{key}{sep}{val}{linesep}" for key, val in cached.items())
 
 
 def _run(cache_dir: Path, mail_dirs: Path) -> None:
-    with _cache(cache_dir / "messages.txt", l=PurePath, r=float) as cache:
+    with _cache(cache_dir / "messages.txt", sep=" ", l=PurePath, r=float) as cache:
         for mailbox, maildir, paths in _iter_keys(mail_dirs):
-            with _cache(cache_dir / f"addr.{mailbox}.txt", l=str, r=str) as mcache:
+            with _cache(
+                cache_dir / f"addr.{mailbox}.txt", sep="#", l=str, r=str
+            ) as mcache:
                 for path in paths:
                     key, sep, _ = path.name.partition(pathsep)
                     if sep != pathsep:
@@ -134,10 +134,10 @@ def _run(cache_dir: Path, mail_dirs: Path) -> None:
 
                     with suppress(KeyError):
                         message = maildir[key]
-                        for row in _parse(message):
-                            if row not in mcache:
-                                log.info("%s", row)
-                            mcache[row] = "-"
+                        for name, email, fmt in _parse(message):
+                            if fmt not in mcache:
+                                log.info("%s", f"{email} :: {name}")
+                            mcache[fmt] = name
 
 
 def main() -> None:
