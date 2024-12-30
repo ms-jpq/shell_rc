@@ -26,4 +26,4 @@ GREP=(
   -- "$QUERY"
 )
 
-"${GREP[@]}" "${CACHED[@]}" < /dev/null | cut -d $'\t' -f 2-
+cut -d ' ' -f 2- -- "${CACHED[@]}" < /dev/null | "${GREP[@]}"

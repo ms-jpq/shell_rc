@@ -115,11 +115,21 @@ def _cache(
             fd.writelines(f"{key}{sep}{val}{linesep}" for key, val in cached.items())
 
 
+def _die(addr: str) -> bool:
+    return (
+        "reply" in addr
+        or "notification" in addr
+        or "invitation" in addr
+        or "inbound" in addr
+        or "notify" in addr
+    )
+
+
 def _run(cache_dir: Path, mail_dirs: Path) -> None:
     with _cache(cache_dir / "messages.txt", sep="\0", l=PurePath, r=float) as cache:
         for mailbox, maildir, paths in _iter_keys(mail_dirs):
             with _cache(
-                cache_dir / f"addr.{mailbox}.txt", sep="\t", l=str, r=str
+                cache_dir / f"addr.{mailbox}.txt", sep=" ", l=str, r=str
             ) as mcache:
                 for path in paths:
                     key, sep, _ = path.name.partition(pathsep)
@@ -136,6 +146,9 @@ def _run(cache_dir: Path, mail_dirs: Path) -> None:
                     with suppress(KeyError):
                         message = maildir[key]
                         for email, name in _parse(message):
+                            if _die(email):
+                                continue
+
                             row = f"{email}\t{name}"
                             hashed = md5(row.encode()).hexdigest()
 
