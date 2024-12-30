@@ -31,3 +31,11 @@ verify
 AuthMechs XOAUTH2
 PassCmd "~/.local/opt/isync/oauth.sh -- ~/.local/state/isync/<email>.oauth.gpg"
 ```
+
+## SASL
+
+```bash
+brew install cyrus-sasl libtool automake
+```
+
+[Compile](https://github.com/moriyoshi/cyrus-sasl-xoauth2/issues/9#issuecomment-2161796043)
