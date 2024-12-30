@@ -1,0 +1,10 @@
+# https://ghostty.org/docs/config/reference
+
+background-opacity=0.95
+confirm-close-surface=false
+font-family="sf mono"
+font-size=14
+font-style="semibold"
+macos-option-as-alt=true
+macos-titlebar-style=hidden
+theme=seoulbones_light
