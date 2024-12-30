@@ -5,17 +5,24 @@ from collections.abc import Iterator, MutableMapping
 from contextlib import contextmanager, suppress
 from email.errors import HeaderParseError
 from email.header import decode_header
-from email.utils import getaddresses
+from email.utils import formataddr, getaddresses
 from itertools import chain
+from logging import INFO, StreamHandler, captureWarnings, getLogger
 from mailbox import Maildir, MaildirMessage
 from os import linesep
 from os.path import pathsep
 from pathlib import Path, PurePath
 from sys import exit
 from typing import Callable, TypeVar
+from unicodedata import normalize
 
 _T = TypeVar("_T")
 _U = TypeVar("_U")
+
+captureWarnings(True)
+log = getLogger()
+log.setLevel(INFO)
+log.addHandler(StreamHandler())
 
 
 def _parse_args() -> Namespace:
@@ -54,6 +61,16 @@ def _decode(name: str) -> Iterator[str]:
                 assert False, (lhs, rhs)
 
 
+def _normalize(name: str) -> str:
+    norm = normalize("NFKC", " ".join(name.split()))
+    for quot in ('"', "'"):
+        if norm.startswith(quot) and norm.endswith(quot):
+            l = len(quot)
+            return norm[l:-l]
+
+    return norm
+
+
 def _standardize(addr: str) -> str | None:
     name, sep, domain = addr.strip().partition("@")
     if sep != "@":
@@ -62,12 +79,13 @@ def _standardize(addr: str) -> str | None:
     return name + sep + domain.casefold()
 
 
-def _parse(mail: MaildirMessage) -> Iterator[tuple[str, str]]:
+def _parse(mail: MaildirMessage) -> Iterator[str]:
     for hdr in ("from", "to", "cc", "bcc"):
         for label, addr in getaddresses(mail.get_all(hdr, [])):
             if parsed := _standardize(addr):
                 for name in _decode(label):
-                    yield parsed, name
+                    normalized = _normalize(name)
+                    yield formataddr((normalized, parsed))
 
 
 def _iter_keys(root: Path) -> Iterator[tuple[str, Maildir, Iterator[Path]]]:
@@ -87,7 +105,7 @@ def _cache(
             if not line:
                 continue
 
-            key, _, value = line.rpartition("\0")
+            key, _, value = line.rpartition(" ")
             with suppress(ValueError):
                 cached[l(key)] = r(value)
 
@@ -95,7 +113,7 @@ def _cache(
         yield cached
     finally:
         with f.open("w") as fd:
-            fd.writelines(f"{key}\0{val}{linesep}" for key, val in cached.items())
+            fd.writelines(f"{key} {val}{linesep}" for key, val in cached.items())
 
 
 def _run(cache_dir: Path, mail_dirs: Path) -> None:
@@ -116,8 +134,10 @@ def _run(cache_dir: Path, mail_dirs: Path) -> None:
 
                     with suppress(KeyError):
                         message = maildir[key]
-                        for addr, _ in _parse(message):
-                            mcache[addr] = " "
+                        for row in _parse(message):
+                            if row not in mcache:
+                                log.info("%s", row)
+                            mcache[row] = "-"
 
 
 def main() -> None:
