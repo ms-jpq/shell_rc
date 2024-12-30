@@ -3,6 +3,12 @@
 set -o pipefail
 
 # shellcheck disable=SC2154
-~/.local/libexec/notify.sh "📩 $AERC_FROM_NAME" <<- EOF
-$AERC_SUBJECT
-EOF
+ARGV=(
+  kitty @
+  kitten notify
+  --icon info
+  --
+  "📩 $AERC_FROM_NAME" "$AERC_SUBJECT"
+)
+
+exec -- "${ARGV[@]}"
