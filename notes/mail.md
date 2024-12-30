@@ -1,10 +1,29 @@
 # Mail
 
+## `mbsync`
+
+### Install
+
+```bash
+brew install --HEAD --formula -- ./formulae/isync.rb
+```
+
+```bash
+brew install --HEAD --formula -- ./formulae/cyrus-sasl-xoauth2.rb
+```
+
+### Conf
+
+```
+AuthMechs XOAUTH2
+PassCmd "~/.local/opt/isync/oauth.sh -- ~/.local/state/isync/<email>.oauth.gpg"
+```
+
+## SASL
+
 [Reference](https://github.com/neomutt/neomutt/tree/main/contrib/oauth2)
 
-## Initial Authorization
-
-set up
+### New token
 
 ```bash
 ~/.local/opt/isync/oauth.sh --verbose --provider microsoft \
@@ -16,7 +35,7 @@ set up
   '~/.local/state/isync/<email>.oauth.gpg'
 ```
 
-verify
+### Verify token
 
 ```bash
 ~/.local/opt/isync/oauth.sh --verbose --provider microsoft \
@@ -24,18 +43,3 @@ verify
   --
   '~/.local/state/isync/<email>.oauth.gpg'
 ```
-
-## `mbsync`
-
-```
-AuthMechs XOAUTH2
-PassCmd "~/.local/opt/isync/oauth.sh -- ~/.local/state/isync/<email>.oauth.gpg"
-```
-
-## SASL
-
-```bash
-brew install cyrus-sasl libtool automake
-```
-
-[Compile](https://github.com/moriyoshi/cyrus-sasl-xoauth2/issues/9#issuecomment-2161796043)

@@ -7,6 +7,21 @@ on:
     - cron: "0 0 * * *" # daily
 
 jobs:
+  formulae:
+    strategy:
+      matrix:
+        formula:
+          - cyrus-sasl-xoauth2.rb
+          - isync.rb
+
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: |-
+          brew install --HEAD --formula -- ./formulae/${{ matrix.formula }}
+
   docker:
     strategy:
       matrix:
