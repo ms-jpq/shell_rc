@@ -11,7 +11,7 @@ PANDOC=(
   --eol lf
   --read html-native_divs-native_spans
   --write markdown
-  --lua-filter "${0%'.sh'}.lua"
+  --lua-filter "${0%/*}/../libexec/html-filter.lua"
   --columns $((COLS - 2))
 )
 
