@@ -3,4 +3,9 @@
 set -o pipefail
 
 # shellcheck disable=SC2154
-exec -- "${0%/*}/../libexec/mbsync.sh" "$AERC_ACCOUNT:$AERC_FOLDER"
+ACCOUNT="${AERC_ACCOUNT#'<'}"
+ACCOUNT="${ACCOUNT%'>'}"
+ACCOUNT="${ACCOUNT,,}"
+
+# shellcheck disable=SC2154
+"${0%/*}/../libexec/mbsync.sh" "$ACCOUNT:$AERC_FOLDER" &
