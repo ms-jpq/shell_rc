@@ -9,8 +9,6 @@ class CyrusSaslXoauth2 < Formula
     depends_on 'automake' => :build
   end
 
-  depends_on 'cyrus-sasl'
-
   def install
     system('glibtoolize')
     File.open('./autogen.sh') do |f|

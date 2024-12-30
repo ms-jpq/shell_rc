@@ -21,11 +21,12 @@ class Isync < Formula
   end
 
   service do
+    sasl = HOMEBREW_PREFIX / 'opt' / 'cyrus-sasl-xoauth2' / 'lib' / 'sasl2'
     run [opt_bin / 'mbsync', '--all']
     run_type :interval
     interval 300
     keep_alive false
-    environment_variables PATH: std_service_path_env
+    environment_variables PATH: std_service_path_env, SASL_PATH: sasl
     log_path File::NULL
     error_log_path File::NULL
   end

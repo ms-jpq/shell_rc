@@ -1,16 +1,14 @@
 # Mail
 
-## `mbsync`
-
-### Install
+## SASL XOAuth2
 
 ```bash
-brew install --HEAD --formula -- ./formulae/isync.rb
+brew install --HEAD --formula -- ./formulae/cyrus-sasl-xoauth2.rb ./formulae/isync.rb
 ```
 
-```bash
-brew install --HEAD --formula -- ./formulae/cyrus-sasl-xoauth2.rb
-```
+## Oauth2
+
+[Reference](https://github.com/neomutt/neomutt/tree/main/contrib/oauth2)
 
 ### Conf
 
@@ -18,10 +16,6 @@ brew install --HEAD --formula -- ./formulae/cyrus-sasl-xoauth2.rb
 AuthMechs XOAUTH2
 PassCmd "~/.local/opt/isync/oauth.sh -- ~/.local/state/isync/<email>.oauth.gpg"
 ```
-
-## SASL
-
-[Reference](https://github.com/neomutt/neomutt/tree/main/contrib/oauth2)
 
 ### New token
 
