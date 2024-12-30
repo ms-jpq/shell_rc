@@ -10,4 +10,5 @@ else
   ARGV+=(--all)
 fi
 
-SASL_PATH=/opt/homebrew/opt/cyrus-sasl-xoauth2/lib/sasl2 exec -- "${ARGV[@]}"
+OPT='/opt/homebrew/opt'
+SASL_PATH="$OPT/cyrus-sasl/lib/sasl2:$OPT/cyrus-sasl-xoauth2/lib/sasl2" exec -- "${ARGV[@]}"

@@ -21,7 +21,11 @@ class Isync < Formula
   end
 
   service do
-    sasl = HOMEBREW_PREFIX / 'opt' / 'cyrus-sasl-xoauth2' / 'lib' / 'sasl2'
+    sasl = [
+      HOMEBREW_PREFIX / 'opt' / 'cyrus-sasl' / 'lib' / 'sasl2',
+      HOMEBREW_PREFIX / 'opt' / 'cyrus-sasl-xoauth2' / 'lib' / 'sasl2'
+    ].join(File::PATH_SEPARATOR)
+
     run [opt_bin / 'mbsync', '--all']
     run_type :interval
     interval 300
