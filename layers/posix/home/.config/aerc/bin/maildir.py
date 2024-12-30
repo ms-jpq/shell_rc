@@ -81,7 +81,7 @@ def _parse(mail: MaildirMessage) -> Iterator[tuple[str, str]]:
             if parsed := _standardize(addr):
                 for name in _decode(label):
                     normalized = _normalize(name)
-                    yield parsed, normalized
+                    yield parsed, "" if normalized == parsed else normalized
 
 
 def _iter_keys(root: Path) -> Iterator[tuple[str, Maildir, Iterator[Path]]]:

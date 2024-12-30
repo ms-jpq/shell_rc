@@ -8,8 +8,14 @@ if [[ ! -d $CACHE ]]; then
   mkdir -p -- "$CACHE"
 fi
 
-QUERY="$1"
-shift -- 1
+if (($# > 1)); then
+  CACHED=("$CACHE/addr.$1.txt")
+  shift -- 1
+  QUERY="$*"
+else
+  CACHED=("$CACHE"/addr.*.txt)
+  QUERY="$1"
+fi
 
 GREP=(
   grep
@@ -19,10 +25,5 @@ GREP=(
   --fixed-strings
   -- "$QUERY"
 )
-if (($#)); then
-  GREP+=("$CACHE/addr.$*.txt")
-else
-  GREP+=("$CACHE"/addr.*.txt)
-fi
 
-"${GREP[@]}" < /dev/null | cut -d $'\t' -f 2-
+"${GREP[@]}" "${CACHED[@]}" < /dev/null | cut -d $'\t' -f 2-
