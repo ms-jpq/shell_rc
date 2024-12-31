@@ -11,7 +11,7 @@ launchctl kickstart gui/501/org.gnupg.gpg-agent
 ## Stop
 
 ```bash
-launchctl kickstart org.gnupg.gpg-agent
+launchctl stop org.gnupg.gpg-agent
 ```
 
 ## Restart

@@ -2,5 +2,7 @@
 
 set -o pipefail
 
-mbsync "$@"
+ACCOUNT="$1"
+mbsync "$ACCOUNT"
+
 exec -- aerc :connect
