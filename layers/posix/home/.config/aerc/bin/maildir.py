@@ -3,6 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator, MutableMapping
 from contextlib import contextmanager, suppress
+from datetime import datetime
 from email.errors import HeaderParseError
 from email.header import decode_header
 from email.utils import getaddresses, parsedate_to_datetime, unquote
@@ -82,20 +83,23 @@ def _mtime(mail: MaildirMessage) -> float | None:
         ("x-received", True),
         ("resent-date", False),
     ):
-        for header in mail.get_all(hdr, ()):
+        for header in mail.get_all(hdr, []):
             if postpend:
                 _, _, value = header.partition(";")
             else:
                 value = header
 
             with suppress(ValueError):
-                parsed = parsedate_to_datetime(value)
-                return parsed.timestamp()
+                if parsed := parsedate_to_datetime(value):
+                    assert isinstance(parsed, datetime)
+                    return parsed.timestamp()
+
+    return None
 
 
 def _parse(mail: MaildirMessage) -> Iterator[tuple[str, str]]:
     for hdr in ("from", "to", "cc", "bcc"):
-        for label, addr in getaddresses(mail.get_all(hdr, ())):
+        for label, addr in getaddresses(mail.get_all(hdr, [])):
             if parsed := _standardize(addr):
                 for name in _decode(label):
                     normalized = _normalize(name)
