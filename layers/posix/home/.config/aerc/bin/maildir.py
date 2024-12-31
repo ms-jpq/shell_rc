@@ -76,10 +76,17 @@ def _standardize(addr: str) -> str | None:
 
 
 def _mtime(mail: MaildirMessage) -> Iterator[float]:
-    for hdr in ("date", "received"):
+    for hdr in ("date", "resent-date"):
         for header in mail.get_all(hdr, ()):
             with suppress(ValueError):
                 parsed = parsedate_to_datetime(header)
+                yield parsed.timestamp()
+
+    for hdr in ("received", "x-received"):
+        for header in mail.get_all(hdr, ()):
+            _, _, rhs = header.partition(";")
+            with suppress(ValueError):
+                parsed = parsedate_to_datetime(rhs)
                 yield parsed.timestamp()
 
 
