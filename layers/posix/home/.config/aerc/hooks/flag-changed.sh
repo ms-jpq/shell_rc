@@ -3,8 +3,8 @@
 set -o pipefail
 
 # shellcheck disable=SC2154
-ACCOUNT="${AERC_ACCOUNT#'<'}"
-ACCOUNT="${ACCOUNT%'>'}"
-ACCOUNT="${ACCOUNT,,}"
+CHANNEL="${AERC_ACCOUNT#'<'}"
+CHANNEL="${CHANNEL%'>'}"
+CHANNEL="${CHANNEL,,}"
 
-mbsync "$ACCOUNT" &
+mbsync -- "$CHANNEL" &
