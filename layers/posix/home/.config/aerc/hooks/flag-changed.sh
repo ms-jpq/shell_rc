@@ -7,4 +7,4 @@ CHANNEL="${AERC_ACCOUNT#'<'}"
 CHANNEL="${CHANNEL%'>'}"
 CHANNEL="${CHANNEL,,}"
 
-mbsync -- "$CHANNEL" &
+exec -- touch -- ~/.local/state/isync/mbsync."$CHANNEL".watch/trigger
