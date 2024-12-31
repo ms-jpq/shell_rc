@@ -2,7 +2,5 @@
 
 set -o pipefail
 
-cd -- "${0%/*}"
-
-"${0%/*}/../libexec/mbsync.sh" "$@"
+mbsync "$@"
 exec -- aerc :connect

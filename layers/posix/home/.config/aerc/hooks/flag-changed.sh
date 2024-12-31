@@ -8,4 +8,4 @@ ACCOUNT="${ACCOUNT%'>'}"
 ACCOUNT="${ACCOUNT,,}"
 
 # shellcheck disable=SC2154
-"${0%/*}/../libexec/mbsync.sh" "$ACCOUNT:$AERC_FOLDER" &
+mbsync "$ACCOUNT:$AERC_FOLDER" &
