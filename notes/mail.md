@@ -6,6 +6,14 @@
 brew install --HEAD --formula -- ./formulae/cyrus-sasl-xoauth2.rb ./formulae/isync.rb
 ```
 
+## Daemonize
+
+After maildirs have been provisioned
+
+```bash
+~/.local/opt/isync/daemonize.sh
+```
+
 ## Oauth2
 
 [Reference](https://github.com/neomutt/neomutt/tree/main/contrib/oauth2)
