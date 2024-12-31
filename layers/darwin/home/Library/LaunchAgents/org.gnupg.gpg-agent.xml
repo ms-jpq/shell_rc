@@ -21,8 +21,6 @@
     <key>ProgramArguments</key>
     <array>
       <string>--batch</string>
-      <string>--log-file</string>
-      <string>socket:///var/run/syslog</string>
       <string>--daemon</string>
       <string>${HOME}/.config/gnupg/libexec/sleep.sh</string>
     </array>
