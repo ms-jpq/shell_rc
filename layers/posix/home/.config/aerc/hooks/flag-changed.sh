@@ -8,4 +8,6 @@ ACCOUNT="${ACCOUNT%'>'}"
 ACCOUNT="${ACCOUNT,,}"
 
 # shellcheck disable=SC2154
-mbsync "$ACCOUNT:$AERC_FOLDER" &
+JOB="mbsync.$ACCOUNT.$AERC_FOLDER"
+
+exec -- launchctl submit -l "$JOB" -- mbsync "$ACCOUNT:$AERC_FOLDER"
