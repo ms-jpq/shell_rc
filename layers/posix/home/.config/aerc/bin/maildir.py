@@ -75,19 +75,22 @@ def _standardize(addr: str) -> str | None:
     return name + sep + domain.casefold()
 
 
-def _mtime(mail: MaildirMessage) -> Iterator[float]:
-    for hdr in ("date", "resent-date"):
+def _mtime(mail: MaildirMessage) -> float | None:
+    for hdr, postpend in (
+        ("date", False),
+        ("received", True),
+        ("x-received", True),
+        ("resent-date", False),
+    ):
         for header in mail.get_all(hdr, ()):
-            with suppress(ValueError):
-                parsed = parsedate_to_datetime(header)
-                yield parsed.timestamp()
+            if postpend:
+                _, _, value = header.partition(";")
+            else:
+                value = header
 
-    for hdr in ("received", "x-received"):
-        for header in mail.get_all(hdr, ()):
-            _, _, rhs = header.partition(";")
             with suppress(ValueError):
-                parsed = parsedate_to_datetime(rhs)
-                yield parsed.timestamp()
+                parsed = parsedate_to_datetime(value)
+                return parsed.timestamp()
 
 
 def _parse(mail: MaildirMessage) -> Iterator[tuple[str, str]]:
@@ -170,7 +173,7 @@ def _run(cache_dir: Path, mail_dirs: Path) -> None:
 
                         with suppress(KeyError):
                             message = maildir[key]
-                            recency = max(tuple(_mtime(message)) or (mtime,))
+                            recency = _mtime(message) or mtime
 
                             for email, name in _parse(message):
                                 if _die(email):
