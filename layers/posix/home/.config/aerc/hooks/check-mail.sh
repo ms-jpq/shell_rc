@@ -3,6 +3,14 @@
 set -o pipefail
 
 CHANNEL="$1"
-mbsync -- "$CHANNEL"
+TRIGGER=~/.local/state/isync/mbsync."$CHANNEL".queue/trigger
+touch -- "$TRIGGER"
+
+while true; do
+  if ! [[ -f $TRIGGER ]]; then
+    break
+  fi
+  sleep 1
+done
 
 exec -- aerc :connect

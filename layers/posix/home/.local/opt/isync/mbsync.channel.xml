@@ -19,11 +19,10 @@
       <string>/opt/homebrew/opt/cyrus-sasl/lib/sasl2:/opt/homebrew/opt/cyrus-sasl-xoauth2/lib/sasl2</string>
     </dict>
     <key>Program</key>
-    <string>/opt/homebrew/bin/mbsync</string>
+    <string>${HOME}/.local/opt/isync/launched.sh</string>
     <key>ProgramArguments</key>
     <array>
-      <string>--verbose</string>
-      <string>--</string>
+      <string>sh</string>
       <string>${CHANNEL}</string>
     </array>
     <key>ProcessType</key>
