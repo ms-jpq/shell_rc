@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>mbsync.${CHANNEL}</string>
+    <key>StandardErrorPath</key>
+    <string>${HOME}/.local/state/isync/mbsync.${CHANNEL}.stderr.log</string>
+    <key>StandardOutPath</key>
+    <string>${HOME}/.local/state/isync/mbsync.${CHANNEL}.stdout.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>PATH</key>
+      <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+      <key>SASL_PATH</key>
+      <string>/opt/homebrew/opt/cyrus-sasl/lib/sasl2:/opt/homebrew/opt/cyrus-sasl-xoauth2/lib/sasl2</string>
+    </dict>
+    <key>Program</key>
+    <string>/opt/homebrew/bin/mbsync</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>--verbose</string>
+      <string>--</string>
+      <string>${CHANNEL}</string>
+    </array>
+    <key>WatchPaths</key>
+    <array>
+      <string>${HOME}/.local/state/isync/mbsync.${CHANNEL}.watch</string>
+    </array>
+    <key>QueueDirectories</key>
+    <array>
+      <string>${HOME}/.local/state/isync/mbsync.${CHANNEL}.queue</string>
+    </array>
+  </dict>
+</plist>
