@@ -13,6 +13,8 @@
     <dict>
       <key>PATH</key>
       <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+      <key>GNUPGHOME</key>
+      <string>${HOME}/.config/gnupg</string>
       <key>SASL_PATH</key>
       <string>/opt/homebrew/opt/cyrus-sasl/lib/sasl2:/opt/homebrew/opt/cyrus-sasl-xoauth2/lib/sasl2</string>
     </dict>
