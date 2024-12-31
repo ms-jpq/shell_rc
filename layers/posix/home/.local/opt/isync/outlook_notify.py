@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import contextmanager
 from functools import lru_cache, partial
 from imaplib import IMAP4, IMAP4_SSL
@@ -10,7 +11,6 @@ from pathlib import Path
 from selectors import EVENT_READ, DefaultSelector
 from subprocess import check_output
 from sys import exit
-from threading import Thread
 from time import monotonic
 
 captureWarnings(True)
@@ -42,7 +42,7 @@ def _imap(host: str, user: str) -> Iterator[IMAP4]:
         yield m
 
 
-def _boxes(m: IMAP4) -> Iterator[bytes]:
+def _boxes(m: IMAP4) -> Iterator[str]:
     ok, data = m.list()
     assert ok == "OK", ok
     sep = b' "/" '
@@ -50,7 +50,7 @@ def _boxes(m: IMAP4) -> Iterator[bytes]:
         assert isinstance(row, bytes), row
         _, s, dir = row.partition(sep)
         assert s == sep, s
-        yield dir
+        yield dir.decode()
 
 
 def _waiter(host: str, user: str, mailbox: str) -> Iterator[bytes]:
@@ -67,7 +67,7 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[bytes]:
             assert line.startswith(b"+ "), line
 
             try:
-                if sel.select(60):
+                if sel.select(timeout=60):
                     line = m.readline()
                     assert line.startswith(b"* "), line
                     line2 = m.readline()
@@ -103,11 +103,10 @@ def main() -> None:
         boxes = tuple(_boxes(m))
 
     idle = partial(_idle, args.host, args.username)
-    th = tuple(Thread(target=idle, args=(box,), daemon=True) for box in boxes)
-    for t in th:
-        t.start()
-    for t in th:
-        t.join()
+    with ThreadPoolExecutor() as ex:
+        futs = (ex.submit(idle, box) for box in boxes)
+        for fut in as_completed(futs):
+            fut.result()
 
 
 try:
