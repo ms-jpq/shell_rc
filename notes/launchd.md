@@ -1,5 +1,11 @@
 # LaunchD
 
+- https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html
+
+- https://www.manpagez.com/man/5/launchd.plist/
+
+- https://gist.github.com/dabrahams/4092951
+
 ## Start
 
 Note: `--` is harmful
