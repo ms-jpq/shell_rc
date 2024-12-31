@@ -6,9 +6,9 @@
     <key>Label</key>
     <string>mbsync.${CHANNEL}</string>
     <key>StandardErrorPath</key>
-    <string>${HOME}/.local/state/isync/mbsync.${CHANNEL}.stderr.log</string>
+    <string>/dev/null</string>
     <key>StandardOutPath</key>
-    <string>${HOME}/.local/state/isync/mbsync.${CHANNEL}.stdout.log</string>
+    <string>/dev/null</string>
     <key>EnvironmentVariables</key>
     <dict>
       <key>PATH</key>
@@ -22,7 +22,7 @@
     <string>${HOME}/.local/opt/isync/launched.sh</string>
     <key>ProgramArguments</key>
     <array>
-      <string>sh</string>
+      <string>bash</string>
       <string>${CHANNEL}</string>
     </array>
     <key>ProcessType</key>

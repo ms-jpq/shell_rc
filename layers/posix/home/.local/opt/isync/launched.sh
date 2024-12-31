@@ -1,6 +1,12 @@
-#!/usr/bin/env -S -- sh -Eeu
+#!/usr/bin/env -S -- bash -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob
+
+set -o pipefail
 
 CHANNEL="$1"
-/opt/homebrew/bin/mbsync --verbose -- "$CHANNEL"
+LABEL="mbsync.$CHANNEL"
 
-exec -- find ~/.local/state/isync/mbsync."$CHANNEL".queue -mindepth 1 -delete
+{
+  /opt/homebrew/bin/mbsync --verbose -- "$CHANNEL"
+
+  find ~/.local/state/isync/"$LABEL".queue -mindepth 1 -delete
+} 2>&1 | logger -t "$LABEL"
