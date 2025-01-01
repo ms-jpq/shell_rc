@@ -130,7 +130,7 @@ def _trigger(channel: str, mailbox: str) -> None:
                 "--icon",
                 "info",
                 "--",
-                f"📩 {channel} -> {mailbox}",
+                f"📩 {channel} ↘ {mailbox}",
             ),
         )
     except CalledProcessError as e:
