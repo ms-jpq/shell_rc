@@ -3,15 +3,15 @@
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from functools import cache, lru_cache, partial
-from imaplib import IMAP4, IMAP4_SSL
+from imaplib import IMAP4, IMAP4_SSL, Commands
 from logging import INFO, LogRecord, StreamHandler, captureWarnings, getLogger
 from logging.handlers import SysLogHandler
 from pathlib import Path
 from platform import system
 from selectors import EVENT_READ, DefaultSelector
-from subprocess import CalledProcessError, check_call, check_output
+from subprocess import check_output
 from sys import exit
 from syslog import openlog, syslog
 from threading import Lock
@@ -41,6 +41,9 @@ if system() == "Darwin":
 
     openlog(ident=_FILE.name)
     log.addHandler(_SysLogHandler())
+
+with nullcontext():
+    Commands["IDLE"] = ("SELECTED",)
 
 
 @cache
@@ -84,29 +87,27 @@ def _boxes(m: IMAP4) -> Iterator[str]:
         yield dir.decode()
 
 
-def _waiter(host: str, user: str, mailbox: str) -> Iterator[tuple[str, bytes]]:
+# https://github.com/python/cpython/issues/55454
+def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
     with DefaultSelector() as sel, _imap(host, user=user) as m:
         sel.register(m.file, EVENT_READ)
         ok, _ = m.select(mailbox, readonly=True)
         assert ok == "OK", ok
 
         while True:
-            tag = m._new_tag()
-            assert isinstance(tag, bytes), tag
-            m.send(tag + b" IDLE\r\n")
+            tag = m._command("IDLE")
             line = m.readline()
             assert line.startswith(b"+ "), line
 
             try:
                 if sel.select(timeout=_MINUTE):
-                    line = m.readline()
-                    assert line.startswith(b"* "), line
-                    line2 = m.readline()
-                    assert line2.startswith(b"* "), line2
-                    yield mailbox, line
+                    while line := m._get_line():
+                        log.info("%s", f"{mailbox} -> {line}")
+                        if line.endswith(b"EXISTS"):
+                            yield None
             finally:
                 m.send(b"DONE\r\n")
-                _ = m.readline()
+                m._command_complete("IDLE", tag)
 
 
 def _trigger(channel: str) -> None:
@@ -124,8 +125,7 @@ def _trigger(channel: str) -> None:
 def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
     while True:
         try:
-            for event in _waiter(host, user=user, mailbox=mailbox):
-                log.info("%s", event)
+            for _ in _waiter(host, user=user, mailbox=mailbox):
                 _trigger(channel)
         except IMAP4.error as e:
             log.error("%s", e)
