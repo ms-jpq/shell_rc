@@ -2,9 +2,10 @@
 
 set -o pipefail
 
-LABEL="mnotify.$1"
+CHANNEL="$1"
+LABEL="mnotify.$CHANNEL"
 shift -- 1
 
 {
-  ~/.local/libexec/notify.cjs '📩' "$*"
+  ~/.local/libexec/notify.cjs "📩 ↘ $CHANNEL" ''
 } 2>&1 | logger -t "$LABEL"
