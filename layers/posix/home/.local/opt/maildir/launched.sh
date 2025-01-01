@@ -7,5 +7,5 @@ LABEL="mnotify.$CHANNEL"
 shift -- 1
 
 {
-  ~/.local/libexec/notify.cjs "📩 ↘ $CHANNEL" ''
+  ~/.local/libexec/notify.cjs "📩 ↘ $CHANNEL" '-'
 } 2>&1 | logger -t "$LABEL"
