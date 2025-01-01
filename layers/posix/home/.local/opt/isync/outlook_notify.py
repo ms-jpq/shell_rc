@@ -90,7 +90,9 @@ def _boxes(m: IMAP4) -> Iterator[str]:
 # https://github.com/python/cpython/issues/55454
 def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
     with DefaultSelector() as sel, _imap(host, user=user) as m:
+        assert "IDLE" in m.capabilities
         sel.register(m.file, EVENT_READ)
+
         ok, _ = m.select(mailbox, readonly=True)
         assert ok == "OK", ok
 
@@ -144,9 +146,9 @@ def main() -> None:
     args = _parse_args()
     idle = partial(_idle, args.channel, args.host, args.username)
 
-    with _imap(args.host, user=args.username) as m:
-        assert "IDLE" in m.capabilities
-        boxes = args.boxes or tuple(_boxes(m))
+    if not (boxes := args.boxes):
+        with _imap(args.host, user=args.username) as m:
+            boxes = tuple(_boxes(m))
 
     with ThreadPoolExecutor() as ex:
         tuple(ex.map(idle, boxes))
