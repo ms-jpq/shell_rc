@@ -17,9 +17,8 @@ from syslog import openlog, syslog
 from threading import Lock
 from time import monotonic
 
-with nullcontext():
-    _MINUTE = 60
-    _FILE = Path(__file__).resolve()
+_MINUTE = 60
+_FILE = Path(__file__).resolve()
 
 with nullcontext():
     captureWarnings(True)

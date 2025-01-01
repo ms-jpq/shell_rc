@@ -2,7 +2,7 @@
 
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator, MutableMapping
-from contextlib import contextmanager, suppress
+from contextlib import contextmanager, nullcontext, suppress
 from datetime import datetime
 from email.errors import HeaderParseError
 from email.header import decode_header
@@ -21,10 +21,11 @@ from unicodedata import normalize
 _T = TypeVar("_T")
 _U = TypeVar("_U")
 
-captureWarnings(True)
-log = getLogger()
-log.setLevel(INFO)
-log.addHandler(StreamHandler())
+with nullcontext():
+    captureWarnings(True)
+    log = getLogger()
+    log.setLevel(INFO)
+    log.addHandler(StreamHandler())
 
 
 def _parse_args() -> Namespace:

@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterable, Iterator, Mapping, MutableMapping, MutableSequence
 from configparser import RawConfigParser
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from functools import lru_cache
 from itertools import chain
 from json import dumps
@@ -21,10 +21,11 @@ from uuid import uuid4
 
 _CODEC = "utf-8"
 
-captureWarnings(True)
-log = getLogger()
-log.setLevel(INFO)
-log.addHandler(StreamHandler())
+with nullcontext():
+    captureWarnings(True)
+    log = getLogger()
+    log.setLevel(INFO)
+    log.addHandler(StreamHandler())
 
 
 def _parse(text: str) -> Iterator[Tuple[str, Optional[str]]]:
