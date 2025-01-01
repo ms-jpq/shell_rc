@@ -6,24 +6,41 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from functools import cache, lru_cache, partial
 from imaplib import IMAP4, IMAP4_SSL
-from logging import INFO, StreamHandler, captureWarnings, getLogger
+from logging import INFO, LogRecord, StreamHandler, captureWarnings, getLogger
 from logging.handlers import SysLogHandler
 from pathlib import Path
 from platform import system
 from selectors import EVENT_READ, DefaultSelector
-from subprocess import check_output
+from subprocess import CalledProcessError, check_call, check_output
 from sys import exit
+from syslog import openlog, syslog
 from threading import Lock
 from time import monotonic
+
+_MINUTE = 60
+_FILE = Path(__file__).resolve()
 
 captureWarnings(True)
 log = getLogger()
 log.setLevel(INFO)
 log.addHandler(StreamHandler())
 if system() == "Darwin":
-    log.addHandler(SysLogHandler(address="/var/run/syslog"))
 
-_MINUTE = 60
+    class _SysLogHandler(SysLogHandler):
+        def emit(self, record: LogRecord) -> None:
+            try:
+                pri = self.encodePriority(
+                    self.facility,
+                    self.mapPriority(record.levelname),
+                )
+                msg = self.format(record)
+            except Exception:
+                self.handleError(record)
+            else:
+                syslog(pri, msg)
+
+    openlog(ident=_FILE.name)
+    log.addHandler(_SysLogHandler())
 
 
 @cache
@@ -33,7 +50,7 @@ def _lock() -> Lock:
 
 @lru_cache(maxsize=1)
 def _auth(user: str, now: int) -> bytes:
-    parent = Path(__file__).parent
+    parent = _FILE.parent
     argv = (
         parent / "oauth.sh",
         "--",
@@ -89,20 +106,43 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[tuple[str, bytes]]:
                     yield mailbox, line
             finally:
                 m.send(b"DONE\r\n")
-                line = m.readline()
-                assert line.startswith(tag + b" OK"), line
+                _ = m.readline()
 
 
-def _trigger(trigger: Path) -> None:
-    pass
+def _trigger(channel: str, mailbox: str) -> None:
+    trigger = (
+        Path.home()
+        / ".local"
+        / "state"
+        / "isync"
+        / f"mbsync.{channel}.watch"
+        / "trigger"
+    )
+    trigger.touch()
+
+    try:
+        check_call(
+            (
+                "kitty",
+                "@",
+                "kitten",
+                "notify",
+                "--icon",
+                "info",
+                "--",
+                f"📩 {channel} -> {mailbox}",
+            ),
+        )
+    except CalledProcessError as e:
+        log.error("%s", e)
 
 
-def _idle(trigger: Path, host: str, user: str, mailbox: str) -> None:
+def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
     while True:
         try:
             for event in _waiter(host, user=user, mailbox=mailbox):
                 log.info("%s", event)
-                _trigger(trigger)
+                _trigger(channel, mailbox=mailbox)
         except IMAP4.error as e:
             log.error("%s", e)
 
@@ -110,6 +150,7 @@ def _idle(trigger: Path, host: str, user: str, mailbox: str) -> None:
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("--host", default="outlook.office365.com")
+    parser.add_argument("--boxes", nargs="*", default=("INBOX",))
     parser.add_argument("channel")
     parser.add_argument("username")
     return parser.parse_args()
@@ -117,19 +158,11 @@ def _parse_args() -> Namespace:
 
 def main() -> None:
     args = _parse_args()
-    trigger = (
-        Path.home()
-        / ".local"
-        / "state"
-        / "isync"
-        / f"mbsync.{args.channel}.watch"
-        / "trigger"
-    )
-    idle = partial(_idle, trigger, args.host, args.username)
+    idle = partial(_idle, args.channel, args.host, args.username)
 
     with _imap(args.host, user=args.username) as m:
         assert "IDLE" in m.capabilities
-        boxes = tuple(_boxes(m))
+        boxes = args.boxes or tuple(_boxes(m))
 
     with ThreadPoolExecutor() as ex:
         tuple(ex.map(idle, boxes))
