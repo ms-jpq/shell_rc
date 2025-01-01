@@ -67,7 +67,7 @@ def _boxes(m: IMAP4) -> Iterator[str]:
         yield dir.decode()
 
 
-def _waiter(host: str, user: str, mailbox: str) -> Iterator[bytes]:
+def _waiter(host: str, user: str, mailbox: str) -> Iterator[tuple[str, bytes]]:
     with DefaultSelector() as sel, _imap(host, user=user) as m:
         sel.register(m.file, EVENT_READ)
         ok, _ = m.select(mailbox, readonly=True)
@@ -86,11 +86,15 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[bytes]:
                     assert line.startswith(b"* "), line
                     line2 = m.readline()
                     assert line2.startswith(b"* "), line2
-                    yield line
+                    yield mailbox, line
             finally:
                 m.send(b"DONE\r\n")
                 line = m.readline()
                 assert line.startswith(tag + b" OK"), line
+
+
+def _trigger(trigger: Path) -> None:
+    pass
 
 
 def _idle(trigger: Path, host: str, user: str, mailbox: str) -> None:
@@ -98,7 +102,7 @@ def _idle(trigger: Path, host: str, user: str, mailbox: str) -> None:
         try:
             for event in _waiter(host, user=user, mailbox=mailbox):
                 log.info("%s", event)
-                trigger.touch()
+                _trigger(trigger)
         except IMAP4.error as e:
             log.error("%s", e)
 
