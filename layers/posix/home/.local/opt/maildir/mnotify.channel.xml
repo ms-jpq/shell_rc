@@ -15,6 +15,7 @@
     <key>ProgramArguments</key>
     <array>
       <string>bash</string>
+      <string>${CHANNEL}</string>
       <!--${WATCH_PATHS}-->
     </array>
     <key>ProcessType</key>

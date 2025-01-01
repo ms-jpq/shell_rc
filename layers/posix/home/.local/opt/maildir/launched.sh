@@ -5,5 +5,5 @@ set -o pipefail
 LABEL="mnotify.$1"
 
 {
-  true
+  printf -- '%s\n' "$@"
 } 2>&1 | logger -t "$LABEL"
