@@ -109,7 +109,7 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[tuple[str, bytes]]:
                 _ = m.readline()
 
 
-def _trigger(channel: str, mailbox: str) -> None:
+def _trigger(channel: str) -> None:
     trigger = (
         Path.home()
         / ".local"
@@ -120,29 +120,13 @@ def _trigger(channel: str, mailbox: str) -> None:
     )
     trigger.touch()
 
-    try:
-        check_call(
-            (
-                "kitty",
-                "@",
-                "kitten",
-                "notify",
-                "--icon",
-                "info",
-                "--",
-                f"📩 {channel} ↘ {mailbox}",
-            ),
-        )
-    except CalledProcessError as e:
-        log.error("%s", e)
-
 
 def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
     while True:
         try:
             for event in _waiter(host, user=user, mailbox=mailbox):
                 log.info("%s", event)
-                _trigger(channel, mailbox=mailbox)
+                _trigger(channel)
         except IMAP4.error as e:
             log.error("%s", e)
 
