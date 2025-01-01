@@ -32,6 +32,7 @@
 + figlet
 + findutils
 + flock
++ fswatch
 + fx
 + fzf
 + gdu
