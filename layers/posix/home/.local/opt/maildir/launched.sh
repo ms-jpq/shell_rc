@@ -3,7 +3,8 @@
 set -o pipefail
 
 LABEL="mnotify.$1"
+shift -- 1
 
 {
-  printf -- '%s\n' "$@"
+  ~/.local/libexec/notify.cjs '📩' "$*"
 } 2>&1 | logger -t "$LABEL"
