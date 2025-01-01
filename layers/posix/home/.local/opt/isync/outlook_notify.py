@@ -93,11 +93,12 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[bytes]:
                 assert line.startswith(tag + b" OK"), line
 
 
-def _idle(host: str, user: str, mailbox: str) -> None:
+def _idle(trigger: Path, host: str, user: str, mailbox: str) -> None:
     while True:
         try:
             for event in _waiter(host, user=user, mailbox=mailbox):
                 log.info("%s", event)
+                trigger.touch()
         except IMAP4.error as e:
             log.error("%s", e)
 
@@ -105,18 +106,27 @@ def _idle(host: str, user: str, mailbox: str) -> None:
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("--host", default="outlook.office365.com")
+    parser.add_argument("channel")
     parser.add_argument("username")
     return parser.parse_args()
 
 
 def main() -> None:
     args = _parse_args()
+    trigger = (
+        Path.home()
+        / ".local"
+        / "state"
+        / "isync"
+        / f"mbsync.{args.channel}.watch"
+        / "trigger"
+    )
+    idle = partial(_idle, trigger, args.host, args.username)
 
     with _imap(args.host, user=args.username) as m:
         assert "IDLE" in m.capabilities
         boxes = tuple(_boxes(m))
 
-    idle = partial(_idle, args.host, args.username)
     with ThreadPoolExecutor() as ex:
         tuple(ex.map(idle, boxes))
 
