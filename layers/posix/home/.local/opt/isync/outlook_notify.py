@@ -2,21 +2,33 @@
 
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
-from functools import lru_cache, partial
+from functools import cache, lru_cache, partial
 from imaplib import IMAP4, IMAP4_SSL
 from logging import INFO, StreamHandler, captureWarnings, getLogger
+from logging.handlers import SysLogHandler
 from pathlib import Path
+from platform import system
 from selectors import EVENT_READ, DefaultSelector
 from subprocess import check_output
 from sys import exit
+from threading import Lock
 from time import monotonic
 
 captureWarnings(True)
 log = getLogger()
 log.setLevel(INFO)
 log.addHandler(StreamHandler())
+if system() == "Darwin":
+    log.addHandler(SysLogHandler(address="/var/run/syslog"))
+
+_MINUTE = 60
+
+
+@cache
+def _lock() -> Lock:
+    return Lock()
 
 
 @lru_cache(maxsize=1)
@@ -34,8 +46,10 @@ def _auth(user: str, now: int) -> bytes:
 
 @contextmanager
 def _imap(host: str, user: str) -> Iterator[IMAP4]:
-    now = int(monotonic() / 60)
-    auth = _auth(user, now=now)
+    now = int(monotonic() / _MINUTE)
+    with _lock():
+        auth = _auth(user, now=now)
+
     with IMAP4_SSL(host=host) as m:
         ok, _ = m.authenticate("XOAUTH2", lambda _: auth)
         assert ok == "OK", ok
@@ -67,7 +81,7 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[bytes]:
             assert line.startswith(b"+ "), line
 
             try:
-                if sel.select(timeout=60):
+                if sel.select(timeout=_MINUTE):
                     line = m.readline()
                     assert line.startswith(b"* "), line
                     line2 = m.readline()
@@ -83,7 +97,7 @@ def _idle(host: str, user: str, mailbox: str) -> None:
     while True:
         try:
             for event in _waiter(host, user=user, mailbox=mailbox):
-                print(event)
+                log.info("%s", event)
         except IMAP4.error as e:
             log.error("%s", e)
 
@@ -104,12 +118,13 @@ def main() -> None:
 
     idle = partial(_idle, args.host, args.username)
     with ThreadPoolExecutor() as ex:
-        futs = (ex.submit(idle, box) for box in boxes)
-        for fut in as_completed(futs):
-            fut.result()
+        tuple(ex.map(idle, boxes))
 
 
 try:
     main()
 except KeyboardInterrupt:
     exit(130)
+except Exception as e:
+    log.exception("%s", e)
+    raise
