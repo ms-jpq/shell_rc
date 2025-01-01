@@ -15,7 +15,7 @@ from subprocess import check_output
 from sys import exit
 from syslog import openlog, syslog
 from threading import Lock
-from time import monotonic
+from time import monotonic, sleep
 
 _MINUTE = 60
 _FILE = Path(__file__).resolve()
@@ -131,7 +131,10 @@ def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
             for _ in _waiter(host, user=user, mailbox=mailbox):
                 _trigger(channel)
         except IMAP4.error as e:
-            log.error("%s", e)
+            log.exception("%s", e)
+        finally:
+            log.info("%s", f"    :: {mailbox}")
+            sleep(3)
 
 
 def _parse_args() -> Namespace:
