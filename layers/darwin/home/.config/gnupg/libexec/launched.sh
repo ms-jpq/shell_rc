@@ -8,4 +8,4 @@ ARGV=(
   --daemon "${0%/*}/sleep.sh"
 )
 
-"${ARGV[@]}" 2>&1 | logger
+"${ARGV[@]}" 2>&1 | logger -t org.gnupg.gpg-agent

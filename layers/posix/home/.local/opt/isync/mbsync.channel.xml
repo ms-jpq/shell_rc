@@ -5,10 +5,6 @@
   <dict>
     <key>Label</key>
     <string>mbsync.${CHANNEL}</string>
-    <key>StandardErrorPath</key>
-    <string>/dev/null</string>
-    <key>StandardOutPath</key>
-    <string>/dev/null</string>
     <key>EnvironmentVariables</key>
     <dict>
       <key>PATH</key>

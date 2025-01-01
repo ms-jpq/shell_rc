@@ -10,7 +10,7 @@ while true; do
   if ! [[ -f $TRIGGER ]]; then
     break
   fi
-  sleep 1
+  sleep -- 0.1
 done
 
 exec -- aerc :connect
