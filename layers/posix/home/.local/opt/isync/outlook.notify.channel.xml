@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>outlook.notify.${CHANNEL}</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>PATH</key>
+      <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+      <key>GNUPGHOME</key>
+      <string>${HOME}/.config/gnupg</string>
+    </dict>
+    <key>Program</key>
+    <string>${HOME}/.local/opt/isync/outlook_notify.py</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>python3</string>
+      <string>${CHANNEL}</string>
+      <string>${MAIL}</string>
+    </array>
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>KeepAlive</key>
+    <true />
+  </dict>
+</plist>
