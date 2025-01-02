@@ -10,8 +10,8 @@ shift -- 1
 {
   for DIR in "$@"; do
     for MAIL in "$DIR"/*; do
-      FROM="$(formail -X from: < "$MAIL" | sed -E -e 's/^(F|f)rom: //')"
-      SUBJECT="$(formail -X subject: < "$MAIL" | sed -E -e 's/^(S|s)ubject: //')"
+      FROM="$(formail -c -x from: < "$MAIL")"
+      SUBJECT="$(formail -c -x subject: < "$MAIL")"
       ~/.local/libexec/notify.cjs "📩 ↘ $FROM" '' "$SUBJECT" ping
     done
   done
