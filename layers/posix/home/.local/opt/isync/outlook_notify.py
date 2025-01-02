@@ -79,19 +79,17 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
         while True:
             tag = m._command("IDLE")
 
-            try:
-                if sel.select(timeout=_MINUTE):
-                    while line := m._get_line():
-                        log.info("%s", f"{mailbox} -> {line}")
-                        if line.endswith(b"EXISTS"):
-                            yield None
-            except IMAP4.abort as e:
-                log.warning("%s", e)
-                return
-            finally:
-                with suppress(IMAP4.abort, SSLEOFError):
-                    m.send(b"DONE\r\n")
-                    m._command_complete("IDLE", tag)
+            if sel.select(timeout=_MINUTE):
+                while line := m._get_line():
+                    if line.startswith(b"* BYE"):
+                        return
+
+                    log.info("%s", f"{mailbox} -> {line}")
+                    if line.endswith(b"EXISTS"):
+                        yield None
+
+            m.send(b"DONE\r\n")
+            m._command_complete("IDLE", tag)
 
 
 def _trigger(channel: str) -> None:
@@ -111,6 +109,8 @@ def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
         try:
             for _ in _waiter(host, user=user, mailbox=mailbox):
                 _trigger(channel)
+        except IMAP4.abort as e:
+            log.warning("%s", e)
         except IMAP4.error as e:
             log.exception("%s", e)
         finally:
@@ -139,30 +139,30 @@ def main() -> None:
         tuple(ex.map(idle, boxes))
 
 
+with nullcontext():
+    captureWarnings(True)
+    log = getLogger()
+    log.setLevel(INFO)
+    log.addHandler(StreamHandler())
+    if system() == "Darwin":
+
+        class _SysLogHandler(SysLogHandler):
+            def emit(self, record: LogRecord) -> None:
+                try:
+                    pri = self.encodePriority(
+                        self.facility,
+                        self.mapPriority(record.levelname),
+                    )
+                    msg = self.format(record)
+                except Exception:
+                    self.handleError(record)
+                else:
+                    syslog(pri, msg)
+
+        openlog(ident=_FILE.name)
+        log.addHandler(_SysLogHandler())
+
 try:
-    with nullcontext():
-        captureWarnings(True)
-        log = getLogger()
-        log.setLevel(INFO)
-        log.addHandler(StreamHandler())
-        if system() == "Darwin":
-
-            class _SysLogHandler(SysLogHandler):
-                def emit(self, record: LogRecord) -> None:
-                    try:
-                        pri = self.encodePriority(
-                            self.facility,
-                            self.mapPriority(record.levelname),
-                        )
-                        msg = self.format(record)
-                    except Exception:
-                        self.handleError(record)
-                    else:
-                        syslog(pri, msg)
-
-            openlog(ident=_FILE.name)
-            log.addHandler(_SysLogHandler())
-
     main()
 except KeyboardInterrupt:
     exit(130)
