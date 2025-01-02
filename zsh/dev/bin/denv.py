@@ -183,5 +183,7 @@ def main() -> None:
         raise OSError(args.arg0)
 
 
-with nullcontext():
+try:
     main()
+except KeyboardInterrupt:
+    exit(130)

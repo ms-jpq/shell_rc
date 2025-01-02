@@ -211,6 +211,7 @@ try:
         log = getLogger()
         log.setLevel(INFO)
         log.addHandler(StreamHandler())
+
     main()
 except KeyboardInterrupt:
     exit(130)

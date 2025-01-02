@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import contextmanager, nullcontext, suppress
+from contextlib import contextmanager, nullcontext
 from functools import cache, lru_cache, partial
 from imaplib import IMAP4, IMAP4_SSL, Commands
 from logging import INFO, LogRecord, StreamHandler, captureWarnings, getLogger
@@ -128,44 +128,45 @@ def _parse_args() -> Namespace:
 
 
 def main() -> None:
-    args = _parse_args()
-    idle = partial(_idle, args.channel, args.host, args.username)
+    try:
+        args = _parse_args()
+        idle = partial(_idle, args.channel, args.host, args.username)
 
-    if not (boxes := args.boxes):
-        with _imap(args.host, user=args.username) as m:
-            boxes = tuple(_boxes(m))
+        if not (boxes := args.boxes):
+            with _imap(args.host, user=args.username) as m:
+                boxes = tuple(_boxes(m))
 
-    with ThreadPoolExecutor() as ex:
-        tuple(ex.map(idle, boxes))
+        with ThreadPoolExecutor() as ex:
+            tuple(ex.map(idle, boxes))
+    except Exception as e:
+        log.exception("%s", e)
+        raise
 
-
-with nullcontext():
-    captureWarnings(True)
-    log = getLogger()
-    log.setLevel(INFO)
-    log.addHandler(StreamHandler())
-    if system() == "Darwin":
-
-        class _SysLogHandler(SysLogHandler):
-            def emit(self, record: LogRecord) -> None:
-                try:
-                    pri = self.encodePriority(
-                        self.facility,
-                        self.mapPriority(record.levelname),
-                    )
-                    msg = self.format(record)
-                except Exception:
-                    self.handleError(record)
-                else:
-                    syslog(pri, msg)
-
-        openlog(ident=_FILE.name)
-        log.addHandler(_SysLogHandler())
 
 try:
+    with nullcontext():
+        captureWarnings(True)
+        log = getLogger()
+        log.setLevel(INFO)
+        log.addHandler(StreamHandler())
+        if system() == "Darwin":
+
+            class _SysLogHandler(SysLogHandler):
+                def emit(self, record: LogRecord) -> None:
+                    try:
+                        pri = self.encodePriority(
+                            self.facility,
+                            self.mapPriority(record.levelname),
+                        )
+                        msg = self.format(record)
+                    except Exception:
+                        self.handleError(record)
+                    else:
+                        syslog(pri, msg)
+
+            openlog(ident=_FILE.name)
+            log.addHandler(_SysLogHandler())
+
     main()
 except KeyboardInterrupt:
     exit(130)
-except Exception as e:
-    log.exception("%s", e)
-    raise
