@@ -11,6 +11,7 @@ from logging.handlers import SysLogHandler
 from pathlib import Path
 from platform import system
 from selectors import EVENT_READ, DefaultSelector
+from ssl import SSLEOFError
 from subprocess import check_output
 from sys import exit
 from syslog import openlog, syslog
@@ -88,7 +89,7 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
                 log.warning("%s", e)
                 return
             finally:
-                with suppress(IMAP4.abort):
+                with suppress(IMAP4.abort, SSLEOFError):
                     m.send(b"DONE\r\n")
                     m._command_complete("IDLE", tag)
 
