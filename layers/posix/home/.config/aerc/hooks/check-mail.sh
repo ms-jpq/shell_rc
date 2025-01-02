@@ -12,5 +12,3 @@ while true; do
   fi
   sleep -- 0.1
 done
-
-exec -- aerc :connect

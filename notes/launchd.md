@@ -1,5 +1,7 @@
 # LaunchD
 
+- https://www.launchd.info/
+
 - https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html
 
 - https://www.manpagez.com/man/5/launchd.plist/
