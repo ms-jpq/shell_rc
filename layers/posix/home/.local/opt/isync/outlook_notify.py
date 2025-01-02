@@ -99,8 +99,6 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
 
         while True:
             tag = m._command("IDLE")
-            line = m.readline()
-            assert line.startswith(b"+ "), line
 
             try:
                 if sel.select(timeout=_MINUTE):
