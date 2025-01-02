@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import contextmanager, nullcontext
+from contextlib import contextmanager, nullcontext, suppress
 from functools import cache, lru_cache, partial
 from imaplib import IMAP4, IMAP4_SSL, Commands
 from logging import INFO, LogRecord, StreamHandler, captureWarnings, getLogger
@@ -11,7 +11,6 @@ from logging.handlers import SysLogHandler
 from pathlib import Path
 from platform import system
 from selectors import EVENT_READ, DefaultSelector
-from ssl import SSLEOFError
 from subprocess import check_output
 from sys import exit
 from syslog import openlog, syslog
@@ -50,10 +49,14 @@ def _imap(host: str, user: str) -> Iterator[IMAP4]:
     with _lock():
         auth = _auth(user, now=now)
 
-    with IMAP4_SSL(host=host) as m:
+    m = IMAP4_SSL(host=host)
+    try:
         ok, _ = m.authenticate("XOAUTH2", lambda _: auth)
         assert ok == "OK", ok
         yield m
+    finally:
+        with suppress(IMAP4.abort):
+            m.logout()
 
 
 def _boxes(m: IMAP4) -> Iterator[str]:
