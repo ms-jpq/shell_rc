@@ -1,5 +1,5 @@
 from argparse import ArgumentParser, Namespace
-from contextlib import closing, suppress
+from contextlib import closing, nullcontext, suppress
 from dataclasses import asdict, dataclass
 from functools import cache, partial
 from ipaddress import IPv4Address, IPv6Address, ip_address
@@ -279,4 +279,5 @@ def main() -> None:
     stdout.write(stream)
 
 
-main()
+with nullcontext():
+    main()

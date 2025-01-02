@@ -20,28 +20,6 @@ from time import monotonic, sleep
 _MINUTE = 60
 _FILE = Path(__file__).resolve()
 
-with nullcontext():
-    captureWarnings(True)
-    log = getLogger()
-    log.setLevel(INFO)
-    log.addHandler(StreamHandler())
-    if system() == "Darwin":
-
-        class _SysLogHandler(SysLogHandler):
-            def emit(self, record: LogRecord) -> None:
-                try:
-                    pri = self.encodePriority(
-                        self.facility,
-                        self.mapPriority(record.levelname),
-                    )
-                    msg = self.format(record)
-                except Exception:
-                    self.handleError(record)
-                else:
-                    syslog(pri, msg)
-
-        openlog(ident=_FILE.name)
-        log.addHandler(_SysLogHandler())
 
 with nullcontext():
     Commands["IDLE"] = ("SELECTED",)
@@ -161,6 +139,29 @@ def main() -> None:
 
 
 try:
+    with nullcontext():
+        captureWarnings(True)
+        log = getLogger()
+        log.setLevel(INFO)
+        log.addHandler(StreamHandler())
+        if system() == "Darwin":
+
+            class _SysLogHandler(SysLogHandler):
+                def emit(self, record: LogRecord) -> None:
+                    try:
+                        pri = self.encodePriority(
+                            self.facility,
+                            self.mapPriority(record.levelname),
+                        )
+                        msg = self.format(record)
+                    except Exception:
+                        self.handleError(record)
+                    else:
+                        syslog(pri, msg)
+
+            openlog(ident=_FILE.name)
+            log.addHandler(_SysLogHandler())
+
     main()
 except KeyboardInterrupt:
     exit(130)

@@ -183,4 +183,5 @@ def main() -> None:
         raise OSError(args.arg0)
 
 
-main()
+with nullcontext():
+    main()

@@ -21,12 +21,6 @@ from unicodedata import normalize
 _T = TypeVar("_T")
 _U = TypeVar("_U")
 
-with nullcontext():
-    captureWarnings(True)
-    log = getLogger()
-    log.setLevel(INFO)
-    log.addHandler(StreamHandler())
-
 
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
@@ -212,6 +206,11 @@ def main() -> None:
 
 
 try:
+    with nullcontext():
+        captureWarnings(True)
+        log = getLogger()
+        log.setLevel(INFO)
+        log.addHandler(StreamHandler())
     main()
 except KeyboardInterrupt:
     exit(130)
