@@ -7,5 +7,7 @@ LABEL="mnotify.$CHANNEL"
 shift -- 1
 
 {
-  ~/.local/libexec/notify.cjs "📩 ↘ $CHANNEL" '' '-' ping
+  if find "$@" -type f | grep -E -- .; then
+    ~/.local/libexec/notify.cjs "📩 ↘ $CHANNEL" '' '-' ping
+  fi
 } 2>&1 | logger -t "$LABEL"
