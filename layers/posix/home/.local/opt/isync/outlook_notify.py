@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import contextmanager, nullcontext
+from contextlib import contextmanager, nullcontext, suppress
 from functools import cache, lru_cache, partial
 from imaplib import IMAP4, IMAP4_SSL, Commands
 from logging import INFO, LogRecord, StreamHandler, captureWarnings, getLogger
@@ -108,9 +108,13 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
                         log.info("%s", f"{mailbox} -> {line}")
                         if line.endswith(b"EXISTS"):
                             yield None
+            except IMAP4.abort as e:
+                log.warning("%s", e)
+                return
             finally:
-                m.send(b"DONE\r\n")
-                m._command_complete("IDLE", tag)
+                with suppress(IMAP4.abort):
+                    m.send(b"DONE\r\n")
+                    m._command_complete("IDLE", tag)
 
 
 def _trigger(channel: str) -> None:
