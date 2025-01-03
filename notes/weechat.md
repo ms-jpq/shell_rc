@@ -11,7 +11,7 @@
 ## Load Conf
 
 ```bash
-/eval /exec -oc cat '<path-to-conf>'
+/exec -oc bash -c 'grep --no-filename -- ^/ ~/.config/eeechat/*.conf'
 ```
 
 ## Bind Key
