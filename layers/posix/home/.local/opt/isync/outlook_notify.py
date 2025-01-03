@@ -100,22 +100,25 @@ def _trigger(channel: str) -> None:
     trigger.touch()
 
 
+def _waiting(host: str, user: str, mailbox: str) -> Iterator[None]:
+    with _idling(host, user=user, mailbox=mailbox) as (sel, m):
+        for _ in range(_CYCLE):
+            if sel.select(timeout=_MINUTE):
+                if (line := m._get_line()).endswith(b"EXISTS"):
+                    yield None
+                    break
+
+                log.info("%s", f"{mailbox} -> {line}")
+
+                if line.startswith(b"* BYE"):
+                    return
+
+
 def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
     while True:
         try:
-            with _idling(host, user=user, mailbox=mailbox) as (sel, m):
-                for _ in range(_CYCLE):
-                    if sel.select(timeout=_MINUTE):
-                        if (line := m._get_line()).endswith(b"EXISTS"):
-                            _trigger(channel)
-                            break
-
-                        log.info("%s", f"{mailbox} -> {line}")
-
-                        if line.startswith(b"* BYE"):
-                            return
-                else:
-                    break
+            for _ in _waiting(host, user, mailbox):
+                _trigger(channel)
         except (TimeoutError, gaierror) as e:
             log.info("%s", e)
         except IMAP4.abort as e:
