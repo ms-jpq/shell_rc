@@ -10,7 +10,7 @@ from logging import INFO, LogRecord, StreamHandler, captureWarnings, getLogger
 from logging.handlers import SysLogHandler
 from pathlib import Path
 from platform import system
-from selectors import EVENT_READ, DefaultSelector
+from selectors import EVENT_READ, BaseSelector, DefaultSelector
 from socket import gaierror
 from subprocess import check_output
 from sys import exit
@@ -72,7 +72,8 @@ def _boxes(m: IMAP4) -> Iterator[str]:
 
 
 # https://github.com/python/cpython/issues/55454
-def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
+@contextmanager
+def _idling(host: str, user: str, mailbox: str) -> Iterator[tuple[BaseSelector, IMAP4]]:
     with DefaultSelector() as sel, _imap(host, user=user) as m:
         assert "IDLE" in m.capabilities
         sel.register(m.file, EVENT_READ)
@@ -82,20 +83,7 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
 
         for _ in range(_CYCLE):
             tag = m._command("IDLE")
-
-            for _ in range(_CYCLE):
-                if sel.select(timeout=_MINUTE):
-                    if (line := m._get_line()).endswith(b"EXISTS"):
-                        yield None
-                        break
-
-                    log.info("%s", f"{mailbox} -> {line}")
-
-                    if line.startswith(b"* BYE"):
-                        return
-            else:
-                break
-
+            yield sel, m
             m.send(b"DONE\r\n")
             m._command_complete("IDLE", tag)
 
@@ -115,8 +103,19 @@ def _trigger(channel: str) -> None:
 def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
     while True:
         try:
-            for _ in _waiter(host, user=user, mailbox=mailbox):
-                _trigger(channel)
+            with _idling(host, user=user, mailbox=mailbox) as (sel, m):
+                for _ in range(_CYCLE):
+                    if sel.select(timeout=_MINUTE):
+                        if (line := m._get_line()).endswith(b"EXISTS"):
+                            _trigger(channel)
+                            break
+
+                        log.info("%s", f"{mailbox} -> {line}")
+
+                        if line.startswith(b"* BYE"):
+                            return
+                else:
+                    break
         except (TimeoutError, gaierror) as e:
             log.info("%s", e)
         except IMAP4.abort as e:
