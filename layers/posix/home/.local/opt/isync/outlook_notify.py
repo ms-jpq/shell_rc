@@ -79,15 +79,17 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
         ok, _ = m.select(mailbox, readonly=True)
         assert ok == "OK", ok
 
-        for _ in range(3):
+        while True:
             tag = m._command("IDLE")
 
-            if sel.select(timeout=_MINUTE):
-                while line := m._get_line():
+            while True:
+                if sel.select(timeout=_MINUTE):
+                    if not (line := m._get_line()):
+                        break
+                    log.info("%s", f"{mailbox} -> {line}")
+
                     if line.startswith(b"* BYE"):
                         return
-
-                    log.info("%s", f"{mailbox} -> {line}")
                     if line.endswith(b"EXISTS"):
                         yield None
 
