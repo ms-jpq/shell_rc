@@ -47,6 +47,7 @@
 + locales
 + m4
 + man2html-base
++ mblaze
 + moreutils
 + mosh
 + mtr
