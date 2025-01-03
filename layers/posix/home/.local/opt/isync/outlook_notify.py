@@ -89,12 +89,12 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
                         yield None
                         break
 
+                    log.info("%s", f"{mailbox} -> {line}")
+
                     if line.startswith(b"* BYE"):
                         return
-
-                    log.info("%s", f"{mailbox} -> {line}")
-                else:
-                    break
+            else:
+                break
 
             m.send(b"DONE\r\n")
             m._command_complete("IDLE", tag)
