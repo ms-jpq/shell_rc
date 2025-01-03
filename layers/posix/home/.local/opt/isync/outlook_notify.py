@@ -79,7 +79,7 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
         ok, _ = m.select(mailbox, readonly=True)
         assert ok == "OK", ok
 
-        while True:
+        for _ in range(3):
             tag = m._command("IDLE")
 
             if sel.select(timeout=_MINUTE):
