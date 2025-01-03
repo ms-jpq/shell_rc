@@ -17,7 +17,6 @@
 + coreutils
 + cowsay
 + curl
-+ cyrus-sasl
 + dash
 + dialog
 + difftastic
