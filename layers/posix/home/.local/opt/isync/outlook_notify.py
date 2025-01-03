@@ -84,15 +84,14 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
 
             for _ in range(2):
                 if sel.select(timeout=_MINUTE):
-                    if not (line := m._get_line()):
+                    if (line := m._get_line()).endswith(b"EXISTS"):
+                        yield None
                         break
-                    log.info("%s", f"{mailbox} -> {line}")
 
                     if line.startswith(b"* BYE"):
                         return
-                    if line.endswith(b"EXISTS"):
-                        yield None
-                        break
+
+                    log.info("%s", f"{mailbox} -> {line}")
                 else:
                     break
 
