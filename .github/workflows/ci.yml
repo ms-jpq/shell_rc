@@ -12,7 +12,6 @@ jobs:
       matrix:
         formula:
           - cyrus-sasl-xoauth2.rb
-          - isync.rb
           - mblaze.rb
 
     runs-on: macos-latest

@@ -3,7 +3,7 @@
 ## SASL XOAuth2
 
 ```bash
-brew install --HEAD --formula -- ./formulae/cyrus-sasl-xoauth2.rb ./formulae/isync.rb ./formulae/mblaze.rb
+brew install --HEAD --formula -- ./formulae/cyrus-sasl-xoauth2.rb ./formulae/mblaze.rb
 ```
 
 ## Daemonize
