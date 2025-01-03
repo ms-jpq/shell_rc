@@ -11,6 +11,7 @@ from logging.handlers import SysLogHandler
 from pathlib import Path
 from platform import system
 from selectors import EVENT_READ, DefaultSelector
+from socket import gaierror
 from subprocess import check_output
 from sys import exit
 from syslog import openlog, syslog
@@ -49,7 +50,7 @@ def _imap(host: str, user: str) -> Iterator[IMAP4]:
     with _lock():
         auth = _auth(user, now=now)
 
-    m = IMAP4_SSL(host=host)
+    m = IMAP4_SSL(host=host, timeout=_MINUTE * 1.1)
     try:
         ok, _ = m.authenticate("XOAUTH2", lambda _: auth)
         assert ok == "OK", ok
@@ -116,6 +117,8 @@ def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
         try:
             for _ in _waiter(host, user=user, mailbox=mailbox):
                 _trigger(channel)
+        except (TimeoutError, gaierror) as e:
+            log.info("%s", e)
         except IMAP4.abort as e:
             log.warning("%s", e)
         except IMAP4.error as e:
