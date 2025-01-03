@@ -18,7 +18,7 @@ from syslog import openlog, syslog
 from threading import Lock
 from time import monotonic, sleep
 
-_MINUTE = 60
+_MINUTE, _SLEEP, _CYCLE = 60, 9, 2
 _FILE = Path(__file__).resolve()
 
 
@@ -80,10 +80,10 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
         ok, _ = m.select(mailbox, readonly=True)
         assert ok == "OK", ok
 
-        for _ in range(2):
+        for _ in range(_CYCLE):
             tag = m._command("IDLE")
 
-            for _ in range(2):
+            for _ in range(_CYCLE):
                 if sel.select(timeout=_MINUTE):
                     if (line := m._get_line()).endswith(b"EXISTS"):
                         yield None
@@ -125,7 +125,7 @@ def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
             log.exception("%s", e)
         finally:
             log.info("%s", f"    :: {mailbox}")
-            sleep(3)
+            sleep(_SLEEP)
 
 
 def _parse_args() -> Namespace:
