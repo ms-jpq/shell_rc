@@ -6,7 +6,7 @@ CHANNEL="$1"
 LABEL="mbsync.$CHANNEL"
 
 {
-  /opt/homebrew/bin/mbsync --verbose -- "$CHANNEL"
+  /opt/homebrew/bin/mbsync -- "$CHANNEL"
 
   find ~/.local/state/isync/"$LABEL".queue -mindepth 1 -delete
 } 2>&1 | logger -t "$LABEL"
