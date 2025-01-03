@@ -72,8 +72,7 @@ def _boxes(m: IMAP4) -> Iterator[str]:
 
 
 # https://github.com/python/cpython/issues/55454
-@contextmanager
-def _idling(host: str, user: str, mailbox: str) -> Iterator[tuple[BaseSelector, IMAP4]]:
+def _waiting(host: str, user: str, mailbox: str) -> Iterator[None]:
     with DefaultSelector() as sel, _imap(host, user=user) as m:
         assert "IDLE" in m.capabilities
         sel.register(m.file, EVENT_READ)
@@ -83,9 +82,26 @@ def _idling(host: str, user: str, mailbox: str) -> Iterator[tuple[BaseSelector, 
 
         for _ in range(_CYCLE):
             tag = m._command("IDLE")
-            yield sel, m
-            m.send(b"DONE\r\n")
-            m._command_complete("IDLE", tag)
+            cooked = False
+
+            try:
+                for _ in range(_CYCLE):
+                    if sel.select(timeout=_MINUTE):
+                        if (line := m._get_line()).endswith(b"EXISTS"):
+                            yield None
+                            break
+
+                        log.info("%s", f"{mailbox} -> {line}")
+
+                        if line.startswith(b"* BYE"):
+                            return
+            except:
+                cooked = True
+                raise
+            finally:
+                if not cooked:
+                    m.send(b"DONE\r\n")
+                    m._command_complete("IDLE", tag)
 
 
 def _trigger(channel: str) -> None:
@@ -98,20 +114,6 @@ def _trigger(channel: str) -> None:
         / "trigger"
     )
     trigger.touch()
-
-
-def _waiting(host: str, user: str, mailbox: str) -> Iterator[None]:
-    with _idling(host, user=user, mailbox=mailbox) as (sel, m):
-        for _ in range(_CYCLE):
-            if sel.select(timeout=_MINUTE):
-                if (line := m._get_line()).endswith(b"EXISTS"):
-                    yield None
-                    break
-
-                log.info("%s", f"{mailbox} -> {line}")
-
-                if line.startswith(b"* BYE"):
-                    return
 
 
 def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
