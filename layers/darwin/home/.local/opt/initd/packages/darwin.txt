@@ -110,6 +110,7 @@
 + universal-ctags
 + watch
 + watchexec
++ weechat
 + wget
 + wireguard-tools
 + xdg-ninja
