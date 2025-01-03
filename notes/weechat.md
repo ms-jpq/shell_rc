@@ -1,9 +1,17 @@
 # Weechat
 
+- https://blog.swwomm.com/2020/07/weechat-light-theme.html
+
 ## Join BNC
 
 ```bash
 /server add '<server-name>' '<host>/<port>' -notls -autoconnect -username='<user>/<bnc-server-name>' -password='<pass>'
+```
+
+## Load Conf
+
+```bash
+/eval /exec -oc cat '<path-to-conf>'
 ```
 
 ## Bind Key
