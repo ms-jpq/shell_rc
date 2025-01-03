@@ -79,10 +79,10 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
         ok, _ = m.select(mailbox, readonly=True)
         assert ok == "OK", ok
 
-        while True:
+        for _ in range(2):
             tag = m._command("IDLE")
 
-            while True:
+            for _ in range(2):
                 if sel.select(timeout=_MINUTE):
                     if not (line := m._get_line()):
                         break
@@ -92,6 +92,9 @@ def _waiter(host: str, user: str, mailbox: str) -> Iterator[None]:
                         return
                     if line.endswith(b"EXISTS"):
                         yield None
+                        break
+                else:
+                    break
 
             m.send(b"DONE\r\n")
             m._command_complete("IDLE", tag)
