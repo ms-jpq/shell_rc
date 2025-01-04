@@ -39,7 +39,7 @@ def _auth(user: str, now: int) -> bytes:
         "--",
         Path.home() / ".local" / "state" / parent.name / f"{user}.oauth.gpg",
     )
-    password = check_output(argv, text=True).rstrip()
+    password = check_output(argv, text=True, timeout=_MINUTE).rstrip()
     raw = f"user={user}\1auth=Bearer {password}\1\1"
     return raw.encode()
 
