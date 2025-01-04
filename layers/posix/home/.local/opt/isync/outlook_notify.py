@@ -18,7 +18,7 @@ from syslog import openlog, syslog
 from threading import Lock
 from time import monotonic, sleep
 
-_MINUTE, _SLEEP, _CYCLE = 60, 9, 2
+_MINUTE, _CYCLE, _PULSE = 60, 9, 2
 _FILE = Path(__file__).resolve()
 
 
@@ -50,14 +50,19 @@ def _imap(host: str, user: str) -> Iterator[IMAP4]:
     with _lock():
         auth = _auth(user, now=now)
 
+    cooked = False
     m = IMAP4_SSL(host=host, timeout=_MINUTE * 1.1)
     try:
         ok, _ = m.authenticate("XOAUTH2", lambda _: auth)
         assert ok == "OK", ok
         yield m
+    except TimeoutError:
+        cooked = True
+        raise
     finally:
-        with suppress(IMAP4.abort):
-            m.logout()
+        if not cooked:
+            with suppress(IMAP4.abort):
+                m.logout()
 
 
 def _boxes(m: IMAP4) -> Iterator[str]:
@@ -85,7 +90,7 @@ def _waiting(host: str, user: str, mailbox: str) -> Iterator[None]:
             cooked = False
 
             try:
-                for _ in range(_CYCLE):
+                for _ in range(_PULSE):
                     if sel.select(timeout=_MINUTE):
                         line = m._get_line()
                         log.info("%s", f"{mailbox} -> {line}")
@@ -93,7 +98,8 @@ def _waiting(host: str, user: str, mailbox: str) -> Iterator[None]:
                         if line.startswith(b"* BYE"):
                             return
 
-                        yield None
+                        if not line.startswith(b"+ IDLE accepted"):
+                            yield None
 
                         if line.endswith(b"EXISTS"):
                             break
@@ -120,8 +126,10 @@ def _trigger(channel: str) -> None:
     log.info("%s", f">> {trigger}")
 
 
-def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
-    while True:
+def _idle(daemon: float, channel: str, host: str, user: str, mailbox: str) -> None:
+    daemonize, touched = daemon > 0, False
+    while daemonize or not touched:
+        touched = True
         try:
             for _ in _waiting(host, user, mailbox):
                 _trigger(channel)
@@ -132,14 +140,16 @@ def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
         except IMAP4.error as e:
             log.exception("%s", e)
         finally:
-            log.info("%s", f"    :: {mailbox}")
-            sleep(_SLEEP)
+            if daemonize:
+                log.info("%s", f"    :: {mailbox}")
+                sleep(daemon)
 
 
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("--host", default="outlook.office365.com")
     parser.add_argument("--boxes", nargs="*", default=("INBOX",))
+    parser.add_argument("--daemon", type=float, default=0)
     parser.add_argument("channel")
     parser.add_argument("username")
     return parser.parse_args()
@@ -148,7 +158,7 @@ def _parse_args() -> Namespace:
 def main() -> None:
     try:
         args = _parse_args()
-        idle = partial(_idle, args.channel, args.host, args.username)
+        idle = partial(_idle, args.daemon, args.channel, args.host, args.username)
 
         if not (boxes := args.boxes):
             with _imap(args.host, user=args.username) as m:
@@ -161,30 +171,31 @@ def main() -> None:
         raise
 
 
+with nullcontext():
+    captureWarnings(True)
+    log = getLogger()
+    log.setLevel(INFO)
+    log.addHandler(StreamHandler())
+    if system() == "Darwin":
+
+        class _SysLogHandler(SysLogHandler):
+            def emit(self, record: LogRecord) -> None:
+                try:
+                    pri = self.encodePriority(
+                        self.facility,
+                        self.mapPriority(record.levelname),
+                    )
+                    msg = self.format(record)
+                except Exception:
+                    self.handleError(record)
+                else:
+                    syslog(pri, msg)
+
+        openlog(ident=_FILE.name)
+        log.addHandler(_SysLogHandler())
+
+
 try:
-    with nullcontext():
-        captureWarnings(True)
-        log = getLogger()
-        log.setLevel(INFO)
-        log.addHandler(StreamHandler())
-        if system() == "Darwin":
-
-            class _SysLogHandler(SysLogHandler):
-                def emit(self, record: LogRecord) -> None:
-                    try:
-                        pri = self.encodePriority(
-                            self.facility,
-                            self.mapPriority(record.levelname),
-                        )
-                        msg = self.format(record)
-                    except Exception:
-                        self.handleError(record)
-                    else:
-                        syslog(pri, msg)
-
-            openlog(ident=_FILE.name)
-            log.addHandler(_SysLogHandler())
-
     main()
 except KeyboardInterrupt:
     exit(130)
