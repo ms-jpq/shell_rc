@@ -115,6 +115,7 @@ def _trigger(channel: str) -> None:
         / "trigger"
     )
     trigger.touch()
+    log.info("%s", f">> {trigger}")
 
 
 def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
