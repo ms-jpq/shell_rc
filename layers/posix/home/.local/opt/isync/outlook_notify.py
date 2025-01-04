@@ -90,12 +90,14 @@ def _waiting(host: str, user: str, mailbox: str) -> Iterator[None]:
                         line = m._get_line()
                         log.info("%s", f"{mailbox} -> {line}")
 
-                        if line.endswith(b"EXISTS"):
-                            yield None
-                            break
-
                         if line.startswith(b"* BYE"):
                             return
+
+                        yield None
+
+                        if line.endswith(b"EXISTS"):
+                            break
+
             except:
                 cooked = True
                 raise
