@@ -10,9 +10,9 @@ from logging import INFO, LogRecord, StreamHandler, captureWarnings, getLogger
 from logging.handlers import SysLogHandler
 from pathlib import Path
 from platform import system
-from selectors import EVENT_READ, BaseSelector, DefaultSelector
+from selectors import EVENT_READ, DefaultSelector
 from socket import gaierror
-from subprocess import check_output
+from subprocess import CalledProcessError, check_output
 from sys import exit
 from syslog import openlog, syslog
 from threading import Lock
@@ -87,11 +87,12 @@ def _waiting(host: str, user: str, mailbox: str) -> Iterator[None]:
             try:
                 for _ in range(_CYCLE):
                     if sel.select(timeout=_MINUTE):
-                        if (line := m._get_line()).endswith(b"EXISTS"):
+                        line = m._get_line()
+                        log.info("%s", f"{mailbox} -> {line}")
+
+                        if line.endswith(b"EXISTS"):
                             yield None
                             break
-
-                        log.info("%s", f"{mailbox} -> {line}")
 
                         if line.startswith(b"* BYE"):
                             return
@@ -121,7 +122,7 @@ def _idle(channel: str, host: str, user: str, mailbox: str) -> None:
         try:
             for _ in _waiting(host, user, mailbox):
                 _trigger(channel)
-        except (TimeoutError, gaierror) as e:
+        except (TimeoutError, gaierror, CalledProcessError) as e:
             log.info("%s", e)
         except IMAP4.abort as e:
             log.warning("%s", e)
