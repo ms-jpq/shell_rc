@@ -29,3 +29,17 @@ Note: `-k` will not start the service if not already running
 ```bash
 launchctl kickstart -k '<domain-target>/<service-id>'
 ```
+
+# os_log
+
+## systemd-cat
+
+```bash
+printf -- '%s\n' '<hola>' | logger -t '<tag>'
+```
+
+## Tail
+
+```bash
+log stream --process logger --process python --info --debug
+```
