@@ -22,4 +22,5 @@ for MDIR in ~/.local/share/maildir/*/; do
 done
 
 CHANNEL="$OUTLOOK_CHANNEL"
-MAIL="$OUTLOOK_ADDR" envsubst < "${0%/*}/outlook.notify.channel.xml"
+MAIL="$OUTLOOK_ADDR" envsubst < "${0%/*}/outlook.notify.channel.xml" | sponge -- "$LAUNCH_AGENTS"/outlook.notify."$CHANNEL".plist
+printf -- '%s\n' "$CHANNEL"
