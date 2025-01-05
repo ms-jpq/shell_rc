@@ -14,7 +14,7 @@ from selectors import EVENT_READ, DefaultSelector
 from socket import gaierror
 from subprocess import CalledProcessError, check_output
 from sys import exit
-from syslog import openlog, syslog
+from syslog import LOG_MAIL, closelog, openlog, syslog
 from threading import Lock
 from time import monotonic, sleep
 
@@ -191,8 +191,8 @@ with nullcontext():
                 else:
                     syslog(pri, msg)
 
-        openlog(ident=_FILE.name)
-        log.addHandler(_SysLogHandler())
+        openlog(ident=_FILE.name, facility=LOG_MAIL)
+        log.addHandler(_SysLogHandler(facility=LOG_MAIL))
 
 
 try:
