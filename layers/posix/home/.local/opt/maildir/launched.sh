@@ -9,9 +9,10 @@ if [[ -v RECURSION ]]; then
   MAIL="$1"
   FROM="$(mhdr -d -h from -- "$MAIL")"
   SUBJECT="$(mhdr -d -h subject -- "$MAIL")"
+  ID="$(b3sum --length 16 <<< "$MAIL" | cut -d ' ' -f 1)"
 
   if ((${#SOCK[@]})); then
-    /Applications/kitty.app/Contents/MacOS/kitten @ --to "unix:${SOCK[*]}" -- kitten notify --identifier "$MAIL" --icon info -- "📩 ↘ $FROM" "$SUBJECT"
+    /Applications/kitty.app/Contents/MacOS/kitten @ --to "unix:${SOCK[*]}" -- kitten notify --identifier "$ID" --icon info -- "📩 ↘ $FROM" "$SUBJECT"
   else
     ~/.local/libexec/notify.cjs "📩 ↘ $FROM" '' "$SUBJECT" ping
   fi
