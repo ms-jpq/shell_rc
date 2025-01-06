@@ -3,24 +3,30 @@
 set -o pipefail
 shopt -u failglob
 
+if [[ -v RECURSION ]]; then
+  SOCK=(/tmp/kitty.*.sock)
+
+  MAIL="$1"
+  FROM="$(mhdr -d -h from -- "$MAIL")"
+  SUBJECT="$(mhdr -d -h subject -- "$MAIL")"
+
+  if ((${#SOCK[@]})); then
+    /Applications/kitty.app/Contents/MacOS/kitten @ --to "unix:${SOCK[*]}" -- kitten notify --icon info -- "📩 ↘ $FROM" "$SUBJECT"
+  else
+    ~/.local/libexec/notify.cjs "📩 ↘ $FROM" '' "$SUBJECT" ping
+  fi
+
+  exit
+fi
+
 CHANNEL="$1"
 LABEL="mnotify.$CHANNEL"
 shift -- 1
 
-SOCK=(/tmp/kitty.*.sock)
-
 {
   for DIR in "$@"; do
     for MAIL in "$DIR"/*; do
-      FROM="$(mhdr -d -h from -- "$MAIL")"
-      SUBJECT="$(mhdr -d -h subject -- "$MAIL")"
-
-      if ((${#SOCK[@]})); then
-        /Applications/kitty.app/Contents/MacOS/kitten @ --to "unix:${SOCK[*]}" -- kitten notify --icon info -- "📩 ↘ $FROM" "$SUBJECT"
-      else
-        ~/.local/libexec/notify.cjs "📩 ↘ $FROM" '' "$SUBJECT" ping
-      fi
-
+      printf -- '%s\0' "$MAIL"
     done
-  done
+  done | RECURSION=1 xargs -r -0 -P 0 -I % -- ~/.local/opt/maildir/launched.sh %
 } 2>&1 | logger -t "$LABEL"
