@@ -85,6 +85,7 @@
 + pastel
 + peak/tap/s5cmd
 + pinentry-mac
++ presenterm
 + progress
 + pspg
 + pstree
