@@ -41,7 +41,6 @@ $(PIPX)/$1: | $(OPT)/pipx/$(PY_BIN)/pipx
 
 endef
 
-# lookatme              lookatme
 define PIP_PKGS
 
 gay                   gay

@@ -60,6 +60,7 @@
 + openssh-server
 + parallel
 + pipexec
++ presenterm
 + progress
 + psmisc
 + pspg
