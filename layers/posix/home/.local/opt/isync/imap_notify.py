@@ -6,14 +6,16 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager, nullcontext, suppress
 from functools import cache, lru_cache, partial
 from imaplib import IMAP4, IMAP4_SSL, Commands
+from itertools import islice
 from logging import INFO, LogRecord, StreamHandler, captureWarnings, getLogger
 from logging.handlers import SysLogHandler
 from pathlib import Path
 from platform import system
 from selectors import EVENT_READ, DefaultSelector
 from socket import gaierror
+from string import Template
 from subprocess import CalledProcessError, check_output
-from sys import exit
+from sys import argv, exit
 from syslog import LOG_MAIL, openlog, syslog
 from threading import Lock
 from time import monotonic, sleep
@@ -145,10 +147,22 @@ def _idle(daemon: float, channel: str, host: str, user: str, mailbox: str) -> No
                 sleep(daemon)
 
 
+def _install(channel: str, path: Path) -> None:
+    raw = _FILE.parent.joinpath("imap.notify.channel.xml").read_text()
+    template = Template(raw)
+    av = "".join(f"<string>{a}</string>" for a in islice(argv, 1, None))
+    rendered = template.substitute(
+        HOME=Path.home(), CHANNEL=channel, SELF=_FILE.name, ARGV=f"-->{av}<!--"
+    )
+    path.write_text(rendered)
+
+
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
-    parser.add_argument("--install", action="store_true")
-    parser.add_argument("--remove", action="store_true")
+    with nullcontext(parser.add_mutually_exclusive_group()) as mutex:
+        mutex.add_argument("--install", action="store_true")
+        mutex.add_argument("--remove", action="store_true")
+
     parser.add_argument("--host", default="outlook.office365.com")
     parser.add_argument("--boxes", nargs="*", default=("INBOX",))
     parser.add_argument("--daemon", type=float, default=0)
@@ -160,7 +174,16 @@ def _parse_args() -> Namespace:
 def main() -> None:
     try:
         args = _parse_args()
-        idle = partial(_idle, args.daemon, args.channel, args.host, args.username)
+        channel = args.channel
+        launchd = (
+            Path.home() / "Library" / "LaunchAgents" / f"imap.notify.{channel}.xml"
+        )
+        if argv.remove:
+            return launchd.unlink(missing_ok=True)
+        elif args.install:
+            return _install(channel, path=launchd)
+
+        idle = partial(_idle, args.daemon, channel, args.host, args.username)
 
         if not (boxes := args.boxes):
             with _imap(args.host, user=args.username) as m:

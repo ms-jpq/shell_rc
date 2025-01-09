@@ -4,7 +4,7 @@
 <plist version="1.0">
   <dict>
     <key>Label</key>
-    <string>outlook.notify.${CHANNEL}</string>
+    <string>imap.notify.${CHANNEL}</string>
     <key>EnvironmentVariables</key>
     <dict>
       <key>PATH</key>
@@ -13,12 +13,11 @@
       <string>${HOME}/.config/gnupg</string>
     </dict>
     <key>Program</key>
-    <string>${HOME}/.local/opt/isync/outlook_notify.py</string>
+    <string>${HOME}/.local/opt/isync/${SELF}</string>
     <key>ProgramArguments</key>
     <array>
       <string>python3</string>
-      <string>${CHANNEL}</string>
-      <string>${MAIL}</string>
+      <!--${ARGV}-->
     </array>
     <key>ProcessType</key>
     <string>Background</string>
