@@ -2,9 +2,10 @@
 
 [database]
 autocommit = 60
+# path = .local/share/maildir/<profile>
 
 [new]
-ignore = .mbsyncstate;.uidvalidity
+ignore = .mbsyncstate;.uidvalidity;.DS_Store
 
 [user]
 name = dog
