@@ -9,6 +9,7 @@ from imaplib import IMAP4, IMAP4_SSL, Commands
 from itertools import islice
 from logging import INFO, LogRecord, StreamHandler, captureWarnings, getLogger
 from logging.handlers import SysLogHandler
+from os import linesep
 from pathlib import Path
 from platform import system
 from selectors import EVENT_READ, DefaultSelector
@@ -47,10 +48,10 @@ def _auth(user: str, now: int) -> bytes:
 
 
 @contextmanager
-def _imap(host: str, user: str) -> Iterator[IMAP4]:
+def _imap(host: str, authn: str, user: str) -> Iterator[IMAP4]:
     now = int(monotonic() / _MINUTE)
     with _lock():
-        auth = _auth(user, now=now)
+        auth = _auth(user, authn=authn, now=now)
 
     cooked = False
     m = IMAP4_SSL(host=host, timeout=_MINUTE * 1.1)
@@ -79,8 +80,8 @@ def _boxes(m: IMAP4) -> Iterator[str]:
 
 
 # https://github.com/python/cpython/issues/55454
-def _waiting(host: str, user: str, mailbox: str) -> Iterator[None]:
-    with DefaultSelector() as sel, _imap(host, user=user) as m:
+def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
+    with DefaultSelector() as sel, _imap(host, authn=authn, user=user) as m:
         assert "IDLE" in m.capabilities
         sel.register(m.file, EVENT_READ)
 
@@ -128,12 +129,14 @@ def _trigger(channel: str) -> None:
     log.info("%s", f">> {trigger}")
 
 
-def _idle(daemon: float, channel: str, host: str, user: str, mailbox: str) -> None:
+def _idle(
+    daemon: float, channel: str, host: str, authn: str, user: str, mailbox: str
+) -> None:
     daemonize, touched = daemon > 0, False
     while daemonize or not touched:
         touched = True
         try:
-            for _ in _waiting(host, user, mailbox):
+            for _ in _waiting(host, authn=authn, user=user, mailbox=mailbox):
                 _trigger(channel)
         except (TimeoutError, gaierror, CalledProcessError) as e:
             log.info("%s", e)
@@ -150,11 +153,22 @@ def _idle(daemon: float, channel: str, host: str, user: str, mailbox: str) -> No
 def _install(channel: str, path: Path) -> None:
     raw = _FILE.parent.joinpath("imap.notify.channel.xml").read_text()
     template = Template(raw)
-    av = "".join(f"<string>{a}</string>" for a in islice(argv, 1, None))
+    av = linesep.join(
+        (
+            "-->",
+            *(
+                f"<string>{a}</string>"
+                for a in islice(argv, 1, None)
+                if a != "--install"
+            ),
+            "<!--",
+        )
+    )
     rendered = template.substitute(
-        HOME=Path.home(), CHANNEL=channel, SELF=_FILE.name, ARGV=f"-->{av}<!--"
+        HOME=Path.home(), CHANNEL=channel, SELF=_FILE.name, ARGV=av
     )
     path.write_text(rendered)
+    log.info("%s", rendered)
 
 
 def _parse_args() -> Namespace:
@@ -165,28 +179,31 @@ def _parse_args() -> Namespace:
 
     parser.add_argument("--host", default="outlook.office365.com")
     parser.add_argument("--boxes", nargs="*", default=("INBOX",))
+    parser.add_argument("--auth", choices=("oauth", "plain"), default="oauth")
     parser.add_argument("--daemon", type=float, default=0)
     parser.add_argument("--channel", required=True)
-    parser.add_argument("--username", required=True)
+    parser.add_argument("--user", required=True)
     return parser.parse_args()
 
 
 def main() -> None:
     try:
         args = _parse_args()
-        channel = args.channel
+        channel, host, authn, user = args.channel, args.host, args.auth, args.user
+
         launchd = (
             Path.home() / "Library" / "LaunchAgents" / f"imap.notify.{channel}.xml"
         )
-        if argv.remove:
+
+        if args.remove:
             return launchd.unlink(missing_ok=True)
         elif args.install:
             return _install(channel, path=launchd)
 
-        idle = partial(_idle, args.daemon, channel, args.host, args.username)
+        idle = partial(_idle, args.daemon, channel, host, authn, user)
 
         if not (boxes := args.boxes):
-            with _imap(args.host, user=args.username) as m:
+            with _imap(host, authn=authn, user=user) as m:
                 boxes = tuple(_boxes(m))
 
         with ThreadPoolExecutor() as ex:
