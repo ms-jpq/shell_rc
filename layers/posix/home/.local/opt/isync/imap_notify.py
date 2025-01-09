@@ -103,7 +103,7 @@ def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
                         line = m._get_line()
                         assert isinstance(line, bytes)
 
-                        log.info("%s", f"{mailbox} -> {line}")
+                        log.info("%s", f"{mailbox} -> {line!r}")
 
                         if line.startswith(b"* BYE"):
                             return
