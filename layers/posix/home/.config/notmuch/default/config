@@ -1,1 +1,4 @@
+# https://man.archlinux.org/man/notmuch-config.1
 
+[database]
+autocommit = 60
