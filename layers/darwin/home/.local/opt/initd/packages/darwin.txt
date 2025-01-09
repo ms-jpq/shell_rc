@@ -72,7 +72,6 @@
 + mtr
 + ncdu
 + ncspot
-+ neofetch
 + neomutt
 + neovim
 + nmap
