@@ -44,7 +44,7 @@ def _auth(authn: str, user: str, now: int) -> bytes:
         password = check_output(argv, text=True, timeout=_MINUTE).rstrip()
         return f"user={user}\1auth=Bearer {password}\1\1".encode()
     elif authn == "plain":
-        return state.joinpath(f"${user}.password").read_bytes()
+        return state.joinpath(f"{user}.password").read_bytes().strip()
     else:
         assert False
 
@@ -58,8 +58,12 @@ def _imap(host: str, authn: str, user: str) -> Iterator[IMAP4]:
     cooked = False
     m = IMAP4_SSL(host=host, timeout=_MINUTE * 1.1)
     try:
-        ok, _ = m.authenticate("XOAUTH2", lambda _: auth)
-        assert ok == "OK", ok
+        if authn == "oauth":
+            ok, _ = m.authenticate("XOAUTH2", lambda _: auth)
+            assert ok == "OK", ok
+        elif authn == "plain":
+            m.login(user, password=auth.decode())
+
         yield m
     except TimeoutError:
         cooked = True
@@ -84,7 +88,6 @@ def _boxes(m: IMAP4) -> Iterator[str]:
 # https://github.com/python/cpython/issues/55454
 def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
     with DefaultSelector() as sel, _imap(host, authn=authn, user=user) as m:
-        assert "IDLE" in m.capabilities
         sel.register(m.file, EVENT_READ)
 
         ok, _ = m.select(mailbox, readonly=True)
@@ -98,12 +101,14 @@ def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
                 for _ in range(_PULSE):
                     if sel.select(timeout=_MINUTE):
                         line = m._get_line()
+                        assert isinstance(line, bytes)
+
                         log.info("%s", f"{mailbox} -> {line}")
 
                         if line.startswith(b"* BYE"):
                             return
 
-                        if not line.startswith(b"+ IDLE accepted"):
+                        if not line.lower().startswith(b"+ idl"):
                             yield None
 
                         if line.endswith(b"EXISTS"):
