@@ -7,6 +7,7 @@ LABEL="mbsync.$CHANNEL"
 
 {
   /opt/homebrew/bin/mbsync -- "$CHANNEL"
+  /opt/homebrew/bin/notmuch --config ~/.config/notmuch/"$CHANNEL"/config new
 
   find ~/.local/state/isync/"$LABEL".queue -mindepth 1 -delete
 } 2>&1 | logger -t "$LABEL"
