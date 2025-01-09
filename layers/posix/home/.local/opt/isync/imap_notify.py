@@ -35,23 +35,25 @@ def _lock() -> Lock:
 
 
 @lru_cache(maxsize=1)
-def _auth(user: str, now: int) -> bytes:
+def _auth(authn: str, user: str, now: int) -> bytes:
     parent = _FILE.parent
-    argv = (
-        parent / "oauth.sh",
-        "--",
-        Path.home() / ".local" / "state" / parent.name / f"{user}.oauth.gpg",
-    )
-    password = check_output(argv, text=True, timeout=_MINUTE).rstrip()
-    raw = f"user={user}\1auth=Bearer {password}\1\1"
-    return raw.encode()
+    state = Path.home() / ".local" / "state" / parent.name
+
+    if authn == "oauth":
+        argv = (parent / "oauth.sh", "--", state / f"{user}.oauth.gpg")
+        password = check_output(argv, text=True, timeout=_MINUTE).rstrip()
+        return f"user={user}\1auth=Bearer {password}\1\1".encode()
+    elif authn == "plain":
+        return state.joinpath(f"${user}.password").read_bytes()
+    else:
+        assert False
 
 
 @contextmanager
 def _imap(host: str, authn: str, user: str) -> Iterator[IMAP4]:
     now = int(monotonic() / _MINUTE)
     with _lock():
-        auth = _auth(user, authn=authn, now=now)
+        auth = _auth(authn, user=user, now=now)
 
     cooked = False
     m = IMAP4_SSL(host=host, timeout=_MINUTE * 1.1)
@@ -192,7 +194,7 @@ def main() -> None:
         channel, host, authn, user = args.channel, args.host, args.auth, args.user
 
         launchd = (
-            Path.home() / "Library" / "LaunchAgents" / f"imap.notify.{channel}.xml"
+            Path.home() / "Library" / "LaunchAgents" / f"imap.notify.{channel}.plist"
         )
 
         if args.remove:
