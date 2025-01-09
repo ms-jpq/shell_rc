@@ -3,5 +3,9 @@
 [database]
 autocommit = 60
 
+[new]
+ignore = .mbsyncstate;.uidvalidity
+
 [user]
+name = dog
 # primary_email =
