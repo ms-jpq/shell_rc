@@ -102,13 +102,14 @@ def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
                     if sel.select(timeout=_MINUTE):
                         line = m._get_line()
                         assert isinstance(line, bytes)
+                        lo = line.lower()
 
                         log.info("%s", f"{mailbox} -> {line!r}")
 
-                        if line.startswith(b"* BYE"):
+                        if lo.startswith(b"* bye"):
                             return
 
-                        if not line.lower().startswith(b"+ idl"):
+                        if not lo.startswith(b"+ idl"):
                             yield None
 
                         if line.endswith(b"EXISTS"):
