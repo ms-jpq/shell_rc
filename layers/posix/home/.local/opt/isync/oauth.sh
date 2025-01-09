@@ -11,10 +11,12 @@ darwin*)
   ;;
 esac
 
+RUN="$SHARE/neomutt/oauth2/mutt_oauth2.py"
 OAUTH=(
+  flock
+  "$RUN"
   /usr/bin/python3
-  "$SHARE/neomutt/oauth2/mutt_oauth2.py"
-
+  "$RUN"
 )
 
 exec -- "${OAUTH[@]}" "$@"

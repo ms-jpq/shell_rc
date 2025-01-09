@@ -14,7 +14,7 @@ from selectors import EVENT_READ, DefaultSelector
 from socket import gaierror
 from subprocess import CalledProcessError, check_output
 from sys import exit
-from syslog import LOG_MAIL, closelog, openlog, syslog
+from syslog import LOG_MAIL, openlog, syslog
 from threading import Lock
 from time import monotonic, sleep
 
@@ -147,11 +147,13 @@ def _idle(daemon: float, channel: str, host: str, user: str, mailbox: str) -> No
 
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
+    parser.add_argument("--install", action="store_true")
+    parser.add_argument("--remove", action="store_true")
     parser.add_argument("--host", default="outlook.office365.com")
     parser.add_argument("--boxes", nargs="*", default=("INBOX",))
     parser.add_argument("--daemon", type=float, default=0)
-    parser.add_argument("channel")
-    parser.add_argument("username")
+    parser.add_argument("--channel", required=True)
+    parser.add_argument("--username", required=True)
     return parser.parse_args()
 
 
