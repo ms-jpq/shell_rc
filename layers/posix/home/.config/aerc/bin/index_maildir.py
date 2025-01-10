@@ -2,13 +2,12 @@
 
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator, MutableMapping
-from concurrent.futures import Executor, ThreadPoolExecutor
+from concurrent.futures import Executor, Future, ThreadPoolExecutor, as_completed
 from contextlib import contextmanager, nullcontext, suppress
 from datetime import datetime
 from email.errors import HeaderParseError
 from email.header import decode_header
 from email.utils import getaddresses, parsedate_to_datetime, unquote
-from functools import partial
 from hashlib import md5
 from itertools import chain
 from logging import INFO, StreamHandler, captureWarnings, getLogger
@@ -207,14 +206,14 @@ def _process_message(
                         mcache[hashed] = (-max(stored, recency), row)
 
 
-def _run(ex: Executor, cache_dir: Path, mail_dirs: Path) -> None:
+def _run(ex: Executor, cache_dir: Path, mail_dirs: Path) -> Iterator[Future[None]]:
     with _cache(cache_dir / "messages.txt", sep="\0", l=PurePath, r=float) as lock:
         for mailbox, maildir, paths in _iter_keys(mail_dirs):
             with _cache(
                 cache_dir / f"addr.{mailbox}.txt", sep=" ", l=str, r=_parse_cache
             ) as mlock:
-                proc = partial(_process_message, maildir, lock, mlock)
-                tuple(ex.map(proc, paths))
+                for path in paths:
+                    yield ex.submit(_process_message, maildir, lock, mlock, path)
 
 
 def main() -> None:
@@ -228,7 +227,9 @@ def main() -> None:
         return
 
     with ThreadPoolExecutor() as ex:
-        _run(ex, cache_dir=cache_dir, mail_dirs=Path(args.maildirs))
+        futs = _run(ex, cache_dir=cache_dir, mail_dirs=Path(args.maildirs))
+        for f in as_completed(futs):
+            f.result()
 
 
 try:
