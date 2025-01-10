@@ -15,7 +15,8 @@ from os import linesep
 from os.path import pathsep
 from pathlib import Path, PurePath
 from sys import exit
-from typing import Any, Callable, Sequence, TypeVar, cast
+from threading import Lock
+from typing import Any, Callable, ContextManager, Sequence, TypeVar, cast
 from unicodedata import normalize
 
 _T = TypeVar("_T")
@@ -107,10 +108,21 @@ def _iter_keys(root: Path) -> Iterator[tuple[str, Maildir, Iterator[Path]]]:
         yield mailbox, maildir, chain.from_iterable(paths)
 
 
+def _locking(thing: _T) -> Callable[[], ContextManager[_T]]:
+    lock = Lock()
+
+    @contextmanager
+    def cont() -> Iterator[_T]:
+        with lock:
+            yield thing
+
+    return cont
+
+
 @contextmanager
 def _cache(
     f: Path, sep: str, l: Callable[[str], _T], r: Callable[[str], _U]
-) -> Iterator[MutableMapping[_T, _U]]:
+) -> Iterator[Callable[[], ContextManager[MutableMapping[_T, _U]]]]:
     f.touch()
     cached: MutableMapping[_T, _U] = {}
     with f.open() as fd:
@@ -126,7 +138,7 @@ def _cache(
                 cached[l(key)] = r(value)
 
     try:
-        yield cached
+        yield _locking(cached)
     finally:
         ordered = sorted(cached.items(), key=lambda x: cast(Any, x[1]))
         gen = (
@@ -153,11 +165,11 @@ def _parse_cache(row: str) -> tuple[float, str]:
 
 
 def _run(cache_dir: Path, mail_dirs: Path) -> None:
-    with _cache(cache_dir / "messages.txt", sep="\0", l=PurePath, r=float) as cache:
+    with _cache(cache_dir / "messages.txt", sep="\0", l=PurePath, r=float) as lock:
         for mailbox, maildir, paths in _iter_keys(mail_dirs):
             with _cache(
                 cache_dir / f"addr.{mailbox}.txt", sep=" ", l=str, r=_parse_cache
-            ) as mcache:
+            ) as mlock:
                 for path in paths:
                     key, sep, _ = path.name.partition(pathsep)
                     if sep != pathsep:
@@ -165,10 +177,11 @@ def _run(cache_dir: Path, mail_dirs: Path) -> None:
 
                     with suppress(FileNotFoundError):
                         mtime = path.stat().st_mtime
-                        if mtime <= cache.get(path, 0):
-                            continue
+                        with lock() as cache:
+                            if mtime <= cache.get(path, 0):
+                                continue
 
-                        cache[path] = mtime
+                            cache[path] = mtime
 
                         with suppress(KeyError):
                             message = maildir[key]
@@ -181,15 +194,17 @@ def _run(cache_dir: Path, mail_dirs: Path) -> None:
                                 row = f"{email}\t{name}"
                                 hashed = md5(row.encode()).hexdigest()
 
-                                cached = mcache.get(hashed)
-                                if cached is None:
-                                    stored = recency
-                                    log.info("%s", f"{email} :: {name}")
-                                else:
-                                    stored, _ = cached
-                                    stored *= -1
+                                with mlock() as mcache:
+                                    cached = mcache.get(hashed)
 
-                                mcache[hashed] = (-max(stored, recency), row)
+                                    if cached is None:
+                                        stored = recency
+                                        log.info("%s", f"{email} :: {name}")
+                                    else:
+                                        stored, _ = cached
+                                        stored *= -1
+
+                                    mcache[hashed] = (-max(stored, recency), row)
 
 
 def main() -> None:
