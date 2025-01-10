@@ -2,11 +2,13 @@
 
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator, MutableMapping
+from concurrent.futures import Executor, ThreadPoolExecutor
 from contextlib import contextmanager, nullcontext, suppress
 from datetime import datetime
 from email.errors import HeaderParseError
 from email.header import decode_header
 from email.utils import getaddresses, parsedate_to_datetime, unquote
+from functools import partial
 from hashlib import md5
 from itertools import chain
 from logging import INFO, StreamHandler, captureWarnings, getLogger
@@ -164,47 +166,55 @@ def _parse_cache(row: str) -> tuple[float, str]:
     return float(lhs), rhs
 
 
-def _run(cache_dir: Path, mail_dirs: Path) -> None:
+def _process_message(
+    maildir: Maildir,
+    lock: Callable[[], ContextManager[MutableMapping[PurePath, float]]],
+    mlock: Callable[[], ContextManager[MutableMapping[str, tuple[float, str]]]],
+    path: Path,
+) -> None:
+    key, sep, _ = path.name.partition(pathsep)
+    if sep != pathsep:
+        return
+
+    with suppress(FileNotFoundError):
+        mtime = path.stat().st_mtime
+        with lock() as cache:
+            if mtime <= cache.get(path, 0):
+                return
+            cache[path] = mtime
+
+            with suppress(KeyError):
+                message = maildir[key]
+                recency = _mtime(message) or mtime
+
+                for email, name in _parse(message):
+                    if _die(email):
+                        continue
+
+                    row = f"{email}\t{name}"
+                    hashed = md5(row.encode()).hexdigest()
+
+                    with mlock() as mcache:
+                        cached = mcache.get(hashed)
+
+                        if cached is None:
+                            stored = recency
+                            log.info("%s", f"{email} :: {name}")
+                        else:
+                            stored, _ = cached
+                            stored *= -1
+
+                        mcache[hashed] = (-max(stored, recency), row)
+
+
+def _run(ex: Executor, cache_dir: Path, mail_dirs: Path) -> None:
     with _cache(cache_dir / "messages.txt", sep="\0", l=PurePath, r=float) as lock:
         for mailbox, maildir, paths in _iter_keys(mail_dirs):
             with _cache(
                 cache_dir / f"addr.{mailbox}.txt", sep=" ", l=str, r=_parse_cache
             ) as mlock:
-                for path in paths:
-                    key, sep, _ = path.name.partition(pathsep)
-                    if sep != pathsep:
-                        continue
-
-                    with suppress(FileNotFoundError):
-                        mtime = path.stat().st_mtime
-                        with lock() as cache:
-                            if mtime <= cache.get(path, 0):
-                                continue
-
-                            cache[path] = mtime
-
-                        with suppress(KeyError):
-                            message = maildir[key]
-                            recency = _mtime(message) or mtime
-
-                            for email, name in _parse(message):
-                                if _die(email):
-                                    continue
-
-                                row = f"{email}\t{name}"
-                                hashed = md5(row.encode()).hexdigest()
-
-                                with mlock() as mcache:
-                                    cached = mcache.get(hashed)
-
-                                    if cached is None:
-                                        stored = recency
-                                        log.info("%s", f"{email} :: {name}")
-                                    else:
-                                        stored, _ = cached
-                                        stored *= -1
-
-                                    mcache[hashed] = (-max(stored, recency), row)
+                proc = partial(_process_message, maildir, lock, mlock)
+                tuple(ex.map(proc, paths))
 
 
 def main() -> None:
@@ -217,7 +227,8 @@ def main() -> None:
             path.unlink()
         return
 
-    _run(cache_dir, Path(args.maildirs))
+    with ThreadPoolExecutor() as ex:
+        _run(ex, cache_dir=cache_dir, mail_dirs=Path(args.maildirs))
 
 
 try:
