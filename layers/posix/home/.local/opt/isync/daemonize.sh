@@ -2,9 +2,6 @@
 
 set -o pipefail
 
-OUTLOOK_CHANNEL="$1"
-OUTLOOK_ADDR="$2"
-
 LAUNCH_AGENTS=~/Library/LaunchAgents
 export -- CHANNEL WATCH_PATHS
 
@@ -20,7 +17,3 @@ for MDIR in ~/.local/share/maildir/*/; do
   envsubst < "${0%/*}/../maildir/mnotify.channel.xml" | sponge -- "$LAUNCH_AGENTS"/mnotify."$CHANNEL".plist
   printf -- '%s\n' "$CHANNEL"
 done
-
-CHANNEL="$OUTLOOK_CHANNEL"
-MAIL="$OUTLOOK_ADDR" envsubst < "${0%/*}/outlook.notify.channel.xml" | sponge -- "$LAUNCH_AGENTS"/outlook.notify."$CHANNEL".plist
-printf -- '%s\n' "$CHANNEL"
