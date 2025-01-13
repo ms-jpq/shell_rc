@@ -168,7 +168,7 @@ def _parse_cache(row: str) -> tuple[float, str]:
 
 def _process_message(
     maildir: Maildir,
-    lock: Callable[[], ContextManager[MutableMapping[PurePath, float]]],
+    cache: MutableMapping[PurePath, float],
     mlock: Callable[[], ContextManager[MutableMapping[str, tuple[float, str]]]],
     path: Path,
 ) -> None:
@@ -178,42 +178,44 @@ def _process_message(
 
     with suppress(FileNotFoundError):
         mtime = path.stat().st_mtime
-        with lock() as cache:
-            if mtime <= cache.get(path, 0):
-                return
-            cache[path] = mtime
 
-            with suppress(KeyError):
-                message = maildir[key]
-                recency = _mtime(message) or mtime
+        if mtime <= cache.get(path, 0):
+            return
+        cache[path] = mtime
 
-                for email, name in _parse(message):
-                    if _die(email):
-                        continue
+        with suppress(KeyError):
+            message = maildir[key]
+            recency = _mtime(message) or mtime
 
-                    row = f"{email}\t{name}"
-                    hashed = md5(row.encode()).hexdigest()
+            for email, name in _parse(message):
+                if _die(email):
+                    continue
 
-                    with mlock() as mcache:
-                        cached = mcache.get(hashed)
+                row = f"{email}\t{name}"
+                hashed = md5(row.encode()).hexdigest()
 
-                        if cached is None:
-                            stored = recency
-                            log.info("%s", f"{email} :: {name}")
-                        else:
-                            stored, _ = cached
-                            stored *= -1
+                with mlock() as mcache:
+                    cached = mcache.get(hashed)
 
-                        mcache[hashed] = (-max(stored, recency), row)
+                    if cached is None:
+                        stored = recency
+                        log.info("%s", f"{email} :: {name}")
+                    else:
+                        stored, _ = cached
+                        stored *= -1
+
+                    mcache[hashed] = (-max(stored, recency), row)
 
 
 def _run(ex: Executor, cache_dir: Path, mail_dirs: Path) -> None:
-    with _cache(cache_dir / "messages.txt", sep="\0", l=PurePath, r=float) as lock:
+    with _cache(
+        cache_dir / "messages.txt", sep="\0", l=PurePath, r=float
+    ) as lock, lock() as cache:
         for mailbox, maildir, paths in _iter_keys(mail_dirs):
             with _cache(
                 cache_dir / f"addr.{mailbox}.txt", sep=" ", l=str, r=_parse_cache
             ) as mlock:
-                proc = partial(_process_message, maildir, lock, mlock)
+                proc = partial(_process_message, maildir, cache, mlock)
                 tuple(ex.map(proc, paths))
 
 
