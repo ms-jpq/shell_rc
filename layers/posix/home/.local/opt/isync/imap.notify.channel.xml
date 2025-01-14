@@ -22,7 +22,7 @@
     <key>ProcessType</key>
     <string>Background</string>
     <key>StartInterval</key>
-    <integer>2</integer>
+    <integer>1</integer>
     <key>ThrottleInterval</key>
     <integer>6</integer>
   </dict>
