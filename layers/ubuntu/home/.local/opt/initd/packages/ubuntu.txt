@@ -76,7 +76,6 @@
 + sudo
 + swi-prolog-nox
 + sysstat
-+ termshark
 + tmux
 + tokei
 + tree
