@@ -172,7 +172,7 @@ def main() -> None:
     norm = normalize("NFKD", dotenv)
     p_env = {**environ}
     env = _trans(_parse(norm), env=p_env)
-    pass_through = {"PATH"}
+    pass_through = {"PATH", "ASDF_DATA_DIR"}
     if name == "nt":
         pass_through |= {"PATHEXT"}
     new_env = {**env, **{k: v for k, v in p_env.items() if k in pass_through}}
