@@ -2,6 +2,5 @@
 # + cuda-drivers-550
 # + cuda-toolkit
 # + docker-ce
-# + docker-ce-cli
 # + docker-compose-plugin
 # + nvidia-container-toolkit
