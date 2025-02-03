@@ -1,11 +1,11 @@
 #!/usr/bin/env -S -- sed -E -f
 
 /\[messages\]/ {
-  a\<C-r> = :connect<Enter>
+  a<C-r> = :connect<Enter>
 }
 
 /d = :choose/d
 /D = :delete/ {
-  i\D = :move Trash<Enter>
+  iD = :move Trash<Enter>
   d
 }
