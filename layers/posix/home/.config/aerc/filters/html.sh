@@ -12,7 +12,7 @@ PANDOC=(
   --read html-native_divs-native_spans
   --write markdown
   --lua-filter "${0%/*}/../libexec/html-filter.lua"
-  --columns $((COLS - 2))
+  --columns $((COLS - 4))
 )
 
 "${PANDOC[@]}" | sed -E -e 's#(data:image/[^;]+;).*$#\1#g'
