@@ -15,4 +15,4 @@ PANDOC=(
   --columns $((COLS - 2))
 )
 
-exec -- "${PANDOC[@]}"
+"${PANDOC[@]}" | sed -E -e 's#(data:image/[^;]+;).*$#\1#g'
