@@ -5,8 +5,10 @@ set -o pipefail
 CHANNEL="$1"
 LABEL="mbsync.$CHANNEL"
 
+OPT='/opt/homebrew/opt'
+
 {
-  /opt/homebrew/bin/mbsync -- "$CHANNEL"
+  SASL_PATH="$OPT/cyrus-sasl/lib/sasl2:$OPT/cyrus-sasl-xoauth2/lib/sasl2" /opt/homebrew/bin/mbsync -- "$CHANNEL"
   /opt/homebrew/bin/notmuch --config ~/.config/notmuch/"$CHANNEL"/config new
 
   find ~/.local/state/isync/"$LABEL".queue -mindepth 1 -delete
