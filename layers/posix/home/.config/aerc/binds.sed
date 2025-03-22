@@ -8,6 +8,6 @@
 /d = :choose/d
 /D = :delete/ {
   i\
-D = :move Trash<Enter>
+D = :move 已删除邮件<Enter>
   d
 }
