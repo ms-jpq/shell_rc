@@ -18,6 +18,7 @@
 .terraform.tfstate.lock.info
 .terraform/
 .venv/
+.yardoc/
 Package.resolved
 __pycache__/
 node_modules/
