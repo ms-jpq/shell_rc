@@ -3,6 +3,9 @@
 /\[messages\]/ {
   a\
 <C-r> = :connect<Enter>
+
+  a\
+w = :read<Enter>
 }
 
 /d = :choose/d
