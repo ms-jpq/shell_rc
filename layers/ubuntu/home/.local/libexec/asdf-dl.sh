@@ -81,6 +81,7 @@ PHP_DEPS=(
   libcurl4-openssl-dev
   libgd-dev
   libonig-dev
+  libpq-dev
   libzip-dev
   re2c
 )
