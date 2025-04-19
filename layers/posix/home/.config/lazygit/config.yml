@@ -1,5 +1,6 @@
 ---
 git:
+  overrideGpg: true
   paging:
     pager: delta --paging=never --24-bit-color=never
 
