@@ -4,8 +4,6 @@
 export -- ASDF_CONFIG_FILE="$XDG_CONFIG_HOME/asdf/rc.conf" ASDF_DATA_DIR="$HOME/.local/asdf"
 
 path=(
-  "$HOME/.local/opt/asdf/bin"
-  "$ASDF_DATA_DIR/bin"
   "$ASDF_DATA_DIR/shims"
   "${path[@]}"
 )

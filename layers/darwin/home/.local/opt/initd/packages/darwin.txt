@@ -3,6 +3,7 @@
 + aerc
 + aha
 + asciiquarium
++ asdf
 + autossh
 + awk
 + b3sum
