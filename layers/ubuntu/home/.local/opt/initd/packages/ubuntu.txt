@@ -5,6 +5,7 @@
 + 7zip-standalone
 + aerc
 + aha
++ asdf
 + athena-jot
 + autossh
 + b3sum
