@@ -24,4 +24,4 @@ Far :${ACCOUNT}-remote:
 Near :${ACCOUNT}-local:
 SyncState *
 Patterns *
-
+Patterns !任务 !日记 !注释 !联系人 !对话历史记录
