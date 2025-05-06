@@ -8,20 +8,13 @@ on:
 
 jobs:
   formulae:
-    strategy:
-      matrix:
-        formula:
-          - aerc.rb
-          - cyrus-sasl-xoauth2.rb
-          - mblaze.rb
-
     runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - run: |-
-          brew install --HEAD --formula -- ./formulae/${{ matrix.formula }}
+          brew install --HEAD --formula -- ./formulae/*
 
   docker:
     strategy:
