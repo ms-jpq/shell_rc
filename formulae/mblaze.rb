@@ -2,7 +2,7 @@
 
 class Mblaze < Formula
   head do
-    url 'https://github.com/leahneukirchen/mblaze.git', branch: 'master'
+    url('https://github.com/leahneukirchen/mblaze.git', branch: 'master')
   end
 
   def install

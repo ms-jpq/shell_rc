@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         formula:
+          - aerc.rb
           - cyrus-sasl-xoauth2.rb
           - mblaze.rb
 
