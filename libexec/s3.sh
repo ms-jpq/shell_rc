@@ -30,7 +30,6 @@ push)
     ~/.config/git/config
     ~/.config/gnupg/sshcontrol
     ~/.config/isyncrc
-    ~/.config/notmuch
     ~/.local/secrets
     ~/.ssh
   )
