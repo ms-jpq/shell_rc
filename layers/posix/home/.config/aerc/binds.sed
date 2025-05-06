@@ -5,7 +5,14 @@
 <C-r> = :connect<Enter>
 
   a\
-w = :read<Enter>
+w = :read -t<Enter>
+
+  a\
+{ = :prev 5<Enter>
+
+  a\
+} = :next 5<Enter>
+
 }
 
 /d = :choose/d
