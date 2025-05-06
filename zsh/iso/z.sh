@@ -17,7 +17,7 @@ z() {
   if [[ -z $acc ]]; then
     printf -- '%s\n' "MIA: $*"
   else
-    acc="$(fp +s --tac --query "'" <<< "$acc")"
+    acc="$(fp +s --tac --exact <<< "$acc")"
     cd -- "$acc" || return 1
   fi
 }

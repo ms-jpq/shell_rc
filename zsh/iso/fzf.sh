@@ -44,6 +44,7 @@ _fzf_preview=(
 )
 _fzf_alt_c_opts=(
   --read0
+  --exact
   "${_fzf_preview[@]}"
 )
 # shellcheck disable=SC2034
@@ -51,6 +52,13 @@ printf -v FZF_ALT_C_OPTS -- '%q ' "${_fzf_alt_c_opts[@]}"
 unset -- _fzf_alt_c_opts
 # shellcheck disable=SC2034
 FZF_CTRL_T_OPTS="$FZF_ALT_C_OPTS"
+
+_fzf_ctrl_r_opts=(
+  --exact
+)
+# shellcheck disable=SC2034
+printf -v FZF_CTRL_R_OPTS -- '%q ' "${_fzf_ctrl_r_opts[@]}"
+unset -- _fzf_ctrl_r_opts
 
 _fzf_compgen_path() {
   local -- local_opts=(
