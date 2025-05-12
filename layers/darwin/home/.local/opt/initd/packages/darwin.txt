@@ -83,7 +83,6 @@
 + pam-reattach
 + pandoc
 + pastel
-+ peak/tap/s5cmd
 + pinentry-mac
 + presenterm
 + progress
@@ -95,6 +94,7 @@
 + ripgrep
 + rlwrap
 + rsync
++ s5cmd
 + sad
 + sevenzip
 + sl
@@ -115,7 +115,6 @@
 + wireguard-tools
 + xdg-ninja
 + xmlstarlet
-+ xsv
 + yank
 + yazi
 + zsh

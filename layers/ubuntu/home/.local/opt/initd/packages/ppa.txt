@@ -12,4 +12,3 @@
 + s5cmd
 + sad
 + watchexec-cli
-+ xsv

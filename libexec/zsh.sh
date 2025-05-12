@@ -42,10 +42,6 @@ ZSH+=(./zsh/aposteriori.{zs,sh} "${SH[@]}" "$FZF"/*.zsh)
 ZACC=("$(cat -- "${ZSH[@]}")")
 BACC=("$(cat -- "${BSH[@]}")")
 
-S5=("$BASE/var/bin/s5cmd" --install-completion)
-ZACC+=("$(SHELL=zsh "${S5[@]}" | sed -E -e '/compinit/d')")
-BACC+=("$(SHELL=bash "${S5[@]}")")
-
 for DIR in "${DIRS[@]}"; do
   for BIN in "$DIR/bin"/*; do
     B="${BIN##*/}"
