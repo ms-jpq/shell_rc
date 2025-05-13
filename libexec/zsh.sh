@@ -9,8 +9,6 @@ Z_OUT="$3"
 B_OUT="$4"
 shift -- 3
 
-BASE="${0%/*}/.."
-
 FUNC="$Z_OUT/fn"
 BINS="$Z_OUT/bin"
 BLIB="$Z_OUT/libexec"
