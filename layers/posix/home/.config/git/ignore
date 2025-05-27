@@ -16,6 +16,7 @@
 .llm/
 .nvim/
 .phan/
+.php-cs-fixer.cache
 .scannerwork/
 .terraform.tfstate.lock.info
 .terraform/
