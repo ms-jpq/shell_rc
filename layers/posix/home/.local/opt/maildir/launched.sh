@@ -6,16 +6,27 @@ shopt -u failglob
 if [[ -v RECURSION ]]; then
   SOCK=(/tmp/kitty.*.sock)
 
+  STATE="$HOME/.local/state/notify-mails"
+
   MAIL="$1"
+  ID="$(b3sum --length 16 <<< "$MAIL" | cut -d ' ' -f 1)"
+  SID="$STATE/$ID"
+  find "$STATE" -type f -mtime +7 -delete
+
+  if [[ -f $SID ]]; then
+    exit
+  fi
+
   FROM="$(mhdr -d -h from -- "$MAIL")"
   SUBJECT="$(mhdr -d -h subject -- "$MAIL")"
-  ID="$(b3sum --length 16 <<< "$MAIL" | cut -d ' ' -f 1)"
 
   if ((${#SOCK[@]})); then
     /Applications/kitty.app/Contents/MacOS/kitten @ --to "unix:${SOCK[*]}" -- kitten notify --identifier "$ID" --icon info -- "📩 ↘ $FROM" "$SUBJECT"
   else
     ~/.local/libexec/notify.cjs "📩 ↘ $FROM" '' "$SUBJECT" ping
   fi
+
+  touch -- "$SID"
 
   exit
 fi
