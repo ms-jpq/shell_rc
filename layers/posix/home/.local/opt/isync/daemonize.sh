@@ -13,7 +13,15 @@ for MDIR in ~/.local/share/maildir/*/; do
 
   mkdir -v -p -- ~/.local/state/isync/mbsync."$CHANNEL".{watch,queue}
 
-  envsubst < "${0%/*}/mbsync.channel.xml" | sponge -- "$LAUNCH_AGENTS"/mbsync."$CHANNEL".plist
-  envsubst < "${0%/*}/../maildir/mnotify.channel.xml" | sponge -- "$LAUNCH_AGENTS"/mnotify."$CHANNEL".plist
+  DST1="$LAUNCH_AGENTS"/mbsync."$CHANNEL".plist
+  DST2="$LAUNCH_AGENTS"/mnotify."$CHANNEL".plist
+  FILES=("$DST1" "$DST2")
+  envsubst < "${0%/*}/mbsync.channel.xml" | sponge -- "$DST1"
+  envsubst < "${0%/*}/../maildir/mnotify.channel.xml" | sponge -- "$DST2"
+
+  for FILE in "${FILES[@]}"; do
+    launchctl load "$FILE"
+  done
+
   printf -- '%s\n' "$CHANNEL"
 done
