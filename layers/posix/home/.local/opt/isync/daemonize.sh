@@ -20,7 +20,7 @@ for MDIR in ~/.local/share/maildir/*/; do
   envsubst < "${0%/*}/../maildir/mnotify.channel.xml" | sponge -- "$DST2"
 
   for FILE in "${FILES[@]}"; do
-    launchctl load "$FILE"
+    chronic -- launchctl load "$FILE"
   done
 
   printf -- '%s\n' "$CHANNEL"
