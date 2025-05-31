@@ -3,10 +3,10 @@
 set -o pipefail
 shopt -u failglob
 
+STATE="$HOME/.local/state/notify-mails"
+
 if [[ -v RECURSION ]]; then
   SOCK=(/tmp/kitty.*.sock)
-
-  STATE="$HOME/.local/state/notify-mails"
 
   MAIL="$1"
   ID="$(b3sum --length 16 <<< "$MAIL" | cut -d ' ' -f 1)"
@@ -36,9 +36,8 @@ LABEL="mnotify.$CHANNEL"
 shift -- 1
 
 {
-  for DIR in "$@"; do
-    for MAIL in "$DIR"/*; do
-      printf -- '%s\0' "$MAIL"
-    done
-  done | RECURSION=1 xargs -r -0 -P 0 -I % -- ~/.local/opt/maildir/launched.sh %
+  if [[ -f "$STATE/$CHANNEL.slient" ]]; then
+    exit
+  fi
+  RECURSION=1 find "$@" -maxdepth 1 -type f -exec ~/.local/opt/maildir/launched.sh '{}' ';'
 } 2>&1 | logger -t "$LABEL"
