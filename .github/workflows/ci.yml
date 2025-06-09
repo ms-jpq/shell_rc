@@ -84,16 +84,12 @@ jobs:
           ./main.sh localhost -- --debug
 
   windows:
-    runs-on: windows-latest
+    runs-on: windows-2025
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
-
-      - run: |-
-          # TODO: https://github.com/actions/runner-images/issues/910#issuecomment-2113154618
-          powershell.exe .\layers\nt\winget.ps1
 
       - run: |-
           winget.exe install '--disable-interactivity' '--accept-source-agreements' '--accept-package-agreements' '--exact' '--id' 'ezwinports.make'
