@@ -19,22 +19,14 @@ darwin*)
   ;;
 msys)
   PATH="/usr/bin:$PATH"
-  trim() {
-    local -- v
-    v="$(tr --delete -- '\r' | tr --delete -- '\n')"
-    v="${v#* }"
-    v="${v##+([[:space:]])}"
-    v="${v%%+([[:space:]])}"
-    printf -- '%s' "$v"
-  }
 
   # shellcheck disable=2154
   HOME="$USERPROFILE"
-  ID="$(wmic os get Caption | trim)"
-  VERSION_ID="$(wmic os get Version | trim)"
+  ID="$(powershell.exe 'Get-ComputerInfo | Select-Object -ExpandProperty WindowsEditionId' | tr -d -- '\r')"
+  VERSION_ID="$(powershell.exe 'Get-ComputerInfo | Select-Object -ExpandProperty WindowsVersion' | tr -d -- '\r')"
   VERSION_CODENAME="$VERSION_ID"
   NPROC="$(nproc)"
-  MEMBYTES="$(wmic ComputerSystem get TotalPhysicalMemory | trim)"
+  MEMBYTES="$(powershell.exe 'Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty TotalPhysicalMemory' | tr -d -- '\r')"
   ;;
 *)
   exit 1

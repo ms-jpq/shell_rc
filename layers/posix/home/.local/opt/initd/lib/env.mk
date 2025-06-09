@@ -81,7 +81,7 @@ ifeq (darwin, $(OS))
 VERSION_ID := $(shell sw_vers -productVersion)
 VERSION_CODENAME := $(VERSION_ID)
 else
-VERSION_ID := $(shell wmic os get Version | tr -d -- '\r')
+VERSION_ID := $(shell powershell.exe 'Get-ComputerInfo | Select-Object -ExpandProperty WindowsVersion' | tr -d -- '\r')
 VERSION_CODENAME := $(VERSION_ID)
 endif
 endif
