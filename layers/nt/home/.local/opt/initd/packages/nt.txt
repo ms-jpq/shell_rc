@@ -1,3 +1,4 @@
+# + commercialhaskell.stack
 # + Git.Git
 # + GoLang.Go
 # + Insecure.Nmap
@@ -14,37 +15,37 @@
 # + Rustlang.Rustup
 # + SWI-Prolog.SWI-Prolog
 # + Swift.Toolchain
-# + commercialhaskell.stack
 + 7zip.7zip
++ bootandy.dust
 + BurntSushi.ripgrep.MSVC
++ charmbracelet.glow
++ charmbracelet.gum
 + Clement.bottom
++ cURL.cURL
++ dandavison.delta
 + Derailed.k9s
++ dundee.gdu
++ eza-community.eza
 + GnuWin32.M4
++ hpjansson.Chafa
 + JanDeDobbeleer.OhMyPosh
 + JesseDuffield.lazygit
++ jqlang.jq
++ junegunn.fzf
++ koalaman.shellcheck
 + Microsoft.PowerAppsCLI
 + Microsoft.PowerShell
++ ms-jpq.sad
++ muesli.duf
 + Neovim.Neovim
++ NSSM.NSSM
 + Rclone.Rclone
++ sharkdp.bat
++ sharkdp.fd
++ sharkdp.hyperfine
++ sharkdp.pastel
 + SoftwareFreedomConservancy.QEMU
 + StephanDilly.gitui
 + UniversalCtags.Ctags
 + Wilfred.difftastic
 + XAMPPRocky.Tokei
-+ bootandy.dust
-+ cURL.cURL
-+ charmbracelet.glow
-+ charmbracelet.gum
-+ dandavison.delta
-+ dundee.gdu
-+ eza-community.eza
-+ hpjansson.Chafa
-+ jqlang.jq
-+ junegunn.fzf
-+ koalaman.shellcheck
-+ ms-jpq.sad
-+ muesli.duf
-+ sharkdp.bat
-+ sharkdp.fd
-+ sharkdp.hyperfine
-+ sharkdp.pastel
