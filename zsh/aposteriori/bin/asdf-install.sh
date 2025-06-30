@@ -86,10 +86,24 @@ if ((LOCAL)); then
   asdf local "$LANG" "$VERSION"
 fi
 
-if ((GLOBAL)); then
-  asdf global "$LANG" "$VERSION"
-fi
-
 if ((VERSION_INSTALLED + GLOBAL)); then
   asdf reshim
+fi
+
+if ((GLOBAL)); then
+  set -x
+
+  SED=(sed -E)
+  case "$OSTYPE" in
+  darwin*)
+    SED+=(-i'')
+    ;;
+  *)
+    SED+=(-i)
+    ;;
+  esac
+
+  "${SED[@]}" -e "/^$LANG/d" -- "$HOME/.tool-versions"
+  # shellcheck disable=SC2016
+  "${SED[@]}" -e '$a'"$LANG $VERSION" -- "$HOME/.tool-versions"
 fi
