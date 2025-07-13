@@ -21,3 +21,7 @@ w = :read -t<Enter>
 D = :move 已删除邮件<Enter>
   d
 }
+
+/a = :archive/d
+/A = :unmark/d
+/A = :archive/d
