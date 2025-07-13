@@ -33,10 +33,10 @@ UNTAR=(
 )
 
 case "$SRC" in
-*.tar.gz)
+*.tar.gz | *.tgz)
   "${CURL[@]}" -- "$SRC" | "${UNTAR[@]}" -z
   ;;
-*.tar.xz)
+*.tar.xz | *.txz)
   "${CURL[@]}" -- "$SRC" | "${UNTAR[@]}" -J
   ;;
 *.zip)
