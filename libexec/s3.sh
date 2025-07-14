@@ -15,6 +15,7 @@ S3=(
   "$(realpath -- "$BASE/.venv/bin/s3cmd")"
   --no-guess-mime-type
   --no-mime-magic
+  --delete-after
   --host "$S3HOST"
   --host-bucket "%(bucket).$S3HOST"
 )
