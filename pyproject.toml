@@ -2,5 +2,9 @@
 name    = "sh"
 version = "0"
 
+dependencies = [
+  "s3cmd@https://github.com/s3tools/s3cmd/archive/heads/master.tar.gz",
+]
+
 [project.optional-dependencies]
 dev = ["mypy", "types-PyYAML", "types-psutil", "black", "isort"]

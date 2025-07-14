@@ -19,12 +19,13 @@ clean:
 
 clobber: clean
 	shopt -u failglob
-	rm -v -rf -- $(VAR) ./.venv ./node_modules
+	rm -v -rf -- $(VAR) $(VENV) ./node_modules
 
 GOOS := darwin ubuntu nt
 CURL := curl --fail-with-body --location --remove-on-error --create-dirs --no-progress-meter
-VAR := var
-TMP := $(VAR)/tmp
+VAR  := var
+TMP  := $(VAR)/tmp
+VENV := ./.venv
 
 $(VAR)/bin $(TMP):
 	mkdir -v -p -- '$@'

@@ -6,12 +6,17 @@ shopt -u failglob
 SELF="${0%/*}"
 BASE="$SELF/.."
 BUCKET='s3://kfc-home'
-S5="$BASE/var/bin/s5cmd"
 TMP="$BASE/var/gpg"
 GPG="$TMP/backup.gpg"
 
-S5=(
-  "$(realpath -- "$BASE/var/bin/s5cmd")"
+S3HOST='s3.ca-west-1.amazonaws.com'
+export -- AWS_SHARED_CREDENTIALS_FILE="$HOME/.config/aws/credentials"
+S3=(
+  "$(realpath -- "$BASE/.venv/bin/s3cmd")"
+  --no-guess-mime-type
+  --no-mime-magic
+  --host "$S3HOST"
+  --host-bucket "%(bucket).$S3HOST"
 )
 
 dir() {
@@ -21,8 +26,8 @@ dir() {
 }
 
 case "${1:-""}" in
-'' | s3)
-  "${S5[@]}" ls --humanize -- "$BUCKET/**"
+'' | s3 | ls)
+  "${S3[@]}" ls --recursive --human-readable-sizes -- "$BUCKET"
   ;;
 push)
   FILES=(
@@ -42,12 +47,12 @@ push)
   gpg --export-secret-keys --export-options export-backup | gpg --batch --encrypt --output "$GPG"
 
   pushd -- "$TMP"
-  "${S5[@]}" sync --delete -- ./ "$BUCKET" | cut -d ' ' -f -2
+  "${S3[@]}" sync --delete-removed -- ./ "$BUCKET"
   ;;
 pull)
   dir
   pushd -- "$TMP"
-  "${S5[@]}" cp -- "$BUCKET/*" . | cut -d ' ' -f -2
+  "${S3[@]}" sync -- "$BUCKET/" ./
   popd
   "$SELF/s3-prep.sh" pull "$TMP" "${FILES[@]}"
 
@@ -56,7 +61,7 @@ pull)
 rmfr)
   read -r -p '>>> (yes/no)?' -- DIE
   if [[ $DIE == 'yes' ]]; then
-    "${S5[@]}" rm --all-versions -- "$BUCKET/*"
+    "${S3[@]}" rm --all-versions -- "$BUCKET/*"
   else
     exit 130
   fi

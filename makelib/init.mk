@@ -22,8 +22,8 @@ execl(
 endef
 export -- PYDEPS
 
-./.venv/bin:
-	python3 -m venv -- './.venv'
+$(VENV)/bin:
+	python3 -m venv -- '$(@D)'
 	'$@/python3' -m pip install --upgrade -- tomli
 	'$@/python3' <<< '$(PYDEPS)'
 
@@ -63,17 +63,4 @@ $(VAR)/bin/hadolint: | $(VAR)/bin
 $(VAR)/bin/shfmt: | $(VAR)/bin
 	URI='https://github.com/mvdan/sh/releases/latest/download/shfmt_$(V_SHFMT)_$(OS)_$(GOARCH)'
 	$(CURL) --output '$@' -- "$$URI"
-	chmod +x '$@'
-
-$(VAR)/bin/s5cmd$(OS_EXT): | $(VAR)/bin
-	URI='https://github.com/peak/s5cmd/releases/latest/download/s5cmd_$(V_S5CMD)_$(S5_OS)-$(S5_TYPE).$(S5_EXT)'
-	case '$(OS)' in
-	nt)
-		$(CURL) --output '$(TMP)/s5cmd.zip' -- "$$URI"
-		unzip -o -d '$(VAR)/bin' '$(TMP)/s5cmd.zip'
-		;;
-	*)
-		$(CURL) -- "$$URI" | tar --extract --gz --file - --directory '$(VAR)/bin'
-		;;
-	esac
 	chmod +x '$@'
