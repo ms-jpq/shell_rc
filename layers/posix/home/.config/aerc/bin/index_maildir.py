@@ -25,22 +25,6 @@ _T = TypeVar("_T")
 _U = TypeVar("_U")
 
 
-def _parse_args() -> Namespace:
-    parser = ArgumentParser()
-    parser.add_argument(
-        "--maildirs",
-        type=Path,
-        default=Path.home() / ".local" / "share" / "maildir",
-    )
-    parser.add_argument(
-        "--cache",
-        type=Path,
-        default=Path.home() / ".cache" / "maildir",
-    )
-    parser.add_argument("--clear", action="store_true")
-    return parser.parse_args()
-
-
 def _maildirs(root: Path) -> Iterator[tuple[str, Path, Maildir]]:
     for mailboxes in root.glob("*/"):
         for globbed in mailboxes.rglob(".mbsyncstate"):
@@ -96,7 +80,7 @@ def _mtime(mail: MaildirMessage) -> float | None:
 
 
 def _parse(mail: MaildirMessage) -> Iterator[tuple[str, str]]:
-    for hdr in ("from", "to", "cc", "bcc"):
+    for hdr in ("from", "to", "cc", "bcc", "return-path"):
         for label, addr in getaddresses(mail.get_all(hdr, [])):
             if parsed := _standardize(addr):
                 for name in _decode(label):
@@ -219,7 +203,23 @@ def _run(ex: Executor, cache_dir: Path, mail_dirs: Path) -> None:
                 tuple(ex.map(proc, paths))
 
 
-def main() -> None:
+def _parse_args() -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument(
+        "--maildirs",
+        type=Path,
+        default=Path.home() / ".local" / "share" / "maildir",
+    )
+    parser.add_argument(
+        "--cache",
+        type=Path,
+        default=Path.home() / ".cache" / "maildir",
+    )
+    parser.add_argument("--clear", action="store_true")
+    return parser.parse_args()
+
+
+def _main() -> None:
     args = _parse_args()
     cache_dir = Path(args.cache)
     cache_dir.mkdir(parents=True, exist_ok=True)
@@ -240,6 +240,6 @@ try:
         log.setLevel(INFO)
         log.addHandler(StreamHandler())
 
-    main()
+    _main()
 except KeyboardInterrupt:
     exit(130)
