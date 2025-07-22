@@ -14,7 +14,7 @@ from itertools import chain
 from logging import INFO, StreamHandler, captureWarnings, getLogger
 from mailbox import Maildir, MaildirMessage
 from os import linesep
-from os.path import pathsep
+from os.path import pathsep, sep
 from pathlib import Path, PurePath
 from sys import exit
 from threading import Lock
@@ -26,7 +26,7 @@ _U = TypeVar("_U")
 
 
 def _maildirs(root: Path) -> Iterator[tuple[str, Path, Maildir]]:
-    for mailboxes in root.glob("*/"):
+    for mailboxes in root.glob("*" + sep):
         for globbed in mailboxes.rglob(".mbsyncstate"):
             if globbed.is_file():
                 path = globbed.parent
@@ -137,11 +137,13 @@ def _cache(
 
 def _die(addr: str) -> bool:
     return (
-        "reply" in addr
-        or "notification" in addr
-        or "invitation" in addr
+        False
         or "inbound" in addr
+        or "invitation" in addr
+        or "notification" in addr
         or "notify" in addr
+        or "reply" in addr
+        or "support" in addr
     )
 
 
