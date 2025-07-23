@@ -10,7 +10,7 @@ from email.header import decode_header
 from email.utils import getaddresses, parsedate_to_datetime, unquote
 from functools import partial
 from hashlib import md5
-from itertools import chain
+from itertools import chain, repeat
 from logging import INFO, StreamHandler, captureWarnings, getLogger
 from mailbox import Maildir, MaildirMessage
 from os import linesep
@@ -113,7 +113,7 @@ def _cache(
     cached: MutableMapping[_T, _U] = {}
     with f.open() as fd:
         for line in fd:
-            if not line:
+            if not (line := line.strip()):
                 continue
 
             key, s, value = line.partition(sep)
@@ -128,11 +128,12 @@ def _cache(
     finally:
         ordered = sorted(cached.items(), key=lambda x: cast(Any, x[1]))
         gen = (
-            f"{key}{sep}{sep.join(map(str, val)) if isinstance(val, Sequence) else val}{linesep}"
+            f"{key}{sep}{sep.join(map(str, val)) if isinstance(val, Sequence) else val}"
             for key, val in ordered
         )
+        lines = chain.from_iterable(zip(gen, repeat(linesep)))
         with f.open("w") as fd:
-            fd.writelines(gen)
+            fd.writelines(lines)
 
 
 def _die(addr: str) -> bool:
@@ -146,6 +147,7 @@ def _die(addr: str) -> bool:
         or "notify" in addr
         or "reply" in addr
         or "support" in addr
+        or addr.endswith(("amazonses.com", "linkedin.com", "slack.com", "ashbyhq.com"))
     )
 
 
