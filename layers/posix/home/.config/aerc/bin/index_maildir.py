@@ -138,6 +138,8 @@ def _cache(
 def _die(addr: str) -> bool:
     return (
         False
+        or "+" in addr
+        or "bounce" in addr
         or "inbound" in addr
         or "invitation" in addr
         or "notification" in addr
@@ -162,35 +164,42 @@ def _process_message(
     if sep != pathsep:
         return
 
-    with suppress(FileNotFoundError):
+    try:
         mtime = path.stat().st_mtime
+    except FileNotFoundError as e:
+        log.warning("%s", e)
+        return
 
-        if mtime <= cache.get(path, 0):
-            return
-        cache[path] = mtime
+    if mtime <= cache.get(path, 0):
+        return
+    cache[path] = mtime
 
-        with suppress(KeyError):
-            message = maildir[key]
-            recency = _mtime(message) or mtime
+    try:
+        message = maildir[key]
+    except KeyError as e:
+        log.warning("%s", e)
+        return
 
-            for email, name in _parse(message):
-                if _die(email):
-                    continue
+    recency = _mtime(message) or mtime
 
-                row = f"{email}\t{name}"
-                hashed = md5(row.encode()).hexdigest()
+    for email, name in _parse(message):
+        if _die(email):
+            continue
 
-                with mlock() as mcache:
-                    cached = mcache.get(hashed)
+        row = f"{email}\t{name}"
+        hashed = md5(row.encode()).hexdigest()
 
-                    if cached is None:
-                        stored = recency
-                        log.info("%s", f"{email} :: {name}")
-                    else:
-                        stored, _ = cached
-                        stored *= -1
+        with mlock() as mcache:
+            cached = mcache.get(hashed)
 
-                    mcache[hashed] = (-max(stored, recency), row)
+            if cached is None:
+                stored = recency
+                log.info("%s", f"{email} :: {name}")
+            else:
+                stored, _ = cached
+                stored *= -1
+
+            mcache[hashed] = (-max(stored, recency), row)
 
 
 def _run(ex: Executor, cache_dir: Path, mail_dirs: Path) -> None:
