@@ -21,6 +21,7 @@ endef
 
 define GIT_REPOS
 
+$(CONFIG)/helix                https://github.com/ms-jpq/helix
 $(CONFIG)/nvim                 https://github.com/ms-jpq/nvim_rc
 $(OPT)/ai                      https://github.com/ms-jpq/ai
 $(OPT)/fzf-tab                 https://github.com/Aloxaf/fzf-tab
