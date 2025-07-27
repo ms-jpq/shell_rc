@@ -26,9 +26,13 @@ cmd user-open      &"$OPENER" "$f"
 map <s-down>       :toggle; down
 map <s-up>         :toggle; up
 map <space>        :toggle
-map F              :setfilter
-map W              ${{cd -- "$f"; fzf --bind 'esc:become(true)' --preview "$XDG_CONFIG_HOME/zsh/libexec/preview.sh {}"}}
 map d              delete
 map f              :filter
+map F              :setfilter
 map o              :user-open
+map W              ${{cd -- "$f"; fzf --bind 'esc:become(true)' --preview "$XDG_CONFIG_HOME/zsh/libexec/preview.sh {}"}}
 map x              cut
+map <enter>        :{{
+                       $printf -- %s "$f"
+                       quit
+                    }}
