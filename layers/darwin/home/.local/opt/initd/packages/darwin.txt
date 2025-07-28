@@ -62,7 +62,6 @@
 + kubernetes-cli
 + lazygit
 + less
-+ lf
 + lsof
 + m4
 + make
