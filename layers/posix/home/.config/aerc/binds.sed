@@ -13,6 +13,13 @@ w = :read -t<Enter>
   a\
 } = :next 5<Enter>
 
+  a\
+E = :envelope<Enter>
+}
+
+/\[view\]/ {
+  a\
+E = :envelope<Enter>
 }
 
 /d = :choose/d
