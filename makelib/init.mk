@@ -30,24 +30,9 @@ $(VENV)/bin:
 ./node_modules/.bin:
 	npm install --upgrade --no-package-lock
 
-
-ifeq ($(HOSTTYPE), aarch64)
-S5_TYPE := $(GOARCH)
-else
-S5_TYPE := 64bit
-endif
-
-ifeq ($(OS), nt)
-S5_EXT := zip
-else
-S5_EXT := tar.gz
-endif
-
-V_S5CMD      = $(patsubst v%,%,$(shell ./libexec/gh-latest.sh $(VAR) peak/s5cmd))
 V_SHELLCHECK = $(shell ./libexec/gh-latest.sh $(TMP) koalaman/shellcheck)
 V_SHFMT      = $(shell ./libexec/gh-latest.sh $(TMP) mvdan/sh)
 
-S5_OS        = $(shell perl -CASD -wpe 's/([a-z])/\u$$1/;s/Darwin/macOS/;s/Nt/Windows/' <<<'$(OS)')
 HADO_OS      = $(shell perl -CASD -wpe 's/([a-z])/\u$$1/' <<<'$(OS)')
 
 $(VAR)/bin/shellcheck: | $(VAR)/bin

@@ -11,22 +11,12 @@ curl: $(BIN)/$(notdir $1)
 endef
 
 
-ifeq ($(HOSTTYPE), aarch64)
-DIFFN_TYPE := arm64
-S5_TYPE    := $(GOARCH)
-else
-DIFFN_TYPE := $(HOSTTYPE)
-S5_TYPE    := 64bit
-endif
-
-V_S5CMD   =  $(patsubst v%,%,$(shell $(GH_LATEST) peak/s5cmd))
 V_WATCHEX := $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
 
 
 define CURL_ARCHIVES
 
 diffnav.exe                                                 https://github.com/dlvhdr/diffnav/releases/latest/download/diffnav_Windows_$(DIFFN_TYPE).zip
-s5cmd.exe                                                   https://github.com/peak/s5cmd/releases/latest/download/s5cmd_$(V_S5CMD)_Windows-$(S5_TYPE).zip
 watchexec-$(V_WATCHEX)-x86_64-pc-windows-msvc/watchexec.exe https://github.com/watchexec/watchexec/releases/latest/download/watchexec-$(V_WATCHEX)-x86_64-pc-windows-msvc.zip
 
 endef

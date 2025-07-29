@@ -9,6 +9,5 @@
 + oh-my-posh
 + packages-microsoft-prod
 + pastel
-+ s5cmd
 + sad
 + watchexec-cli

@@ -93,7 +93,6 @@
 + ripgrep
 + rlwrap
 + rsync
-+ s5cmd
 + sad
 + sevenzip
 + sl
