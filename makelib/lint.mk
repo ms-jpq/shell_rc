@@ -2,7 +2,7 @@
 
 lint: mypy shellcheck hadolint tsc
 
-mypy: $(VENV)/bin
+mypy: $(VENV)/$(PY_BIN)
 	git ls-files --deduplicate -z -- '*.py' | xargs -r -0 -- '$</mypy' --
 
 shellcheck: $(VAR)/bin/shellcheck

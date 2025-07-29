@@ -1,0 +1,293 @@
+{
+  "#": "https://github.com/helix-editor/helix/blob/master/languages.toml",
+  "$": [
+    "tabby",
+    "harper-ls"
+  ],
+  "language": {
+    "bash": {
+      "formatter": {
+        "args": [
+          "--simplify",
+          "--binary-next-line",
+          "--space-redirects",
+          "--indent=2"
+        ],
+        "command": "shfmt"
+      }
+    },
+    "c": {
+      "formatter": {
+        "args": [
+          "-Werror"
+        ],
+        "command": "clang-format"
+      }
+    },
+    "clojure": {
+      "formatter": {
+        "args": [
+          "fix",
+          "--remove-multiple-non-indenting-spaces",
+          "--sort-ns-reference",
+          "--split-keypairs-over-multiple-lines",
+          "--",
+          "-"
+        ],
+        "command": "cljfmt"
+      }
+    },
+    "css": {},
+    "dockerfile": {
+      "formatter": {
+        "args": [
+          "format",
+          "--spaces=2"
+        ],
+        "command": "dockerfile-utils"
+      }
+    },
+    "dtsi": {
+      "formatter": {
+        "args": [
+          "--stdin",
+          "--",
+          "-"
+        ],
+        "command": "dtsfmt"
+      }
+    },
+    "fortran": {
+      "formatter": {
+        "args": [],
+        "command": "fprettify"
+      }
+    },
+    "go": {
+      "formatter": {
+        "args": [],
+        "command": "goimports"
+      }
+    },
+    "haskell": {
+      "formatter": {
+        "command": "stylish-haskell"
+      }
+    },
+    "hcl": {
+      "formatter": {
+        "args": [
+          "fmt",
+          "-"
+        ],
+        "command": "terraform"
+      }
+    },
+    "html": {},
+    "java": {
+      "formatter": {
+        "args": [
+          "-"
+        ],
+        "command": "javafmt.java"
+      }
+    },
+    "jq": {},
+    "json": {
+      "formatter": {
+        "args": [
+          "json"
+        ],
+        "command": "sortd"
+      }
+    },
+    "kotlin": {
+      "formatter": {
+        "args": [
+          "2",
+          "-"
+        ],
+        "command": "ktfmt.java"
+      }
+    },
+    "latex": {
+      "formatter": {
+        "command": "latexindent.pl"
+      }
+    },
+    "lua": {
+      "formatter": {
+        "args": [
+          "--line-width=88",
+          "--indent-count=2",
+          "--stdin"
+        ],
+        "command": "luafmt"
+      }
+    },
+    "perl": {
+      "formatter": {
+        "args": [
+          "--indent-columns=2"
+        ],
+        "command": "perltidy.pl"
+      }
+    },
+    "php": {
+      "formatter": {
+        "args": [],
+        "command": "php-csf.php"
+      },
+      "language-servers": [
+        "intelephense",
+        "phpactor"
+      ]
+    },
+    "powershell": {
+      "formatter": {
+        "command": "pwsh-fmt.ps1"
+      },
+      "language-servers": [
+        "powershell-es"
+      ]
+    },
+    "prolog": {
+      "formatter": {
+        "command": "prolog-fmt.pro"
+      }
+    },
+    "python": {
+      "formatter": {
+        "args": [],
+        "command": "black-sort.py"
+      },
+      "language-servers": [
+        "pyright"
+      ]
+    },
+    "ruby": {
+      "formatter": {
+        "args": [
+          "rb.rb",
+          "--fail-level=fatal",
+          "--stderr",
+          "--stdin",
+          "--format=quiet",
+          "--no-color",
+          "--autocorrect"
+        ],
+        "command": "rubocop.rb"
+      },
+      "language-servers": [
+        "ruby-lsp",
+        "solargraph",
+        "sorbet"
+      ]
+    },
+    "rust": {
+      "formatter": {
+        "args": [
+          "--edition=2021"
+        ],
+        "command": "rustfmt"
+      }
+    },
+    "scss": {},
+    "sql": {
+      "formatter": {
+        "args": [
+          "--language=postgres"
+        ],
+        "command": "sql-formatter"
+      }
+    },
+    "systemd": {
+      "formatter": {
+        "command": "systemd-fmt.sh"
+      }
+    },
+    "toml": {
+      "formatter": {
+        "args": [
+          "format",
+          "--option=align_entries=true",
+          "--option=array_trailing_comma=true",
+          "--option=reorder_keys=true",
+          "--",
+          "-"
+        ],
+        "command": "taplo"
+      }
+    },
+    "typescript": {
+      "formatter": {
+        "args": [
+          "--filetype=typescript",
+          "--tabsize=2"
+        ],
+        "command": "prettier.js"
+      },
+      "language-servers": [
+        "typescript-language-server",
+        "vscode-eslint-language-server"
+      ]
+    },
+    "xml": {
+      "formatter": {
+        "args": [
+          "--filetype=xml",
+          "--tabsize=2",
+          "--sort"
+        ],
+        "command": "prettier.js"
+      },
+      "language-servers": [
+        "lemminx"
+      ]
+    },
+    "yaml": {
+      "formatter": {
+        "args": [
+          "--filetype=yaml",
+          "--tabsize=2",
+          "--sort"
+        ],
+        "command": "prettier.js"
+      }
+    }
+  },
+  "language-server": {
+    "lemminx": {
+      "args": [],
+      "command": "lemminx"
+    },
+    "phpactor": {
+      "args": [
+        "language-server"
+      ],
+      "command": "phpactor"
+    },
+    "powershell-es": {
+      "args": [],
+      "command": "pwsh_es.ps1"
+    },
+    "sorbet": {
+      "args": [
+        "tc",
+        "--lsp"
+      ],
+      "command": "srb"
+    },
+    "tabby": {
+      "args": [
+        "--lsp",
+        "--stdio"
+      ],
+      "command": "tabby-agent"
+    },
+    "typos": {
+      "args": [],
+      "command": "typos-lsp"
+    }
+  }
+}

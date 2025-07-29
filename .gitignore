@@ -1,8 +1,9 @@
-*.isorted
 .DS_Store
 .git/
 .mypy_cache/
 .venv/
+*.isorted
+layers/posix/home/.config/helix/languages.toml
 package-lock.json
 tsconfig.tsbuildinfo
 var/

@@ -1,0 +1,37 @@
+#!/usr/bin/env -S -- bash -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar
+
+set -o pipefail
+
+VAR="$HOME/.config/nvim/var"
+PATH="$VAR/bin:$VAR/modules/node_modules/.bin:$VAR/modules/py_modules/bin:$VAR/modules/rb_modules/bin:$PATH"
+
+HX="$HOME/.local/bin/hx"
+if ! [[ -x $HX ]]; then
+  case "$OSTYPE" in
+  linux*)
+    HX='/usr/bin/hx'
+    ;;
+  darwin*)
+    HX='/opt/homebrew/bin/hx'
+    ;;
+  msys)
+    HX='/usr/bin/hx'
+    ;;
+  *)
+    set -x
+    exit 1
+    ;;
+  esac
+fi
+
+case "$OSTYPE" in
+linux*)
+  export -- HELIX_RUNTIME='/usr/lib/helix/runtime'
+  ;;
+darwin*)
+  export -- HELIX_RUNTIME='/opt/homebrew/opt/helix/libexec/runtime'
+  ;;
+*) ;;
+esac
+
+exec -- "$HX" --config "$HOME/.config/helix/config.toml" "$@"

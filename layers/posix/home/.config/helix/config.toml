@@ -1,0 +1,127 @@
+theme = "cls"
+
+[editor]
+bufferline               = "always"
+completion-replace       = true
+completion-timeout       = 5
+completion-trigger-len   = 1
+cursorline               = true
+end-of-line-diagnostics  = "hint"
+idle-timeout             = 50
+popup-border             = "all"
+rainbow-brackets         = true
+trim-trailing-whitespace = true
+true-color               = true
+
+[editor.auto-save]
+after-delay.enable  = true
+after-delay.timeout = 1000
+focus-lost          = true
+
+[editor.file-picker]
+hidden = false
+
+[editor.indent-guides]
+render = true
+
+[editor.inline-diagnostics]
+cursor-line = "warning"
+other-lines = "hint"
+
+[editor.lsp]
+display-inlay-hints                = true
+display-messages                   = true
+display-progress-messages          = true
+goto-reference-include-declaration = false
+
+[editor.soft-wrap]
+enable = true
+
+[editor.word-completion]
+trigger-length = 1
+
+[keys.insert]
+A-left  = ["move_prev_word_end", "move_char_left", "move_char_right"]
+A-right = ["move_next_word_start", "move_char_right"]
+C-a     = "goto_line_start"
+C-e     = "goto_line_end_newline"
+C-space = "completion"
+esc     = [":set cursorline true", "normal_mode"]
+
+[keys.select]
+
+[keys.normal]
+"+"     = "expand_selection"
+"@"     = "@<C-s>*%s<up><ret>"
+A       = [":set cursorline false", "insert_at_line_end"]
+A-left  = ["move_prev_word_end", "move_char_left", "move_char_right"]
+A-right = ["move_next_word_start", "move_char_right"]
+C-d     = ["half_page_down", "align_view_center"]
+C-u     = ["half_page_up", "align_view_center"]
+I       = [":set cursorline false", "insert_at_line_start"]
+O       = [":set cursorline false", "open_above"]
+P       = "paste_clipboard_before"
+R       = "replace_selections_with_clipboard"
+X       = "extend_line_above"
+"_"     = "shrink_selection"
+c       = [":set cursorline false", "change_selection"]
+d       = ["yank_to_clipboard", "delete_selection_noyank"]
+i       = [":set cursorline false", "insert_mode"]
+o       = [":set cursorline false", "open_below"]
+p       = "paste_clipboard_after"
+y       = "yank_to_clipboard"
+
+"{" = [
+  "move_line_up",
+  "move_line_up",
+  "move_line_up",
+  "move_line_up",
+  "move_line_up",
+  "move_line_up",
+  "move_line_up",
+  "move_line_up",
+  "move_line_up",
+  "move_line_up",
+  "align_view_center",
+]
+"}" = [
+  "move_line_down",
+  "move_line_down",
+  "move_line_down",
+  "move_line_down",
+  "move_line_down",
+  "move_line_down",
+  "move_line_down",
+  "move_line_down",
+  "move_line_down",
+  "move_line_down",
+  "align_view_center",
+]
+
+[keys.normal.space]
+Q = ":write-quit-all!"
+Y = ":toggle cursorcolumn"
+p = ":format"
+x = ":buffer-close!"
+y = ":toggle search.smart-case"
+
+P = [
+  ":sh rm -f /tmp/unique-file",
+  ":insert-output yazi --chooser-file=/tmp/unique-file -- '%{buffer_name}'",
+  ':insert-output printf -- %s "\x1b[?1049h\x1b[?2004h" > /dev/tty',
+  ":open %sh{cat /tmp/unique-file}",
+  ":redraw",
+]
+U = [
+  ":write-all",
+  ":new",
+  ":insert-output lazygit",
+  ":buffer-close!",
+  ":set mouse false",
+  ":set mouse true",
+  ":redraw",
+  ":reload-all",
+]
+
+[keys.normal.'\']
+R = ":config-reload"
