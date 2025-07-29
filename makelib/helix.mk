@@ -1,6 +1,7 @@
 .PHONY: helix clobber.helix
 
 clobber: clobber.helix
+all: helix
 
 HELIX := ./layers/posix/home/.config/helix
 
