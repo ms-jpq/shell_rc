@@ -8,17 +8,15 @@ import { fileURLToPath } from "node:url"
 import { parseArgs } from "node:util"
 
 const {
-  values: { filename, filetype, sort, tabsize },
+  values: { filetype, sort, tabsize },
   positionals,
 } = parseArgs({
   options: {
-    filename: { type: "string" },
     filetype: { type: "string" },
     sort: { type: "boolean" },
     tabsize: { type: "string" },
   },
 })
-ok(filename)
 ok(filetype)
 ok(tabsize)
 
@@ -44,8 +42,7 @@ if (sort) {
     /^(java|type)script/
 }
 
-const argv = (function* () {
-  yield `--stdin-filepath=${filename}`
+const argv = (function*() {
   yield `--tab-width=${tabsize}`
   for (const [plugin, re] of Object.entries(plugins)) {
     if (filetype.match(re)) {

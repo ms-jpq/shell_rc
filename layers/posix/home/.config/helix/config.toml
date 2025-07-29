@@ -98,21 +98,23 @@ y       = "yank_to_clipboard"
   "align_view_center",
 ]
 
-[keys.normal.space]
-Q = ":write-quit-all!"
-Y = ":toggle cursorcolumn"
-p = ":format"
-x = ":buffer-close!"
-y = ":toggle search.smart-case"
-
-P = [
+C-t = [
   ":sh rm -f /tmp/unique-file",
   ":insert-output yazi --chooser-file=/tmp/unique-file -- '%{buffer_name}'",
   ':insert-output printf -- %s "\x1b[?1049h\x1b[?2004h" > /dev/tty',
   ":open %sh{cat /tmp/unique-file}",
   ":redraw",
 ]
-U = [
+
+[keys.normal.space]
+Q = ":write-quit-all!"
+Y = ":toggle cursorcolumn"
+m = ":format"
+p = "no_op"
+x = ":buffer-close!"
+y = ":toggle search.smart-case"
+
+P = [
   ":write-all",
   ":new",
   ":insert-output lazygit",
