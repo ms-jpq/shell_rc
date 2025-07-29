@@ -2,7 +2,7 @@
   "#": "https://github.com/helix-editor/helix/blob/master/languages.toml",
   "$": [
     "tabby",
-    "harper-ls"
+    "typos"
   ],
   "language": {
     "bash": {
@@ -103,7 +103,10 @@
     "latex": {
       "formatter": {
         "command": "latexindent.pl"
-      }
+      },
+      "language-servers": [
+        "ltex-ls-plus"
+      ]
     },
     "lua": {
       "formatter": {
@@ -114,6 +117,18 @@
         ],
         "command": "luafmt"
       }
+    },
+    "markdown": {
+      "formatter": {
+        "args": [
+          "--filetype=markdown",
+          "--tabsize=2"
+        ],
+        "command": "prettier.js"
+      },
+      "language-servers": [
+        "ltex-ls-plus"
+      ]
     },
     "perl": {
       "formatter": {
@@ -226,8 +241,7 @@
       "formatter": {
         "args": [
           "--filetype=xml",
-          "--tabsize=2",
-          "--sort"
+          "--tabsize=2"
         ],
         "command": "prettier.js"
       },
@@ -239,8 +253,7 @@
       "formatter": {
         "args": [
           "--filetype=yaml",
-          "--tabsize=2",
-          "--sort"
+          "--tabsize=2"
         ],
         "command": "prettier.js"
       }

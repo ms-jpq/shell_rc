@@ -15,17 +15,23 @@ def _main() -> None:
     dst = libexec / "languages.toml"
 
     preset = loads(online.read_text())
-    languages = {l["name"]: l.get("language-servers", ()) for l in preset["language"]}
+    languages = {
+        l.pop("name"): l.get("language-servers", []) for l in preset["language"]
+    }
 
     json = load_json(src.read_text())
-    common, ls = json["$"], json["language"]
+    common = json["$"]
 
     acc = []
     for name, language in json["language"].items():
         lsps = language.get("language-servers", [])
-        lsps.extend(languages.get(name, ()))
+        lsps.extend(languages.pop(name, ()))
         lsps.extend(common)
         acc.append({"name": name, **language})
+
+    for name, lsps in languages.items():
+        lsps.extend(common)
+        acc.append({"name": name, "language-servers": lsps})
 
     toml = dumps({"language": acc, "language-server": json["language-server"]})
     dst.write_text(toml)
