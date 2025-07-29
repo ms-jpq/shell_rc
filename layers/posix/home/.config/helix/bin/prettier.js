@@ -2,9 +2,9 @@
 
 import { ok } from "node:assert/strict"
 import { spawnSync } from "node:child_process"
-import { dirname, join } from "node:path"
+import { join } from "node:path"
 import { execPath } from "node:process"
-import { fileURLToPath } from "node:url"
+import { homedir } from "node:os"
 import { parseArgs } from "node:util"
 
 const {
@@ -21,7 +21,10 @@ ok(filetype)
 ok(tabsize)
 
 const node_modules = join(
-  dirname(dirname(fileURLToPath(import.meta.url))),
+  homedir(),
+  ".config",
+  "nvim",
+  "var",
   "modules",
   "node_modules",
 )
