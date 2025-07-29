@@ -1,22 +1,22 @@
 #!/usr/bin/env -S -- osascript -l JavaScript
 
-"use strict";
+"use strict"
 
-ObjC.import("stdlib");
+ObjC.import("stdlib")
 
 /**
  * @type {string[]}
  */
 const [, , , arg0, ...argv] = ObjC.unwrap(
   $.NSProcessInfo.processInfo.arguments,
-).map(ObjC.unwrap);
+).map(ObjC.unwrap)
 
 const app = (() => {
-  const app = Application.currentApplication();
-  app.includeStandardAdditions = true;
-  return app;
-})();
+  const app = Application.currentApplication()
+  app.includeStandardAdditions = true
+  return app
+})()
 
-const [withTitle, sub, bod, soundName = null] = argv.length ? argv : [""];
-const [body, subtitle] = bod ? [bod, sub] : [sub ?? "", ""];
-app.displayNotification(body, { withTitle, subtitle, soundName });
+const [withTitle, sub, bod, soundName = null] = argv.length ? argv : [""]
+const [body, subtitle] = bod ? [bod, sub] : [sub ?? "", ""]
+app.displayNotification(body, { withTitle, subtitle, soundName })

@@ -1,9 +1,6 @@
 {
   "#": "https://github.com/helix-editor/helix/blob/master/languages.toml",
-  "$": [
-    "tabby",
-    "typos"
-  ],
+  "$": ["tabby", "typos"],
   "language": {
     "bash": {
       "formatter": {
@@ -18,9 +15,7 @@
     },
     "c": {
       "formatter": {
-        "args": [
-          "-Werror"
-        ],
+        "args": ["-Werror"],
         "command": "clang-format"
       }
     },
@@ -40,10 +35,7 @@
     "css": {},
     "dockerfile": {
       "formatter": {
-        "args": [
-          "format",
-          "--spaces=2"
-        ],
+        "args": ["format", "--spaces=2"],
         "command": "dockerfile-utils"
       }
     },
@@ -66,37 +58,27 @@
     },
     "hcl": {
       "formatter": {
-        "args": [
-          "fmt",
-          "-"
-        ],
+        "args": ["fmt", "-"],
         "command": "terraform"
       }
     },
     "html": {},
     "java": {
       "formatter": {
-        "args": [
-          "-"
-        ],
+        "args": ["-"],
         "command": "javafmt.java"
       }
     },
     "jq": {},
     "json": {
       "formatter": {
-        "args": [
-          "json"
-        ],
+        "args": ["json"],
         "command": "sortd"
       }
     },
     "kotlin": {
       "formatter": {
-        "args": [
-          "2",
-          "-"
-        ],
+        "args": ["2", "-"],
         "command": "ktfmt.java"
       }
     },
@@ -104,42 +86,27 @@
       "formatter": {
         "command": "latexindent.pl"
       },
-      "language-servers": [
-        "ltex-ls-plus"
-      ]
+      "language-servers": ["ltex-ls-plus"]
     },
     "lua": {
       "formatter": {
-        "args": [
-          "--line-width=88",
-          "--indent-count=2",
-          "--stdin"
-        ],
+        "args": ["--line-width=88", "--indent-count=2", "--stdin"],
         "command": "luafmt"
       }
     },
     "mail": {
       "formatter": {
-        "args": [
-          "--filetype=markdown",
-          "--tabsize=2"
-        ],
+        "args": ["--filetype=markdown", "--tabsize=2"],
         "command": "prettier.js"
       },
-      "language-servers": [
-        "ltex-ls-plus"
-      ]
+      "language-servers": ["ltex-ls-plus"]
     },
     "markdown": {
-      "language-servers": [
-        "ltex-ls-plus"
-      ]
+      "language-servers": ["ltex-ls-plus"]
     },
     "perl": {
       "formatter": {
-        "args": [
-          "--indent-columns=2"
-        ],
+        "args": ["--indent-columns=2"],
         "command": "perltidy.pl"
       }
     },
@@ -148,18 +115,13 @@
         "args": [],
         "command": "php-csf.php"
       },
-      "language-servers": [
-        "intelephense",
-        "phpactor"
-      ]
+      "language-servers": ["intelephense", "phpactor"]
     },
     "powershell": {
       "formatter": {
         "command": "pwsh-fmt.ps1"
       },
-      "language-servers": [
-        "powershell-es"
-      ]
+      "language-servers": ["powershell-es"]
     },
     "prolog": {
       "formatter": {
@@ -171,9 +133,7 @@
         "args": [],
         "command": "black-sort.py"
       },
-      "language-servers": [
-        "pyright"
-      ]
+      "language-servers": ["pyright"]
     },
     "ruby": {
       "formatter": {
@@ -188,26 +148,18 @@
         ],
         "command": "rubocop.rb"
       },
-      "language-servers": [
-        "ruby-lsp",
-        "solargraph",
-        "sorbet"
-      ]
+      "language-servers": ["ruby-lsp", "solargraph", "sorbet"]
     },
     "rust": {
       "formatter": {
-        "args": [
-          "--edition=2021"
-        ],
+        "args": ["--edition=2021"],
         "command": "rustfmt"
       }
     },
     "scss": {},
     "sql": {
       "formatter": {
-        "args": [
-          "--language=postgres"
-        ],
+        "args": ["--language=postgres"],
         "command": "sql-formatter"
       }
     },
@@ -231,10 +183,7 @@
     },
     "typescript": {
       "formatter": {
-        "args": [
-          "--filetype=typescript",
-          "--tabsize=2"
-        ],
+        "args": ["--filetype=typescript", "--tabsize=2"],
         "command": "prettier.js"
       },
       "language-servers": [
@@ -244,22 +193,14 @@
     },
     "xml": {
       "formatter": {
-        "args": [
-          "--filetype=xml",
-          "--tabsize=2"
-        ],
+        "args": ["--filetype=xml", "--tabsize=2"],
         "command": "prettier.js"
       },
-      "language-servers": [
-        "lemminx"
-      ]
+      "language-servers": ["lemminx"]
     },
     "yaml": {
       "formatter": {
-        "args": [
-          "--filetype=yaml",
-          "--tabsize=2"
-        ],
+        "args": ["--filetype=yaml", "--tabsize=2"],
         "command": "prettier.js"
       }
     }
@@ -270,9 +211,7 @@
       "command": "lemminx"
     },
     "phpactor": {
-      "args": [
-        "language-server"
-      ],
+      "args": ["language-server"],
       "command": "phpactor"
     },
     "powershell-es": {
@@ -280,17 +219,11 @@
       "command": "pwsh_es.ps1"
     },
     "sorbet": {
-      "args": [
-        "tc",
-        "--lsp"
-      ],
+      "args": ["tc", "--lsp"],
       "command": "srb"
     },
     "tabby": {
-      "args": [
-        "--lsp",
-        "--stdio"
-      ],
+      "args": ["--lsp", "--stdio"],
       "command": "tabby-agent"
     },
     "typos": {

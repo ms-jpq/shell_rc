@@ -28,19 +28,14 @@
     "sql-formatter": [],
     "svelte-language-server": [],
     "tabby-agent": [],
-    "typescript-language-server": [
-      "@types/node",
-      "typescript"
-    ],
+    "typescript-language-server": ["@types/node", "typescript"],
     "vim-language-server": [],
     "vscode-langservers-extracted": [],
     "yaml-language-server": []
   },
   "packagist": {},
   "pypi": {
-    "black": [
-      "isort"
-    ],
+    "black": ["isort"],
     "fortls": [],
     "fprettify": [],
     "mypy": [],
@@ -52,8 +47,6 @@
     "rubocop": [],
     "solargraph": [],
     "sorbet-static": [],
-    "syntax_tree": [
-      "syntax_tree-rbs"
-    ]
+    "syntax_tree": ["syntax_tree-rbs"]
   }
 }
