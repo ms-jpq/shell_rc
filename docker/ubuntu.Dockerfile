@@ -10,6 +10,7 @@ RUN apt-get update && \
   curl \
   jq \
   ca-certificates \
+  python3-venv \
   pcp
 
 WORKDIR /srv

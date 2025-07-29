@@ -17,6 +17,7 @@ if [[ -z $RG_ARGS ]]; then
     --read0
     --print0
     --preview='{f}'
+    --multi
   )
   IFS="$SEP"
 
