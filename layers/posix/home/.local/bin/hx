@@ -5,7 +5,7 @@ set -o pipefail
 VAR="$HOME/.config/nvim/var"
 PATH="$VAR/bin:$VAR/modules/node_modules/.bin:$VAR/modules/py_modules/bin:$VAR/modules/rb_modules/bin:$PATH"
 
-HX="$HOME/.local/bin/hx2"
+HX="$HOME/.local/lbin/hx2"
 if ! [[ -x $HX ]]; then
   case "$OSTYPE" in
   linux*)
