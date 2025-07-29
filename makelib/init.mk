@@ -35,17 +35,17 @@ V_SHFMT      = $(shell ./libexec/gh-latest.sh $(TMP) mvdan/sh)
 
 HADO_OS      = $(shell perl -CASD -wpe 's/([a-z])/\u$$1/' <<<'$(OS)')
 
-$(VAR)/$(PY_BIN)/shellcheck: | $(VAR)/bin
+$(VAR)/bin/shellcheck: | $(VAR)/bin
 	URI='https://github.com/koalaman/shellcheck/releases/latest/download/shellcheck-$(V_SHELLCHECK).$(OS).x86_64.tar.xz'
 	$(CURL) -- "$$URI" | tar --extract --xz --file - --directory '$(VAR)/bin' --strip-components 1 -- 'shellcheck-$(V_SHELLCHECK)/shellcheck'
 	chmod +x '$@'
 
-$(VAR)/$(PY_BIN)/hadolint: | $(VAR)/bin
+$(VAR)/bin/hadolint: | $(VAR)/bin
 	URI='https://github.com/hadolint/hadolint/releases/latest/download/hadolint-$(HADO_OS)-x86_64'
 	$(CURL) --output '$@' -- "$$URI"
 	chmod +x '$@'
 
-$(VAR)/(PY_BIN)/shfmt: | $(VAR)/bin
+$(VAR)/bin/shfmt: | $(VAR)/bin
 	URI='https://github.com/mvdan/sh/releases/latest/download/shfmt_$(V_SHFMT)_$(OS)_$(GOARCH)'
 	$(CURL) --output '$@' -- "$$URI"
 	chmod +x '$@'

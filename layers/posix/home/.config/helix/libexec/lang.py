@@ -1,22 +1,28 @@
 #!/usr/bin/env -S -- PYTHONSAFEPATH= python3
 
-from json import loads
+from json import loads as load_json
 from pathlib import Path
 
+from tomli import loads
 from tomli_w import dumps
 
-root = Path(__file__).resolve(strict=True).parent.parent
+libexec = Path(__file__).resolve(strict=True).parent.parent
+online = libexec.parent.parent.parent.parent.parent / "var" / "helix.lang.toml"
 
-src = root / "languages.json"
-dst = root / "languages.toml"
+src = libexec / "languages.json"
+dst = libexec / "languages.toml"
 
-json = loads(src.read_text())
+preset = loads(online.read_text())
+languages = {l["name"]: l.get("language-servers", ()) for l in preset["language"]}
+
+json = load_json(src.read_text())
 common, ls = json["$"], json["language"]
-acc = []
 
+acc = []
 for name, language in json["language"].items():
-    if lsps := language.get("language-servers"):
-        lsps.extend(common)
+    lsps = language.get("language-servers", [])
+    lsps.extend(languages.get(name, ()))
+    lsps.extend(common)
     acc.append({"name": name, **language})
 
 toml = dumps({"language": acc, "language-server": json["language-server"]})
