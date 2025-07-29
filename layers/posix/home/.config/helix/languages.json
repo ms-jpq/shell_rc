@@ -118,7 +118,7 @@
         "command": "luafmt"
       }
     },
-    "markdown": {
+    "mail": {
       "formatter": {
         "args": [
           "--filetype=markdown",
@@ -126,6 +126,11 @@
         ],
         "command": "prettier.js"
       },
+      "language-servers": [
+        "ltex-ls-plus"
+      ]
+    },
+    "markdown": {
       "language-servers": [
         "ltex-ls-plus"
       ]
