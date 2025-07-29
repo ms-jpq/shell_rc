@@ -1,0 +1,59 @@
+{
+  "$": {},
+  "npm": {
+    "@mdx-js/language-server": [],
+    "@microsoft/compose-language-service": [],
+    "@prisma/language-server": [],
+    "@tailwindcss/language-server": [],
+    "@typespec/compiler": [],
+    "ansible-language-server": [],
+    "bash-language-server": [],
+    "diagnostic-languageserver": [],
+    "dockerfile-language-server-nodejs": [],
+    "graphql-language-service-cli": [],
+    "htmlhint": [],
+    "ibm-openapi-validator": [],
+    "intelephense": [],
+    "lua-fmt": [],
+    "nginx-language-server": [],
+    "perlnavigator-server": [],
+    "prettier": [
+      "@prettier/plugin-xml",
+      "@typespec/prettier-plugin-typespec",
+      "prettier-plugin-nginx",
+      "prettier-plugin-organize-imports",
+      "prettier-plugin-tailwindcss"
+    ],
+    "pyright": [],
+    "sql-formatter": [],
+    "svelte-language-server": [],
+    "tabby-agent": [],
+    "typescript-language-server": [
+      "@types/node",
+      "typescript"
+    ],
+    "vim-language-server": [],
+    "vscode-langservers-extracted": [],
+    "yaml-language-server": []
+  },
+  "packagist": {},
+  "pypi": {
+    "black": [
+      "isort"
+    ],
+    "fortls": [],
+    "fprettify": [],
+    "mypy": [],
+    "sortd": [],
+    "systemd-language-server": [],
+    "vim-vint": []
+  },
+  "rubygems": {
+    "rubocop": [],
+    "solargraph": [],
+    "sorbet-static": [],
+    "syntax_tree": [
+      "syntax_tree-rbs"
+    ]
+  }
+}
