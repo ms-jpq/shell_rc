@@ -21,6 +21,7 @@
 + charmbracelet.glow
 + charmbracelet.gum
 + Clement.bottom
++ Helix.Helix
 + cURL.cURL
 + dandavison.delta
 + Derailed.k9s

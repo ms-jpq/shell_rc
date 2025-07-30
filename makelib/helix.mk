@@ -14,4 +14,4 @@ clobber.helix:
 
 helix: $(HELIX)/languages.toml
 $(HELIX)/languages.toml: $(VENV)/$(PY_BIN) $(HELIX)/libexec/lang.py $(VAR)/helix.lang.toml $(HELIX)/languages.json
-	'$</python' '$(HELIX)/libexec/lang.py'
+	'$</python3' '$(HELIX)/libexec/lang.py'
