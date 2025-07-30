@@ -1,6 +1,6 @@
 {
   "#": "https://github.com/helix-editor/helix/blob/master/languages.toml",
-  "$": ["tabby", "typos"],
+  "$": [],
   "language": {
     "bash": {
       "formatter": {
@@ -72,8 +72,9 @@
     "jq": {},
     "json": {
       "formatter": {
-        "args": ["json"],
-        "command": "sortd"
+        "command": "json-fmt.js",
+        "args": ["--tabsize=2"]
+
       }
     },
     "kotlin": {
