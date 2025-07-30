@@ -72,9 +72,8 @@
     "jq": {},
     "json": {
       "formatter": {
-        "command": "json-fmt.js",
-        "args": ["--tabsize=2"]
-
+        "args": ["--tabsize=2"],
+        "command": "json-fmt.js"
       }
     },
     "kotlin": {

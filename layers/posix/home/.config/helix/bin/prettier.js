@@ -46,6 +46,7 @@ if (sort) {
 }
 
 const argv = (function*() {
+  yield `--stdin-filepath=.${filetype}`,
   yield `--tab-width=${tabsize}`
   for (const [plugin, re] of Object.entries(plugins)) {
     if (filetype.match(re)) {
