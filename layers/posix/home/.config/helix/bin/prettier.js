@@ -2,9 +2,9 @@
 
 import { ok } from "node:assert/strict"
 import { spawnSync } from "node:child_process"
+import { homedir } from "node:os"
 import { join } from "node:path"
 import { execPath } from "node:process"
-import { homedir } from "node:os"
 import { parseArgs } from "node:util"
 
 const {

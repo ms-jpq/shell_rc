@@ -69,6 +69,12 @@
         "command": "javafmt.java"
       }
     },
+    "javascript": {
+      "formatter": {
+        "args": ["--filetype=javascript", "--tabsize=2", "--sort"],
+        "command": "prettier.js"
+      }
+    },
     "jq": {},
     "json": {
       "formatter": {
