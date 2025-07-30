@@ -131,7 +131,7 @@
     "python": {
       "formatter": {
         "args": [],
-        "command": "black-sort.py"
+        "command": "isort-black.py"
       },
       "language-servers": ["pyright"]
     },
