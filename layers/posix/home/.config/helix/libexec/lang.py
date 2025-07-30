@@ -8,18 +8,19 @@ from tomli_w import dumps
 
 
 def _main() -> None:
+    codec = "utf-8"
     libexec = Path(__file__).resolve(strict=True).parent.parent
     online = libexec.parent.parent.parent.parent.parent / "var" / "helix.lang.toml"
 
     src = libexec / "languages.json"
     dst = libexec / "languages.toml"
 
-    preset = loads(online.read_text())
+    preset = loads(online.read_text(codec))
     languages = {
         l.pop("name"): l.get("language-servers", []) for l in preset["language"]
     }
 
-    json = load_json(src.read_text())
+    json = load_json(src.read_text(codec))
     common = json["$"]
 
     acc = []
