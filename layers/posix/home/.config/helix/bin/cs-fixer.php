@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 $cwd = getcwd();
 assert($cwd);
-$tmp = tempnam($cwd, prefix: "");
+$tmp = tempnam($cwd, prefix: "~php-cs-fixer~");
 assert($tmp);
 
 try {
