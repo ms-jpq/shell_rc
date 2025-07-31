@@ -77,14 +77,14 @@
     },
     "javascript": {
       "formatter": {
-        "args": ["--filetype=javascript", "--tabsize=2", "--sort"],
+        "args": ["--tabsize=2", "--sort", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
       }
     },
     "jq": {},
     "json": {
       "formatter": {
-        "args": ["--tabsize=2"],
+        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "json-fmt.js"
       }
     },
@@ -107,13 +107,13 @@
       }
     },
     "mail": {
-      "formatter": {
-        "args": ["--filetype=markdown", "--tabsize=2"],
-        "command": "prettier.js"
-      },
       "language-servers": ["ltex-ls-plus"]
     },
     "markdown": {
+      "formatter": {
+        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
+        "command": "prettier.js"
+      },
       "language-servers": ["ltex-ls-plus"]
     },
     "perl": {
@@ -195,7 +195,7 @@
     },
     "typescript": {
       "formatter": {
-        "args": ["--filetype=typescript", "--tabsize=2"],
+        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
       },
       "language-servers": [
@@ -205,14 +205,14 @@
     },
     "xml": {
       "formatter": {
-        "args": ["--filetype=xml", "--tabsize=2"],
+        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
       },
       "language-servers": ["lemminx"]
     },
     "yaml": {
       "formatter": {
-        "args": ["--filetype=yaml", "--tabsize=2"],
+        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
       }
     }

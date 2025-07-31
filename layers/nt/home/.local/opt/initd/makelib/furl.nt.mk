@@ -10,6 +10,13 @@ curl: $(BIN)/$(notdir $1)
 
 endef
 
+ifeq ($(HOSTTYPE), aarch64)
+DIFFN_TYPE := arm64
+S5_TYPE    := $(GOARCH)
+else
+DIFFN_TYPE := $(HOSTTYPE)
+S5_TYPE    := 64bit
+endif
 
 V_WATCHEX := $(patsubst v%,%,$(shell $(GH_LATEST) watchexec/watchexec))
 

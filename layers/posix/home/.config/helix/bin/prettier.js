@@ -8,16 +8,16 @@ import { execPath } from "node:process"
 import { parseArgs } from "node:util"
 
 const {
-  values: { filetype, sort, tabsize },
+  values: { filename, sort, tabsize },
   positionals,
 } = parseArgs({
   options: {
-    filetype: { type: "string" },
+    filename: { type: "string" },
     sort: { type: "boolean" },
     tabsize: { type: "string" },
   },
 })
-ok(filetype)
+ok(filename)
 ok(tabsize)
 
 const node_modules = join(
@@ -45,11 +45,11 @@ if (sort) {
     /^(java|type)script/
 }
 
-const argv = (function*() {
-  yield `--stdin-filepath=.${filetype}`
+const argv = (function* () {
+  yield `--stdin-filepath=${filename}`
   yield `--tab-width=${tabsize}`
   for (const [plugin, re] of Object.entries(plugins)) {
-    if (filetype.match(re)) {
+    if (filename.match(re)) {
       yield `--plugin=${join(node_modules, plugin)}`
     }
   }
