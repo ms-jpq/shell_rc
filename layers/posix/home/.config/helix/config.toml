@@ -25,7 +25,6 @@ hidden = false
 render = true
 
 [editor.inline-diagnostics]
-cursor-line = "error"
 other-lines = "warning"
 
 [editor.lsp]
@@ -111,15 +110,11 @@ C-t = [
 ]
 
 [keys.normal.space]
-"-" = "hsplit"
-"=" = "vsplit"
-Q   = ":write-quit-all!"
-Y   = ":toggle cursorcolumn"
-m   = ":format"
-p   = "no_op"
-q   = "wclose"
-x   = ":buffer-close!"
-y   = ":toggle search.smart-case"
+Q = ":write-quit-all!"
+Y = "no_op"
+m = ":format"
+p = "no_op"
+y = "no_op"
 
 P = [
   ":write-all",
@@ -134,3 +129,8 @@ P = [
 
 [keys.normal.'\']
 R = ":config-reload"
+f = ":toggle cursorcolumn"
+t = "vsplit"
+w = "wclose"
+x = ":buffer-close!"
+y = ":toggle search.smart-case"
