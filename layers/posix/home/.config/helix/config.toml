@@ -131,6 +131,7 @@ P = [
 [keys.normal.'\']
 R = ":config-reload"
 f = ":toggle cursorcolumn"
+r = ":reload-all"
 t = "vsplit"
 w = "wclose"
 x = ":buffer-close!"
