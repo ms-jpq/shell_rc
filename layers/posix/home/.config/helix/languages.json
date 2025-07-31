@@ -119,9 +119,9 @@
     "php": {
       "formatter": {
         "args": [],
-        "command": "php-csf.php"
+        "command": "cs-fixer.php"
       },
-      "language-servers": ["intelephense", "phpactor"]
+      "language-servers": ["phpactor"]
     },
     "powershell": {
       "formatter": {
