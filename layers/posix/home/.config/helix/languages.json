@@ -19,6 +19,12 @@
         "command": "clang-format"
       }
     },
+    "c-sharp": {
+      "indent": {
+        "tab-width": 2,
+        "unit": "\t"
+      }
+    },
     "clojure": {
       "formatter": {
         "args": [
@@ -55,6 +61,10 @@
       "formatter": {
         "args": [],
         "command": "goimports"
+      },
+      "indent": {
+        "tab-width": 2,
+        "unit": "\t"
       }
     },
     "haskell": {
