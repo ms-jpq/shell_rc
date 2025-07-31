@@ -4,9 +4,10 @@ clobber: clobber.helix
 all: helix
 
 HELIX := ./layers/posix/home/.config/helix
+HELIX_RELEASE := 25.07.1
 
 $(VAR)/helix.lang.toml:
-	URI='https://raw.githubusercontent.com/helix-editor/helix/refs/heads/master/languages.toml'
+	URI='https://raw.githubusercontent.com/helix-editor/helix/refs/tags/$(HELIX_RELEASE)/languages.toml'
 	$(CURL) --output '$@' -- "$$URI"
 
 clobber.helix:
