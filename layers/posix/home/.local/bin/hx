@@ -5,7 +5,9 @@ set -o pipefail
 VAR="$HOME/.config/nvim/var"
 PATH="$HOME/.config/helix/bin:$VAR/bin:$VAR/modules/node_modules/.bin:$VAR/modules/py_modules/bin:$VAR/modules/rb_modules/bin:$PATH"
 
-HX="$HOME/.local/lbin/hx2"
+OPT="$HOME/.local/opt/helix"
+
+HX="$OPT/target/release/hx"
 if ! [[ -x $HX ]]; then
   case "$OSTYPE" in
   linux*)
@@ -24,14 +26,18 @@ if ! [[ -x $HX ]]; then
   esac
 fi
 
-case "$OSTYPE" in
-linux*)
-  export -- HELIX_RUNTIME='/usr/lib/helix/runtime'
-  ;;
-darwin*)
-  export -- HELIX_RUNTIME='/opt/homebrew/opt/helix/libexec/runtime'
-  ;;
-*) ;;
-esac
+export -- HELIX_RUNTIME="$OPT/runtime"
+
+if [[ ! -d $HELIX_RUNTIME ]]; then
+  case "$OSTYPE" in
+  linux*)
+    export -- HELIX_RUNTIME='/usr/lib/helix/runtime'
+    ;;
+  darwin*)
+    export -- HELIX_RUNTIME='/opt/homebrew/opt/helix/libexec/runtime'
+    ;;
+  *) ;;
+  esac
+fi
 
 exec -- "$HX" --config "$HOME/.config/helix/config.toml" "$@"
