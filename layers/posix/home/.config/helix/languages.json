@@ -197,11 +197,8 @@
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
-      },
-      "language-servers": [
-        "typescript-language-server",
-        "vscode-eslint-language-server"
-      ]
+      }
+
     },
     "xml": {
       "formatter": {

@@ -16,7 +16,7 @@ ok(tabsize)
 
 const p1 = spawn("sortd", ["json"], { stdio: ["inherit", "pipe", "inherit"] })
 
-const p2 = spawn("prettier.js", ["--filetype=json", "--tabsize", tabsize], {
+const p2 = spawn("prettier.js", ["--filename=.json", "--tabsize", tabsize], {
   stdio: [p1.stdout, "inherit", "inherit"],
 })
 
