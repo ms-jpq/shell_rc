@@ -4,9 +4,9 @@ Set-StrictMode -Version 'Latest'
 $ErrorActionPreference = 'Stop'
 $PSStyle.OutputRendering = 'PlainText'
 
-
-$lib = Join-Path -Path (Split-Path -Path $PSScriptRoot) 'lib' 'pwsh_es.ps1'
-$cache = [IO.Directory]::CreateTempSubdirectory()
+$root = $IsWindows ? $Env:TEMP : (Join-Path -Path $HOME '.cache')
+$lib = Join-Path -Path $root 'helix-rt' 'lib' 'pwsh_es.ps1'
+$tmp = [IO.Directory]::CreateTempSubdirectory()
 
 $argv = @(
     Join-Path -Path $lib 'PowerShellEditorServices' 'Start-EditorServices.ps1'
@@ -18,8 +18,8 @@ $argv = @(
     '-HostProfileId', '0'
     '-HostVersion', '1.0.0'
     '-LogLevel', 'Normal'
-    '-LogPath', (Join-Path -Path $cache 'powershell_es.log')
-    '-SessionDetailsPath', (Join-Path -Path $cache 'powershell_es.session.json')
+    '-LogPath', (Join-Path -Path $tmp 'powershell_es.log')
+    '-SessionDetailsPath', (Join-Path -Path $tmp 'powershell_es.session.json')
 )
 
 $Env:NOCOLOR = '1'

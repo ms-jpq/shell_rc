@@ -45,6 +45,12 @@
         "command": "fprettify"
       }
     },
+    "fsharp": {
+      "formatter": {
+        "args": [],
+        "command": "fantomas.fsx"
+      }
+    },
     "go": {
       "formatter": {
         "args": [],
