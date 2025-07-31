@@ -1,6 +1,7 @@
 theme = "cls"
 
 [editor]
+auto-format              = false
 bufferline               = "always"
 completion-replace       = true
 completion-timeout       = 5
@@ -9,7 +10,7 @@ cursorline               = true
 end-of-line-diagnostics  = "hint"
 idle-timeout             = 50
 popup-border             = "all"
-# rainbow-brackets         = true
+rainbow-brackets         = true
 trim-trailing-whitespace = true
 true-color               = true
 
@@ -36,8 +37,8 @@ goto-reference-include-declaration = false
 [editor.soft-wrap]
 enable = true
 
-# [editor.word-completion]
-# trigger-length = 1
+[editor.word-completion]
+trigger-length = 1
 
 [keys.insert]
 A-left  = ["move_prev_word_end", "move_char_left", "move_char_right"]
