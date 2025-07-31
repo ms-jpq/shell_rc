@@ -29,7 +29,7 @@ render = true
 other-lines = "warning"
 
 [editor.lsp]
-display-inlay-hints                = true
+display-inlay-hints                = false
 display-messages                   = true
 display-progress-messages          = true
 goto-reference-include-declaration = false
@@ -115,7 +115,7 @@ Q = ":write-quit-all!"
 Y = "no_op"
 m = ":format"
 p = "no_op"
-y = "no_op"
+y = ":toggle lsp.display-inlay-hints"
 
 P = [
   ":write-all",
