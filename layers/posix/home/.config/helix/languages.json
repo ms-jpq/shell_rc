@@ -84,7 +84,7 @@
     "jq": {},
     "json": {
       "formatter": {
-        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
+        "args": ["--tabsize=2"],
         "command": "json-fmt.js"
       }
     },
@@ -198,7 +198,6 @@
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
       }
-
     },
     "xml": {
       "formatter": {
