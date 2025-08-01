@@ -108,8 +108,3 @@ jobs:
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 
           bash .\win.sh localhost -- '--debug'
-
-      - run: |-
-          $tmp = 'out.json'
-          winget export '--disable-interactivity' '--accept-source-agreements' '--output' $tmp
-          Get-Content -Path $tmp
