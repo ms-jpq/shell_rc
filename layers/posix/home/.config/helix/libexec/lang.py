@@ -17,7 +17,8 @@ def _main() -> None:
 
     preset = loads(online.read_text(codec))
     languages = {
-        l.pop("name"): l.get("language-servers", []) for l in preset["language"]
+        l.pop("name"): (l.get("language-servers", []), l.get("indent", {}))
+        for l in preset["language"]
     }
 
     json = load_json(src.read_text(codec))
@@ -25,14 +26,20 @@ def _main() -> None:
 
     acc = []
     for name, language in json["language"].items():
+        ls, _ = languages.pop(name, ((), ()))
         lsps = language.get("language-servers", [])
-        lsps.extend(languages.pop(name, ()))
+        lsps.extend(ls)
         lsps.extend(common)
         acc.append({"name": name, **language})
 
-    for name, lsps in languages.items():
+    for name, (lsps, indent) in languages.items():
         lsps.extend(common)
-        acc.append({"name": name, "language-servers": lsps})
+        row = {"name": name, "language-servers": lsps}
+        if (unit := indent.get("unit", "")) == "\t":
+            row["indent"] = {"unit": unit, "tab-width": 2}
+        elif unit == " " * 4:
+            row["indent"] = {"unit": " " * 2, "tab-width": 2}
+        acc.append(row)
 
     toml = dumps({"language": acc, "language-server": json["language-server"]})
     dst.write_text(toml)

@@ -1,6 +1,6 @@
 {
   "#": "https://github.com/helix-editor/helix/blob/master/languages.toml",
-  "$": [],
+  "$": ["tabby", "typos"],
   "language": {
     "bash": {
       "formatter": {
@@ -17,12 +17,6 @@
       "formatter": {
         "args": ["-Werror"],
         "command": "clang-format"
-      }
-    },
-    "c-sharp": {
-      "indent": {
-        "tab-width": 2,
-        "unit": "\t"
       }
     },
     "clojure": {
@@ -61,10 +55,6 @@
       "formatter": {
         "args": [],
         "command": "goimports"
-      },
-      "indent": {
-        "tab-width": 2,
-        "unit": "\t"
       }
     },
     "haskell": {
@@ -243,10 +233,6 @@
     "tabby": {
       "args": ["--lsp", "--stdio"],
       "command": "tabby-agent"
-    },
-    "typos": {
-      "args": [],
-      "command": "typos-lsp"
     }
   }
 }
