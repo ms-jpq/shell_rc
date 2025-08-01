@@ -2,7 +2,7 @@ theme = "cls"
 
 [editor]
 auto-format              = false
-bufferline               = "always"
+bufferline               = "never"
 completion-replace       = true
 completion-timeout       = 5
 completion-trigger-len   = 1
@@ -132,11 +132,9 @@ P = [
 ]
 
 [keys.normal.space.y]
-i = [
-  ":toggle inline-diagnostics.cursor-line disable hint",
-  ":toggle inline-diagnostics.other-lines disable hint",
-]
+i = ":toggle inline-diagnostics.cursor-line disable hint"
 l = ":toggle lsp.display-inlay-hints"
+o = ":toggle inline-diagnostics.other-lines disable hint"
 
 [keys.normal.'\']
 Q = ":write-quit-all!"
