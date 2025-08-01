@@ -1,10 +1,21 @@
 #!/usr/bin/env -S -- PYTHONSAFEPATH= python3
 
+from collections.abc import MutableMapping
 from json import loads as load_json
 from pathlib import Path
+from typing import Any
 
 from tomli import loads
 from tomli_w import dumps
+
+
+def _merge_indent(
+    row: MutableMapping[str, Any], indent: MutableMapping[str, Any]
+) -> None:
+    if (unit := indent.get("unit", "")) == "\t":
+        row["indent"] = {"unit": unit, "tab-width": 2}
+    elif unit == " " * 4:
+        row["indent"] = {"unit": " " * 2, "tab-width": 2}
 
 
 def _main() -> None:
@@ -26,19 +37,18 @@ def _main() -> None:
 
     acc = []
     for name, language in json["language"].items():
-        ls, _ = languages.pop(name, ((), ()))
+        ls, indent = languages.pop(name, ((), {}))
         lsps = language.get("language-servers", [])
         lsps.extend(ls)
         lsps.extend(common)
-        acc.append({"name": name, **language})
+        row = {"name": name, **language}
+        _merge_indent(row, indent=indent)
+        acc.append(row)
 
     for name, (lsps, indent) in languages.items():
         lsps.extend(common)
         row = {"name": name, "language-servers": lsps}
-        if (unit := indent.get("unit", "")) == "\t":
-            row["indent"] = {"unit": unit, "tab-width": 2}
-        elif unit == " " * 4:
-            row["indent"] = {"unit": " " * 2, "tab-width": 2}
+        _merge_indent(row, indent=indent)
         acc.append(row)
 
     toml = dumps({"language": acc, "language-server": json["language-server"]})
