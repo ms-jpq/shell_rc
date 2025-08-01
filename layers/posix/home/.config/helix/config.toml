@@ -116,7 +116,6 @@ C-t = [
 ]
 
 [keys.normal.space]
-Q = ":write-quit-all!"
 Y = "no_op"
 m = ":format"
 p = "no_op"
@@ -140,6 +139,7 @@ i = [
 l = ":toggle lsp.display-inlay-hints"
 
 [keys.normal.'\']
+Q = ":write-quit-all!"
 R = ":config-reload"
 f = ":toggle cursorcolumn"
 r = ":reload-all"
