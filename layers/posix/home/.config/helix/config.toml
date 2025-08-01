@@ -26,8 +26,8 @@ hidden = false
 render = true
 
 [editor.inline-diagnostics]
-cursor-line = "hint"
-other-lines = "hint"
+cursor-line = "disable"
+other-lines = "disable"
 
 [editor.lsp]
 display-inlay-hints                = false
@@ -134,8 +134,8 @@ P = [
 
 [keys.normal.space.y]
 i = [
-  ":toggle inline-diagnostics.other-lines disable hint",
   ":toggle inline-diagnostics.cursor-line disable hint",
+  ":toggle inline-diagnostics.other-lines disable hint",
 ]
 l = ":toggle lsp.display-inlay-hints"
 
