@@ -26,7 +26,8 @@ hidden = false
 render = true
 
 [editor.inline-diagnostics]
-other-lines = "warning"
+cursor-line = "hint"
+other-lines = "hint"
 
 [editor.lsp]
 display-inlay-hints                = false
@@ -53,27 +54,31 @@ esc     = [":set cursorline true", "normal_mode"]
 [keys.select]
 
 [keys.normal]
-"+"     = "expand_selection"
-"@"     = "@<C-s>*%s<up><ret>"
-A       = [":set cursorline false", "insert_at_line_end"]
 A-left  = ["move_prev_word_end", "move_char_left", "move_char_right"]
 A-right = ["move_next_word_start", "move_char_right"]
 C-d     = ["half_page_down", "align_view_center"]
 C-h     = ["move_prev_word_end", "move_char_left", "move_char_right"]
 C-l     = ["move_next_word_start", "move_char_right"]
 C-u     = ["half_page_up", "align_view_center"]
-I       = [":set cursorline false", "insert_at_line_start"]
-O       = [":set cursorline false", "open_above"]
-P       = "paste_clipboard_before"
-R       = "replace_selections_with_clipboard"
-X       = "extend_line_above"
-"_"     = "shrink_selection"
-c       = [":set cursorline false", "change_selection"]
-d       = ["delete_selection_noyank"]
-i       = [":set cursorline false", "insert_mode"]
-o       = [":set cursorline false", "open_below"]
-p       = "paste_clipboard_after"
-y       = "yank_to_clipboard"
+
+"+" = "expand_selection"
+X   = "extend_line_above"
+"_" = "shrink_selection"
+
+P = "paste_clipboard_before"
+R = "replace_selections_with_clipboard"
+d = ["delete_selection_noyank"]
+p = "paste_clipboard_after"
+y = "yank_to_clipboard"
+
+A = [":set cursorline false", "insert_at_line_end"]
+I = [":set cursorline false", "insert_at_line_start"]
+O = [":set cursorline false", "open_above"]
+c = [":set cursorline false", "change_selection"]
+i = [":set cursorline false", "insert_mode"]
+o = [":set cursorline false", "open_below"]
+
+"@" = "@<C-s>*%s<up><ret>"
 
 "{" = [
   "move_line_up",
@@ -115,7 +120,6 @@ Q = ":write-quit-all!"
 Y = "no_op"
 m = ":format"
 p = "no_op"
-y = ":toggle lsp.display-inlay-hints"
 
 P = [
   ":write-all",
@@ -127,6 +131,13 @@ P = [
   ":redraw",
   ":reload-all",
 ]
+
+[keys.normal.space.y]
+i = [
+  ":toggle inline-diagnostics.other-lines disable hint",
+  ":toggle inline-diagnostics.cursor-line disable hint",
+]
+l = ":toggle lsp.display-inlay-hints"
 
 [keys.normal.'\']
 R = ":config-reload"
