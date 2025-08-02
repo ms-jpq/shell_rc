@@ -11,7 +11,7 @@ ROOT="$RT/more/${SCRIPT//'/'/-}"
 TMP="$(mktemp -d --tmpdir "$ROOT/tmp")"
 
 export -- BIN="$ROOT/bin" LIB="$ROOT/LIB" TMP TMPDIR="$TMP"
-PATH="$DIR:$PATH"
+PATH="$DIR:$HOME/.local/opt/initd/libexec:$PATH"
 
 CODE=0
 pushd -- "$TMP"
