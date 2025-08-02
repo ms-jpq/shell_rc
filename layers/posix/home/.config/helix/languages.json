@@ -150,7 +150,7 @@
     "ruby": {
       "formatter": {
         "args": [
-          "rb.rb",
+          "%{buffer_name}",
           "--fail-level=fatal",
           "--stderr",
           "--stdin",

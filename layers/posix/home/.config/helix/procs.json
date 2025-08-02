@@ -1,5 +1,12 @@
 {
   "$": {},
+  "composer": {},
+  "gem": {
+    "rubocop": [],
+    "solargraph": [],
+    "sorbet-static": [],
+    "syntax_tree": ["syntax_tree-rbs"]
+  },
   "npm": {
     "@mdx-js/language-server": [],
     "@microsoft/compose-language-service": [],
@@ -33,8 +40,7 @@
     "vscode-langservers-extracted": [],
     "yaml-language-server": []
   },
-  "packagist": {},
-  "pypi": {
+  "pip": {
     "black": ["isort"],
     "fortls": [],
     "fprettify": [],
@@ -42,11 +48,5 @@
     "sortd": [],
     "systemd-language-server": [],
     "vim-vint": []
-  },
-  "rubygems": {
-    "rubocop": [],
-    "solargraph": [],
-    "sorbet-static": [],
-    "syntax_tree": ["syntax_tree-rbs"]
   }
 }

@@ -1,8 +1,1 @@
-{
-  "Style/NumberedParameters": {
-    "Enabled": false
-  },
-  "Style/ParallelAssignment": {
-    "Enabled": false
-  }
-}
+layers/posix/home/.config/helix/rubocop.json

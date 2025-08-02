@@ -52,6 +52,7 @@ C-space = "completion"
 esc     = [":set cursorline true", "normal_mode"]
 
 [keys.select]
+y = "yank_to_clipboard"
 
 [keys.normal]
 A-left  = ["move_prev_word_end", "move_char_left", "move_char_right"]
