@@ -7,20 +7,24 @@ PAR=0
 
 case "${RECUR:=""}" in
 '')
+  declare -A -- MANS
   MANS=(
-    composer.php
-    gem.rb
-    npm.js
-    pip.py
+    [$]=install.sh
+    [composer]=composer.php
+    [gem]=gem.rb
+    [npm]=npm.js
+    [pip]=pip.py
   )
-  printf -- '%s\0' "${MANS[@]}" | RECUR=1 xargs -r -0 -n 1 -P "$PAR" -- "$0"
+  for KEY in "${!MANS[@]}"; do
+    printf -- '%s\0' "$KEY" "${MANS["$KEY"]}"
+  done | RECUR=1 xargs -r -0 -n 2 -P "$PAR" -- "$0"
   ;;
 1)
   read -r -d '' -- JQ <<- 'JQ' || true
 .[$man] | to_entries[] | [.key] + .value | join("\n")
 JQ
-  MAN="$DIR/libexec/$1"
-  KEY="${1%%.*}"
+  KEY="$1"
+  MAN="$DIR/libexec/$2"
 
   jq --raw-output0 --arg man "$KEY" "$JQ" < "$DIR/procs.json" | RECUR=2 xargs -r -0 -n 1 -P "$PAR" -- "$0" "$MAN"
   ;;
