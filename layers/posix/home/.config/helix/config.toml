@@ -133,16 +133,16 @@ P = [
 ]
 
 [keys.normal.space.y]
+f = ":toggle cursorcolumn"
 i = ":toggle inline-diagnostics.cursor-line disable hint"
 l = ":toggle lsp.display-inlay-hints"
 o = ":toggle inline-diagnostics.other-lines disable hint"
+y = ":toggle search.smart-case"
 
 [keys.normal.'\']
 Q = ":write-quit-all!"
 R = ":config-reload"
-f = ":toggle cursorcolumn"
 r = ":reload-all"
 t = "vsplit"
 w = "wclose"
 x = ":buffer-close!"
-y = ":toggle search.smart-case"

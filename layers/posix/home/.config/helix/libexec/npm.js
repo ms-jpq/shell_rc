@@ -14,7 +14,7 @@ const home = join(
   homedir(),
   ".cache",
   "helix-rt",
-  "js",
+  "nodejs",
   pkg.replaceAll(sep, "-"),
 )
 const json = {
