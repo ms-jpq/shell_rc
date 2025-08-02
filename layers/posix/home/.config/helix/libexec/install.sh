@@ -14,7 +14,8 @@ export -- BIN="$ROOT/bin" LIB="$ROOT/LIB" TMP TMPDIR="$TMP"
 PATH="$DIR:$PATH"
 
 CODE=0
+pushd -- "$TMP"
 $"${0%/*}/cond-exec.sh" "$DIR/../install/$SCRIPT" || CODE="$?"
-
+popd
 rm -fr -- "$TMP"
 exit "$CODE"
