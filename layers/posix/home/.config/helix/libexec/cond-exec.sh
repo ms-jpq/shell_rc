@@ -19,4 +19,4 @@ if ! command -v -- "$ARG0"; then
 EOF
 fi
 
-echo exec -- "$@"
+exec -- "$@"
