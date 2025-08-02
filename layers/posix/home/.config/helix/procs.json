@@ -4,7 +4,7 @@
   "gem": {
     "rubocop": [],
     "solargraph": [],
-    "sorbet-static": [],
+    "sorbet": [],
     "syntax_tree": ["syntax_tree-rbs"]
   },
   "npm": {
@@ -22,7 +22,6 @@
     "ibm-openapi-validator": [],
     "intelephense": [],
     "lua-fmt": [],
-    "nginx-language-server": [],
     "perlnavigator-server": [],
     "prettier": [
       "@prettier/plugin-xml",
@@ -45,6 +44,7 @@
     "fortls": [],
     "fprettify": [],
     "mypy": [],
+    "nginx-language-server": [],
     "sortd": [],
     "systemd-language-server": [],
     "vim-vint": []

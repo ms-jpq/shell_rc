@@ -3,7 +3,7 @@
 set -o pipefail
 
 DIR="${0%/*}"
-PAR=1
+PAR=0
 
 case "${RECUR:=""}" in
 '')
