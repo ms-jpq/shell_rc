@@ -26,7 +26,7 @@ writeFileSync(join(home, "package.json"), JSON.stringify(json))
 
 const { error, status, signal } = spawnSync(
   "npm",
-  ["install", "--no-package-lock", "--upgrade", "--prefix", home],
+  ["install", "--no-package-lock", "--prefix", home],
   { stdio: "inherit" },
 )
 

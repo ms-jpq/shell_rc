@@ -27,6 +27,18 @@ JQ
 2)
   MAN="$1"
   readarray -t -- PKGS <<< "$2"
+  PKG="${PKGS[0]:=""}"
+
+  if [[ -n ${PATCH:=""} ]]; then
+    # shellcheck disable=SC2254
+    case "$PKG" in
+    $PATCH) ;;
+    *)
+      exit
+      ;;
+    esac
+  fi
+
   exec -- "$DIR/libexec/cond-exec.sh" "$MAN" "${PKGS[@]}"
   ;;
 *)

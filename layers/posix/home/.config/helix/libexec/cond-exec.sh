@@ -4,6 +4,13 @@ set -o pipefail
 
 ARG0="$1"
 
+ASDF_DATA_DIR="$HOME/.local/asdf"
+
+if [[ -d $ASDF_DATA_DIR ]]; then
+  PATH="$ASDF_DATA_DIR/shims:$PATH"
+  export -- ASDF_CONFIG_FILE="$HOME/.config/asdf/rc.conf" ASDF_DATA_DIR
+fi
+
 if [[ -x $ARG0 ]]; then
   BANG="$(sed -E -n -e '1s@^#!([^ ]+).*$@\1@p' -- "$ARG0")"
   if [[ $BANG == '/usr/bin/env' ]]; then
@@ -13,7 +20,7 @@ if [[ -x $ARG0 ]]; then
   fi
 fi
 
-if ! command -v -- "$ARG0"; then
+if ! command -v -- "$ARG0" > /dev/null; then
   exec -- tee <<- EOF
 ! command -v -- $ARG0
 EOF
