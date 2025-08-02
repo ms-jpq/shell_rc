@@ -26,7 +26,7 @@ func main() {
 
 	cmd := exec.Command("go", "install", "-modcacherw", "--", pkg)
 	cmd.Stdout, cmd.Stderr = os.Stdout, os.Stderr
-	cmd.Env = append(os.Environ(), "GOPATH="+home)
+	cmd.Env = append(os.Environ(), "GOPATH="+home, "GOBIN="+path.Join(home, "bin"))
 
 	if err := cmd.Run(); err != nil {
 		log.Panicln(err)
