@@ -10,7 +10,11 @@
     "syntax_tree": ["syntax_tree-rbs"]
   },
   "go": {
-    "github.com/go-delve/delve/cmd/dlv@latest": []
+    "github.com/go-delve/delve/cmd/dlv@latest": [],
+    "github.com/nametake/golangci-lint-langserver@latest": [],
+    "github.com/wader/jq-lsp@master": [],
+    "golang.org/x/tools/cmd/goimports@latest": [],
+    "golang.org/x/tools/gopls@latest": []
   },
   "npm": {
     "@mdx-js/language-server": [],
