@@ -1,6 +1,7 @@
 # + commercialhaskell.stack
 # + Git.Git
 # + GoLang.Go
+# + hpjansson.Chafa
 # + Insecure.Nmap
 # + Microsoft.BingWallpaper
 # + Microsoft.DotNet.SDK.8
@@ -21,14 +22,13 @@
 + charmbracelet.glow
 + charmbracelet.gum
 + Clement.bottom
-+ Helix.Helix
 + cURL.cURL
 + dandavison.delta
 + Derailed.k9s
 + dundee.gdu
 + eza-community.eza
 + GnuWin32.M4
-+ hpjansson.Chafa
++ Helix.Helix
 + JanDeDobbeleer.OhMyPosh
 + JesseDuffield.lazygit
 + jqlang.jq
