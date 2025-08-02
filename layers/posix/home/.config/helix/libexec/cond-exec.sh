@@ -21,7 +21,7 @@ if [[ -x $ARG0 ]]; then
 fi
 
 if ! command -v -- "$ARG0" > /dev/null; then
-  exec -- tee <<- EOF
+  exec -- tee <<- EOF >&2
 ! command -v -- $ARG0
 EOF
 fi

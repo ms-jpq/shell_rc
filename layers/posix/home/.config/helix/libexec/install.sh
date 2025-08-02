@@ -2,10 +2,9 @@
 
 set -o pipefail
 
-ROOT="$HOME/.cache/helix-rt"
-
-if ! [[ -v RECURSE ]]; then
-  RECURSE=1 xargs -0 -r -- "$0"
-fi
+SCRIPT="$1"
+ROOT="$HOME/.cache/helix-rt/more/${SCRIPT//'/'/-}"
 
 export -- BIN="$ROOT/bin" LIB="$ROOT/LIB" TMP="$ROOT/tmp"
+
+exec -- "${0%/*}/cond-exec.sh" "$SCRIPT"

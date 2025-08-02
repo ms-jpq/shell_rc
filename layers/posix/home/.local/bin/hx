@@ -1,11 +1,9 @@
-#!/usr/bin/env -S -- bash -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar
+#!/usr/bin/env -S -- bash -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O globstar
 
 set -o pipefail
 
-VAR="$HOME/.config/nvim/var"
-PATH="$HOME/.config/helix/bin:$VAR/bin:$VAR/modules/node_modules/.bin:$VAR/modules/py_modules/bin:$VAR/modules/rb_modules/bin:$PATH"
-
 OPT="$HOME/.local/opt/helix"
+RT="$HOME/.cache/helix-rt"
 
 HX="$OPT/target/release/hx"
 if ! [[ -x $HX ]]; then
@@ -39,5 +37,16 @@ if [[ ! -d $HELIX_RUNTIME ]]; then
   *) ;;
   esac
 fi
+
+PATHS=(
+  "$HOME/.config/helix/bin"
+  "$RT/nodejs"/*/node_modules/.bin
+  "$RT/ruby"/*/bin
+  "$RT/python"/*/venv/{Scripts,bin}
+  "$PATH"
+)
+IFS=':'
+# shellcheck disable=SC2154
+PATH="${PATHS[*]}"
 
 exec -- "$HX" --config "$HOME/.config/helix/config.toml" "$@"
