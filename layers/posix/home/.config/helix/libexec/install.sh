@@ -6,16 +6,22 @@ SCRIPT="$1"
 DIR="$(realpath -- "$0")"
 DIR="$(dirname -- "$DIR")"
 
-RT="$HOME/.cache/helix-rt"
-ROOT="$RT/more/${SCRIPT//'/'/-}"
-TMP="$(mktemp -d --tmpdir "$ROOT/tmp")"
-
-export -- BIN="$ROOT/bin" LIB="$ROOT/LIB" TMP TMPDIR="$TMP"
 PATH="$DIR:$HOME/.local/opt/initd/libexec:$PATH"
+RT="$HOME/.cache/helix-rt"
+VAR="$RT/var"
+VAR_TMP="$RT/tmp"
+NAME="${SCRIPT//'/'/-}"
+ROOT="$RT/more/$NAME"
+BIN="$ROOT/bin"
+LIB="$ROOT/LIB"
 
+mkdir -p -- "$VAR" "$BIN" "$VAR_TMP"
+TMP="$(mktemp -d -p "$VAR_TMP" "$NAME.XXXXXX")"
+
+export -- BIN LIB TMP TMPDIR="$TMP"
 CODE=0
-pushd -- "$TMP"
-$"${0%/*}/cond-exec.sh" "$DIR/../install/$SCRIPT" || CODE="$?"
-popd
+pushd -- "$VAR" > /dev/null
+"$DIR/cond-exec.sh" "$DIR/../install/$SCRIPT" || CODE="$?"
+popd > /dev/null
 rm -fr -- "$TMP"
 exit "$CODE"

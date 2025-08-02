@@ -1,6 +1,7 @@
 .clj-kondo
 .DS_Store
 .git/
+.lsp/
 .mypy_cache/
 .venv/
 *.isorted

@@ -30,7 +30,7 @@
                ext (case (System/getProperty "os.name")
                      "Windows" ".exe"
                      "")]
-           (Path/of (str b ext) (into-array String []))))
+           (Path/of b (into-array String [(str "cljfmt" ext)]))))
 
 (doseq
  [proc (ProcessBuilder/startPipeline
