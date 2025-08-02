@@ -40,6 +40,8 @@ fi
 
 PATHS=(
   "$HOME/.config/helix/bin"
+  "$HOME/.config/nvim/var/bin"
+  "$RT/bin"
   "$RT/nodejs"/*/node_modules/.bin
   "$RT/ruby"/*/bin
   "$RT/python"/*/venv/{Scripts,bin}

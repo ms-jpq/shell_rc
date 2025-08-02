@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-DIR="${0%/*}"
+DIR="$(dirname -- "$0")"
 PAR=0
 
 case "${RECUR:=""}" in
@@ -12,6 +12,7 @@ case "${RECUR:=""}" in
     [$]=install.sh
     [composer]=composer.php
     [gem]=gem.rb
+    [go]=go.go
     [npm]=npm.js
     [pip]=pip.py
   )

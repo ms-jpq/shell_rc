@@ -9,6 +9,9 @@
     "sorbet": [],
     "syntax_tree": ["syntax_tree-rbs"]
   },
+  "go": {
+    "github.com/go-delve/delve/cmd/dlv@latest": []
+  },
   "npm": {
     "@mdx-js/language-server": [],
     "@microsoft/compose-language-service": [],

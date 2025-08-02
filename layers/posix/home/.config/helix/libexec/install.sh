@@ -3,8 +3,18 @@
 set -o pipefail
 
 SCRIPT="$1"
-ROOT="$HOME/.cache/helix-rt/more/${SCRIPT//'/'/-}"
+DIR="$(realpath -- "$0")"
+DIR="$(dirname -- "$DIR")"
 
-export -- BIN="$ROOT/bin" LIB="$ROOT/LIB" TMP="$ROOT/tmp"
+RT="$HOME/.cache/helix-rt"
+ROOT="$RT/more/${SCRIPT//'/'/-}"
+TMP="$(mktemp -d --tmpdir "$ROOT/tmp")"
 
-exec -- "${0%/*}/cond-exec.sh" "$SCRIPT"
+export -- BIN="$ROOT/bin" LIB="$ROOT/LIB" TMP TMPDIR="$TMP"
+PATH="$DIR:$PATH"
+
+CODE=0
+$"${0%/*}/cond-exec.sh" "$DIR/../install/$SCRIPT" || CODE="$?"
+
+rm -fr -- "$TMP"
+exit "$CODE"
