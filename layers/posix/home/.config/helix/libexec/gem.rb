@@ -4,9 +4,9 @@
 
 require('pathname')
 
-ARGV.first => [String => pkg]
-packages = [pkg, ...stdin.each]
-home = Pathname(Dir.home) / '.cache' / 'helix-rt' / 'ruby_modules' / pkg
+return if /^2/ =~ RUBY_VERSION
 
-home.mkpath
-system(*%w[gem install --no-document --install-dir], home, *packages, exception: true)
+ARGV => [pkg, *pkgs]
+home = Pathname(Dir.home) / '.cache' / 'helix-rt' / 'ruby' / pkg
+
+exec(*%w[gem install --no-document --install-dir], home.to_s, pkg, *pkgs)
