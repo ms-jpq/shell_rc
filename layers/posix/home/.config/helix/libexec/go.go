@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"strings"
+	"regexp"
 )
 
 func init() {
@@ -19,11 +19,14 @@ func main() {
 		log.Panicln(err)
 	}
 	pkg := os.Args[1]
-	lib := path.Join(homedir, ".cache", "helix-rt", "go", strings.ReplaceAll(pkg, string(os.PathSeparator), "-"))
+
+	re := regexp.MustCompile(`^(?:[^/]+/)*([-\w]+)(?:@\w+)?$`)
+	dir := re.FindAllStringSubmatch(pkg, 1)[0][1]
+	home := path.Join(homedir, ".cache", "helix-rt", "go", dir)
 
 	cmd := exec.Command("go", "install", "-modcacherw", "--", pkg)
 	cmd.Stdout, cmd.Stderr = os.Stdout, os.Stderr
-	cmd.Env = append(os.Environ(), "GOPATH="+lib)
+	cmd.Env = append(os.Environ(), "GOPATH="+home)
 
 	if err := cmd.Run(); err != nil {
 		log.Panicln(err)
