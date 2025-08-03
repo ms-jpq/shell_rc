@@ -6,7 +6,6 @@ import javax.xml.xpath.XPathFactory
 import kotlin.io.path.Path
 import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectory
-import kotlin.io.path.deleteIfExists
 import kotlin.io.path.deleteRecursively
 
 val root = URI("https://repo1.maven.org/maven2/com/facebook/ktfmt/")
@@ -26,7 +25,7 @@ val proc = ProcessBuilder("env", "--", "get.sh", jar).redirectError(Redirect.INH
 val code = proc.waitFor()
 
 if (code != 0) {
-    System.exit(code)
+  System.exit(code)
 }
 
 val file = Path(String(proc.getInputStream().readAllBytes()))

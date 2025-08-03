@@ -38,7 +38,7 @@ val procs =
 for (proc in procs) {
   val code = proc.waitFor()
   if (code != 0) {
-      System.exit(code)
+    System.exit(code)
   }
 
   assert(!proc.isAlive())

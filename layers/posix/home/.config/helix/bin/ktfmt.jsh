@@ -1,4 +1,5 @@
-// ; exec java -ea -Dprogram.name="$0" "$0" "$@"
+#!/usr/bin/env -S -- java --source 18
+
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
@@ -11,7 +12,7 @@ public class ktfmt {
             .resolve(".cache")
             .resolve("helix-rt")
             .resolve("more")
-            .resolve("ktfmt.java")
+            .resolve("ktfmt.kts")
             .resolve("lib")
             .resolve("ktfmt.jar");
 

@@ -72,7 +72,7 @@
     "java": {
       "formatter": {
         "args": ["-"],
-        "command": "javafmt.java"
+        "command": "javafmt.jsh"
       }
     },
     "javascript": {
@@ -90,8 +90,8 @@
     },
     "kotlin": {
       "formatter": {
-        "args": ["2", "--stdin-name", "%{buffer_name}", "-"],
-        "command": "ktfmt.java"
+        "args": ["2", "--stdin-name=%{buffer_name}", "-"],
+        "command": "ktfmt.jsh"
       }
     },
     "latex": {

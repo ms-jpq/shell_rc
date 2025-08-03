@@ -15,7 +15,7 @@ val p1 =
 val code = p1.waitFor()
 
 if (code != 0) {
-    System.exit(code)
+  System.exit(code)
 }
 
 val version = String(p1.getInputStream().readAllBytes()).replaceFirst("kotlin-lsp/v", "")
@@ -30,14 +30,13 @@ val procs =
             ProcessBuilder("env", "--", "unpack.sh", lib.toString())
                 .redirectOutput(Redirect.INHERIT)
                 .redirectError(Redirect.INHERIT),
-        )
-    )
+        ))
 
 procs.forEach {
-    val code = it.waitFor()
-    if (code != 0) {
-        System.exit(code)
-    }
+  val code = it.waitFor()
+  if (code != 0) {
+    System.exit(code)
+  }
 }
 
 bin.deleteIfExists()
