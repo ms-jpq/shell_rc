@@ -14,7 +14,7 @@ VAR="$RT/var"
 VAR_TMP="$RT/tmp"
 ROOT="$RT/more/$NAME"
 BIN="$ROOT/bin"
-LIB="$ROOT/LIB"
+LIB="$ROOT/lib"
 
 mkdir -p -- "$VAR" "$VAR_TMP" "$BIN"
 TMP="$(mktemp -d -p "$VAR_TMP" "$NAME.XXXXXX")"

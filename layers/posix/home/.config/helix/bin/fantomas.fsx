@@ -15,12 +15,17 @@ let bin =
     let home = Environment.GetEnvironmentVariable "HOME"
     Path.Join(home, ".cache", "helix-rt", "dotnet", "fantomas", "fantomas")
 
-let src = Environment.GetCommandLineArgs() |> Seq.item 2 |> Path.GetFileName
+let name = Environment.GetCommandLineArgs() |> Seq.item 2 |> Path.GetFileName
 let tmp = Directory.CreateTempSubdirectory()
-let dst = Path.Join(tmp.FullName, src)
+let buf = Path.Join(tmp.FullName, name)
 
 try
-    let cmd = ProcessStartInfo(bin, [ "--out"; dst; src ])
+    let _ =
+        use stdin = Console.OpenStandardInput()
+        use out = File.Create buf
+        stdin.CopyTo out
+
+    let cmd = ProcessStartInfo(bin, [ buf ])
     cmd.Environment.Add("DOTNET_ROOT", dotnet)
     cmd.RedirectStandardOutput <- true
 
@@ -29,6 +34,6 @@ try
     proc.WaitForExit()
     Environment.ExitCode <- proc.ExitCode
 
-    File.ReadAllText dst |> Console.Write
+    File.ReadAllText buf |> Console.Write
 finally
     tmp.Delete true

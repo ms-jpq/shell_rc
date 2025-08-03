@@ -5,13 +5,14 @@ import java.util.stream.Stream;
 
 public class javafmt {
   public static void main(String args[]) throws Exception {
-    final var self = Path.of(System.getProperty("program.name"));
     final var java = Path.of(System.getProperty("java.home")).resolve("bin").resolve("java");
     final var jar =
-        self.getParent()
-            .getParent()
-            .resolve("lib")
+        Path.of(System.getProperty("user.home"))
+            .resolve(".cache")
+            .resolve("helix-rt")
+            .resolve("more")
             .resolve("javafmt.java")
+            .resolve("lib")
             .resolve("google-java-format.jar");
     final var argv =
         Stream.concat(Stream.of(java.toString(), "-jar", jar.toString()), Stream.of(args))

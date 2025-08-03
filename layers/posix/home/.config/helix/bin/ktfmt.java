@@ -5,10 +5,16 @@ import java.util.stream.Stream;
 public class ktfmt {
   public static void main(String args[]) throws Exception {
     final var tabsize = Integer.parseInt(args[0]);
-    final var self = Path.of(System.getProperty("program.name"));
     final var java = Path.of(System.getProperty("java.home")).resolve("bin").resolve("java");
     final var jar =
-        self.getParent().getParent().resolve("lib").resolve("ktfmt.java").resolve("ktfmt.jar");
+        Path.of(System.getProperty("user.home"))
+            .resolve(".cache")
+            .resolve("helix-rt")
+            .resolve("more")
+            .resolve("ktfmt.java")
+            .resolve("lib")
+            .resolve("ktfmt.jar");
+
     final var argv =
         Stream.of(
                 Stream.of(java.toString(), "-jar", jar.toString()),

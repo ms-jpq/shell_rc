@@ -10,10 +10,7 @@ import kotlin.io.path.deleteIfExists
 import kotlin.io.path.deleteRecursively
 
 val root = URI("https://repo1.maven.org/maven2/com/facebook/ktfmt/")
-val path = System.getProperty("sun.java.command").split(" ").last()
-val proxy = Path(path).getParent().resolve("ktfmt.ex.java")
 val lib = Path(System.getenv("LIB")!!)
-val bin = Path(System.getenv("BIN")!!)
 
 val version =
     XPathFactory.newInstance()
@@ -39,7 +36,3 @@ val file = Path(String(proc.getInputStream().readAllBytes()))
 lib.createDirectory()
 
 file.copyTo(lib.resolve("ktfmt.jar"))
-
-bin.deleteIfExists()
-
-proxy.copyTo(bin, true)
