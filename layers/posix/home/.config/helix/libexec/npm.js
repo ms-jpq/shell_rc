@@ -7,7 +7,7 @@ import { homedir } from "node:os"
 import { join, sep } from "node:path"
 import { argv } from "node:process"
 
-const [, , pkg, ...pkgs] = argv
+const [, , pkg, ...pkgs] = argv.map((p) => p.trim())
 ok(pkg)
 
 const home = join(

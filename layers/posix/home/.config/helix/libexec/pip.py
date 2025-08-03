@@ -9,7 +9,7 @@ try:
 except ImportError:
     exit(0)
 
-_, pkg, *pkgs = argv
+_, pkg, *pkgs = map(lambda s: s.strip(), argv)
 requirements = linesep.join((pkg, *pkgs))
 home = Path.home() / ".cache" / "helix-rt" / "python" / pkg
 txt = home / "requirements.txt"
