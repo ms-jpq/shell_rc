@@ -4,6 +4,7 @@ set -o pipefail
 
 BASE='https://github.com/artempyanykh/marksman/releases/latest/download/marksman'
 
+EXT=''
 case "$OSTYPE" in
 darwin*)
   URI="$BASE-macos"
@@ -12,10 +13,11 @@ linux*)
   URI="$BASE-linux-x64"
   ;;
 *)
-  URI="$BASE.exe"
-  BIN="$BIN.exe"
+  EXT='.exe'
+  URI="$BASE$EXT"
   ;;
 esac
 
 FILE="$(get.sh "$URI")"
-install -v -b -- "$FILE" "$BIN"
+# shellcheck disable=SC2154
+install -v -b -- "$FILE" "$BIN/marksman$EXT"

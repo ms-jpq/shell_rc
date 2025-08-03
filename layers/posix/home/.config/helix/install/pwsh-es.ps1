@@ -4,15 +4,12 @@ Set-StrictMode -Version 'Latest'
 $ErrorActionPreference = 'Stop'
 $PSStyle.OutputRendering = 'PlainText'
 
-
 $uri = 'https://github.com/PowerShell/PowerShellEditorServices/releases/latest/download/PowerShellEditorServices.zip'
 
 $tmp = $Env:TMP
 $out = Split-Path -Leaf -Path $uri
-$bin = $Env:BIN
-$bin_d = Split-Path -Path $bin
 
-if ($Env:CI && $IsMacOS) {
+if ((-not ($null -eq $Env:CI)) -and $IsMacOS) {
     Exit
 }
 
@@ -24,6 +21,3 @@ if (Test-Path -Path $Env:LIB) {
 }
 
 Move-Item -Path $tmp -Destination $Env:LIB
-Copy-Item -Path (Join-Path -Path $PSScriptRoot 'pwsh_fmt.ex.ps1') -Destination (Join-Path -Path $bin_d 'pwsh-fmt.ps1')
-Copy-Item -Path (Join-Path -Path $PSScriptRoot 'pwsh_lint.ex.ps1') -Destination (Join-Path -Path $bin_d 'pwsh-lint.ps1')
-Copy-Item -Path (Join-Path -Path $PSScriptRoot 'pwsh_es.ex.ps1') -Destination $bin

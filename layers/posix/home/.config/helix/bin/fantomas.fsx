@@ -20,14 +20,13 @@ let tmp = Directory.CreateTempSubdirectory()
 let buf = Path.Join(tmp.FullName, name)
 
 try
-    let _ =
+    do
         use stdin = Console.OpenStandardInput()
         use out = File.Create buf
         stdin.CopyTo out
 
-    let cmd = ProcessStartInfo(bin, [ buf ])
+    let cmd = ProcessStartInfo(bin, [ buf ], RedirectStandardOutput = true)
     cmd.Environment.Add("DOTNET_ROOT", dotnet)
-    cmd.RedirectStandardOutput <- true
 
     use proc = Process.Start cmd
     proc.StandardOutput.ReadToEnd() |> ignore

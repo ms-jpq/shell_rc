@@ -230,7 +230,7 @@
     },
     "powershell-es": {
       "args": [],
-      "command": "pwsh_es.ps1"
+      "command": "pwsh-es.ps1"
     },
     "r": {
       "command": "lsp.R"

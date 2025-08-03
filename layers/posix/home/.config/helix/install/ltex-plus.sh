@@ -6,6 +6,7 @@ REPO='ltex-plus/ltex-ls-plus'
 BASE="https://github.com/$REPO/releases/latest/download/ltex-ls-plus"
 VERSION="$(gh-latest.sh . "$REPO")"
 
+EXT=''
 case "$OSTYPE" in
 darwin*)
   URI="$BASE-$VERSION-mac-x64.tar.gz"
@@ -15,9 +16,11 @@ linux*)
   ;;
 *)
   URI="$BASE-$VERSION-windows-x64.zip"
-  BIN="$BIN.bat"
+  EXT='.cmd'
   ;;
 esac
+
+DST="$BIN/ltex-ls-plus$EXT"
 
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
@@ -25,4 +28,4 @@ get.sh "$URI" | unpack.sh "$TMP"
 rm -rf -- "$LIB"
 mkdir -v -p -- "$LIB"
 mv -v -f -- "$TMP"/*/* "$LIB/"
-ln -v -snf -- "$LIB/bin/$(basename -- "$BIN")" "$BIN"
+ln -v -snf -- "$LIB/bin/$(basename -- "$DST")" "$DST"

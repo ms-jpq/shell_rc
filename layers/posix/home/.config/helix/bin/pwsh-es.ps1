@@ -5,7 +5,7 @@ $ErrorActionPreference = 'Stop'
 $PSStyle.OutputRendering = 'PlainText'
 
 $root = $IsWindows ? $Env:TEMP : (Join-Path -Path $HOME '.cache')
-$lib = Join-Path -Path $root 'helix-rt' 'lib' 'pwsh_es.ps1'
+$lib = Join-Path -Path "$root" 'helix-rt' 'more' 'pwsh-es.ps1' 'lib'
 $tmp = [IO.Directory]::CreateTempSubdirectory()
 
 $argv = @(

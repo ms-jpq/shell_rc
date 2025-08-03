@@ -12,7 +12,7 @@ let home =
 
 let argv = [ "tool"; "install"; "--tool-path"; home; pkg ]
 
-let _ =
+do
     use proc = ProcessStartInfo("dotnet", argv) |> Process.Start
 
     proc.WaitForExit()

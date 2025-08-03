@@ -5,7 +5,6 @@ set -o pipefail
 ARG0="$1"
 
 ASDF_DATA_DIR="$HOME/.local/asdf"
-
 if [[ -d $ASDF_DATA_DIR ]]; then
   PATH="$ASDF_DATA_DIR/shims:$PATH"
   export -- ASDF_CONFIG_FILE="$HOME/.config/asdf/rc.conf" ASDF_DATA_DIR

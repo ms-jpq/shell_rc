@@ -13,7 +13,7 @@ let dotnet =
 
 let bin =
     let home = Environment.GetEnvironmentVariable "HOME"
-    Path.Join(home, ".cache", "helix-rt", "dotnet", "fsautocomplete", "fsautocomplete")
+    Path.Join(home, ".cache", "helix-rt", "more", "omnisharp.fsx", "lib", "OmniSharp")
 
 let argv = Environment.GetCommandLineArgs() |> Seq.skip 2
 

@@ -6,6 +6,7 @@ set -o pipefail
 DST="$LIB/lsp-ai"
 BASE='https://github.com/SilasMarvin/lsp-ai/releases/latest/download/lsp-ai'
 
+EXT=''
 case "$OSTYPE" in
 darwin*)
   URI="$BASE-$HOSTTYPE-apple-darwin.gz"
@@ -15,8 +16,7 @@ linux*)
   ;;
 *)
   URI="$BASE-$HOSTTYPE-pc-windows-msvc.zip"
-  DST="$DST.exe"
-  BIN="$BIN.exe"
+  EXT='.exe'
   ;;
 esac
 
@@ -35,7 +35,5 @@ darwin* | linux*)
   ;;
 esac
 
-mv -v -f -- "${SRC[@]}" "$DST"
+mv -v -f -- "${SRC[@]}" "$DST$EXT"
 chmod +x "$DST"
-
-ln -v -snf -- "$(dirname -- "$0")/lsp_ai.ex.sh" "$BIN"
