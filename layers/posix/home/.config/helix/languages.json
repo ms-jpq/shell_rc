@@ -220,7 +220,7 @@
     },
     "phpactor": {
       "args": ["language-server"],
-      "command": "phpactor"
+      "command": "phpactor.phar"
     },
     "powershell-es": {
       "args": [],

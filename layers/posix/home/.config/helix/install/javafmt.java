@@ -30,6 +30,6 @@ public class javafmt {
     final var jar = new String(p2.getInputStream().readAllBytes());
 
     Files.createDirectories(lib);
-    Files.move(Path.of(jar), dst, StandardCopyOption.REPLACE_EXISTING);
+    Files.copy(Path.of(jar), dst, StandardCopyOption.REPLACE_EXISTING);
   }
 }

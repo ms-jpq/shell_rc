@@ -16,7 +16,7 @@ public class jdtls {
     final var uri =
         "https://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz";
     final var lib = Path.of(System.getenv("LIB"));
-    var bin = Path.of(System.getenv("BIN"));
+    var bin = Path.of(System.getenv("BIN")).resolve("jdtls");
     if (win) {
       bin = bin.resolveSibling("jdtls.bat");
     }
