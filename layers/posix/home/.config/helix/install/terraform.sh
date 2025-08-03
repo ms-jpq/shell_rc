@@ -24,7 +24,6 @@ linux*)
   ;;
 *)
   NAME="windows_$HT"
-  BIN="$BIN.exe"
   ;;
 esac
 
@@ -33,4 +32,4 @@ URI="$BASE_URI/$VERSION/terraform_${VERSION}_$NAME.zip"
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
 # shellcheck disable=2154
-mv -v -f -- "$TMP/terraform"* "$BIN"
+mv -v -f -- "$TMP/"* "$BIN/"

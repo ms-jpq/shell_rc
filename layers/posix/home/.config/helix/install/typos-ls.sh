@@ -9,6 +9,7 @@ VERSION="$(gh-latest.sh . "$REPO")"
 VERSION='v0.1.23'
 BASE="https://github.com/$REPO/releases/download/$VERSION/typos-lsp"
 
+EXT=''
 case "$OSTYPE" in
 darwin*)
   URI="$BASE-$VERSION-$HOSTTYPE-apple-darwin.tar.gz"
@@ -18,10 +19,11 @@ linux*)
   ;;
 *)
   URI="$BASE-$VERSION-$HOSTTYPE-pc-windows-msvc.zip"
-  BIN="$BIN.exe"
+  EXT='.exe'
   ;;
 esac
 
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
-mv -v -f -- "$TMP/"**'/typos-lsp'* "$BIN"
+# shellcheck disable=SC2154
+mv -v -f -- "$TMP/"**'/typos-lsp'* "$BIN/typos-lsp$EXT"

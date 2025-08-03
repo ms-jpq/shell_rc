@@ -13,6 +13,7 @@ aarch64)
   ;;
 esac
 
+EXT=''
 case "$OSTYPE" in
 darwin*)
   URI="${BASE}_darwin_$HT.zip"
@@ -22,11 +23,11 @@ linux*)
   ;;
 *)
   URI="${BASE}_windows_$HT.zip"
-  BIN="$BIN.exe"
+  EXT='.exe'
   ;;
 esac
 
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
 # shellcheck disable=2154
-mv -v -f -- "$TMP/"* "$BIN"
+mv -v -f -- "$TMP/"* "$BIN/tflint$EXT"

@@ -4,6 +4,7 @@ set -o pipefail
 
 BASE='https://github.com/tamasfe/taplo/releases/latest/download/taplo'
 
+EXT=''
 case "$OSTYPE" in
 darwin*)
   URI="$BASE-darwin-$HOSTTYPE.gz"
@@ -13,7 +14,7 @@ linux*)
   ;;
 *)
   URI="$BASE-windows-$HOSTTYPE.zip"
-  BIN="$BIN.exe"
+  EXT='.exe'
   ;;
 esac
 
@@ -21,4 +22,4 @@ esac
 get.sh "$URI" | unpack.sh "$TMP"
 F=("$TMP"/*)
 chmod +x "${F[@]}"
-mv -v -f -- "${F[@]}" "$BIN"
+mv -v -f -- "${F[@]}" "$BIN/taplo$EXT"

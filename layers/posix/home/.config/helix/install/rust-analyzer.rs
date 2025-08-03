@@ -41,7 +41,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
   let bin = var_os("BIN")
     .map(PathBuf::from)
-    .ok_or_else(|| format!("{}", Backtrace::capture()))?;
+    .ok_or_else(|| format!("{}", Backtrace::capture()))?
+    .join("rust-analyzer");
 
   #[cfg(target_family = "windows")]
   let bin = {

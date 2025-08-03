@@ -4,6 +4,7 @@ set -o pipefail
 
 BASE='https://github.com/kristoff-it/superhtml/releases/latest/download'
 
+EXT=''
 case "$OSTYPE" in
 darwin*)
   URI="$BASE/$HOSTTYPE-macos.tar.gz"
@@ -21,7 +22,7 @@ linux*)
   ;;
 *)
   URI="$BASE/$HOSTTYPE-windows.zip"
-  BIN="$BIN.exe"
+  EXT='.exe'
   ;;
 esac
 
@@ -29,4 +30,5 @@ ARCHIVE="superhtml-${URI##*/}"
 # shellcheck disable=SC2154
 get.sh "$URI" "$ARCHIVE" | unpack.sh "$TMP"
 find "$TMP" -name '*.pdb' -delete
-mv -v -f -- "$TMP"/*/* "$BIN"
+# shellcheck disable=SC2154
+mv -v -f -- "$TMP"/*/* "$BIN/superhtml$EXT"
