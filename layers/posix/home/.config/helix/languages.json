@@ -47,7 +47,7 @@
     },
     "fsharp": {
       "formatter": {
-        "args": [],
+        "args": ["%{buffer_name}"],
         "command": "fantomas.fsx"
       }
     },

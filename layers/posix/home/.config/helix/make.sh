@@ -11,6 +11,7 @@ case "${RECUR:=""}" in
   MANS=(
     [$]=install.sh
     [composer]=composer.php
+    [dotnet]=dotnet-tools.fsx
     [gem]=gem.rb
     [go]=go.go
     [npm]=npm.js

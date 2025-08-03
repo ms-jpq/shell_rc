@@ -7,8 +7,6 @@
     "diff2html.sh": [],
     "dtsfmt.sh": [],
     "eslint.js": [],
-    "fantomas.fsx": [],
-    "fsautocomplete.fsx": [],
     "glsl-analyzer.sh": [],
     "golangci-lint.go": [],
     "gradle-ls.java": [],
@@ -60,6 +58,10 @@
   },
   "composer": {
     "phan/phan": []
+  },
+  "dotnet": {
+    "fantomas": [],
+    "fsautocomplete": []
   },
   "gem": {
     "rubocop": [],
