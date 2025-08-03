@@ -38,6 +38,16 @@ goto-reference-include-declaration = false
 [editor.soft-wrap]
 enable = true
 
+[editor.statusline]
+center = ["workspace-diagnostics"]
+right = [
+  "diagnostics",
+  "file-encoding",
+  "file-indent-style",
+  "position",
+  "position-percentage",
+]
+
 [editor.word-completion]
 trigger-length = 1
 
