@@ -4,7 +4,7 @@
 
 require('pathname')
 
-return if /^2/ =~ RUBY_VERSION
+return if (/^2/ =~ RUBY_VERSION) || (Gem.win_platform? && ENV.key?("CI"))
 
 ARGV => [pkg, *pkgs]
 home = Pathname(Dir.home) / '.cache' / 'helix-rt' / 'ruby' / pkg
