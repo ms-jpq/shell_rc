@@ -90,7 +90,7 @@
     },
     "kotlin": {
       "formatter": {
-        "args": ["2", "-"],
+        "args": ["2", "--stdin-name", "%{buffer_name}", "-"],
         "command": "ktfmt.java"
       }
     },
