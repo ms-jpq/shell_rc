@@ -1,6 +1,6 @@
 {
   "#": "https://github.com/helix-editor/helix/blob/master/languages.toml",
-  "$": ["tabby", "typos"],
+  "$": ["tabby", "helix-gpt", "typos"],
   "language": {
     "bash": {
       "formatter": {
@@ -220,6 +220,9 @@
     }
   },
   "language-server": {
+    "helix-gpt": {
+      "command": "helix-gpt"
+    },
     "lemminx": {
       "args": [],
       "command": "lemminx"
