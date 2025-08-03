@@ -33,12 +33,16 @@ for DIR in "${DIRS[@]}"; do
 done
 
 SH=("$GIT/dircolors.sh" "$GIT/z/z.sh" ./zsh/_*.sh)
-FZF="$GIT/fzf/shell"
-BSH+=(./zsh/aposteriori.{bash,sh} "${SH[@]}" "$FZF"/*.bash)
-ZSH+=(./zsh/aposteriori.{zs,sh} "${SH[@]}" "$FZF"/*.zsh)
 
-ZACC=("$(cat -- "${ZSH[@]}")")
-BACC=("$(cat -- "${BSH[@]}")")
+# TODO: this somehow blows up gnu-tar on windows?
+if [[ $OS != 'nt' ]]; then
+  FZF="$GIT/fzf/shell"
+  BSH+=(./zsh/aposteriori.{bash,sh} "${SH[@]}" "$FZF"/*.bash)
+  ZSH+=(./zsh/aposteriori.{zs,sh} "${SH[@]}" "$FZF"/*.zsh)
+fi
+
+ZACC=("$(cat -- /dev/null "${ZSH[@]}")")
+BACC=("$(cat -- /dev/null "${BSH[@]}")")
 
 for DIR in "${DIRS[@]}"; do
   for BIN in "$DIR/bin"/*; do
