@@ -46,7 +46,13 @@ JQ
     esac
   fi
 
-  exec -- "$DIR/libexec/cond-exec.sh" "$MAN" "${PKGS[@]}"
+  CODE=0
+  "$DIR/libexec/cond-exec.sh" "$MAN" "${PKGS[@]}" || CODE="$?"
+  if ((CODE)); then
+    NOW="$(date -- '+%y/%m/%d %H:%m:%S')"
+    printf -- '%s\n' "!!! $NOW - $PKG" | tee -a -- "$HOME/.cache/helix-rt/failed.log" >&2
+  fi
+  exit "$CODE"
   ;;
 *)
   set -x
