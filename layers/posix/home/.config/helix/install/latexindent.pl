@@ -15,9 +15,7 @@ use utf8;
 my $dir    = dirname(__FILE__);
 my $tmp    = $ENV{TMP};
 my $cpan   = catfile( dirname( $Config{perlpath} ), 'cpan' );
-my $bin    = $ENV{BIN};
 my $lib    = $ENV{LIB};
-my $script = catfile( $dir, 'latexindent.ex.pl' );
 
 if ( $OSNAME eq 'MSWin32' ) {
   $cpan = "$cpan.bat";
@@ -57,6 +55,3 @@ if ( !-d $lib ) {
   rmtree($tmp_lib);
   move( $tmp, $lib );
 }
-
-copy( $script, $bin );
-chmod 0755, $bin;

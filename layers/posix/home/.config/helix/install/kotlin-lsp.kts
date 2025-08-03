@@ -6,7 +6,7 @@ import kotlin.io.path.deleteIfExists
 
 val lib = Path(System.getenv("LIB")!!)
 val sh = lib.resolve("kotlin-lsp.sh")
-val bin = Path(System.getenv("BIN")!!)
+val bin = Path(System.getenv("BIN")!!).resolve("kotlin-lsp")
 val repo = "Kotlin/kotlin-lsp"
 
 val p1 =

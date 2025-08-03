@@ -25,7 +25,7 @@ val uri = "https://github.com/fwcd/kotlin-language-server/releases/latest/downlo
 val tmp = Path(System.getenv("TMP")!!)
 val lib = Path(System.getenv("LIB")!!)
 val ll = suffix(Path(lib.toString(), "bin", "kotlin-language-server"), ".bat")
-val bin = suffix(Path(System.getenv("BIN")!!), ".bat")
+val bin = suffix(Path(System.getenv("BIN")!!).resolve("kotlin-language-server"), ".bat")
 
 val procs =
     ProcessBuilder.startPipeline(

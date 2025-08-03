@@ -14,7 +14,7 @@ use utf8;
 my $dir   = dirname(__FILE__);
 my $tmp   = $ENV{TMP};
 my $cpan  = catfile( dirname( $Config{perlpath} ), 'cpan' );
-my $bin   = dirname( $ENV{BIN} );
+my $bin   = $ENV{BIN};
 my $lib   = $ENV{LIB};
 my @names = qw( perlcritic perltidy );
 
@@ -45,10 +45,3 @@ if ( !-d $lib ) {
   move( $tmp, $lib );
 }
 
-for my $name (@names) {
-  my $src = catfile( $dir, "$name.ex.pl" );
-  my $dst = catfile( $bin, "$name.pl" );
-
-  copy( $src, $dst );
-  chmod 0755, $dst;
-}
