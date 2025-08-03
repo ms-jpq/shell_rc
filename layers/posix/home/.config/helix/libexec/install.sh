@@ -26,6 +26,6 @@ pushd -- "$VAR" > /dev/null
 popd > /dev/null
 rm -fr -- "$TMP"
 if ((CODE)); then
-  printf -- '%s\n' "!!! $SCRIPT" | tee --append -- "$RT/failed.log" >&2
+  printf -- '%s\n' "!!! $SCRIPT" | tee -a -- "$RT/failed.log" >&2
 fi
 exit "$CODE"
