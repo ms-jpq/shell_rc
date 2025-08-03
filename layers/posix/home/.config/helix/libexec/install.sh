@@ -25,4 +25,7 @@ pushd -- "$VAR" > /dev/null
 "$DIR/cond-exec.sh" "$DIR/../install/$SCRIPT" || CODE="$?"
 popd > /dev/null
 rm -fr -- "$TMP"
+if ((CODE)); then
+  printf -- '%s\n' "!!! $SCRIPT" | tee --append -- "$RT/failed.log" >&2
+fi
 exit "$CODE"

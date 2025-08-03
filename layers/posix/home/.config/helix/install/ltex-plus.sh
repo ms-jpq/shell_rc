@@ -20,6 +20,7 @@ linux*)
   ;;
 esac
 
+# shellcheck disable=SC2154
 DST="$BIN/ltex-ls-plus$EXT"
 
 # shellcheck disable=SC2154

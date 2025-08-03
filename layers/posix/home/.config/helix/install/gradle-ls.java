@@ -11,10 +11,12 @@ import java.util.function.Consumer;
 
 public class gradle_ls {
   public static void main(String args[]) throws Exception {
+    System.exit(0);
+
     final var win = System.getProperty("os.name").contains("Windows");
 
     final var lib = Path.of(System.getenv("LIB"));
-    var bin = Path.of(System.getenv("BIN"));
+    var bin = Path.of(System.getenv("BIN")).resolve("gradle");
     if (win) {
       bin = bin.resolveSibling("gradle" + (win ? ".bat" : ""));
     }
