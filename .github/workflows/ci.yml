@@ -107,6 +107,8 @@ jobs:
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
           Get-Command -All -- bash
           Get-Command -All -- make
+          Get-Command -All -- npm
+
 
       - run: |-
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
