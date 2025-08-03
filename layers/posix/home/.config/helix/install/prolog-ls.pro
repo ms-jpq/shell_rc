@@ -6,10 +6,7 @@ main(_Argv) :-
     getenv('LIB', Lib),
     =(Pack, lsp_server),
     directory_file_path(Lib, Pack, Dir),
-    (   exists_directory(Dir)
-    ->  true
-    ;   make_directory_path(Dir)
-    ),
+    make_directory_path(Dir),
     pack_install(Pack,
                  [ package_directory(Lib),
                    global(false),
