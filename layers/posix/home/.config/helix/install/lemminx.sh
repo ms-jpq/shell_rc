@@ -18,6 +18,11 @@ linux*)
   ;;
 esac
 
+if ! command -v -- xmllint > /dev/null; then
+  set -x
+  exit 0
+fi
+
 CURL=(curl --fail-with-body --location --no-progress-meter --max-time 600 -- "$BASE_URI")
 XPATH=(xmllint --html --xpath '(//html/body/table/tr/td/a/text())[last()]' -)
 VERSION="$("${CURL[@]}" | "${XPATH[@]}")"
