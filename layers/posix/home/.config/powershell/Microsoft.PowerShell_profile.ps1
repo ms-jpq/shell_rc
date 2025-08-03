@@ -55,6 +55,7 @@ if ($IsWindows) {
     Set-PSReadLineOption -TerminateOrphanedConsoleApps
 
     $appdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::ApplicationData)
+    $localappdata = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
     $pf = [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFiles)
 
     if ($null -eq $Env:MSYSTEM) {
@@ -72,6 +73,7 @@ if ($IsWindows) {
             Join-Path -Path $pf 'Git' 'usr' 'bin'
             Join-Path -Path $Env:HOMEDRIVE 'msys64' 'usr' 'bin'
             Join-Path -Path $HOME '.cargo' 'bin'
+            Join-Path -Path $localappdata 'Programs' 'oh-my-posh' 'bin'
         ) | Where-Object { Test-Path -PathType 'Container' -Path $_ }
     ) + @($Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 
