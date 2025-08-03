@@ -23,4 +23,5 @@ get.sh "$URI" | unpack.sh "$TMP"
 F=("$TMP"/*)
 chmod +x "${F[@]}"
 # shellcheck disable=SC2154
+mkdir -p -- "$BIN"
 mv -v -f -- "${F[@]}" "$BIN/taplo$EXT"

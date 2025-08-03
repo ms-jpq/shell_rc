@@ -7,7 +7,7 @@ use std::{
   backtrace::Backtrace,
   env::{consts::ARCH, var_os},
   error::Error,
-  fs::{read_dir, rename},
+  fs::{create_dir_all, read_dir, rename},
   path::PathBuf,
   process::{Command, Stdio},
 };
@@ -39,10 +39,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     .map(PathBuf::from)
     .ok_or_else(|| format!("{}", Backtrace::capture()))?;
 
-  let bin = var_os("BIN")
+  let bin_dir = var_os("BIN")
     .map(PathBuf::from)
-    .ok_or_else(|| format!("{}", Backtrace::capture()))?
-    .join("rust-analyzer");
+    .ok_or_else(|| format!("{}", Backtrace::capture()))?;
+
+  let bin = bin_dir.join("rust-analyzer");
 
   #[cfg(target_family = "windows")]
   let bin = {
@@ -70,6 +71,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
   assert!(proc.wait()?.success());
   assert!(status.success());
+
+  create_dir_all(bin_dir)?;
 
   #[cfg(target_family = "unix")]
   let prefix = "rust-analyzer-";

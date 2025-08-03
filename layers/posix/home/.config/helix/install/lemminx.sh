@@ -25,4 +25,5 @@ URI="$BASE_URI/$VERSION$BASENAME"
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
 # shellcheck disable=SC2154
+mkdir -p -- "$BIN"
 mv -v -f -- "$TMP/lemminx"* "$BIN/lemminx$EXT"

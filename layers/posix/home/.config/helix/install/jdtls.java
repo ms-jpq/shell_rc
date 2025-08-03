@@ -56,6 +56,7 @@ public class jdtls {
     } else {
       Files.move(tmp, lib);
     }
+    Files.createDirectories(bin.getParent());
     Files.createSymbolicLink(bin, src);
   }
 }

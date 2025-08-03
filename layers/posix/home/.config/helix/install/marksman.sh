@@ -20,4 +20,5 @@ esac
 
 FILE="$(get.sh "$URI")"
 # shellcheck disable=SC2154
+mkdir -v -p -- "$BIN"
 install -v -b -- "$FILE" "$BIN/marksman$EXT"

@@ -24,11 +24,7 @@
     "lua-ls.sh": [],
     "marksman.sh": [],
     "omnisharp.fsx": [],
-    "php-cs-fixer.php": [],
-    "phpactor.php": [],
-    "phpstan.php": [],
     "prolog-ls.pro": [],
-    "psalm.php": [],
     "pwsh-es.ps1": [],
     "rust-analyzer.rs": [],
     "shellcheck.sh": [],
@@ -94,6 +90,12 @@
     "vim-language-server": [],
     "vscode-langservers-extracted": [],
     "yaml-language-server": []
+  },
+  "phar": {
+    "php-cs-fixer": ["PHP-CS-Fixer/PHP-CS-Fixer"],
+    "phpactor": ["phpactor/phpactor"],
+    "phpstan": ["phpstan/phpstan"],
+    "psalm": ["psalm/psalm"]
   },
   "pip": {
     "black": ["isort"],

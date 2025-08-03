@@ -2,6 +2,7 @@
 import java.lang.ProcessBuilder.Redirect
 import kotlin.io.path.Path
 import kotlin.io.path.createSymbolicLinkPointingTo
+import kotlin.io.path.createDirectory
 import kotlin.io.path.deleteIfExists
 
 val lib = Path(System.getenv("LIB")!!)
@@ -38,6 +39,8 @@ procs.forEach {
     System.exit(code)
   }
 }
+
+bin.getParent().createDirectory()
 
 bin.deleteIfExists()
 

@@ -2,8 +2,9 @@
 
 import           Data.Function      ((&))
 import           Data.Functor       ((<&>))
-import           System.Directory   (getPermissions, renameFile,
-                                     setOwnerExecutable, setPermissions)
+import           System.Directory   (createDirectoryIfMissing, getPermissions,
+                                     renameFile, setOwnerExecutable,
+                                     setPermissions)
 import           System.Environment (getEnv, getExecutablePath)
 import           System.Exit        (exitSuccess)
 import           System.FilePath    (dropExtension, takeBaseName, (</>))
@@ -23,6 +24,7 @@ nameof _       = id
 
 run "mingw32" = exitSuccess
 run os = do
+  binDir <- getEnv "BIN"
   tmp <- getEnv "TMP"
   version <- readProcess "env" ["--", "gh-latest.sh", ".", repo] ""
 
@@ -35,7 +37,8 @@ run os = do
     >>= putStr
 
   _ <- getExecutablePath >>= getPermissions >>= setPermissions srv
-  _ <- getEnv "BIN" <&> (</> "stylish") >>= renameFile srv
+  _ <- createDirectoryIfMissing True binDir
+  _ <- binDir </> "stylish" & renameFile srv
   exitSuccess
 
 main = run os

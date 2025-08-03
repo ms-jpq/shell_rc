@@ -26,4 +26,5 @@ esac
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
 # shellcheck disable=SC2154
+mkdir -p -- "$BIN"
 install -v -b -- "$TMP/dtsfmt" "$BIN/dtsfmt"

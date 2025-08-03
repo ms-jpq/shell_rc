@@ -24,7 +24,6 @@
         "args": [
           "fix",
           "--remove-multiple-non-indenting-spaces",
-          "--sort-ns-reference",
           "--split-keypairs-over-multiple-lines",
           "--",
           "-"
@@ -59,7 +58,8 @@
     },
     "haskell": {
       "formatter": {
-        "command": "stylish-haskell"
+        "args": [],
+        "command": "stylish"
       }
     },
     "hcl": {

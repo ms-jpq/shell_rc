@@ -16,7 +16,7 @@ ROOT="$RT/more/$NAME"
 BIN="$ROOT/bin"
 LIB="$ROOT/lib"
 
-mkdir -p -- "$VAR" "$VAR_TMP" "$BIN"
+mkdir -p -- "$VAR" "$VAR_TMP" "$ROOT"
 TMP="$(mktemp -d -p "$VAR_TMP" "$NAME.XXXXXX")"
 
 export -- BIN LIB TMP TMPDIR="$TMP"

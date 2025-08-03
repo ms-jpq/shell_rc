@@ -52,6 +52,7 @@ C-space = "completion"
 esc     = [":set cursorline true", "normal_mode"]
 
 [keys.select]
+D = ["yank_to_clipboard", "delete_selection_noyank"]
 y = "yank_to_clipboard"
 
 [keys.normal]
@@ -63,7 +64,9 @@ C-l     = ["move_next_word_start", "move_char_right"]
 C-u     = ["half_page_up", "align_view_center"]
 
 "+" = "expand_selection"
+D   = ["extend_to_line_end", "delete_selection_noyank"]
 X   = "extend_line_above"
+Y   = ["extend_to_line_end", "yank_to_clipboard"]
 "_" = "shrink_selection"
 
 P = "paste_clipboard_before"

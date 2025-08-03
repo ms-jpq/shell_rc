@@ -1,8 +1,8 @@
 #!/usr/bin/env -S -- clojure.sh -M
 
 (import '[java.lang ProcessBuilder ProcessBuilder$Redirect]
-        '[java.nio.file Files Path StandardCopyOption]
-        '[java.nio.file.attribute PosixFilePermissions])
+        '[java.nio.file FileAlreadyExistsException Files Path StandardCopyOption]
+        '[java.nio.file.attribute FileAttribute PosixFilePermissions])
 (require
  '[clojure.string :refer [join] :as s]
  '[clojure.java.shell :refer [sh]])
@@ -33,6 +33,8 @@
                      "")]
            (Path/of b (into-array String [(str "clj-kondo" ext)]))))
 
+(def src (.resolve tmp "clj-kondo"))
+
 (doseq
  [proc (ProcessBuilder/startPipeline
         [(-> (ProcessBuilder. ["get.sh", uri])
@@ -43,10 +45,12 @@
           (.redirectError ProcessBuilder$Redirect/INHERIT))])]
   (-> proc .waitFor zero? assert))
 
-(Files/move (.resolve tmp "clj-kondo")
-            bin
-            (into-array [StandardCopyOption/REPLACE_EXISTING]))
-
 (->> "rwxrwxr-x"
      (PosixFilePermissions/fromString)
-     (Files/setPosixFilePermissions bin))
+     (Files/setPosixFilePermissions src))
+
+(try
+  (Files/createDirectory (.getParent bin) (into-array FileAttribute []))
+  (catch FileAlreadyExistsException _))
+
+(Files/move src bin (into-array [StandardCopyOption/REPLACE_EXISTING]))

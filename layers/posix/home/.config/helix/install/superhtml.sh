@@ -31,4 +31,5 @@ ARCHIVE="superhtml-${URI##*/}"
 get.sh "$URI" "$ARCHIVE" | unpack.sh "$TMP"
 find "$TMP" -name '*.pdb' -delete
 # shellcheck disable=SC2154
+mkdir -p -- "$BIN"
 mv -v -f -- "$TMP"/*/* "$BIN/superhtml$EXT"

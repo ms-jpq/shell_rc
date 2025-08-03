@@ -29,5 +29,6 @@ esac
 
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
-# shellcheck disable=2154
+# shellcheck disable=SC2154
+mkdir -p -- "$BIN"
 mv -v -f -- "$TMP/"* "$BIN/tflint$EXT"

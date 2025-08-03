@@ -77,6 +77,11 @@ func main() {
 	if err != nil {
 		log.Panicln(err)
 	}
+
+	if err = os.MkdirAll(binDir, 0755); err != nil {
+		log.Panicln(err)
+	}
+
 	if err = os.Rename(globbed[0], bin); err != nil {
 		log.Panicln(err)
 	}

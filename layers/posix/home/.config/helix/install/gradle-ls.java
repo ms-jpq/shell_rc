@@ -77,6 +77,7 @@ public class gradle_ls {
       Files.move(built, lib);
     }
 
+    Files.createDirectories(bin.getParent());
     Files.createSymbolicLink(bin, dst);
 
     while (true) {

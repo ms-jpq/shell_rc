@@ -1,7 +1,8 @@
 #!/usr/bin/env -S -- clojure.sh -M
 
 (import '[java.lang ProcessBuilder ProcessBuilder$Redirect]
-        '[java.nio.file Files Path StandardCopyOption])
+        '[java.nio.file FileAlreadyExistsException Files Path StandardCopyOption]
+        '[java.nio.file.attribute FileAttribute])
 (require
  '[clojure.string :refer [join]]
  '[clojure.java.shell :refer [sh]])
@@ -41,6 +42,10 @@
           (.redirectOutput ProcessBuilder$Redirect/INHERIT)
           (.redirectError ProcessBuilder$Redirect/INHERIT))])]
   (-> proc .waitFor zero? assert))
+
+(try
+  (Files/createDirectory (.getParent bin) (into-array FileAttribute []))
+  (catch FileAlreadyExistsException _))
 
 (Files/move (.resolve tmp "cljfmt")
             bin

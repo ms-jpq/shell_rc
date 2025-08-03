@@ -32,5 +32,7 @@ esac
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
 get.sh "$T_URI" | unpack.sh "$TMP"
+# shellcheck disable=SC2154
+mkdir -p -- "$BIN"
 mv -v -f -- "$TMP/texlab"* "$BIN/texlab$EXT"
 mv -v -f -- "$TMP/tectonic"* "$T_BIN"

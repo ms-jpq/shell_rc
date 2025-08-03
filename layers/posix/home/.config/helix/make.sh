@@ -15,6 +15,7 @@ case "${RECUR:=""}" in
     [gem]=gem.rb
     [go]=go.go
     [npm]=npm.js
+    [phar]=phar.php
     [pip]=pip.py
   )
   for KEY in "${!MANS[@]}"; do

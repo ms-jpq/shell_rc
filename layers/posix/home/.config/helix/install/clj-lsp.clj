@@ -1,8 +1,8 @@
 #!/usr/bin/env -S -- clojure.sh -M
 
 (import '[java.lang ProcessBuilder ProcessBuilder$Redirect]
-        '[java.nio.file Files Path StandardCopyOption]
-        '[java.nio.file.attribute PosixFilePermissions])
+        '[java.nio.file FileAlreadyExistsException Files Path StandardCopyOption]
+        '[java.nio.file.attribute FileAttribute PosixFilePermissions])
 
 (def arch (System/getProperty "os.arch"))
 (def os (System/getProperty "os.name"))
@@ -35,10 +35,14 @@
           (.redirectError ProcessBuilder$Redirect/INHERIT))])]
   (-> proc .waitFor zero? assert))
 
-(Files/move (.resolve tmp "clojure-lsp")
-            bin
-            (into-array [StandardCopyOption/REPLACE_EXISTING]))
+(def src (.resolve tmp "clojure-lsp"))
 
 (->> "rwxrwxr-x"
      (PosixFilePermissions/fromString)
-     (Files/setPosixFilePermissions bin))
+     (Files/setPosixFilePermissions src))
+
+(try
+  (Files/createDirectory (.getParent bin) (into-array FileAttribute []))
+  (catch FileAlreadyExistsException _))
+
+(Files/move src bin (into-array [StandardCopyOption/REPLACE_EXISTING]))

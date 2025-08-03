@@ -15,7 +15,6 @@ aarch64)
   ;;
 esac
 
-EXT=''
 case "$OSTYPE" in
 darwin*)
   URI="$BASE-$VERSION-darwin-$HT.tar.gz"
@@ -25,7 +24,6 @@ linux*)
   ;;
 *)
   URI="$BASE-$VERSION-win32-$HT.zip"
-  EXT='.cmd'
   ;;
 esac
 
@@ -35,4 +33,4 @@ get.sh "$URI" | unpack.sh "$TMP"
 rm -rf -- "$LIB"
 mv -v -f -- "$TMP" "$LIB"
 # shellcheck disable=2154
-ln -v -snf -- "$(dirname -- "$0")/lua_ls.ex.sh" "$BIN/lua-language-server$EXT"
+mkdir -v -p -- "$BIN"

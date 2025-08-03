@@ -20,4 +20,5 @@ esac
 get.sh "$URI" | unpack.sh "$TMP"
 # shellcheck disable=2154
 
+mkdir -p -- "$BIN"
 mv -f -- "$TMP/"* "$BIN/"

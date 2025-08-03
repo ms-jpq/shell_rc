@@ -25,8 +25,8 @@ DST="$BIN/ltex-ls-plus$EXT"
 
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
-# shellcheck disable=2154
+# shellcheck disable=SC2154
 rm -rf -- "$LIB"
-mkdir -v -p -- "$LIB"
+mkdir -v -p -- "$BIN" "$LIB"
 mv -v -f -- "$TMP"/*/* "$LIB/"
 ln -v -snf -- "$LIB/bin/$(basename -- "$DST")" "$DST"

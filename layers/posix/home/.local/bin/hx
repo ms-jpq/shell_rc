@@ -40,12 +40,10 @@ fi
 
 PATHS=(
   "$HOME/.config/helix/bin"
-  "$HOME/.config/nvim/var/bin"
   "$RT/bin"
-  "$RT/go"/*/bin
+  "$RT/"{more,go,ruby}/*/bin
   "$RT/nodejs"/*/node_modules/.bin
   "$RT/python"/*/venv/{Scripts,bin}
-  "$RT/ruby"/*/bin
   "$PATH"
 )
 IFS=':'
