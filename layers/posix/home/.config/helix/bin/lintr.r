@@ -1,14 +1,8 @@
 #!/usr/bin/env -S -- Rscript
 
 {
-  argv <- commandArgs()
-  location <- argv[4]
-  if (!startsWith(location, "--file=")) {
-    stop()
-  }
-  arg0 <- sub("^--file=", "", location)
-  parent <- dirname(dirname(arg0))
-  lib <- paste(parent, "lib", "lsr", sep = "/")
+  home <- path.expand("~")
+  lib <- file.path(home, ".cache", "helix-rt", "more", "lsp.r", "lib")
   .libPaths(c(.libPaths(), lib))
 }
 

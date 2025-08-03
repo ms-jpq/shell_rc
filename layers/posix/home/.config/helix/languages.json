@@ -147,6 +147,12 @@
       },
       "language-servers": ["pyright"]
     },
+    "r": {
+      "formatter": {
+        "args": [],
+        "command": "styler.r"
+      }
+    },
     "ruby": {
       "formatter": {
         "args": [
@@ -225,6 +231,9 @@
     "powershell-es": {
       "args": [],
       "command": "pwsh_es.ps1"
+    },
+    "r": {
+      "command": "lsp.r"
     },
     "sorbet": {
       "args": ["tc", "--lsp"],
