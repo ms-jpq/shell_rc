@@ -13,6 +13,7 @@ aarch64)
   ;;
 esac
 
+EXT=''
 case "$OSTYPE" in
 darwin*)
   URI="$BASE-Darwin-x86_64"
@@ -22,9 +23,10 @@ linux*)
   ;;
 *)
   URI="$BASE-Windows-$HT.exe"
-  BIN="$BIN.exe"
+  EXT='.exe'
   ;;
 esac
 
 FILE="$(get.sh "$URI")"
-install -v -b -- "$FILE" "$BIN"
+# shellcheck disable=SC2154
+install -v -b -- "$FILE" "$BIN/hadolint$EXT"

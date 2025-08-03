@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -22,11 +23,11 @@ const repo = "golangci/golangci-lint"
 func main() {
 	base := fmt.Sprintf("https://github.com/%s/releases/latest/download/golangci-lint", repo)
 
-	bin, ok := os.LookupEnv("BIN")
+	binDir, ok := os.LookupEnv("BIN")
 	if !ok {
 		log.Panicln()
 	}
-	ext := "tar.gz"
+	bin, ext := path.Join(binDir, "golangci-lint"), "tar.gz"
 	if runtime.GOOS == "windows" {
 		bin += ".exe"
 		ext = "zip"
@@ -49,11 +50,9 @@ func main() {
 
 	get := exec.Command("env", "--", "get.sh", uri)
 	unpack := exec.Command("env", "--", "unpack.sh", tmp)
-	get.Stderr = os.Stderr
-	unpack.Stderr = os.Stderr
+	get.Stderr, unpack.Stderr = os.Stderr, os.Stderr
 	r, w := io.Pipe()
-	get.Stdout = w
-	unpack.Stdin = r
+	unpack.Stdin, get.Stdout = r, w
 
 	wg := sync.WaitGroup{}
 

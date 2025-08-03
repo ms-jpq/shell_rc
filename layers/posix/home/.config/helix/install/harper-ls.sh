@@ -13,7 +13,6 @@ linux*)
   ;;
 *)
   URI="$BASE-$HOSTTYPE-pc-windows-msvc.zip"
-  BIN="$BIN.exe"
   ;;
 esac
 
@@ -21,4 +20,4 @@ esac
 get.sh "$URI" | unpack.sh "$TMP"
 # shellcheck disable=2154
 
-install -v -b -- "$TMP/harper-ls"* "$BIN"
+mv -f -- "$TMP/"* "$BIN/"
