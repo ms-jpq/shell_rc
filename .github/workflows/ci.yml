@@ -40,7 +40,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - run: |-
-          env | sort -t = -k 1
+          sudo -- apt-get update
+          sudo -- apt-get install --no-install-recommends --yes -- swi-prolog-nox gnucobol moreutils
+
+      - run: |-
+          /home/linuxbrew/.linuxbrew/bin/brew install -- clojure/tools/clojure
+          eval -- "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          CLJ="$(command -v -- clojure)"
+          sudo -- ln -v -s -- "$CLJ" /usr/local/bin/clojure
 
       - run: |-
           gmake lint
@@ -60,9 +67,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - run: |-
-          env | sort -t = -k 1
 
       - run: |-
           brew install -- bash make gnu-getopt coreutils
@@ -91,6 +95,15 @@ jobs:
 
       - uses: actions/setup-python@v5
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "microsoft"
+          java-version: "21"
+
       - run: |-
           winget.exe install '--disable-interactivity' '--accept-source-agreements' '--accept-package-agreements' '--exact' '--id' 'ezwinports.make'
 
@@ -102,7 +115,7 @@ jobs:
       - run: |-
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 
-          bash .\win.sh localhost -- all helix
+          bash .\win.sh localhost -- all helix JAVA_HOME="$Env:JAVA_HOME_21_X64"
 
       - run: |-
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
