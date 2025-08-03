@@ -150,7 +150,7 @@
     "r": {
       "formatter": {
         "args": [],
-        "command": "styler.r"
+        "command": "styler.R"
       }
     },
     "ruby": {
@@ -233,7 +233,7 @@
       "command": "pwsh_es.ps1"
     },
     "r": {
-      "command": "lsp.r"
+      "command": "lsp.R"
     },
     "sorbet": {
       "args": ["tc", "--lsp"],
