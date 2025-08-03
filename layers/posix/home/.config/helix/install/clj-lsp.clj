@@ -23,7 +23,7 @@
                ext (case os
                      "Windows" ".exe"
                      "")]
-           (Path/of (str b ext) (into-array String []))))
+           (Path/of b (into-array String [(str "clojure-lsp" ext)]))))
 
 (doseq
  [proc (ProcessBuilder/startPipeline

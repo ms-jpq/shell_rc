@@ -5,17 +5,18 @@ set -o pipefail
 SCRIPT="$1"
 DIR="$(realpath -- "$0")"
 DIR="$(dirname -- "$DIR")"
+NAME="${SCRIPT//'/'/-}"
 
 PATH="$DIR:$HOME/.local/opt/initd/libexec:$PATH"
 RT="$HOME/.cache/helix-rt"
+
 VAR="$RT/var"
 VAR_TMP="$RT/tmp"
-NAME="${SCRIPT//'/'/-}"
 ROOT="$RT/more/$NAME"
 BIN="$ROOT/bin"
 LIB="$ROOT/LIB"
 
-mkdir -p -- "$VAR" "$BIN" "$VAR_TMP"
+mkdir -p -- "$VAR" "$VAR_TMP" "$BIN"
 TMP="$(mktemp -d -p "$VAR_TMP" "$NAME.XXXXXX")"
 
 export -- BIN LIB TMP TMPDIR="$TMP"

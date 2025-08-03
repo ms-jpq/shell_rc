@@ -15,6 +15,7 @@ aarch64)
   ;;
 esac
 
+NAME=shfmt
 case "$OSTYPE" in
 darwin*)
   URI="${BASE}_${VERSION}_darwin_$HT"
@@ -24,9 +25,10 @@ linux*)
   ;;
 *)
   URI="${BASE}_${VERSION}_windows_$HT.exe"
-  BIN="$BIN.exe"
+  NAME="$NAME.exe"
   ;;
 esac
 
 FILE="$(get.sh "$URI")"
-install -v -b -- "$FILE" "$BIN"
+# shellcheck disable=SC2154
+install -v -b -- "$FILE" "$BIN/$NAME"

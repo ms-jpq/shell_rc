@@ -31,7 +31,7 @@
                ext (case (System/getProperty "os.name")
                      "Windows" ".exe"
                      "")]
-           (Path/of (str b ext) (into-array String []))))
+           (Path/of b (into-array String [(str "clj-kondo" ext)]))))
 
 (doseq
  [proc (ProcessBuilder/startPipeline
