@@ -6,11 +6,13 @@
   .libPaths(c(.libPaths(), lib))
 }
 
-lines_in <- readLines(file("stdin"))
 tmp <- paste(tempfile(), "r", sep = ".")
-writeLines(lines_in, con = tmp)
 
-invisible(capture.output(styler::style_file(c(tmp))))
-lines_out <- readLines(tmp)
-invisible(file.remove(tmp))
-writeLines(lines_out)
+tryCatch({
+  writeLines(readLines(file("stdin")), con = tmp)
+  invisible(capture.output(styler::style_file(c(tmp))))
+  lines_out <- readLines(tmp)
+  writeLines(readLines(tmp))
+}, finally = {
+  invisible(file.remove(tmp))
+})
