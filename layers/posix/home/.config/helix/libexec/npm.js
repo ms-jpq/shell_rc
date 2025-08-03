@@ -5,7 +5,7 @@ import { spawnSync } from "node:child_process"
 import { mkdirSync, writeFileSync } from "node:fs"
 import { homedir } from "node:os"
 import { join, sep } from "node:path"
-import { argv } from "node:process"
+import { argv, platform } from "node:process"
 
 const [, , pkg, ...pkgs] = argv.map((p) => p.trim())
 ok(pkg)
@@ -24,17 +24,11 @@ const json = {
 mkdirSync(home, { recursive: true })
 writeFileSync(join(home, "package.json"), JSON.stringify(json))
 
-const { error, status, signal } = (() => {
-  try {
-    return spawnSync(
-      "npm",
-      ["install", "--no-package-lock", "--prefix", home],
-      { stdio: "inherit" },
-    )
-  } catch (error) {
-    return { error }
-  }
-})()
+const { error, status, signal } = spawnSync(
+  "npm" + (platform === "win32" ? ".cmd" : ""),
+  ["install", "--no-package-lock", "--prefix", home],
+  { stdio: "inherit" },
+)
 
 if (error) {
   console.warn(error)
