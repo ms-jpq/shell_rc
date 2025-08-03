@@ -17,8 +17,8 @@ linux*)
   EXT='.exe'
   ;;
 esac
-BIN="$BIN$EXT"
 
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
+# shellcheck disable=SC2154
 mv -v -f -- "$TMP/bin/glsl_analyzer$EXT" "$BIN/glsl_analyzer$EXT"
