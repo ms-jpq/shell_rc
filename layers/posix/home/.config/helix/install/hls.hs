@@ -28,10 +28,8 @@ contents _ version tmp   = tmp </> printf "haskell-language-server-%s" version
 run os = do
   lib <- getEnv "LIB"
   tmp <- getEnv "TMP"
-  cwd <- getCurrentDirectory <&> (takeDirectory >>> takeDirectory)
   version <- readProcess "env" ["--", "gh-latest.sh", ".", repo] ""
 
-  let tramp = cwd </> "config" </> "dl" </> "hls.ex.sh"
   let link = uri os version
 
   _ <- readProcess "env" ["--", "get.sh", link] ""
@@ -40,7 +38,6 @@ run os = do
 
   _ <- removePathForcibly lib
   _ <- contents os version tmp & flip renameDirectory lib
-  _ <- getEnv "BIN" <&> suffix os >>= copyFileWithMetadata tramp
   exitSuccess
 
 main = run os

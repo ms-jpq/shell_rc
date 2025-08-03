@@ -9,7 +9,6 @@ if (!startsWith(location, "--file=")) {
 parent <- dirname(sub("^--file=", "", location))
 r <- paste(parent, "lsr.ex.r", sep = "/")
 lib <- Sys.getenv("LIB")
-bin <- Sys.getenv("BIN")
 
 apt <- Sys.which("apt-get")
 if (apt != "") {
@@ -48,5 +47,3 @@ for (pkg in pkgs) {
   }
   library(pkg, lib.loc = c(lib), character.only = TRUE)
 }
-
-file.copy(r, bin, overwrite = TRUE)

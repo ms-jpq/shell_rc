@@ -4,6 +4,7 @@ set -o pipefail
 
 BASE_URI='https://download.jboss.org/jbosstools/vscode/stable/lemminx-binary'
 
+EXT=''
 case "$OSTYPE" in
 darwin*)
   BASENAME='lemminx-osx-x86_64.zip'
@@ -13,7 +14,7 @@ linux*)
   ;;
 *)
   BASENAME='lemminx-win32.zip'
-  BIN="$BIN.exe"
+  EXT='.exe'
   ;;
 esac
 
@@ -23,4 +24,5 @@ VERSION="$("${CURL[@]}" | "${XPATH[@]}")"
 URI="$BASE_URI/$VERSION$BASENAME"
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$TMP"
-mv -v -f -- "$TMP/lemminx"* "$BIN"
+# shellcheck disable=SC2154
+mv -v -f -- "$TMP/lemminx"* "$BIN/lemminx$EXT"

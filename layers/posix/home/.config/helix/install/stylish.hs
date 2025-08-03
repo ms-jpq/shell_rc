@@ -1,6 +1,7 @@
 #!/usr/bin/env -S -- runhaskell
 
 import           Data.Function      ((&))
+import           Data.Functor       ((<&>))
 import           System.Directory   (getPermissions, renameFile,
                                      setOwnerExecutable, setPermissions)
 import           System.Environment (getEnv, getExecutablePath)
@@ -34,7 +35,7 @@ run os = do
     >>= putStr
 
   _ <- getExecutablePath >>= getPermissions >>= setPermissions srv
-  _ <- getEnv "BIN" >>= renameFile srv
+  _ <- getEnv "BIN" <&> (</> "stylish") >>= renameFile srv
   exitSuccess
 
 main = run os
