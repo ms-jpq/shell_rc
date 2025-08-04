@@ -60,6 +60,7 @@
     "golang.org/x/tools/gopls@latest": []
   },
   "npm": {
+    "@github/copilot-language-server": [],
     "@mdx-js/language-server": [],
     "@microsoft/compose-language-service": [],
     "@prisma/language-server": [],
