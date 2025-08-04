@@ -74,7 +74,7 @@ C-l     = ["move_next_word_start", "move_char_right"]
 C-u     = ["half_page_up", "align_view_center"]
 
 "+" = "expand_selection"
-D   = ["extend_to_line_end", "delete_selection_noyank"]
+D   = ["yank_to_clipboard", "delete_selection_noyank"]
 X   = "extend_line_above"
 Y   = ["extend_to_line_end", "yank_to_clipboard"]
 "_" = "shrink_selection"
@@ -147,10 +147,11 @@ P = [
 
 [keys.normal.space.y]
 f = ":toggle cursorcolumn"
-i = ":toggle inline-diagnostics.cursor-line disable hint"
 l = ":toggle lsp.display-inlay-hints"
-o = ":toggle inline-diagnostics.other-lines disable hint"
 y = ":toggle search.smart-case"
+
+i = ":toggle inline-diagnostics.other-lines disable hint"
+o = ":toggle inline-diagnostics.cursor-line disable hint"
 
 [keys.normal.'\']
 Q = ":write-quit-all!"
