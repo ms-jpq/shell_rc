@@ -3,7 +3,7 @@
 import { ok } from "node:assert/strict"
 import { spawnSync } from "node:child_process"
 import { homedir } from "node:os"
-import { join } from "node:path"
+import { extname, join } from "node:path"
 import { execPath } from "node:process"
 import { parseArgs } from "node:util"
 
@@ -36,20 +36,20 @@ const plugins = {
     /^typespec$/,
   [join("prettier-plugin-awk", "out", "index.js")]: /^awk$/,
   [join("prettier-plugin-nginx", "dist", "index.js")]: /^nginx$/,
-  [join("prettier-plugin-tailwindcss", "dist", "index.mjs")]:
-    /^(html|((java|type)scriptreact))$/,
+  [join("prettier-plugin-tailwindcss", "dist", "index.mjs")]: /^(html|js|ts)$/,
 }
 
 if (sort) {
-  plugins[join("prettier-plugin-organize-imports", "index.js")] =
-    /^(java|type)script/
+  plugins[join("prettier-plugin-organize-imports", "index.js")] = /^js/
 }
 
 const argv = (function* () {
+  const ext = extname(filename).substring(1)
   yield `--stdin-filepath=${filename}`
   yield `--tab-width=${tabsize}`
+
   for (const [plugin, re] of Object.entries(plugins)) {
-    if (filename.match(re)) {
+    if (ext.match(re)) {
       yield `--plugin=${join(node_modules, plugin)}`
     }
   }
