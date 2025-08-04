@@ -118,6 +118,7 @@ esac
 
 declare -A -- FFS ROOTS
 FFS=([root]=1 [home]=0)
+# shellcheck disable=SC2154
 ROOTS=(
   ['root']=/
   ['home']="$ENV_HOME"

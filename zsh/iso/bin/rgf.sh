@@ -27,6 +27,7 @@ if [[ -z $RG_ARGS ]]; then
     rg
   fi
 else
+  # shellcheck disable=SC2154
   ARGS=(
     --color=always
     --line-number

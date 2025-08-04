@@ -4,6 +4,7 @@ set -o pipefail
 
 if [[ -v KITTY_PID ]]; then
   if [[ -v FZF_PREVIEW_COLUMNS ]]; then
+    # shellcheck disable=SC2154
     ARGV=(
       --stdin no
       --place "${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES@0x0"
