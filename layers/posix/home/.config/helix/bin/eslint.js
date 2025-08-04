@@ -48,10 +48,11 @@ const _tmp = async function* (filename = "") {
 }
 
 const _eslint = async (eslint = "", filename = "") => {
+  const cwd = dirname(dirname(dirname(eslint)))
   const { error, status, signal } = spawnSync(
     eslint,
     ["--exit-on-fatal-error", "--no-ignore", "--fix", "--", filename],
-    { stdio: "inherit" },
+    { stdio: "inherit", cwd },
   )
 
   if (error) {
