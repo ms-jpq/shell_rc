@@ -41,7 +41,7 @@ const plugins = {
 }
 
 if (sort) {
-  plugins[join("prettier-plugin-organize-imports", "index.js")] = /^js/
+  plugins[join("prettier-plugin-organize-imports", "index.js")] = /^(js|ts)/
 }
 
 const argv = (function* () {

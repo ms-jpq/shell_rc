@@ -6,8 +6,9 @@ import { randomBytes } from "node:crypto"
 import { existsSync } from "node:fs"
 import { open, rm } from "node:fs/promises"
 import { basename, dirname, extname, join } from "node:path"
-import { argv, cwd, stdin, stdout } from "node:process"
+import { argv, cwd, execPath, stdin, stdout } from "node:process"
 import { pipeline } from "node:stream/promises"
+import { fileURLToPath } from "node:url"
 
 /**
  * @return {IterableIterator<string>}
@@ -47,21 +48,28 @@ const _tmp = async function* (filename = "") {
   }
 }
 
-const _eslint = async (eslint = "", filename = "") => {
-  const cwd = dirname(dirname(dirname(eslint)))
-  const { error, status, signal } = spawnSync(
-    eslint,
-    ["--exit-on-fatal-error", "--no-ignore", "--fix", "--", filename],
-    { stdio: "inherit", cwd },
-  )
+const _spawn = async (arg0 = "", argv = [""], pwd = cwd()) => {
+  const { error, status, signal } = spawnSync(arg0, argv, {
+    stdio: "inherit",
+    cwd: pwd,
+  })
 
   if (error) {
     throw error
   } else if (signal) {
     throw signal
   } else if (status) {
-    process.exitCode = status ?? undefined
+    process.exitCode = status
   }
+}
+
+const _eslint = async (eslint = "", filename = "") => {
+  const cwd = dirname(dirname(dirname(eslint)))
+  await _spawn(
+    eslint,
+    ["--exit-on-fatal-error", "--no-ignore", "--fix", "--", filename],
+    cwd,
+  )
 
   const fd = await open(filename)
   try {
@@ -71,9 +79,10 @@ const _eslint = async (eslint = "", filename = "") => {
   }
 }
 
-const [, , filename] = argv
-ok(filename)
 ;(async () => {
+  const [, , filename] = argv
+  ok(filename)
+
   for (const path of _parents()) {
     const eslint = join(path, "node_modules", ".bin", "eslint")
     if (existsSync(eslint)) {
@@ -82,5 +91,13 @@ ok(filename)
       }
     }
   }
-  stdin.pipe(stdout)
+
+  const dir = dirname(fileURLToPath(import.meta.url))
+  await _spawn(execPath, [
+    join(dir, "prettier.js"),
+    "--tabsize=2",
+    "--sort",
+    "--filename",
+    filename,
+  ])
 })()
