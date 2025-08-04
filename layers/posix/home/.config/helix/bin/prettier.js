@@ -4,7 +4,8 @@ import { ok } from "node:assert/strict"
 import { spawnSync } from "node:child_process"
 import { homedir } from "node:os"
 import { extname, join } from "node:path"
-import { execPath } from "node:process"
+import { execPath, stdin, stdout } from "node:process"
+import { pipeline } from "node:stream/promises"
 import { parseArgs } from "node:util"
 
 const {
@@ -68,5 +69,7 @@ if (error) {
 } else if (signal) {
   throw signal
 } else {
-  process.exitCode = status ?? undefined
+  if ((process.exitCode = status ?? undefined) !== 0) {
+    await pipeline(stdin, stdout)
+  }
 }

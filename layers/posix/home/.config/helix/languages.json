@@ -201,8 +201,8 @@
     },
     "typescript": {
       "formatter": {
-        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier.js"
+        "args": ["%{buffer_name}"],
+        "command": "eslint.js"
       }
     },
     "xml": {

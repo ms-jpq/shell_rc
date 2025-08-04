@@ -4,9 +4,9 @@ import { ok } from "node:assert/strict"
 import { spawnSync } from "node:child_process"
 import { randomBytes } from "node:crypto"
 import { existsSync } from "node:fs"
-import { rm, symlink } from "node:fs/promises"
+import { rm } from "node:fs/promises"
 import { basename, dirname, extname, join } from "node:path"
-import { argv, cwd, execPath } from "node:process"
+import { argv, cwd, stdin, stdout } from "node:process"
 
 /**
  * @return {IterableIterator<string>}
@@ -40,14 +40,22 @@ const _tmp = async function* (filename = "") {
   }
 }
 
-const _eslint = (eslint = "", tmp = "") => {
+const _eslint = (eslint = "", filename = "") => {
+  console.log({ eslint, filename })
   const { error, status, signal } = spawnSync(
-    execPath,
-    [eslint, "--exit-on-fatal-error", "--fix", "--", tmp],
+    eslint,
+    [
+      "--exit-on-fatal-error",
+      "--fix-dry-run",
+      "--stdin",
+      "--stdin-filename",
+      filename,
+    ],
     {
       stdio: "inherit",
     },
   )
+
   if (error) {
     throw error
   } else if (signal) {
@@ -57,16 +65,14 @@ const _eslint = (eslint = "", tmp = "") => {
   }
 }
 
-const [, , filename, tempname] = argv
-ok(tempname)
-
-for (const path of _parents()) {
-  const eslint = join(path, "node_modules", ".bin", "eslint")
-  if (existsSync(eslint)) {
-    for await (const tmp of _tmp(filename)) {
-      await symlink(tempname, tmp, "file")
-      _eslint(eslint, tmp)
+const [, , filename] = argv
+ok(filename)
+;(() => {
+  for (const path of _parents()) {
+    const eslint = join(path, "node_modules", ".bin", "eslint")
+    if (existsSync(eslint)) {
+      return _eslint(eslint, filename)
     }
-    break
   }
-}
+  stdin.pipe(stdout)
+})()
