@@ -7,7 +7,6 @@ DIR="$(realpath -- "$0")"
 DIR="$(dirname -- "$DIR")"
 NAME="${SCRIPT//'/'/-}"
 
-PATH="$DIR:$HOME/.local/opt/initd/libexec:$PATH"
 RT="$HOME/.cache/helix-rt"
 
 VAR="$RT/var"

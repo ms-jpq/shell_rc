@@ -224,9 +224,18 @@
       "args": ["--stdio"],
       "command": "copilot-language-server"
     },
+    "fsharp-ls": {
+      "command": "fsautocomplete.fsx"
+    },
     "lemminx": {
       "args": [],
       "command": "lemminx"
+    },
+    "lua-language-server": {
+      "command": "lua-language-server.sh"
+    },
+    "omnisharp": {
+      "command": "omnisharp.fsx"
     },
     "phpactor": {
       "args": ["language-server"],

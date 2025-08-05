@@ -46,6 +46,7 @@ JQ
     esac
   fi
 
+  PATH="$DIR/libexec:$HOME/.local/opt/initd/libexec:$PATH"
   CODE=0
   "$DIR/libexec/cond-exec.sh" "$MAN" "${PKGS[@]}" || CODE="$?"
   if ((CODE)); then
