@@ -1,6 +1,6 @@
 {
   "#": "https://github.com/helix-editor/helix/blob/master/languages.toml",
-  "$": ["tabby", "chatty", "typos"],
+  "$": ["tabby", "chatty", "helix-gpt", "typos"],
   "language": {
     "bash": {
       "formatter": {
@@ -226,6 +226,9 @@
     },
     "fsharp-ls": {
       "command": "fsautocomplete.fsx"
+    },
+    "helix-gpt": {
+      "command": "helix-gpt"
     },
     "lemminx": {
       "args": [],
