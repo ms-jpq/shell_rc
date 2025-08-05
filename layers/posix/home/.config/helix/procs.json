@@ -50,6 +50,7 @@
     "rubocop": [],
     "solargraph": [],
     "sorbet": [],
+    "steep": [],
     "syntax_tree": ["syntax_tree-rbs"]
   },
   "go": {
