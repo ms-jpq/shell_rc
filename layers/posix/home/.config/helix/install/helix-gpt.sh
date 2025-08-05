@@ -20,5 +20,6 @@ npm run -- build:bin
 popd > /dev/null
 
 # shellcheck disable=SC2154
-mkdir -p -- "$BIN"
-ln -snf -- "$LIB/dist"/* "$BIN/helix-gpt"
+rm -fr -- "$BIN"
+# shellcheck disable=SC2154
+mv -vf -- "$LIB/dist" "$BIN"
