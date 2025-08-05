@@ -41,7 +41,7 @@ fi
 PATHS=(
   "$HOME/.config/helix/bin"
   "$RT/bin"
-  "$RT/"{more,go,ruby}/*/bin
+  "$RT/"{more,go,ruby,php}/*/bin
   "$RT/nodejs"/*/node_modules/.bin
   "$RT/python"/*/venv/{Scripts,bin}
   "$PATH"
