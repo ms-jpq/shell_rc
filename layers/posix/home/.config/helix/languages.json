@@ -228,6 +228,7 @@
       "command": "fsautocomplete.fsx"
     },
     "helix-gpt": {
+      "args": ["--handler", "copilot", "--copilotModel", "gpt-4.1"],
       "command": "helix-gpt"
     },
     "lemminx": {
