@@ -10,7 +10,7 @@ $ARGV => [filename, *argv]
 parents = Pathname.pwd.join(File.basename(filename)).parent.ascend.to_a
 
 yml = '.rubocop.yml'
-conf = parents.lazy.map { _1 / yml }.find(-> { File.join(__dir__, '..', yml) }, &:exist?)
+conf = parents.lazy.map { _1 / yml }.find(-> { File.join(__dir__, '..', yml) }, &:file?)
 argv += ['--config', conf.to_s]
 
 parents.each do
