@@ -50,4 +50,10 @@ IFS=':'
 # shellcheck disable=SC2154
 PATH="${PATHS[*]}"
 
+ENV="$HOME/.local/opt/ai/.env"
+if [[ -f $ENV ]]; then
+  # shellcheck disable=SC1090
+  source -- "$ENV"
+fi
+
 exec -- "$HX" --config "$HOME/.config/helix/config.toml" "$@"
