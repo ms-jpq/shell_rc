@@ -7,10 +7,10 @@ require('pathname')
 
 $ARGV => [filename, *argv]
 
-parents = Pathname(filename).parent.ascend.to_a
+parents = Pathname.pwd.join(File.basename(filename)).parent.ascend.to_a
 
 yml = '.rubocop.yml'
-conf = parents.map { _1 / yml }.find(-> { File.join(__dir__, '..', yml) }, &:exist?)
+conf = parents.lazy.map { _1 / yml }.find(-> { File.join(__dir__, '..', yml) }, &:exist?)
 argv += ['--config', conf.to_s]
 
 parents.each do
@@ -21,5 +21,5 @@ parents.each do
   end
 end
 
-cop = File.join(Dir.home, *%w[.config nvim var modules rb_modules bin rubocop])
+cop = File.join(Dir.home, *%w[.cache helix-rt ruby rubocop bin rubocop])
 exec(cop, *argv)
