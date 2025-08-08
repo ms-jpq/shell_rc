@@ -166,7 +166,7 @@
         ],
         "command": "rubocop.rb"
       },
-      "language-servers": ["ruby-lsp", "solargraph", "sorbet"]
+      "language-servers": ["sorbet"]
     },
     "rust": {
       "formatter": {
