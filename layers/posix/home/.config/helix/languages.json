@@ -216,7 +216,8 @@
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
-      }
+      },
+      "language-servers": ["stainless"]
     }
   },
   "language-server": {
@@ -262,6 +263,10 @@
     "sorbet": {
       "args": ["tc", "--lsp"],
       "command": "srb"
+    },
+    "stainless": {
+      "args": ["--stdio"],
+      "command": "stainless-language-server"
     },
     "tabby": {
       "args": ["--lsp", "--stdio"],
