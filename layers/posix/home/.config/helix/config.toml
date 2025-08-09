@@ -154,6 +154,7 @@ i = ":toggle inline-diagnostics.other-lines disable hint"
 o = ":toggle inline-diagnostics.cursor-line disable hint"
 
 [keys.normal.'\']
+D = ':reset-diff-change'
 Q = ":write-quit-all!"
 R = ":config-reload"
 r = ":reload-all"
