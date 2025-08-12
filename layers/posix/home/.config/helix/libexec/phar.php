@@ -21,5 +21,5 @@ $file = join(PHP_EOL, array: $output);
 if (!is_dir($home)) {
     assert(mkdir($home, recursive: true));
 }
-assert(chmod($file, permissions: 0755));
 assert(copy($file, $bin));
+assert(chmod($bin, permissions: 0755));

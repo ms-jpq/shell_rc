@@ -28,7 +28,7 @@ try {
     exec(
         join(
             " ",
-            array_map("escapeshellarg", ["php-cs-fixer", "--no-interaction", "fix", "--", $tmp])
+            array_map("escapeshellarg", ["php-cs-fixer.phar", "--no-interaction", "fix", "--", $tmp])
         ),
         $output,
         $code
