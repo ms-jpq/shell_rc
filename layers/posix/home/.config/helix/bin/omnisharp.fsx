@@ -19,8 +19,8 @@ let argv = Environment.GetCommandLineArgs() |> Seq.skip 2
 
 let cmd = ProcessStartInfo(bin, argv)
 cmd.Environment.Add("DOTNET_ROOT", dotnet)
+cmd.Environment.Add("OMNISHARPHOME", Path.GetTempPath())
 
 do
     use proc = Process.Start cmd
-    proc.StandardOutput.ReadToEnd() |> ignore
     Environment.ExitCode <- proc.ExitCode

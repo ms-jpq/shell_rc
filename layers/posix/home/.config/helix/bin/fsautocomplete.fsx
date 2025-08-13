@@ -22,5 +22,4 @@ cmd.Environment.Add("DOTNET_ROOT", dotnet)
 
 do
     use proc = Process.Start cmd
-    proc.StandardOutput.ReadToEnd() |> ignore
     Environment.ExitCode <- proc.ExitCode
