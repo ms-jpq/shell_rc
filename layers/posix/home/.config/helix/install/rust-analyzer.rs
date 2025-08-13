@@ -35,7 +35,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
   };
 
-  let tmp = var_os("TMP")
+  let tmp = var_os("RUN")
     .map(PathBuf::from)
     .ok_or_else(|| format!("{}", Backtrace::capture()))?;
 

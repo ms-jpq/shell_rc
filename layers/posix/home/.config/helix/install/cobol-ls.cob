@@ -8,21 +8,21 @@
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-       SELECT TMPF ASSIGN TO "tmp.txt".
+       SELECT RUNF ASSIGN TO "tmp.txt".
 
        DATA DIVISION.
        FILE SECTION.
-       FD TMPF.
-       01 TMP PIC X(9999).
+       FD RUNF.
+       01 RUN PIC X(9999).
 
        WORKING-STORAGE SECTION.
        01 PTR POINTER.
        01 ENV-BIN PIC XXX VALUE "BIN".
-       01 ENV-TMP PIC XXX VALUE "TMP".
+       01 ENV-RUN PIC XXX VALUE "RUN".
        01 ENV-LEN PIC 9(8) BINARY.
 
        01 BIN PIC X(99).
-       01 TMPD PIC X(99).
+       01 RUND PIC X(99).
 
        01 SH PIC X(9999).
        01 SPIT PIC X(8) VALUE ">tmp.txt".
@@ -54,7 +54,7 @@
              MOVE ENV(1:ENV-LEN) TO BIN
            END-IF.
 
-           SET PTR TO ADDRESS OF ENV-TMP.
+           SET PTR TO ADDRESS OF ENV-RUN.
            CALL "getenv" USING BY VALUE PTR RETURNING PTR
            IF PTR = NULL THEN
              MOVE 1 TO RETURN-CODE
@@ -64,14 +64,14 @@
              MOVE 0 TO ENV-LEN
              INSPECT ENV TALLYING ENV-LEN
                FOR CHARACTERS BEFORE INITIAL X"00"
-             MOVE ENV(1:ENV-LEN) TO TMPD
+             MOVE ENV(1:ENV-LEN) TO RUND
            END-IF.
 
-           STRING TMPD "/extension/server/native" DELIMITED BY " "
+           STRING RUND "/extension/server/native" DELIMITED BY " "
            INTO NAIVE.
 
            MOVE SPACES TO SH.
-           MOVE SPACES TO TMP.
+           MOVE SPACES TO RUN.
 
            STRING "bash -c 'printf -- %s $OSTYPE'"
            " " SPIT DELIMITED SIZE INTO SH.
@@ -80,12 +80,12 @@
              MOVE RETVAL TO RETURN-CODE
              EXIT PROGRAM
            END-IF.
-           OPEN INPUT TMPF.
-           READ TMPF into OSTYPE.
-           CLOSE TMPF.
+           OPEN INPUT RUNF.
+           READ RUNF into OSTYPE.
+           CLOSE RUNF.
 
            MOVE SPACES TO SH.
-           MOVE SPACES TO TMP.
+           MOVE SPACES TO RUN.
 
            STRING "gh-latest.sh" " . " REPO " " SPIT
            DELIMITED SIZE INTO SH.
@@ -94,9 +94,9 @@
              MOVE RETVAL TO RETURN-CODE
              EXIT PROGRAM
            END-IF.
-           OPEN INPUT TMPF.
-           READ TMPF into VERSION.
-           CLOSE TMPF.
+           OPEN INPUT RUNF.
+           READ RUNF into VERSION.
+           CLOSE RUNF.
 
            STRING "https://github.com/" REPO
            "/releases/latest/download/cobol-language-support"
@@ -134,7 +134,7 @@
 
            STRING "get.sh " URI
            " | unpack.sh "
-           TMPD DELIMITED BY SIZE INTO SH.
+           RUND DELIMITED BY SIZE INTO SH.
            CALL "SYSTEM" USING SH RETURNING RETVAL.
            IF RETVAL NOT = 0
              MOVE RETVAL TO RETURN-CODE

@@ -8,7 +8,7 @@
  '[clojure.java.shell :refer [sh]])
 
 (def arch (System/getProperty "os.arch"))
-(def tmp (-> "TMP"
+(def tmp (-> "RUN"
              System/getenv
              (Path/of (into-array String []))))
 

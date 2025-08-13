@@ -33,7 +33,7 @@ func main() {
 		ext = "zip"
 	}
 
-	tmp, ok := os.LookupEnv("TMP")
+	tmp, ok := os.LookupEnv("RUN")
 	if !ok {
 		log.Panicln()
 	}

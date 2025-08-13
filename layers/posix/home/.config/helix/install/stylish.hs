@@ -25,7 +25,7 @@ nameof _       = id
 run "mingw32" = exitSuccess
 run os = do
   binDir <- getEnv "BIN"
-  tmp <- getEnv "TMP"
+  tmp <- getEnv "RUN"
   version <- readProcess "env" ["--", "gh-latest.sh", ".", repo] ""
 
   let link = uri os version

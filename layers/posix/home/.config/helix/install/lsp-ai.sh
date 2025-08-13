@@ -21,17 +21,17 @@ linux*)
 esac
 
 # shellcheck disable=SC2154
-get.sh "$URI" | unpack.sh "$TMP"
+get.sh "$URI" | unpack.sh "$RUN"
 
 rm -rf -- "$LIB"
 mkdir -p -- "$LIB"
 
 case "$OSTYPE" in
 darwin* | linux*)
-  SRC=("$TMP"/*)
+  SRC=("$RUN"/*)
   ;;
 *)
-  SRC=("$TMP/lsp-ai.exe")
+  SRC=("$RUN/lsp-ai.exe")
   ;;
 esac
 

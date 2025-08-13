@@ -5,7 +5,7 @@ open System.Diagnostics
 open System.IO
 open System.Runtime.InteropServices
 
-let tmp = Environment.GetEnvironmentVariable "TMP"
+let tmp = Environment.GetEnvironmentVariable "RUN"
 let lib = Environment.GetEnvironmentVariable "LIB"
 
 let arch = Runtime.InteropServices.Architecture()

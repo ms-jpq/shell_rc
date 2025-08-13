@@ -24,9 +24,9 @@ esac
 DST="$BIN/ltex-ls-plus$EXT"
 
 # shellcheck disable=SC2154
-get.sh "$URI" | unpack.sh "$TMP"
+get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
 rm -rf -- "$LIB"
 mkdir -v -p -- "$BIN" "$LIB"
-mv -v -f -- "$TMP"/*/* "$LIB/"
+mv -v -f -- "$RUN"/*/* "$LIB/"
 ln -v -snf -- "$LIB/bin/$(basename -- "$DST")" "$DST"

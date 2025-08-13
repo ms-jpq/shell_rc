@@ -5,10 +5,10 @@ set -o pipefail
 URI='https://github.com/leona/helix-gpt/archive/refs/heads/master.tar.gz'
 
 # shellcheck disable=SC2154
-get.sh "$URI" | unpack.sh "$TMP"
+get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
 rm -fr -- "$LIB"
-mv -v -f -- "$TMP/"* "$LIB"
+mv -v -f -- "$RUN/"* "$LIB"
 
 if ! hash -- bun npm > /dev/null; then
   set -x

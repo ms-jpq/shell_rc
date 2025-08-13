@@ -19,8 +19,8 @@ linux*)
 esac
 
 # shellcheck disable=SC2154
-get.sh "$URI" | unpack.sh "$TMP"
-F=("$TMP"/*)
+get.sh "$URI" | unpack.sh "$RUN"
+F=("$RUN"/*)
 chmod +x "${F[@]}"
 # shellcheck disable=SC2154
 mkdir -p -- "$BIN"

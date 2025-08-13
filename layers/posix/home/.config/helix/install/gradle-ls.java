@@ -21,7 +21,7 @@ public class gradle_ls {
       bin = bin.resolveSibling("gradle" + (win ? ".bat" : ""));
     }
     final var name = "gradle-language-server";
-    final var tmp = Path.of(System.getenv("TMP"));
+    final var tmp = Path.of(System.getenv("RUN"));
     final var dst = lib.resolve("bin").resolve(name);
     final var repo = "microsoft/vscode-gradle";
 

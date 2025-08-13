@@ -6,7 +6,7 @@ $PSStyle.OutputRendering = 'PlainText'
 
 $uri = 'https://github.com/PowerShell/PowerShellEditorServices/releases/latest/download/PowerShellEditorServices.zip'
 
-$tmp = $Env:TMP
+$tmp = $Env:RUN
 $out = Split-Path -Leaf -Path $uri
 
 if ((-not ($null -eq $Env:CI)) -and $IsMacOS) {

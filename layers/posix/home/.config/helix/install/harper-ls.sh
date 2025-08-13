@@ -17,8 +17,8 @@ linux*)
 esac
 
 # shellcheck disable=SC2154
-get.sh "$URI" | unpack.sh "$TMP"
+get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=2154
 
 mkdir -p -- "$BIN"
-mv -f -- "$TMP/"* "$BIN/"
+mv -f -- "$RUN/"* "$BIN/"

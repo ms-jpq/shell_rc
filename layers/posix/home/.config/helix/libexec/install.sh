@@ -14,12 +14,12 @@ BIN="$ROOT/bin"
 LIB="$ROOT/lib"
 
 mkdir -p -- "$ROOT"
-TMP="$(mktemp -p "$TMPDIR" -d "$NAME.XXXXXX")"
+RUN="$(mktemp -p "$TMPDIR" -d "$NAME.XXXXXX")"
 
-export -- BIN LIB TMP TMPDIR="$TMP"
+export -- RUN BIN LIB
 CODE=0
 pushd -- "$TMPDIR" > /dev/null
 "$DIR/cond-exec.sh" "$DIR/../install/$SCRIPT" || CODE="$?"
 popd > /dev/null
-rm -fr -- "$TMP"
+rm -fr -- "$RUN"
 exit "$CODE"

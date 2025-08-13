@@ -12,7 +12,7 @@ use strict;
 use utf8;
 
 my $dir   = dirname(__FILE__);
-my $tmp   = $ENV{TMP};
+my $tmp   = $ENV{RUN};
 my $cpan  = catfile( dirname( $Config{perlpath} ), 'cpan' );
 my $bin   = $ENV{BIN};
 my $lib   = $ENV{LIB};

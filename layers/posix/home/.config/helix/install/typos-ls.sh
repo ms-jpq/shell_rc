@@ -24,7 +24,7 @@ linux*)
 esac
 
 # shellcheck disable=SC2154
-get.sh "$URI" | unpack.sh "$TMP"
+get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
 mkdir -p -- "$BIN"
-mv -v -f -- "$TMP/"**'/typos-lsp'* "$BIN/typos-lsp$EXT"
+mv -v -f -- "$RUN/"**'/typos-lsp'* "$BIN/typos-lsp$EXT"

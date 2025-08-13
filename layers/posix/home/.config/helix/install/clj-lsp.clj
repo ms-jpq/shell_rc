@@ -6,7 +6,7 @@
 
 (def arch (System/getProperty "os.arch"))
 (def os (System/getProperty "os.name"))
-(def tmp (-> "TMP"
+(def tmp (-> "RUN"
              System/getenv
              (Path/of (into-array String []))))
 

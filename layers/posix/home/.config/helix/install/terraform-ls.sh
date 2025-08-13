@@ -30,7 +30,7 @@ esac
 URI="$BASE_URI/$VERSION/terraform-ls_${VERSION}_$NAME.zip"
 
 # shellcheck disable=SC2154
-get.sh "$URI" | unpack.sh "$TMP"
+get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
 mkdir -p -- "$BIN"
-mv -v -f -- "$TMP/terraform"* "$BIN/"
+mv -v -f -- "$RUN/terraform"* "$BIN/"

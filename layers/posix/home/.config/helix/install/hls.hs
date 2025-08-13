@@ -27,7 +27,7 @@ contents _ version tmp   = tmp </> printf "haskell-language-server-%s" version
 
 run os = do
   lib <- getEnv "LIB"
-  tmp <- getEnv "TMP"
+  tmp <- getEnv "RUN"
   version <- readProcess "env" ["--", "gh-latest.sh", ".", repo] ""
 
   let link = uri os version

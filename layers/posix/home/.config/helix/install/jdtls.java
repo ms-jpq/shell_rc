@@ -21,7 +21,7 @@ public class jdtls {
       bin = bin.resolveSibling("jdtls.bat");
     }
     final var src = lib.resolve("bin").resolve(bin.getFileName().toString());
-    final var tmp = Path.of(System.getenv("TMP"));
+    final var tmp = Path.of(System.getenv("RUN"));
 
     final var procs =
         ProcessBuilder.startPipeline(
