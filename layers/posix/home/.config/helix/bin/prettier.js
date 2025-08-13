@@ -23,10 +23,10 @@ ok(tabsize)
 
 const node_modules = join(
   homedir(),
-  ".config",
-  "nvim",
-  "var",
-  "modules",
+  ".cache",
+  "helix-rt",
+  "nodejs",
+  "prettier",
   "node_modules",
 )
 const bin = join(node_modules, ".bin", "prettier")
