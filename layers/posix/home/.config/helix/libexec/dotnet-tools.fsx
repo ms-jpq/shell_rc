@@ -10,10 +10,16 @@ let pkg = Environment.GetCommandLineArgs() |> Seq.item 2
 let home =
     Path.Join(Environment.GetEnvironmentVariable "HOME", ".cache", "helix-rt", "dotnet", pkg)
 
+let tmp = Path.Join(Path.GetTempPath(), "dotnet")
+
 let argv = [ "tool"; "install"; "--tool-path"; home; pkg ]
 
+let cmd = ProcessStartInfo("dotnet", argv)
+cmd.Environment.Add("NUGET_PACKAGES", Path.Join(tmp, "packages"))
+cmd.Environment.Add("NUGET_HTTP_CACHE_PATH", Path.Join(tmp, "http"))
+
 do
-    use proc = ProcessStartInfo("dotnet", argv) |> Process.Start
+    use proc = Process.Start cmd
 
     proc.WaitForExit()
     assert (proc.ExitCode = 0)

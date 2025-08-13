@@ -28,6 +28,10 @@ $composer = [
     "install",
 ];
 
+
+$tmp = join(DIRECTORY_SEPARATOR, array: [sys_get_temp_dir(), "composer"]);
+assert(putenv("COMPOSER_CACHE_DIR=$tmp"));
+
 $output = [];
 $code = -1;
 exec(
