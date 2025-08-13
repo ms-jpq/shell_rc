@@ -14,7 +14,7 @@ BIN="$ROOT/bin"
 LIB="$ROOT/lib"
 
 mkdir -p -- "$ROOT"
-TMP="$(mktemp -d "$NAME.XXXXXX")"
+TMP="$(mktemp -p "$TMPDIR" -d "$NAME.XXXXXX")"
 
 export -- BIN LIB TMP TMPDIR="$TMP"
 CODE=0
