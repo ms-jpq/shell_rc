@@ -241,6 +241,11 @@
       ],
       "command": "helix-gpt"
     },
+    "intelephense": {
+      "config": {
+        "globalStoragePath": "/var/tmp/intelephense"
+      }
+    },
     "lemminx": {
       "args": [],
       "command": "lemminx"
