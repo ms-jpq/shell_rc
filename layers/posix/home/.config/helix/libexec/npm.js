@@ -3,7 +3,7 @@
 import { ok } from "node:assert/strict"
 import { spawnSync } from "node:child_process"
 import { mkdirSync, writeFileSync } from "node:fs"
-import { homedir } from "node:os"
+import { homedir, tmpdir } from "node:os"
 import { join, sep } from "node:path"
 import { argv, platform } from "node:process"
 
@@ -26,7 +26,14 @@ writeFileSync(join(home, "package.json"), JSON.stringify(json))
 
 const { error, status, signal } = spawnSync(
   "npm" + (platform === "win32" ? ".cmd" : ""),
-  ["install", "--no-package-lock", "--prefix", home],
+  [
+    "install",
+    "--no-package-lock",
+    "--cache",
+    join(tmpdir(), "npm"),
+    "--prefix",
+    home,
+  ],
   { stdio: "inherit" },
 )
 
