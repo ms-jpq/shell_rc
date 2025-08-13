@@ -5,18 +5,29 @@ set -o pipefail
 SCRIPT="$1"
 DIR="$(realpath -- "$0")"
 DIR="$(dirname -- "$DIR")"
-NAME="${SCRIPT//'/'/-}"
+NAME="${SCRIPT//"/"/-}"
 
+case "$OSTYPE" in
+linux* | darwin*)
+  VAR="/var/tmp/helix-rt"
+  ;;
+msys)
+  # shellcheck disable=SC2154
+  VAR="$TEMP/helix-rt/var"
+  ;;
+*)
+  set -v
+  exit 1
+  ;;
+esac
 RT="$HOME/.cache/helix-rt"
 
-VAR="$RT/var"
-VAR_TMP="$RT/tmp"
 ROOT="$RT/more/$NAME"
 BIN="$ROOT/bin"
 LIB="$ROOT/lib"
 
-mkdir -p -- "$VAR" "$VAR_TMP" "$ROOT"
-TMP="$(mktemp -d -p "$VAR_TMP" "$NAME.XXXXXX")"
+mkdir -p -- "$VAR" "$ROOT"
+TMP="$(mktemp -d -p "$VAR" "$NAME.XXXXXX")"
 
 export -- BIN LIB TMP TMPDIR="$TMP"
 CODE=0
