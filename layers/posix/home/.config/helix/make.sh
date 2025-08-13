@@ -47,6 +47,22 @@ JQ
     esac
   fi
 
+  case "$OSTYPE" in
+  linux* | darwin*)
+    TMPDIR="/var/tmp/helix-rt"
+    ;;
+  msys)
+    # shellcheck disable=SC2154
+    TMPDIR="$TEMP/helix-rt/var"
+    ;;
+  *)
+    set -v
+    exit 1
+    ;;
+  esac
+  export -- TMPDIR TMP="$TMPDIR" TEMP="$TMPDIR"
+  mkdir -v -p -- "$TMPDIR"
+
   PATH="$DIR/libexec:$HOME/.local/opt/initd/libexec:$PATH"
   CODE=0
   "$DIR/libexec/cond-exec.sh" "$MAN" "${PKGS[@]}" || CODE="$?"

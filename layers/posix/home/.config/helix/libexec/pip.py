@@ -1,8 +1,10 @@
 #!/usr/bin/env -S -- PYTHONSAFEPATH= python3
 
 from os import execlp, linesep, name
+from os.path import join
 from pathlib import Path
 from sys import argv, exit
+from tempfile import gettempdir
 
 try:
     from venv import create
@@ -26,6 +28,8 @@ execlp(
     "-m",
     "pip",
     "--quiet",
+    "--cache-dir",
+    join(gettempdir(), "pip"),
     "install",
     "--require-virtualenv",
     "--upgrade",
