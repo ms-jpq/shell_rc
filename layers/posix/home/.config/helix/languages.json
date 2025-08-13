@@ -271,7 +271,7 @@
       "command": "stainless-language-server"
     },
     "tabby": {
-      "args": ["--lsp", "--stdio"],
+      "args": ["--stdio"],
       "command": "tabby-agent"
     }
   }

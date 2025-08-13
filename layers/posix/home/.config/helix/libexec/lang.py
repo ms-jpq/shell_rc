@@ -38,7 +38,7 @@ def _main() -> None:
     acc = []
     for name, language in json["language"].items():
         ls, indent = languages.pop(name, ((), {}))
-        lsps = language.get("language-servers", [])
+        lsps = language.setdefault("language-servers", [])
         lsps.extend(ls)
         lsps.extend(common)
         row = {"name": name, **language}
