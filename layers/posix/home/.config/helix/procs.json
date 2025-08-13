@@ -102,7 +102,7 @@
     "php-cs-fixer": ["PHP-CS-Fixer/PHP-CS-Fixer"],
     "phpactor": ["phpactor/phpactor"],
     "phpstan": ["phpstan/phpstan"],
-    "psalm": ["psalm/psalm"]
+    "psalm": ["vimeo/psalm"]
   },
   "pip": {
     "black": ["isort"],
