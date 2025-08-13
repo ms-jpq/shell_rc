@@ -2,7 +2,7 @@
 import java.lang.ProcessBuilder.Redirect
 import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.io.path.createDirectory
+import kotlin.io.path.createDirectories
 import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.deleteRecursively
@@ -51,7 +51,7 @@ tmp.resolve("server").toFile().copyRecursively(lib.toFile())
 
 ll.toFile().setExecutable(true)
 
-bin.getParent().createDirectory()
+bin.getParent().createDirectories()
 
 bin.deleteIfExists()
 
