@@ -3,6 +3,7 @@ theme = "cls"
 [editor]
 auto-format               = false
 bufferline                = "never"
+color-modes               = true
 completion-replace        = true
 completion-timeout        = 5
 completion-trigger-len    = 1
