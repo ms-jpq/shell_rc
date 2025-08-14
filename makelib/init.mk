@@ -28,7 +28,7 @@ $(VENV)/$(PY_BIN):
 	'$@/python3' <<< '$(PYDEPS)'
 
 ./node_modules/.bin:
-	npm install --upgrade --no-package-lock
+	npm install --no-package-lock
 
 V_SHELLCHECK = $(shell ./libexec/gh-latest.sh $(TMP) koalaman/shellcheck)
 V_SHFMT      = $(shell ./libexec/gh-latest.sh $(TMP) mvdan/sh)
