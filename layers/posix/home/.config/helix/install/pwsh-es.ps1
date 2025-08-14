@@ -2,6 +2,7 @@
 
 Set-StrictMode -Version 'Latest'
 $ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
 $PSStyle.OutputRendering = 'PlainText'
 
 $uri = 'https://github.com/PowerShell/PowerShellEditorServices/releases/latest/download/PowerShellEditorServices.zip'
