@@ -4,7 +4,7 @@ set -o pipefail
 
 DIR="$(realpath -- "$0")"
 DIR="$(dirname -- "$DIR")"
-PAR=0
+PAR="${PAR:=0}"
 
 case "${RECUR:=""}" in
 '')
