@@ -15,7 +15,36 @@ if ! hash -- bun npm > /dev/null; then
   exit
 fi
 
+read -r -d '' -- PATCH <<- 'PATCH' || true
+diff --git i/src/events/completions.ts w/src/events/completions.ts
+index ffe96b7..b6469dc 100644
+--- i/src/events/completions.ts
++++ w/src/events/completions.ts
+@@ -79,20 +79,6 @@ export const completions = (lsp: Service) => {
+       );
+     log("calling completion event");
+
+-    ctx.sendDiagnostics(
+-      [
+-        {
+-          message: "Fetching completion...",
+-          severity: DiagnosticSeverity.Information,
+-          range: {
+-            start: { line: request.params.position.line, character: 0 },
+-            end: { line: request.params.position.line + 1, character: 0 },
+-          },
+-        },
+-      ],
+-      config.completionTimeout,
+-    );
+-
+     try {
+       var hints = await assistant.completion(
+         { contentBefore, contentAfter },
+PATCH
+
 pushd -- "$LIB" > /dev/null
+git apply --ignore-space-change --ignore-whitespace --whitespace=nowarn <<< "$PATCH"
 npm run -- build:bin
 popd > /dev/null
 
