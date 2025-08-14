@@ -237,7 +237,7 @@
         "--handler",
         "copilot",
         "--copilotModel",
-        "gpt-4.1"
+        "claude-sonnet-4-0"
       ],
       "command": "helix-gpt"
     },
