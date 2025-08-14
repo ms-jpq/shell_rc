@@ -31,6 +31,7 @@ const { error, status, signal } = spawnSync(
     "--no-package-lock",
     "--cache",
     join(tmpdir(), "npm"),
+    "--no-progress",
     "--prefix",
     home,
   ],
