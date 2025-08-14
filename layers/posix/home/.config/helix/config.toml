@@ -1,18 +1,19 @@
 theme = "cls"
 
 [editor]
-auto-format              = false
-bufferline               = "never"
-completion-replace       = true
-completion-timeout       = 5
-completion-trigger-len   = 1
-cursorline               = true
-end-of-line-diagnostics  = "hint"
-idle-timeout             = 50
-popup-border             = "all"
-rainbow-brackets         = true
-trim-trailing-whitespace = true
-true-color               = true
+auto-format               = false
+bufferline                = "never"
+completion-replace        = true
+completion-timeout        = 5
+completion-trigger-len    = 1
+cursorline                = true
+end-of-line-diagnostics   = "hint"
+idle-timeout              = 50
+popup-border              = "all"
+preview-completion-insert = false
+rainbow-brackets          = true
+trim-trailing-whitespace  = true
+true-color                = true
 
 [editor.auto-save]
 after-delay.enable  = true
