@@ -66,10 +66,15 @@ JQ
 
   LIBEXEC="$DIR/libexec"
   PATH="$LIBEXEC:$HOME/.local/opt/initd/libexec:$PATH"
-  ARGV=(
-    perl -w
-    -e 'alarm shift; (exec @ARGV) || die'
-    -- "$TIMEOUT"
+  ARGV=()
+  if [[ -v CI ]]; then
+    ARGV+=(
+      perl -w
+      -e 'alarm shift; (exec @ARGV) || die'
+      -- "$TIMEOUT"
+    )
+  fi
+  ARGV+=(
     "$LIBEXEC/cond-exec.sh" "$MAN"
     "${PKGS[@]}"
   )
