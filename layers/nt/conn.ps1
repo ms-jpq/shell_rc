@@ -44,7 +44,7 @@ function ssh {
     Add-WindowsCapability -Online -Name 'OpenSSH.Server'
     Set-Service -Name 'sshd' -StartupType 'Automatic' -Status 'Running'
 
-    $WIN_ADMIN = if (!(Test-Path variable:global:IsWindows) -Or $IsWindows) {
+    $WIN_ADMIN = if (!(Test-Path variable:global:IsWindows) -or $IsWindows) {
         $C_USER = [Security.Principal.WindowsIdentity]::GetCurrent()
         $USER_OBJ = New-Object Security.Principal.WindowsPrincipal($C_USER)
         $USER_OBJ.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)

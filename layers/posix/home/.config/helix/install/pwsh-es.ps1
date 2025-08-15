@@ -11,7 +11,7 @@ $tmp = $Env:RUN
 $out = Split-Path -Leaf -Path $uri
 
 if ((-not ($null -eq $Env:CI)) -and $IsMacOS) {
-    Exit
+    exit
 }
 
 Invoke-WebRequest -Uri $uri -OutFile $out
