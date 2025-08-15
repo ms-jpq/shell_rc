@@ -5,6 +5,7 @@ set -o pipefail
 DIR="$(realpath -- "$0")"
 DIR="$(dirname -- "$DIR")"
 PAR="${PAR:=0}"
+TIMEOUT=$((15 * 60))
 
 case "${RECUR:=""}" in
 '')
@@ -63,12 +64,14 @@ JQ
   export -- TMPDIR TMP="$TMPDIR" TEMP="$TMPDIR"
   mkdir -v -p -- "$TMPDIR"
 
-  PATH="$DIR/libexec:$HOME/.local/opt/initd/libexec:$PATH"
+  INITEXEC="$HOME/.local/opt/initd/libexec"
+  LIBEXEC="$DIR/libexec"
+  PATH="$LIBEXEC:$INITEXEC:$PATH"
   CODE=0
-  "$DIR/libexec/cond-exec.sh" "$MAN" "${PKGS[@]}" || CODE="$?"
+  "$INITEXEC/timeout.sh" "$TIMEOUT" "$LIBEXEC/cond-exec.sh" "$MAN" "${PKGS[@]}" || CODE="$?"
   if ((CODE)); then
     NOW="$(date -- '+%y/%m/%d %H:%m:%S')"
-    printf -- '%s\n' "!!! $NOW - $PKG" | tee -a -- "$HOME/.cache/helix-rt/failed.log" >&2
+    printf -- '%s\n' "!!! $NOW - $PKG \$?=$CODE" | tee -a -- "$HOME/.cache/helix-rt/failed.log" >&2
   fi
   exit "$CODE"
   ;;
