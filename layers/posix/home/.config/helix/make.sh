@@ -61,14 +61,20 @@ JQ
     exit 1
     ;;
   esac
-  export -- TMPDIR TMP="$TMPDIR" TEMP="$TMPDIR"
+  export -- TMPDIR TMP="$TMPDIR" TEMP="$TMPDIR" PERL_UNICODE=ASD
   mkdir -v -p -- "$TMPDIR"
 
-  INITEXEC="$HOME/.local/opt/initd/libexec"
   LIBEXEC="$DIR/libexec"
-  PATH="$LIBEXEC:$INITEXEC:$PATH"
+  PATH="$LIBEXEC:$HOME/.local/opt/initd/libexec:$PATH"
+  ARGV=(
+    perl -w
+    -e 'alarm shift; (exec @ARGV) || die'
+    -- "$TIMEOUT"
+    "$LIBEXEC/cond-exec.sh" "$MAN"
+    "${PKGS[@]}"
+  )
   CODE=0
-  "$INITEXEC/timeout.sh" "$TIMEOUT" "$LIBEXEC/cond-exec.sh" "$MAN" "${PKGS[@]}" || CODE="$?"
+  "${ARGV[@]}" || CODE="$?"
   if ((CODE)); then
     NOW="$(date -- '+%y/%m/%d %H:%m:%S')"
     printf -- '%s\n' "!!! $NOW - $PKG \$?=$CODE" | tee -a -- "$HOME/.cache/helix-rt/failed.log" >&2
