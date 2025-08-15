@@ -6,6 +6,7 @@
 # + Microsoft.BingWallpaper
 # + Microsoft.DotNet.SDK.8
 # + Microsoft.OpenJDK.21
+# + Microsoft.PowerAppsCLI
 # + Microsoft.Sysinternals.Autoruns
 # + Microsoft.Sysinternals.BGInfo
 # + Microsoft.VisualStudio.2022.BuildTools
@@ -34,7 +35,6 @@
 + jqlang.jq
 + junegunn.fzf
 + koalaman.shellcheck
-+ Microsoft.PowerAppsCLI
 + Microsoft.PowerShell
 + ms-jpq.sad
 + muesli.duf
