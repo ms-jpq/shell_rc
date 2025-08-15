@@ -8,7 +8,7 @@ shift -- 1
 ARGV=()
 case "$OSTYPE" in
 msys)
-  ARGV+=(powershell.exe -NoProfile -NonInteractive "$HOME/.local/opt/initd/libexec/timeout.ps1" "$TIME")
+  ARGV+=()
   ;;
 *)
   if command -v -- timeout > /dev/null; then
