@@ -25,7 +25,7 @@ index d264359..eb7fa13 100644
  export default {
    ...values,
 -  triggerCharacters: (values.triggerCharacters as string).split("||"),
-+  triggerCharacters: [" ", ".", "'", '"', "`", "(", "{", "<", "&", "|", "!", "-", ">", "$"],
++  triggerCharacters: [" ", ".", "'", '"', "`", "(", "{", "<", "&", "|", ":", "!", "-", ">", "$", "/", "\\"],
    debounce: parseInt(values.debounce as string),
    fetchTimeout: parseInt(values.fetchTimeout as string),
    actionTimeout: parseInt(values.actionTimeout as string),
