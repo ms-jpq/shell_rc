@@ -1,36 +1,79 @@
 #!/usr/bin/env -S -- PYTHONSAFEPATH= python3
 
 from argparse import ArgumentParser, Namespace
-from collections.abc import Iterator, MutableMapping
-from concurrent.futures import Executor, ThreadPoolExecutor
-from contextlib import contextmanager, nullcontext, suppress
+from collections.abc import Iterator
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from contextlib import nullcontext, suppress
 from datetime import datetime
+from email import message_from_bytes
 from email.errors import HeaderParseError
 from email.header import decode_header
+from email.message import EmailMessage
+from email.policy import SMTP, SMTPUTF8
 from email.utils import getaddresses, parsedate_to_datetime, unquote
 from functools import partial
-from hashlib import md5
-from itertools import chain, repeat
+from itertools import chain, takewhile
 from logging import INFO, StreamHandler, captureWarnings, getLogger
-from mailbox import Maildir, MaildirMessage
-from os import linesep
-from os.path import pathsep, sep
-from pathlib import Path, PurePath
+from os import environ, linesep
+from os.path import normcase, sep
+from pathlib import Path
 from sys import exit
-from threading import Lock
-from typing import Any, Callable, ContextManager, Sequence, TypeVar, cast
+from typing import MutableSet, Sequence
 from unicodedata import normalize
 
-_T = TypeVar("_T")
-_U = TypeVar("_U")
+_NL = SMTP.linesep.encode()
+_LS = linesep.encode()
+_FLAG = "RECUR"
 
 
-def _maildirs(root: Path) -> Iterator[tuple[str, Path, Maildir]]:
-    for mailboxes in root.glob("*" + sep):
-        for globbed in mailboxes.rglob(".mbsyncstate"):
-            if globbed.is_file():
-                path = globbed.parent
-                yield mailboxes.name, path, Maildir(path)
+def _die(addr: str) -> bool:
+    return (
+        False
+        or len(addr) >= 50
+        or "+" in addr
+        or "bounce" in addr
+        or "inbound" in addr
+        or "invitation" in addr
+        or "notification" in addr
+        or "notify" in addr
+        or "reply" in addr
+        or "support" in addr
+        or addr.endswith(("amazonses.com", "linkedin.com", "slack.com", "ashbyhq.com"))
+    )
+
+
+def _read_headers(path: Path) -> EmailMessage | None:
+    with suppress(FileNotFoundError):
+        with path.open("rb") as f:
+            lines = takewhile(lambda x: x not in {_NL, _LS}, iter(f.readline, b""))
+            headers = b"".join(lines)
+
+            email = message_from_bytes(headers, policy=SMTPUTF8)
+            assert isinstance(email, EmailMessage)
+            return email
+
+    return None
+
+
+def _mtime(mail: EmailMessage) -> float:
+    for hdr, postpend in (
+        ("date", False),
+        ("received", True),
+        ("x-received", True),
+        ("resent-date", False),
+    ):
+        for header in mail.get_all(hdr, ()):
+            if postpend:
+                _, _, value = header.partition(";")
+            else:
+                value = header
+
+            with suppress(ValueError):
+                if parsed := parsedate_to_datetime(value):
+                    assert isinstance(parsed, datetime)
+                    return parsed.timestamp()
+
+    return 0.0
 
 
 def _decode(name: str) -> Iterator[str]:
@@ -45,11 +88,6 @@ def _decode(name: str) -> Iterator[str]:
                 assert False, (lhs, rhs)
 
 
-def _normalize(name: str) -> str:
-    norm = normalize("NFKC", " ".join(name.split()))
-    return unquote(norm)
-
-
 def _standardize(addr: str) -> str | None:
     name, sep, domain = addr.strip().partition("@")
     if sep != "@":
@@ -58,175 +96,88 @@ def _standardize(addr: str) -> str | None:
     return name + sep + domain.casefold()
 
 
-def _mtime(mail: MaildirMessage) -> float | None:
-    for hdr, postpend in (
-        ("date", False),
-        ("received", True),
-        ("x-received", True),
-        ("resent-date", False),
-    ):
-        for header in mail.get_all(hdr, []):
-            if postpend:
-                _, _, value = header.partition(";")
-            else:
-                value = header
-
-            with suppress(ValueError):
-                if parsed := parsedate_to_datetime(value):
-                    assert isinstance(parsed, datetime)
-                    return parsed.timestamp()
-
-    return None
+def _normalize(name: str) -> str:
+    norm = normalize("NFKC", " ".join(name.split()))
+    return unquote(norm)
 
 
-def _parse(mail: MaildirMessage) -> Iterator[tuple[str, str]]:
+def _parse(mail: EmailMessage) -> Iterator[tuple[str, str]]:
     for hdr in ("from", "to", "cc", "bcc", "return-path"):
-        for label, addr in getaddresses(mail.get_all(hdr, [])):
+        for label, addr in getaddresses(mail.get_all(hdr, ())):
             if parsed := _standardize(addr):
                 for name in _decode(label):
                     normalized = _normalize(name)
                     yield parsed, "" if normalized == parsed else normalized
 
 
-def _iter_keys(root: Path) -> Iterator[tuple[str, Maildir, Iterator[Path]]]:
-    for mailbox, dir, maildir in _maildirs(root):
-        paths = (dir.joinpath(subdir).iterdir() for subdir in ("cur", "new"))
-        yield mailbox, maildir, chain.from_iterable(paths)
+def _process_mail(mail: Path) -> tuple[Path, Sequence[tuple[float, str]]] | None:
+    if not (headers := _read_headers(mail)):
+        return
 
-
-def _locking(thing: _T) -> Callable[[], ContextManager[_T]]:
-    lock = Lock()
-
-    @contextmanager
-    def cont() -> Iterator[_T]:
-        with lock:
-            yield thing
-
-    return cont
-
-
-@contextmanager
-def _cache(
-    f: Path, sep: str, l: Callable[[str], _T], r: Callable[[str], _U]
-) -> Iterator[Callable[[], ContextManager[MutableMapping[_T, _U]]]]:
-    f.touch()
-    cached: MutableMapping[_T, _U] = {}
-    with f.open() as fd:
-        for line in fd:
-            if not (line := line.strip()):
-                continue
-
-            key, s, value = line.partition(sep)
-            if s != sep:
-                continue
-
-            with suppress(ValueError):
-                cached[l(key)] = r(value)
-
-    try:
-        yield _locking(cached)
-    finally:
-        ordered = sorted(cached.items(), key=lambda x: cast(Any, x[1]))
-        gen = (
-            f"{key}{sep}{sep.join(map(str, val)) if isinstance(val, Sequence) else val}"
-            for key, val in ordered
-        )
-        lines = chain.from_iterable(zip(gen, repeat(linesep)))
-        with f.open("w") as fd:
-            fd.writelines(lines)
-
-
-def _die(addr: str) -> bool:
-    return (
-        False
-        or "+" in addr
-        or "bounce" in addr
-        or "inbound" in addr
-        or "invitation" in addr
-        or "notification" in addr
-        or "notify" in addr
-        or "reply" in addr
-        or "support" in addr
-        or addr.endswith(("amazonses.com", "linkedin.com", "slack.com", "ashbyhq.com"))
+    mtime = _mtime(headers)
+    addrs = tuple(
+        (mtime, f"{addr}\t{label}") for addr, label in _parse(headers) if not _die(addr)
     )
+    return mail, addrs
 
 
-def _parse_cache(row: str) -> tuple[float, str]:
-    lhs, _, rhs = row.partition(" ")
-    return float(lhs), rhs
+def _process_account(cache_dir: Path, account: Path) -> None:
+    stem = cache_dir.joinpath(account.name)
+    cache, out = stem.with_suffix(".cache.txt"), stem.with_suffix(".addr.txt")
+    for p in (cache, out):
+        p.touch()
 
-
-def _process_message(
-    maildir: Maildir,
-    cache: MutableMapping[PurePath, float],
-    mlock: Callable[[], ContextManager[MutableMapping[str, tuple[float, str]]]],
-    path: Path,
-) -> None:
-    key, sep, _ = path.name.partition(pathsep)
-    if sep != pathsep:
-        return
+    seen = frozenset(cache.read_text().split("\0"))
+    compiled = {
+        rhs: float(lhs)
+        for lhs, rhs in (
+            line.split(" ", maxsplit=1) for line in out.read_text().splitlines()
+        )
+    }
+    maildirs = chain.from_iterable(
+        (
+            globbed.parent.iterdir()
+            for globbed in account.rglob(".mbsyncstate")
+            if globbed.is_file()
+        )
+    )
+    mails = chain.from_iterable(
+        dir.iterdir() for dir in maildirs if dir.name in ("new", "cur")
+    )
+    unseen = (mail for mail in mails if normcase(mail) not in seen)
+    added: MutableSet[str] = set()
 
     try:
-        mtime = path.stat().st_mtime
-    except FileNotFoundError as e:
-        log.warning("%s", e)
-        return
+        with ThreadPoolExecutor() as ex:
+            for row in ex.map(_process_mail, unseen):
+                if not row:
+                    continue
+                path, addrs = row
+                added.add(normcase(path))
+                for mtime, addr in addrs:
+                    compiled[addr] = max(compiled.get(addr, mtime), mtime)
+                    log.info("%s", addr)
 
-    if mtime <= cache.get(path, 0):
-        return
-    cache[path] = mtime
-
-    try:
-        message = maildir[key]
-    except KeyError as e:
-        log.warning("%s", e)
-        return
-
-    recency = _mtime(message) or mtime
-
-    for email, name in _parse(message):
-        if _die(email):
-            continue
-
-        row = f"{email}\t{name}"
-        hashed = md5(row.encode()).hexdigest()
-
-        with mlock() as mcache:
-            cached = mcache.get(hashed)
-
-            if cached is None:
-                stored = recency
-                log.info("%s", f"{email} :: {name}")
-            else:
-                stored, _ = cached
-                stored *= -1
-
-            mcache[hashed] = (-max(stored, recency), row)
-
-
-def _run(ex: Executor, cache_dir: Path, mail_dirs: Path) -> None:
-    with _cache(
-        cache_dir / "messages.txt", sep="\0", l=PurePath, r=float
-    ) as lock, lock() as cache:
-        for mailbox, maildir, paths in _iter_keys(mail_dirs):
-            with _cache(
-                cache_dir / f"addr.{mailbox}.txt", sep=" ", l=str, r=_parse_cache
-            ) as mlock:
-                proc = partial(_process_message, maildir, cache, mlock)
-                tuple(ex.map(proc, paths))
+    finally:
+        ordered = sorted(compiled.items(), key=lambda x: x[1], reverse=True)
+        saw = "\0".join(chain(seen, added))
+        updated = linesep.join(f"{mtime} {addr}" for addr, mtime in ordered)
+        cache.write_text(saw)
+        out.write_text(updated)
 
 
 def _parse_args() -> Namespace:
     parser = ArgumentParser()
+    home = Path.home()
     parser.add_argument(
         "--maildirs",
         type=Path,
-        default=Path.home() / ".local" / "share" / "maildir",
+        default=home / ".local" / "share" / "maildir",
     )
     parser.add_argument(
         "--cache",
         type=Path,
-        default=Path.home() / ".cache" / "maildir",
+        default=home / ".cache" / "maildir",
     )
     parser.add_argument("--clear", action="store_true")
     return parser.parse_args()
@@ -242,8 +193,11 @@ def _main() -> None:
             path.unlink()
         return
 
-    with ThreadPoolExecutor() as ex:
-        _run(ex, cache_dir=cache_dir, mail_dirs=Path(args.maildirs))
+    environ[_FLAG] = "1"
+    with ProcessPoolExecutor() as ex:
+        proc = partial(_process_account, cache_dir)
+        accounts = Path(args.maildirs).glob("*" + sep)
+        tuple(ex.map(proc, accounts))
 
 
 try:
@@ -253,6 +207,7 @@ try:
         log.setLevel(INFO)
         log.addHandler(StreamHandler())
 
-    _main()
+    if not _FLAG in environ:
+        _main()
 except KeyboardInterrupt:
     exit(130)

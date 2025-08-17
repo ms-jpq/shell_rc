@@ -9,11 +9,11 @@ if [[ ! -d $CACHE ]]; then
 fi
 
 if (($# > 1)); then
-  CACHED=("$CACHE/addr.$1.txt")
+  CACHED=("$CACHE/$1.addr.txt")
   shift -- 1
   QUERY="$*"
 else
-  CACHED=("$CACHE"/addr.*.txt)
+  CACHED=("$CACHE"/*.addr.txt)
   QUERY="$1"
 fi
 
@@ -26,4 +26,4 @@ GREP=(
   -- "$QUERY"
 )
 
-cut -d ' ' -f 3- -- "${CACHED[@]}" < /dev/null | "${GREP[@]}"
+cut -d ' ' -f 2- -- "${CACHED[@]}" < /dev/null | "${GREP[@]}"
