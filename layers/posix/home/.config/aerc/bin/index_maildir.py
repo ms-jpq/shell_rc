@@ -33,7 +33,7 @@ _LS = linesep.encode()
 _FLAG = "RECUR"
 
 
-def _die(addr: str) -> bool:
+def _die(addr: str, label: str) -> bool:
     return (
         False
         or len(addr) >= 50
@@ -55,7 +55,7 @@ def _die(addr: str) -> bool:
                 "slack.com",
             )
         )
-    )
+    ) or (False or " via " in label or " 通过 " in label)
 
 
 def _read_headers(path: Path) -> EmailMessage | None:
@@ -124,7 +124,7 @@ def _parse(mail: EmailMessage) -> Iterator[tuple[str, str]]:
             if parsed := _standardize(addr):
                 for name in _decode(label):
                     normalized = _normalize(name)
-                    yield parsed, "" if normalized == parsed else normalized
+                    yield parsed, "" if normalized == parsed.casefold() else normalized
 
 
 def _process_mail(mail: Path) -> _Processed:
@@ -133,7 +133,9 @@ def _process_mail(mail: Path) -> _Processed:
 
     mtime = _mtime(headers)
     addrs = tuple(
-        (mtime, f"{addr}\t{label}") for addr, label in _parse(headers) if not _die(addr)
+        (mtime, f"{addr}\t{label}")
+        for addr, label in _parse(headers)
+        if not _die(addr, label=label)
     )
     return mail, addrs
 
