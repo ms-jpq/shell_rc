@@ -108,7 +108,8 @@ def _standardize(addr: str) -> str | None:
     if sep != "@":
         return None
 
-    return name + sep + domain.casefold()
+    # NOT RFC5321 compliant
+    return name.casefold() + sep + domain.casefold()
 
 
 def _normalize(name: str) -> str:
