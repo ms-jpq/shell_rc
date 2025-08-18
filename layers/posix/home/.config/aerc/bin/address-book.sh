@@ -26,4 +26,15 @@ GREP=(
   -- "$QUERY"
 )
 
-cut -d ' ' -f 2- -- "${CACHED[@]}" < /dev/null | "${GREP[@]}" | awk -F $'\t' -- '!seen[$1]++ { print }'
+FILTER=(tee)
+if [[ -t 1 ]]; then
+  FILTER=(
+    tv
+    --color 5
+    --delimiter $'\t'
+    --force-all-rows
+    --upper-column-width 60
+  )
+fi
+
+cut -d ' ' -f 2- -- "${CACHED[@]}" < /dev/null | "${GREP[@]}" | awk -F $'\t' -- '!seen[$1]++ { print }' | "${FILTER[@]}"
