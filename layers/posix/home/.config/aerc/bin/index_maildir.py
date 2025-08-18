@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
 from concurrent.futures import (
-    Executor,
+    Future,
     ProcessPoolExecutor,
     ThreadPoolExecutor,
     as_completed,
@@ -23,11 +23,10 @@ from os import environ, linesep
 from os.path import normcase, sep
 from pathlib import Path
 from sys import exit
-from typing import Callable, MutableSet, Sequence, TypeVar
+from typing import MutableSequence, MutableSet, Sequence
 from unicodedata import normalize
 
-_T = TypeVar("_T")
-_U = TypeVar("_U")
+_Processed = tuple[Path, Sequence[tuple[float, str]]] | None
 
 _NL = SMTP.linesep.encode()
 _LS = linesep.encode()
@@ -118,21 +117,15 @@ def _parse(mail: EmailMessage) -> Iterator[tuple[str, str]]:
                     yield parsed, "" if normalized == parsed else normalized
 
 
-def _process_mail(mail: Path) -> tuple[Path, Sequence[tuple[float, str]]] | None:
+def _process_mail(mail: Path) -> _Processed:
     if not (headers := _read_headers(mail)):
-        return
+        return None
 
     mtime = _mtime(headers)
     addrs = tuple(
         (mtime, f"{addr}\t{label}") for addr, label in _parse(headers) if not _die(addr)
     )
     return mail, addrs
-
-
-def _fmap(ex: Executor, f: Callable[[_T], _U], rows: Iterator[_T]) -> Iterator[_U]:
-    futures = (ex.submit(f, row) for row in rows)
-    for future in as_completed(futures):
-        yield future.result()
 
 
 def _process_account(cache_dir: Path, account: Path) -> None:
@@ -161,16 +154,23 @@ def _process_account(cache_dir: Path, account: Path) -> None:
     unseen = (mail for mail in mails if normcase(mail) not in seen)
     added: MutableSet[str] = set()
 
+    def cont(fut: Future[_Processed]) -> None:
+        row = fut.result()
+        if not row:
+            return
+        path, addrs = row
+        added.add(normcase(path))
+        for mtime, addr in addrs:
+            compiled[addr] = max(compiled.get(addr, mtime), mtime)
+            log.info("%s", addr)
+
     try:
         with ThreadPoolExecutor() as ex:
-            for row in _fmap(ex, f=_process_mail, rows=unseen):
-                if not row:
-                    continue
-                path, addrs = row
-                added.add(normcase(path))
-                for mtime, addr in addrs:
-                    compiled[addr] = max(compiled.get(addr, mtime), mtime)
-                    log.info("%s", addr)
+            futs: MutableSequence[Future[_Processed]] = []
+            for fut in (ex.submit(_process_mail, path) for path in unseen):
+                fut.add_done_callback(cont)
+                futs.append(fut)
+            tuple(as_completed(futs))
 
     finally:
         ordered = sorted(compiled.items(), key=lambda x: x[1], reverse=True)
@@ -205,13 +205,12 @@ def _main() -> None:
     if args.clear:
         for path in cache_dir.iterdir():
             path.unlink()
-        return
 
     environ[_FLAG] = "1"
     with ProcessPoolExecutor() as ex:
         proc = partial(_process_account, cache_dir)
         accounts = Path(args.maildirs).glob("*" + sep)
-        tuple(_fmap(ex, f=proc, rows=accounts))
+        tuple(ex.map(proc, accounts))
 
 
 try:
