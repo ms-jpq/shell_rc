@@ -2,7 +2,12 @@
 
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures import (
+    Executor,
+    ProcessPoolExecutor,
+    ThreadPoolExecutor,
+    as_completed,
+)
 from contextlib import nullcontext, suppress
 from datetime import datetime
 from email import message_from_bytes
@@ -18,8 +23,11 @@ from os import environ, linesep
 from os.path import normcase, sep
 from pathlib import Path
 from sys import exit
-from typing import MutableSet, Sequence
+from typing import Callable, MutableSet, Sequence, TypeVar
 from unicodedata import normalize
+
+_T = TypeVar("_T")
+_U = TypeVar("_U")
 
 _NL = SMTP.linesep.encode()
 _LS = linesep.encode()
@@ -121,6 +129,12 @@ def _process_mail(mail: Path) -> tuple[Path, Sequence[tuple[float, str]]] | None
     return mail, addrs
 
 
+def _fmap(ex: Executor, f: Callable[[_T], _U], rows: Iterator[_T]) -> Iterator[_U]:
+    futures = (ex.submit(f, row) for row in rows)
+    for future in as_completed(futures):
+        yield future.result()
+
+
 def _process_account(cache_dir: Path, account: Path) -> None:
     stem = cache_dir.joinpath(account.name)
     cache, out = stem.with_suffix(".cache.txt"), stem.with_suffix(".addr.txt")
@@ -149,7 +163,7 @@ def _process_account(cache_dir: Path, account: Path) -> None:
 
     try:
         with ThreadPoolExecutor() as ex:
-            for row in ex.map(_process_mail, unseen):
+            for row in _fmap(ex, f=_process_mail, rows=unseen):
                 if not row:
                     continue
                 path, addrs = row
@@ -197,7 +211,7 @@ def _main() -> None:
     with ProcessPoolExecutor() as ex:
         proc = partial(_process_account, cache_dir)
         accounts = Path(args.maildirs).glob("*" + sep)
-        tuple(ex.map(proc, accounts))
+        tuple(_fmap(ex, f=proc, rows=accounts))
 
 
 try:
