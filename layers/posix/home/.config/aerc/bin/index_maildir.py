@@ -41,11 +41,19 @@ def _die(addr: str) -> bool:
         or "bounce" in addr
         or "inbound" in addr
         or "invitation" in addr
+        or "marketplace" in addr
         or "notification" in addr
         or "notify" in addr
         or "reply" in addr
         or "support" in addr
-        or addr.endswith(("amazonses.com", "linkedin.com", "slack.com", "ashbyhq.com"))
+        or addr.endswith(
+            (
+                "amazonses.com",
+                "ashbyhq.com",
+                "linkedin.com",
+                "slack.com",
+            )
+        )
     )
 
 
