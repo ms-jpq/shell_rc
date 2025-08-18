@@ -26,4 +26,4 @@ GREP=(
   -- "$QUERY"
 )
 
-cut -d ' ' -f 2- -- "${CACHED[@]}" < /dev/null | "${GREP[@]}"
+cut -d ' ' -f 2- -- "${CACHED[@]}" < /dev/null | "${GREP[@]}" | awk -F $'\t' -- '!seen[$1]++ { print }'

@@ -50,6 +50,7 @@ def _die(addr: str) -> bool:
             (
                 "amazonses.com",
                 "ashbyhq.com",
+                "docusign.net",
                 "linkedin.com",
                 "slack.com",
             )
