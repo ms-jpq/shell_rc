@@ -61,6 +61,7 @@ const _spawn = async (arg0 = "", argv = [""], pwd = cwd()) => {
   } else if (status !== null) {
     process.exitCode = status
   }
+  return true
 }
 
 const _eslint = async (eslint = "", filename = "") => {
@@ -95,8 +96,10 @@ const _eslint = async (eslint = "", filename = "") => {
     if (existsSync(eslint)) {
       for await (const tmp of _tmp(filename)) {
         try {
-          return await _eslint(eslint, tmp)
-        } catch {
+          if (await _eslint(eslint, tmp)) {
+            return
+          }
+        } finally {
           break l1
         }
       }
