@@ -67,7 +67,7 @@ JQ
   LIBEXEC="$DIR/libexec"
   PATH="$LIBEXEC:$HOME/.local/opt/initd/libexec:$PATH"
   ARGV=()
-  if [[ -v CI ]]; then
+  if [[ $OSTYPE == msys ]]; then
     ARGV+=(
       perl -w
       -e 'alarm shift; (exec @ARGV) || die'

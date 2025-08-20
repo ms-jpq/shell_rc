@@ -69,6 +69,14 @@ for LINE in "${DESIRED[@]}"; do
   esac
 done
 
+TIMEOUT=$((60 * 15))
+MS_TIMEOUT=(
+  perl -w
+  -e 'alarm shift; (exec @ARGV) || die'
+  -- "$TIMEOUT"
+
+)
+
 if (("${#RM[@]}")); then
   case "$OSTYPE" in
   darwin*)
@@ -80,6 +88,7 @@ if (("${#RM[@]}")); then
     ;;
   msys)
     WINGET=(
+      "${MS_TIMEOUT[@]}"
       winget uninstall
       --disable-interactivity
       --accept-source-agreements
@@ -118,6 +127,7 @@ if (("${#ADD[@]}")); then
     ;;
   msys)
     WINGET=(
+      "${MS_TIMEOUT[@]}"
       winget install
       --disable-interactivity
       --accept-source-agreements --accept-package-agreements
