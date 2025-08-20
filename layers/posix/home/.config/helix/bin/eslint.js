@@ -58,7 +58,7 @@ const _spawn = async (arg0 = "", argv = [""], pwd = cwd()) => {
     throw error
   } else if (signal) {
     throw signal
-  } else if (status) {
+  } else if (status !== null) {
     process.exitCode = status
   }
 }
@@ -67,7 +67,14 @@ const _eslint = async (eslint = "", filename = "") => {
   const cwd = dirname(dirname(dirname(eslint)))
   await _spawn(
     eslint,
-    ["--exit-on-fatal-error", "--no-ignore", "--fix", "--", filename],
+    [
+      "--exit-on-fatal-error",
+      "--suppress-all",
+      "--no-ignore",
+      "--fix",
+      "--",
+      filename,
+    ],
     cwd,
   )
 
@@ -83,11 +90,15 @@ const _eslint = async (eslint = "", filename = "") => {
   const [, , filename] = argv
   ok(filename)
 
-  for (const path of _parents()) {
+  l1: for (const path of _parents()) {
     const eslint = join(path, "node_modules", ".bin", "eslint")
     if (existsSync(eslint)) {
       for await (const tmp of _tmp(filename)) {
-        return await _eslint(eslint, tmp)
+        try {
+          return await _eslint(eslint, tmp)
+        } catch {
+          break l1
+        }
       }
     }
   }
