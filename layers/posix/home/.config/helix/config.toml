@@ -25,7 +25,8 @@ focus-lost          = true
 hidden = false
 
 [editor.indent-guides]
-render = true
+render      = true
+skip-levels = 1
 
 [editor.inline-diagnostics]
 cursor-line = "disable"

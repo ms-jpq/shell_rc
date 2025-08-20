@@ -51,6 +51,13 @@
       }
     },
     "go": {
+      "auto-pairs": {
+        "\"": "\"",
+        "'": "'",
+        "(": ")",
+        "`": "`",
+        "{": "}"
+      },
       "formatter": {
         "args": [],
         "command": "goimports"
