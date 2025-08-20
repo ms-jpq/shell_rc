@@ -4,15 +4,12 @@ set -o pipefail
 
 COLS="$(stty size < /dev/tty | cut -d ' ' -f 2)"
 
-PANDOC=(
-  pandoc
-  --reference-links
-  --reference-location block
-  --eol lf
-  --read html-native_divs-native_spans
-  --write markdown
-  --lua-filter "${0%/*}/../libexec/html-filter.lua"
-  --columns $((COLS - 4))
+ARGV=(
+  w3m -W
+  -T text/html
+  -graph
+  -cols "$COLS"
+  -o display_link_number=1
 )
 
-"${PANDOC[@]}" | sed -E -e 's#(data:image/[^;]+;).*$#\1#g'
+exec -- "${ARGV[@]}" "$@"

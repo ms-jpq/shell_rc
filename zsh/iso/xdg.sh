@@ -13,6 +13,7 @@ export -- RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc.conf"
 export -- TF_CLI_CONFIG_FILE="$XDG_CONFIG_HOME/terraform/config.tfrc"
 export -- WGETRC="$XDG_CONFIG_HOME/wget/config"
 
+export -- W3M_DIR="$XDG_DATA_HOME/w3m"
 export -- AWS_DATA_PATH="$XDG_CACHE_HOME/aws/models"
 export -- BUNDLE_USER_HOME="$XDG_CACHE_HOME/bundle"
 export -- DOTNET_CLI_HOME="$XDG_CACHE_HOME/dotnet"
