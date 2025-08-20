@@ -106,6 +106,7 @@
 + unar
 + unison
 + universal-ctags
++ w3m
 + watch
 + watchexec
 + weechat

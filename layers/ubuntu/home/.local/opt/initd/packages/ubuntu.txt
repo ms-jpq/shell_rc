@@ -82,6 +82,7 @@
 + uctags
 + unison
 + unzip
++ w3m
 + wget
 + xmlstarlet
 + yazi
