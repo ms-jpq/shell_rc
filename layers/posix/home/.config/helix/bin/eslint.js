@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process"
 import { randomBytes } from "node:crypto"
 import { existsSync } from "node:fs"
 import { open, rm } from "node:fs/promises"
+import { devNull } from "node:os"
 import { basename, dirname, extname, join } from "node:path"
 import { argv, cwd, execPath, stdin, stdout } from "node:process"
 import { pipeline } from "node:stream/promises"
@@ -66,11 +67,13 @@ const _spawn = async (arg0 = "", argv = [""], pwd = cwd()) => {
 
 const _eslint = async (eslint = "", filename = "") => {
   const cwd = dirname(dirname(dirname(eslint)))
-  await _spawn(
+  const ext = await _spawn(
     eslint,
     [
       "--exit-on-fatal-error",
       "--suppress-all",
+      "--suppressions-location",
+      devNull,
       "--no-ignore",
       "--fix",
       "--",
@@ -85,6 +88,7 @@ const _eslint = async (eslint = "", filename = "") => {
   } finally {
     fd.close()
   }
+  return ext
 }
 
 ;(async () => {
