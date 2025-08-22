@@ -1,3 +1,5 @@
+.PHONY: venv
+
 define PYDEPS
 from itertools import chain
 from os import execl
@@ -22,6 +24,7 @@ execl(
 endef
 export -- PYDEPS
 
+venv: $(VENV)/$(PY_BIN)
 $(VENV)/$(PY_BIN):
 	python3 -m venv -- '$(@D)'
 	'$@/python3' -m pip install --upgrade -- tomli
