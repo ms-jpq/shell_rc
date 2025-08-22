@@ -72,8 +72,12 @@ y = "yank_to_clipboard"
 "+" = "rotate_selection_contents_backward"
 "_" = "rotate_selection_contents_forward"
 
+"@" = "@<C-s>*%s<up><ret>"
+
 [keys.normal]
 Z = "no_op"
+
+"@" = "@<C-s>*%s<up><ret>"
 
 A-left  = ["move_prev_word_end", "move_char_left", "move_char_right"]
 A-right = ["move_next_word_start", "move_char_right"]
@@ -102,7 +106,6 @@ c = [":set cursorline false", "change_selection"]
 i = [":set cursorline false", "insert_mode"]
 o = [":set cursorline false", "open_below"]
 
-"@" = "@<C-s>*%s<up><ret>"
 
 "{" = [
   "move_line_up",
@@ -136,6 +139,8 @@ C-t = [
   ":insert-output yazi --chooser-file=/tmp/yazi-helix -- '%{buffer_name}'",
   ':insert-output printf -- %s "\x1b[?1049h\x1b[?2004h" > /dev/tty',
   ":open %sh{cat -- /tmp/yazi-helix}",
+  ":set mouse false",
+  ":set mouse true",
   ":redraw",
 ]
 
