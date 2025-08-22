@@ -13,5 +13,5 @@ clobber.helix:
 	rm -vfr -- $(HELIX)/languages.toml
 
 helix: $(HELIX)/languages.toml
-$(HELIX)/languages.toml: $(VENV)/$(PY_BIN) $(HELIX)/libexec/languages.sh $(HELIX)/libexec/languages.jq $(VAR)/helix.lang.toml $(HELIX)/languages.json
+$(HELIX)/languages.toml: $(HELIX)/libexec/languages.sh $(HELIX)/libexec/languages.jq $(VAR)/helix.lang.toml $(HELIX)/languages.json | $(VENV)/$(PY_BIN)
 	'$(HELIX)/libexec/languages.sh'
