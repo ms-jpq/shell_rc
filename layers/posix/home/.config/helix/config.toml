@@ -133,7 +133,7 @@ o = [":set cursorline false", "open_below"]
 
 C-t = [
   ":sh rm -f -- /tmp/yazi-helix",
-  ":insert-output yazi --chooser-file=/tmp/unique-file -- '%{buffer_name}'",
+  ":insert-output yazi --chooser-file=/tmp/yazi-helix -- '%{buffer_name}'",
   ':insert-output printf -- %s "\x1b[?1049h\x1b[?2004h" > /dev/tty',
   ":open %sh{cat -- /tmp/yazi-helix}",
   ":redraw",

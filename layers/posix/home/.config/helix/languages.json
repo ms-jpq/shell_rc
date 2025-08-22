@@ -1,6 +1,6 @@
 {
   "#": "https://github.com/helix-editor/helix/blob/master/languages.toml",
-  "$": ["tabby", "helix-gpt"],
+  "$": [],
   "language": {
     "bash": {
       "formatter": {

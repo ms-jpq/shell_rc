@@ -17,7 +17,16 @@ JQ=(
   --slurpfile user "$PARENT/languages.json"
 )
 
-read -r -d '' -- PY <<- 'PYTHON' || true
+read -r -d '' -- PY1 <<- 'PYTHON' || true
+from json import dump
+from tomli import load
+from sys import stdin, stdout
+
+j = load(stdin.buffer)
+dump(j, stdout, ensure_ascii=False, sort_keys=True)
+PYTHON
+
+read -r -d '' -- PY2 <<- 'PYTHON' || true
 from json import load
 from tomli_w import dump
 from sys import stdin, stdout
@@ -31,6 +40,6 @@ if [[ $OSTYPE == msys ]]; then
   PY_BIN='Scripts'
 fi
 
-PATH="$ROOT/.venv/$PY_BIN:$PATH"
 export -- PYTHONIOENCODING=utf-8
-tomlq -- '.' "$TOML" | "${JQ[@]}" | python -c "$PY" > "$DST"
+PATH="$ROOT/.venv/$PY_BIN:$PATH"
+python -c "$PY1" < "$TOML" | "${JQ[@]}" | python -c "$PY2" > "$DST"
