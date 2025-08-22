@@ -110,6 +110,9 @@ jobs:
           Get-Command -All -- npm
 
       - run: |-
+          bash .\win.sh localhost -- mypy
+
+      - run: |-
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 
           bash .\win.sh localhost -- all helix JAVA_HOME="$Env:JAVA_HOME_21_X64"
