@@ -70,6 +70,8 @@ X = "select_line_above"
 y = "yank_to_clipboard"
 
 [keys.normal]
+Z = "no_op"
+
 A-left  = ["move_prev_word_end", "move_char_left", "move_char_right"]
 A-right = ["move_next_word_start", "move_char_right"]
 C-d     = ["half_page_down", "align_view_center"]
