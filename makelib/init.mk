@@ -2,7 +2,7 @@
 
 define PYDEPS
 from itertools import chain
-from os import execl
+from subprocess import check_call
 from sys import executable
 
 from tomli import load
@@ -10,16 +10,17 @@ from tomli import load
 toml = load(open("pyproject.toml", "rb"))
 
 project = toml["project"]
-execl(
-  executable,
-  executable,
-  "-m",
-  "pip",
-  "install",
-  "--upgrade",
-  "--",
-  *project.get("dependencies", ()),
-  *chain.from_iterable(project["optional-dependencies"].values()),
+check_call(
+    (
+        executable,
+        "-m",
+        "pip",
+        "install",
+        "--upgrade",
+        "--",
+        *project.get("dependencies", ()),
+        *chain.from_iterable(project["optional-dependencies"].values()),
+    )
 )
 endef
 export -- PYDEPS
