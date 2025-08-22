@@ -32,4 +32,5 @@ if [[ $OSTYPE == msys ]]; then
 fi
 
 PATH="$ROOT/.venv/$PY_BIN:$PATH"
+export -- PYTHONIOENCODING=utf-8
 tomlq -- '.' "$TOML" | "${JQ[@]}" | python -c "$PY" > "$DST"
