@@ -66,6 +66,7 @@ esc     = [":set cursorline true", "normal_mode"]
 
 [keys.select]
 D = ["yank_to_clipboard", "delete_selection_noyank"]
+X = "select_line_above"
 y = "yank_to_clipboard"
 
 [keys.normal]
@@ -76,9 +77,11 @@ C-h     = ["move_prev_word_end", "move_char_left", "move_char_right"]
 C-l     = ["move_next_word_start", "move_char_right"]
 C-u     = ["half_page_up", "align_view_center"]
 
+X = ["select_mode", "select_line_above"]
+x = ["select_mode", "select_line_below"]
+
 "+" = "expand_selection"
 D   = ["yank_to_clipboard", "delete_selection_noyank"]
-X   = "extend_line_above"
 Y   = ["extend_to_line_end", "yank_to_clipboard"]
 "_" = "shrink_selection"
 
