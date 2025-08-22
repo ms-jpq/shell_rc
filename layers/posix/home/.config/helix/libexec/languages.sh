@@ -32,4 +32,4 @@ if [[ $OSTYPE == msys ]]; then
 fi
 
 PATH="$ROOT/.venv/$PY_BIN:$PATH"
-tomlq -- '.' "$TOML" | "${JQ[@]}" | python3 -c "$PY" > "$DST"
+tomlq -- '.' "$TOML" | "${JQ[@]}" | python -c "$PY" > "$DST"
