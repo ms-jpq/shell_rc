@@ -27,8 +27,8 @@ export -- PYDEPS
 venv: $(VENV)/$(PY_BIN)
 $(VENV)/$(PY_BIN):
 	python3 -m venv -- '$(@D)'
-	'$@/python3' -m pip install --upgrade -- tomli
-	'$@/python3' <<< '$(PYDEPS)'
+	'$@/python' -m pip install --upgrade -- tomli
+	'$@/python' <<< '$(PYDEPS)'
 
 ./node_modules/.bin:
 	npm install --no-package-lock
