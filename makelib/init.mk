@@ -24,7 +24,7 @@ export -- PYDEPS
 
 $(VENV)/$(PY_BIN):
 	python3 -m venv -- '$(@D)'
-	'$@/python3' -m pip install --upgrade -- tomli tomli-w
+	'$@/python3' -m pip install --upgrade -- tomli
 	'$@/python3' <<< '$(PYDEPS)'
 
 ./node_modules/.bin:
