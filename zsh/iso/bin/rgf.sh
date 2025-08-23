@@ -2,39 +2,41 @@
 
 set -o pipefail
 
-SEP=$'\4'
-RG_ARGS="${_RG_ARGS:-}"
+# https://junegunn.github.io/fzf/tips/ripgrep-integration/
+RG=(
+  rg
+  --column
+  --fixed-strings
+  --color always
+  # --null
+  --
+)
+printf -v CHANGE -- '%q ' "${RG[@]}"
+BAT=(
+  bat
+  --color always
+  --highlight-line
+)
+printf -v PREVIEW -- '%q ' "${BAT[@]}"
 
-if [[ -z $RG_ARGS ]]; then
-  export -- _RG_ARGS=""
-  ARGS=(
-    --line-buffered
-    --files-with-matches
-    --null
-    "$@"
-  )
-  FZF_ARGS=(
-    --read0
-    --print0
-    --preview='{f}'
-    --multi
-  )
-  IFS="$SEP"
+# shellcheck disable=SC2154
+EDIT=(
+  "$EDITOR"
+  --
+)
+printf -v OPENER -- '%q ' "${EDIT[@]}"
 
-  if (($#)); then
-    rg "${ARGS[@]}" 2>&1 | SHELL="$0" _RG_ARGS="$*" fzf "${FZF_ARGS[@]}"
-  else
-    rg
-  fi
-else
-  # shellcheck disable=SC2154
-  ARGS=(
-    --color=always
-    --line-number
-    --context=3
-    --context-separator="$("$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '-' "$FZF_PREVIEW_COLUMNS")"
-  )
-  readarray -t -d "$SEP" -- ENV_ARGS < <(printf -- '%s' "$RG_ARGS")
-  readarray -t -d '' -- RG_PATH < "$2"
-  exec -- rg "${ARGS[@]}" "${ENV_ARGS[@]}" -- "${RG_PATH[@]}"
-fi
+FZF_ARGS=(
+  fzf
+  --disabled
+  # --read0
+  --ansi
+  --multi
+  --delimiter ':'
+  --preview "$PREVIEW {2} -- {1}"
+  --bind "start:reload:$CHANGE '' || :"
+  --bind "change:reload:$CHANGE {q} || :"
+  --bind "enter:become:$OPENER {+1}"
+)
+
+"${FZF_ARGS[@]}" < /dev/null
