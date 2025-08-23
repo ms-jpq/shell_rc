@@ -34,6 +34,7 @@ FZF_ARGS=(
   --multi
   --delimiter ':'
   --preview "$PREVIEW {2} -- {1}"
+  --preview-window '~3,+{2}+3/3'
   --bind "start:reload:$CHANGE '' || :"
   --bind "change:reload:$CHANGE {q} || :"
   --bind "enter:become:$OPENER {+1}"
