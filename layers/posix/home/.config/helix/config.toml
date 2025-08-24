@@ -136,21 +136,18 @@ o = [":set cursorline false", "open_below"]
 ]
 
 C-t = [
-  ":sh rm -f -- /tmp/yazi-helix",
-  ":insert-output yazi --chooser-file=/tmp/yazi-helix -- '%{buffer_name}'",
-  ':insert-output printf -- %s "\x1b[?1049h\x1b[?2004h" > /dev/tty',
-  ":open %sh{cat -- /tmp/yazi-helix}",
+  ":open %sh{yazi --chooser-file=/dev/stdout -- '%{buffer_name}'}",
   ":set mouse false",
   ":set mouse true",
   ":redraw",
 ]
 
 [keys.normal.space]
+P = "no_op"
 Y = "no_op"
 m = ":format"
-p = "no_op"
 
-P = [
+p = [
   ':open %sh{"$XDG_CONFIG_HOME/zsh/bin/rgf"}',
   ":set mouse false",
   ":set mouse true",
