@@ -24,14 +24,21 @@ EDIT=(
   "$EDITOR"
   --
 )
-printf -v OPENER -- '%q ' "${EDIT[@]}"
+
+MULT=()
+if [[ -t 1 ]]; then
+  MULT+=(--multi)
+  printf -v OPENER -- '%q ' "${EDIT[@]}"
+else
+  OPENER='printf -- %s'
+fi
 
 FZF_ARGS=(
   fzf
   --disabled
   # --read0
   --ansi
-  --multi
+  "${MULT[@]}"
   --delimiter ':'
   --preview "$PREVIEW {2} -- {1}"
   --preview-window '~3,+{2}+3/3'
