@@ -5,7 +5,15 @@ set -o pipefail
 DIR="$(realpath -- "$0")"
 DIR="$(dirname -- "$DIR")"
 PAR="${PAR:=0}"
-TIMEOUT=$((15 * 60))
+TIMEOUT=$((60 * 15))
+read -r -d '' -- PYTHON <<- 'PYTHON' || true
+from subprocess import check_call
+from sys import argv
+
+_, timeout, *args = argv
+
+check_call(args, timeout=float(timeout))
+PYTHON
 
 case "${RECUR:=""}" in
 '')
@@ -69,9 +77,9 @@ JQ
   ARGV=()
   if [[ $OSTYPE == msys ]]; then
     ARGV+=(
-      perl -w
-      -e 'alarm shift; (exec @ARGV) || die'
-      -- "$TIMEOUT"
+      python
+      -c "$PYTHON"
+      "$TIMEOUT"
     )
   fi
   ARGV+=(

@@ -70,11 +70,18 @@ for LINE in "${DESIRED[@]}"; do
 done
 
 TIMEOUT=$((60 * 15))
-MS_TIMEOUT=(
-  perl -w
-  -e 'alarm shift; (exec @ARGV) || die'
-  -- "$TIMEOUT"
+read -r -d '' -- PYTHON <<- 'PYTHON' || true
+from subprocess import check_call
+from sys import argv
 
+_, timeout, *args = argv
+
+check_call(args, timeout=float(timeout))
+PYTHON
+MS_TIMEOUT=(
+  python
+  -c "$PYTHON"
+  "$TIMEOUT"
 )
 
 if (("${#RM[@]}")); then
