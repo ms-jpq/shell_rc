@@ -37,7 +37,7 @@ FZF_ARGS=(
   --preview-window '~3,+{2}+3/3'
   --bind "start:reload:$CHANGE '' || :"
   --bind "change:reload:$CHANGE {q} || :"
-  --bind "enter:become:$OPENER {+1}"
+  --bind "enter:become:$OPENER {+1,2,3}"
 )
 
 "${FZF_ARGS[@]}" < /dev/null
