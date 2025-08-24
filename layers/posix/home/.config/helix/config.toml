@@ -147,6 +147,15 @@ P = "no_op"
 Y = "no_op"
 m = ":format"
 
+U = [
+  ":write-all",
+  ":sh tmux display-popup -EE -d '#{pane_current_path}' -w '95%%' -h '90%%' -- lazygit",
+  ":reload-all",
+  ":set mouse false",
+  ":set mouse true",
+  ":redraw",
+]
+
 p = [
   ':open %sh{"$XDG_CONFIG_HOME/zsh/bin/rgf"}',
   ":set mouse false",
@@ -166,7 +175,7 @@ o = ":toggle inline-diagnostics.cursor-line disable hint"
 D = ':reset-diff-change'
 Q = ":write-quit-all!"
 R = ":config-reload"
-T = ":insert-output tmux new-window -a -c '#{pane_current_path}' -- hx -- '%{buffer_name}:%{cursor_line}:%{cursor_column}'"
+T = ":sh tmux new-window -a -c '#{pane_current_path}' -- hx -- '%{buffer_name}:%{cursor_line}:%{cursor_column}'"
 X = ":buffer-close-others!"
 r = ":reload-all"
 t = "vsplit"
