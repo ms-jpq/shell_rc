@@ -143,9 +143,9 @@ C-t = [
 ]
 
 [keys.normal.space]
-P = "no_op"
 Y = "no_op"
 m = ":format"
+p = "no_op"
 
 U = [
   ":write-all",
@@ -156,7 +156,7 @@ U = [
   ":redraw",
 ]
 
-p = [
+P = [
   ':open %sh{"$XDG_CONFIG_HOME/zsh/bin/rgf"}',
   ":set mouse false",
   ":set mouse true",
