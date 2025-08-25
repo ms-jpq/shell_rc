@@ -78,7 +78,7 @@ y = "yank_to_clipboard"
 [keys.normal]
 Z = "no_op"
 
-"@" = "@<C-s>*%s<up><ret>"
+"@" = "@*%s<up><ret>"
 
 A-left  = ["move_prev_word_end", "move_char_left", "move_char_right"]
 A-right = ["move_next_word_start", "move_char_right"]
