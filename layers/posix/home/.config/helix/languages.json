@@ -127,6 +127,13 @@
       },
       "language-servers": ["ltex-ls-plus"]
     },
+    "nginx": {
+      "formatter": {
+        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
+        "command": "prettier.js"
+      },
+      "file-types": ["nginx"]
+    },
     "perl": {
       "formatter": {
         "args": ["--indent-columns=2"],
