@@ -156,7 +156,7 @@ U = [
   ":redraw",
 ]
 
-o = [
+O = [
   ":cd %sh{yazi --chooser-file=/dev/null --cwd-file=/dev/stdout}",
   ":set mouse false",
   ":set mouse true",

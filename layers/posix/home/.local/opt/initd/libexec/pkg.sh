@@ -69,21 +69,6 @@ for LINE in "${DESIRED[@]}"; do
   esac
 done
 
-TIMEOUT=$((60 * 15))
-read -r -d '' -- PYTHON <<- 'PYTHON' || true
-from subprocess import check_call
-from sys import argv
-
-_, timeout, *args = argv
-
-check_call(args, timeout=float(timeout))
-PYTHON
-MS_TIMEOUT=(
-  python
-  -c "$PYTHON"
-  "$TIMEOUT"
-)
-
 if (("${#RM[@]}")); then
   case "$OSTYPE" in
   darwin*)
@@ -95,7 +80,6 @@ if (("${#RM[@]}")); then
     ;;
   msys)
     WINGET=(
-      "${MS_TIMEOUT[@]}"
       winget uninstall
       --disable-interactivity
       --accept-source-agreements
@@ -134,7 +118,6 @@ if (("${#ADD[@]}")); then
     ;;
   msys)
     WINGET=(
-      "${MS_TIMEOUT[@]}"
       winget install
       --disable-interactivity
       --accept-source-agreements --accept-package-agreements

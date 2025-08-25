@@ -43,7 +43,7 @@ JQ
   ;;
 2)
   MAN="${1%$'\r'}"
-  readarray -t -- PKGS <<< "${2%$'\r'}"
+  readarray -t -- PKGS <<< "${2/$'\r'/""}"
   PKG="${PKGS[0]:=""}"
 
   if [[ -n ${PATCH:=""} ]]; then
