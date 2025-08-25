@@ -156,6 +156,13 @@ U = [
   ":redraw",
 ]
 
+o = [
+  ":cd %sh{yazi --chooser-file=/dev/null --cwd-file=/dev/stdout}",
+  ":set mouse false",
+  ":set mouse true",
+  ":redraw",
+]
+
 P = [
   ':open %sh{"$XDG_CONFIG_HOME/zsh/bin/rgf"}',
   ":set mouse false",

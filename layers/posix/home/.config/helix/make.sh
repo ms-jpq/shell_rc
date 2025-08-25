@@ -42,8 +42,8 @@ JQ
   jq --raw-output0 --arg man "$KEY" "$JQ" < "$DIR/procs.json" | RECUR=2 xargs -r -0 -n 1 -P "$PAR" -- "$0" "$MAN"
   ;;
 2)
-  MAN="$1"
-  readarray -t -- PKGS <<< "$2"
+  MAN="${1%$'\r'}"
+  readarray -t -- PKGS <<< "${2%$'\r'}"
   PKG="${PKGS[0]:=""}"
 
   if [[ -n ${PATCH:=""} ]]; then

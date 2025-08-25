@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
-	"strings"
 )
 
 func init() {
@@ -19,7 +18,7 @@ func main() {
 	if err != nil {
 		log.Panicln(err)
 	}
-	pkg := strings.Trim(os.Args[1], "\r\n")
+	pkg := os.Args[1]
 
 	re := regexp.MustCompile(`^(?:[^/]+/)*([-\w]+)(?:@\w+)?$`)
 	dir := re.FindAllStringSubmatch(pkg, 1)[0][1]
