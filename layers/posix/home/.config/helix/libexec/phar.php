@@ -3,6 +3,10 @@
 
 declare(strict_types=1);
 
+if (PHP_OS_FAMILY === "Windows") {
+    exit(0);
+}
+
 [, $pkg, $github] = $argv;
 
 $userHome = getenv("HOME");

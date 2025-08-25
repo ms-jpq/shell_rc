@@ -143,6 +143,7 @@ C-t = [
 ]
 
 [keys.normal.space]
+K = "signature_help"
 Y = "no_op"
 m = ":format"
 p = "no_op"
