@@ -27,6 +27,7 @@ execlp(
     python,
     "-m",
     "pip",
+    "--disable-pip-version-check",
     "--quiet",
     "--cache-dir",
     join(gettempdir(), "pip"),

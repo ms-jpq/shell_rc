@@ -29,6 +29,8 @@ const { error, status, signal } = spawnSync(
   [
     "install",
     "--no-package-lock",
+    "--no-update-notifier",
+    "--no-fund",
     "--cache",
     join(tmpdir(), "npm"),
     "--no-progress",
