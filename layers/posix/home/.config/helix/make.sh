@@ -12,7 +12,7 @@ from sys import argv
 
 _, timeout, *args = argv
 
-check_call(("env", "--", args), timeout=float(timeout))
+check_call(("env", "--", *args), timeout=float(timeout))
 PYTHON
 
 case "${RECUR:=""}" in

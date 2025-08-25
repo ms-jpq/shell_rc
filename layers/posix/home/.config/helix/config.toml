@@ -73,7 +73,7 @@ y = "yank_to_clipboard"
 "+" = "rotate_selection_contents_backward"
 "_" = "rotate_selection_contents_forward"
 
-"@" = "@<C-s>*%s<up><ret>"
+"@" = "@*%s<up><ret>"
 
 [keys.normal]
 Z = "no_op"
