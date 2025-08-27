@@ -16,4 +16,17 @@ ARGV=(
   -o tabstop=2
 )
 
-exec -- "${ARGV[@]}" "$@"
+BOLD_RED=$'\e[1;31m'
+GREEN=$'\e[0;32m'
+YELLOW=$'\e[0;33m'
+CLS=$'\e[0m'
+
+
+SED=(
+  sed -E
+  -e "s#(\[[[:digit:]]+\])#$BOLD_RED\1$CLS#g"
+  -e "s#(https?://[^ ]+)#$GREEN\1$CLS#g"
+  -e "s#(mailto:[^ ]+)#$YELLOW\1$CLS#g"
+)
+
+"${ARGV[@]}" "$@" | "${SED[@]}"
