@@ -1,7 +1,8 @@
 # https://github.com/sxyazi/yazi/tree/shipped/yazi-config/preset
 
 [mgr]
-show_hidden = true
+show_hidden    = true
+sort_dir_first = true
 
 [preview]
 wrap = "yes"
