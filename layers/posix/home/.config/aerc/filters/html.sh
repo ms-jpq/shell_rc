@@ -21,7 +21,6 @@ GREEN=$'\e[0;32m'
 YELLOW=$'\e[0;33m'
 CLS=$'\e[0m'
 
-
 SED=(
   sed -E
   -e "s#(\[[[:digit:]]+\])#$BOLD_RED\1$CLS#g"
