@@ -128,11 +128,11 @@
       "language-servers": ["ltex-ls-plus"]
     },
     "nginx": {
+      "file-types": ["nginx"],
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
-      },
-      "file-types": ["nginx"]
+      }
     },
     "perl": {
       "formatter": {
@@ -282,6 +282,9 @@
     },
     "r": {
       "command": "lsp.R"
+    },
+    "solargraph": {
+      "command": "solargraph.rb"
     },
     "sorbet": {
       "args": ["tc", "--lsp"],

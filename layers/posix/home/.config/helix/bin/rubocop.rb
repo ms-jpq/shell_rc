@@ -21,5 +21,6 @@ parents.each do
   end
 end
 
-cop = File.join(Dir.home, *%w[.cache helix-rt ruby rubocop bin rubocop])
+gem_path = ENV['GEM_PATH'] = File.join(Dir.home, *%w[.cache helix-rt ruby rubocop])
+cop = File.join(gem_path, *%w[bin rubocop])
 exec(cop, *argv)
