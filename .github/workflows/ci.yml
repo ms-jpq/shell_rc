@@ -13,8 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: |-
-          HOMEBREW_INTERNAL_ALLOW_PACKAGES_FROM_PATHS=1 brew install --HEAD --formula -- ./formulae/*
+      # - run: |-
+      #     HOMEBREW_INTERNAL_ALLOW_PACKAGES_FROM_PATHS=1 brew install --HEAD --formula -- ./formulae/*
 
   docker:
     strategy:
