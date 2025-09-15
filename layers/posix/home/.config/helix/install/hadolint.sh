@@ -16,7 +16,7 @@ esac
 EXT=''
 case "$OSTYPE" in
 darwin*)
-  URI="$BASE-Darwin-x86_64"
+  URI="$BASE-macos-$HT"
   ;;
 linux*)
   URI="$BASE-Linux-$HT"
