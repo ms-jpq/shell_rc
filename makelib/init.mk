@@ -37,7 +37,13 @@ $(VENV)/$(PY_BIN):
 V_SHELLCHECK = $(shell ./libexec/gh-latest.sh $(TMP) koalaman/shellcheck)
 V_SHFMT      = $(shell ./libexec/gh-latest.sh $(TMP) mvdan/sh)
 
-HADO_OS      = $(shell perl -CASD -wpe 's/([a-z])/\u$$1/' <<<'$(OS)')
+HADO_OS      = $(shell sed -E -e 's#darwin#macos#' <<<'$(OS)')
+ifeq ($(HOSTTYPE), aarch64)
+HADO_ARCH    = $(GOARCH)
+else
+HADO_ARCH    = $(HOSTTYPE)
+endif
+
 
 $(VAR)/bin/shellcheck: | $(VAR)/bin
 	URI='https://github.com/koalaman/shellcheck/releases/latest/download/shellcheck-$(V_SHELLCHECK).$(OS).x86_64.tar.xz'
@@ -45,7 +51,7 @@ $(VAR)/bin/shellcheck: | $(VAR)/bin
 	chmod +x '$@'
 
 $(VAR)/bin/hadolint: | $(VAR)/bin
-	URI='https://github.com/hadolint/hadolint/releases/latest/download/hadolint-$(HADO_OS)-x86_64'
+	URI='https://github.com/hadolint/hadolint/releases/latest/download/hadolint-$(HADO_OS)-$(HADO_ARCH)'
 	$(CURL) --output '$@' -- "$$URI"
 	chmod +x '$@'
 
