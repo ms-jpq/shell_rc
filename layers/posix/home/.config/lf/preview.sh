@@ -4,7 +4,7 @@ set -o pipefail
 
 TARGET="$1"
 WIDTH="$2"
-_HEIGHT="$3"
+HEIGHT="$3"
 _H_POS="$4"
 _V_POS="$5"
 
@@ -19,7 +19,7 @@ MIME="$(file --brief --dereference --mime-type -- "$TARGET")"
 MIME="${MIME%%/*}"
 
 if [[ $MIME == image ]]; then
-  exec -- chafa -- "$TARGET"
+  exec -- chafa --view-size "$((WIDTH - 4))x${HEIGHT}" -- "$TARGET"
 fi
 
 exec -- "${BAT[@]}" -- "$TARGET"
