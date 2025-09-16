@@ -32,7 +32,7 @@ map F              :setfilter
 map o              :user-open
 map W              ${{cd -- "$f"; fzf --bind 'esc:become(true)' --preview "$XDG_CONFIG_HOME/zsh/libexec/preview.sh {}"}}
 map x              cut
-map <enter>        :{{
+map <a-enter>      :{{
                        $printf -- %s "$f"
                        quit
                     }}
