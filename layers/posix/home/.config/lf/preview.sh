@@ -8,11 +8,18 @@ _HEIGHT="$3"
 _H_POS="$4"
 _V_POS="$5"
 
-ARGV=(
+BAT=(
   bat
   --force-colorization
   --wrap character
   --terminal-width $((WIDTH))
 )
 
-exec -- "${ARGV[@]}" -- "$TARGET"
+MIME="$(file --brief --dereference --mime-type -- "$TARGET")"
+MIME="${MIME%%/*}"
+
+if [[ $MIME == image ]]; then
+  exec -- chafa -- "$TARGET"
+fi
+
+exec -- "${BAT[@]}" -- "$TARGET"
