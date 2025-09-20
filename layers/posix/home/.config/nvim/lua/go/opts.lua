@@ -7,9 +7,20 @@ vim.opt.secure = true
 -- use bash as shell
 vim.opt.shell = vim.env.COMSPEC or "bash"
 
-
 local is_win = vim.fn.has("win32") == 1 or vim.fn.has("win32unix")
 vim.g.python3_host_prog = is_win and "python.exe" or "/usr/bin/python3"
+
+-- min lines changed to report
+vim.opt.report = 0
+
+-- no swap files
+vim.opt.swapfile = false
+
+-- wrap
+vim.opt.wrap = true
+
+-- no hex or binary parsing
+vim.opt.nrformats = ""
 
 -- waiting time within a key sequence
 vim.opt.timeoutlen = 500
@@ -30,49 +41,18 @@ vim.opt.scrolloff = 0
 vim.opt.sidescrolloff = 10
 vim.opt.smoothscroll = true
 
--- normalize cursor pos
-local vcol = {"onemore", "block"}
-vim.opt.virtualedit = vcol
+-- ui for cmd auto complete
+vim.opt.wildmenu = true
+vim.opt.wildmode = "list:longest,full"
+vim.opt.wildignorecase = true
+vim.opt.wildoptions = "tagfile"
 
-vim.api.nvim_create_autocmd(
-  "InsertEnter",
-  {
-    callback = function()
-      vim.opt.virtualedit = vcol
-      vim.opt.cursorline = false
-      vim.opt.cursorcolumn = false
-    end
-  }
-)
-vim.api.nvim_create_autocmd(
-  "InsertLeave",
-  {
-    callback = function()
-      vim.opt.cursorline = true
-    end
-  }
-)
+-- more history
+vim.opt.history = 10000
 
-vim.keymap.set(
-  "n",
-  "<leader>f",
-  function()
-    if vim.opt.cursorcolumn then
-      vim.opt.virtualedit = vcol
-      vim.opt.cursorcolumn = false
-    else
-      vim.opt.virtualedit = "all"
-      vim.opt.cursorcolumn = true
-    end
-  end,
-  {
-    noremap = true
-  }
-)
-
-for _, mode in pairs({"n", "v"}) do
-  vim.keymap.set(mode, "$", "$<right>", {noremap = true})
-end
+-- ignore case
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
 -- show cursor
 vim.opt.cursorline = true
