@@ -1,5 +1,6 @@
 Go = {}
 
+require("go.checktime")
 require("go.clipboard")
 require("go.commands")
 require("go.cursor")
@@ -8,5 +9,7 @@ require("go.lsp")
 require("go.opts")
 require("go.paths")
 require("go.plugins")
+require("go.search")
+require("go.session")
 require("go.status_line")
 require("go.theme")

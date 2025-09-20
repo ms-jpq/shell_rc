@@ -1,14 +1,11 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- Prevent macro recording
+-- prevent macro recording
 vim.keymap.set("n", "q", "<nop>", {noremap = true})
 
-for _, mode in pairs {"n", "v"} do
-  -- quit
-  vim.keymap.set(mode, "Q", "<nop>", {noremap = true})
-  vim.keymap.set(mode, "QQ", "<cmd>quitall!<cr>", {noremap = true})
-end
+-- manaul save
+vim.keymap.set("n", "<c-s>", "<cmd>w<cr>", {noremap = true})
 
 -- dont go into ex mode
 vim.keymap.set("c", "<c-f>", "", {noremap = true})
@@ -64,12 +61,6 @@ vim.keymap.set("c", "<c-a>", "<home>", {noremap = true})
 vim.keymap.set("c", "<c-x><c-a>", "<c-a>", {noremap = true})
 vim.keymap.set("c", "<c-e>", "<end>", {noremap = true})
 
-local function with_redraw(wrapped)
-  local l = [[<cmd>set lazyredraw<cr><cmd>set noincsearch<cr>]]
-  local r = [[<cmd>nohlsearch<cr><cmd>set incsearch<cr><cmd>set nolazyredraw<cr>]]
-  return l .. wrapped .. r
-end
-
 -- emacs arrow movements
 vim.keymap.set("i", "<m-left>", "<c-o>b", {noremap = true})
 vim.keymap.set("i", "<m-right>", "<c-o>e<right>", {noremap = true})
@@ -83,6 +74,10 @@ for _, mode in pairs {"n", "o", "v"} do
 end
 
 for _, mode in pairs {"n", "v"} do
+  -- quit
+  vim.keymap.set(mode, "Q", "<nop>", {noremap = true})
+  vim.keymap.set(mode, "QQ", "<cmd>quitall!<cr>", {noremap = true})
+
   -- delete dont copy
   for _, key in pairs {"c", "C", "d", "D", "s", "S", "x", "X"} do
     vim.keymap.set(mode, key, '"_' .. key, {noremap = true})
@@ -107,7 +102,7 @@ for _, mode in pairs {"n", "v"} do
     vim.keymap.set(mode, key, key .. "zz", {noremap = true})
   end
 
-  -- move relative to window size
+  -- movement relative to window size
   for key, val in pairs {["<c-u>"] = "<up>", ["<c-d>"] = "<down>"} do
     vim.keymap.set(
       mode,
@@ -120,12 +115,7 @@ for _, mode in pairs {"n", "v"} do
     )
   end
 
-  -- () search next params
-  vim.keymap.set(mode, "(", with_redraw [[?(\|[\|{<cr>]], {noremap = true})
-  vim.keymap.set(mode, ")", with_redraw [[/)\|]\|}<cr>]], {noremap = true})
-
-  -- move w linewrap
-
+  -- movement w linewrap
   for _, key in pairs {"<up>", "<down>", "j", "k"} do
     vim.keymap.set(
       mode,
