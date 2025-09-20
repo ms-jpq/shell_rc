@@ -30,21 +30,10 @@ vim.keymap.set("v", "<s-down>", "g<down>", {noremap = true})
 vim.keymap.set("v", "<", "<gv", {noremap = true})
 vim.keymap.set("v", ">", ">gv", {noremap = true})
 
--- add emacs key binds
-vim.keymap.set("i", "<c-a>", "<c-o>^", {noremap = true})
-vim.keymap.set("i", "<c-x><c-a>", "<c-a>", {noremap = true})
-vim.keymap.set(
-  "i",
-  "<c-e>",
-  function()
-    return (vim.fn.pumvisible() and "<c-e>" or "") .. "<end>"
-  end,
-  {expr = true, noremap = true}
-)
-
-vim.keymap.set("c", "<c-a>", "<home>", {noremap = true})
-vim.keymap.set("c", "<c-x><c-a>", "<c-a>", {noremap = true})
-vim.keymap.set("c", "<c-e>", "<end>", {noremap = true})
+-- previous, next, line, file, omnifunc
+for _, key in pairs {"p", "n", "l", "f", "o"} do
+  vim.keymap.set("i", key, "<c-x>" .. key, {noremap = true})
+end
 
 -- insert movement keys do not enter
 for _, key in pairs {"<left>", "<right>"} do
@@ -58,13 +47,52 @@ for _, key in pairs {"<left>", "<right>"} do
   )
 end
 
+-- add emacs key binds
+vim.keymap.set("i", "<c-a>", "<c-o>^", {noremap = true})
+vim.keymap.set("i", "<c-x><c-a>", "<c-a>", {noremap = true})
+vim.keymap.set(
+  "i",
+  "<c-e>",
+  function()
+    return (vim.fn.pumvisible() and "<c-e>" or "") .. "<end>"
+  end,
+  {expr = true, noremap = true}
+)
+
+-- emacs arrow movements
+vim.keymap.set("c", "<c-a>", "<home>", {noremap = true})
+vim.keymap.set("c", "<c-x><c-a>", "<c-a>", {noremap = true})
+vim.keymap.set("c", "<c-e>", "<end>", {noremap = true})
+
 local function with_redraw(wrapped)
   local l = [[<cmd>set lazyredraw<cr><cmd>set noincsearch<cr>]]
   local r = [[<cmd>nohlsearch<cr><cmd>set incsearch<cr><cmd>set nolazyredraw<cr>]]
   return l .. wrapped .. r
 end
 
+-- emacs arrow movements
+vim.keymap.set("i", "<m-left>", "<c-o>b", {noremap = true})
+vim.keymap.set("i", "<m-right>", "<c-o>e<right>", {noremap = true})
+vim.keymap.set("c", "<m-left>", "<s-left>", {noremap = true})
+vim.keymap.set("c", "<m-right>", "<s-right>", {noremap = true})
+
+for _, mode in pairs {"n", "o", "v"} do
+  -- add emacs key binds
+  vim.keymap.set(mode, "<m-left>", "b", {noremap = true})
+  vim.keymap.set(mode, "<m-right>", "e<right>", {noremap = true})
+end
+
 for _, mode in pairs {"n", "v"} do
+  -- delete dont copy
+  for _, key in pairs {"c", "C", "d", "D", "s", "S", "x", "X"} do
+    vim.keymap.set(mode, key, '"_' .. key, {noremap = true})
+  end
+
+  -- leave cursor 1 behind instead of before
+  for _, key in pairs {"p", "P"} do
+    vim.keymap.set(mode, key, "g" .. key, {noremap = true})
+  end
+
   -- scroll fixed lines
   vim.keymap.set(mode, "{", "5g<up>zz", {noremap = true})
   vim.keymap.set(mode, "}", "5g<down>zz", {noremap = true})

@@ -2,6 +2,9 @@
 local vcol = {"onemore", "block"}
 vim.opt.virtualedit = vcol
 
+-- show cursor
+vim.opt.cursorline = true
+
 vim.api.nvim_create_autocmd(
   "InsertEnter",
   {

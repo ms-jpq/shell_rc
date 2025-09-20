@@ -54,5 +54,5 @@ vim.opt.history = 10000
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
--- show cursor
-vim.opt.cursorline = true
+-- dont follow tags
+vim.opt.complete:remove("i")
