@@ -30,6 +30,24 @@ vim.keymap.set("v", "<s-down>", "g<down>", {noremap = true})
 vim.keymap.set("v", "<", "<gv", {noremap = true})
 vim.keymap.set("v", ">", ">gv", {noremap = true})
 
+-- insert movement keys do not enter
+for _, key in pairs {"<left>", "<right>"} do
+  vim.keymap.set(
+    "i",
+    key,
+    function()
+      return (vim.fn.pumvisible() and "<C-e>" or "") .. key
+    end,
+    {expr = true, noremap = true}
+  )
+end
+
+local function with_redraw(wrapped)
+  local l = [[<cmd>set lazyredraw<cr><cmd>set noincsearch<cr>]]
+  local r = [[<cmd>nohlsearch<cr><cmd>set incsearch<cr><cmd>set nolazyredraw<cr>]]
+  return l .. wrapped .. r
+end
+
 for _, mode in pairs {"n", "v"} do
   -- scroll fixed lines
   vim.keymap.set(mode, "{", "5g<up>zz", {noremap = true})
@@ -57,10 +75,13 @@ for _, mode in pairs {"n", "v"} do
       {expr = true, noremap = true}
     )
   end
-end
 
--- move w linewrap
-for _, mode in pairs {"n", "v"} do
+  -- () search next params
+  vim.keymap.set(mode, "(", with_redraw [[?(\|[\|{<cr>]], {noremap = true})
+  vim.keymap.set(mode, ")", with_redraw [[/)\|]\|}<cr>]], {noremap = true})
+
+  -- move w linewrap
+
   for _, key in pairs {"<up>", "<down>", "j", "k"} do
     vim.keymap.set(
       mode,
@@ -71,16 +92,4 @@ for _, mode in pairs {"n", "v"} do
       {expr = true, noremap = true}
     )
   end
-end
-
--- insert movement keys do not enter
-for _, key in pairs {"<left>", "<right>"} do
-  vim.keymap.set(
-    "i",
-    key,
-    function()
-      return (vim.fn.pumvisible() and "<C-e>" or "") .. key
-    end,
-    {expr = true, noremap = true}
-  )
 end
