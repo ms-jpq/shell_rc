@@ -30,6 +30,22 @@ vim.keymap.set("v", "<s-down>", "g<down>", {noremap = true})
 vim.keymap.set("v", "<", "<gv", {noremap = true})
 vim.keymap.set("v", ">", ">gv", {noremap = true})
 
+-- add emacs key binds
+vim.keymap.set("i", "<c-a>", "<c-o>^", {noremap = true})
+vim.keymap.set("i", "<c-x><c-a>", "<c-a>", {noremap = true})
+vim.keymap.set(
+  "i",
+  "<c-e>",
+  function()
+    return (vim.fn.pumvisible() and "<c-e>" or "") .. "<end>"
+  end,
+  {expr = true, noremap = true}
+)
+
+vim.keymap.set("c", "<c-a>", "<home>", {noremap = true})
+vim.keymap.set("c", "<c-x><c-a>", "<c-a>", {noremap = true})
+vim.keymap.set("c", "<c-e>", "<end>", {noremap = true})
+
 -- insert movement keys do not enter
 for _, key in pairs {"<left>", "<right>"} do
   vim.keymap.set(
