@@ -1,5 +1,7 @@
 set background=light
 
+highlight HighlightedyankRegion cterm=reverse gui=reverse
+
 function s:colours()
   highlight! CursorLine        guibg=#eae0f1 ctermbg=253
   highlight! EndOfBuffer       guibg=NONE    ctermbg=NONE

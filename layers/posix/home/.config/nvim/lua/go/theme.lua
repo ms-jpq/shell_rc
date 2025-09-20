@@ -1,0 +1,42 @@
+-- use 256 colours
+vim.opt.termguicolors = true
+
+-- remove welcome message
+vim.opt.shortmess:append("I")
+
+-- always show tabline
+vim.opt.showtabline = 2
+
+-- always show issues column
+vim.opt.signcolumn = "yes"
+
+-- show line count
+vim.opt.number = true
+
+-- dont show eob lines
+vim.opt.fillchars = [[eob: ]]
+
+-- always show status line
+vim.opt.laststatus = 3
+
+-- keep wrapped text indent
+vim.opt.breakindent = true
+vim.opt.showbreak = "↳"
+
+-- constant cursor styling
+vim.opt.guicursor = ""
+
+-- completion menu transparency
+vim.opt.pumblend = 5
+
+vim.api.nvim_create_autocmd(
+  {"TextYankPost"},
+  {
+    callback = function()
+      vim.hl.on_yank {higroup = "HighlightedyankRegion"}
+    end
+  }
+)
+
+-- theme
+vim.cmd("source " .. vim.fs.joinpath(vim.fn.stdpath("config"), "plugin", "theme.vim"))

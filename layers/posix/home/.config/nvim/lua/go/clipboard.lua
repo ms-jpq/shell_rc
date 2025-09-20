@@ -102,13 +102,13 @@ vim.g.clipboard = {
 }
 
 vim.paste = (function(paste)
-  return function(lines, phase)
+  return function(lines, p)
     local acc = {}
     for _, line in ipairs(lines) do
       for _, l in ipairs(vim.split(line, "\027%[27;5;106~")) do
         table.insert(acc, l)
       end
     end
-    return paste(acc, phase)
+    return paste(acc, p)
   end
 end)(vim.paste)
