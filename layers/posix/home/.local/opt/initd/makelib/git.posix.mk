@@ -26,8 +26,6 @@ $(OPT)/fzf-tab                 https://github.com/Aloxaf/fzf-tab
 $(OPT)/helix                   https://github.com/helix-editor/helix
 $(OPT)/pipes.sh                https://github.com/pipeseroni/pipes.sh
 $(OPT)/weechat-scripts         https://github.com/weechat/scripts
-$(OPT)/zsh-autosuggestions     https://github.com/zsh-users/zsh-autosuggestions
-$(OPT)/zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting
 
 endef
 

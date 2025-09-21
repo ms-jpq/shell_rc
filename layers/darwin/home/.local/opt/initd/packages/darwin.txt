@@ -118,3 +118,5 @@
 + yank
 + yazi
 + zsh
++ zsh-autosuggestions
++ zsh-syntax-highlighting
