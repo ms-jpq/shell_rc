@@ -1,5 +1,5 @@
 vim.api.nvim_create_autocmd(
-  {"BufNewFile"},
+  {"BufEnter"},
   {
     pattern = {"*.txt"},
     callback = function()
