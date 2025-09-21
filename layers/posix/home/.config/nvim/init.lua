@@ -21,4 +21,11 @@ require("go.text_objects.line")
 require("go.text_objects.move")
 require("go.text_objects.sort")
 require("go.theme")
+require("go.windows")
 require("go.whitespace")
+
+for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+  if vim.api.nvim_buf_get_name(buf) == "" then
+    vim.bo[buf].buftype = "nofile"
+  end
+end
