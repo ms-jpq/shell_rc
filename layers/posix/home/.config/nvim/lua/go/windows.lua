@@ -78,13 +78,14 @@ local toggle_qf = function(lo)
       local buf = vim.api.nvim_win_get_buf(win)
       local ft = vim.bo[buf].filetype
       if ft == "qf" then
-        vim.api.nvim_win_close(win)
+        vim.api.nvim_win_close(win, true)
         closed = true
       end
     end
 
     if not closed then
-      vim.cmd([[copen]])
+      local height = vim.o.previewheight
+      vim.cmd([[copen ]] .. height)
     end
   end
 end
