@@ -32,3 +32,5 @@ for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     vim.bo[buf].buftype = "nofile"
   end
 end
+
+require("go.pack")

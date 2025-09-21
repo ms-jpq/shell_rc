@@ -98,7 +98,7 @@ for _, mode in pairs {"n", "v"} do
   end
 
   -- re-center
-  for _, key in pairs {"d", "n", "N", "[c", "]c", "<c-f>", "<c-b>"} do
+  for _, key in pairs {"n", "N", "[c", "]c", "<c-f>", "<c-b>"} do
     vim.keymap.set(mode, key, key .. "zz", {noremap = true})
   end
 
