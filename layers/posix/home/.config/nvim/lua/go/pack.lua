@@ -12,6 +12,7 @@ require("go.pack.start.fzf")
 
 vim.cmd [[packloadall]]
 
+require("go.pack.start.theme")
 require("go.pack.start.treesitter")
 
 require("go.pack.opt.copilot")

@@ -1,5 +1,5 @@
 vim.g.chadtree_settings = {
-  xdg = true
+  -- xdg = true
 }
 
 vim.keymap.set("n", [[<leader>v]], [[<cmd>CHADopen<cr>]], {noremap = true})
