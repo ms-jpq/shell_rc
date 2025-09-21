@@ -87,7 +87,7 @@ local paste = function()
   return {}
 end
 
-vim.o.clipboard = "unnamedplus"
+vim.opt.clipboard = "unnamedplus"
 vim.g.clipboard = {
   name = "OSC 52",
   cache_enabled = true,

@@ -1,7 +1,7 @@
 local to = require("go.text_objects")
 
 Go.op_select_line = function(is_inside)
-  local row = unpack(vim.api.nvim_win_get_cursor(0))
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
   local line = unpack(vim.api.nvim_buf_get_lines(0, row - 1, row, true))
 
   local lhs = 0
@@ -14,8 +14,13 @@ Go.op_select_line = function(is_inside)
     rhs = #line + 1
   end
 
-  vim.print(line)
   to.set_visual_selection("v", row, lhs, row, rhs, false)
+
+  vim.schedule(
+    function()
+      vim.api.nvim_win_set_cursor(0, {row, col})
+    end
+  )
 end
 
 local cmd = function(inside)
