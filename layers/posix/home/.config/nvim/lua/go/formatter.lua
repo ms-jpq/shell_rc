@@ -1,10 +1,24 @@
+local lib = require("go")
+
+local data = nil
+
+local fmt_command = function(buf)
+  if data == nil then
+    local loadpath = vim.fs.joinpath(vim.fn.stdpath("config"), "apriori", "fmt.json")
+    data = lib.read_json(loadpath)
+  end
+
+  local filetype = vim.bo[buf].filetype
+  return {}
+end
+
 Go.run_fmt = function()
   local buf = vim.api.nvim_get_current_buf()
   local name = vim.api.nvim_buf_get_name(buf)
   local cwd = name ~= "" and vim.fs.dirname(name) or vim.fn.getcwd()
   local timeout = 3000
 
-  local cmd = {"sleep", "--", "2"}
+  local cmd = fmt_command(buf)
 
   local handle = nil
   local on_exit = function(waited)

@@ -1,4 +1,4 @@
-local lib = require("golib")
+local lib = require("go")
 
 local pathsep = lib.is_win and ";" or ":"
 local home = vim.uv.os_homedir()

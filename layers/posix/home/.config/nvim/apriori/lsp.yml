@@ -1,0 +1,350 @@
+---
+ds_pinyin_lsp:
+  bin: ds-pinyin-lsp
+
+jsonls:
+  bin: vscode-json-language-server
+
+yamlls:
+  bin: yaml-language-server
+  filetypes:
+    - yaml
+    - yaml.ansible
+    - yaml.docker-compose
+  # settings:
+  #   yaml:
+  #     keyOrdering: false
+
+taplo:
+  bin: taplo
+
+typos_lsp:
+  bin: typos-lsp
+  init_options:
+    diagnosticSeverity: Information
+
+# harper_ls:
+#   bin: harper-ls
+
+lemminx:
+  bin: lemminx
+  args: []
+
+contextive:
+  bin: Contextive.LanguageServer_which
+
+ast_grep:
+  bin: ast-grep
+
+# marksman:
+#   bin: marksman
+
+markdown:
+  bin: vscode-markdown-language-server
+  args:
+    - --stdio
+  filetypes:
+    - markdown
+
+# ltex:
+#   bin: ltex-ls
+
+ltex_plus:
+  bin: ltex-ls-plus
+
+texlab:
+  bin: texlab
+  settings:
+    texlab:
+      build:
+        args:
+          - -X
+          - compile
+          - --keep-intermediates
+          - --keep-logs
+          - --synctex
+          - --
+          - "%f"
+        executable: tectonic
+        # onSave: True
+        # forwardSearchAfter: True
+      # forwardSearch:
+      #   executable: evince-synctex
+      #   args:
+      #     - "-f"
+      #     - "%l"
+      #     - "%p"
+      #     - '"code -g %f:%l"'
+
+digestif:
+  bin: digestif
+
+diagnosticls:
+  bin: diagnostic-languageserver
+  filetypes:
+    - dockerfile
+    - sh
+    - zsh
+  root:
+    fallback: cwd
+  init_options:
+    filetypes:
+      dockerfile:
+        - hadolint
+    linters:
+      hadolint:
+        args:
+          - --format
+          - json
+          - --
+          - "%file"
+        command: hadolint
+        parseJson:
+          column: column
+          line: line
+          message: "${message} [${code}]"
+          security: level
+        rootPatterns:
+          - .hadolint.yml
+          - .hadolint.yaml
+        securities:
+          error: error
+          info: info
+          style: hint
+          warning: warning
+        sourceName: hadolint
+
+bashls:
+  bin: bash-language-server
+
+jqls:
+  bin: jq-lsp
+
+awk_ls:
+  bin: awk-language-server
+
+systemd_ls:
+  bin: systemd-language-server
+
+perlnavigator:
+  bin: perlnavigator
+
+powershell_es:
+  bin: pwsh_es.ps1
+  args: []
+
+dockerls:
+  bin: docker-langserver
+
+docker_compose_language_service:
+  bin: docker-compose-langserver
+
+pyright:
+  bin: pyright-langserver
+
+# pylyzer:
+#   bin: pylyzer
+#
+# ruff_lsp:
+#   bin: ruff
+
+hls:
+  bin: haskell-language-server-wrapper
+
+rust_analyzer:
+  bin: rust-analyzer
+
+gopls:
+  bin: gopls
+
+golangci_lint_ls:
+  bin: golangci-lint-langserver
+
+sourcekit:
+  bin: sourcekit-lsp
+
+clangd:
+  bin: clangd
+
+ccls:
+  bin: ccls
+
+fortls:
+  bin: fortls
+
+# typeprof:
+#   bin: typeprof
+
+# steep:
+#   bin: steep
+
+# ruby_lsp:
+#   bin: ruby-lsp
+
+sorbet:
+  bin: srb
+
+solargraph:
+  bin: solargraph
+
+mdx_analyzer:
+  bin: mdx-language-server
+
+ts_ls:
+  bin: typescript-language-server
+
+prismals:
+  bin: prisma-language-server
+
+eslint:
+  bin: vscode-eslint-language-server
+  settings:
+    run: onSave
+    rulesCustomizations:
+      - rule: "*"
+        severity: downgrade
+      - rule: prettier/*
+        severity: info
+
+# denols:
+#   bin: deno
+
+superhtml:
+  bin: superhtml
+
+cssls:
+  bin: vscode-css-language-server
+
+tailwindcss:
+  bin: tailwindcss-language-server
+
+svelte:
+  bin: svelteserver
+
+graphql:
+  bin: graphql-lsp
+
+vimls:
+  bin: vim-language-server
+
+r_language_server:
+  bin: lsr
+  args: []
+
+julials:
+  bin: julia-lsp
+  args: []
+
+phan:
+  bin: phan
+
+# psalm:
+#   bin: psalm
+
+phpactor:
+  bin: phpactor
+
+intelephense:
+  bin: intelephense
+  init_options:
+    globalStoragePath: /var/tmp/intelephense
+
+fsautocomplete:
+  bin: fsautocomplete
+
+omnisharp:
+  bin: omnisharp
+  args: []
+
+clojure_lsp:
+  bin: clojure-lsp
+
+# gradle_ls:
+#   bin: gradle-language-server
+
+kotlin_lsp:
+  bin: kotlin-lsp
+
+kotlin_language_server:
+  bin: kotlin-language-server
+
+jdtls:
+  bin: jdtls
+
+prolog_ls:
+  bin: prolog-ls
+  args: []
+
+# sqlls:
+#   bin: sql-language-server
+
+lua_ls:
+  bin: lua-language-server
+  settings:
+    Lua:
+      runtime:
+        version: "Lua 5.1"
+
+ansiblels:
+  bin: ansible-language-server
+
+glsl_analyzer:
+  bin: glsl_analyzer
+
+# theme_check:
+#   bin: theme-check-language-server
+
+# emmet_language_server:
+#   bin: emmet-language-server
+
+terraformls:
+  bin: terraform-ls
+
+helm_ls:
+  bin: helm_ls
+
+tflint:
+  bin: tflint
+
+cobol_ls:
+  bin: cobol-language-support
+  args:
+    - pipeEnabled
+    - '-Dline.separator=\r\n'
+    - -Dlogback.statusListenerClass=ch.qos.logback.core.status.NopStatusListener
+    - -DserverType=NATIVE
+
+nginx_language_server:
+  bin: nginx-language-server
+
+lsp_ai:
+  bin: lsp-ai
+  # https://github.com/SilasMarvin/lsp-ai/wiki/In%E2%80%90Editor-Chatting
+  filetypes: []
+  init_options:
+    memory:
+      file_store: {}
+    models: []
+    chat: []
+
+tabby_ml:
+  bin: tabby-agent
+  filetypes:
+    - bash
+    - java
+    - javascript
+    - kotlin
+    - markdown
+    - php
+    - python
+    - ruby
+    - typescript
+
+# gh_actions_ls:
+#   bin: gh-actions-language-server
+
+# volar:
+#   bin: vue-language-server
+
+tsp_server:
+  bin: tsp-server

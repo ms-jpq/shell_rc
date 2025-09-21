@@ -1,3 +1,5 @@
+local lib = require("go")
+
 vim.opt.tagfunc = "v:lua.vim.lsp.tagfunc"
 vim.opt.formatexpr = "v:lua.vim.lsp.formatexpr()"
 
@@ -86,3 +88,36 @@ for _, mode in pairs {"n", "v"} do
     {noremap = true}
   )
 end
+
+(function()
+  local loadpath = vim.fs.joinpath(vim.fn.stdpath("config"), "apriori", "lsp.json")
+  local json = lib.read_json(loadpath)
+
+  if coq ~= nil then
+    cfg = coq.lsp_ensure_capabilities(cfg)
+  end
+  if chad ~= nil then
+    cfg = chad.lsp_ensure_capabilities(cfg)
+  end
+
+  for name, conf in pairs(json) do
+    local overrides = {
+      cmd = conf.args and vim.iter({{conf.bin}, conf.args}):flatten():totable() or nil,
+      filetypes = conf.filetypes,
+      init_options = conf.init_options,
+      settings = conf.settings
+    }
+
+    local config =
+      vim.iter(overrides):filter(
+      function(_, val)
+        return val ~= nil
+      end
+    ):totable()
+    vim.lsp.config(config)
+
+    if vim.fn.executable(conf.bin) ~= 0 then
+      vim.lsp.enable(name)
+    end
+  end
+end)()
