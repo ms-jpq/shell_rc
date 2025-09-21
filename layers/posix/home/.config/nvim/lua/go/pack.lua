@@ -9,8 +9,12 @@ vim.opt.packpath:append(packed)
 
 require("go.pack.start.chadtree")
 require("go.pack.start.coq")
+require("go.pack.start.fzf")
 
 vim.cmd [[packloadall]]
+
+require("go.pack.start.leap")
+require("go.pack.start.theme")
 
 vim.schedule(
   function()

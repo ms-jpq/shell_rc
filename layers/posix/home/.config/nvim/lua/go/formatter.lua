@@ -9,7 +9,7 @@ local fmt_command = function(buf)
   end
 
   local filetype = vim.bo[buf].filetype
-  return {}
+  return {"sed", "-E", "-e", "s#[[:space:]]*$##g"}
 end
 
 Go.run_fmt = function()

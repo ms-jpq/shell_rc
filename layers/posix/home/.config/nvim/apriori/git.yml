@@ -1,53 +1,4 @@
 ---
-https://github.com/ms-jpq/chadtree:
-  mvp: &mvp true
-  call:
-    - - rm
-      - -fr
-      - --
-      - .vars/runtime
-    - - python3
-      - -m
-      - chadtree
-      - deps
-  # vals:
-  #   chadtree_settings:
-  #     theme.icon_glyph_set: ascii
-  keys:
-    - modes: n
-      maps:
-        "<leader>v": "<cmd>CHADopen<cr>"
-        "<leader>z": "<cmd>CHADrestore<cr>"
-
-https://github.com/ms-jpq/coq_nvim:
-  mvp: *mvp
-  call:
-    - - rm
-      - -fr
-      - --
-      - .vars/runtime
-    - - python3
-      - -m
-      - coq
-      - deps
-  vals:
-    coq_settings:
-      auto_start: true
-      display:
-        statusline.helo: false
-        mark_applied_notify: false
-      clients:
-        registers.lines: ["z"]
-        lsp.ignored_servers:
-          - copilot
-          - tabby_ml
-        snippets.user_path: |-
-          ~/.config/nvim/pack/modules/start/snips
-      keymap:
-        eval_snips: "<leader>B"
-        repeat: "<leader>."
-        jump_to_mark: <c-y>
-
 https://github.com/nvim-treesitter/nvim-treesitter:
   call:
     - - nvim
@@ -61,12 +12,10 @@ https://github.com/nvim-treesitter/nvim-treesitter:
   lua: |-
     local opts = vim.g.ts_opts
     opts.auto_install = vim.fn.has("win32") == 0
-    require("nvim-treesitter.configs").setup(opts)
+
     vim.o.foldmethod = "expr"
-    vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
   vals:
     ts_opts:
-      # ensure_installed: all
       highlight:
         enable: true
         disable:
@@ -130,17 +79,6 @@ https://github.com/nvim-treesitter/nvim-treesitter:
             <leader><right>: "@statement.outer"
             <leader><down>: "@block.outer"
 
-https://github.com/nvim-treesitter/nvim-treesitter-textobjects: {}
-
-https://github.com/nvim-treesitter/nvim-treesitter-context:
-  lub: |-
-    require("treesitter-context").setup(vim.g.tsc_opts)
-  vals:
-    tsc_opts:
-      multiline_threshold: 1
-
-https://github.com/neovim/nvim-lspconfig:
-  mvp: *mvp
 
 https://github.com/ms-jpq/coq.thirdparty:
   mvp: *mvp
@@ -172,14 +110,6 @@ https://github.com/ms-jpq/coq.thirdparty:
       # - src: vimtex
       #   short_name: vTEX
 
-https://github.com/ms-jpq/snips:
-  mvp: *mvp
-
-https://github.com/ms-jpq/coq.artifacts:
-  mvp: *mvp
-
-https://github.com/junegunn/fzf:
-  mvp: *mvp
 
 https://github.com/junegunn/fzf.vim:
   mvp: *mvp
@@ -217,11 +147,6 @@ https://github.com/junegunn/fzf.vim:
       preview_window:
         - right:wrap
 
-https://github.com/tpope/vim-repeat:
-  mvp: *mvp
-
-https://github.com/tpope/vim-surround:
-  mvp: *mvp
 
 https://github.com/junegunn/vim-easy-align:
   mvp: *mvp
@@ -232,15 +157,12 @@ https://github.com/junegunn/vim-easy-align:
       maps:
         "ga": "<plug>(EasyAlign)"
 
-https://github.com/tpope/vim-unimpaired:
-  mvp: *mvp
 
 https://github.com/cocopon/iceberg.vim:
   mvp: *mvp
   lua: |-
-    vim.cmd [[colorscheme iceberg]]
 
-https://github.com/ggandor/leap.nvim:
+ttps://github.com/ggandor/leap.nvim:
   mvp: *mvp
   lub: |-
     require('leap').set_default_mappings()
