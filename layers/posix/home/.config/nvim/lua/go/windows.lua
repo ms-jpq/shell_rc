@@ -21,9 +21,6 @@ for _, key in pairs {"<c-right>", "<c-l>"} do
   vim.keymap.set("n", key, "<cmd>wincmd l<cr>", {noremap = true})
 end
 
--- close
-vim.keymap.set("n", "<c-w><c-c>", "<cmd>wincmd c<cr>", {noremap = true})
-
 -- kill current buf
 vim.keymap.set("n", "<leader>x", "<cmd>bwipeout!<cr>", {noremap = true})
 
@@ -54,7 +51,42 @@ vim.keymap.set("n", "<leader>]", "<cmd>tabnext<cr>", {noremap = true})
 -- pick tab
 vim.keymap.set("n", "<leader>0", "g<tab>", {noremap = true})
 for i = 1, 9 do
-  vim.keymap.set("n", [[<leader>]] .. i, [[<cmd>tabnext ]] .. i .. [[<cr>]], {noremap = true})
+  vim.keymap.set(
+    "n",
+    [[<leader>]] .. i,
+    [[<cmd>tabnext ]] .. i .. [[<cr>]],
+    {noremap = true}
+  )
 end
 
 vim.api.nvim_create_autocmd({"VimResized"}, {command = [[wincmd =]]})
+
+-- locallist
+vim.keymap.set("n", "<c-a>", "<cmd>lprevious<cr>", {noremap = true})
+vim.keymap.set("n", "<c-e>", "<cmd>lnext<cr>", {noremap = true})
+
+-- quickfix
+vim.keymap.set("n", "<c-p>", "<cmd>cprevious<cr>", {noremap = true})
+vim.keymap.set("n", "<c-n>", "<cmd>cnext<cr>", {noremap = true})
+
+local toggle_qf = function(lo)
+  return function()
+    local closed = false
+    local wins = vim.api.nvim_tabpage_list_wins(0)
+
+    for _, win in pairs(wins) do
+      local buf = vim.api.nvim_win_get_buf(win)
+      local ft = vim.bo[buf].filetype
+      if ft == "qf" then
+        vim.api.nvim_win_close(win)
+        closed = true
+      end
+    end
+
+    if not closed then
+      vim.cmd([[copen]])
+    end
+  end
+end
+
+vim.keymap.set("n", [[<leader>l]], toggle_qf(true), {noremap = true})
