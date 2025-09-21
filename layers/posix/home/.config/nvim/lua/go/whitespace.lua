@@ -35,6 +35,37 @@ local detect_tabs = function()
   if leading_tabs > leading_spaces then
     vim.bo.expandtab = false
   end
+
+  local indent_lvs = {}
+  for ts = 2, 4 do
+    local divisibility = 0
+    for _, line in pairs(lines) do
+      local indent_lv = to.p_indent(line, ts)
+      if indent_lv % ts == 0 then
+        divisibility = divisibility + 1
+      end
+    end
+    table.insert(indent_lvs, {divisibility, ts})
+  end
+
+  table.sort(
+    indent_lvs,
+    function(lhs, rhs)
+      local ld, lt = unpack(lhs)
+      local rd, rt = unpack(rhs)
+
+      if ld == rd then
+        return lt < rt
+      else
+        return ld > rd
+      end
+    end
+  )
+
+  local winner = unpack(indent_lvs)
+  local _, tabsize = unpack(winner)
+  set_tabsize(tabsize)
+  vim.print(indent_lvs)
 end
 
 vim.api.nvim_create_autocmd({"BufReadPost"}, {callback = detect_tabs})
