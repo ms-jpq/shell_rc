@@ -1,3 +1,5 @@
+local lib = require("golib")
+
 -- do not exec arbitrary code
 vim.opt.modeline = false
 
@@ -7,8 +9,7 @@ vim.opt.secure = true
 -- use bash as shell
 vim.opt.shell = vim.env.COMSPEC or "bash"
 
-local is_win = vim.fn.has("win32") == 1 or vim.fn.has("win32unix")
-vim.g.python3_host_prog = is_win and "python.exe" or "/usr/bin/python3"
+vim.g.python3_host_prog = lib.is_win and "python.exe" or "/usr/bin/python3"
 
 -- min lines changed to report
 vim.opt.report = 0
