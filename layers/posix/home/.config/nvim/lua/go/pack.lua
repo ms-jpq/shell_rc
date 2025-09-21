@@ -12,8 +12,6 @@ require("go.pack.start.fzf")
 
 vim.cmd [[packloadall]]
 
--- require("go.pack.start.leap")
--- require("go.pack.start.theme")
 require("go.pack.start.treesitter")
 
 require("go.pack.opt.copilot")
@@ -21,17 +19,14 @@ require("go.pack.opt.easyalign")
 
 vim.schedule(
   function()
-    for path in vim.fs.dir(vim.fs.joinpath(base, "pack", "opt")) do
-      vim.print(path)
-      vim.cmd([[packadd ]] .. vim.fs.basename(path))
-      vim.opt.runtimepath:append(path)
+    local opt = vim.fs.joinpath(base, "pack", "opt")
+    for name in vim.fs.dir(opt) do
+      vim.opt.runtimepath:append(vim.fs.joinpath(opt, name))
+      vim.cmd([[packadd ]] .. name)
     end
-    vim.schedule(
-      function()
-        -- require("go.pack.opt.gitsigns")
-        -- require("go.pack.opt.illuminate")
-      end
-    )
+
+    require("go.pack.opt.gitsigns")
+    require("go.pack.opt.illuminate")
   end
 )
 

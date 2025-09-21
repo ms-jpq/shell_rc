@@ -2,7 +2,6 @@ local gs = require("gitsigns")
 
 gs.setup {
   current_line_blame = true,
-  show_deleted = true
   -- word_diff = true
 }
 
