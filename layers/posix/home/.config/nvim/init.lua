@@ -1,5 +1,6 @@
 Go = {}
 
+require("go.bookmark")
 require("go.checktime")
 require("go.clipboard")
 require("go.commands")

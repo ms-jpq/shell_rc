@@ -1,6 +1,6 @@
 local to = require("go.text_objects")
 
-Go.op_around_all = function(hold_pos)
+Go.op_entire = function(hold_pos)
   local count = vim.api.nvim_buf_line_count(0)
   local last_line = unpack(vim.api.nvim_buf_get_lines(0, -2, -1, true))
   local pos = vim.api.nvim_win_get_cursor(0)
@@ -16,7 +16,7 @@ Go.op_around_all = function(hold_pos)
 end
 
 local cmd = function(hold)
-  return [[<cmd>lua Go.op_around_all(]] .. tostring(hold) .. [[)<cr>]]
+  return [[<cmd>lua Go.op_entire(]] .. tostring(hold) .. [[)<cr>]]
 end
 
 vim.keymap.set("o", "ie", cmd(true), {noremap = true})
