@@ -112,7 +112,7 @@
       "-m",
       "chadtree",
       "deps",
-      "--xdg"
+      "--xdg=~/.local/share/nvim"
     ],
     "https://github.com/ms-jpq/coq.artifacts": [],
     "https://github.com/ms-jpq/coq.thirdparty": [],
@@ -121,7 +121,7 @@
       "-m",
       "coq",
       "deps",
-      "--xdg=true"
+      "--xdg=~/.local/share/nvim"
     ],
     "https://github.com/ms-jpq/snips": [],
     "https://github.com/neovim/nvim-lspconfig": [],

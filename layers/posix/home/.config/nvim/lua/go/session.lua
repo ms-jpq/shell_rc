@@ -37,19 +37,21 @@ vim.api.nvim_create_autocmd(
 vim.api.nvim_create_autocmd(
   {"VimEnter"},
   {
-    callback = function()
-      local bufs = vim.api.nvim_list_bufs()
-      for _, buf in ipairs(bufs) do
-        if vim.api.nvim_buf_get_name(buf) ~= "" then
-          return
+    callback = vim.schedule_wrap(
+      function()
+        local bufs = vim.api.nvim_list_bufs()
+        for _, buf in ipairs(bufs) do
+          if vim.api.nvim_buf_get_name(buf) ~= "" then
+            return
+          end
+        end
+
+        local path, escaped = unpack(session_path())
+        if vim.fn.filereadable(path) then
+          vim.cmd([[silent! source ]] .. escaped)
         end
       end
-
-      local path, escaped = unpack(session_path())
-      if vim.fn.filereadable(path) then
-        vim.cmd([[silent! source ]] .. escaped)
-      end
-    end
+    )
   }
 )
 

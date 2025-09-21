@@ -17,13 +17,13 @@ vim.keymap.set("n", [[<leader>b]], [[<cmd>Buffers<cr>]], {noremap = true})
 vim.keymap.set("n", [[<leader>B]], [[<cmd>Jumps<cr>]], {noremap = true})
 vim.keymap.set("n", [[<leader>m]], [[<cmd>Marks<cr>]], {noremap = true})
 
-vim.keymap.set("n", [[<leader>o]], [[<cmd>BLines<cr>]], {noremap = true})
-vim.keymap.set("n", [[<leader>p]], [[<cmd>Files<cr>]], {noremap = true})
+vim.keymap.set("n", [[<leader>/]], [[<cmd>BLines<cr>]], {noremap = true})
+vim.keymap.set("n", [[<leader>f]], [[<cmd>Files<cr>]], {noremap = true})
 
-vim.keymap.set("n", [[<leader>y]], [[<cmd>GFiles?<cr>]], {noremap = true})
-vim.keymap.set("n", [[<leader>Y]], [[<cmd>GFiles<cr>]], {noremap = true})
+vim.keymap.set("n", [[<leader>g]], [[<cmd>GFiles?<cr>]], {noremap = true})
+vim.keymap.set("n", [[<leader>G]], [[<cmd>GFiles<cr>]], {noremap = true})
 
-vim.keymap.set("n", [[<leader>O]], [[<cmd>RG<cr>]], {noremap = true})
+vim.keymap.set("n", [[<leader>?]], [[<cmd>RG<cr>]], {noremap = true})
 
 -- vim.api.nvim_create_user_command(
 --   "FTdetect",
