@@ -11,7 +11,6 @@ vim.g.coq_settings = {
     ["snippets.user_path"] = "~/.cache/helix-rt/nvim/opt/snips"
   },
   keymap = {
-    eval_snips = [[<leader>B]],
     jump_to_mark = [[<c-y>]]
   }
 }

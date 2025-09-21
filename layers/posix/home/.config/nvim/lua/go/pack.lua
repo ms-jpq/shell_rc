@@ -4,7 +4,6 @@ local base = vim.fs.joinpath(vim.uv.os_homedir(), ".cache", "helix-rt", "nvim")
 local packed = vim.fs.joinpath(base, "pack")
 local lsp_path = vim.fs.joinpath(vim.fn.stdpath("config"), "apriori", "lsp.json")
 
-vim.opt.runtimepath:append(base)
 vim.opt.packpath:append(packed)
 
 require("go.pack.start.chadtree")
@@ -13,15 +12,26 @@ require("go.pack.start.fzf")
 
 vim.cmd [[packloadall]]
 
-require("go.pack.start.leap")
-require("go.pack.start.theme")
+-- require("go.pack.start.leap")
+-- require("go.pack.start.theme")
+require("go.pack.start.treesitter")
+
+require("go.pack.opt.copilot")
+require("go.pack.opt.easyalign")
 
 vim.schedule(
   function()
-    local iter = vim.fs.dir(vim.fs.joinpath(packed, "opt"))
-    for path in iter do
+    for path in vim.fs.dir(vim.fs.joinpath(base, "pack", "opt")) do
+      vim.print(path)
       vim.cmd([[packadd ]] .. vim.fs.basename(path))
+      vim.opt.runtimepath:append(path)
     end
+    vim.schedule(
+      function()
+        -- require("go.pack.opt.gitsigns")
+        -- require("go.pack.opt.illuminate")
+      end
+    )
   end
 )
 

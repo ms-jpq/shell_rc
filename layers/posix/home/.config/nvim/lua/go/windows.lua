@@ -9,44 +9,44 @@ vim.opt.splitbelow = true
 
 -- move between windows
 for _, key in pairs {"<c-up>", "<c-k>"} do
-  vim.keymap.set("n", key, "<cmd>wincmd k<cr>", {noremap = true})
+  vim.keymap.set("n", key, [[<cmd>wincmd k<cr>]], {noremap = true})
 end
 for _, key in pairs {"<c-down>", "<c-j>"} do
-  vim.keymap.set("n", key, "<cmd>wincmd j<cr>", {noremap = true})
+  vim.keymap.set("n", key, [[<cmd>wincmd j<cr>]], {noremap = true})
 end
 for _, key in pairs {"<c-left>", "<c-h>"} do
-  vim.keymap.set("n", key, "<cmd>wincmd h<cr>", {noremap = true})
+  vim.keymap.set("n", key, [[<cmd>wincmd h<cr>]], {noremap = true})
 end
 for _, key in pairs {"<c-right>", "<c-l>"} do
-  vim.keymap.set("n", key, "<cmd>wincmd l<cr>", {noremap = true})
+  vim.keymap.set("n", key, [[<cmd>wincmd l<cr>]], {noremap = true})
 end
 
 -- kill current buf
-vim.keymap.set("n", "<leader>x", "<cmd>bwipeout!<cr>", {noremap = true})
+vim.keymap.set("n", [[<leader>x]], "<cmd>bwipeout!<cr>", {noremap = true})
 
 -- kill current tab
-vim.keymap.set("n", "<leader>q", "<cmd>tabclose<cr>", {noremap = true})
+vim.keymap.set("n", [[<leader>q]], "<cmd>tabclose<cr>", {noremap = true})
 
 -- swap windows
-vim.keymap.set("n", "<leader>'", "<cmd>wincmd r<cr>", {noremap = true})
-vim.keymap.set("n", "<leader>;", "<cmd>wincmd R<cr>", {noremap = true})
+vim.keymap.set("n", [[<leader>']], [[<cmd>wincmd r<cr>]], {noremap = true})
+vim.keymap.set("n", [[<leader>;]], [[<cmd>wincmd R<cr>]], {noremap = true})
 
 -- move windows
-vim.keymap.set("n", "<s-m-left>", "<cmd>wincmd H<cr>", {noremap = true})
-vim.keymap.set("n", "<s-m-right>", "<cmd>wincmd L<cr>", {noremap = true})
-vim.keymap.set("n", "<s-m-up>", "<cmd>wincmd K<cr>", {noremap = true})
-vim.keymap.set("n", "<s-m-down>", "<cmd>wincmd J<cr>", {noremap = true})
+vim.keymap.set("n", [[<s-m-left>]], [[<cmd>wincmd H<cr>]], {noremap = true})
+vim.keymap.set("n", [[<s-m-right>]], [[<cmd>wincmd L<cr>]], {noremap = true})
+vim.keymap.set("n", [[<s-m-up>]], [[<cmd>wincmd K<cr>]], {noremap = true})
+vim.keymap.set("n", [[<s-m-down>]], [[<cmd>wincmd J<cr>]], {noremap = true})
 
 -- resize windows
-vim.keymap.set("n", "+", "<cmd>wincmd =<cr>", {noremap = true})
-vim.keymap.set("n", "<s-left>", "<cmd>wincmd <<cr>", {noremap = true})
-vim.keymap.set("n", "<s-right>", "<cmd>wincmd ><cr>", {noremap = true})
-vim.keymap.set("n", "<s-up>", "<cmd>wincmd +<cr>", {noremap = true})
-vim.keymap.set("n", "<s-down>", "<cmd>wincmd -<cr>", {noremap = true})
+vim.keymap.set("n", [[+]], [[<cmd>wincmd =<cr>]], {noremap = true})
+vim.keymap.set("n", [[<s-left>]], [[<cmd>wincmd <<cr>]], {noremap = true})
+vim.keymap.set("n", [[<s-right>]], [[<cmd>wincmd ><cr>]], {noremap = true})
+vim.keymap.set("n", [[<s-up>]], [[<cmd>wincmd +<cr>]], {noremap = true})
+vim.keymap.set("n", [[<s-down>]], [[<cmd>wincmd -<cr>]], {noremap = true})
 
 -- cycle between tabs
-vim.keymap.set("n", "<leader>[", "<cmd>tabprevious<cr>", {noremap = true})
-vim.keymap.set("n", "<leader>]", "<cmd>tabnext<cr>", {noremap = true})
+vim.keymap.set("n", "<leader>[", [[<cmd>tabprevious<cr>]], {noremap = true})
+vim.keymap.set("n", "<leader>]", [[<cmd>tabnext<cr>]], {noremap = true})
 
 -- pick tab
 vim.keymap.set("n", "<leader>0", "g<tab>", {noremap = true})
@@ -62,12 +62,12 @@ end
 vim.api.nvim_create_autocmd({"VimResized"}, {command = [[wincmd =]]})
 
 -- locallist
-vim.keymap.set("n", "<c-a>", "<cmd>lprevious<cr>", {noremap = true})
-vim.keymap.set("n", "<c-e>", "<cmd>lnext<cr>", {noremap = true})
+vim.keymap.set("n", [[<c-a>]], [[<cmd>lprevious<cr>]], {noremap = true})
+vim.keymap.set("n", [[<c-e>]], [[<cmd>lnext<cr>]], {noremap = true})
 
 -- quickfix
-vim.keymap.set("n", "<c-p>", "<cmd>cprevious<cr>", {noremap = true})
-vim.keymap.set("n", "<c-n>", "<cmd>cnext<cr>", {noremap = true})
+vim.keymap.set("n", [[<c-p>]], [[<cmd>cprevious<cr>]], {noremap = true})
+vim.keymap.set("n", [[<c-n>]], [[<cmd>cnext<cr>]], {noremap = true})
 
 local toggle_qf = function(lo)
   return function()
