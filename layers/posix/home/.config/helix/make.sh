@@ -25,6 +25,7 @@ case "${RECUR:=""}" in
     [gem]=gem.rb
     [go]=go.go
     [npm]=npm.js
+    [pack]=pack.sh
     [phar]=phar.php
     [pip]=pip.py
   )

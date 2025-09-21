@@ -1,4 +1,4 @@
-$(SHARE)/tmux $(NVIM_MVP) $(OPT)/pipx: | /usr/share/doc/python3-venv
+$(SHARE)/tmux $(OPT)/pipx: | /usr/share/doc/python3-venv
 
 # pkg.posix: /etc/apt/sources.list.d/ubuntu_partner.list
 /etc/apt/sources.list.d/ubuntu_partner.list:
