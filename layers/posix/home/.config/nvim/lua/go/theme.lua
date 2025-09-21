@@ -38,5 +38,8 @@ vim.api.nvim_create_autocmd(
   }
 )
 
+-- preview height
+vim.opt.previewheight = 11
+
 -- theme
 vim.cmd("source " .. vim.fs.joinpath(vim.fn.stdpath("config"), "plugin", "theme.vim"))

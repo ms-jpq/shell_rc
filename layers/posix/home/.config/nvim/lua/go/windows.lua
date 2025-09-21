@@ -27,6 +27,9 @@ vim.keymap.set("n", "<c-w><c-c>", "<cmd>wincmd c<cr>", {noremap = true})
 -- kill current buf
 vim.keymap.set("n", "<leader>x", "<cmd>bwipeout!<cr>", {noremap = true})
 
+-- kill current tab
+vim.keymap.set("n", "<leader>q", "<cmd>tabclose<cr>", {noremap = true})
+
 -- swap windows
 vim.keymap.set("n", "<leader>'", "<cmd>wincmd r<cr>", {noremap = true})
 vim.keymap.set("n", "<leader>;", "<cmd>wincmd R<cr>", {noremap = true})
@@ -43,5 +46,15 @@ vim.keymap.set("n", "<s-left>", "<cmd>wincmd <<cr>", {noremap = true})
 vim.keymap.set("n", "<s-right>", "<cmd>wincmd ><cr>", {noremap = true})
 vim.keymap.set("n", "<s-up>", "<cmd>wincmd +<cr>", {noremap = true})
 vim.keymap.set("n", "<s-down>", "<cmd>wincmd -<cr>", {noremap = true})
+
+-- cycle between tabs
+vim.keymap.set("n", "<leader>[", "<cmd>tabprevious<cr>", {noremap = true})
+vim.keymap.set("n", "<leader>]", "<cmd>tabnext<cr>", {noremap = true})
+
+-- pick tab
+vim.keymap.set("n", "<leader>0", "g<tab>", {noremap = true})
+for i = 1, 9 do
+  vim.keymap.set("n", [[<leader>]] .. i, [[<cmd>tabnext ]] .. i .. [[<cr>]], {noremap = true})
+end
 
 vim.api.nvim_create_autocmd({"VimResized"}, {command = [[wincmd =]]})
