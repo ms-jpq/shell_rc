@@ -35,5 +35,18 @@ return {
       vim.cmd(cmd)
       vim.api.nvim_win_set_cursor(0, hi)
     end
+  end,
+  p_indent = function(line, tabsize)
+    local match = string.match(line, [[^%s+]])
+    if match == nil then
+      return 0
+    end
+
+    local tabs = {}
+    for _ = 1, tabsize do
+      table.insert(tabs, " ")
+    end
+    local subbed = string.gsub(match, "\t", table.concat(tabs, ""))
+    return #subbed
   end
 }
