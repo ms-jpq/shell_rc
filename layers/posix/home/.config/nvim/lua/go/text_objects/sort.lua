@@ -17,11 +17,6 @@ Go.op_sort_lines = function(visual_type)
     end
   )
 
-  vim.schedule(
-    function()
-      vim.print(lines)
-    end
-  )
   vim.api.nvim_buf_set_lines(0, row1, row2 + 1, true, lines)
 end
 

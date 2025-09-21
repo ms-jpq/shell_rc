@@ -4,7 +4,7 @@ Go.op_around_all = function(hold_pos)
   local count = vim.api.nvim_buf_line_count(0)
   local last_line = unpack(vim.api.nvim_buf_get_lines(0, -2, -1, true))
   local pos = vim.api.nvim_win_get_cursor(0)
-  to.set_visual_selection(0, "V", 0, 0, (count - 1), #last_line)
+  to.set_visual_selection("V", 1, 0, count, #last_line)
 
   if hold_pos then
     vim.schedule(

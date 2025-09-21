@@ -32,14 +32,14 @@ Go.op_visual_move = function(up)
       vim.cmd [[norm! gv]]
     else
       vim.cmd(row1 + 1 .. "," .. row2 + 1 .. "move " .. row1 - 1)
-      to.set_visual_selection(0, "v", row1 - 1, col1, row2 - 1, col2, true)
+      to.set_visual_selection("v", row1, col1, row2, col2, true)
     end
   else
     if row2 + 1 >= count then
       vim.cmd [[norm! gv]]
     else
       vim.cmd(row1 + 1 .. "," .. row2 + 1 .. "move " .. row2 + 2)
-      to.set_visual_selection(0, "v", row1 + 1, col1, row2 + 1, col2, true)
+      to.set_visual_selection("v", row1 + 2, col1, row2 + 2, col2, true)
     end
   end
 end

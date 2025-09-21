@@ -21,19 +21,19 @@ return {
 
     return {row1 - 1, col1, row2 - 1, col2 + 1}
   end,
-  set_visual_selection = function(win, mode, r1, c1, r2, c2, reverse)
+  set_visual_selection = function(mode, r1, c1, r2, c2, reverse)
     local cmd = [[norm! ]] .. mode
-    local lo = {r1 + 1, c1}
-    local hi = {r2 + 1, math.max(0, c2 - 1)}
+    local lo = {r1, c1}
+    local hi = {r2, math.max(0, c2 - 1)}
 
     if reverse then
-      vim.api.nvim_win_set_cursor(win, hi)
+      vim.api.nvim_win_set_cursor(0, hi)
       vim.cmd(cmd)
-      vim.api.nvim_win_set_cursor(win, lo)
+      vim.api.nvim_win_set_cursor(0, lo)
     else
-      vim.api.nvim_win_set_cursor(win, lo)
+      vim.api.nvim_win_set_cursor(0, lo)
       vim.cmd(cmd)
-      vim.api.nvim_win_set_cursor(win, hi)
+      vim.api.nvim_win_set_cursor(0, hi)
     end
   end
 }
