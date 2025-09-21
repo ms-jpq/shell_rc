@@ -106,10 +106,22 @@
     "https://github.com/junegunn/fzf.vim": [],
     "https://github.com/junegunn/vim-easy-align": [],
     "https://github.com/lewis6991/gitsigns.nvim": ["--lazy"],
-    "https://github.com/ms-jpq/chadtree": ["python3", "-m", "chadtree", "deps"],
+    "https://github.com/ms-jpq/chadtree": [
+      "python3",
+      "-m",
+      "chadtree",
+      "deps",
+      "--xdg"
+    ],
     "https://github.com/ms-jpq/coq.artifacts": [],
     "https://github.com/ms-jpq/coq.thirdparty": [],
-    "https://github.com/ms-jpq/coq_nvim": ["python3", "-m", "coq", "deps"],
+    "https://github.com/ms-jpq/coq_nvim": [
+      "python3",
+      "-m",
+      "coq",
+      "deps",
+      "--xdg=true"
+    ],
     "https://github.com/ms-jpq/snips": [],
     "https://github.com/neovim/nvim-lspconfig": [],
     "https://github.com/nvim-treesitter/nvim-treesitter": [],
