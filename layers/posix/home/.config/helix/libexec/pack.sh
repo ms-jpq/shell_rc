@@ -4,15 +4,18 @@ set -o pipefail
 
 SRC="$1"
 shift -- 1
-LAZY="$*"
 
 LIB="$HOME/.cache/helix-rt/nvim/pack"
 
-if [[ -n $LAZY ]]; then
+case "${1:-""}" in
+--lazy)
   LIB="$LIB/opt"
-else
+  shift -- 1
+  ;;
+*)
   LIB="$LIB/start"
-fi
+  ;;
+esac
 DST="$LIB/${SRC##*/}"
 
 GET=(
@@ -44,3 +47,8 @@ else
 fi
 
 printf -- '%s\n' "-> $SRC" >&2
+
+if (($#)); then
+  pushd -- "$DST" > /dev/null
+  exec -- "$@"
+fi
