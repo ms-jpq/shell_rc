@@ -29,10 +29,7 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-vim.api.nvim_create_autocmd(
-  {"VimLeavePre", "VimSuspend", "FocusLost", "CursorHold"},
-  {callback = mk_session}
-)
+vim.api.nvim_create_autocmd({"VimLeavePre", "VimSuspend", "FocusLost", "CursorHold"}, {callback = mk_session})
 
 vim.api.nvim_create_autocmd(
   {"VimEnter"},

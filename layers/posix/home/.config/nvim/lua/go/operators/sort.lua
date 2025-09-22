@@ -22,15 +22,5 @@ Go.op_sort_lines = function(visual_type)
   to.set_visual_selection(mode, row1 + 1, 0, row2 + 1, 0)
 end
 
-vim.keymap.set(
-  "n",
-  "gu",
-  [[<cmd>set opfunc=v:lua.Go.op_sort_lines<cr>g@]],
-  {noremap = true}
-)
-vim.keymap.set(
-  "v",
-  "gu",
-  to.norm .. [[<cmd>lua Go.op_sort_lines(nil)<cr>]],
-  {noremap = true}
-)
+vim.keymap.set("n", "gu", [[<cmd>set opfunc=v:lua.Go.op_sort_lines<cr>g@]], {noremap = true})
+vim.keymap.set("v", "gu", to.norm .. [[<cmd>lua Go.op_sort_lines(nil)<cr>]], {noremap = true})

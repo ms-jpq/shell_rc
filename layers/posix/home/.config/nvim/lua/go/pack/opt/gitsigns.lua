@@ -1,7 +1,7 @@
 local gs = require("gitsigns")
 
 gs.setup {
-  current_line_blame = true,
+  current_line_blame = true
   -- word_diff = true
 }
 

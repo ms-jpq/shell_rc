@@ -51,12 +51,7 @@ vim.keymap.set("n", "<leader>]", [[<cmd>tabnext<cr>]], {noremap = true})
 -- pick tab
 vim.keymap.set("n", "<leader>0", "g<tab>", {noremap = true})
 for i = 1, 9 do
-  vim.keymap.set(
-    "n",
-    [[<leader>]] .. i,
-    [[<cmd>tabnext ]] .. i .. [[<cr>]],
-    {noremap = true}
-  )
+  vim.keymap.set("n", [[<leader>]] .. i, [[<cmd>tabnext ]] .. i .. [[<cr>]], {noremap = true})
 end
 
 vim.api.nvim_create_autocmd({"VimResized"}, {command = [[wincmd =]]})

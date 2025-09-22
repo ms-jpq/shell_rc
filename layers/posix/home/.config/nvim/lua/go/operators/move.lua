@@ -45,9 +45,4 @@ Go.op_visual_move = function(up)
 end
 
 vim.keymap.set("v", [[<m-up>]], to.norm .. cmd("op_visual_move", true), {noremap = true})
-vim.keymap.set(
-  "v",
-  [[<m-down>]],
-  to.norm .. cmd("op_visual_move", false),
-  {noremap = true}
-)
+vim.keymap.set("v", [[<m-down>]], to.norm .. cmd("op_visual_move", false), {noremap = true})

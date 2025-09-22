@@ -33,7 +33,4 @@ local mark_signs = function()
   end
 end
 
-vim.api.nvim_create_autocmd(
-  {"BufEnter", "CursorHold", "CursorHoldI"},
-  {callback = mark_signs}
-)
+vim.api.nvim_create_autocmd({"BufEnter", "CursorHold", "CursorHoldI"}, {callback = mark_signs})

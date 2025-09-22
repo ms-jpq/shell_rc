@@ -6,10 +6,7 @@ vim.keymap.set(
   "i",
   [[<c-f>]],
   function()
-    local esc_pum =
-      vim.fn.pumvisible() == 1 and
-      vim.api.nvim_replace_termcodes("<c-e>", true, true, true) or
-      ""
+    local esc_pum = vim.fn.pumvisible() == 1 and vim.api.nvim_replace_termcodes("<c-e>", true, true, true) or ""
     return esc_pum .. vim.fn["copilot#Accept"]()
   end,
   {

@@ -40,4 +40,3 @@ vim.api.nvim_create_autocmd(
 
 -- preview height
 vim.opt.previewheight = 11
-

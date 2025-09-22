@@ -1,1 +1,1 @@
-require('leap').set_default_mappings()
+require("leap").set_default_mappings()

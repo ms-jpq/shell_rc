@@ -5,6 +5,7 @@
   },
   "devDependencies": {
     "@taplo/cli": "*",
+    "lua-fmt": "*",
     "@types/node": "*",
     "prettier": "*",
     "typescript": "*"

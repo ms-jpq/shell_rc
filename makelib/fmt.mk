@@ -1,6 +1,6 @@
-.PHONY: fmt systemd-fmt shfmt black prettier taplo
+.PHONY: fmt systemd-fmt shfmt black prettier taplo luafmt
 
-fmt: systemd-fmt shfmt black prettier taplo
+fmt: systemd-fmt shfmt black prettier taplo luafmt
 
 systemd-fmt:
 	./layers/posix/home/.local/bin/systemd-fmt.sh ./layers
@@ -17,3 +17,7 @@ prettier: ./node_modules/.bin
 
 taplo: ./node_modules/.bin
 	git ls-files --deduplicate -z -- '*.toml' | xargs -r -0 -- '$</taplo' format --
+
+luafmt: ./node_modules/.bin
+	git ls-files --deduplicate -z -- '*.lua' | xargs -r -0 -n 1 -P 0 -- '$</luafmt' --indent-count 2 --write-mode replace --
+

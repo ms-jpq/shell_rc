@@ -25,24 +25,15 @@ Go.run_fmt = function()
     vim.uv.timer_stop(handle)
 
     if waited.signal ~= 0 then
-      vim.notify(
-        [[☠️ ]] .. vim.inspect(waited),
-        vim.log.levels.ERROR,
-        {}
-      )
+      vim.notify([[☠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR, {})
       return
     elseif waited.code ~= 0 then
-      vim.notify(
-        [[⚠️ ]] .. vim.inspect(waited),
-        waited.stderr,
-        vim.log.levels.ERROR,
-        {}
-      )
+      vim.notify([[⚠️ ]] .. vim.inspect(waited), waited.stderr, vim.log.levels.ERROR, {})
       return
     end
 
     if vim.api.nvim_get_current_buf() == buf then
-      local lines = vim.split(waited.stdout, "\n", {plain=true})
+      local lines = vim.split(waited.stdout, "\n", {plain = true})
       vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
       vim.notify([[✅...]], vim.log.levels.INFO, {})
     end
@@ -65,6 +56,3 @@ end
 vim.opt.formatexpr = "v:lua.Go.run_fmt()"
 
 vim.keymap.set("n", "gq", Go.run_fmt, {noremap = true, nowait = true})
-
-
-

@@ -45,7 +45,7 @@ local detect_tabs = function()
         divisibility = divisibility + 1
       end
     end
-    table.insert(indent_lvs, { ts})
+    table.insert(indent_lvs, {ts})
   end
 
   table.sort(
