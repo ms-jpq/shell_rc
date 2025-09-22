@@ -62,8 +62,8 @@ end
 vim.api.nvim_create_autocmd({"VimResized"}, {command = [[wincmd =]]})
 
 -- locallist
-vim.keymap.set("n", [[<c-a>]], [[<cmd>lprevious<cr>]], {noremap = true})
-vim.keymap.set("n", [[<c-e>]], [[<cmd>lnext<cr>]], {noremap = true})
+-- vim.keymap.set("n", [[<c-a>]], [[<cmd>lprevious<cr>]], {noremap = true})
+-- vim.keymap.set("n", [[<c-e>]], [[<cmd>lnext<cr>]], {noremap = true})
 
 -- quickfix
 vim.keymap.set("n", [[<c-p>]], [[<cmd>cprevious<cr>]], {noremap = true})

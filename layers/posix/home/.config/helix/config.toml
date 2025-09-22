@@ -185,9 +185,11 @@ y = ":toggle search.smart-case"
 i = ":toggle inline-diagnostics.other-lines disable hint"
 o = ":toggle inline-diagnostics.cursor-line disable hint"
 
+[keys.normal.Q]
+Q = ":write-quit-all!"
+
 [keys.normal.'\']
 D = ':reset-diff-change'
-Q = ":write-quit-all!"
 R = ":config-reload"
 T = ":sh tmux new-window -a -c '#{pane_current_path}' -- hx -- '%{buffer_name}:%{cursor_line}:%{cursor_column}'"
 X = ":buffer-close-others!"
