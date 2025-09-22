@@ -37,7 +37,7 @@ for _, mode in pairs {"n", "v"} do
 
   vim.keymap.set(
     mode,
-    "ga",
+    [[<leader>a]],
     function()
       vim.lsp.buf.code_action()
     end,
