@@ -13,6 +13,6 @@ $(NVIM)/apriori/lsp.json: $(NVIM)/libexec/languages.sh $(NVIM)/apriori/lsp.yml |
 	'$<' < '$(NVIM)/apriori/lsp.yml' > '$@'
 
 nvim: $(NVIM)/apriori/fmt.json
-$(NVIM)/apriori/fmt.json: $(NVIM)/libexec/language-map.jq $(HELIX)/languages.json | $(VENV)/$(PY_BIN)
-	'$<' < '$(HELIX)/languages.json' > '$@'
+$(NVIM)/apriori/fmt.json: $(NVIM)/libexec/language-map.jq $(NVIM)/apriori/language-map.json $(HELIX)/languages.json
+	'$<' --slurpfile lmap '$(NVIM)/apriori/language-map.json' < '$(HELIX)/languages.json' > '$@'
 
