@@ -18,8 +18,8 @@ Go.op_sort_lines = function(visual_type)
   )
 
   vim.api.nvim_buf_set_lines(0, row1, row2 + 1, true, lines)
-  local mode = to.translate_visual_type(visual_type)
-  to.set_visual_selection(mode, row1, col1, row2, col2)
+  local mode = to.translate_visual_type(visual_type or "line")
+  to.set_visual_selection(mode, row1 + 1, 0, row2 + 1, 0)
 end
 
 vim.keymap.set(
@@ -31,6 +31,6 @@ vim.keymap.set(
 vim.keymap.set(
   "v",
   "gu",
-  to.norm .. [[<cmd>lua Go.op_sort_lines(nil)<cr>g@]],
+  to.norm .. [[<cmd>lua Go.op_sort_lines(nil)<cr>]],
   {noremap = true}
 )
