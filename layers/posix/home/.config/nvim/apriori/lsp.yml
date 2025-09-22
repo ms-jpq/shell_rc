@@ -1,7 +1,4 @@
 ---
-ds_pinyin_lsp:
-  bin: ds-pinyin-lsp
-
 jsonls:
   bin: vscode-json-language-server
 

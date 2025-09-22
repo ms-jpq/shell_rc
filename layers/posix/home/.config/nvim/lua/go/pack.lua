@@ -47,8 +47,10 @@ for name, conf in pairs(lib.read_json(lsp_path)) do
   ):totable()
 
   config = require("coq").lsp_ensure_capabilities(config)
-  config = require("chad").lsp_ensure_capabilities(config)
-  vim.lsp.config(config)
+  if chad ~= nil then
+    config = chad.lsp_ensure_capabilities(config)
+  end
+  vim.lsp.config(name, config)
 
   if vim.fn.executable(conf.bin) ~= 0 then
     vim.lsp.enable(name)
