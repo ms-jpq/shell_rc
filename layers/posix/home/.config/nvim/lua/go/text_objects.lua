@@ -21,6 +21,17 @@ return {
 
     return row1 - 1, col1, row2 - 1, col2 + 1
   end,
+  translate_visual_type = function(visual_type)
+    if visual_type == "char" then
+      return "v"
+    elseif visual_type == "line" then
+      return "V"
+    elseif visual_type == "block" then
+      return "<c-v>"
+    else
+      assert(false, visual_type)
+    end
+  end,
   set_visual_selection = function(mode, r1, c1, r2, c2, reverse)
     local cmd = [[norm! ]] .. mode
     local lo = {r1, c1}

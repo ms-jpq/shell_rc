@@ -128,7 +128,7 @@
     "https://github.com/nvim-treesitter/nvim-treesitter": [],
     "https://github.com/nvim-treesitter/nvim-treesitter-context": [],
     "https://github.com/nvim-treesitter/nvim-treesitter-textobjects": [],
-    "https://github.com/RRethy/vim-illuminate": ["--lazy"],
+    "https://github.com/RRethy/vim-illuminate": [],
     "https://github.com/tpope/vim-repeat": [],
     "https://github.com/tpope/vim-surround": [],
     "https://github.com/tpope/vim-unimpaired": []

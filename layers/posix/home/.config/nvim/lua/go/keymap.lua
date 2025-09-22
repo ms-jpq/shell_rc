@@ -81,7 +81,7 @@ for _, mode in pairs {"n", "v"} do
   vim.keymap.set(mode, "QQ", [[<cmd>quitall!<cr>]], {noremap = true})
 
   -- delete dont copy
-  for _, key in pairs {"c", "C", "d", "D", "s", "S", "x", "X"} do
+  for _, key in pairs {"c", "C", "d", "D", "x", "X"} do
     vim.keymap.set(mode, key, '"_' .. key, {noremap = true})
   end
 

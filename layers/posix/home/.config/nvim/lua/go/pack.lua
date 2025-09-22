@@ -12,6 +12,8 @@ require("go.pack.start.fzf")
 
 vim.cmd [[packloadall]]
 
+require("go.pack.start.illuminate")
+require("go.pack.start.leap")
 require("go.pack.start.theme")
 require("go.pack.start.treesitter")
 
@@ -27,7 +29,6 @@ vim.schedule(
     end
 
     require("go.pack.opt.gitsigns")
-    require("go.pack.opt.illuminate")
   end
 )
 
