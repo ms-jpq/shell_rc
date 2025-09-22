@@ -3,9 +3,10 @@ name    = "sh"
 version = "0"
 
 dependencies = [
+  "PyYAML",
   "s3cmd@https://github.com/s3tools/s3cmd/archive/heads/master.tar.gz",
-  "tomli-w",
   "tomli",
+  "tomli-w",
 ]
 
 [project.optional-dependencies]

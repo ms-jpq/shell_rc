@@ -19,7 +19,9 @@ Go.op_sort_lines = function(visual_type)
 
   vim.api.nvim_buf_set_lines(0, row1, row2 + 1, true, lines)
   local mode = to.translate_visual_type(visual_type or "line")
-  to.set_visual_selection(mode, row1 + 1, 0, row2 + 1, 0)
+  if visual_type == nil then
+    to.set_visual_selection(mode, row1 + 1, 0, row2 + 1, 0)
+  end
 end
 
 vim.keymap.set("n", "gu", [[<cmd>set opfunc=v:lua.Go.op_sort_lines<cr>g@]], {noremap = true})
