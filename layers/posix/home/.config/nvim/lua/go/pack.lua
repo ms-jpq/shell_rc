@@ -39,12 +39,12 @@ for name, conf in pairs(lib.read_json(lsp_path)) do
     settings = conf.settings
   }
 
-  local config =
-    vim.iter(overrides):filter(
-    function(_, val)
-      return val ~= nil
+  local config = {}
+  for key, val in pairs(overrides) do
+    if val ~= nil then
+      config[key] = val
     end
-  ):totable()
+  end
 
   config = require("coq").lsp_ensure_capabilities(config)
   if chad ~= nil then

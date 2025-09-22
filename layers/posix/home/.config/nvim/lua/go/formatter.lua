@@ -9,7 +9,7 @@ local fmt_command = function(buf)
   end
 
   local filetype = vim.bo[buf].filetype
-  return {"sed", "-E", "-e", "s#[[:space:]]*$##g"}
+  return {"sed", "-E", "-e", [[:l1]], "-e", [[/./,$!d]], "-e", [[/^\n*$/{$d;N;}]], "-e", [[/\n$/bl1]]}
 end
 
 Go.run_fmt = function()
@@ -26,14 +26,14 @@ Go.run_fmt = function()
 
     if waited.signal ~= 0 then
       vim.notify(
-        [[☠️ pid $?=]] .. waited.pid .. [[signal $?=]] .. waited.signal,
+        [[☠️ ]] .. vim.inspect(waited),
         vim.log.levels.ERROR,
         {}
       )
       return
     elseif waited.code ~= 0 then
       vim.notify(
-        [[⚠️ pid $?=]] .. waited.pid .. [[code $?]] .. waited.code,
+        [[⚠️ ]] .. vim.inspect(waited),
         waited.stderr,
         vim.log.levels.ERROR,
         {}
