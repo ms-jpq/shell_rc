@@ -129,3 +129,6 @@ for _, mode in pairs {"n", "v"} do
     )
   end
 end
+
+-- cut to clipboard
+vim.keymap.set("v", "X", "d", {noremap = true})
