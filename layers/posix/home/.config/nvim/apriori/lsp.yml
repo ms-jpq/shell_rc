@@ -276,7 +276,7 @@ prolog_ls:
 #   bin: sql-language-server
 
 lua_ls:
-  bin: lua-language-server
+  bin: lua-language-server.sh
   settings:
     Lua:
       runtime:

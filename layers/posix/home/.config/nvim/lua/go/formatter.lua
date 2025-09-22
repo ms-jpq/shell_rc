@@ -42,11 +42,7 @@ Go.run_fmt = function()
     end
 
     if vim.api.nvim_get_current_buf() == buf then
-      local lines = {}
-      for line in string.gmatch(waited.stdout, [[^$]]) do
-        table.insert(lines, line)
-      end
-
+      local lines = vim.split(waited.stdout, "\n", {plain=true})
       vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
       vim.notify([[✅...]], vim.log.levels.INFO, {})
     end
@@ -69,3 +65,6 @@ end
 vim.opt.formatexpr = "v:Go.run_fmt()"
 
 vim.keymap.set("n", "gq", Go.run_fmt, {noremap = true, nowait = true})
+
+
+
