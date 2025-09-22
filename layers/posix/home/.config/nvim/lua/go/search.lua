@@ -4,7 +4,7 @@ vim.opt.inccommand = "nosplit"
 vim.opt.grepprg = [[rg\ --vimgrep]]
 
 -- clear hlsearch result
-vim.keymap.set("n", "<leader>i", "<cmd>nohlsearch<cr>", {noremap = true})
+vim.keymap.set("n", "<leader>h", "<cmd>set hlsearch!<cr>", {noremap = true})
 
 -- search without moving
 vim.keymap.set("n", "*", "*N", {noremap = true})
