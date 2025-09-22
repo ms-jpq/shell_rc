@@ -101,7 +101,7 @@
   },
   "pack": {
     "https://github.com/cocopon/iceberg.vim": [],
-    "https://github.com/ggandor/leap.nvim": ["--lazy"],
+    "https://github.com/ggandor/leap.nvim": [],
     "https://github.com/github/copilot.vim": ["--lazy"],
     "https://github.com/junegunn/fzf": [],
     "https://github.com/junegunn/fzf.vim": [],
