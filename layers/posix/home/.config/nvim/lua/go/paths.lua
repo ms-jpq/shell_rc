@@ -5,7 +5,7 @@ local home = vim.uv.os_homedir()
 local runtime = vim.fs.joinpath(home, ".cache", "helix-rt")
 
 local paths = {
-  vim.fs.joinpath(home, "helix", "bin"),
+  vim.fs.joinpath(home, ".config", "helix", "bin"),
   vim.fs.joinpath(runtime, "bin"),
   vim.fn.globpath(runtime, "{more,go,ruby,php}/*/bin", true, true),
   vim.fn.globpath(runtime, "nodejs/*/node_modules/.bin", true, true),
