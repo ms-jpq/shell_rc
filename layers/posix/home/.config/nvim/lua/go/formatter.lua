@@ -62,7 +62,7 @@ Go.run_fmt = function()
   vim.notify([[⏳...]], vim.log.levels.INFO, {})
 end
 
-vim.opt.formatexpr = "v:Go.run_fmt()"
+vim.opt.formatexpr = "v:lua.Go.run_fmt()"
 
 vim.keymap.set("n", "gq", Go.run_fmt, {noremap = true, nowait = true})
 

@@ -19,7 +19,7 @@ return {
     local row1, col1 = unpack(vim.api.nvim_buf_get_mark(buf, mark1))
     local row2, col2 = unpack(vim.api.nvim_buf_get_mark(buf, mark2))
 
-    return {row1 - 1, col1, row2 - 1, col2 + 1}
+    return row1 - 1, col1, row2 - 1, col2 + 1
   end,
   set_visual_selection = function(mode, r1, c1, r2, c2, reverse)
     local cmd = [[norm! ]] .. mode

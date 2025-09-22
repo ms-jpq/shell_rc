@@ -1,7 +1,7 @@
 local to = require("go.text_objects")
 
 Go.op_sort_lines = function(visual_type)
-  local row1, _, row2, _ = unpack(to.operator_marks(0, visual_type))
+  local row1, _, row2, _ = to.operator_marks(0, visual_type)
   local lines = vim.api.nvim_buf_get_lines(0, row1, row2 + 1, true)
   table.sort(
     lines,
@@ -23,7 +23,7 @@ end
 vim.keymap.set(
   "n",
   "gu",
-  [[<cmd>set opfunc=v:Go.op_sort_lines<cr>g@]],
+  [[<cmd>set opfunc=v:lua.Go.op_sort_lines<cr>g@]],
   {noremap = true}
 )
 vim.keymap.set(
