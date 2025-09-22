@@ -14,3 +14,8 @@ vim.g.coq_settings = {
     jump_to_mark = [[<c-y>]]
   }
 }
+
+require("coq_3p") {
+  {short_name = "nLUA", src = "nvimlua"},
+  {src = "repl"}
+}
