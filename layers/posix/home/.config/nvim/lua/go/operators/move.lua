@@ -19,8 +19,8 @@ local cmd = function(name, hold)
   return [[<cmd>lua Go.]] .. name .. [[(]] .. tostring(hold) .. [[)<cr>]]
 end
 
-vim.keymap.set("n", "<m-up>", cmd("op_norm_move", true), {noremap = true})
-vim.keymap.set("n", "<m-down>", cmd("op_norm_move", false), {noremap = true})
+vim.keymap.set("n", [[<m-up>]], cmd("op_norm_move", true), {noremap = true})
+vim.keymap.set("n", [[<m-down>]], cmd("op_norm_move", false), {noremap = true})
 
 Go.op_visual_move = function(up)
   local row = unpack(vim.api.nvim_win_get_cursor(0))
@@ -44,10 +44,10 @@ Go.op_visual_move = function(up)
   end
 end
 
-vim.keymap.set("v", "<m-up>", to.norm .. cmd("op_visual_move", true), {noremap = true})
+vim.keymap.set("v", [[<m-up>]], to.norm .. cmd("op_visual_move", true), {noremap = true})
 vim.keymap.set(
   "v",
-  "<m-down>",
+  [[<m-down>]],
   to.norm .. cmd("op_visual_move", false),
   {noremap = true}
 )
