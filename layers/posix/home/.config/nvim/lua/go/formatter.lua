@@ -8,7 +8,24 @@ local fmt_command = function(buf)
     data = lib.read_json(loadpath)
   end
 
+  local name = vim.api.nvim_buf_get_name(buf)
   local filetype = vim.bo[buf].filetype
+  local spec = data[filetype]
+
+  if spec ~= nil then
+    if vim.fn.executable(spec.command) == 1 then
+      local mapped =
+        vim.iter({{spec.command}, spec.args}):flatten():map(
+        function(val)
+          local l1 = string.gsub(val, [[%%{buffer_name}]], name)
+          return l1
+        end
+      ):totable()
+
+      return mapped
+    end
+  end
+
   return {"sed", "-E", "-e", [[:l1]], "-e", [[/./,$!d]], "-e", [[/^\n*$/{$d;N;}]], "-e", [[/\n$/bl1]]}
 end
 
@@ -34,6 +51,7 @@ Go.run_fmt = function()
 
     if vim.api.nvim_get_current_buf() == buf then
       local lines = vim.split(waited.stdout, "\n", {plain = true})
+      lines[#lines] = nil
       vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
       vim.notify([[✅...]], vim.log.levels.INFO, {})
     end

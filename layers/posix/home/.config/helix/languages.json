@@ -113,7 +113,7 @@
     },
     "lua": {
       "formatter": {
-        "args": ["--line-width=88", "--indent-count=2", "--stdin"],
+        "args": ["--indent-count=2", "--stdin"],
         "command": "luafmt"
       }
     },
@@ -300,3 +300,4 @@
     }
   }
 }
+
