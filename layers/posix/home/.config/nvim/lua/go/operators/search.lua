@@ -27,7 +27,7 @@ Go.op_buf_edit = function(visual_type)
 end
 
 vim.keymap.set("n", "gs", [[<cmd>set opfunc=v:lua.Go.op_buf_edit<cr>g@]], {noremap = true})
-vim.keymap.set("v", "gs", to.norm .. [[<cmd>lua Go.op_buf_edit(vim.NIL)<cr>]], {noremap = true})
+vim.keymap.set("v", "gs", to.norm .. [[<cmd>lua Go.op_buf_edit(nil)<cr>]], {noremap = true})
 
 -- very magic
 vim.keymap.set("n", "gS", [[:%s/\v//g<left><left><left>]], {noremap = true})
@@ -48,5 +48,5 @@ Go.op_rg = searcher("RG")
 
 for key, val in pairs {op_blines = "gf", op_rg = "gF"} do
   vim.keymap.set("n", val, [[<cmd>set opfunc=v:lua.Go.]] .. key .. [[<cr>g@]], {nowait = true, noremap = true})
-  vim.keymap.set("v", val, to.norm .. [[<cmd>lua Go.]] .. key .. [[(vim.NIL)<cr>]], {nowait = true, noremap = true})
+  vim.keymap.set("v", val, to.norm .. [[<cmd>lua Go.]] .. key .. [[(nil)<cr>]], {nowait = true, noremap = true})
 end

@@ -19,7 +19,7 @@ return {
     local row1, col1 = unpack(vim.api.nvim_buf_get_mark(buf, mark1))
     local row2, col2 = unpack(vim.api.nvim_buf_get_mark(buf, mark2))
 
-    local last_line = unpack(vim.api.nvim_buf_get_lines(buf, -2, -1, true))
+    local last_line = unpack(vim.api.nvim_buf_get_lines(buf, row2 - 1, row2, true))
     col2 = math.min(#last_line - 1, col2)
 
     return row1 - 1, col1, row2 - 1, col2 + 1
