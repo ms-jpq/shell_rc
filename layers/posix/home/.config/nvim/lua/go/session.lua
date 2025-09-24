@@ -36,6 +36,10 @@ vim.api.nvim_create_autocmd(
   {
     callback = vim.schedule_wrap(
       function()
+        if vim.env.NO_SESSION then
+          return
+        end
+
         local bufs = vim.api.nvim_list_bufs()
         for _, buf in ipairs(bufs) do
           if vim.api.nvim_buf_get_name(buf) ~= "" then
