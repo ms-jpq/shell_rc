@@ -182,7 +182,7 @@ sorbet:
   bin: srb
 
 solargraph:
-  bin: solargraph
+  bin: solargraph.rb
 
 mdx_analyzer:
   bin: mdx-language-server
