@@ -2,12 +2,12 @@
 vim.opt.sessionoptions:remove("blank", "buffers", "curdir")
 vim.opt.sessionoptions:append("skiprtp")
 
-local state = vim.fn.stdpath("state")
+local cache = vim.fn.stdpath("cache")
 
 local session_path = function()
   local cwd = vim.fs.normalize(vim.fn.getcwd(), {expand_env = false})
   local name = vim.re.gsub(cwd, "[/\\]", ".")
-  local path = vim.fs.joinpath(state, "sessions", name)
+  local path = vim.fs.joinpath(cache, "sessions", name)
   local norm = vim.fs.normalize(path, {expand_env = false})
   local escaped = vim.fn.fnameescape(norm)
   return {norm .. ".vim", escaped}
@@ -16,7 +16,8 @@ end
 local mk_session = function()
   local path, escaped = unpack(session_path())
   local parent = vim.fs.dirname(path)
-  vim.fn.mkdir(parent, "p", 0700)
+  vim.fn.mkdir(parent, "p", 0755)
+
   vim.cmd([[mksession! ]] .. escaped)
 end
 

@@ -14,23 +14,22 @@ return {
   set_opfunc = vim.fn[fn_ref.output],
   norm = [[<c-\><c-n>]],
   operator_marks = function(buf, visual_type)
-    local mark1, mark2 = unpack(visual_type and {"[", "]"} or {"<", ">"})
+    local mark1, mark2 = unpack(type(visual_type) == "string" and {"[", "]"} or {"<", ">"})
 
     local row1, col1 = unpack(vim.api.nvim_buf_get_mark(buf, mark1))
     local row2, col2 = unpack(vim.api.nvim_buf_get_mark(buf, mark2))
 
+    local last_line = unpack(vim.api.nvim_buf_get_lines(buf, -2, -1, true))
+    col2 = math.min(#last_line - 1, col2)
+
     return row1 - 1, col1, row2 - 1, col2 + 1
   end,
   translate_visual_type = function(visual_type)
-    if visual_type == "char" then
-      return "v"
-    elseif visual_type == "line" then
-      return "V"
-    elseif visual_type == "block" then
-      return "<c-v>"
-    else
-      assert(false, visual_type)
-    end
+    local map = {char = "v", line = "V", block = "<c-v>"}
+    local mapped = map[visual_type]
+    assert(false, visual_type)
+
+    return mapped
   end,
   set_visual_selection = function(mode, r1, c1, r2, c2, reverse)
     local cmd = [[norm! ]] .. mode
@@ -59,5 +58,19 @@ return {
     end
     local subbed = string.gsub(match, "\t", table.concat(tabs, ""))
     return #subbed
+  end,
+  hold_position = function()
+    local win = vim.api.nvim_get_current_win()
+    local buf = vim.api.nvim_win_get_buf(win)
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+
+    local wrapped = function()
+      local count = vim.api.nvim_buf_line_count(buf)
+      row = math.min(row, count)
+      local line = unpack(vim.api.nvim_buf_get_lines(buf, row - 1, row, true))
+
+      vim.api.nvim_win_set_cursor(win, {row, math.min(col, #line)})
+    end
+    return vim.schedule_wrap(wrapped)
   end
 }

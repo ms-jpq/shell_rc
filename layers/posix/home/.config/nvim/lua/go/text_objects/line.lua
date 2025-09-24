@@ -1,7 +1,8 @@
 local to = require("go.text_objects")
 
-Go.op_select_line = function(is_inside)
-  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+Go.op_select_line = function(hold_pos, is_inside)
+  local hold = to.hold_position()
+  local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
   local line = unpack(vim.api.nvim_buf_get_lines(0, row - 1, row, true))
 
   local lhs = 0
@@ -15,19 +16,16 @@ Go.op_select_line = function(is_inside)
   end
 
   to.set_visual_selection("v", row, lhs, row, rhs, false)
-
-  vim.schedule(
-    function()
-      vim.api.nvim_win_set_cursor(0, {row, col})
-    end
-  )
+  if hold_pos then
+    hold()
+  end
 end
 
-local cmd = function(inside)
-  return [[<cmd>lua Go.op_select_line(]] .. tostring(inside) .. [[)<cr>]]
+local cmd = function(hold_pos, inside)
+  return [[<cmd>lua Go.op_select_line(]] .. tostring(hold_pos) .. "," .. tostring(inside) .. [[)<cr>]]
 end
 
-vim.keymap.set("o", "il", cmd(true), {noremap = true})
-vim.keymap.set("o", "al", cmd(false), {noremap = true})
-vim.keymap.set("v", "il", to.norm .. cmd(true), {noremap = true})
-vim.keymap.set("v", "al", to.norm .. cmd(false), {noremap = true})
+vim.keymap.set("o", "il", cmd(true, true), {noremap = true})
+vim.keymap.set("o", "al", cmd(true, false), {noremap = true})
+vim.keymap.set("v", "il", to.norm .. cmd(false, true), {noremap = true})
+vim.keymap.set("v", "al", to.norm .. cmd(false, false), {noremap = true})

@@ -29,6 +29,8 @@ vim.api.nvim_create_autocmd({"BufLeave", "FocusLost"}, {callback = check_time(fa
 
 vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {callback = check_time(true)})
 
+vim.api.nvim_create_autocmd({"VimLeavePre"}, {command = [[silent! wall!]]})
+
 local cycle = 600
 local check_times = nil
 check_times = function()

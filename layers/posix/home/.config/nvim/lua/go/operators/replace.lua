@@ -4,6 +4,7 @@ Go.op_replace = function(visual_type)
   local row1, col1, row2, col2 = to.operator_marks(0, visual_type)
   local replacement = vim.split(vim.fn.getreg(), "\n", true)
 
+  vim.print({visual_type,row1, col1, row2, col2})
   vim.api.nvim_buf_set_text(0, row1, col1, row2, col2, replacement)
 end
 

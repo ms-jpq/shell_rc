@@ -4,6 +4,7 @@ local hl = "IncSearch"
 
 local mark_signs = function()
   local buf = vim.api.nvim_get_current_buf()
+  local count = vim.api.nvim_buf_line_count(buf)
 
   local marks = {}
   for key in string.gmatch(az, [[%w]]) do
@@ -29,7 +30,10 @@ local mark_signs = function()
       sign_hl_group = hl,
       number_hl_group = hl
     }
-    vim.api.nvim_buf_set_extmark(buf, ns, row - 1, 0, opts)
+
+    if row > 0 and row <= count then
+      vim.api.nvim_buf_set_extmark(buf, ns, row - 1, 0, opts)
+    end
   end
 end
 
