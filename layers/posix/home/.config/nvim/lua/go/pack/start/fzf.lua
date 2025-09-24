@@ -17,24 +17,23 @@ vim.keymap.set("n", [[<leader>b]], [[<cmd>Buffers<cr>]], {noremap = true})
 vim.keymap.set("n", [[<leader>B]], [[<cmd>Jumps<cr>]], {noremap = true})
 vim.keymap.set("n", [[<leader>m]], [[<cmd>Marks<cr>]], {noremap = true})
 
-vim.keymap.set("n", [[<leader>/]], [[<cmd>BLines<cr>]], {noremap = true})
 vim.keymap.set("n", [[<leader>f]], [[<cmd>Files<cr>]], {noremap = true})
 
 vim.keymap.set("n", [[<leader>g]], [[<cmd>GFiles?<cr>]], {noremap = true})
 vim.keymap.set("n", [[<leader>G]], [[<cmd>GFiles<cr>]], {noremap = true})
 
+vim.keymap.set("n", [[<leader>/]], [[<cmd>BL<cr>]], {noremap = true})
 vim.keymap.set("n", [[<leader>?]], [[<cmd>RG<cr>]], {noremap = true})
 
--- vim.api.nvim_create_user_command(
---   "FTdetect",
---   function()
---     vim.cmd [[filetype detect]]
---   end,
---   {
---     force = true,
---     bang = true,
---     nargs = true
---   }
--- )
-
-vim.cmd [[command! -bang -nargs=* RG call fzf#vim#grep2("rg --fixed-strings --column --line-number --no-heading --color=always --smart-case -- ", <q-args>, fzf#vim#with_preview(), <bang>0)]]
+vim.api.nvim_create_user_command(
+  "RG",
+  function(opts)
+    local cmd = [[rg --fixed-strings --column --line-number --no-heading --color=always --smart-case --]]
+    vim.fn["fzf#vim#grep2"](cmd, opts.args, vim.fn["fzf#vim#with_preview"](), opts.bang)
+  end,
+  {
+    force = true,
+    bang = true,
+    nargs = "*"
+  }
+)
