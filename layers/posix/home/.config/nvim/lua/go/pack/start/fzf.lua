@@ -25,12 +25,28 @@ vim.keymap.set("n", [[<leader>G]], [[<cmd>GFiles<cr>]], {noremap = true})
 vim.keymap.set("n", [[<leader>/]], [[<cmd>BL!<cr>]], {noremap = true})
 vim.keymap.set("n", [[<leader>?]], [[<cmd>RG!<cr>]], {noremap = true})
 
+local rg_args =
+  table.concat(
+  {
+    "",
+    "--fixed-strings",
+    "--with-filename",
+    "--column",
+    "--line-number",
+    "--no-heading",
+    "--color=always",
+    "--smart-case",
+    "--"
+  },
+  " "
+)
+
 vim.api.nvim_create_user_command(
   "RG",
   function(opts)
-    local cmd = [[rg --fixed-strings --column --line-number --no-heading --color=always --smart-case --]]
     local preview = vim.fn["fzf#vim#with_preview"]()
-    vim.fn["fzf#vim#grep2"](cmd, opts.args, preview, opts.bang)
+
+    vim.fn["fzf#vim#grep2"]([[rg ]] .. rg_args, opts.args, preview, opts.bang)
   end,
   {
     force = true,
@@ -42,11 +58,17 @@ vim.api.nvim_create_user_command(
 vim.api.nvim_create_user_command(
   "BL",
   function(opts)
-    local name = vim.fn.shellescape(vim.api.nvim_buf_get_name(0))
-    local cmd =
-      [[rgb.sh ]] .. name .. [[ --fixed-strings --column --line-number --no-heading --color=always --smart-case --]]
+    local absname = vim.api.nvim_buf_get_name(0)
+    local relname = vim.fn.fnamemodify(absname, [[:~:.]])
+    local name = vim.fn.shellescape(relname)
 
-    local preview = {options = {[[--preview=bat --force-colorization --highlight-line {1} -- ]] .. name}}
+    local cmd = [[rgb.sh ]] .. name .. rg_args
+    local preview = {
+      options = {
+        [[--preview=bat --force-colorization --highlight-line {2} -- ]] .. name
+      }
+    }
+
     vim.fn["fzf#vim#grep2"](cmd, opts.args, preview, opts.bang)
   end,
   {
