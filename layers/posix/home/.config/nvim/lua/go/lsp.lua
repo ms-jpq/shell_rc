@@ -25,6 +25,15 @@ vim.api.nvim_create_autocmd(
   }
 )
 
+vim.api.nvim_create_autocmd(
+  "LspAttach",
+  {
+    callback = function(args)
+      local _ = assert(vim.lsp.get_client_by_id(args.data.client_id))
+    end
+  }
+)
+
 -- vim.lsp.inline_completion.enable(true)
 
 -- vim.keymap.set(
