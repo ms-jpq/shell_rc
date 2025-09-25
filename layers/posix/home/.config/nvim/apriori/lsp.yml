@@ -339,8 +339,8 @@ tabby_ml:
     - text
     - typescript
 
-copilot:
-  bin: copilot-language-server
+# copilot:
+#   bin: copilot-language-server
 
 # gh_actions_ls:
 #   bin: gh-actions-language-server
