@@ -13,15 +13,18 @@ local virtual_text = true
 local virtual_lines = false
 vim.diagnostic.config({virtual_text = virtual_text, virtual_lines = virtual_lines})
 
-vim.api.nvim_create_user_command(
-  "DiagnosticToggle",
-  function()
-    virtual_text = not virtual_text
-    virtual_lines = not virtual_lines
-    vim.diagnostic.config({virtual_text = virtual_text, virtual_lines = virtual_lines})
-  end,
-  {}
-)
+local toggle = function()
+  virtual_text = not virtual_text
+  virtual_lines = not virtual_lines
+  local conf = {virtual_text = virtual_text, virtual_lines = virtual_lines}
+  local text = [[🎱 ]] .. string.gsub(vim.inspect(conf), [[%s]], "")
+
+  vim.diagnostic.config(conf)
+  vim.notify(text, vim.log.levels.INFO, {})
+end
+
+vim.keymap.set("n", "gO", toggle, {noremap = true})
+vim.api.nvim_create_user_command("DToggle", toggle, {})
 
 vim.api.nvim_create_autocmd(
   {"BufEnter", "CursorHold", "InsertLeave"},
