@@ -13,9 +13,11 @@ vim.g.fzf_vim = {
   preview_window = {"right:wrap"}
 }
 
+local az = vim.split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "", true)
+
 vim.keymap.set("n", [[<leader>b]], [[<cmd>Buffers<cr>]], {noremap = true})
-vim.keymap.set("n", [[<leader>B]], [[<cmd>Jumps<cr>]], {noremap = true})
-vim.keymap.set("n", [[<leader>m]], [[<cmd>Marks<cr>]], {noremap = true})
+vim.keymap.set("n", [[<leader>j]], [[<cmd>Jumps<cr>]], {noremap = true})
+vim.keymap.set("n", [[<leader>B]], [[<cmd>Marks ]] .. table.concat(az, " ") .. [[<cr>]], {noremap = true})
 
 vim.keymap.set("n", [[<leader>f]], [[<cmd>Files<cr>]], {noremap = true})
 
@@ -69,9 +71,7 @@ vim.api.nvim_create_user_command(
 
     local cmd = [[rgb.sh ]] .. name .. rg_args
     local preview = {
-      options = {
-        [[--preview=bat --force-colorization --highlight-line {2} -- ]] .. name
-      }
+      options = {[[--preview=bat --force-colorization --highlight-line {2} -- {1}]]}
     }
 
     vim.fn["fzf#vim#grep2"](cmd, opts.args, preview, opts.bang)
