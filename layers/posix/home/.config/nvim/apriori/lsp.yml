@@ -179,10 +179,15 @@ fortls:
 #   bin: ruby-lsp
 
 sorbet:
-  bin: srb
+  bin: srb.rb
+  args:
+    - tc
+    - --lsp
 
 solargraph:
   bin: solargraph.rb
+  args:
+    - stdio
 
 mdx_analyzer:
   bin: mdx-language-server

@@ -49,6 +49,7 @@
   },
   "gem": {
     "rubocop": [],
+    "ruby-lsp": [],
     "solargraph": [],
     "sorbet": [],
     "steep": [],
