@@ -22,6 +22,5 @@ vim.keymap.set(
   function()
     local cmd = vim.iter({command(), "--", "env", "--", "EDITOR=nvim-remote.sh", "lf"}):flatten():totable()
     vim.system(cmd):wait(666)
-  end,
-  {noremap = true}
+  end
 )

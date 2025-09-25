@@ -23,7 +23,7 @@ local toggle = function()
   vim.notify(text, vim.log.levels.INFO, {})
 end
 
-vim.keymap.set("n", "gO", toggle, {noremap = true})
+vim.keymap.set("n", "gO", toggle)
 vim.api.nvim_create_user_command("DToggle", toggle, {})
 
 vim.api.nvim_create_autocmd(
@@ -89,8 +89,7 @@ vim.keymap.set(
   [[<leader>a]],
   function()
     vim.lsp.buf.code_action()
-  end,
-  {noremap = true}
+  end
 )
 
 vim.keymap.set(
@@ -98,8 +97,7 @@ vim.keymap.set(
   [[<leader>d]],
   function()
     vim.diagnostic.setloclist()
-  end,
-  {noremap = true}
+  end
 )
 
 vim.keymap.set(
@@ -107,8 +105,7 @@ vim.keymap.set(
   [[<leader>D]],
   function()
     vim.diagnostic.setqflist()
-  end,
-  {noremap = true}
+  end
 )
 
 vim.keymap.set(
@@ -116,8 +113,7 @@ vim.keymap.set(
   [[<leader>s]],
   function()
     vim.lsp.buf.document_symbol()
-  end,
-  {noremap = true}
+  end
 )
 
 vim.keymap.set(
@@ -125,8 +121,7 @@ vim.keymap.set(
   [[<leader>S]],
   function()
     vim.lsp.buf.workspace_symbol()
-  end,
-  {noremap = true}
+  end
 )
 
 vim.keymap.set(
@@ -134,8 +129,7 @@ vim.keymap.set(
   "H",
   function()
     vim.diagnostic.open_float()
-  end,
-  {noremap = true}
+  end
 )
 
 vim.keymap.set(
@@ -143,8 +137,7 @@ vim.keymap.set(
   "gp",
   function()
     vim.lsp.buf.definition()
-  end,
-  {noremap = true}
+  end
 )
 
 vim.keymap.set(
@@ -152,8 +145,7 @@ vim.keymap.set(
   "gP",
   function()
     vim.lsp.buf.references()
-  end,
-  {noremap = true}
+  end
 )
 
 vim.keymap.set(
@@ -161,8 +153,7 @@ vim.keymap.set(
   [[<leader>j]],
   function()
     vim.diagnostic.setloclist()
-  end,
-  {noremap = true}
+  end
 )
 
 vim.keymap.set(
@@ -170,6 +161,5 @@ vim.keymap.set(
   [[<leader>J]],
   function()
     vim.lsp.buf.setqflist()
-  end,
-  {noremap = true}
+  end
 )

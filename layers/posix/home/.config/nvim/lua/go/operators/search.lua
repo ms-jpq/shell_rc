@@ -26,11 +26,11 @@ Go.op_buf_edit = function(visual_type)
   vim.api.nvim_input(cmd)
 end
 
-vim.keymap.set("n", "gs", [[<cmd>set opfunc=v:lua.Go.op_buf_edit<cr>g@]], {noremap = true})
-vim.keymap.set("x", "gs", to.norm .. [[<cmd>lua Go.op_buf_edit(nil)<cr>]], {noremap = true})
+vim.keymap.set("n", "gs", [[<cmd>set opfunc=v:lua.Go.op_buf_edit<cr>g@]])
+vim.keymap.set("x", "gs", to.norm .. [[<cmd>lua Go.op_buf_edit(nil)<cr>]])
 
 -- very magic
-vim.keymap.set("n", "gS", [[:%s/\v//g<left><left><left>]], {noremap = true})
+vim.keymap.set("n", "gS", [[:%s/\v//g<left><left><left>]])
 
 local searcher = function(cmd)
   return function(visual_type)

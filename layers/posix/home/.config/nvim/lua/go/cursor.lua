@@ -35,14 +35,11 @@ vim.keymap.set(
       vim.opt.virtualedit = "all"
       vim.opt.cursorcolumn = true
     end
-  end,
-  {
-    noremap = true
-  }
+  end
 )
 
 for _, mode in pairs {"n", "v"} do
-  vim.keymap.set(mode, "$", "$<right>", {noremap = true})
+  vim.keymap.set(mode, "$", "$<right>")
 end
 
 vim.api.nvim_create_autocmd(
