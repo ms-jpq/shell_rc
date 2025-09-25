@@ -1,7 +1,6 @@
 vim.opt.tagfunc = "v:lua.vim.lsp.tagfunc"
 vim.opt.formatexpr = "v:lua.vim.lsp.formatexpr()"
 
-vim.diagnostic.config({virtual_lines = true})
 vim.lsp.inlay_hint.enable(true)
 
 if vim.fn.has("nvim-0.12") == 1 then
@@ -9,6 +8,20 @@ if vim.fn.has("nvim-0.12") == 1 then
   vim.lsp.linked_editing_range.enable(true)
   vim.lsp.semantic_tokens.enable(true)
 end
+
+local virtual_text = true
+local virtual_lines = false
+vim.diagnostic.config({virtual_text = virtual_text, virtual_lines = virtual_lines})
+
+vim.api.nvim_create_user_command(
+  "DiagnosticToggle",
+  function()
+    virtual_text = not virtual_text
+    virtual_lines = not virtual_lines
+    vim.diagnostic.config({virtual_text = virtual_text, virtual_lines = virtual_lines})
+  end,
+  {}
+)
 
 vim.api.nvim_create_autocmd(
   {"BufEnter", "CursorHold", "InsertLeave"},

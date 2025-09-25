@@ -10,7 +10,7 @@ require("go.pack.start.chadtree")
 require("go.pack.start.coq")
 require("go.pack.start.fzf")
 
-vim.cmd [[packloadall]]
+vim.cmd.packloadall()
 
 require("go.pack.start.illuminate")
 require("go.pack.start.leap")
@@ -26,7 +26,7 @@ vim.schedule(
     for name in vim.fs.dir(opt) do
       local rt = vim.fs.joinpath(opt, name)
       vim.opt.runtimepath:append(rt)
-      vim.cmd([[packadd ]] .. name)
+      vim.cmd.packadd(name)
     end
 
     require("go.pack.opt.gitsigns")

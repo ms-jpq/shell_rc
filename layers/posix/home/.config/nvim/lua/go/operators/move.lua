@@ -6,11 +6,11 @@ Go.op_norm_move = function(up)
 
   if up then
     if row > 1 then
-      vim.cmd [[move -2]]
+      vim.cmd.move [[-2]]
     end
   else
     if row < count then
-      vim.cmd [[move +1]]
+      vim.cmd.move [[+1]]
     end
   end
 end

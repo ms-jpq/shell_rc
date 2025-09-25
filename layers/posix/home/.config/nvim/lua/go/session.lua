@@ -25,7 +25,7 @@ vim.api.nvim_create_autocmd(
   {"SessionWritePost"},
   {
     callback = function()
-      vim.cmd [[doautocmd User CHADSave]]
+      vim.cmd.doautocmd [[User CHADSave]]
     end
   }
 )
