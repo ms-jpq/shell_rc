@@ -40,6 +40,8 @@ const plugins = {
   [join("prettier-plugin-tailwindcss", "dist", "index.mjs")]: /^(html|js|ts)$/,
 }
 
+const more_args = new Map([[/^json$/, ["--parser", "jsonc"]]])
+
 if (sort) {
   plugins[join("prettier-plugin-organize-imports", "index.js")] = /^(js|ts)/
 }
@@ -52,6 +54,12 @@ const argv = (function* () {
   for (const [plugin, re] of Object.entries(plugins)) {
     if (ext.match(re)) {
       yield `--plugin=${join(node_modules, plugin)}`
+    }
+  }
+
+  for (const [re, args] of more_args) {
+    if (ext.match(re)) {
+      yield* args
     }
   }
 })()
