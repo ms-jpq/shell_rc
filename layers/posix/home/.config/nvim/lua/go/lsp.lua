@@ -25,58 +25,74 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-for _, mode in pairs {"n", "v"} do
-  vim.keymap.set(
-    mode,
-    "H",
-    function()
-      vim.diagnostic.open_float()
-    end,
-    {noremap = true}
-  )
+vim.keymap.set(
+  "n",
+  [[<leader>a]],
+  function()
+    vim.lsp.buf.code_action()
+  end,
+  {noremap = true}
+)
 
-  vim.keymap.set(
-    mode,
-    [[<leader>a]],
-    function()
-      vim.lsp.buf.code_action()
-    end,
-    {noremap = true}
-  )
+vim.keymap.set(
+  "n",
+  [[<leader>s]],
+  function()
+    vim.lsp.buf.document_symbol()
+  end,
+  {noremap = true}
+)
 
-  vim.keymap.set(
-    mode,
-    "gp",
-    function()
-      vim.lsp.buf.definition()
-    end,
-    {noremap = true}
-  )
+vim.keymap.set(
+  "n",
+  [[<leader>S]],
+  function()
+    vim.lsp.buf.workspace_symbol()
+  end,
+  {noremap = true}
+)
 
-  vim.keymap.set(
-    mode,
-    "gP",
-    function()
-      vim.lsp.buf.references()
-    end,
-    {noremap = true}
-  )
+vim.keymap.set(
+  "n",
+  "H",
+  function()
+    vim.diagnostic.open_float()
+  end,
+  {noremap = true}
+)
 
-  vim.keymap.set(
-    mode,
-    [[<leader>j]],
-    function()
-      vim.diagnostic.setloclist()
-    end,
-    {noremap = true}
-  )
+vim.keymap.set(
+  "n",
+  "gp",
+  function()
+    vim.lsp.buf.definition()
+  end,
+  {noremap = true}
+)
 
-  vim.keymap.set(
-    mode,
-    [[<leader>J]],
-    function()
-      vim.lsp.buf.setqflist()
-    end,
-    {noremap = true}
-  )
-end
+vim.keymap.set(
+  "n",
+  "gP",
+  function()
+    vim.lsp.buf.references()
+  end,
+  {noremap = true}
+)
+
+vim.keymap.set(
+  "n",
+  [[<leader>j]],
+  function()
+    vim.diagnostic.setloclist()
+  end,
+  {noremap = true}
+)
+
+vim.keymap.set(
+  "n",
+  [[<leader>J]],
+  function()
+    vim.lsp.buf.setqflist()
+  end,
+  {noremap = true}
+)

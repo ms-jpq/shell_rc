@@ -5,13 +5,13 @@ gs.setup {
   -- word_diff = true
 }
 
-vim.keymap.set("n", "[s", gs.prev_hunk, {noremap = true})
-vim.keymap.set("n", "]s", gs.next_hunk, {noremap = true})
+vim.keymap.set("n", "[g", gs.prev_hunk, {noremap = true})
+vim.keymap.set("n", "]g", gs.next_hunk, {noremap = true})
 
 vim.keymap.set("n", [[<leader>e]], gs.prev_hunk, {noremap = true})
 vim.keymap.set("n", [[<leader>E]], gs.diffthis, {noremap = true})
 
-vim.keymap.set("n", [[<leader>s]], gs.stage_hunk, {noremap = true})
-vim.keymap.set("n", [[<leader>S]], gs.undo_stage_hunk, {noremap = true})
+vim.keymap.set("n", [[<leader>e]], gs.stage_hunk, {noremap = true})
+vim.keymap.set("n", [[<leader>E]], gs.undo_stage_hunk, {noremap = true})
 
 vim.keymap.set("n", [[<leader>c]], gs.reset_hunk, {noremap = true})
