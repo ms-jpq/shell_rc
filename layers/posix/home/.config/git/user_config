@@ -59,6 +59,9 @@ pruneTags = true
 # TODO: this segfaults git on ubuntu 24
 # writeCommitGraph  = true
 
+[gc]
+worktreePruneExpire = "now"
+
 [grep]
 column      = true
 lineNumber  = true
