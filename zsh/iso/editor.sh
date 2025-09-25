@@ -1,3 +1,4 @@
 #!/usr/bin/env -S -- bash
 
-export -- EDITOR=nvim VISUAL=nvim
+export -- EDITOR="${EDITOR:-nvim}"
+export -- VISUAL="$EDITOR"
