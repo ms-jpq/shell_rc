@@ -10,11 +10,13 @@ require("nvim-treesitter.configs").setup {
     enable = true,
     keymaps = {
       init_selection = "+",
-      node_decremental = "q",
+      node_decremental = "_",
       node_incremental = "+"
     }
   },
-  indent = {},
+  indent = {
+    enable = true
+  },
   textobjects = {
     lsp_interop = {
       enable = true,
@@ -49,19 +51,19 @@ require("nvim-treesitter.configs").setup {
       enable = true,
       set_jumps = true,
       goto_next_start = {
-        ["]["] = "@statement.outer",
+        ["]s"] = "@statement.outer",
         ["]m"] = "@block.outer"
       },
       goto_next_end = {
-        ["]]"] = "@statement.outer",
+        ["]S"] = "@statement.outer",
         ["]M"] = "@block.outer"
       },
       goto_previous_start = {
-        ["[[]]"] = "@statement.outer",
+        ["[s"] = "@statement.outer",
         ["[m"] = "@block.outer"
       },
       goto_previous_end = {
-        ["[]"] = "@statement.outer",
+        ["[S"] = "@statement.outer",
         ["[M"] = "@block.outer"
       }
     },
