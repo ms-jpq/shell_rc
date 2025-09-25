@@ -1,6 +1,8 @@
 vim.opt.tagfunc = "v:lua.vim.lsp.tagfunc"
 vim.opt.formatexpr = "v:lua.vim.lsp.formatexpr()"
 
+vim.diagnostic.config({virtual_lines = true})
+
 vim.api.nvim_create_autocmd(
   {"BufEnter", "CursorHold", "InsertLeave"},
   {
