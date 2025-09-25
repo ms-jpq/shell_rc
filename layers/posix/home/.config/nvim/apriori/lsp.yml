@@ -127,7 +127,7 @@ perlnavigator:
   bin: perlnavigator
 
 powershell_es:
-  bin: pwsh_es.ps1
+  bin: pwsh-es.ps1
   args: []
 
 dockerls:
@@ -225,7 +225,7 @@ vimls:
   bin: vim-language-server
 
 r_language_server:
-  bin: lsr
+  bin: lsp.R
   args: []
 
 julials:
@@ -239,7 +239,7 @@ phan:
 #   bin: psalm
 
 phpactor:
-  bin: phpactor
+  bin: phpactor.phar
 
 intelephense:
   bin: intelephense
@@ -247,10 +247,10 @@ intelephense:
     globalStoragePath: /var/tmp/intelephense
 
 fsautocomplete:
-  bin: fsautocomplete
+  bin: fsautocomplete.fsx
 
 omnisharp:
-  bin: omnisharp
+  bin: omnisharp.fsx
   args: []
 
 clojure_lsp:

@@ -27,7 +27,7 @@ return {
   translate_visual_type = function(visual_type)
     local map = {char = "v", line = "V", block = "<c-v>"}
     local mapped = map[visual_type]
-    assert(false, visual_type)
+    assert(mapped, visual_type)
 
     return mapped
   end,
