@@ -25,6 +25,22 @@ vim.api.nvim_create_autocmd(
   }
 )
 
+-- vim.lsp.inline_completion.enable(true)
+
+-- vim.keymap.set(
+--   "i",
+--   [[<c-f>]],
+--   function()
+--     if not vim.lsp.inline_completion.get() then
+--       return [[<c-f>]]
+--     end
+--   end,
+--   {
+--     expr = true,
+--     replace_keycodes = true
+--   }
+-- )
+
 vim.keymap.set(
   "n",
   [[<leader>a]],

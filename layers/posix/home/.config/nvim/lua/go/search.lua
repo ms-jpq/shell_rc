@@ -1,5 +1,3 @@
--- search results shown on side
-vim.opt.inccommand = "nosplit"
 -- use ripgrep
 vim.opt.grepprg = [[rg\ --vimgrep]]
 
