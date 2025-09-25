@@ -40,7 +40,9 @@ const plugins = {
   [join("prettier-plugin-tailwindcss", "dist", "index.mjs")]: /^(html|js|ts)$/,
 }
 
-const more_args = new Map([[/^json$/, ["--parser", "jsonc"]]])
+const more_args = new Map([
+  [/^json$/, ["--parser=jsonc", "--trailing-comma=none"]],
+])
 
 if (sort) {
   plugins[join("prettier-plugin-organize-imports", "index.js")] = /^(js|ts)/
