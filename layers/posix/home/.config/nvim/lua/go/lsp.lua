@@ -36,6 +36,24 @@ vim.keymap.set(
 
 vim.keymap.set(
   "n",
+  [[<leader>d]],
+  function()
+    vim.diagnostic.setloclist()
+  end,
+  {noremap = true}
+)
+
+vim.keymap.set(
+  "n",
+  [[<leader>D]],
+  function()
+    vim.diagnostic.setqflist()
+  end,
+  {noremap = true}
+)
+
+vim.keymap.set(
+  "n",
   [[<leader>s]],
   function()
     vim.lsp.buf.document_symbol()

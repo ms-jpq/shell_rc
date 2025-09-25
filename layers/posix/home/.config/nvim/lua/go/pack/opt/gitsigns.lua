@@ -8,8 +8,8 @@ gs.setup {
 vim.keymap.set("n", "[g", gs.prev_hunk, {noremap = true})
 vim.keymap.set("n", "]g", gs.next_hunk, {noremap = true})
 
-vim.keymap.set("n", [[<leader>e]], gs.prev_hunk, {noremap = true})
-vim.keymap.set("n", [[<leader>E]], gs.diffthis, {noremap = true})
+vim.keymap.set("n", [[<leader>i]], gs.prev_hunk, {noremap = true})
+vim.keymap.set("n", [[<leader>I]], gs.diffthis, {noremap = true})
 
 vim.keymap.set("n", [[<leader>e]], gs.stage_hunk, {noremap = true})
 vim.keymap.set("n", [[<leader>E]], gs.undo_stage_hunk, {noremap = true})
