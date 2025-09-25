@@ -27,5 +27,5 @@ end
 
 vim.keymap.set("o", "il", cmd(true, true), {noremap = true})
 vim.keymap.set("o", "al", cmd(true, false), {noremap = true})
-vim.keymap.set("v", "il", to.norm .. cmd(false, true), {noremap = true})
-vim.keymap.set("v", "al", to.norm .. cmd(false, false), {noremap = true})
+vim.keymap.set("x", "il", to.norm .. cmd(false, true), {noremap = true})
+vim.keymap.set("x", "al", to.norm .. cmd(false, false), {noremap = true})

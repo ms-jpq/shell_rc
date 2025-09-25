@@ -25,4 +25,4 @@ Go.op_sort_lines = function(visual_type)
 end
 
 vim.keymap.set("n", "gu", [[<cmd>set opfunc=v:lua.Go.op_sort_lines<cr>g@]], {noremap = true})
-vim.keymap.set("v", "gu", to.norm .. [[<cmd>lua Go.op_sort_lines(nil)<cr>]], {noremap = true})
+vim.keymap.set("x", "gu", to.norm .. [[<cmd>lua Go.op_sort_lines(nil)<cr>]], {noremap = true})

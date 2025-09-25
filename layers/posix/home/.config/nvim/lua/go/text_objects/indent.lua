@@ -57,4 +57,4 @@ local cmd = function(hold)
 end
 
 vim.keymap.set("o", "ii", cmd(true), {noremap = true})
-vim.keymap.set("v", "ii", to.norm .. cmd(false), {noremap = true})
+vim.keymap.set("x", "ii", to.norm .. cmd(false), {noremap = true})
