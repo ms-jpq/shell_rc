@@ -1,10 +1,14 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- quit
+vim.keymap.set({"n", "v"}, "Q", [[<nop>]], {noremap = true})
+vim.keymap.set({"n", "v"}, "QQ", [[<cmd>quitall!<cr>]], {noremap = true})
+
 -- prevent macro recording
 vim.keymap.set("n", "q", [[<nop>]], {noremap = true})
 
--- manaul save
+-- manual save
 vim.keymap.set("n", [[<c-s>]], [[<cmd>w<cr>]], {noremap = true})
 
 -- dont go into ex mode
@@ -69,65 +73,57 @@ vim.keymap.set("i", [[<m-right>]], [[<c-o>e<right>]], {noremap = true})
 vim.keymap.set("c", [[<m-left>]], [[<s-left>]], {noremap = true})
 vim.keymap.set("c", [[<m-right>]], [[<s-right>]], {noremap = true})
 
-for _, mode in pairs {"n", "o", "v"} do
-  -- add emacs key binds
-  vim.keymap.set(mode, [[<m-left>]], "b", {noremap = true})
-  vim.keymap.set(mode, [[<m-right>]], [[e<right>]], {noremap = true})
+-- add emacs key binds
+vim.keymap.set({"n", "o", "v"}, [[<m-left>]], "b", {noremap = true})
+vim.keymap.set({"n", "o", "v"}, [[<m-right>]], [[e<right>]], {noremap = true})
+
+-- delete dont copy
+for _, key in pairs {"c", "C", "d", "D", "x", "X"} do
+  vim.keymap.set({"n", "v"}, key, '"_' .. key, {noremap = true})
 end
 
-for _, mode in pairs {"n", "v"} do
-  -- quit
-  vim.keymap.set(mode, "Q", [[<nop>]], {noremap = true})
-  vim.keymap.set(mode, "QQ", [[<cmd>quitall!<cr>]], {noremap = true})
+-- leave cursor 1 behind instead of before
+for _, key in pairs {"p", "P"} do
+  vim.keymap.set({"n", "v"}, key, "g" .. key, {noremap = true})
+end
 
-  -- delete dont copy
-  for _, key in pairs {"c", "C", "d", "D", "x", "X"} do
-    vim.keymap.set(mode, key, '"_' .. key, {noremap = true})
-  end
+-- scroll fixed lines
+vim.keymap.set({"n", "v"}, "{", [[5g<up>zz]], {noremap = true})
+vim.keymap.set({"n", "v"}, "}", [[5g<down>zz]], {noremap = true})
 
-  -- leave cursor 1 behind instead of before
-  for _, key in pairs {"p", "P"} do
-    vim.keymap.set(mode, key, "g" .. key, {noremap = true})
-  end
+-- re-center
+for _, key in pairs {"o", "O", "c", "C", "a", "A", "v", "x", "X", "m", "M", "r", "R"} do
+  vim.keymap.set({"n", "v"}, "z" .. key, "z" .. key .. "zz", {noremap = true})
+end
 
-  -- scroll fixed lines
-  vim.keymap.set(mode, "{", [[5g<up>zz]], {noremap = true})
-  vim.keymap.set(mode, "}", [[5g<down>zz]], {noremap = true})
+-- re-center
+for _, key in pairs {"n", "N", "[c", "]c", "<c-f>", "<c-b>"} do
+  vim.keymap.set({"n", "v"}, key, key .. "zz", {noremap = true})
+end
 
-  -- re-center
-  for _, key in pairs {"o", "O", "c", "C", "a", "A", "v", "x", "X", "m", "M", "r", "R"} do
-    vim.keymap.set(mode, "z" .. key, "z" .. key .. "zz", {noremap = true})
-  end
+-- movement relative to window size
+for key, val in pairs {["<c-u>"] = "<up>", ["<c-d>"] = "<down>"} do
+  vim.keymap.set(
+    {"n", "v"},
+    key,
+    function()
+      local rel = math.floor(vim.fn.winheight(0) / 4)
+      return math.max(5, math.min(rel, 9)) .. "g" .. val .. "zz"
+    end,
+    {expr = true, noremap = true}
+  )
+end
 
-  -- re-center
-  for _, key in pairs {"n", "N", "[c", "]c", "<c-f>", "<c-b>"} do
-    vim.keymap.set(mode, key, key .. "zz", {noremap = true})
-  end
-
-  -- movement relative to window size
-  for key, val in pairs {["<c-u>"] = "<up>", ["<c-d>"] = "<down>"} do
-    vim.keymap.set(
-      mode,
-      key,
-      function()
-        local rel = math.floor(vim.fn.winheight(0) / 4)
-        return math.max(5, math.min(rel, 9)) .. "g" .. val .. "zz"
-      end,
-      {expr = true, noremap = true}
-    )
-  end
-
-  -- movement w linewrap
-  for _, key in pairs {"<up>", "<down>", "j", "k"} do
-    vim.keymap.set(
-      mode,
-      key,
-      function()
-        return (vim.v.count ~= 0 and "m'" .. vim.v.count or "g") .. key
-      end,
-      {expr = true, noremap = true}
-    )
-  end
+-- movement w linewrap
+for _, key in pairs {"<up>", "<down>", "j", "k"} do
+  vim.keymap.set(
+    {"n", "v"},
+    key,
+    function()
+      return (vim.v.count ~= 0 and "m'" .. vim.v.count or "g") .. key
+    end,
+    {expr = true, noremap = true}
+  )
 end
 
 -- cut to clipboard

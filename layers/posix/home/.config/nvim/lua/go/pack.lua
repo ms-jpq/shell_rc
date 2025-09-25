@@ -24,7 +24,8 @@ vim.schedule(
   function()
     local opt = vim.fs.joinpath(base, "pack", "opt")
     for name in vim.fs.dir(opt) do
-      vim.opt.runtimepath:append(vim.fs.joinpath(opt, name))
+      local rt = vim.fs.joinpath(opt, name)
+      vim.opt.runtimepath:append(rt)
       vim.cmd([[packadd ]] .. name)
     end
 

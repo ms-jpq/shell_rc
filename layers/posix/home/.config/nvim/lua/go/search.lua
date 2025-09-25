@@ -22,12 +22,10 @@ local function with_redraw(wrapped)
   return l .. wrapped .. r
 end
 
-for _, mode in pairs {"n", "v"} do
-  -- use no magic
-  vim.keymap.set(mode, "/", [[/\V]], {noremap = true})
-  vim.keymap.set(mode, "?", [[?\V]], {noremap = true})
+-- use no magic
+vim.keymap.set({"n", "v"}, "/", [[/\V]], {noremap = true})
+vim.keymap.set({"n", "v"}, "?", [[?\V]], {noremap = true})
 
-  -- () search next params
-  vim.keymap.set(mode, "(", with_redraw [[?(\|[\|{<cr>]], {noremap = true})
-  vim.keymap.set(mode, ")", with_redraw [[/)\|]\|}<cr>]], {noremap = true})
-end
+-- () search next params
+vim.keymap.set({"n", "v"}, "(", with_redraw [[?(\|[\|{<cr>]], {noremap = true})
+vim.keymap.set({"n", "v"}, ")", with_redraw [[/)\|]\|}<cr>]], {noremap = true})

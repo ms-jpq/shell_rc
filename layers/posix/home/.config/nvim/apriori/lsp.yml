@@ -336,6 +336,7 @@ tabby_ml:
     - php
     - python
     - ruby
+    - text
     - typescript
 
 # gh_actions_ls:
