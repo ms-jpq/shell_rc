@@ -1,3 +1,3 @@
 #!/usr/bin/env -S -- bash
 
-lazygit "$@"
+LC_ALL=en_CA.UTF-8 lazygit "$@"
