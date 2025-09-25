@@ -5,7 +5,9 @@ set -o pipefail
 # https://junegunn.github.io/fzf/tips/ripgrep-integration/
 RG=(
   rg
+  --with-filename
   --column
+  --line-number
   --fixed-strings
   --color always
   # --null
@@ -25,7 +27,7 @@ if [[ $* == --tmux ]]; then
 fi
 
 # shellcheck disable=SC2154
-EDIT+=("$EDITOR" --)
+EDIT+=(nvim -c copen -q)
 
 MULT=()
 if [[ -t 1 ]]; then
@@ -46,7 +48,7 @@ FZF_ARGS=(
   --preview-window '~3,+{2}+3/3'
   --bind "start:reload:$CHANGE '' || :"
   --bind "change:reload:$CHANGE {q} || :"
-  --bind "enter:become:$OPENER {+1,2,3}"
+  --bind "enter:become:$OPENER {+f1,2,3,4}"
 )
 
 "${FZF_ARGS[@]}" < /dev/null
