@@ -63,9 +63,10 @@ pruneTags = true
 worktreePruneExpire = "now"
 
 [grep]
-column      = true
-lineNumber  = true
-patternType = "perl"
+column            = true
+fallbackToNoIndex = true
+lineNumber        = true
+patternType       = "perl"
 
 [help]
 autoCorrect = "prompt"
