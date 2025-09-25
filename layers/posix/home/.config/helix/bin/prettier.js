@@ -64,13 +64,10 @@ const argv = (function* () {
   }
 })()
 
-const { error, status, signal } = spawnSync(
-  execPath,
-  [bin, ...argv, ...positionals],
-  {
-    stdio: "inherit",
-  },
-)
+const execArgs = [bin, ...argv, ...positionals]
+const { error, status, signal } = spawnSync(execPath, execArgs, {
+  stdio: "inherit",
+})
 
 if (error) {
   throw error
