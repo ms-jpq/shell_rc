@@ -7,7 +7,7 @@ BASE='https://github.com/kristoff-it/superhtml/releases/latest/download'
 EXT=''
 case "$OSTYPE" in
 darwin*)
-  URI="$BASE/$HOSTTYPE-macos.tar.gz"
+  URI="$BASE/$HOSTTYPE-macos.zip"
   ;;
 linux*)
   case "$HOSTTYPE" in
@@ -18,7 +18,7 @@ linux*)
     LIBC=''
     ;;
   esac
-  URI="$BASE/$HOSTTYPE-linux$LIBC.tar.gz"
+  URI="$BASE/$HOSTTYPE-linux$LIBC.tar.xz"
   ;;
 *)
   URI="$BASE/$HOSTTYPE-windows.zip"

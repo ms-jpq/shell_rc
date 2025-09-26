@@ -7,7 +7,7 @@ shift -- 1
 
 mkdir -v -p -- "$DST"
 
-CP=(-a -c -f)
+CP=(-a -f)
 if [[ $OSTYPE == msys ]]; then
   CP+=(--dereference)
 fi
