@@ -11,7 +11,7 @@ set infotimefmtold "06-01-02 15:04"
 set locale         "*"
 set mouse          true
 set period         2
-set previewer      "~/.config/lf/preview.sh"
+set previewer      "~/.config/lf/libexec/preview.sh"
 set roundbox       true
 set scrolloff      3
 set sixel          true
@@ -32,6 +32,5 @@ map o              :user-open
 map x              cut
 
 map i
-map a              push %mkpath.sh<space>
-
-cmd mkpath         %mkpath.sh "$*" && lf -remote "send $id load" && lf -remote "send $id select $1"
+cmd mkpath         %~/.config/lf/libexec/mkpath.sh "$*"
+map a              push :mkpath<space>

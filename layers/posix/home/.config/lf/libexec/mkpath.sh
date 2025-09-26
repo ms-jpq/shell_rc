@@ -6,11 +6,14 @@ INPUT="$*"
 
 case "$INPUT" in
 */)
-  exec -- mkdir -p -- "$INPUT"
+  mkdir -p -- "$INPUT"
   ;;
 *)
   DIR="$(dirname -- "$INPUT")"
   mkdir -p -- "$DIR"
-  exec -- touch -- "$INPUT"
+  touch -- "$INPUT"
   ;;
 esac
+
+# shellcheck disable=SC2154
+exec -- lf -remote "send $id select $INPUT"
