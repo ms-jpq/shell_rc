@@ -2,7 +2,6 @@
 
 set -o pipefail
 
-
 FILE="$1"
 shift -- 1
 

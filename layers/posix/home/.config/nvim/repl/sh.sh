@@ -5,7 +5,7 @@ set -o pipefail
 SH=(
   bash
   -c
-  "$(</dev/stdin)"
+  "$(< /dev/stdin)"
 )
 
 printf -- '%q ' "${SH[@]}"

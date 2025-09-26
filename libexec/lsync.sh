@@ -7,9 +7,14 @@ shift -- 1
 
 mkdir -v -p -- "$DST"
 
+CP=(-a -c -f)
+if [[ $OSTYPE == msys ]]; then
+  CP+=(--dereference)
+fi
+
 for SRC in "$@"; do
   if [[ -d $SRC ]]; then
-    cp -a -f -- "$SRC"/* "$DST"
+    cp "${CP[@]}" -- "$SRC"/* "$DST"
   fi
 done
 
