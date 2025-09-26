@@ -32,5 +32,9 @@ map o              :user-open
 map x              cut
 
 map i
+
 cmd mkpath         %~/.config/lf/libexec/mkpath.sh "$*"
 map a              push :mkpath<space>
+
+cmd ln             %~/.config/lf/libexec/link.sh "$f" "$*"
+map A              push :ln<space>
