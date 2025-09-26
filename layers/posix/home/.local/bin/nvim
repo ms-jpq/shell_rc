@@ -1,0 +1,30 @@
+#!/usr/bin/env -S -- bash -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O globstar
+
+set -o pipefail
+
+NVIM='nvim'
+
+case "$OSTYPE" in
+linux*)
+  NVIM='/usr/bin/nvim'
+  ;;
+darwin*)
+  NVIM='/opt/homebrew/bin/nvim'
+  ;;
+msys) ;;
+*)
+  set -x
+  exit 1
+  ;;
+esac
+
+ARGV=("$NVIM")
+
+if [[ -v NVIM_SERVERNAME ]]; then
+  ARGV+=(
+    --server "$NVIM_SERVERNAME"
+    --remote
+  )
+fi
+
+exec -- "${ARGV[@]}" "$@"

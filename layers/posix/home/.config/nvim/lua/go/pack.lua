@@ -6,7 +6,6 @@ local lsp_path = vim.fs.joinpath(vim.fn.stdpath("config"), "apriori", "lsp.json"
 
 vim.opt.packpath:append(packed)
 
-require("go.pack.start.chadtree")
 require("go.pack.start.coq")
 require("go.pack.start.fzf")
 
@@ -49,9 +48,6 @@ for name, conf in pairs(lib.read_json(lsp_path)) do
   end
 
   config = require("coq").lsp_ensure_capabilities(config)
-  if chad ~= nil then
-    config = chad.lsp_ensure_capabilities(config)
-  end
   vim.lsp.config(name, config)
 
   if vim.fn.executable(conf.bin) ~= 0 then

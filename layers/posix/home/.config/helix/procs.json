@@ -108,13 +108,6 @@
     "https://github.com/junegunn/fzf.vim": [],
     "https://github.com/junegunn/vim-easy-align": [],
     "https://github.com/lewis6991/gitsigns.nvim": ["--lazy"],
-    "https://github.com/ms-jpq/chadtree": [
-      "python3",
-      "-m",
-      "chadtree",
-      "deps",
-      "--xdg=~/.local/share/nvim"
-    ],
     "https://github.com/ms-jpq/coq.artifacts": [],
     "https://github.com/ms-jpq/coq.thirdparty": [],
     "https://github.com/ms-jpq/coq_nvim": [

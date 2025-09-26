@@ -1,6 +1,3 @@
--- use 256 colours
-vim.opt.termguicolors = true
-
 -- remove welcome message
 vim.opt.shortmess:append("I")
 

@@ -51,7 +51,10 @@ Go.run_fmt = function()
 
     if vim.api.nvim_get_current_buf() == buf then
       local lines = vim.split(waited.stdout, "\n", {plain = true})
-      lines[#lines] = nil
+
+      if #lines[#lines] == 0 then
+        lines[#lines] = nil
+      end
       vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
       vim.notify([[✅...]], vim.log.levels.INFO, {})
     end
