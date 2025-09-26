@@ -33,3 +33,5 @@ map x              cut
 
 map i
 map a              push %mkpath.sh<space>
+
+cmd mkpath         %mkpath.sh "$*" && lf -remote "send $id load" && lf -remote "send $id select $1"
