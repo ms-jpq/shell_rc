@@ -15,6 +15,6 @@ case "$INPUT" in
   ;;
 esac
 
-if [[ -v LF_LEVEL ]]; then
-  lf -remote "select $INPUT"
+if [[ -v LF_LEVEL ]] && [[ -v id ]] ; then
+  lf -remote "send $id select $INPUT"
 fi
