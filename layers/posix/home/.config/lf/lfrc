@@ -2,7 +2,6 @@
 # https://github.com/gokcehan/lf/blob/master/etc/lfrc.example
 
 set drawbox        true
-set findlen        2
 set hidden         true
 set icons          true
 set incfilter      true
@@ -31,7 +30,3 @@ map f              :filter
 map F              :setfilter
 map o              :user-open
 map x              cut
-map <a-enter>      :{{
-                       $printf -- %s "$f"
-                       quit
-                    }}
