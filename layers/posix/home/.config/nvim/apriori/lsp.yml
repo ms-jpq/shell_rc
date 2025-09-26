@@ -176,7 +176,7 @@ fortls:
 #   bin: steep
 
 ruby_lsp:
-  bin: ruby-lsp
+  bin: ruby-lsp.rb
   args: []
 
 sorbet:

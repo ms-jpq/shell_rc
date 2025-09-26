@@ -38,3 +38,7 @@ map a              push :mkpath<space>
 
 cmd ln             %~/.config/lf/libexec/link.sh "$f" "$*"
 map A              push :ln<space>
+
+map bc             $printf -- %s "$f" | ~/.config/zsh/bin/c
+map bd             $dirname -- "$f"   | ~/.config/zsh/bin/c
+map bf             $basename -- "$f"  | ~/.config/zsh/bin/c
