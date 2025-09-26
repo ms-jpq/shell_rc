@@ -30,3 +30,6 @@ map f              :filter
 map F              :setfilter
 map o              :user-open
 map x              cut
+
+map i
+map a              push %mkpath.sh<space>
