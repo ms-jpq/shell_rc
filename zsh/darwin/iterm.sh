@@ -2,5 +2,6 @@
 
 if [[ -f  ~/.iterm2_shell_integration.zsh ]]; then
   export -- ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1
+  # shellcheck disable=1090
   source -- ~/.iterm2_shell_integration.zsh
 fi
