@@ -32,4 +32,4 @@ get.sh "$URI" "$ARCHIVE" | unpack.sh "$RUN"
 find "$RUN" -name '*.pdb' -delete
 # shellcheck disable=SC2154
 mkdir -p -- "$BIN"
-mv -v -f -- "$RUN"/*/* "$BIN/superhtml$EXT"
+mv -v -f -- "$RUN"/superhtml* "$BIN/superhtml$EXT"
