@@ -14,7 +14,3 @@ case "$INPUT" in
   exec -- touch -- "$INPUT"
   ;;
 esac
-
-if [[ -v LF_LEVEL ]] && [[ -v id ]] ; then
-  lf -remote "send $id select $INPUT"
-fi
