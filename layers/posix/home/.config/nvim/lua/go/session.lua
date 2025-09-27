@@ -64,7 +64,7 @@ vim.api.nvim_create_autocmd(
 vim.api.nvim_create_user_command(
   "KillSession",
   function()
-    vim.cmd [[%bwipeout!]]
+    vim.cmd [[silent! %bwipeout!]]
     mk_session()
   end,
   {}
