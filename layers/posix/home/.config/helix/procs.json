@@ -23,7 +23,7 @@
     "lsp-ai.sh": [],
     "lsp.R": [],
     "ltex-plus.sh": [],
-    "lua-ls.sh": [],
+    "lua-ls.lua": [],
     "marksman.sh": [],
     "omnisharp.fsx": [],
     "prolog-ls.pro": [],

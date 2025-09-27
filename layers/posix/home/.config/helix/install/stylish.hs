@@ -25,15 +25,15 @@ nameof _       = id
 run "mingw32" = exitSuccess
 run os = do
   binDir <- getEnv "BIN"
-  tmp <- getEnv "RUN"
+  run <- getEnv "RUN"
   version <- readProcess "env" ["--", "gh-latest.sh", ".", repo] ""
 
   let link = uri os version
   let name = nameof os link & takeBaseName
-  let srv = tmp </> name </> "stylish-haskell"
+  let srv = run </> name </> "stylish-haskell"
 
   _ <- readProcess "env" ["--", "get.sh", link] ""
-    >>= readProcess "env" ["--", "unpack.sh", tmp]
+    >>= readProcess "env" ["--", "unpack.sh", run]
     >>= putStr
 
   _ <- getExecutablePath >>= getPermissions >>= setPermissions srv

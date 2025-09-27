@@ -3,7 +3,7 @@ vim.opt.formatexpr = "v:lua.vim.lsp.formatexpr()"
 
 vim.lsp.inlay_hint.enable(true)
 
-if vim.fn.has("nvim-0.12") == 1 then
+if vim.fn.has [[nvim-0.12]] == 1 then
   vim.lsp.inline_completion.enable(true)
   vim.lsp.linked_editing_range.enable(true)
   vim.lsp.semantic_tokens.enable(true)
@@ -60,7 +60,7 @@ vim.api.nvim_create_autocmd(
         vim.wo[win][0].foldexpr = "v:lua.vim.lsp.foldexpr()"
       end
       if client:supports_method("textDocument/documentColor") then
-        if vim.fn.has("nvim-0.12") == 1 then
+        if vim.fn.has [[nvim-0.12]] == 1 then
           vim.lsp.document_color.enable(true, args.buf)
         end
       end

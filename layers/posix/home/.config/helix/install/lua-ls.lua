@@ -1,0 +1,38 @@
+#!/usr/bin/env -S -- nvim -l
+
+local jit = require("jit")
+local run, lib = vim.env.RUN, vim.env.LIB
+
+local repo = [[LuaLS/lua-language-server]]
+local base = [[https://github.com/]] .. repo .. [[/releases/latest/download/lua-language-server]]
+local version = vim.system({"gh-latest.sh", ".", repo}):wait().stdout
+
+local uri = (function()
+  local prefix = base .. "-" .. version
+
+  if vim.fn.has [[win32]] == 1 or vim.fn.has [[win32unix]] == 1 then
+    return prefix .. "-win32-" .. jit.arch .. ".zip"
+  elseif vim.fn.has [[mac]] then
+    return prefix .. "-darwin-" .. jit.arch .. ".tar.gz"
+  else
+    return prefix .. "-linux-" .. jit.arch .. ".tar.gz"
+  end
+end)()
+
+local std = function(out, err)
+  if err then
+    print(err)
+  end
+  if out then
+    print(out)
+  end
+end
+
+local proc1 = vim.system({"get.sh", uri}, {stderr = std}):wait()
+assert(proc1.code == 0, vim.inspect(proc1))
+
+local proc2 = vim.system({"unpack.sh", run, proc1.stdout}, {stdout = std, stderr = std}):wait()
+assert(proc2.code == 0, vim.inspect(proc2))
+
+vim.fs.rm(lib, {recursive = true, force = true})
+assert(vim.uv.fs_rename(run, lib))

@@ -1,3 +1,5 @@
+local lib = require("go")
+
 local esc = "\027"
 local sep = "\n"
 local tmux = vim.env.TMUX
@@ -57,9 +59,9 @@ local copy = function(lines)
   if ssh then
     local b = vim.base64.encode(s)
     vim.api.nvim_chan_send(2, osc52(b))
-  elseif vim.fn.has("mac") then
+  elseif vim.fn.has [[mac]] == 1 then
     send(s, "pbcopy")
-  elseif vim.fn.has("unix") then
+  elseif vim.fn.has [[unix]] == 1 then
     send(s, "wl-copy")
   end
 end
@@ -67,11 +69,11 @@ end
 local paste = function()
   -- vim.api.nvim_chan_send(2, osc52("?"))
   if not ssh then
-    if vim.fn.has("mac") then
+    if vim.fn.has [[mac]] == 1 then
       return recv(false, "pbpaste")
-    elseif vim.fn.has("unix") then
+    elseif vim.fn.has [[unix]] == 1 then
       return recv(false, "wl-paste")
-    elseif vim.fn.has("win32") then
+    elseif lib.is_win then
       local pwsh = {
         "powershell.exe",
         "-NoProfile",

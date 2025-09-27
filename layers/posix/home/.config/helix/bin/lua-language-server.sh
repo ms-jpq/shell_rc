@@ -2,4 +2,4 @@
 
 set -o pipefail
 
-exec -- "$HOME/.cache/helix-rt/more/lua-ls.sh/lib/bin/lua-language-server" "$@"
+exec -- "$HOME/.cache/helix-rt/more/lua-ls.lua/lib/bin/lua-language-server" "$@"

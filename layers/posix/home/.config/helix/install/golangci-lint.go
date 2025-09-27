@@ -33,7 +33,7 @@ func main() {
 		ext = "zip"
 	}
 
-	tmp, ok := os.LookupEnv("RUN")
+	run, ok := os.LookupEnv("RUN")
 	if !ok {
 		log.Panicln()
 	}
@@ -49,7 +49,7 @@ func main() {
 	uri := fmt.Sprintf("%s-%s-%s-%s.%s", base, version, runtime.GOOS, runtime.GOARCH, ext)
 
 	get := exec.Command("env", "--", "get.sh", uri)
-	unpack := exec.Command("env", "--", "unpack.sh", tmp)
+	unpack := exec.Command("env", "--", "unpack.sh", run)
 	get.Stderr, unpack.Stderr = os.Stderr, os.Stderr
 	r, w := io.Pipe()
 	unpack.Stdin, get.Stdout = r, w
@@ -72,7 +72,7 @@ func main() {
 	wg.Add(2)
 	wg.Wait()
 
-	pat := filepath.Join(tmp, "*", "golangci-lint*")
+	pat := filepath.Join(run, "*", "golangci-lint*")
 	globbed, err := filepath.Glob(pat)
 	if err != nil {
 		log.Panicln(err)
