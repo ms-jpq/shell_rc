@@ -58,24 +58,25 @@ end
 
 vim.api.nvim_create_autocmd({"VimSuspend", "FocusLost", "CursorHold"}, {callback = mk_session})
 
-vim.api.nvim_create_autocmd(
-  {"VimLeavePre"},
-  {
-    callback = function()
-      local dead = {}
-      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.bo[buf].buflisted and vim.fn.filereadable(vim.api.nvim_buf_get_name(buf)) == 0 then
-          table.insert(dead, buf)
-        end
+local prune_session = function()
+  local dead = {}
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.bo[buf].buflisted then
+      local name = vim.api.nvim_buf_get_name(buf)
+      if vim.fn.filereadable(name) == 0 then
+        table.insert(dead, buf)
       end
-
-      if #dead > 0 then
-        vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
-      end
-      mk_session()
     end
-  }
-)
+  end
+
+  if #dead > 0 then
+    vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
+  end
+  mk_session()
+end
+
+vim.api.nvim_create_user_command("MakeSession", prune_session, {})
+vim.api.nvim_create_autocmd({"VimLeavePre"}, {callback = prune_session})
 
 vim.api.nvim_create_autocmd(
   {"VimEnter"},
