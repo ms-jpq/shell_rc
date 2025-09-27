@@ -21,7 +21,7 @@ DIRS=(
   ./zsh/{iso,tmux}
   ./zsh/"$OS"
   ./zsh/aposteriori
-  ./zsh/{fun,dev,docker,lf}
+  ./zsh/{fun,dev,docker}
 )
 
 ZSH=(./zsh/apriori.{sh,zsh})
