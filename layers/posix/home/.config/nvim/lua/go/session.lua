@@ -1,11 +1,11 @@
 -- limit session restoration info
-vim.opt.sessionoptions:remove("blank", "buffers", "curdir")
+vim.opt.sessionoptions:remove("blank", "buffers", "curdir", "help", "terminal")
 vim.opt.sessionoptions:append("skiprtp")
 
 local cache = vim.fn.stdpath("cache")
 
 local session_path = function()
-  local cwd = vim.fs.normalize(vim.fn.getcwd(), {expand_env = false})
+  local cwd = vim.fn.getcwd()
   local name = vim.re.gsub(cwd, "[/\\]", ".")
   local path = vim.fs.joinpath(cache, "sessions", name)
   local norm = vim.fs.normalize(path, {expand_env = false})
@@ -14,6 +14,10 @@ local session_path = function()
 end
 
 local mk_session = function()
+  if vim.fn.getcwd() == vim.uv.os_homedir() then
+    return
+  end
+
   local path, escaped = unpack(session_path())
   local parent = vim.fs.dirname(path)
   vim.fn.mkdir(parent, "p", 0755)
