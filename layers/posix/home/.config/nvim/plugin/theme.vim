@@ -9,6 +9,7 @@ function s:colours()
   highlight! VertSplit             guibg=NONE    ctermbg=NONE
   highlight! link                  CursorColumn  CursorLine
   highlight! link                  MatchParen    Search
+  highlight! link                  TabLineFill   Normal
   highlight! link                  WinSeparator  LineNr
 endfunction
 
