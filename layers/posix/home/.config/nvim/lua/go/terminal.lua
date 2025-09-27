@@ -46,9 +46,11 @@ vim.keymap.set(
 
     local bufs = {}
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-      local name = vim.api.nvim_buf_get_name(buf)
-      if vim.fn.filereadable(name) == 1 then
-        bufs[buf] = name
+      if vim.bo[buf].buflisted then
+        local name = vim.api.nvim_buf_get_name(buf)
+        if vim.fn.filereadable(name) == 1 then
+          bufs[buf] = name
+        end
       end
     end
 
