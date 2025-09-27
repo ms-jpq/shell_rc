@@ -2,6 +2,8 @@ vim.env.NVIM_SERVERNAME = vim.env.NVIM_SERVERNAME or vim.fn.serverstart()
 
 vim.api.nvim_create_autocmd({"TermOpen"}, {command = [[startinsert]]})
 
+vim.api.nvim_create_autocmd({"TermLeave"}, {command = [[set nomodified]]})
+
 vim.keymap.set(
   "n",
   [[<c-t>]],
@@ -18,6 +20,6 @@ vim.keymap.set(
       vim.cmd.bwipeout(buf)
     end
 
-    vim.fn.jobstart(vim.iter(cmd):flatten():totable(), {term = true, on_exit = on_exit})
+    vim.fn.jobstart(vim.iter(cmd):flatten():totable(), {term = true, env = {TERM = [[xterm-kitty]]}, on_exit = on_exit})
   end
 )
