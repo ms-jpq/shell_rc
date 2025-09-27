@@ -1,0 +1,1 @@
+map e &"$EDITOR" "$f" && lf -remote "send $id quit"

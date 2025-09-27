@@ -30,7 +30,7 @@ vim.keymap.set(
   "n",
   [[<c-t>]],
   function()
-    local cmd = {{"lf"}}
+    local cmd = {{"lf"}, {"-config", vim.fs.joinpath(vim.fn.stdpath("config"), "lfrc.2")}}
     local path = vim.api.nvim_buf_get_name(0)
     if vim.fn.filereadable(path) == 0 then
       path = vim.fn.getcwd()
