@@ -6,10 +6,9 @@ local run, lib = vim.env.RUN, vim.env.LIB
 local repo = [[LuaLS/lua-language-server]]
 local base = [[https://github.com/]] .. repo .. [[/releases/latest/download/lua-language-server]]
 local version = vim.system({"gh-latest.sh", ".", repo}):wait().stdout
+local prefix = base .. "-" .. version
 
 local uri = (function()
-  local prefix = base .. "-" .. version
-
   if vim.fn.has [[win32]] == 1 or vim.fn.has [[win32unix]] == 1 then
     return prefix .. "-win32-" .. jit.arch .. ".zip"
   elseif vim.fn.has [[mac]] then
@@ -20,11 +19,8 @@ local uri = (function()
 end)()
 
 local std = function(out, err)
-  if err then
-    print(err)
-  end
-  if out then
-    print(out)
+  for _, txt in pairs {o = out, e = err} do
+    print(txt)
   end
 end
 

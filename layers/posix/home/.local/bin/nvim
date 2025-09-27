@@ -40,7 +40,7 @@ for F in "$@"; do
   fi
 done
 
-if ((${#QF[@]} == $#)); then
+if (($#)) && ((${#QF[@]} == $#)); then
   TMP="$(mktemp)"
   printf -- '%s\n' "${QF[@]}" > "$TMP"
   exec -- "${ARGV[@]}" -q "$TMP"

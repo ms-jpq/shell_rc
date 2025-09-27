@@ -2,12 +2,10 @@
 vim.opt.sessionoptions:remove("blank", "buffers", "curdir", "help", "terminal")
 vim.opt.sessionoptions:append("skiprtp")
 
-local cache = vim.fn.stdpath("cache")
-
 local session_path = function()
   local cwd = vim.fn.getcwd()
   local name = vim.re.gsub(cwd, "[/\\]", ".")
-  local path = vim.fs.joinpath(cache, "sessions", name)
+  local path = vim.fs.joinpath(vim.fn.stdpath("cache"), "sessions", name)
   local norm = vim.fs.normalize(path, {expand_env = false})
   local escaped = vim.fn.fnameescape(norm)
   return {norm .. ".vim", escaped}
@@ -25,6 +23,15 @@ local mk_session = function()
   vim.cmd([[mksession! ]] .. escaped)
 end
 
+vim.api.nvim_create_user_command(
+  "KillSession",
+  function()
+    vim.cmd [[silent! %bwipeout!]]
+    mk_session()
+  end,
+  {}
+)
+
 vim.api.nvim_create_autocmd(
   {"SessionWritePost"},
   {
@@ -34,14 +41,39 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-vim.api.nvim_create_autocmd({"VimLeavePre", "VimSuspend", "FocusLost", "CursorHold"}, {callback = mk_session})
+vim.api.nvim_create_autocmd({"VimSuspend", "FocusLost", "CursorHold"}, {callback = mk_session})
+
+vim.api.nvim_create_autocmd(
+  {"VimLeavePre"},
+  {
+    callback = function()
+      mk_session()
+    end
+  }
+)
+
+local no_session = function()
+  if vim.env.NO_SESSION then
+    return true
+  end
+
+  if vim.fn.argc(-1) > 1 then
+    return true
+  end
+
+  if #vim.api.nvim_get_current_line() > 0 then
+    return true
+  end
+
+  return false
+end
 
 vim.api.nvim_create_autocmd(
   {"VimEnter"},
   {
     callback = vim.schedule_wrap(
       function()
-        if vim.env.NO_SESSION then
+        if no_session() then
           return
         end
 
@@ -59,13 +91,4 @@ vim.api.nvim_create_autocmd(
       end
     )
   }
-)
-
-vim.api.nvim_create_user_command(
-  "KillSession",
-  function()
-    vim.cmd [[silent! %bwipeout!]]
-    mk_session()
-  end,
-  {}
 )

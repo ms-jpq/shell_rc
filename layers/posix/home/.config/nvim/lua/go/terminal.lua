@@ -4,7 +4,7 @@ vim.api.nvim_create_autocmd({"TermOpen"}, {command = [[startinsert]]})
 
 vim.api.nvim_create_autocmd({"TermLeave"}, {command = [[set nomodified]]})
 
-local termstart = function(cmd, env)
+local termstart = function(cmd, env, die)
   local buf = vim.api.nvim_create_buf(false, true)
 
   vim.api.nvim_buf_call(
@@ -17,6 +17,9 @@ local termstart = function(cmd, env)
           env = env,
           on_exit = function()
             vim.cmd.bwipeout(buf)
+            if die then
+              die()
+            end
           end
         }
       )
@@ -41,6 +44,29 @@ vim.keymap.set(
     end
     table.insert(cmd, {"--", path})
 
-    termstart(vim.iter(cmd):flatten():totable(), vim.empty_dict())
+    local bufs = {}
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      local name = vim.api.nvim_buf_get_name(buf)
+      if vim.fn.filereadable(name) == 1 then
+        bufs[buf] = name
+      end
+    end
+
+    termstart(
+      vim.iter(cmd):flatten():totable(),
+      vim.empty_dict(),
+      function()
+        local dead = {}
+        for buf, name in pairs(bufs) do
+          if vim.fn.filereadable(name) == 0 then
+            table.insert(dead, buf)
+          end
+        end
+
+        if #dead > 0 then
+          vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
+        end
+      end
+    )
   end
 )
