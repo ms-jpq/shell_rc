@@ -27,4 +27,23 @@ if [[ -v NVIM_SERVERNAME ]]; then
   )
 fi
 
-exec -- "${ARGV[@]}" "$@"
+QF=()
+for F in "$@"; do
+  if [[ $F =~ ^[^:]+(:[0-9]+){1,2}:? ]]; then
+    if [[ $F =~ [^:](:[0-9]+){2}$ ]]; then
+      F="$F:-"
+    elif [[ $F =~ [^:](:[0-9]+){1}$ ]]; then
+      F="$F:0:-"
+    fi
+
+    QF+=("$F")
+  fi
+done
+
+if ((${#QF[@]} == $#)); then
+  TMP="$(mktemp)"
+  printf -- '%s\n' "${QF[@]}" > "$TMP"
+  exec -- "${ARGV[@]}" -q "$TMP"
+else
+  exec -- "${ARGV[@]}" "$@"
+fi
