@@ -1,1 +1,1 @@
-map e &"$EDITOR" "$(realpath --no-symlinks --relative-base "$PWD" -- "$f")" && lf -remote "send $id quit"
+map e &"$EDITOR" "$(realpath --no-symlinks --relative-base "$NVIM_PWD" -- "$f")" && lf -remote "send $id quit"

@@ -33,39 +33,45 @@ local lfcmd = function()
   return {{"lf"}, {"-config", vim.fs.joinpath(vim.fn.stdpath("config"), "lfrc.2")}}
 end
 
+local lfdie = function()
+  local bufs = {}
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.bo[buf].buflisted then
+      local name = vim.api.nvim_buf_get_name(buf)
+      if vim.fn.filereadable(name) == 1 then
+        bufs[buf] = name
+      end
+    end
+  end
+
+  return function()
+    local dead = {}
+    for buf, name in pairs(bufs) do
+      if vim.fn.filereadable(name) == 0 then
+        table.insert(dead, buf)
+      end
+    end
+
+    if #dead > 0 then
+      vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
+    end
+  end
+end
+
 vim.keymap.set(
   "n",
   [[<c-t>]],
   function()
     local cmd = lfcmd()
+
+    local cwd = vim.fn.getcwd()
     local path = vim.api.nvim_buf_get_name(0)
     if vim.fn.filereadable(path) == 0 then
-      path = vim.fn.getcwd()
+      path = cwd
     end
     table.insert(cmd, {"--", path})
 
-    local bufs = {}
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-      if vim.bo[buf].buflisted then
-        local name = vim.api.nvim_buf_get_name(buf)
-        if vim.fn.filereadable(name) == 1 then
-          bufs[buf] = name
-        end
-      end
-    end
-    local die = function()
-      local dead = {}
-      for buf, name in pairs(bufs) do
-        if vim.fn.filereadable(name) == 0 then
-          table.insert(dead, buf)
-        end
-      end
-
-      if #dead > 0 then
-        vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
-      end
-    end
-
-    termstart(vim.iter(cmd):flatten():totable(), vim.empty_dict(), die)
+    local die = lfdie()
+    termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd}, die)
   end
 )
