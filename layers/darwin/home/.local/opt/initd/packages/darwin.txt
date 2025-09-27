@@ -35,6 +35,7 @@
 + fswatch
 + fx
 + fzf
++ gawk
 + gdu
 + gettext
 + git

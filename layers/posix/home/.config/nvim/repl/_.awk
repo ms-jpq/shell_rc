@@ -6,8 +6,8 @@ BEGIN {
 }
 
 {
-  gsub(/^[[:space:]]/, " ")
-  gsub(/[[:space:]]+$/, "")
+  gsub(/^[[:space:]]/, " ", $0)
+  gsub(/[[:space:]]+$/, "", $0)
 }
 
 DEDENT == -2 && $0 {
@@ -16,15 +16,19 @@ DEDENT == -2 && $0 {
 }
 
 {
-  if (!$0) { SKIPPED = 1 }
-  else {
-    if (SKIPPED && PRINTED) { print "" }
-
+  if (! $0) {
+    SKIPPED = 1
+  } else {
+    if (SKIPPED && PRINTED) {
+      print ""
+    }
     SKIPPED = 0
     PRINTED = 1
-
     print substr($0, DEDENT + 1)
   }
 }
 
-END { printf("%c", 0) }
+END {
+  printf "%c", 0
+}
+

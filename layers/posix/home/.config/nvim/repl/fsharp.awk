@@ -5,8 +5,8 @@ BEGIN {
 }
 
 {
-  gsub(/^[[:space:]]/, " ")
-  gsub(/[[:space:]]+$/, "")
+  gsub(/^[[:space:]]/, " ", $0)
+  gsub(/[[:space:]]+$/, "", $0)
 }
 
 DEDENT == -2 && $0 {
@@ -14,15 +14,19 @@ DEDENT == -2 && $0 {
   DEDENT = RLENGTH
 }
 
-!(NR == 1 && /^#/) {
-  if (!$0) { SKIPPED = 1 }
-  else {
-    if (SKIPPED) { print "" }
-
+! (NR == 1 && /^#/) {
+  if (! $0) {
+    SKIPPED = 1
+  } else {
+    if (SKIPPED) {
+      print ""
+    }
     SKIPPED = 0
-
-    printf("\n%s", substr($0, DEDENT + 1))
+    printf "\n%s", substr($0, DEDENT + 1)
   }
 }
 
-END { print ";;" }
+END {
+  print ";;"
+}
+
