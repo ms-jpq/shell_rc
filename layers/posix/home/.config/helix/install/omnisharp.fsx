@@ -5,7 +5,7 @@ open System.Diagnostics
 open System.IO
 open System.Runtime.InteropServices
 
-let tmp = Environment.GetEnvironmentVariable "RUN"
+let run = Environment.GetEnvironmentVariable "RUN"
 let lib = Environment.GetEnvironmentVariable "LIB"
 
 let arch = Runtime.InteropServices.Architecture()
@@ -42,11 +42,11 @@ let run arg0 argv (input: 'a) =
     assert (proc.ExitCode = 0)
     proc.StandardOutput.ReadToEnd()
 
-"" |> run "get.sh" [ uri ] |> run "unpack.sh" [ tmp ] |> Console.Write
+"" |> run "get.sh" [ uri ] |> run "unpack.sh" [ run ] |> Console.Write
 
 try
     Directory.Delete(lib, true)
 with :? DirectoryNotFoundException ->
     ()
 
-Directory.Move(tmp, lib)
+Directory.Move(run, lib)

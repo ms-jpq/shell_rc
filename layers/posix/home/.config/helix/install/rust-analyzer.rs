@@ -35,7 +35,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
   };
 
-  let tmp = var_os("RUN")
+  let run = var_os("RUN")
     .map(PathBuf::from)
     .ok_or_else(|| format!("{}", Backtrace::capture()))?;
 
@@ -65,7 +65,7 @@ fn main() -> Result<(), Box<dyn Error>> {
   let status = Command::new("env")
     .arg("--")
     .arg("unpack.sh")
-    .arg(&tmp)
+    .arg(&run)
     .stdin(stdin)
     .status()?;
 
@@ -80,7 +80,7 @@ fn main() -> Result<(), Box<dyn Error>> {
   #[cfg(target_family = "windows")]
   let prefix = "rust-analyzer.exe";
 
-  for entry in read_dir(&tmp)? {
+  for entry in read_dir(&run)? {
     let entry = entry?;
     if entry
       .file_name()

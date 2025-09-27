@@ -8,7 +8,7 @@
  '[clojure.java.shell :refer [sh]])
 
 (def arch (System/getProperty "os.arch"))
-(def tmp (-> "RUN"
+(def run (-> "RUN"
              System/getenv
              (Path/of (into-array String []))))
 
@@ -38,7 +38,7 @@
         [(-> (ProcessBuilder. ["get.sh", uri])
              (.redirectError ProcessBuilder$Redirect/INHERIT))
          (->
-          (ProcessBuilder. ["unpack.sh", (.toString tmp)])
+          (ProcessBuilder. ["unpack.sh", (.toString run)])
           (.redirectOutput ProcessBuilder$Redirect/INHERIT)
           (.redirectError ProcessBuilder$Redirect/INHERIT))])]
   (-> proc .waitFor zero? assert))
@@ -47,6 +47,6 @@
   (Files/createDirectory (.getParent bin) (into-array FileAttribute []))
   (catch FileAlreadyExistsException _))
 
-(Files/move (.resolve tmp "cljfmt")
+(Files/move (.resolve run "cljfmt")
             bin
             (into-array [StandardCopyOption/REPLACE_EXISTING]))

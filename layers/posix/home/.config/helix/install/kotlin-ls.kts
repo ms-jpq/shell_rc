@@ -23,7 +23,7 @@ val suffix = { path: Path, ext: String ->
 }
 
 val uri = "https://github.com/fwcd/kotlin-language-server/releases/latest/download/server.zip"
-val tmp = Path(System.getenv("RUN")!!)
+val run = Path(System.getenv("RUN")!!)
 val lib = Path(System.getenv("LIB")!!)
 val ll = suffix(lib.resolve("bin").resolve("kotlin-language-server"), ".bat")
 val bin = suffix(Path(System.getenv("BIN")!!).resolve("kotlin-language-server"), ".bat")
@@ -32,7 +32,7 @@ val procs =
     ProcessBuilder.startPipeline(
         listOf(
             ProcessBuilder("env", "--", "get.sh", uri).redirectError(Redirect.INHERIT),
-            ProcessBuilder("env", "--", "unpack.sh", tmp.toString())
+            ProcessBuilder("env", "--", "unpack.sh", run.toString())
                 .redirectOutput(Redirect.INHERIT)
                 .redirectError(Redirect.INHERIT)))
 
@@ -47,7 +47,7 @@ for (proc in procs) {
 
 @OptIn(kotlin.io.path.ExperimentalPathApi::class) lib.deleteRecursively()
 
-tmp.resolve("server").toFile().copyRecursively(lib.toFile())
+run.resolve("server").toFile().copyRecursively(lib.toFile())
 
 ll.toFile().setExecutable(true)
 
