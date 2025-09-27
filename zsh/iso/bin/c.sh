@@ -18,6 +18,10 @@ if [[ -v TMUX_PANE ]]; then
   T=1
 fi
 
+if [[ -v NVIM_SERVERNAME ]]; then
+  T=0
+fi
+
 if ((T)); then
   # TMUX wrap start
   printf -- '\ePtmux;'
