@@ -17,3 +17,5 @@ vim.keymap.set("n", [[<leader>e]], gs.stage_hunk)
 vim.keymap.set("n", [[<leader>E]], gs.undo_stage_hunk)
 
 vim.keymap.set({"n", "x"}, [[<leader>c]], gs.reset_hunk)
+
+vim.api.nvim_create_autocmd({"FocusGained"}, {command = [[Gitsigns refresh]]})
