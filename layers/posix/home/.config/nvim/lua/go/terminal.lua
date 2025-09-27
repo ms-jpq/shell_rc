@@ -4,7 +4,7 @@ vim.api.nvim_create_autocmd({"TermOpen"}, {command = [[startinsert]]})
 
 vim.api.nvim_create_autocmd({"TermLeave"}, {command = [[set nomodified]]})
 
-local termstart = function(cmd)
+local termstart = function(cmd, env)
   local buf = vim.api.nvim_create_buf(false, true)
 
   vim.api.nvim_buf_call(
@@ -14,6 +14,7 @@ local termstart = function(cmd)
         cmd,
         {
           term = true,
+          env = env,
           on_exit = function()
             vim.cmd.bwipeout(buf)
           end
@@ -36,6 +37,6 @@ vim.keymap.set(
     end
     table.insert(cmd, {"--", path})
 
-    termstart(vim.iter(cmd):flatten():totable())
+    termstart(vim.iter(cmd):flatten():totable(), vim.empty_dict())
   end
 )
