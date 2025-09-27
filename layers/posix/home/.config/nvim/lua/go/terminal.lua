@@ -53,22 +53,19 @@ vim.keymap.set(
         end
       end
     end
-
-    termstart(
-      vim.iter(cmd):flatten():totable(),
-      vim.empty_dict(),
-      function()
-        local dead = {}
-        for buf, name in pairs(bufs) do
-          if vim.fn.filereadable(name) == 0 then
-            table.insert(dead, buf)
-          end
-        end
-
-        if #dead > 0 then
-          vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
+    local die = function()
+      local dead = {}
+      for buf, name in pairs(bufs) do
+        if vim.fn.filereadable(name) == 0 then
+          table.insert(dead, buf)
         end
       end
-    )
+
+      if #dead > 0 then
+        vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
+      end
+    end
+
+    termstart(vim.iter(cmd):flatten():totable(), vim.empty_dict(), die)
   end
 )
