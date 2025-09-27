@@ -18,9 +18,6 @@ vim.keymap.set(
       vim.cmd.bwipeout(buf)
     end
 
-    vim.fn.jobstart(
-      vim.iter(cmd):flatten():totable(),
-      {term = true, env = {LC_ALL = [[en_CA.UTF-8]]}, on_exit = on_exit}
-    )
+    vim.fn.jobstart(vim.iter(cmd):flatten():totable(), {term = true, on_exit = on_exit})
   end
 )
