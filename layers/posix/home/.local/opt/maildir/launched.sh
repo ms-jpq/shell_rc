@@ -21,7 +21,16 @@ if [[ -v RECURSION ]]; then
   SUBJECT="$(mhdr -d -h subject -- "$MAIL")"
 
   if ((${#SOCK[@]})); then
-    /Applications/kitty.app/Contents/MacOS/kitten @ --to "unix:${SOCK[*]}" -- kitten notify --identifier "$ID" --icon info -- "📩 ↘ $FROM" "$SUBJECT"
+    ARGV=(
+      /Applications/kitty.app/Contents/MacOS/kitten @
+      --to "unix:${SOCK[*]}"
+      --
+      kitten notify
+      --identifier "$ID"
+      --icon info
+      -- "📩 ↘ $FROM" "$SUBJECT"
+    )
+    "${ARGV[@]}"
   else
     ~/.local/libexec/notify.cjs "📩 ↘ $FROM" '' "$SUBJECT" ping
   fi
