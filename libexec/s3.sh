@@ -37,7 +37,7 @@ push)
     ~/.config/gnupg/sshcontrol
     ~/.config/isyncrc
     ~/.local/secrets
-    ~/.ssh
+    ~/.ssh/!(known_hosts)
   )
 
   dir
