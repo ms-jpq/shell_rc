@@ -9,7 +9,7 @@ for _, buf in ipairs(vim.api.nvim_list_bufs()) do
   end
 end
 
-local no_session = function()
+local no_session = (function()
   local cached = nil
 
   return function()
@@ -33,7 +33,7 @@ local no_session = function()
 
     return cached
   end
-end
+end)()
 
 local session_path = function()
   local cwd = vim.fn.getcwd()
