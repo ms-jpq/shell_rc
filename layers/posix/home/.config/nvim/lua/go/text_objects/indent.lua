@@ -10,7 +10,7 @@ local iter_lines = function(direction)
   local init_indent = to.p_indent(init_line, tabsize)
 
   return function()
-    if row <= 0 or row >= count - 1 then
+    if row <= 0 or row >= count then
       return nil
     end
 
@@ -36,14 +36,17 @@ Go.op_indent = function(hold_pos)
   row = row - 1
   local hold = to.hold_position()
 
+  local line = vim.api.nvim_get_current_line()
+  local init_indent = to.p_indent(line, vim.bo.tabstop)
+
   local lo, hi = row, row
   for l, i in iter_lines(-1) do
-    if i ~= 0 then
+    if init_indent == 0 or i ~= 0 then
       lo = l
     end
   end
   for r, i in iter_lines(1) do
-    if i ~= 0 then
+    if init_indent == 0 or i ~= 0 then
       hi = r
     end
   end
