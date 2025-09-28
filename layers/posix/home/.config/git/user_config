@@ -27,6 +27,9 @@ pager    = "delta"
 safecrlf = true
 symlinks = true
 
+[core.whitespace]
+tabwidth = 2
+
 [delta]
 hyperlinks     = true
 light          = true
@@ -45,7 +48,7 @@ mnemonicPrefix   = true
 renameLimit      = 999999999
 renames          = "copies"
 submodule        = "log"
-tool             = "difftastic"
+tool             = "nvimdiff"
 wsErrorHighlight = "all"
 
 [difftool]
@@ -131,12 +134,3 @@ name  = "dogisgreat"
 
 [worktree]
 guessRemote = false
-
-[core.whitespace]
-tabwidth = 2
-
-[difftool.difftastic]
-cmd = "exec difft --display side-by-side-show-both --background light --color always -- \"$LOCAL\" \"$REMOTE\""
-
-[difftool.gui]
-cmd = "gui-diff.sh \"$LOCAL\" \"$REMOTE\""
