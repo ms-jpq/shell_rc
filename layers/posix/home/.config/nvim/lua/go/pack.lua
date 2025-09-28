@@ -4,6 +4,8 @@ local base = vim.fs.joinpath(vim.uv.os_homedir(), ".cache", "helix-rt", "nvim")
 local packed = vim.fs.joinpath(base, "pack")
 local lsp_path = vim.fs.joinpath(vim.fn.stdpath("config"), "apriori", "lsp.json")
 
+require("go.pack.coq-nvim")
+
 vim.opt.packpath:append(packed)
 vim.cmd.packloadall()
 
@@ -31,6 +33,7 @@ vim.api.nvim_create_autocmd(
         packloadopt()
 
         require("go.pack.copilot")
+        require("go.pack.coq-3p")
         require("go.pack.easyalign")
         require("go.pack.fzf")
         require("go.pack.gitsigns")
@@ -42,7 +45,6 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-require("go.pack.coq")
 require("go.pack.theme")
 
 for name, conf in pairs(lib.read_json(lsp_path)) do

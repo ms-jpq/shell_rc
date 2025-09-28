@@ -41,6 +41,7 @@ jobs:
       - run: |-
           sudo -- apt-get update
           sudo -- apt-get install --no-install-recommends --yes -- swi-prolog-nox gnucobol moreutils
+          sudo -- apt purge --yes -- firefox
 
       - run: |-
           /home/linuxbrew/.linuxbrew/bin/brew install -- clojure/tools/clojure

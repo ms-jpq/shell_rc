@@ -1,0 +1,4 @@
+require("coq_3p") {
+  {short_name = "nLUA", src = "nvimlua"},
+  {src = "repl"}
+}
