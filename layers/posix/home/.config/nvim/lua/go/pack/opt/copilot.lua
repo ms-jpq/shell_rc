@@ -15,3 +15,5 @@ vim.keymap.set(
     expr = true
   }
 )
+
+vim.fs.find([[copilot.vim]])

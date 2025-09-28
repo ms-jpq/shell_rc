@@ -2,12 +2,7 @@ local lib = require("go")
 local to = require("go.text_objects")
 
 local magic_escape = function(text)
-  local l1 = string.gsub(text, [[\]], [[\\]])
-  local l2 = string.gsub(l1, [[/]], [[\/]])
-  local l3 = string.gsub(l2, "\n", [[\n]])
-  local l4 = string.gsub(l3, "\r", [[\r]])
-  local l5 = string.gsub(l4, "\t", [[\t]])
-  return l5
+  return vim.fn.escape(text, "\\/\n\r\t")
 end
 
 local selected_text = function(visual_type)

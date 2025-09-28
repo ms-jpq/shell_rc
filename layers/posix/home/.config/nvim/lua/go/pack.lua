@@ -11,26 +11,25 @@ require("go.pack.start.fzf")
 
 vim.cmd.packloadall()
 
-require("go.pack.start.illuminate")
+local packloadopt = function()
+  local opt = vim.fs.joinpath(base, "pack", "opt")
+  for name in vim.fs.dir(opt) do
+    local path = vim.fs.joinpath(opt, name)
+    vim.cmd.packadd(vim.fn.escape(name, [[\ ]]))
+    vim.opt.runtimepath:append(path)
+
+    for ext, dir in pairs {vim = "plugin", lua = "lua"} do
+      local pat = vim.fs.joinpath(path, dir, "*." .. ext)
+      for _, f in ipairs(vim.fn.glob(pat, false, true)) do
+        vim.cmd.source(f)
+      end
+    end
+  end
+end
+
 require("go.pack.start.leap")
 require("go.pack.start.theme")
 require("go.pack.start.treesitter")
-
-require("go.pack.opt.copilot")
-require("go.pack.opt.easyalign")
-
-vim.schedule(
-  function()
-    local opt = vim.fs.joinpath(base, "pack", "opt")
-    for name in vim.fs.dir(opt) do
-      local rt = vim.fs.joinpath(opt, name)
-      vim.opt.runtimepath:append(rt)
-      vim.cmd.packadd(name)
-    end
-
-    require("go.pack.opt.gitsigns")
-  end
-)
 
 for name, conf in pairs(lib.read_json(lsp_path)) do
   local overrides = {
@@ -54,3 +53,19 @@ for name, conf in pairs(lib.read_json(lsp_path)) do
     vim.lsp.enable(name)
   end
 end
+
+vim.api.nvim_create_autocmd(
+  {"VimEnter"},
+  {
+    callback = vim.schedule_wrap(
+      function()
+        packloadopt()
+
+        require("go.pack.opt.copilot")
+        require("go.pack.opt.easyalign")
+        require("go.pack.opt.gitsigns")
+        require("go.pack.opt.illuminate")
+      end
+    )
+  }
+)
