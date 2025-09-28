@@ -331,20 +331,20 @@ lsp_ai:
     models: []
     chat: []
 
-tabby_ml:
-  bin: tabby-agent
-  filetypes:
-    - bash
-    - java
-    - javascript
-    - kotlin
-    - mail
-    - markdown
-    - php
-    - python
-    - ruby
-    - text
-    - typescript
+# tabby_ml:
+#   bin: tabby-agent
+#   filetypes:
+#     - bash
+#     - java
+#     - javascript
+#     - kotlin
+#     - mail
+#     - markdown
+#     - php
+#     - python
+#     - ruby
+#     - text
+#     - typescript
 
 # copilot:
 #   bin: copilot-language-server
