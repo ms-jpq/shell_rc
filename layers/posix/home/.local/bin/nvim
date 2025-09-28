@@ -18,6 +18,11 @@ msys) ;;
   ;;
 esac
 
+if ! command -v -- "$NVIM" > /dev/null; then
+  set -x
+  exit
+fi
+
 ARGV=("$NVIM")
 
 if [[ -v NVIM_SERVERNAME ]]; then

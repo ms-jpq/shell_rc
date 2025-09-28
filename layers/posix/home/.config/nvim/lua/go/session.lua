@@ -2,6 +2,39 @@
 vim.opt.sessionoptions:remove("blank", "buffers", "curdir", "help", "terminal")
 vim.opt.sessionoptions:append("skiprtp")
 
+-- scratch buffer
+for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+  if vim.api.nvim_buf_get_name(buf) == "" then
+    vim.bo[buf].buftype = "nofile"
+  end
+end
+
+local no_session = function()
+  local cached = nil
+
+  return function()
+    if cached ~= nil then
+      return cached
+    end
+
+    cached = vim.fn.getcwd() == vim.uv.os_homedir() or vim.fn.argc(-1) > 0 or (function()
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+          if vim.api.nvim_buf_line_count(buf) > 1 then
+            return true
+          end
+
+          local lines = vim.api.nvim_buf_get_lines(buf, -2, -1, true)
+          if (#lines > 0 and #lines[1] > 0) then
+            return true
+          end
+        end
+        return false
+      end)()
+
+    return cached
+  end
+end
+
 local session_path = function()
   local cwd = vim.fn.getcwd()
   local name = vim.re.gsub(cwd, "[/\\]", ".")
@@ -9,26 +42,6 @@ local session_path = function()
   local norm = vim.fs.normalize(path, {expand_env = false})
   local escaped = vim.fn.fnameescape(norm)
   return norm .. ".vim", escaped
-end
-
-local no_session = function()
-  if vim.env.NO_SESSION then
-    return true
-  end
-
-  if vim.fn.getcwd() == vim.uv.os_homedir() then
-    return true
-  end
-
-  if vim.fn.argc(-1) > 0 then
-    return true
-  end
-
-  if #vim.api.nvim_get_current_line() > 0 then
-    return true
-  end
-
-  return false
 end
 
 local mk_session = function(kill)
@@ -52,16 +65,16 @@ vim.api.nvim_create_user_command(
   {}
 )
 
-if no_session() then
-  return
-end
-
 vim.api.nvim_create_autocmd({"VimSuspend", "FocusLost", "CursorHold"}, {callback = mk_session})
 
 vim.api.nvim_create_autocmd(
   {"QuitPre"},
   {
     callback = function()
+      if no_session() then
+        return
+      end
+
       local dead = {}
       for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if vim.bo[buf].buflisted then
@@ -75,6 +88,7 @@ vim.api.nvim_create_autocmd(
       if #dead > 0 then
         vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
       end
+
       mk_session()
     end
   }
@@ -85,6 +99,10 @@ vim.api.nvim_create_autocmd(
   {
     callback = vim.schedule_wrap(
       function()
+        if no_session() then
+          return
+        end
+
         local path, escaped = session_path()
         if vim.fn.filereadable(path) then
           vim.cmd([[silent! source ]] .. escaped)

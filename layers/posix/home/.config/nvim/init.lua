@@ -18,7 +18,6 @@ require("go.opts")
 require("go.paths")
 require("go.plugins")
 require("go.search")
-require("go.session")
 require("go.status_line")
 require("go.terminal")
 require("go.text_objects.entire")
@@ -29,10 +28,6 @@ require("go.treesitter")
 require("go.whitespace")
 require("go.windows")
 
-for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-  if vim.api.nvim_buf_get_name(buf) == "" then
-    vim.bo[buf].buftype = "nofile"
-  end
-end
-
+--
 require("go.pack")
+require("go.session")
