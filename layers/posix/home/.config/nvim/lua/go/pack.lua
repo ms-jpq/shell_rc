@@ -23,6 +23,28 @@ local packloadopt = function()
   end
 end
 
+vim.api.nvim_create_autocmd(
+  {"VimEnter"},
+  {
+    callback = vim.schedule_wrap(
+      function()
+        packloadopt()
+
+        require("go.pack.copilot")
+        require("go.pack.easyalign")
+        require("go.pack.fzf")
+        require("go.pack.gitsigns")
+        require("go.pack.illuminate")
+        require("go.pack.leap")
+        require("go.pack.treesitter")
+      end
+    )
+  }
+)
+
+require("go.pack.coq")
+require("go.pack.theme")
+
 for name, conf in pairs(lib.read_json(lsp_path)) do
   local overrides = {
     cmd = conf.args and vim.iter({{conf.bin}, conf.args}):flatten():totable() or nil,
@@ -45,25 +67,3 @@ for name, conf in pairs(lib.read_json(lsp_path)) do
     vim.lsp.enable(name)
   end
 end
-
-vim.api.nvim_create_autocmd(
-  {"VimEnter"},
-  {
-    callback = vim.schedule_wrap(
-      function()
-        packloadopt()
-
-        require("go.pack.opt.copilot")
-        require("go.pack.opt.easyalign")
-        require("go.pack.opt.gitsigns")
-        require("go.pack.opt.illuminate")
-        require("go.pack.opt.treesitter")
-        require("go.pack.opt.fzf")
-        require("go.pack.opt.leap")
-      end
-    )
-  }
-)
-
-require("go.pack.start.coq")
-require("go.pack.start.theme")
