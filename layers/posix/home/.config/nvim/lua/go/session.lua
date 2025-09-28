@@ -8,7 +8,7 @@ local session_path = function()
   local path = vim.fs.joinpath(vim.fn.stdpath("cache"), "sessions", name)
   local norm = vim.fs.normalize(path, {expand_env = false})
   local escaped = vim.fn.fnameescape(norm)
-  return {norm .. ".vim", escaped}
+  return norm .. ".vim", escaped
 end
 
 local no_session = function()
@@ -20,7 +20,7 @@ local no_session = function()
     return true
   end
 
-  if vim.fn.argc(-1) > 1 then
+  if vim.fn.argc(-1) > 0 then
     return true
   end
 
@@ -31,12 +31,12 @@ local no_session = function()
   return false
 end
 
-local mk_session = function()
-  if no_session() then
+local mk_session = function(kill)
+  if not kill and no_session() then
     return
   end
 
-  local path, escaped = unpack(session_path())
+  local path, escaped = session_path()
   local parent = vim.fs.dirname(path)
   vim.fn.mkdir(parent, "p", 0755)
 
@@ -47,7 +47,7 @@ vim.api.nvim_create_user_command(
   "KillSession",
   function()
     vim.cmd [[silent! %bwipeout!]]
-    mk_session()
+    mk_session(true)
   end,
   {}
 )
@@ -85,7 +85,7 @@ vim.api.nvim_create_autocmd(
   {
     callback = vim.schedule_wrap(
       function()
-        local path, escaped = unpack(session_path())
+        local path, escaped = session_path()
         if vim.fn.filereadable(path) then
           vim.cmd([[silent! source ]] .. escaped)
         end
