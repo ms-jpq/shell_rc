@@ -9,7 +9,7 @@ shift -- 2
 
 CURL=(
   curl
-  --fail-with-body
+  --fail
   --location
   --no-progress-meter
 )

@@ -10,7 +10,7 @@ ETAG="$DST.etag"
 
 CURL=(
   curl
-  --fail-with-body
+  --fail
   --location
   --remove-on-error
   --create-dirs

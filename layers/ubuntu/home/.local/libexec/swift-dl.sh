@@ -11,7 +11,7 @@ if [[ -v RECURSION ]]; then
   CURL=(
     curl
     --location
-    --fail-with-body
+    --fail
     --no-progress-meter
     -- "$2"
   )

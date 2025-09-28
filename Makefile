@@ -22,7 +22,7 @@ clobber: clean
 	rm -v -rf -- $(VAR) $(VENV) ./node_modules
 
 GOOS := darwin ubuntu nt
-CURL := curl --fail-with-body --location --remove-on-error --create-dirs --no-progress-meter
+CURL := curl --fail --location --remove-on-error --create-dirs --no-progress-meter
 VAR  := var
 TMP  := $(VAR)/tmp
 VENV := ./.venv

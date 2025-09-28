@@ -18,7 +18,7 @@ SOURCE_FILE="/etc/apt/sources.list.d/$FS_NAME.list"
 
 CURL=(
   curl
-  --fail-with-body
+  --fail
   --location
   --no-progress-meter
   --

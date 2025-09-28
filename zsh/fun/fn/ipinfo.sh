@@ -2,5 +2,5 @@
 
 ipinfo() {
   # shellcheck disable=SC2312
-  curl --connect-timeout 6 --fail-with-body --no-progress-meter -- 'https://ipinfo.io' 'https://v6.ipinfo.io' | jq --sort-keys
+  curl --connect-timeout 6 --fail --no-progress-meter -- 'https://ipinfo.io' 'https://v6.ipinfo.io' | jq --sort-keys
 }
