@@ -1,13 +1,7 @@
 local to = require("go.text_objects")
 
-local iter_lines = function(direction)
-  local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
-  row = row - 1
-  local tabsize = vim.bo.tabstop
+local iter_around_lines = function(is_inside, tabsize, row, init_indent, direction)
   local count = vim.api.nvim_buf_line_count(0)
-
-  local init_line = unpack(vim.api.nvim_buf_get_lines(0, row, row + 1, true))
-  local init_indent = to.p_indent(init_line, tabsize)
 
   return function()
     if row <= 0 or row >= count then
@@ -18,11 +12,14 @@ local iter_lines = function(direction)
     local empty = line == ""
     local indent = to.p_indent(line, tabsize)
 
-    local cond1 = init_indent == 0 and empty
-    local cond2 = indent < init_indent and not empty
-
-    if cond1 or cond2 then
-      return nil
+    if is_inside then
+      if indent ~= init_indent or empty then
+        return nil
+      end
+    else
+      if (init_indent == 0 and empty) or (indent < init_indent and not empty) then
+        return nil
+      end
     end
 
     local r = row
@@ -31,37 +28,41 @@ local iter_lines = function(direction)
   end
 end
 
-Go.op_indent = function(hold_pos)
+Go.op_indent = function(hold_pos, is_inside)
+  local tabsize = vim.bo.tabstop
   local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
   row = row - 1
+
   local hold = to.hold_position()
 
-  local line = vim.api.nvim_get_current_line()
-  local init_indent = to.p_indent(line, vim.bo.tabstop)
+  local line = unpack(vim.api.nvim_buf_get_lines(0, row, row + 1, true))
+  local indent = to.p_indent(line, tabsize)
 
   local lo, hi = row, row
-  for l, i in iter_lines(-1) do
-    if init_indent == 0 or i ~= 0 then
+  for l, i in iter_around_lines(is_inside, tabsize, row, indent, -1) do
+    if indent == 0 or i ~= 0 then
       lo = l
     end
   end
-  for r, i in iter_lines(1) do
-    if init_indent == 0 or i ~= 0 then
+  for r, i in iter_around_lines(is_inside, tabsize, row, indent, 1) do
+    if indent == 0 or i ~= 0 then
       hi = r
     end
   end
 
-  local line = unpack(vim.api.nvim_buf_get_lines(0, hi, hi + 1, true))
-  to.set_visual_selection("v", lo + 1, 0, hi + 1, #line, false)
+  local last = unpack(vim.api.nvim_buf_get_lines(0, hi, hi + 1, true))
+  to.set_visual_selection("v", lo + 1, 0, hi + 1, #last, false)
 
   if hold_pos then
     hold()
   end
 end
 
-local cmd = function(hold)
-  return [[<cmd>lua Go.op_indent(]] .. tostring(hold) .. [[)<cr>]]
+local cmd = function(hold, inside)
+  return [[<cmd>lua Go.op_indent(]] .. tostring(hold) .. "," .. tostring(inside) .. [[)<cr>]]
 end
 
-vim.keymap.set("o", "ii", cmd(true))
-vim.keymap.set("x", "ii", to.norm .. cmd(false))
+vim.keymap.set("o", "ii", cmd(true, true))
+vim.keymap.set("x", "ii", to.norm .. cmd(false, true))
+vim.keymap.set("o", "ai", cmd(true, false))
+vim.keymap.set("x", "ai", to.norm .. cmd(false, false))
