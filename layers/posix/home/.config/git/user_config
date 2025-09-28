@@ -93,6 +93,9 @@ conflictstyle = "zdiff3"
 ff            = "only"
 tool          = "nvimdiff"
 
+[pager]
+diff = "diffnav"
+
 [pull]
 rebase = true
 
