@@ -199,15 +199,15 @@ ts_ls:
 prismals:
   bin: prisma-language-server
 
-eslint:
-  bin: vscode-eslint-language-server
-  settings:
-    run: onSave
-    rulesCustomizations:
-      - rule: "*"
-        severity: downgrade
-      - rule: prettier/*
-        severity: info
+# eslint:
+#   bin: vscode-eslint-language-server
+#   settings:
+#     run: onSave
+#     rulesCustomizations:
+#       - rule: "*"
+#         severity: downgrade
+#       - rule: prettier/*
+#         severity: info
 
 # denols:
 #   bin: deno
@@ -338,6 +338,7 @@ tabby_ml:
     - java
     - javascript
     - kotlin
+    - mail
     - markdown
     - php
     - python
