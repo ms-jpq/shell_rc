@@ -48,22 +48,24 @@ vim.api.nvim_create_autocmd(
 require("go.pack.theme")
 
 for name, conf in pairs(lib.read_json(lsp_path)) do
-  local overrides = {
-    cmd = conf.args and vim.iter({{conf.bin}, conf.args}):flatten():totable() or nil,
-    filetypes = conf.filetypes,
-    init_options = conf.init_options,
-    settings = conf.settings
-  }
-
-  local config = {}
-  for key, val in pairs(overrides) do
-    if val ~= nil then
-      config[key] = val
-    end
+  local overrides = {}
+  if conf.filetypes then
+    overrides.filetypes = conf.filetypes
   end
+  if conf.init_options then
+    overrides.init_options = conf.init_options
+  end
+  if conf.settings then
+    overrides.settings = conf.settings
+  end
+  local cmds =
+    conf.args and vim.iter({{""}, conf.args}):flatten():totable() or
+    vim.iter({(vim.lsp.config[name] or {}).cmd or {}}):flatten():totable()
+  cmds[1] = conf.bin
+  overrides.cmd = cmds
 
-  config = require("coq").lsp_ensure_capabilities(config)
-  vim.lsp.config(name, config)
+  overrides = require("coq").lsp_ensure_capabilities(overrides)
+  vim.lsp.config(name, overrides)
 
   if vim.fn.executable(conf.bin) ~= 0 then
     vim.lsp.enable(name)

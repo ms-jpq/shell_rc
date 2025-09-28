@@ -25,7 +25,6 @@ typos_lsp:
 
 lemminx:
   bin: lemminx
-  args: []
 
 contextive:
   bin: Contextive.LanguageServer_which
@@ -38,8 +37,6 @@ ast_grep:
 
 markdown:
   bin: vscode-markdown-language-server
-  args:
-    - --stdio
   filetypes:
     - markdown
 
@@ -128,7 +125,6 @@ perlnavigator:
 
 powershell_es:
   bin: pwsh-es.ps1
-  args: []
 
 dockerls:
   bin: docker-langserver
@@ -177,18 +173,12 @@ fortls:
 
 ruby_lsp:
   bin: ruby-lsp.rb
-  args: []
 
 sorbet:
   bin: srb.rb
-  args:
-    - tc
-    - --lsp
 
 solargraph:
   bin: solargraph.rb
-  args:
-    - stdio
 
 mdx_analyzer:
   bin: mdx-language-server
@@ -232,11 +222,9 @@ vimls:
 
 r_language_server:
   bin: lsp.R
-  args: []
 
 julials:
   bin: julia-lsp
-  args: []
 
 phan:
   bin: phan
@@ -257,7 +245,6 @@ fsautocomplete:
 
 omnisharp:
   bin: omnisharp.fsx
-  args: []
 
 clojure_lsp:
   bin: clojure-lsp
@@ -276,14 +263,12 @@ jdtls:
 
 prolog_ls:
   bin: prolog-ls
-  args: []
 
 # sqlls:
 #   bin: sql-language-server
 
 lua_ls:
   bin: lua-language-server.sh
-  args: []
   settings:
     Lua:
       runtime:
