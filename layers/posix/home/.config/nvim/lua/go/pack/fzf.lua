@@ -22,7 +22,7 @@ vim.keymap.set("n", [[<leader>b]], [[<cmd>Buffers!<cr>]])
 vim.keymap.set("n", [[<leader>j]], [[<cmd>Jumps!<cr>]])
 vim.keymap.set("n", [[<leader>B]], [[<cmd>Marks! ]] .. table.concat(az, " ") .. [[<cr>]])
 
-vim.keymap.set("n", [[<leader>f]], [[<cmd>File!s<cr>]])
+vim.keymap.set("n", [[<leader>f]], [[<cmd>Files!<cr>]])
 
 vim.keymap.set("n", [[<leader>g]], [[<cmd>GFiles!?<cr>]])
 vim.keymap.set("n", [[<leader>G]], [[<cmd>GFiles!<cr>]])
