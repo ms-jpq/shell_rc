@@ -26,7 +26,7 @@ let uri =
     else
         sprintf "%s-%s-%A-%s" base_uri "win-" arch "-net6.0.zip"
 
-let run arg0 argv (input: 'a) =
+let pipe arg0 argv (input: 'a) =
     let start =
         ProcessStartInfo(arg0, RedirectStandardInput = true, RedirectStandardOutput = true)
 
@@ -42,7 +42,7 @@ let run arg0 argv (input: 'a) =
     assert (proc.ExitCode = 0)
     proc.StandardOutput.ReadToEnd()
 
-"" |> run "get.sh" [ uri ] |> run "unpack.sh" [ run ] |> Console.Write
+"" |> pipe "get.sh" [ uri ] |> pipe "unpack.sh" [ run ] |> Console.Write
 
 try
     Directory.Delete(lib, true)
