@@ -6,24 +6,28 @@ local iter_lines = function(direction)
   local tabsize = vim.bo.tabstop
   local count = vim.api.nvim_buf_line_count(0)
 
-  local line = unpack(vim.api.nvim_buf_get_lines(0, row, row + 1, true))
-  local indent = to.p_indent(line, tabsize)
+  local init_line = unpack(vim.api.nvim_buf_get_lines(0, row, row + 1, true))
+  local init_indent = to.p_indent(init_line, tabsize)
 
   return function()
     if row <= 0 or row >= count - 1 then
       return nil
     end
 
-    line = unpack(vim.api.nvim_buf_get_lines(0, row, row + 1, true))
-    local next_indent = to.p_indent(line, tabsize)
+    local line = unpack(vim.api.nvim_buf_get_lines(0, row, row + 1, true))
+    local empty = line == ""
+    local indent = to.p_indent(line, tabsize)
 
-    if (indent == 0 and #line == 0) or (next_indent < indent and #line ~= 0) then
+    local cond1 = init_indent == 0 and empty
+    local cond2 = indent < init_indent and not empty
+
+    if cond1 or cond2 then
       return nil
     end
 
     local r = row
     row = row + direction
-    return r, next_indent
+    return r, indent
   end
 end
 
