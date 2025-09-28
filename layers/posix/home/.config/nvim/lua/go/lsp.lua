@@ -4,7 +4,6 @@ vim.opt.formatexpr = "v:lua.vim.lsp.formatexpr()"
 vim.lsp.inlay_hint.enable(true)
 
 if vim.fn.has [[nvim-0.12]] == 1 then
-  vim.lsp.inline_completion.enable(true)
   vim.lsp.linked_editing_range.enable(true)
   vim.lsp.semantic_tokens.enable(true)
 end
