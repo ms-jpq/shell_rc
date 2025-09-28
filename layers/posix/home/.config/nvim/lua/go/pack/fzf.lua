@@ -15,6 +15,7 @@ vim.g.fzf_vim = {
 
 local az = vim.split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "", true)
 
+vim.keymap.set("n", [[<leader>|]], [[<cmd>Maps!<cr>]])
 vim.keymap.set("n", [[<leader>\]], [[<cmd>Commands!<cr>]])
 
 vim.keymap.set("n", [[<leader>b]], [[<cmd>Buffers!<cr>]])
