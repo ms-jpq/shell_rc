@@ -7,13 +7,12 @@ vim.keymap.set(
   [[<c-f>]],
   function()
     local esc_pum = vim.fn.pumvisible() == 1 and vim.api.nvim_replace_termcodes("<c-e>", true, true, true) or ""
-    return esc_pum .. vim.fn["copilot#Accept"]()
+    return esc_pum .. vim.fn["copilot#Accept"] [[<c-f>]]
   end,
   {
     noremap = true,
     nowait = true,
-    expr = true
+    expr = true,
+    replace_keycodes = false
   }
 )
-
-vim.fs.find([[copilot.vim]])
