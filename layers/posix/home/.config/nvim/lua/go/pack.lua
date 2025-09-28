@@ -48,19 +48,16 @@ vim.api.nvim_create_autocmd(
 require("go.pack.theme")
 
 for name, conf in pairs(lib.read_json(lsp_path)) do
+  local keys = {"filetypes", "init_options", "settings"}
   local overrides = {}
-  if conf.filetypes then
-    overrides.filetypes = conf.filetypes
+  for _, k in pairs(keys) do
+    if conf[k] then
+      overrides[k] = conf[k]
+    end
   end
-  if conf.init_options then
-    overrides.init_options = conf.init_options
-  end
-  if conf.settings then
-    overrides.settings = conf.settings
-  end
-  local cmds =
-    conf.args and vim.iter({{""}, conf.args}):flatten():totable() or
-    vim.iter({(vim.lsp.config[name] or {}).cmd or {}}):flatten():totable()
+
+  local argv = conf.args and {{""}, conf.args} or {(vim.lsp.config[name] or {}).cmd or {}}
+  local cmds = vim.iter(argv):flatten():totable()
   cmds[1] = conf.bin
   overrides.cmd = cmds
 
