@@ -7,13 +7,8 @@ if ! (($#)); then
 fi
 
 case "$1" in
-aerc | man | autossh | yazi | nvim | hx | lazygit | btm)
+aerc | autossh | */autossh | nvim | */nvim | hx | */hx)
   exit
-  ;;
-/bin/sh)
-  if [[ ${2:-""} == /usr/bin/man ]]; then
-    exit
-  fi
   ;;
 "$HOME/.local/opt/isomorphic-copy/tmp/python"* | "$HOME/.local/opt/pyradio/venv/bin/python"*)
   exit
