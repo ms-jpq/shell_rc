@@ -15,5 +15,7 @@ case "$INPUT" in
   ;;
 esac
 
+printf -v QUOTED -- '%q' "$INPUT"
+
 # shellcheck disable=SC2154
-exec -- lf -remote "send $id select $INPUT"
+exec -- lf -remote "send $id select $QUOTED"

@@ -1,1 +1,5 @@
-map e &"$EDITOR" "$(realpath --no-symlinks --relative-base "$NVIM_PWD" -- "$f")" && lf -remote "send $id quit"
+# layers/posix/home/.config/lf/lfrc
+
+map e  &"$EDITOR" "$(realpath --no-symlinks --relative-base "$NVIM_PWD" -- "$f")" && lf -remote "send $id quit"
+map br $realpath --no-symlinks --relative-to "$NVIM_PWD" -- "$f" | sed -E -z -e 's#\n$##'                            | ~/.config/zsh/bin/c
+map bR $realpath --no-symlinks --relative-to "$NVIM_PWD" -- "$f" | sed -E -z -e 's#\n$##' | xargs -0 -- printf -- %q | ~/.config/zsh/bin/c

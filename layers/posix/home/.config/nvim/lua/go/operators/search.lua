@@ -38,10 +38,10 @@ local searcher = function(cmd)
   end
 end
 
-Go.op_blines = searcher("BLines")
-Go.op_rg = searcher("RG")
+Go.op_blines = searcher [[BL!]]
+Go.op_rg = searcher [[RG!]]
 
-for key, val in pairs {op_blines = "gf", op_rg = "gF"} do
+for key, val in pairs {op_blines = "gF", op_rg = "gf"} do
   vim.keymap.set("n", val, [[<cmd>set opfunc=v:lua.Go.]] .. key .. [[<cr>g@]], {nowait = true, noremap = true})
   vim.keymap.set("x", val, to.norm .. [[<cmd>lua Go.]] .. key .. [[(nil)<cr>]], {nowait = true, noremap = true})
 end
