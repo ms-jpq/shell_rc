@@ -25,6 +25,30 @@ local packloadopt = function()
   end
 end
 
+local lsp_on = function()
+  for name, conf in pairs(lib.read_json(lsp_path)) do
+    local keys = {"filetypes", "init_options", "settings"}
+    local overrides = {}
+    for _, k in pairs(keys) do
+      if conf[k] then
+        overrides[k] = conf[k]
+      end
+    end
+
+    local argv = conf.args and {{""}, conf.args} or {(vim.lsp.config[name] or {}).cmd or {}}
+    local cmds = vim.iter(argv):flatten():totable()
+    cmds[1] = conf.bin
+    overrides.cmd = cmds
+
+    overrides = require("coq").lsp_ensure_capabilities(overrides)
+    vim.lsp.config(name, overrides)
+
+    if vim.fn.executable(conf.bin) ~= 0 then
+      vim.lsp.enable(name)
+    end
+  end
+end
+
 vim.api.nvim_create_autocmd(
   {"VimEnter"},
   {
@@ -46,25 +70,4 @@ vim.api.nvim_create_autocmd(
 )
 
 require("go.pack.theme")
-
-for name, conf in pairs(lib.read_json(lsp_path)) do
-  local keys = {"filetypes", "init_options", "settings"}
-  local overrides = {}
-  for _, k in pairs(keys) do
-    if conf[k] then
-      overrides[k] = conf[k]
-    end
-  end
-
-  local argv = conf.args and {{""}, conf.args} or {(vim.lsp.config[name] or {}).cmd or {}}
-  local cmds = vim.iter(argv):flatten():totable()
-  cmds[1] = conf.bin
-  overrides.cmd = cmds
-
-  overrides = require("coq").lsp_ensure_capabilities(overrides)
-  vim.lsp.config(name, overrides)
-
-  if vim.fn.executable(conf.bin) ~= 0 then
-    vim.lsp.enable(name)
-  end
-end
+lsp_on()
