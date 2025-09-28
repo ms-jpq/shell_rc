@@ -5,10 +5,6 @@ local packed = vim.fs.joinpath(base, "pack")
 local lsp_path = vim.fs.joinpath(vim.fn.stdpath("config"), "apriori", "lsp.json")
 
 vim.opt.packpath:append(packed)
-
-require("go.pack.start.coq")
-require("go.pack.start.fzf")
-
 vim.cmd.packloadall()
 
 local packloadopt = function()
@@ -18,18 +14,14 @@ local packloadopt = function()
     vim.cmd.packadd(vim.fn.escape(name, [[\ ]]))
     vim.opt.runtimepath:append(path)
 
-    for ext, dir in pairs {vim = "plugin", lua = "lua"} do
-      local pat = vim.fs.joinpath(path, dir, "*." .. ext)
+    for _, dir in pairs {"plugin", "lua"} do
+      local pat = vim.fs.joinpath(path, dir, "*.{vim,lua}")
       for _, f in ipairs(vim.fn.glob(pat, false, true)) do
         vim.cmd.source(f)
       end
     end
   end
 end
-
-require("go.pack.start.leap")
-require("go.pack.start.theme")
-require("go.pack.start.treesitter")
 
 for name, conf in pairs(lib.read_json(lsp_path)) do
   local overrides = {
@@ -65,7 +57,13 @@ vim.api.nvim_create_autocmd(
         require("go.pack.opt.easyalign")
         require("go.pack.opt.gitsigns")
         require("go.pack.opt.illuminate")
+        require("go.pack.opt.treesitter")
+        require("go.pack.opt.fzf")
+        require("go.pack.opt.leap")
       end
     )
   }
 )
+
+require("go.pack.start.coq")
+require("go.pack.start.theme")

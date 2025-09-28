@@ -102,10 +102,10 @@
   },
   "pack": {
     "https://github.com/cocopon/iceberg.vim": [],
-    "https://github.com/ggandor/leap.nvim": [],
+    "https://github.com/ggandor/leap.nvim": ["--lazy"],
     "https://github.com/github/copilot.vim": ["--lazy"],
-    "https://github.com/junegunn/fzf": [],
-    "https://github.com/junegunn/fzf.vim": [],
+    "https://github.com/junegunn/fzf": ["--lazy"],
+    "https://github.com/junegunn/fzf.vim": ["--lazy"],
     "https://github.com/junegunn/vim-easy-align": ["--lazy"],
     "https://github.com/lewis6991/gitsigns.nvim": ["--lazy"],
     "https://github.com/ms-jpq/coq.artifacts": [],
@@ -117,14 +117,16 @@
       "deps",
       "--xdg=~/.local/share/nvim"
     ],
-    "https://github.com/ms-jpq/snips": [],
+    "https://github.com/ms-jpq/snips": ["--lazy"],
     "https://github.com/neovim/nvim-lspconfig": [],
-    "https://github.com/nvim-treesitter/nvim-treesitter": [],
-    "https://github.com/nvim-treesitter/nvim-treesitter-context": [],
-    "https://github.com/nvim-treesitter/nvim-treesitter-textobjects": [],
+    "https://github.com/nvim-treesitter/nvim-treesitter": ["--lazy"],
+    "https://github.com/nvim-treesitter/nvim-treesitter-context": ["--lazy"],
+    "https://github.com/nvim-treesitter/nvim-treesitter-textobjects": [
+      "--lazy"
+    ],
     "https://github.com/RRethy/vim-illuminate": ["--lazy"],
-    "https://github.com/tpope/vim-repeat": [],
-    "https://github.com/tpope/vim-surround": []
+    "https://github.com/tpope/vim-repeat": ["--lazy"],
+    "https://github.com/tpope/vim-surround": ["--lazy"]
   },
   "phar": {
     "php-cs-fixer": ["PHP-CS-Fixer/PHP-CS-Fixer"],
