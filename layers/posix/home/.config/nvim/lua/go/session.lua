@@ -19,12 +19,14 @@ local no_session = (function()
 
     cached = vim.fn.getcwd() == vim.uv.os_homedir() or vim.fn.argc(-1) > 0 or (function()
         for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-          if vim.api.nvim_buf_line_count(buf) > 1 then
-            return true
-          end
+          local stdin = vim.api.nvim_buf_line_count(buf) > 1 or (function()
+              local lines = vim.api.nvim_buf_get_lines(buf, -2, -1, true)
 
-          local lines = vim.api.nvim_buf_get_lines(buf, -2, -1, true)
-          if (#lines > 0 and #lines[1] > 0) then
+              return #lines > 0 and #lines[1] > 0
+            end)()
+
+          if stdin then
+            vim.opt.wrap = false
             return true
           end
         end
