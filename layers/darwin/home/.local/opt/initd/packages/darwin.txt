@@ -27,6 +27,7 @@
 + duf
 + dust
 + entr
++ exiftool
 + eza
 + fd
 + figlet

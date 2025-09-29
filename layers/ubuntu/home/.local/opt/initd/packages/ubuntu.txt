@@ -44,6 +44,7 @@
 + language-pack-en
 + language-pack-zh-hans
 + lf
++ libimage-exiftool-perl
 + libxml2-utils
 + locales
 + m4

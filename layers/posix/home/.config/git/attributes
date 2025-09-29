@@ -7,6 +7,7 @@
 *.el    diff=lisp
 *.ex    diff=elixir
 *.exs   diff=elixir
+*.gif   diff=exif
 *.go    diff=golang
 *.gpg   binary
 *.h     diff=cpp
@@ -15,12 +16,15 @@
 *.hpp   diff=cpp
 *.html  diff=html
 *.java  diff=java
+*.jpeg  diff=exif
+*.jpg   diff=exif
 *.lisp  diff=lisp
 *.m     diff=objc
 *.md    diff=markdown
 *.mm    diff=objc
 *.php   diff=php
 *.pl    diff=perl
+*.png   diff=exif
 *.py    diff=python
 *.rake  diff=ruby
 *.rb    diff=ruby

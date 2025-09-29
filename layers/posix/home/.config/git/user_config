@@ -51,6 +51,9 @@ submodule        = "log"
 tool             = "nvimdiff"
 wsErrorHighlight = "all"
 
+[diff.exif]
+textconv = "exiftool"
+
 [difftool]
 prompt        = false
 trustExitCode = true

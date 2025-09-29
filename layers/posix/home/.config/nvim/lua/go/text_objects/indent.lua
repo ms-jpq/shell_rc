@@ -4,7 +4,7 @@ local iter_around_lines = function(is_inside, tabsize, row, init_indent, directi
   local count = vim.api.nvim_buf_line_count(0)
 
   return function()
-    if row <= 0 or row >= count then
+    if row < 0 or row >= count then
       return nil
     end
 
