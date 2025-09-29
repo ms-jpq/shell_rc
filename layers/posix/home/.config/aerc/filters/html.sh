@@ -19,6 +19,7 @@ ARGV=(
 BOLD_RED=$'\e[1;31m'
 GREEN=$'\e[0;32m'
 YELLOW=$'\e[0;33m'
+BOLD_YELLOW=$'\e[1;33m'
 CLS=$'\e[0m'
 
 SED=(
@@ -26,6 +27,7 @@ SED=(
   -e "s#(\[[[:digit:]]+\])#$BOLD_RED\1$CLS#g"
   -e "s#(https?://[^ ]+)#$GREEN\1$CLS#g"
   -e "s#(mailto:[^ ]+)#$YELLOW\1$CLS#g"
+  -e "s#[^[]([[:digit:]]{6,})[^]]?#$BOLD_YELLOW\1$CLS#g"
 )
 
 "${ARGV[@]}" "$@" | "${SED[@]}"
