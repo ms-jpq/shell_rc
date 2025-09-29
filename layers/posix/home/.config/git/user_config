@@ -97,10 +97,12 @@ date         = "format-local:%y-%m-%d %H:%M"
 strategy = "incremental"
 
 [merge]
-autostash     = true
-conflictStyle = "zdiff3"
-ff            = "only"
-tool          = "nvimdiff"
+autoStash        = true
+autostash        = true
+conflictStyle    = "zdiff3"
+directoryRenames = true
+ff               = "only"
+tool             = "nvimdiff"
 
 [pager]
 diff = "diffnav"
