@@ -5,7 +5,7 @@ set -o pipefail
 PR="$1"
 
 REMOTE="$(git remote)"
-git config --worktree --replace-all -- "remote.$REMOTE.fetch" "+refs/pull/*/head:refs/remotes/$REMOTE/pr/*"
-git config --worktree --add -- "remote.$REMOTE.fetch" '+refs/heads/*:refs/remotes/origin/*'
+git config --worktree --replace-all -- "remote.$REMOTE.fetch" "+refs/pull/*:refs/remotes/$REMOTE/pull/*"
+git config --worktree --add -- "remote.$REMOTE.fetch" "+refs/heads/*:refs/remotes/$REMOTE/*"
 git fetch
 git switch --track -- "$REMOTE/pr/$PR"
