@@ -52,7 +52,7 @@ tool             = "nvimdiff"
 wsErrorHighlight = "all"
 
 [diff.exif]
-textconv = "exiftool"
+textconv = "exiftool --"
 
 [difftool]
 prompt        = false
