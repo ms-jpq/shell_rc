@@ -22,6 +22,8 @@ set wrapscroll     true
 cmd open           &true
 cmd user-open      &"$OPENER" "$f"
 
+map <esc>          :clear; unselect
+
 map <s-down>       :toggle; down
 map <s-up>         :toggle; up
 map <space>        :toggle
