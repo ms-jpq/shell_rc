@@ -24,11 +24,10 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-vim.keymap.set(
-  "n",
-  "<leader>f",
+local toggle_cursorcolumn =
+  vim.schedule_wrap(
   function()
-    if vim.opt.cursorcolumn then
+    if vim.o.cursorcolumn then
       vim.opt.virtualedit = vcol
       vim.opt.cursorcolumn = false
     else
@@ -38,9 +37,10 @@ vim.keymap.set(
   end
 )
 
-for _, mode in pairs {"n", "v"} do
-  vim.keymap.set(mode, "$", "$<right>")
-end
+vim.keymap.set("n", [[<leader>y]], toggle_cursorcolumn)
+vim.api.nvim_create_user_command([[ToggleCursorColumn]], toggle_cursorcolumn, {})
+
+vim.keymap.set({"n", "v"}, "$", "$<right>")
 
 vim.api.nvim_create_autocmd(
   {"InsertEnter", "CursorMovedI", "TextChangedP"},
