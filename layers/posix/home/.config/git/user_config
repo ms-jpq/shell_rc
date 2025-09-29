@@ -54,6 +54,12 @@ wsErrorHighlight = "all"
 [diff.exif]
 textconv = "exiftool --"
 
+[diff.gpg]
+textconv = "gpg --list-packets --"
+
+[diff.gpgkey]
+textconv = "gpg --show-keys --"
+
 [difftool]
 prompt        = false
 trustExitCode = true
@@ -92,7 +98,7 @@ strategy = "incremental"
 
 [merge]
 autostash     = true
-conflictstyle = "zdiff3"
+conflictStyle = "zdiff3"
 ff            = "only"
 tool          = "nvimdiff"
 

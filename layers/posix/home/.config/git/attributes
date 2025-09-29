@@ -9,7 +9,7 @@
 *.exs   diff=elixir
 *.gif   diff=exif
 *.go    diff=golang
-*.gpg   binary
+*.gpg   diff=gpg
 *.h     diff=cpp
 *.h++   diff=cpp
 *.hh    diff=cpp
