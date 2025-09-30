@@ -1,6 +1,6 @@
 local lib = require("go")
 
-local timeout = 30000
+local timeout = 8888
 
 local data = nil
 
