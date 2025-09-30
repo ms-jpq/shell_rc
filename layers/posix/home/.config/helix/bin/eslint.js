@@ -93,19 +93,24 @@ const _eslint = async (eslint = "", filename = "") => {
   const [, , filename] = argv
   ok(filename)
 
+  let found = false
   l1: for (const path of _parents()) {
     const eslint = join(path, "node_modules", ".bin", "eslint")
     if (existsSync(eslint)) {
       for await (const tmp of _tmp(filename)) {
         try {
           if (await _eslint(eslint, tmp)) {
-            return
+            found = true
           }
         } finally {
           break l1
         }
       }
     }
+  }
+
+  if (found) {
+    return
   }
 
   const dir = dirname(fileURLToPath(import.meta.url))
