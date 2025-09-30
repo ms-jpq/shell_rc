@@ -1,5 +1,7 @@
 local lib = require("go")
 
+local timeout = 30000
+
 local data = nil
 
 local fmt_command = function(buf)
@@ -33,7 +35,6 @@ Go.run_fmt = function()
   local buf = vim.api.nvim_get_current_buf()
   local name = vim.api.nvim_buf_get_name(buf)
   local cwd = name ~= "" and vim.fs.dirname(name) or vim.fn.getcwd()
-  local timeout = 3000
 
   local cmd = fmt_command(buf)
 
