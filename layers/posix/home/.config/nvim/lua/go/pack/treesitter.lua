@@ -15,7 +15,7 @@ require("nvim-treesitter.configs").setup {
     }
   },
   indent = {
-    enable = true
+    -- enable = true
   },
   textobjects = {
     lsp_interop = {

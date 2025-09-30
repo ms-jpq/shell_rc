@@ -23,6 +23,9 @@ F = :forward -A<Enter>
 /\[view\]/ {
   a\
 E = :envelope<Enter>
+
+  a\
+F = :forward -A<Enter>
 }
 
 /d = :choose/d

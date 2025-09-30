@@ -224,8 +224,8 @@
     },
     "typescript": {
       "formatter": {
-        "args": ["%{buffer_name}"],
-        "command": "eslint.js"
+        "args": ["--tabsize=2", "--sort", "--filename", "%{buffer_name}"],
+        "command": "prettier.js"
       }
     },
     "xml": {
