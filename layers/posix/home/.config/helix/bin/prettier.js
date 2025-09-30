@@ -1,4 +1,5 @@
 #!/usr/bin/env -S -- node
+"use strict"
 
 import { ok } from "node:assert/strict"
 import { spawnSync } from "node:child_process"
