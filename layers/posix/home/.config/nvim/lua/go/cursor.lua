@@ -9,6 +9,7 @@ vim.api.nvim_create_autocmd(
   "InsertEnter",
   {
     callback = function()
+      vim.b.__column_highlight__ = vim.o.cursorcolumn
       vim.opt.virtualedit = vcol
       vim.opt.cursorline = false
       vim.opt.cursorcolumn = false
@@ -19,7 +20,11 @@ vim.api.nvim_create_autocmd(
   "InsertLeave",
   {
     callback = function()
+      local cc = vim.b.__column_highlight__
       vim.opt.cursorline = true
+      if cc then
+        vim.opt.cursorcolumn = cc
+      end
     end
   }
 )
