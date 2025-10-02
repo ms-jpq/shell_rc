@@ -33,8 +33,7 @@ local searcher = function(cmd)
     local escaped = magic_escape(text)
     vim.fn.setreg("/", escaped)
     vim.opt.hlsearch = true
-    local input = [[<cmd>]] .. cmd .. " " .. text .. [[<cr>]]
-    vim.api.nvim_input(input)
+    vim.cmd(cmd .. " " .. text)
   end
 end
 
