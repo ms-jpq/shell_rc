@@ -146,19 +146,3 @@ vim.keymap.set(
     vim.lsp.buf.references()
   end
 )
-
-vim.keymap.set(
-  "n",
-  [[<leader>j]],
-  function()
-    vim.diagnostic.setloclist()
-  end
-)
-
-vim.keymap.set(
-  "n",
-  [[<leader>J]],
-  function()
-    vim.lsp.buf.setqflist()
-  end
-)

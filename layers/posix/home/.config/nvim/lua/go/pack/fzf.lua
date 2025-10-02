@@ -20,7 +20,7 @@ vim.keymap.set("n", [[<leader>\]], [[<cmd>Commands!<cr>]])
 
 vim.keymap.set("n", [[<leader>b]], [[<cmd>Buffers!<cr>]])
 vim.keymap.set("n", [[<leader>j]], [[<cmd>Jumps!<cr>]])
-vim.keymap.set("n", [[<leader>B]], [[<cmd>Marks! ]] .. table.concat(az, " ") .. [[<cr>]])
+vim.keymap.set("n", [[<leader>J]], [[<cmd>Marks! ]] .. table.concat(az, " ") .. [[<cr>]])
 
 vim.keymap.set("n", [[<leader>f]], [[<cmd>Files!<cr>]])
 
