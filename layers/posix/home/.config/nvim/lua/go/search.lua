@@ -11,8 +11,9 @@ vim.keymap.set("n", "g*", "g*N")
 vim.keymap.set("n", "g#", "g#N")
 
 -- centre on search result
-vim.keymap.set("n", "n", "n")
-vim.keymap.set("n", "N", "N")
+for _, key in pairs {"n", "N"} do
+  vim.keymap.set("n", key, key .. "zz")
+end
 
 local function with_redraw(wrapped)
   local l = [[<cmd>set lazyredraw<cr><cmd>set noincsearch<cr>]]
