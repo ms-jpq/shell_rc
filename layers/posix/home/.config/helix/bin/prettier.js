@@ -3,14 +3,15 @@
 
 import { ok } from "node:assert/strict"
 import { spawnSync } from "node:child_process"
+import { existsSync } from "node:fs"
 import { homedir } from "node:os"
-import { extname, join } from "node:path"
-import { execPath, stdin, stdout } from "node:process"
+import { dirname, extname, join } from "node:path"
+import { cwd, execPath, stdin, stdout } from "node:process"
 import { pipeline } from "node:stream/promises"
 import { parseArgs } from "node:util"
 
 const {
-  values: { filename, sort, tabsize },
+  values: { filename, tabsize },
   positionals,
 } = parseArgs({
   options: {
@@ -32,6 +33,14 @@ const node_modules = join(
 )
 const bin = join(node_modules, ".bin", "prettier")
 
+const _parents = function* (path = cwd()) {
+  const parent = dirname(path)
+  yield path
+  if (parent !== path) {
+    yield* _parents(parent)
+  }
+}
+
 const plugins = {
   [join("@prettier", "plugin-xml", "src", "plugin.js")]: /^xml$/,
   [join("@typespec", "prettier-plugin-typespec", "dist", "index.js")]:
@@ -39,15 +48,22 @@ const plugins = {
   [join("prettier-plugin-awk", "out", "index.js")]: /^awk$/,
   [join("prettier-plugin-nginx", "dist", "index.js")]: /^nginx$/,
   [join("prettier-plugin-tailwindcss", "dist", "index.mjs")]: /^(html|js|ts)$/,
+  [join("prettier-plugin-organize-imports", "index.js")]: {
+    [Symbol.match](str) {
+      for (const path of _parents()) {
+        const eslint = join(path, "node_modules", ".bin", "eslint")
+        if (existsSync(eslint)) {
+          return null
+        }
+      }
+      return str.match(/^(js|ts)/)
+    },
+  },
 }
 
 const more_args = new Map([
   [/^json$/, ["--parser=jsonc", "--trailing-comma=none"]],
 ])
-
-if (sort) {
-  plugins[join("prettier-plugin-organize-imports", "index.js")] = /^(js|ts)/
-}
 
 const argv = (function* () {
   const ext = extname(filename).substring(1)

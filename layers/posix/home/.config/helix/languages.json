@@ -89,7 +89,7 @@
     },
     "javascript": {
       "formatter": {
-        "args": ["--tabsize=2", "--sort", "--filename", "%{buffer_name}"],
+        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
       }
     },
@@ -224,7 +224,7 @@
     },
     "typescript": {
       "formatter": {
-        "args": ["--tabsize=2", "--sort", "--filename", "%{buffer_name}"],
+        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
       }
     },

@@ -15,7 +15,9 @@ const {
 })
 ok(tabsize)
 
-const p1 = spawn("sortd", ["json"], { stdio: ["inherit", "pipe", "inherit"] })
+const p1 = spawn("jq", ["--sort-keys", "."], {
+  stdio: ["inherit", "pipe", "inherit"],
+})
 
 const p2 = spawn(
   "prettier.js",
