@@ -40,6 +40,7 @@
 + muesli.duf
 + Neovim.Neovim
 + NSSM.NSSM
++ Prometheus.WindowsExporter
 + Rclone.Rclone
 + sharkdp.bat
 + sharkdp.fd
