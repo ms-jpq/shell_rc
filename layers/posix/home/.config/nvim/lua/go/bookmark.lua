@@ -31,7 +31,7 @@ local mark_signs = function()
       number_hl_group = hl
     }
 
-    if row > 0 and row <= count then
+    if row >= 0 and row <= count then
       vim.api.nvim_buf_set_extmark(buf, ns, row - 1, 0, opts)
     end
   end
