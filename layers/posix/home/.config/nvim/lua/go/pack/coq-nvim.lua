@@ -7,7 +7,7 @@ vim.g.coq_settings = {
   },
   clients = {
     ["registers.lines"] = {"z"},
-    ["lsp.ignored_servers"] = {"copilot", "tabby_ml"},
+    ["lsp.ignored_servers"] = {"tabby_ml"},
     ["snippets.user_path"] = "~/.cache/helix-rt/nvim/pack/start/snips"
   },
   keymap = {
