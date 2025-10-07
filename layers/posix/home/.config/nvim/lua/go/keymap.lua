@@ -128,3 +128,6 @@ end
 
 -- cut to clipboard
 vim.keymap.set("v", "X", "d")
+
+-- go to file
+vim.keymap.set({"n", "v"}, "gx", "gF")
