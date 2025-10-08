@@ -49,6 +49,7 @@ FZF_ARGS=(
   --bind "start:reload:$CHANGE '' || :"
   --bind "change:reload:$CHANGE {q} || :"
   --bind "enter:become:$OPENER {+f1,2,3,4}"
+  --query "$*"
 )
 
 "${FZF_ARGS[@]}" < /dev/null
