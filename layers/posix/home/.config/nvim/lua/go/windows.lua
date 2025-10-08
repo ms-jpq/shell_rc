@@ -56,6 +56,9 @@ end
 
 vim.api.nvim_create_autocmd({"VimResized"}, {command = [[wincmd =]]})
 
+-- pin quickfix to window
+vim.api.nvim_create_autocmd({"FileType"}, {pattern = {"qf"}, command = [[setlocal winfixbuf]]})
+
 -- locallist
 -- vim.keymap.set("n", [[<c-a>]], [[<cmd>lprevious<cr>]])
 -- vim.keymap.set("n", [[<c-e>]], [[<cmd>lnext<cr>]])
