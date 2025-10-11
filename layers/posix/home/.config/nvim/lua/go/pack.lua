@@ -4,7 +4,14 @@ local base = vim.fs.joinpath(vim.uv.os_homedir(), ".cache", "helix-rt", "nvim")
 local packed = vim.fs.joinpath(base, "pack")
 local lsp_path = vim.fs.joinpath(vim.fn.stdpath("config"), "apriori", "lsp.json")
 
-require("go.pack.coq-nvim")
+local safe_require = function(module)
+  local ok, err = pcall(require, module)
+  if not ok then
+    vim.notify(err, vim.log.levels.WARN)
+  end
+end
+
+safe_require("go.pack.coq-nvim")
 
 vim.opt.packpath:append(packed)
 vim.cmd.packloadall()
@@ -40,7 +47,9 @@ local lsp_on = function()
     cmds[1] = conf.bin
     overrides.cmd = cmds
 
-    overrides = require("coq").lsp_ensure_capabilities(overrides)
+    if coq then
+      overrides = coq.lsp_ensure_capabilities(overrides)
+    end
     vim.lsp.config(name, overrides)
 
     if vim.fn.executable(conf.bin) ~= 0 then
@@ -56,18 +65,18 @@ vim.api.nvim_create_autocmd(
       function()
         packloadopt()
 
-        require("go.pack.copilot")
-        require("go.pack.coq-3p")
-        require("go.pack.easyalign")
-        require("go.pack.fzf")
-        require("go.pack.gitsigns")
-        require("go.pack.illuminate")
-        require("go.pack.leap")
-        require("go.pack.treesitter")
+        safe_require("go.pack.copilot")
+        safe_require("go.pack.coq-3p")
+        safe_require("go.pack.easyalign")
+        safe_require("go.pack.fzf")
+        safe_require("go.pack.gitsigns")
+        safe_require("go.pack.illuminate")
+        safe_require("go.pack.leap")
+        safe_require("go.pack.treesitter")
       end
     )
   }
 )
 
-require("go.pack.theme")
+safe_require("go.pack.theme")
 lsp_on()
