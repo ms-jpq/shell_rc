@@ -14,7 +14,10 @@ end
 safe_require("go.pack.coq-nvim")
 
 vim.opt.packpath:append(packed)
-vim.cmd.packloadall()
+local ok, err = pcall(vim.cmd.packloadall)
+if not ok then
+  vim.notify(err, vim.log.levels.WARN)
+end
 
 local packloadopt = function()
   local opt = vim.fs.joinpath(base, "pack", "opt")
