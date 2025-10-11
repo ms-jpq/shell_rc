@@ -9,7 +9,9 @@ vim.opt.secure = true
 -- use bash as shell
 vim.opt.shell = vim.env.COMSPEC or "bash"
 
-vim.g.python3_host_prog = lib.is_win and "python.exe" or "/usr/bin/python3"
+if not lib.is_win then
+  vim.g.python3_host_prog = "/usr/bin/python3"
+end
 
 -- min lines changed to report
 vim.opt.report = 0

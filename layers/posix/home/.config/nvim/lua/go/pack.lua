@@ -7,7 +7,7 @@ local lsp_path = vim.fs.joinpath(vim.fn.stdpath("config"), "apriori", "lsp.json"
 local safe_require = function(module)
   local ok, err = pcall(require, module)
   if not ok then
-    vim.notify(err, vim.log.levels.WARN)
+    vim.notify(err, vim.log.levels.ERROR)
   end
 end
 
@@ -16,7 +16,7 @@ safe_require("go.pack.coq-nvim")
 vim.opt.packpath:append(packed)
 local ok, err = pcall(vim.cmd.packloadall)
 if not ok then
-  vim.notify(err, vim.log.levels.WARN)
+  vim.notify(err, vim.log.levels.ERROR)
 end
 
 local packloadopt = function()
