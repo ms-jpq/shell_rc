@@ -75,3 +75,17 @@ vim.keymap.set(
     termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd}, die)
   end
 )
+
+vim.keymap.set(
+  "n",
+  [[<leader>t]],
+  function()
+    local cmd = lfcmd()
+
+    local cwd = vim.fn.getcwd()
+    table.insert(cmd, {"--", cwd})
+
+    local die = lfdie()
+    termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd}, die)
+  end
+)
