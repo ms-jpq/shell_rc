@@ -356,7 +356,7 @@ def __init() -> None:
     rh = readline.read_history_file
     wh = readline.write_history_file
 
-    hist = join(environ["XDG_STATE_HOME"], "shell_history", "python")
+    hist = environ["PYTHON_HISTORY"]
 
     def read_history_file(
         _: Union[str, bytes, PathLike[str], PathLike[bytes], None] = None,

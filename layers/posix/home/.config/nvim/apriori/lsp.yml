@@ -25,6 +25,8 @@ typos_lsp:
 
 lemminx:
   bin: lemminx
+  args:
+    - -Dlemminx.workdir=/var/tmp/lemminx
 
 contextive:
   bin: Contextive.LanguageServer_which

@@ -14,14 +14,15 @@ export -- TF_CLI_CONFIG_FILE="$XDG_CONFIG_HOME/terraform/config.tfrc"
 export -- WGETRC="$XDG_CONFIG_HOME/wget/config"
 
 export -- AWS_DATA_PATH="$XDG_CACHE_HOME/aws/models"
+export -- BUNDLE_USER_CACHE="$XDG_CACHE_HOME"/bundle
 export -- BUNDLE_USER_HOME="$XDG_CACHE_HOME/bundle"
 export -- DOTNET_CLI_HOME="$XDG_CACHE_HOME/dotnet"
 export -- GRADLE_USER_HOME="$XDG_CACHE_HOME"/gradle
 export -- PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/python"
 export -- W3M_DIR="$XDG_DATA_HOME/w3m"
 
-export -- BUNDLE_USER_CACHE="$XDG_CACHE_HOME"/bundle
 export -- MYSQL_HISTFILE="$XDG_STATE_HOME/shell_history/mysql"
+export -- PYTHON_HISTORY="$XDG_STATE_HOME/shell_history/python"
 export -- R_HISTFILE="$XDG_STATE_HOME/shell_history/r"
 export -- REDISCLI_HISTFILE="$XDG_STATE_HOME/shell_history/redis"
 export -- RLWRAP_HOME="$XDG_STATE_HOME/rlwrap"
