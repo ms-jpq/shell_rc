@@ -10,7 +10,8 @@ vim.filetype.add(
       network = systemd,
       nspawn = systemd,
       service = systemd,
-      socket = systemd
+      socket = systemd,
+      ["dns-delegate"] = systemd
     },
     pattern = {
       [".*/.*%.network.d/.*%.conf"] = systemd,

@@ -39,7 +39,7 @@ map i
 cmd mkpath         %~/.config/lf/libexec/mkpath.sh "$*"
 map a              push :mkpath<space>
 
-cmd ln             %~/.config/lf/libexec/link.sh "$f" "$*"
+cmd ln             %~/.config/lf/libexec/link.sh "$fx" "$*"
 map A              push :ln<space>
 
 map bc             $printf -- %s "$f"                                                                                       | ~/.config/zsh/bin/c
