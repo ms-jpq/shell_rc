@@ -1,3 +1,4 @@
+local lib = require("go")
 local az = "abcdefghijklmnopqrstuvwxyz"
 
 local hl = "IncSearch"
@@ -37,4 +38,4 @@ local mark_signs = function()
   end
 end
 
-vim.api.nvim_create_autocmd({"BufEnter", "CursorHold", "CursorHoldI"}, {callback = mark_signs})
+vim.api.nvim_create_autocmd({"BufEnter", "CursorHold", "CursorHoldI"}, {group = lib.group, callback = mark_signs})

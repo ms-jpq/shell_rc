@@ -1,3 +1,5 @@
+local lib = require("go")
+
 -- hide background buffers
 vim.opt.hidden = true
 -- reuse buf
@@ -54,10 +56,23 @@ for i = 1, 9 do
   vim.keymap.set("n", [[<leader>]] .. i, [[<cmd>tabnext ]] .. i .. [[<cr>]])
 end
 
-vim.api.nvim_create_autocmd({"VimResized"}, {command = [[wincmd =]]})
+vim.api.nvim_create_autocmd(
+  {"VimResized"},
+  {
+    group = lib.group,
+    command = [[wincmd =]]
+  }
+)
 
 -- pin quickfix to window
-vim.api.nvim_create_autocmd({"FileType"}, {pattern = {"qf"}, command = [[setlocal winfixbuf]]})
+vim.api.nvim_create_autocmd(
+  {"FileType"},
+  {
+    group = lib.group,
+    pattern = {"qf"},
+    command = [[setlocal winfixbuf]]
+  }
+)
 
 -- locallist
 -- vim.keymap.set("n", [[<c-a>]], [[<cmd>lprevious<cr>]])

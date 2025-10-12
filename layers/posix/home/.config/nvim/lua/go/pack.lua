@@ -38,7 +38,7 @@ end
 local lsp_on = function()
   for name, conf in pairs(lib.read_json(lsp_path)) do
     local keys = {"filetypes", "init_options", "settings"}
-    local overrides = {}
+    local overrides = {detached = false}
     for _, k in pairs(keys) do
       if conf[k] then
         overrides[k] = conf[k]
@@ -64,6 +64,7 @@ end
 vim.api.nvim_create_autocmd(
   {"VimEnter"},
   {
+    group = lib.group,
     once = true,
     callback = vim.schedule_wrap(
       function()

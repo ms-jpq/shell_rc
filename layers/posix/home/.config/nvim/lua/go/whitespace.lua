@@ -1,3 +1,4 @@
+local lib = require("go")
 local to = require("go.text_objects")
 
 -- join only add 1 space
@@ -67,4 +68,4 @@ local detect_tabs = function()
   set_tabsize(tabsize)
 end
 
-vim.api.nvim_create_autocmd({"BufReadPost"}, {callback = detect_tabs})
+vim.api.nvim_create_autocmd({"BufReadPost"}, {group = lib.group, callback = detect_tabs})

@@ -1,3 +1,5 @@
+local lib = require("go")
+
 -- auto save file
 vim.opt.autowrite = true
 vim.opt.autowriteall = true
@@ -8,7 +10,10 @@ vim.opt.backupskip = ""
 -- persistent undo
 vim.opt.undofile = true
 
-vim.api.nvim_create_autocmd({"FocusGained", "VimResume", "WinEnter"}, {command = "silent! checktime"})
+vim.api.nvim_create_autocmd(
+  {"FocusGained", "VimResume", "WinEnter"},
+  {group = lib.group, command = "silent! checktime"}
+)
 
 local check_time = function(lo)
   return function()
@@ -25,11 +30,11 @@ local check_time = function(lo)
   end
 end
 
-vim.api.nvim_create_autocmd({"BufLeave", "FocusLost"}, {callback = check_time(false)})
+vim.api.nvim_create_autocmd({"BufLeave", "FocusLost"}, {group = lib.group, callback = check_time(false)})
 
-vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {callback = check_time(true)})
+vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {group = lib.group, callback = check_time(true)})
 
-vim.api.nvim_create_autocmd({"VimLeavePre"}, {once = true, command = [[silent! wall!]]})
+vim.api.nvim_create_autocmd({"VimLeavePre"}, {group = lib.group, once = true, command = [[silent! wall!]]})
 
 local cycle = 600
 local check_times = nil

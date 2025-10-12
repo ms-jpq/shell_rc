@@ -1,3 +1,5 @@
+local lib = require("go")
+
 -- normalize cursor pos
 local vcol = {"onemore", "block"}
 vim.opt.virtualedit = vcol
@@ -8,6 +10,7 @@ vim.opt.cursorline = true
 vim.api.nvim_create_autocmd(
   "InsertEnter",
   {
+    group = lib.group,
     callback = function()
       vim.b.__column_highlight__ = vim.o.cursorcolumn
       vim.opt.virtualedit = vcol
@@ -19,6 +22,7 @@ vim.api.nvim_create_autocmd(
 vim.api.nvim_create_autocmd(
   "InsertLeave",
   {
+    group = lib.group,
     callback = function()
       local cc = vim.b.__column_highlight__
       vim.opt.cursorline = true
@@ -50,6 +54,7 @@ vim.keymap.set({"n", "v"}, "$", "$<right>")
 vim.api.nvim_create_autocmd(
   {"InsertEnter", "CursorMovedI", "TextChangedP"},
   {
+    group = lib.group,
     callback = function()
       local _, col = unpack(vim.api.nvim_win_get_cursor(0))
       vim.b.__cursor_column__ = col
@@ -60,6 +65,7 @@ vim.api.nvim_create_autocmd(
 vim.api.nvim_create_autocmd(
   {"InsertLeave"},
   {
+    group = lib.group,
     callback = function()
       local col = vim.b.__cursor_column__
       if col then

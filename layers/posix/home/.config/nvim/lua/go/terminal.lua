@@ -1,8 +1,10 @@
+local lib = require("go")
+
 vim.env.NVIM_SERVERNAME = vim.env.NVIM_SERVERNAME or vim.fn.serverstart()
 
-vim.api.nvim_create_autocmd({"TermOpen"}, {command = [[startinsert]]})
+vim.api.nvim_create_autocmd({"TermOpen"}, {group = lib.group, command = [[startinsert]]})
 
-vim.api.nvim_create_autocmd({"TermLeave"}, {command = [[set nomodified]]})
+vim.api.nvim_create_autocmd({"TermLeave"}, {group = lib.group, command = [[set nomodified]]})
 
 local termstart = function(cmd, env, die)
   local buf = vim.api.nvim_create_buf(false, true)

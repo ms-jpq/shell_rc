@@ -1,3 +1,5 @@
+local lib = require("go")
+
 -- limit session restoration info
 vim.opt.sessionoptions:remove("blank", "buffers", "curdir", "help", "terminal")
 vim.opt.sessionoptions:append("skiprtp")
@@ -67,11 +69,12 @@ vim.api.nvim_create_user_command(
   {}
 )
 
-vim.api.nvim_create_autocmd({"VimSuspend", "FocusLost", "CursorHold"}, {callback = mk_session})
+vim.api.nvim_create_autocmd({"VimSuspend", "FocusLost", "CursorHold"}, {group = lib.group, callback = mk_session})
 
 vim.api.nvim_create_autocmd(
   {"QuitPre"},
   {
+    group = lib.group,
     once = true,
     callback = function()
       if no_session() then
@@ -100,6 +103,7 @@ vim.api.nvim_create_autocmd(
 vim.api.nvim_create_autocmd(
   {"VimEnter"},
   {
+    group = lib.group,
     once = true,
     callback = vim.schedule_wrap(
       function()
