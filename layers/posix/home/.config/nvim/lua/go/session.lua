@@ -72,6 +72,7 @@ vim.api.nvim_create_autocmd({"VimSuspend", "FocusLost", "CursorHold"}, {callback
 vim.api.nvim_create_autocmd(
   {"QuitPre"},
   {
+    once = true,
     callback = function()
       if no_session() then
         return
@@ -99,6 +100,7 @@ vim.api.nvim_create_autocmd(
 vim.api.nvim_create_autocmd(
   {"VimEnter"},
   {
+    once = true,
     callback = vim.schedule_wrap(
       function()
         if no_session() then

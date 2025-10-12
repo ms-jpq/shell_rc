@@ -64,6 +64,7 @@ end
 vim.api.nvim_create_autocmd(
   {"VimEnter"},
   {
+    once = true,
     callback = vim.schedule_wrap(
       function()
         packloadopt()
