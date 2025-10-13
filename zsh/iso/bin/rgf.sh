@@ -23,6 +23,7 @@ printf -v PREVIEW -- '%q ' "${BAT[@]}"
 
 EDIT=()
 if [[ $* == --tmux ]]; then
+  shift -- 1
   EDIT+=(tmux new-window -a -c '#{pane_current_path}' --)
 fi
 
