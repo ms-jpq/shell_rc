@@ -46,7 +46,7 @@ markdown:
 #   bin: ltex-ls
 
 ltex_plus:
-  bin: ltex-ls-plus
+  bin: ltex-ls-plus.sh
 
 texlab:
   bin: texlab
