@@ -26,6 +26,9 @@ end
 -- kill current buf
 vim.keymap.set("n", [[<leader>x]], "<cmd>bwipeout!<cr>")
 
+-- kill current win
+vim.keymap.set("n", [[<c-w><c-q>]], "<cmd>wincmd c<cr>")
+
 -- kill current tab
 vim.keymap.set("n", [[<leader>q]], "<cmd>tabclose<cr>")
 
