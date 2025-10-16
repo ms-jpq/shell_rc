@@ -174,6 +174,7 @@ def main() -> None:
     env = _trans(_parse(norm), env=p_env)
     pass_through = {
         "ASDF_DATA_DIR",
+        "AWS_SHARED_CREDENTIALS_FILE",
         "EDITOR",
         "HOME",
         "LC_ALL",
