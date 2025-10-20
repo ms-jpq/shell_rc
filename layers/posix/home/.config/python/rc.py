@@ -102,7 +102,6 @@ from collections.abc import (
     AsyncIterable,
     AsyncIterator,
     Awaitable,
-    ByteString,
     Callable,
     Collection,
     Container,
