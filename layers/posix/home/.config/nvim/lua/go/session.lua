@@ -28,7 +28,6 @@ local no_session = (function()
             end)()
 
           if stdin then
-            vim.opt.wrap = false
             return true
           end
         end
