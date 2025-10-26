@@ -79,12 +79,13 @@ vim.keymap.set({"n", "o", "v"}, [[<m-right>]], [[e<right>]])
 
 -- delete dont copy
 for _, key in pairs {"c", "C", "d", "D", "x", "X"} do
-  vim.keymap.set({"n", "v"}, key, '"_' .. key)
+  vim.keymap.set({"n", "v"}, key, [["_]] .. key)
 end
 
 -- leave cursor 1 behind instead of before
 for _, key in pairs {"p", "P"} do
-  vim.keymap.set({"n", "v"}, key, "g" .. key)
+  vim.keymap.set("n", key, "g" .. key)
+  vim.keymap.set("v", key, [["_dg]] .. key)
 end
 
 -- scroll fixed lines
