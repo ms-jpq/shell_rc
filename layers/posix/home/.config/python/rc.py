@@ -313,10 +313,20 @@ from typing import (
     overload,
     runtime_checkable,
 )
-from urllib import parse, request
-from urllib.parse import urlencode, urlsplit, urlunsplit
+from urllib import request
+from urllib.parse import (
+    parse_qs,
+    parse_qsl,
+    quote_plus,
+    urlencode,
+    urljoin,
+    urlsplit,
+    urlunsplit,
+)
+from urllib.request import build_opener
 from uuid import UUID, uuid1, uuid3, uuid4, uuid5
 from weakref import WeakKeyDictionary, WeakSet, WeakValueDictionary
+from xml.etree.ElementTree import Element, SubElement
 
 if sys.version_info >= (3, 10):
     from contextlib import aclosing
