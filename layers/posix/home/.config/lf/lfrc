@@ -43,7 +43,7 @@ cmd ln             %~/.config/lf/libexec/link.sh "$fx" "$*"
 map A              push :ln<space>
 
 map bc             $printf -- %s "$f"                                                                                       | ~/.config/zsh/bin/c
-map bd             $dirname -- "$f"                                                                                         | ~/.config/zsh/bin/c
-map bf             $basename -- "$f"                                                                                        | ~/.config/zsh/bin/c
+map bd             $dirname -- "$f"                                     | sed -E -z -e 's#\n$##'                            | ~/.config/zsh/bin/c
+map bf             $basename -- "$f"                                    | sed -E -z -e 's#\n$##'                            | ~/.config/zsh/bin/c
 map br             $realpath --no-symlinks --relative-to "$PWD" -- "$f" | sed -E -z -e 's#\n$##'                            | ~/.config/zsh/bin/c
 map bR             $realpath --no-symlinks --relative-to "$PWD" -- "$f" | sed -E -z -e 's#\n$##' | xargs -0 -- printf -- %q | ~/.config/zsh/bin/c
