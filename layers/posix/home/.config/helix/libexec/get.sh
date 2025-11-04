@@ -8,8 +8,15 @@ DST="${2:-"$(basename -- "$SRC")"}"
 TTAG="$DST.ttag"
 ETAG="$DST.etag"
 
-CURL=(
-  curl
+CURL=(curl)
+
+if [[ -v IPV4 ]]; then
+  CURL+=(-4)
+elif [[ -v IPV6 ]]; then
+  CURL+=(-6)
+fi
+
+CURL+=(
   --fail
   --location
   --remove-on-error
