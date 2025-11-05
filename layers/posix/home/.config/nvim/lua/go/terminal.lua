@@ -69,7 +69,7 @@ vim.keymap.set(
     local cwd = vim.fn.getcwd()
     local path = vim.api.nvim_buf_get_name(0)
     if vim.fn.filereadable(path) == 0 then
-      path = cwd
+      path = vim.fn.getcwd(0)
     end
     table.insert(cmd, {"--", path})
 
