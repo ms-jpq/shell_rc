@@ -59,7 +59,11 @@ local lfdie = function()
       vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
     end
 
-    local read = vim.iter(io.lines(tmp)):join("\n")
+    local go, lines = pcall(io.lines, tmp)
+    if not go then
+      return
+    end
+    local read = vim.iter(lines):join("\n")
     vim.fs.rm(tmp, {recursive = true, force = true})
     for _, path in pairs(vim.split(read, "\0", {plain = true})) do
       local esc = vim.fn.fnameescape(path)
