@@ -31,10 +31,6 @@ local termstart = function(cmd, env, die)
   vim.api.nvim_win_set_buf(0, buf)
 end
 
-local lfcmd = function()
-  return {{"lf"}, {"-config", vim.fs.joinpath(vim.fn.stdpath("config"), "lfrc.2")}}
-end
-
 local lfdie = function()
   local bufs = {}
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -71,34 +67,38 @@ local lfdie = function()
   return tmp, die
 end
 
-vim.keymap.set(
-  "n",
-  [[<c-t>]],
-  function()
-    local cmd = lfcmd()
+local spawn_lf = function(use_cwd)
+  return function()
+    local cmd = {{"lf"}, {"-config", vim.fs.joinpath(vim.fn.stdpath("config"), "lfrc.2")}}
 
     local cwd = vim.fn.getcwd()
-    local path = vim.api.nvim_buf_get_name(0)
-    if vim.fn.filereadable(path) == 0 then
-      path = cwd
-    end
-    table.insert(cmd, {"--", path})
+    table.insert(cmd, use_cwd(cwd))
 
     local tmp, die = lfdie()
     termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd, NVIM_BUF = tmp}, die)
   end
+end
+
+vim.keymap.set(
+  "n",
+  [[<c-t>]],
+  spawn_lf(
+    function(cwd)
+      local path = vim.api.nvim_buf_get_name(0)
+      if vim.fn.filereadable(path) == 0 then
+        path = cwd
+      end
+      return {"--", path}
+    end
+  )
 )
 
 vim.keymap.set(
   "n",
   [[<leader>t]],
-  function()
-    local cmd = lfcmd()
-
-    local cwd = vim.fn.getcwd()
-    table.insert(cmd, {"--", cwd})
-
-    local tmp, die = lfdie()
-    termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd, NVIM_BUF = tmp}, die)
-  end
+  spawn_lf(
+    function(cwd)
+      return {"--", cwd}
+    end
+  )
 )
