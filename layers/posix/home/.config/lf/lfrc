@@ -43,6 +43,8 @@ map a              push :mkpath<space>
 cmd ln             %~/.config/lf/libexec/link.sh "$fx" "$*"
 map A              push :ln<space>
 
+map X              &test -x "$f" && chmod -x -- "$f" || chmod +x -- "$f"; lf -remote "send $id reload"
+
 map bc             $printf -- %s "$f"                                                                                       | ~/.config/zsh/bin/c
 map bd             $dirname -- "$f"                                     | sed -E -z -e 's#\n$##'                            | ~/.config/zsh/bin/c
 map bf             $basename -- "$f"                                    | sed -E -z -e 's#\n$##'                            | ~/.config/zsh/bin/c
