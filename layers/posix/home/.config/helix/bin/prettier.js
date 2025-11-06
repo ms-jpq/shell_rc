@@ -14,6 +14,7 @@ const {
   values: { filename, tabsize },
   positionals,
 } = parseArgs({
+  allowPositionals: true,
   options: {
     filename: { type: "string" },
     sort: { type: "boolean" },

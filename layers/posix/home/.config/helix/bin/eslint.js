@@ -7,9 +7,10 @@ import { randomBytes } from "node:crypto"
 import { existsSync } from "node:fs"
 import { open, rm } from "node:fs/promises"
 import { basename, dirname, extname, join } from "node:path"
-import { argv, cwd, execPath, stdin, stdout } from "node:process"
+import { cwd, execPath, stdin, stdout } from "node:process"
 import { pipeline } from "node:stream/promises"
 import { fileURLToPath } from "node:url"
+import { parseArgs } from "node:util"
 
 /**
  * @return {IterableIterator<string>}
@@ -90,7 +91,9 @@ const _eslint = async (eslint = "", filename = "") => {
 }
 
 ;(async () => {
-  const [, , filename] = argv
+  const {
+    positionals: [filename],
+  } = parseArgs({ allowPositionals: true })
   ok(filename)
 
   let found = false
