@@ -78,7 +78,7 @@ while (($#)); do
 done
 
 if ((SUDO)) && ((UID)); then
-  exec -- --preserve-env -- "$0" "$@"
+  exec -- sudo --preserve-env -- "$0" "$@"
 fi
 
 if [[ -z ${CPUS:-""} ]]; then
