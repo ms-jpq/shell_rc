@@ -103,14 +103,13 @@ vim.g.clipboard = {
   }
 }
 
+local undo_quoting = function(line)
+  return vim.split(line, "\027%[27;5;106~")
+end
+
 vim.paste = (function(paste)
   return function(lines, p)
-    local acc = {}
-    for _, line in ipairs(lines) do
-      for _, l in ipairs(vim.split(line, "\027%[27;5;106~")) do
-        table.insert(acc, l)
-      end
-    end
+    local acc = vim.iter(lines):map(undo_quoting):flatten():totable()
     return paste(acc, p)
   end
 end)(vim.paste)
