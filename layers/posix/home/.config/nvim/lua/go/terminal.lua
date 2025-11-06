@@ -63,12 +63,10 @@ local lfdie = function()
     if not go then
       return
     end
-    local read = vim.iter(lines):join("\n")
+    local path = vim.iter(lines):join("\n")
+    local esc = vim.fn.fnameescape(path)
     vim.fs.rm(tmp, {recursive = true, force = true})
-    for _, path in pairs(vim.split(read, "\0", {plain = true})) do
-      local esc = vim.fn.fnameescape(path)
-      vim.cmd.edit(esc)
-    end
+    vim.cmd.edit(esc)
   end
   return tmp, die
 end
