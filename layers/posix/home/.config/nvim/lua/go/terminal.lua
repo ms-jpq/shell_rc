@@ -46,7 +46,8 @@ local lfdie = function()
     end
   end
 
-  return function()
+  local tmp = vim.fn.tempname()
+  local die = function()
     local dead = {}
     for buf, name in pairs(bufs) do
       if vim.fn.filereadable(name) == 0 then
@@ -57,7 +58,15 @@ local lfdie = function()
     if #dead > 0 then
       vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
     end
+
+    local read = vim.iter(io.lines(tmp)):join("\n")
+    vim.fs.rm(tmp, {recursive = true, force = true})
+    for _, path in pairs(vim.split(read, "\0", {plain = true})) do
+      local esc = vim.fn.fnameescape(path)
+      vim.cmd.edit(esc)
+    end
   end
+  return tmp, die
 end
 
 vim.keymap.set(
@@ -73,8 +82,8 @@ vim.keymap.set(
     end
     table.insert(cmd, {"--", path})
 
-    local die = lfdie()
-    termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd}, die)
+    local tmp, die = lfdie()
+    termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd, NVIM_BUF = tmp}, die)
   end
 )
 
@@ -87,7 +96,7 @@ vim.keymap.set(
     local cwd = vim.fn.getcwd()
     table.insert(cmd, {"--", cwd})
 
-    local die = lfdie()
-    termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd}, die)
+    local tmp, die = lfdie()
+    termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd, NVIM_BUF = tmp}, die)
   end
 )

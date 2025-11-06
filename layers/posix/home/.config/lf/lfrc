@@ -2,6 +2,7 @@
 # https://github.com/gokcehan/lf/blob/master/etc/lfrc.example
 
 set drawbox        true
+set filesep        "\0"
 set hidden         true
 set icons          true
 set incfilter      true
