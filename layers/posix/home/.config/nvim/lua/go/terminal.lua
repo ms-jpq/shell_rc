@@ -42,8 +42,11 @@ local lfdie = function()
     end
   end
 
-  local tmp = vim.fn.tempname()
-  local die = function()
+  local buf = vim.api.nvim_get_current_buf()
+  local cur = vim.api.nvim_buf_get_name(buf)
+  local alt = vim.fn.getreg("#")
+
+  return function()
     local dead = {}
     for buf, name in pairs(bufs) do
       if vim.fn.filereadable(name) == 0 then
@@ -55,16 +58,9 @@ local lfdie = function()
       vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
     end
 
-    local go, lines = pcall(io.lines, tmp)
-    if not go then
-      return
-    end
-    local path = vim.iter(lines):join("\n")
-    local esc = vim.fn.fnameescape(path)
-    vim.fs.rm(tmp, {recursive = true, force = true})
-    vim.cmd.edit(esc)
+    local altfile = vim.api.nvim_get_current_buf() == buf and alt or cur
+    vim.fn.setreg("#", altfile)
   end
-  return tmp, die
 end
 
 local spawn_lf = function(use_cwd)
@@ -74,8 +70,8 @@ local spawn_lf = function(use_cwd)
     local cwd = vim.fn.getcwd()
     table.insert(cmd, use_cwd(cwd))
 
-    local tmp, die = lfdie()
-    termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd, NVIM_BUF = tmp}, die)
+    local die = lfdie()
+    termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd}, die)
   end
 end
 
