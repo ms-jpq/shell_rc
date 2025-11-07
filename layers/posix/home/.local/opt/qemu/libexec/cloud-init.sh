@@ -32,12 +32,13 @@ done
 cp -a -R -f -- ./cloud-init/scripts "$TMP/scripts"
 
 rm -v -fr -- "$DST"
+VOL='cidata'
 case "$OSTYPE" in
 darwin*)
-  hdiutil makehybrid -iso -joliet -default-volume-name cidata -o "$DST" "$TMP"
+  hdiutil makehybrid -iso -joliet -default-volume-name "$VOL" -o "$DST" "$TMP"
   ;;
 linux*)
-  genisoimage -volid cidata -joliet -rock -output "$DST" -- "$TMP"/*
+  genisoimage -joliet -rock -volid "$VOL" -output "$DST" -- "$TMP"/*
   ;;
 *)
   exit 1
