@@ -1,5 +1,11 @@
 #cloud-config
 ---
+bootcmd:
+  - - cloud-init-per
+    - once
+    - --
+    - date
+    - "--set=${DATE}"
 users:
   - name: root
     lock_passwd: false
