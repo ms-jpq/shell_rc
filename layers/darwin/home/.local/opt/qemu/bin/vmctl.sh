@@ -60,7 +60,7 @@ DRIVE="$ROOT/$RAW"
 CLOUD_INIT="$ROOT/cloud-init.iso"
 
 SSH_LOCATION="$ROOT/ssh.conn"
-SSH_CMD=(ssh -l root -p)
+SSH_CMD=(ssh -o UserKnownHostsFile=/dev/null -l root -p)
 
 PASSWD='root'
 
