@@ -59,7 +59,7 @@ local lfdie = function()
     end
 
     local altfile = vim.api.nvim_get_current_buf() == buf and alt or cur
-    vim.fn.setreg("#", altfile)
+    pcall(vim.fn.setreg, "#", altfile)
   end
 end
 
