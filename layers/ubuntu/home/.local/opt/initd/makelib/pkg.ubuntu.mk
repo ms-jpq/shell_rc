@@ -7,7 +7,7 @@ $(SHARE)/tmux $(OPT)/pipx: | /usr/share/doc/python3-venv
 	EOF
 
 /etc/apt/trusted.gpg.d/ms-jpq.gpg:
-	$(CURL) -- 'https://ms-jpq.github.io/deb/pubkey.asc' | sudo -- gpg --batch --dearmor --yes --output '$@'
+	$(CURL) -- 'https://raw.githubusercontent.com/ms-jpq/deb/refs/heads/deb/pubkey.asc' | sudo -- gpg --batch --dearmor --yes --output '$@'
 
 pkg.posix: /etc/apt/sources.list.d/ms-jpq.list
 /etc/apt/sources.list.d/ms-jpq.list: | /etc/apt/trusted.gpg.d/ms-jpq.gpg
