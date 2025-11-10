@@ -51,6 +51,9 @@ submodule        = "log"
 tool             = "nvimdiff"
 wsErrorHighlight = "all"
 
+[diff.dpkg]
+textconv = "dpkg --info --"
+
 [diff.exif]
 textconv = "exiftool --"
 
