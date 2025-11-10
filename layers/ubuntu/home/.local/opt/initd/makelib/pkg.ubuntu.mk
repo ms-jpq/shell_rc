@@ -12,7 +12,7 @@ $(SHARE)/tmux $(OPT)/pipx: | /usr/share/doc/python3-venv
 pkg.posix: /etc/apt/sources.list.d/ms-jpq.list
 /etc/apt/sources.list.d/ms-jpq.list: | /etc/apt/trusted.gpg.d/ms-jpq.gpg
 	sudo -- tee -- '$@' <<-'EOF'
-	deb https://ms-jpq.github.io/deb /
+	deb https://raw.githubusercontent.com/ms-jpq/deb/refs/heads/deb/ /
 	EOF
 
 pkg.posix: /etc/apt/sources.list.d/ppa_neovim-ppa_unstable.list
