@@ -35,4 +35,5 @@ pkg.posix: /etc/apt/sources.list.d/gcp.list
 /etc/apt/sources.list.d/gcp.list: /etc/apt/trusted.gpg.d/gcp.gpg
 	sudo -- tee -- '$@' <<-'EOF'
 	deb https://packages.cloud.google.com/apt cloud-sdk main
+	deb https://packages.cloud.google.com/apt google-cloud-ops-agent-$(VERSION_CODENAME)-all main
 	EOF
