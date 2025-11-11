@@ -6,6 +6,8 @@ bootcmd:
     - uuid-0
     - date
     - "--set=${DATE}"
+ssh:
+  emit_keys_to_console: false
 users:
   - name: root
     lock_passwd: false
