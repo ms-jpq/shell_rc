@@ -3,7 +3,7 @@
 bootcmd:
   - - cloud-init-per
     - once
-    - --
+    - uuid-0
     - date
     - "--set=${DATE}"
 users:
