@@ -2,7 +2,7 @@ local lib = require("go")
 local to = require("go.text_objects")
 
 local magic_escape = function(text)
-  return vim.fn.escape(text, "\\/\n\r\t")
+  return vim.fn.escape(text, "\\/\n\r\t&")
 end
 
 local selected_text = function(visual_type)
