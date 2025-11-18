@@ -7,7 +7,7 @@ from contextlib import contextmanager, nullcontext
 from functools import lru_cache
 from itertools import chain
 from json import dumps
-from logging import INFO, StreamHandler, captureWarnings, getLogger
+from logging import INFO, basicConfig, captureWarnings, getLogger
 from os import environ, execle, linesep, name
 from os.path import normcase
 from pathlib import Path, PurePath
@@ -23,9 +23,7 @@ _CODEC = "utf-8"
 
 with nullcontext():
     captureWarnings(True)
-    log = getLogger()
-    log.setLevel(INFO)
-    log.addHandler(StreamHandler())
+    basicConfig(format="%(message)s", level=INFO)
 
 
 def _parse(text: str) -> Iterator[Tuple[str, Optional[str]]]:
@@ -46,7 +44,7 @@ def _parse(text: str) -> Iterator[Tuple[str, Optional[str]]]:
         parser.read_string(lines)
     except AttributeError:
         ls = linesep.join(f">! {line}" for line in text.splitlines())
-        log.error("%s", ls)
+        getLogger().error("%s", ls)
         exit(True)
     else:
         for section in parser.values():
@@ -74,7 +72,7 @@ def _codec(text: str) -> str:
         return "".join(cont())
     except UnicodeDecodeError as e:
         es = repr(type(e))
-        log.error("%s", f">! {es}")
+        getLogger().error("%s", f">! {es}")
         exit(True)
 
 
@@ -103,7 +101,7 @@ def _subst(val: str, env: Mapping[str, str]) -> str:
         parsed = "".join(cont())
     except (KeyError, ValueError) as e:
         es = repr(type(e)(text))
-        log.error("%s", f">! {es}")
+        getLogger().error("%s", f">! {es}")
         exit(True)
     else:
         return parsed
@@ -122,18 +120,18 @@ def _print(key: str, val: str) -> None:
     lhs = _quote(key)
     rhs = _quote(val)
     if _isatty():
-        log.info("%s", f">> {lhs}={rhs}")
+        getLogger().info("%s", f">> {lhs}={rhs}")
 
 
 @contextmanager
 def _man() -> Iterator[None]:
     if _isatty():
-        log.info("%s", f"<<")
+        getLogger().info("%s", f"<<")
     try:
         yield None
     finally:
         if _isatty():
-            log.info("%s", f"<<")
+            getLogger().info("%s", f"<<")
 
 
 def _trans(
@@ -145,7 +143,7 @@ def _trans(
         for key, val in stream:
             if val is None:
                 es = repr(ValueError(key))
-                log.error("%s", f">! {es}")
+                getLogger().error("%s", f">! {es}")
                 exit(True)
 
             if key not in env:

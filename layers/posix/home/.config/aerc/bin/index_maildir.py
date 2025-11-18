@@ -18,7 +18,7 @@ from email.policy import SMTP, SMTPUTF8
 from email.utils import getaddresses, parsedate_to_datetime, unquote
 from functools import partial
 from itertools import chain, takewhile
-from logging import INFO, StreamHandler, captureWarnings, getLogger
+from logging import INFO, basicConfig, captureWarnings, getLogger
 from os import environ, linesep
 from os.path import normcase, sep
 from pathlib import Path
@@ -31,6 +31,10 @@ _Processed = tuple[Path, Sequence[tuple[float, str]]] | None
 _NL = SMTP.linesep.encode()
 _LS = linesep.encode()
 _FLAG = "RECUR"
+
+with nullcontext():
+    captureWarnings(True)
+    basicConfig(format="%(message)s", level=INFO)
 
 
 def _die(addr: str, label: str) -> bool:
@@ -174,7 +178,7 @@ def _process_account(cache_dir: Path, account: Path) -> None:
         added.add(normcase(path))
         for mtime, addr in addrs:
             if not addr in compiled:
-                log.info("%s", addr)
+                getLogger().info("%s", addr)
             compiled[addr] = max(compiled.get(addr, mtime), mtime)
 
     try:
@@ -227,12 +231,6 @@ def _main() -> None:
 
 
 try:
-    with nullcontext():
-        captureWarnings(True)
-        log = getLogger()
-        log.setLevel(INFO)
-        log.addHandler(StreamHandler())
-
     if not _FLAG in environ:
         _main()
 except KeyboardInterrupt:

@@ -7,7 +7,7 @@ from contextlib import contextmanager, nullcontext, suppress
 from functools import cache, lru_cache, partial
 from imaplib import IMAP4, IMAP4_SSL, Commands
 from itertools import islice
-from logging import INFO, LogRecord, StreamHandler, captureWarnings, getLogger
+from logging import INFO, LogRecord, basicConfig, captureWarnings, getLogger
 from logging.handlers import SysLogHandler
 from os import linesep
 from pathlib import Path
@@ -104,7 +104,7 @@ def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
                         assert isinstance(line, bytes)
                         lo = line.lower()
 
-                        log.info("%s", f"{mailbox} -> {line!r}")
+                        getLogger().info("%s", f"{mailbox} -> {line!r}")
 
                         if lo.startswith(b"* bye"):
                             return
@@ -134,7 +134,7 @@ def _trigger(channel: str) -> None:
         / "trigger"
     )
     trigger.touch()
-    log.info("%s", f">> {trigger}")
+    getLogger().info("%s", f">> {trigger}")
 
 
 def _idle(
@@ -147,14 +147,14 @@ def _idle(
             for _ in _waiting(host, authn=authn, user=user, mailbox=mailbox):
                 _trigger(channel)
         except (TimeoutError, gaierror, CalledProcessError) as e:
-            log.info("%s", e)
+            getLogger().info("%s", e)
         except IMAP4.abort as e:
-            log.warning("%s", e)
+            getLogger().warning("%s", e)
         except IMAP4.error as e:
-            log.exception("%s", e)
+            getLogger().exception("%s", e)
         finally:
             if daemonize:
-                log.info("%s", f"    :: {mailbox}")
+                getLogger().info("%s", f"    :: {mailbox}")
                 sleep(daemon)
 
 
@@ -176,7 +176,7 @@ def _install(channel: str, path: Path) -> None:
         HOME=Path.home(), CHANNEL=channel, SELF=_FILE.name, ARGV=av
     )
     path.write_text(rendered)
-    log.info("%s", rendered)
+    getLogger().info("%s", rendered)
 
 
 def _parse_args() -> Namespace:
@@ -217,15 +217,14 @@ def main() -> None:
         with ThreadPoolExecutor() as ex:
             tuple(ex.map(idle, boxes))
     except Exception as e:
-        log.exception("%s", e)
+        getLogger().exception("%s", e)
         raise
 
 
 with nullcontext():
     captureWarnings(True)
-    log = getLogger()
-    log.setLevel(INFO)
-    log.addHandler(StreamHandler())
+    basicConfig(format="%(message)s", level=INFO)
+
     if system() == "Darwin":
 
         class _SysLogHandler(SysLogHandler):
@@ -242,7 +241,7 @@ with nullcontext():
                     syslog(pri, msg)
 
         openlog(ident=_FILE.name, facility=LOG_MAIL)
-        log.addHandler(_SysLogHandler(facility=LOG_MAIL))
+        getLogger().addHandler(_SysLogHandler(facility=LOG_MAIL))
 
 
 try:
