@@ -45,4 +45,4 @@ check_times = function()
   end
   vim.defer_fn(check_times, cycle)
 end
-vim.defer_fn(check_times, 600)
+vim.defer_fn(check_times, cycle)
