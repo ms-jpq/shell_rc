@@ -7,18 +7,19 @@ BASE='https://github.com/neocmakelsp/neocmakelsp/releases/latest/download/neocma
 EXT=''
 case "$OSTYPE" in
 darwin*)
-  URI="$BASE-$HOSTTYPE-apple-darwin"
+  URI="$BASE-universal-apple-darwin.tar.gz"
   ;;
 linux*)
-  URI="$BASE-$HOSTTYPE-unknown-linux-gnu"
+  URI="$BASE-$HOSTTYPE-unknown-linux-gnu.tar.gz"
   ;;
 *)
-  URI="$BASE-$HOSTTYPE-pc-windows-msvc.exe"
+  URI="$BASE-$HOSTTYPE-pc-windows-msvc.zip"
   EXT='.exe'
   ;;
 esac
 
-FILE="$(get.sh "$URI")"
+# shellcheck disable=SC2154
+get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
 mkdir -p -- "$BIN"
-install -v -b -- "$FILE" "$BIN/neocmakelsp$EXT"
+install -v -b -- "$RUN"/* "$BIN/neocmakelsp$EXT"
