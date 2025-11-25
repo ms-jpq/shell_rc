@@ -14,7 +14,11 @@ end
 local no_session = (function()
   local cached = nil
 
-  return function()
+  return function(cwd)
+    if cwd == "" then
+      return true
+    end
+
     if cached ~= nil then
       return cached
     end
@@ -38,9 +42,8 @@ local no_session = (function()
   end
 end)()
 
-local session_path = function()
-  local cwd = vim.fn.getcwd()
-  local name = vim.re.gsub(cwd, "[/\\]", ".")
+local session_path = function(cwd)
+  local name = vim.re.gsub(cwd or vim.fn.getcwd(), "[/\\]", ".")
   local path = vim.fs.joinpath(vim.fn.stdpath("cache"), "sessions", name)
   local norm = vim.fs.normalize(path, {expand_env = false})
   local escaped = vim.fn.fnameescape(norm)
@@ -48,11 +51,12 @@ local session_path = function()
 end
 
 local mk_session = function(kill)
-  if not kill and no_session() then
+  local cwd = vim.fn.getcwd()
+  if not kill and no_session(cwd) then
     return
   end
 
-  local path, escaped = session_path()
+  local path, escaped = session_path(cwd)
   local parent = vim.fs.dirname(path)
   vim.fn.mkdir(parent, "p", 0755)
   vim.fn.setfperm(parent, [[rwxr-xr-x]])
@@ -107,11 +111,12 @@ vim.api.nvim_create_autocmd(
     once = true,
     callback = vim.schedule_wrap(
       function()
-        if no_session() then
+        local cwd = vim.fn.getcwd()
+        if no_session(cwd) then
           return
         end
 
-        local path, escaped = session_path()
+        local path, escaped = session_path(cwd)
         if vim.fn.filereadable(path) then
           vim.cmd([[silent! source ]] .. escaped)
         end
