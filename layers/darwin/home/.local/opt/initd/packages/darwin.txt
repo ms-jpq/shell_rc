@@ -33,6 +33,7 @@
 + figlet
 + findutils
 + flock
++ freerdp
 + fswatch
 + fx
 + fzf
