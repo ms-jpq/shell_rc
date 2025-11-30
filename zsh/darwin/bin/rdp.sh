@@ -7,9 +7,11 @@ LONG_OPTS='size:,lodpi,user:,pass:,host:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
+ADMIN='administrator'
+
 SIZE=''
 HIDPI=1
-UNAME='administrator'
+UNAME="$ADMIN"
 PASS=''
 HOST=''
 while true; do
@@ -58,13 +60,20 @@ fi
 ARGV=(
   sdl-freerdp
   /cert:ignore
-  /smart-sizing
   /f
+  "/smart-sizing:$SIZE"
   "/size:$SIZE"
   "/u:$UNAME"
   "/p:$PASS"
   "/v:$HOST"
+  -wallpaper
+  -themes
+  -decorations
 )
+
+if [[ $UNAME == "$ADMIN" ]]; then
+  ARGV+=(/admin)
+fi
 
 if ((HIDPI)); then
   ARGV+=(/scale-desktop:200)
