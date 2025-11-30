@@ -1,3 +1,4 @@
 {
+  "SDL_Fullscreen": "SDL_SCANCODE_F",
   "SDL_KeyModMask": ["KMOD_RGUI"]
 }

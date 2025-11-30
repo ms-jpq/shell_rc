@@ -2,15 +2,14 @@
 
 set -o pipefail
 
-OPTS='s:,l,u:,p:,h:'
-LONG_OPTS='size:,lodpi,user:,pass:,host:'
+OPTS='s:,u:,p:,h:'
+LONG_OPTS='size:,user:,pass:,host:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 ADMIN='administrator'
 
 SIZE=''
-HIDPI=1
 UNAME="$ADMIN"
 PASS=''
 HOST=''
@@ -19,10 +18,6 @@ while true; do
   -s | --size)
     SIZE="$2"
     shift -- 2
-    ;;
-  -l | --lodpi)
-    HIDPI=0
-    shift -- 1
     ;;
   -u | --user)
     UNAME="$2"
@@ -60,7 +55,6 @@ fi
 ARGV=(
   sdl-freerdp
   /cert:ignore
-  /f
   "/size:$SIZE"
   "/u:$UNAME"
   "/p:$PASS"
@@ -73,10 +67,6 @@ ARGV=(
 
 if [[ $UNAME == "$ADMIN" ]]; then
   ARGV+=(/admin)
-fi
-
-if ((HIDPI)); then
-  ARGV+=(/scale:180 /scale-desktop:200)
 fi
 
 exec -- "${ARGV[@]}" "$@"
