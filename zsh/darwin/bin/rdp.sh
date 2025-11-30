@@ -3,7 +3,7 @@
 set -o pipefail
 
 OPTS='s:,u:,p:,h:'
-LONG_OPTS='user:,pass:,host:'
+LONG_OPTS='video,user:,pass:,host:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
@@ -12,6 +12,7 @@ ADMIN='administrator'
 UNAME="$ADMIN"
 PASS=''
 HOST=''
+VIDEO=0
 while true; do
   case "$1" in
   -u | --user)
@@ -25,6 +26,10 @@ while true; do
   -h | --host)
     HOST="$2"
     shift -- 2
+    ;;
+  --video)
+    VIDEO=1
+    shift -- 1
     ;;
   --)
     shift -- 1
@@ -49,12 +54,16 @@ ARGV=(
   "/v:$HOST"
   +dynamic-resolution
   -wallpaper
-  -themes
-  -decorations
+  +async-update
+  +auto-reconnect
 )
 
 if [[ $UNAME == "$ADMIN" ]]; then
   ARGV+=(/admin)
+fi
+
+if ((VIDEO)); then
+  ARGV+=(/video /sound)
 fi
 
 exec -- "${ARGV[@]}" "$@"
