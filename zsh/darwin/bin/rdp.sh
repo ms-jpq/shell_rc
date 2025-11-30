@@ -2,18 +2,23 @@
 
 set -o pipefail
 
-OPTS='u:,p:,h:'
-LONG_OPTS='lodpi,user:,pass:,host:'
+OPTS='s:,l,u:,p:,h:'
+LONG_OPTS='size:,lodpi,user:,pass:,host:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
+SIZE=''
 HIDPI=1
 UNAME='administrator'
 PASS=''
-HOST=
+HOST=''
 while true; do
   case "$1" in
-  --lodpi)
+  -s | --size)
+    SIZE="$2"
+    shift -- 2
+    ;;
+  -l | --lodpi)
     HIDPI=0
     shift -- 1
     ;;
@@ -44,20 +49,25 @@ if [[ -z $HOST ]]; then
   exit 2
 fi
 
+if [[ -z $SIZE ]]; then
+  set -x
+  system_profiler SPDisplaysDataType | sed -E -n 's#^ +Resolution: ([0-9]+) x ([0-9]+).*$#\1x\2#p'
+  exit 2
+fi
+
 ARGV=(
   sdl-freerdp
   /cert:ignore
   /smart-sizing
   /f
+  "/size:$SIZE"
   "/u:$UNAME"
   "/p:$PASS"
   "/v:$HOST"
 )
 
-SIZE='2880x1864'
 if ((HIDPI)); then
   ARGV+=(/scale-desktop:200)
 fi
-ARGV+=("/size:$SIZE")
 
 exec -- "${ARGV[@]}" "$@"
