@@ -61,11 +61,11 @@ ARGV=(
   sdl-freerdp
   /cert:ignore
   /f
-  "/smart-sizing:$SIZE"
   "/size:$SIZE"
   "/u:$UNAME"
   "/p:$PASS"
   "/v:$HOST"
+  +dynamic-resolution
   -wallpaper
   -themes
   -decorations
@@ -76,7 +76,7 @@ if [[ $UNAME == "$ADMIN" ]]; then
 fi
 
 if ((HIDPI)); then
-  ARGV+=(/scale-desktop:200)
+  ARGV+=(/scale:180 /scale-desktop:200)
 fi
 
 exec -- "${ARGV[@]}" "$@"
