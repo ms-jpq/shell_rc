@@ -2,6 +2,10 @@ vim.g.copilot_assume_mapped = true
 vim.g.copilot_hide_during_completion = false
 vim.g.copilot_no_maps = true
 
+if true then
+  return
+end
+
 vim.keymap.set(
   "i",
   [[<c-f>]],
