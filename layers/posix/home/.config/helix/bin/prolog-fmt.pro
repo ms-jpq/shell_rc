@@ -18,12 +18,18 @@ stdin_to_file(Tmp) :-
         close(Out)
     ).
 
+file_to_stdout(Tmp) :-
+    setup_call_cleanup(
+        open(Tmp, read, Out),
+        copy_stream_data(Out, user_output),
+        close(Out)
+    ).
+
 run_fmt(Fmt, Tmp) :-
     append([Fmt], ['--', '--', Tmp], ArgV),
     stdin_to_file(Tmp),
     process_create(path('swipl'), ArgV, []),
-    process_create(path('cat'), ['--', Tmp], []).
-
+    file_to_stdout(Tmp).
 
 main(_Argv) :-
     lsp(Dir),
