@@ -11,9 +11,26 @@ lsp(Dir) :-
     directory_file_path(PrologLS, 'lib', Lib),
     directory_file_path(Lib, 'lsp_server', Dir).
 
+stdin_to_file(Tmp) :-
+    setup_call_cleanup(
+        open(Tmp, write, Out),
+        copy_stream_data(user_input, Out),
+        close(Out)
+    ).
+
+run_fmt(Fmt, Tmp) :-
+    append([Fmt], ['--', '--', Tmp], ArgV),
+    stdin_to_file(Tmp),
+    process_create(path('swipl'), ArgV, []),
+    process_create(path('cat'), ['--', Tmp], []).
+
+
 main(_Argv) :-
     lsp(Dir),
     directory_file_path(Dir, app, App),
     directory_file_path(App, 'formatter.pl', Fmt),
-    append([Fmt], ['--inplace=false', '--output_to=/dev/stdout', '--', '/dev/stdin'], ArgV),
-    process_create(path('swipl'), ArgV, []).
+    setup_call_cleanup(
+        tmp_file('prolog-fmt', Tmp),
+        run_fmt(Fmt, Tmp),
+        delete_file(Tmp)
+    ).
