@@ -264,7 +264,8 @@ jdtls:
   bin: jdtls
 
 prolog_ls:
-  bin: prolog-ls
+  bin: prolog-ls.pro
+  args: []
 
 # sqlls:
 #   bin: sql-language-server
