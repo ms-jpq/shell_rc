@@ -12,9 +12,8 @@ lsp(Dir) :-
     directory_file_path(Lib, 'lsp_server', Dir).
 
 main(_Argv) :-
-    current_prolog_flag(argv, ArgV),
     lsp(Dir),
     directory_file_path(Dir, app, App),
     directory_file_path(App, 'formatter.pl', Fmt),
-    append([Fmt], ArgV, A),
-    process_create(path('swipl'), A, []).
+    append([Fmt], ['--inplace=false', '--output_to=/dev/stdout', '--', '/dev/stdin'], ArgV),
+    process_create(path('swipl'), ArgV, []).
