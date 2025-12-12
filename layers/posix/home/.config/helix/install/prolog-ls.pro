@@ -2,9 +2,8 @@
 
 :- initialization(main, main).
 
-main(_Argv) :-
+install(Pack) :-
     getenv('LIB', Lib),
-    =(Pack, lsp_server),
     directory_file_path(Lib, Pack, Dir),
     make_directory_path(Dir),
     pack_install(Pack,
@@ -13,3 +12,6 @@ main(_Argv) :-
                    upgrade(true),
                    interactive(false)
                  ]).
+
+main(_Argv) :-
+    install('lsp_server').
