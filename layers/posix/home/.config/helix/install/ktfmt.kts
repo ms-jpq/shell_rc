@@ -18,7 +18,8 @@ val version =
             "/metadata/versioning/versions/version[last()]",
             DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder()
-                .parse(root.resolve("maven-metadata.xml").toString()))
+                .parse(root.resolve("maven-metadata.xml").toString()),
+        )
 
 val jar = root.resolve("$version/ktfmt-$version-with-dependencies.jar").toString()
 val proc = ProcessBuilder("env", "--", "get.sh", jar).redirectError(Redirect.INHERIT).start()
