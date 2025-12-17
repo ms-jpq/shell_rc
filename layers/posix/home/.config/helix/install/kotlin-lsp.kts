@@ -20,21 +20,20 @@ if (code != 0) {
 }
 
 val os = {
-  val name = System.getProperty("os.name").lowercase()
+  val name = System.getProperty("os.name")
   when {
-    name.contains("win") -> "win"
-    name.contains("mac") -> "mac"
+    name.startsWith("Windows") -> "win"
+    name.startsWith("Mac") -> "mac"
     else -> "linux"
   }
 }
 
-val arch = {
-  val name = System.getProperty("os.arch").lowercase()
-  when {
-    name.contains("aarch64") || name.contains("arm64") -> "aarch64"
-    else -> "x64"
-  }
-}
+val arch =
+    when (System.getProperty("os.arch")) {
+      "aarch64",
+      "army64" -> "aarch64"
+      else -> "x64"
+    }
 
 val version = String(p1.getInputStream().readAllBytes()).replaceFirst("kotlin-lsp/v", "")
 val uri = "https://download-cdn.jetbrains.com/kotlin-lsp/$version/kotlin-$version-$os-$arch.zip"
