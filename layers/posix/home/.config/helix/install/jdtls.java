@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 public class jdtls {
   public static void main(String args[]) throws Exception {
-    final var win = System.getProperty("os.name").contains("Windows");
+    final var win = System.getProperty("os.name").startsWith("Windows");
 
     final var uri =
         "https://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz";

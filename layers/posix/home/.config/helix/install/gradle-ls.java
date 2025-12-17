@@ -13,7 +13,7 @@ public class gradle_ls {
   public static void main(String args[]) throws Exception {
     System.exit(0);
 
-    final var win = System.getProperty("os.name").contains("Windows");
+    final var win = System.getProperty("os.name").startsWith("Windows");
 
     final var lib = Path.of(System.getenv("LIB"));
     var bin = Path.of(System.getenv("BIN")).resolve("gradle");
