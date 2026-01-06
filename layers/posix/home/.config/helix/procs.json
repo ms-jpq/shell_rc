@@ -140,7 +140,6 @@
     "mypy": [],
     "nginx-language-server": [],
     "sortd": [],
-    "systemd-language-server": [],
     "vim-vint": []
   }
 }

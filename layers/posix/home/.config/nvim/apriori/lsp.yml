@@ -119,8 +119,8 @@ jqls:
 awk_ls:
   bin: awk-language-server
 
-systemd_ls:
-  bin: systemd-language-server
+systemd_lsp:
+  bin: systemd-lsp
 
 perlnavigator:
   bin: perlnavigator
