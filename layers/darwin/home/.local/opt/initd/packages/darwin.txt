@@ -70,7 +70,6 @@
 + m4
 + make
 + man2html
-+ mdcat
 + moreutils
 + mosh
 + mpv

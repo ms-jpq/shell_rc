@@ -24,7 +24,7 @@ CLS=$'\e[0m'
 
 SED=(
   sed -E
-  -e "s#(\[[[:digit:]]+\])#$BOLD_RED\1$CLS#g"
+  -e "s#(\[[[:digit:]]+\])[[:space:]]?#$BOLD_RED\1 $CLS#g"
   -e "s#(https?://[^ ]+)#$GREEN\1$CLS#g"
   -e "s#(mailto:[^ ]+)#$YELLOW\1$CLS#g"
   -e "s#(^|[[:space:]]+)([[:digit:]]{6,})([[:space:]]+|$)#$BOLD_YELLOW\2$CLS#g"
