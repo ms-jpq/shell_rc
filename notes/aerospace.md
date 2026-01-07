@@ -1,4 +1,4 @@
-# ~/.aerospace.toml
+# ~/.config/aerospace/aerospace.toml
 
 ```toml
 start-at-login = true
