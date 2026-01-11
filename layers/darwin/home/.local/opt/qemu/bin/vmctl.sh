@@ -54,23 +54,21 @@ QMP_SOCK="$ROOT/qmp.sock"
 CON_SOCK="$ROOT/con.sock"
 QM_SOCK="$ROOT/qm.sock"
 VNC_SOCK="$ROOT/vnc.sock"
+SSH_SOCK="$ROOT/ssh.sock"
 
 RAW=vm.raw
 DRIVE="$ROOT/$RAW"
 CLOUD_INIT="$ROOT/cloud-init.iso"
 
-SSH_LOCATION="$ROOT/ssh.conn"
-SSH_CMD=(ssh -o UserKnownHostsFile=/dev/null -l root -p)
+printf -v SSH_CONN -- '%q ' nc -U -- "$SSH_SOCK"
+SSH_CMD=(ssh -o UserKnownHostsFile=/dev/null -l root -o ProxyCommand="$SSH_CONN" -- localhost)
 
 PASSWD='root'
 
 ssh_pp() {
-  local -- conn="$1"
-  SSH_HOST="${conn%%:*}"
-  SSH_PORT="${conn##*:}"
   {
     printf -- '\n%s' '>>> '
-    printf -- '%q ' "${SSH_CMD[@]}" "$SSH_PORT" -- "$SSH_HOST"
+    printf -- '%q ' "${SSH_CMD[@]}"
     printf -- '<<<\n\n'
   } >&2
 }
@@ -134,8 +132,6 @@ run)
     ACTION=new "$0" "${ARGV[@]}"
   fi
 
-  SSH_CONN="${SSH:-"127.0.0.1:$("$DIR/libexec/ssh-port.sh")"}"
-
   KERNEL=("$CACHE"/*-vmlinuz-*)
   INITRD=("$CACHE"/*-initrd-*)
 
@@ -143,7 +139,7 @@ run)
     "$DIR/libexec/qemu-aarch64.sh"
     --qmp "$QMP_SOCK"
     --monitor "$QM_SOCK"
-    --ssh "$SSH_CONN"
+    --ssh "$SSH_SOCK"
     --kernel "${KERNEL[@]}"
     --initrd "${INITRD[@]}"
     --drive "$DRIVE"
@@ -161,8 +157,7 @@ run)
   fi
   QARGV+=("$@")
 
-  ssh_pp "$SSH_CONN"
-  printf -- '%s' "$SSH_CONN" > "$SSH_LOCATION"
+  ssh_pp
   set -x
   exec -- flock --nonblock "$ROOT" "${QARGV[@]}"
   ;;
@@ -174,14 +169,13 @@ console)
   SOCK="$CON_SOCK"
   ;;
 ssh)
-  LOCATION="$(< "$SSH_LOCATION")"
-  ssh_pp "$LOCATION"
+  ssh_pp
   AV=()
   if (($#)); then
     printf -v A -- '%q ' "$@"
     AV+=("$A")
   fi
-  exec -- "${SSH_CMD[@]}" "$SSH_PORT" -- "$SSH_HOST" "${AV[@]}"
+  exec -- "${SSH_CMD[@]}" "${AV[@]}"
   ;;
 monitor)
   SOCK="$QM_SOCK"

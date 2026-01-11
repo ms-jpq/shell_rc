@@ -151,7 +151,7 @@ else
 fi
 
 if [[ -v SSH ]]; then
-  SSH_FWD=",hostfwd=tcp:$SSH-:22"
+  SSH_FWD=",hostfwd=unix:$SSH-:22"
 else
   SSH_FWD=''
 fi
