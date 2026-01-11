@@ -61,7 +61,7 @@ DRIVE="$ROOT/$RAW"
 CLOUD_INIT="$ROOT/cloud-init.iso"
 
 printf -v SSH_CONN -- '%q ' nc -U -- "$SSH_SOCK"
-SSH_CMD=(ssh -o UserKnownHostsFile=/dev/null -l root -o ProxyCommand="$SSH_CONN" -- localhost)
+SSH_CMD=(ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand="$SSH_CONN" -l root -- localhost)
 
 PASSWD='root'
 
