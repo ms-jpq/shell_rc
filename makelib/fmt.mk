@@ -19,5 +19,5 @@ taplo: ./node_modules/.bin
 	git ls-files --deduplicate -z -- '*.toml' | xargs -r -0 -- '$</taplo' format --
 
 luafmt: ./node_modules/.bin
-	git ls-files --deduplicate -z -- '*.lua' | xargs -r -0 -n 1 -P 0 -- '$</luafmt' --indent-count 2 --write-mode replace --
+	git ls-files --deduplicate --stage -- '*.lua' | awk -- '$$1 !~ /^120000/ { print $$4 }' | tr -- '\n' '\0' | xargs -r -0 -n 1 -P 0 -- '$</luafmt' --indent-count 2 --write-mode replace --
 
