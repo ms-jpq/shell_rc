@@ -28,6 +28,7 @@ const { error, status, signal } = spawnSync(
   "npm" + (platform === "win32" ? ".cmd" : ""),
   [
     "install",
+    "--ignore-scripts",
     "--no-package-lock",
     "--no-update-notifier",
     "--no-fund",
