@@ -21,6 +21,7 @@ assert(file_put_contents(join(DIRECTORY_SEPARATOR, array: [$home, "composer.json
 
 $composer = [
     "composer",
+    "--no-scripts",
     "--no-interaction",
     "--no-plugins",
     "--working-dir",
