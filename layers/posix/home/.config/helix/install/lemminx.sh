@@ -23,7 +23,14 @@ if ! command -v -- xmllint > /dev/null; then
   exit 0
 fi
 
-CURL=(curl --fail --location --no-progress-meter --max-time 600 -- "$BASE_URI")
+CURL=(curl --fail --location --no-progress-meter --max-time 600)
+if [[ -v IPV4 ]]; then
+  CURL+=(-4)
+elif [[ -v IPV6 ]]; then
+  CURL+=(-6)
+fi
+CURL+=(-- "$BASE_URI")
+
 XPATH=(xmllint --html --xpath '(//html/body/table/tr/td/a/text())[last()]' -)
 VERSION="$("${CURL[@]}" | "${XPATH[@]}")"
 URI="$BASE_URI/$VERSION$BASENAME"
