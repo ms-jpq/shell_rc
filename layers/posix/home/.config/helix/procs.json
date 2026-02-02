@@ -117,7 +117,7 @@
       "deps",
       "--xdg=~/.local/share/nvim"
     ],
-    "https://github.com/ms-jpq/snips": ["--lazy"],
+    "https://github.com/ms-jpq/snips": [],
     "https://github.com/neovim/nvim-lspconfig": [],
     "https://github.com/nvim-treesitter/nvim-treesitter": ["--lazy"],
     "https://github.com/nvim-treesitter/nvim-treesitter-context": ["--lazy"],
