@@ -1,6 +1,6 @@
 local lib = require("go")
 
-require("nvim-treesitter.configs").setup {
+require("nvim-treesitter.config").setup {
   auto_install = not lib.is_win,
   highlight = {
     enable = true,
