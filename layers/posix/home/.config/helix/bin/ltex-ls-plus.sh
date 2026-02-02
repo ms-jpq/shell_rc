@@ -4,7 +4,7 @@ set -o pipefail
 
 cleanup() {
   set -x
-  kill -9 -- $!
+  kill -9 -- $! || :
 }
 
 trap -- cleanup EXIT
