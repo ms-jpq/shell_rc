@@ -2,16 +2,18 @@ local lib = require("go")
 
 require("nvim-treesitter").setup {}
 
-local parsers = {}
+local filetypes = {}
 for parser, _ in pairs(require("nvim-treesitter.parsers")) do
-  table.insert(parsers, parser)
+  for _, ft in pairs(vim.treesitter.language.get_filetypes(parser)) do
+    table.insert(filetypes, ft)
+  end
 end
 
 vim.api.nvim_create_autocmd(
   "FileType",
   {
     group = lib.group,
-    pattern = parsers,
+    pattern = filetypes,
     callback = function()
       vim.treesitter.start()
     end
