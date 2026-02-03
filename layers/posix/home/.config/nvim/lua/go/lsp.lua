@@ -152,3 +152,27 @@ vim.keymap.set(
     vim.lsp.buf.references()
   end
 )
+
+vim.keymap.set(
+  "x",
+  "+",
+  function()
+    vim.lsp.buf.selection_range(1)
+  end
+)
+
+vim.keymap.set(
+  "x",
+  "_",
+  function()
+    vim.lsp.buf.selection_range(-1)
+  end
+)
+
+vim.keymap.set(
+  "n",
+  "L",
+  function()
+    vim.lsp.buf.signature_help()
+  end
+)
