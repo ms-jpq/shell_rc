@@ -15,7 +15,6 @@ set period         2
 set previewer      "~/.config/lf/libexec/preview.sh"
 set roundbox       true
 set scrolloff      3
-set sixel          true
 set tabstop        2
 set timefmt        "06-01-02 15:04"
 set wrapscroll     true
