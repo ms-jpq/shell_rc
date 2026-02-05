@@ -9,7 +9,6 @@ set incfilter      true
 set incsearch      true
 set infotimefmtnew "06-01-02 15:04"
 set infotimefmtold "06-01-02 15:04"
-set locale         "*"
 set mouse          true
 set period         2
 set previewer      "~/.config/lf/libexec/preview.sh"
