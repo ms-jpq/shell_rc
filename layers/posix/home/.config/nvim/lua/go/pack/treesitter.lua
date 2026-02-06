@@ -15,7 +15,11 @@ vim.api.nvim_create_autocmd(
     group = lib.group,
     pattern = filetypes,
     callback = function()
-      vim.treesitter.start()
+      pcall(
+        function()
+          vim.treesitter.start()
+        end
+      )
     end
   }
 )
