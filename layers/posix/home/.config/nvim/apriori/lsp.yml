@@ -37,10 +37,10 @@ ast_grep:
 # marksman:
 #   bin: marksman
 
-markdown:
-  bin: vscode-markdown-language-server
-  filetypes:
-    - markdown
+# markdown:
+#   bin: vscode-markdown-language-server
+#   filetypes:
+#     - markdown
 
 # ltex:
 #   bin: ltex-ls
