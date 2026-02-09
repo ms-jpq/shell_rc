@@ -27,4 +27,8 @@ run       = 'move-node-to-workspace 5'
 [[on-window-detected]]
 if.app-id = 'us.zoom.xos'
 run       = 'move-node-to-workspace 7'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.automator.mpv'
+run       = 'move-node-to-workspace 9'
 ```
