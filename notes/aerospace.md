@@ -11,6 +11,10 @@ after-startup-command = ['layout tiles']
 osascript -e 'id of app "<app-name>"'
 ```
 
+```bash
+lsappinfo list
+```
+
 ```toml
 [[on-window-detected]]
 if.app-id = 'org.mozilla.firefox'
@@ -29,6 +33,6 @@ if.app-id = 'us.zoom.xos'
 run       = 'move-node-to-workspace 7'
 
 [[on-window-detected]]
-if.app-id = 'com.apple.automator.mpv'
-run       = 'move-node-to-workspace 9'
+if.app-name-regex-substring = '^mpv$'
+run                         = 'move-node-to-workspace 9'
 ```
