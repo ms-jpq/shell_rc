@@ -14,15 +14,15 @@ vim.api.nvim_create_autocmd(
   {
     group = lib.group,
     pattern = filetypes,
-    callback = function()
-      local go, err =
+    callback = function(args)
+      local go, _ =
         pcall(
         function()
           vim.treesitter.start()
         end
       )
       if not go then
-        vim.notify(err, vim.log.levels.WARN)
+        vim.cmd.TSInstall(args.match)
       end
     end
   }
