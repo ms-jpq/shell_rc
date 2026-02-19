@@ -87,6 +87,7 @@
 + pandoc
 + pastel
 + pinentry-mac
++ poppler
 + presenterm
 + progress
 + pspg
