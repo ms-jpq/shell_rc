@@ -20,9 +20,9 @@
 + curl
 + dash-shell
 + dialog
++ diffnav
 + difftastic
 + diffutils
-+ dlvhdr/formulae/diffnav
 + dnsmasq
 + duf
 + dust
