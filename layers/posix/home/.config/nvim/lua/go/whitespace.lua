@@ -65,7 +65,12 @@ local detect_tabs = function()
 
   local winner = unpack(indent_lvs)
   local tabsize = unpack(winner)
-  set_tabsize(tabsize, vim.bo)
+  local buf = vim.api.nvim_get_current_buf()
+  vim.schedule(
+    function()
+      set_tabsize(tabsize, vim.bo[buf])
+    end
+  )
 end
 
 vim.api.nvim_create_autocmd({"BufReadPost"}, {group = lib.group, callback = detect_tabs})
