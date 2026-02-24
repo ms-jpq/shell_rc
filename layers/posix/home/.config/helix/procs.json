@@ -94,7 +94,7 @@
     "sql-formatter": [],
     "svelte-language-server": ["typescript-svelte-plugin"],
     "tabby-agent": [],
-    "tree-sitter-cli": [],
+    "tree-sitter-cli": ["--no-ignoreScripts"],
     "typescript-language-server": ["@types/node", "typescript"],
     "vim-language-server": [],
     "vscode-langservers-extracted": [],

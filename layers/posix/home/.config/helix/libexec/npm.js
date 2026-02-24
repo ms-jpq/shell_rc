@@ -5,9 +5,22 @@ import { spawnSync } from "node:child_process"
 import { mkdirSync, writeFileSync } from "node:fs"
 import { homedir, tmpdir } from "node:os"
 import { join, sep } from "node:path"
-import { argv, platform } from "node:process"
+import { platform } from "node:process"
+import { parseArgs } from "node:util"
 
-const [, , pkg, ...pkgs] = argv.map((p) => p.trim())
+const {
+  values: { ignoreScripts },
+  positionals,
+} = parseArgs({
+  allowNegative: true,
+  allowPositionals: true,
+  options: {
+    ignoreScripts: { type: "boolean", default: true },
+  },
+})
+
+const [pkg, ...pkgs] = positionals.map((a) => a.trim())
+
 ok(pkg)
 
 const home = join(
@@ -28,7 +41,7 @@ const { error, status, signal } = spawnSync(
   "npm" + (platform === "win32" ? ".cmd" : ""),
   [
     "install",
-    "--ignore-scripts=false",
+    `--ignore-scripts=${ignoreScripts}`,
     "--no-package-lock",
     "--no-update-notifier",
     "--no-fund",
