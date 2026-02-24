@@ -10,13 +10,13 @@ vim.opt.expandtab = true
 -- smart indentation level
 vim.opt.smarttab = true
 
-local set_tabsize = function(tabsize)
+local set_tabsize = function(tabsize, setter)
   for _, key in pairs {"tabstop", "softtabstop", "shiftwidth"} do
-    vim.opt[key] = tabsize
+    setter[key] = tabsize
   end
 end
 
-set_tabsize(2)
+set_tabsize(2, vim.opt)
 
 local detect_tabs = function()
   local count = vim.api.nvim_buf_line_count(0)
@@ -46,7 +46,7 @@ local detect_tabs = function()
         divisibility = divisibility + 1
       end
     end
-    table.insert(indent_lvs, {ts})
+    table.insert(indent_lvs, {ts, divisibility})
   end
 
   table.sort(
@@ -64,8 +64,8 @@ local detect_tabs = function()
   )
 
   local winner = unpack(indent_lvs)
-  local _, tabsize = unpack(winner)
-  set_tabsize(tabsize)
+  local tabsize = unpack(winner)
+  set_tabsize(tabsize, vim.bo)
 end
 
 vim.api.nvim_create_autocmd({"BufReadPost"}, {group = lib.group, callback = detect_tabs})
