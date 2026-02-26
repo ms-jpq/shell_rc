@@ -2,3 +2,6 @@
 
 export -- EDITOR="${EDITOR:-nvim}"
 export -- VISUAL="$EDITOR"
+
+# shellcheck disable=2154
+export -- INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"

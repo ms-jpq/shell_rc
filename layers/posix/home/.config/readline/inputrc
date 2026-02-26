@@ -1,0 +1,2 @@
+"\C-d": accept-line
+"\C-x\C-e": rlwrap-call-editor
