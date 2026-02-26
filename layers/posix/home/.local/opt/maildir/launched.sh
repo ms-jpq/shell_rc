@@ -35,9 +35,7 @@ if [[ -v RECURSION ]]; then
     ~/.local/libexec/notify.cjs "📩 ↘ $FROM" '' "$SUBJECT" ping
   fi
 
-  touch -- "$SID"
-
-  exit
+  exec -- touch -- "$SID"
 fi
 
 CHANNEL="$1"
