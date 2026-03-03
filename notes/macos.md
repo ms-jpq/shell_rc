@@ -12,6 +12,12 @@ defaults write kCFPreferencesAnyApplication TSMLanguageIndicatorEnabled 0
 defaults write -g ApplePressAndHoldEnabled -bool false
 ```
 
+## Finder's Column View Uses Flexible Sizing
+
+```bash
+defaults write com.apple.finder _FXEnableColumnAutoSizing -bool YES
+```
+
 ## Enable window dragging via `ctrl` + `cmd`
 
 ```bash
