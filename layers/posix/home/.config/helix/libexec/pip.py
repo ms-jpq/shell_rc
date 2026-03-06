@@ -34,6 +34,7 @@ execlp(
     "install",
     "--require-virtualenv",
     "--upgrade",
+    "--upgrade-strategy=eager",
     "--requirement",
     txt,
 )
