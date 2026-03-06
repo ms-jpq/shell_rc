@@ -3,7 +3,11 @@
 ## SASL XOAuth2
 
 ```bash
-brew install --HEAD --formula -- ./formulae/cyrus-sasl-xoauth2.rb ./formulae/mblaze.rb
+HOMEBREW_DEVELOPER=1 brew install --HEAD --formula -- ./formulae/cyrus-sasl-xoauth2.rb ./formulae/mblaze.rb
+```
+
+```bash
+HOMEBREW_DEVELOPER=1 brew reinstall --formula -- ./formulae/cyrus-sasl-xoauth2.rb ./formulae/mblaze.rb
 ```
 
 ## Daemonize
