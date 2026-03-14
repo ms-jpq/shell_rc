@@ -17,6 +17,10 @@ lsappinfo list
 
 ```toml
 [[on-window-detected]]
+if.app-id = 'net.kovidgoyal.kitty'
+run       = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
 if.app-id = 'org.mozilla.firefox'
 run       = 'move-node-to-workspace 3'
 
