@@ -41,6 +41,10 @@ if.app-id = 'us.zoom.xos'
 run       = 'move-node-to-workspace 7'
 
 [[on-window-detected]]
+if.app-id = 'com.apple.iCal'
+run       = 'move-node-to-workspace 9'
+
+[[on-window-detected]]
 if.app-name-regex-substring = '^mpv$'
 run                         = 'move-node-to-workspace 9'
 ```
