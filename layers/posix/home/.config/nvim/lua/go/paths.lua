@@ -8,9 +8,9 @@ local paths = {
   vim.fs.joinpath(vim.fn.stdpath("config"), "bin"),
   vim.fs.joinpath(home, ".config", "helix", "bin"),
   vim.fs.joinpath(runtime, "bin"),
-  vim.fn.globpath(runtime, "more/*/bin", true, true),
+  vim.fn.globpath(runtime, "{more,go}/*/bin", true, true),
   vim.env.PATH,
-  vim.fn.globpath(runtime, "{go,ruby,php}/*/bin", true, true),
+  vim.fn.globpath(runtime, "{ruby,php}/*/bin", true, true),
   vim.fn.globpath(runtime, "nodejs/*/node_modules/.bin", true, true),
   vim.fn.globpath(runtime, "python/*/venv/{Scripts,bin}", true, true)
 }
