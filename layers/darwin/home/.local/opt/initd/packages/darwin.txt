@@ -121,6 +121,7 @@
 + xmlstarlet
 + yank
 + yazi
++ zellij
 + zsh
 + zsh-autosuggestions
 + zsh-syntax-highlighting
