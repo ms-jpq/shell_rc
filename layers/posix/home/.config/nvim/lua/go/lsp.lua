@@ -154,7 +154,7 @@ vim.keymap.set(
 )
 
 vim.keymap.set(
-  "x",
+  {"x", "o"},
   "+",
   function()
     vim.lsp.buf.selection_range(vim.v.count1)
@@ -162,7 +162,7 @@ vim.keymap.set(
 )
 
 vim.keymap.set(
-  "x",
+  {"x", "o"},
   "_",
   function()
     vim.lsp.buf.selection_range(-vim.v.count1)
