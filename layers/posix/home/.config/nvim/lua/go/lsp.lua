@@ -54,24 +54,24 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-vim.api.nvim_create_autocmd(
-  "LspAttach",
-  {
-    group = lib.group,
-    callback = function(args)
-      local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
-      if client:supports_method("textDocument/foldingRange") then
-        local win = vim.api.nvim_get_current_win()
-        vim.wo[win][0].foldexpr = "v:lua.vim.lsp.foldexpr()"
-      end
-      if client:supports_method("textDocument/documentColor") then
-        if vim.fn.has [[nvim-0.12]] == 1 then
-          vim.lsp.document_color.enable(true, args.buf)
-        end
-      end
-    end
-  }
-)
+-- vim.api.nvim_create_autocmd(
+--   "LspAttach",
+--   {
+--     group = lib.group,
+--     callback = function(args)
+--       local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+--       if client:supports_method("textDocument/foldingRange") then
+--         local win = vim.api.nvim_get_current_win()
+--         vim.wo[win][0].foldexpr = "v:lua.vim.lsp.foldexpr()"
+--       end
+--       if client:supports_method("textDocument/documentColor") then
+--         if vim.fn.has [[nvim-0.12]] == 1 then
+--           vim.lsp.document_color.enable(true, args.buf)
+--         end
+--       end
+--     end
+--   }
+-- )
 
 -- vim.lsp.inline_completion.enable(true)
 
