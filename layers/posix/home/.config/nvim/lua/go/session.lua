@@ -65,7 +65,7 @@ local mk_session = function(kill)
 end
 
 vim.api.nvim_create_user_command(
-  "KillSession",
+  "KS",
   function()
     vim.cmd [[silent! %bwipeout!]]
     mk_session(true)
