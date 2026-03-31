@@ -53,4 +53,4 @@ FZF_ARGS=(
   --query "$*"
 )
 
-"${FZF_ARGS[@]}" < /dev/null
+"${FZF_ARGS[@]}"
