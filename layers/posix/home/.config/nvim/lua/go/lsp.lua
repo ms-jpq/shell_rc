@@ -153,21 +153,8 @@ vim.keymap.set(
   end
 )
 
-vim.keymap.set(
-  {"x", "o"},
-  "+",
-  function()
-    vim.lsp.buf.selection_range(vim.v.count1)
-  end
-)
-
-vim.keymap.set(
-  {"x", "o"},
-  "_",
-  function()
-    vim.lsp.buf.selection_range(-vim.v.count1)
-  end
-)
+vim.keymap.set({"x", "o"}, "+", "an", {remap = true})
+vim.keymap.set({"x", "o"}, "_", "in", {remap = true})
 
 vim.keymap.set(
   "n",
