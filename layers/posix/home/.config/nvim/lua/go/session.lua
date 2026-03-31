@@ -64,6 +64,31 @@ local mk_session = function(kill)
   vim.cmd([[mksession! ]] .. escaped)
 end
 
+local prune_buffers = function()
+  local dead = {}
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.bo[buf].buflisted then
+      local name = vim.api.nvim_buf_get_name(buf)
+      if vim.fn.filereadable(name) == 0 then
+        table.insert(dead, buf)
+      end
+    end
+  end
+
+  if #dead > 0 then
+    vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
+  end
+end
+
+vim.api.nvim_create_user_command(
+  "PS",
+  function()
+    prune_buffers()
+    mk_session(true)
+  end,
+  {}
+)
+
 vim.api.nvim_create_user_command(
   "KS",
   function()
@@ -85,20 +110,7 @@ vim.api.nvim_create_autocmd(
         return
       end
 
-      local dead = {}
-      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.bo[buf].buflisted then
-          local name = vim.api.nvim_buf_get_name(buf)
-          if vim.fn.filereadable(name) == 0 then
-            table.insert(dead, buf)
-          end
-        end
-      end
-
-      if #dead > 0 then
-        vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
-      end
-
+      prune_buffers()
       mk_session()
     end
   }
