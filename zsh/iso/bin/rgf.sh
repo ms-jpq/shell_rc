@@ -53,4 +53,4 @@ FZF_ARGS=(
   --query "$*"
 )
 
-"${FZF_ARGS[@]}"
+exec -- "${FZF_ARGS[@]}"
