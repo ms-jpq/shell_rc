@@ -31,7 +31,7 @@ local termstart = function(cmd, env, die)
   vim.api.nvim_win_set_buf(0, buf)
 end
 
-local lfdie = function()
+local file_exp_die = function()
   local bufs = {}
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     if vim.bo[buf].buflisted then
@@ -63,28 +63,36 @@ local lfdie = function()
   end
 end
 
-local spawn_lf = function(use_cwd)
+local spawn_yz = function(use_cwd)
   return function()
-    local cmd = {{"lf"}, {"-config", vim.fs.joinpath(vim.fn.stdpath("config"), "lfrc.2")}}
+    local tmp = vim.fn.tempname()
+    local path = use_cwd(vim.fn.getcwd())
 
-    local cwd = vim.fn.getcwd()
-    table.insert(cmd, use_cwd(cwd))
-
-    local die = lfdie()
-    termstart(vim.iter(cmd):flatten():totable(), {NVIM_PWD = cwd}, die)
+    local cmd = {"yazi", "--chooser-file", tmp, "--", path}
+    local die = file_exp_die()
+    termstart(
+      cmd,
+      vim.empty_dict(),
+      function()
+        if vim.fn.filereadable(tmp) == 1 then
+          vim.cmd.edit(tmp)
+        end
+        die()
+      end
+    )
   end
 end
 
 vim.keymap.set(
   "n",
   [[<c-t>]],
-  spawn_lf(
+  spawn_yz(
     function(cwd)
       local path = vim.api.nvim_buf_get_name(0)
       if vim.fn.filereadable(path) == 0 then
         path = cwd
       end
-      return {"--", path}
+      return path
     end
   )
 )
@@ -92,9 +100,9 @@ vim.keymap.set(
 vim.keymap.set(
   "n",
   [[<leader>t]],
-  spawn_lf(
+  spawn_yz(
     function(cwd)
-      return {"--", cwd}
+      return cwd
     end
   )
 )

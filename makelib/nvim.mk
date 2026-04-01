@@ -15,7 +15,3 @@ $(NVIM)/apriori/lsp.json: $(NVIM)/libexec/languages.sh $(NVIM)/apriori/lsp.yml |
 nvim: $(NVIM)/apriori/fmt.json
 $(NVIM)/apriori/fmt.json: $(NVIM)/libexec/language-map.jq $(NVIM)/apriori/language-map.json $(HELIX)/languages.json
 	'$<' --slurpfile lmap '$(NVIM)/apriori/language-map.json' < '$(HELIX)/languages.json' > '$@'
-
-nvim: $(NVIM)/lfrc.2
-$(NVIM)/lfrc.2: $(dir $(NVIM))/lf/lfrc $(NVIM)/lfrc
-	cat -- $^ > '$@'
