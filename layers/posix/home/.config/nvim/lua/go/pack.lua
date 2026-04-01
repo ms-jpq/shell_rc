@@ -11,14 +11,6 @@ local safe_require = function(module)
   end
 end
 
-safe_require("go.pack.coq-nvim")
-
-vim.opt.packpath:append(packed)
-local ok, err = pcall(vim.cmd.packloadall)
-if not ok then
-  vim.notify(err, vim.log.levels.ERROR)
-end
-
 local packloadopt = function()
   local opt = vim.fs.joinpath(base, "pack", "opt")
   for name in vim.fs.dir(opt) do
@@ -83,5 +75,15 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-safe_require("go.pack.theme")
-lsp_on()
+local _ = (function()
+  safe_require("go.pack.coq-nvim")
+
+  vim.opt.packpath:append(packed)
+  local ok, err = pcall(vim.cmd.packloadall)
+  if not ok then
+    vim.notify(err, vim.log.levels.ERROR)
+  end
+
+  safe_require("go.pack.theme")
+  lsp_on()
+end)()

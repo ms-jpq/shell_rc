@@ -7,9 +7,6 @@ vim.opt.autowriteall = true
 -- noskip backup
 vim.opt.backupskip = ""
 
--- persistent undo
-vim.opt.undofile = true
-
 vim.api.nvim_create_autocmd(
   {"FocusGained", "VimResume", "WinEnter"},
   {group = lib.group, command = "silent! checktime"}
