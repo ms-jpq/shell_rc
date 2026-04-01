@@ -75,7 +75,13 @@ local spawn_yz = function(use_cwd)
       vim.empty_dict(),
       function()
         if vim.fn.filereadable(tmp) == 1 then
-          vim.cmd.edit(tmp)
+          local select = vim.fn.readblob(tmp)
+          local escaped = vim.fn.fnameescape(select)
+          if vim.fn.isdirectory(select) == 1 then
+            vim.cmd.cd(escaped)
+          else
+            vim.cmd.edit(escaped)
+          end
         end
         die()
       end

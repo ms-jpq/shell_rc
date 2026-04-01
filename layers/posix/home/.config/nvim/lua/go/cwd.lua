@@ -1,4 +1,4 @@
-local cwd = vim.fn.fnameescape(vim.fn.getcwd())
+local cwd = vim.fn.getcwd()
 
 local cycle = 600
 local check_cwd = nil
@@ -6,7 +6,7 @@ check_cwd = function()
   local chk = function()
     if vim.fn.getcwd() == "" then
       vim.fn.mkdir(cwd, "p")
-      vim.cmd.cd(cwd)
+      vim.cmd.cd(vim.fn.fnameescape(cwd))
     end
   end
 
