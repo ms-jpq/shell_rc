@@ -28,6 +28,7 @@ require("go.theme")
 require("go.treesitter")
 require("go.whitespace")
 require("go.windows")
+require("go.yazi")
 
 --
 require("go.pack")
