@@ -53,6 +53,19 @@ local lsp_on = function()
   end
 end
 
+do
+  safe_require("go.pack.coq-nvim")
+
+  vim.opt.packpath:append(packed)
+  local ok, err = pcall(vim.cmd.packloadall)
+  if not ok then
+    vim.notify(err, vim.log.levels.ERROR)
+  end
+
+  safe_require("go.pack.theme")
+  lsp_on()
+end
+
 vim.api.nvim_create_autocmd(
   {"VimEnter"},
   {
@@ -74,16 +87,3 @@ vim.api.nvim_create_autocmd(
     )
   }
 )
-
-local _ = (function()
-  safe_require("go.pack.coq-nvim")
-
-  vim.opt.packpath:append(packed)
-  local ok, err = pcall(vim.cmd.packloadall)
-  if not ok then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
-
-  safe_require("go.pack.theme")
-  lsp_on()
-end)()
