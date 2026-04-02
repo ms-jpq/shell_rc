@@ -12,10 +12,10 @@ vim.opt.rtp:append {
 require("go.paths")
 require("go.pack.treesitter")
 
-if 1 then
+do
   local ts = require("nvim-treesitter")
   local languages = vim.json.decode(vim.fn.readblob(vim.fs.joinpath(cfg, "ts-languages.json")))
-  local options = {}
+  local options = {summary = true}
   local timeout = 5 * 60 * 1000
 
   vim.env.PATH = vim.env.PATH .. ":" .. vim.fs.joinpath(vim.env.HOME, ".local", "asdf", "shims")

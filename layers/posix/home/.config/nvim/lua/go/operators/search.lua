@@ -13,34 +13,38 @@ local selected_text = function(visual_type)
   return text
 end
 
-Go.op_buf_edit = function(visual_type)
-  local text = selected_text(visual_type)
-  local escaped = magic_escape(text)
-  local cmd = [[:%s/\V]] .. escaped .. [[//g<left><left>]]
+do
+  Go.op_buf_edit = function(visual_type)
+    local text = selected_text(visual_type)
+    local escaped = magic_escape(text)
+    local cmd = [[:%s/\V]] .. escaped .. [[//g<left><left>]]
 
-  vim.api.nvim_input(cmd)
+    vim.api.nvim_input(cmd)
+  end
+
+  vim.keymap.set("n", "gs", [[<cmd>set opfunc=v:lua.Go.op_buf_edit<cr>g@]])
+  vim.keymap.set("x", "gs", to.norm .. [[<cmd>lua Go.op_buf_edit(nil)<cr>]])
 end
-
-vim.keymap.set("n", "gs", [[<cmd>set opfunc=v:lua.Go.op_buf_edit<cr>g@]])
-vim.keymap.set("x", "gs", to.norm .. [[<cmd>lua Go.op_buf_edit(nil)<cr>]])
 
 -- very magic
 vim.keymap.set("n", "gS", [[:%s/\v//g<left><left><left>]])
 
-local searcher = function(cmd)
-  return function(visual_type)
-    local text = selected_text(visual_type)
-    local escaped = magic_escape(text)
-    vim.fn.setreg("/", escaped)
-    vim.opt.hlsearch = true
-    vim.cmd(cmd .. " " .. text)
+do
+  local searcher = function(cmd)
+    return function(visual_type)
+      local text = selected_text(visual_type)
+      local escaped = magic_escape(text)
+      vim.fn.setreg("/", escaped)
+      vim.opt.hlsearch = true
+      vim.cmd(cmd .. " " .. text)
+    end
   end
-end
 
-Go.op_blines = searcher [[BL!]]
-Go.op_rg = searcher [[RG!]]
+  Go.op_blines = searcher [[BL!]]
+  Go.op_rg = searcher [[RG!]]
 
-for key, val in pairs {op_blines = "gF", op_rg = "gf"} do
-  vim.keymap.set("n", val, [[<cmd>set opfunc=v:lua.Go.]] .. key .. [[<cr>g@]], {nowait = true, noremap = true})
-  vim.keymap.set("x", val, to.norm .. [[<cmd>lua Go.]] .. key .. [[(nil)<cr>]], {nowait = true, noremap = true})
+  for key, val in pairs {op_blines = "gF", op_rg = "gf"} do
+    vim.keymap.set("n", val, [[<cmd>set opfunc=v:lua.Go.]] .. key .. [[<cr>g@]], {nowait = true, noremap = true})
+    vim.keymap.set("x", val, to.norm .. [[<cmd>lua Go.]] .. key .. [[(nil)<cr>]], {nowait = true, noremap = true})
+  end
 end

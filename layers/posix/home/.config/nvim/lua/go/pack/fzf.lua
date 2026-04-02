@@ -30,58 +30,60 @@ vim.keymap.set("n", [[<leader>G]], [[<cmd>GFiles!<cr>]])
 vim.keymap.set("n", [[<leader>/]], [[<cmd>BL!<cr>]])
 vim.keymap.set("n", [[<leader>?]], [[<cmd>RG!<cr>]])
 
-local rg_args =
-  table.concat(
-  {
-    "",
-    "--fixed-strings",
-    "--with-filename",
-    "--column",
-    "--line-number",
-    "--no-heading",
-    "--color=always",
-    "--smart-case",
-    "--"
-  },
-  " "
-)
+do
+  local rg_args =
+    table.concat(
+    {
+      "",
+      "--fixed-strings",
+      "--with-filename",
+      "--column",
+      "--line-number",
+      "--no-heading",
+      "--color=always",
+      "--smart-case",
+      "--"
+    },
+    " "
+  )
 
-vim.api.nvim_create_user_command(
-  "RG",
-  function(opts)
-    local preview = vim.fn["fzf#vim#with_preview"]()
+  vim.api.nvim_create_user_command(
+    "RG",
+    function(opts)
+      local preview = vim.fn["fzf#vim#with_preview"]()
 
-    vim.fn["fzf#vim#grep2"]([[rg ]] .. rg_args, opts.args, preview, opts.bang)
-  end,
-  {
-    force = true,
-    bang = true,
-    nargs = "*"
-  }
-)
-
-vim.api.nvim_create_user_command(
-  "BL",
-  function(opts)
-    local absname = vim.api.nvim_buf_get_name(0)
-    if vim.fn.filereadable(absname) == 0 then
-      vim.cmd([[BLines! ]] .. opts.args)
-      return
-    end
-
-    local relname = vim.fn.fnamemodify(absname, [[:~:.]])
-    local name = vim.fn.shellescape(relname)
-
-    local cmd = [[rgb.sh ]] .. name .. rg_args
-    local preview = {
-      options = {[[--preview=bat --force-colorization --highlight-line {2} -- {1}]]}
+      vim.fn["fzf#vim#grep2"]([[rg ]] .. rg_args, opts.args, preview, opts.bang)
+    end,
+    {
+      force = true,
+      bang = true,
+      nargs = "*"
     }
+  )
 
-    vim.fn["fzf#vim#grep2"](cmd, opts.args, preview, opts.bang)
-  end,
-  {
-    force = true,
-    bang = true,
-    nargs = "*"
-  }
-)
+  vim.api.nvim_create_user_command(
+    "BL",
+    function(opts)
+      local absname = vim.api.nvim_buf_get_name(0)
+      if vim.fn.filereadable(absname) == 0 then
+        vim.cmd([[BLines! ]] .. opts.args)
+        return
+      end
+
+      local relname = vim.fn.fnamemodify(absname, [[:~:.]])
+      local name = vim.fn.shellescape(relname)
+
+      local cmd = [[rgb.sh ]] .. name .. rg_args
+      local preview = {
+        options = {[[--preview=bat --force-colorization --highlight-line {2} -- {1}]]}
+      }
+
+      vim.fn["fzf#vim#grep2"](cmd, opts.args, preview, opts.bang)
+    end,
+    {
+      force = true,
+      bang = true,
+      nargs = "*"
+    }
+  )
+end
