@@ -18,5 +18,8 @@ local timeout = 5 * 60 * 1000
 
 vim.env.PATH = vim.env.PATH .. ":" .. vim.fs.joinpath(vim.env.HOME, ".local", "asdf", "shims")
 
+vim.print("<<< <<<")
+vim.print(languages)
 ts.install(languages):wait(timeout)
 ts.update(languages):wait(timeout)
+vim.print(">>> >>>")
