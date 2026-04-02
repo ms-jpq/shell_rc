@@ -1,0 +1,12 @@
+{
+  "bash": [
+    "sh"
+  ],
+  "powershell": [
+    "ps1"
+  ],
+  "typescript": [
+    "typescript",
+    "typescriptreact"
+  ]
+}
