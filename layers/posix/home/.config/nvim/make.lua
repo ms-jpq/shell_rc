@@ -1,9 +1,12 @@
 #!/usr/bin/env -S -- nvim -l
 
-vim.opt.rtp:append(vim.fn.stdpath("config"))
-
-local ts = vim.fs.joinpath(vim.fn.stdpath("cache"), "..", "helix-rt", "nvim", "pack", "opt", "nvim-treesitter")
-vim.opt.rtp:append(ts)
+local opt = vim.fs.joinpath(vim.fn.stdpath("cache"), "..", "helix-rt", "nvim", "pack", "opt")
+vim.opt.rtp:append {
+  vim.fn.stdpath("config"),
+  vim.fs.joinpath(opt, "nvim-treesitter"),
+  vim.fs.joinpath(opt, "nvim-treesitter-context"),
+  vim.fs.joinpath(opt, "nvim-treesitter-textobjects")
+}
 
 require("go.paths")
 require("go.pack.treesitter")
