@@ -16,15 +16,11 @@ do
       group = lib.group,
       pattern = filetypes,
       callback = function(args)
-        local go, _ =
-          pcall(
+        pcall(
           function()
-            vim.treesitter.start()
+            vim.treesitter.start(args.buf)
           end
         )
-        if not go then
-          vim.cmd.TSInstall(args.match)
-        end
       end
     }
   )
