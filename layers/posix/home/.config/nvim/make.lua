@@ -12,14 +12,21 @@ vim.opt.rtp:append {
 require("go.paths")
 require("go.pack.treesitter")
 
-local ts = require("nvim-treesitter")
-local languages = vim.json.decode(vim.fn.readblob(vim.fs.joinpath(cfg, "ts-languages.json")))
-local timeout = 5 * 60 * 1000
+if 1 then
+  local ts = require("nvim-treesitter")
+  local languages = vim.json.decode(vim.fn.readblob(vim.fs.joinpath(cfg, "ts-languages.json")))
+  local options = {}
+  local timeout = 5 * 60 * 1000
 
-vim.env.PATH = vim.env.PATH .. ":" .. vim.fs.joinpath(vim.env.HOME, ".local", "asdf", "shims")
+  vim.env.PATH = vim.env.PATH .. ":" .. vim.fs.joinpath(vim.env.HOME, ".local", "asdf", "shims")
 
-vim.print("<<< <<<")
-vim.print(languages)
-ts.install(languages):wait(timeout)
-ts.update(languages):wait(timeout)
-vim.print(">>> >>>")
+  if vim.fn.has("macunix") == 1 then
+    options.max_jobs = 1
+  end
+
+  vim.print("<<< <<<")
+  vim.print(languages)
+  ts.install(languages, options):wait(timeout)
+  ts.update(languages, options):wait(timeout)
+  vim.print(">>> >>>")
+end
