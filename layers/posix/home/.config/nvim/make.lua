@@ -14,7 +14,7 @@ require("go.pack.treesitter")
 
 do
   local ts = require("nvim-treesitter")
-  local languages = vim.json.decode(vim.fn.readblob(vim.fs.joinpath(cfg, "ts-languages.json")))
+  local languages = vim.json.decode(vim.fn.readblob(vim.fs.joinpath(cfg, "ts-languages.json"))).languages
   local options = {summary = true}
   local timeout = 5 * 60 * 1000
 
