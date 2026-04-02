@@ -11,5 +11,19 @@ vim.opt.rtp:append {
 require("go.paths")
 require("go.pack.treesitter")
 
+local ts = require("nvim-treesitter")
+local timeout = 5 * 60 * 1000
+local languages = {
+  "go",
+  "javascript",
+  "lua",
+  "python",
+  "ruby",
+  "typescript",
+  "vim"
+}
+
 vim.env.PATH = vim.env.PATH .. ":" .. vim.fs.joinpath(vim.env.HOME, ".local", "asdf", "shims")
-require("nvim-treesitter").install {"all"}:wait(5 * 60 * 1000)
+
+ts.install(languages):wait(timeout)
+ts.update(languages):wait(timeout)
