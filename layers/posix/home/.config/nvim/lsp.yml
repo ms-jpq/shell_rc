@@ -210,8 +210,8 @@ superhtml:
 cssls:
   bin: vscode-css-language-server
 
-tailwindcss:
-  bin: tailwindcss-language-server
+# tailwindcss:
+#   bin: tailwindcss-language-server
 
 svelte:
   bin: svelteserver
