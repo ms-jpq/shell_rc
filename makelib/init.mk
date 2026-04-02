@@ -32,7 +32,7 @@ $(VENV)/$(PY_BIN):
 	'$@/python' <<< '$(PYDEPS)'
 
 ./node_modules/.bin:
-	npm install --ignore-scripts --upgrade --no-package-lock
+	npm install --ignore-scripts --no-package-lock
 
 V_SHELLCHECK = $(shell ./libexec/gh-latest.sh $(TMP) koalaman/shellcheck)
 V_SHFMT      = $(shell ./libexec/gh-latest.sh $(TMP) mvdan/sh)
