@@ -51,3 +51,4 @@
 + UniversalCtags.Ctags
 + Wilfred.difftastic
 + XAMPPRocky.Tokei
++ Zellij.Zellij

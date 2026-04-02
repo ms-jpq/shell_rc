@@ -14,7 +14,6 @@ $(GIT_TMP)/aerc                https://git.sr.ht/~rjarry/aerc
 $(GIT_TMP)/dircolors-solarized https://github.com/seebi/dircolors-solarized
 $(GIT_TMP)/fzf                 https://github.com/junegunn/fzf
 $(GIT_TMP)/k9s                 https://github.com/derailed/k9s
-$(GIT_TMP)/lf                  https://github.com/gokcehan/lf
 $(GIT_TMP)/z                   https://github.com/rupa/z
 
 endef
