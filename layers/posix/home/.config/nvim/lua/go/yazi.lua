@@ -34,8 +34,8 @@ local file_exp_die = function()
     end
   end
 
-  local buf = vim.api.nvim_get_current_buf()
-  local cur = vim.api.nvim_buf_get_name(buf)
+  local current = vim.api.nvim_get_current_buf()
+  local cur_name = vim.api.nvim_buf_get_name(current)
   local alt = vim.fn.getreg("#")
 
   return function()
@@ -50,7 +50,7 @@ local file_exp_die = function()
       vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
     end
 
-    local altfile = vim.api.nvim_get_current_buf() == buf and alt or cur
+    local altfile = vim.api.nvim_get_current_buf() == current and alt or cur_name
     pcall(vim.fn.setreg, "#", altfile)
   end
 end
