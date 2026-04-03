@@ -6,3 +6,6 @@ vim.cmd.source(man)
 
 local parens = unpack(vim.api.nvim_get_runtime_file("plugin/matchparen.vim", true))
 vim.cmd.source(parens)
+
+vim.cmd.packadd [[matchit]]
+vim.cmd.packadd [[nvim.difftool]]
