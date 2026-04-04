@@ -1,2 +1,14 @@
 [input]
 prepend_keymap = [{ on = "<Esc>", run = "close" }]
+
+[mgr]
+prepend_keymap = [
+  { on = [
+    "e",
+    "x",
+  ], run = "shell -- chmod -- +x %s" },
+  { on = [
+    "e",
+    "X",
+  ], run = "shell -- chmod -- -x %s" },
+]
