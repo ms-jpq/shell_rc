@@ -15,10 +15,6 @@ pkg.posix: /etc/apt/sources.list.d/ms-jpq.list
 	deb https://raw.githubusercontent.com/ms-jpq/deb/refs/heads/deb/ /
 	EOF
 
-pkg.posix: /etc/apt/sources.list.d/ppa_neovim-ppa_unstable.list
-/etc/apt/sources.list.d/ppa_neovim-ppa_unstable.list:
-	sudo -- ./libexec/add-ppa.sh neovim-ppa/unstable
-
 /etc/apt/trusted.gpg.d/charm.gpg:
 	$(CURL) -- 'https://repo.charm.sh/apt/gpg.key' | sudo -- gpg --batch --dearmor --yes --output '$@'
 
