@@ -1,7 +1,16 @@
 local lib = require("go")
 
 local rand = string.gsub(vim.fn.tempname(), "/", "-")
+local ns = vim.api.nvim_create_namespace(rand)
 local tmux_buf = "nvim-" .. rand
+
+vim.api.nvim_create_user_command(
+  "ReplClear",
+  function()
+    vim.b.__tmux_target__ = nil
+  end,
+  {}
+)
 
 local pick_pane = function(buf, pane_id, callback)
   local state = vim.b[buf]
@@ -115,13 +124,12 @@ local tmux_send = function(buf, pane, lo, hi)
   end
 end
 
-vim.api.nvim_create_user_command(
-  "ReplClear",
-  function()
-    vim.b.__tmux_target__ = nil
-  end,
-  {}
-)
+local matching = function(buf)
+  local re = vim.b[buf].__page_regex__
+  return function(line)
+    return re and vim.fn.match(line, re) ~= -1
+  end
+end
 
 local seek = function(match, row, direction)
   local count = direction < 0 and 0 or vim.api.nvim_buf_line_count(0)
@@ -141,13 +149,20 @@ local seek = function(match, row, direction)
   return row
 end
 
-local matching = function(buf)
-  local re = vim.b[buf].__page_regex__
-  return function(line)
-    return re and vim.fn.match(line, re) ~= -1
-  end
+local highlight = function(buf, lo, hi)
+  hi = math.max(0, hi - 1)
+  local line = unpack(vim.api.nvim_buf_get_lines(0, hi, hi + 1, true))
+  vim.highlight.range(buf, ns, "HighlightedyankRegion", {lo, 0}, {hi, #line}, {inclusive = false})
 end
 
+local nohighlight = function(buf)
+  vim.defer_fn(
+    function()
+      vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+    end,
+    99
+  )
+end
 local repl = function()
   local pane_id = vim.env.TMUX_PANE
   if not pane_id then
@@ -159,15 +174,15 @@ local repl = function()
   row = row - 1
   local match = matching(buf)
 
-  pick_pane(
-    buf,
-    pane_id,
-    function(pane)
-      local lo = seek(match, row, -1)
-      local hi = seek(match, row, 1)
-      tmux_send(buf, pane, lo, hi)
-    end
-  )
+  local callback = function(pane)
+    local lo = seek(match, row, -1)
+    local hi = seek(match, row, 1)
+    highlight(buf, lo, hi)
+    tmux_send(buf, pane, lo, hi)
+    nohighlight(buf)
+  end
+
+  pick_pane(buf, pane_id, callback)
 end
 
 vim.keymap.set("n", [[<leader>w]], repl)
