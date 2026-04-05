@@ -22,20 +22,18 @@ PSPROFILE="$PWSH/Microsoft.PowerShell_profile.ps1"
 CURL="$APPDATA/.curlrc"
 BAT="$CONF/bat"
 BTM="$CONF/bottom"
-GPG="$CONF/gnupg"
 
 mkdir -v -p -- "$USERPROFILE/.local" "$LOCALHI" "$PWSH"
 if ! [[ -L $CONF ]]; then
   powershell.exe New-Item -ItemType Junction -Path "$CONF" -Target "$LOCALAPPDATA"
 fi
-mkdir -v -p -- "$BAT" "$BTM" "$GPG"
+mkdir -v -p -- "$BAT" "$BTM"
 
 declare -A -- LINKS=()
 LINKS=(
   ["$APPDATA/bat"]="$BAT"
   ["$APPDATA/bottom"]="$BTM"
   ["$USERPROFILE/.cache"]="$WINTMP"
-  ["$USERPROFILE/.gnupg"]="$GPG"
   ["$USERPROFILE/.local/opt"]="$LOCALHI"
   ["$USERPROFILE/.local/share"]="$APPDATA"
   ["$USERPROFILE/.local/state"]="$LOCALLO"

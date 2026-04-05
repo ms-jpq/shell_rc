@@ -9,8 +9,6 @@
     <dict>
       <key>PATH</key>
       <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
-      <key>GNUPGHOME</key>
-      <string>${HOME}/.config/gnupg</string>
     </dict>
     <key>Program</key>
     <string>${HOME}/.local/opt/isync/${SELF}</string>

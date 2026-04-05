@@ -70,7 +70,7 @@ Must use `[S]` signing subkey's keygrip
 
 ```bash
 # Add '<subkey>' keygrip
-"$EDITOR" "$GNUPGHOME/sshcontrol"
+"$EDITOR" "~/.gnupg/sshcontrol"
 ```
 
 ## Forward

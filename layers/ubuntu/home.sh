@@ -6,7 +6,6 @@ SYSTEMD="$HOME/.config/systemd/user"
 
 declare -A -- LINKS=()
 LINKS=(
-  ["$HOME/.gnupg"]="$HOME/.config/gnupg"
   ["$SYSTEMD/gpg-agent-browser.socket"]=/dev/null
   ["$SYSTEMD/gpg-agent-extra.socket"]=/dev/null
   ["$SYSTEMD/gpg-agent-ssh.socket"]=/dev/null

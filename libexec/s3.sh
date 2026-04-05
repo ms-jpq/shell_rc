@@ -34,8 +34,8 @@ push)
   FILES=(
     ~/.config/aerc/accounts.conf
     ~/.config/git/config
-    ~/.config/gnupg/sshcontrol
     ~/.config/isyncrc
+    ~/.gnupg/sshcontrol
     ~/.local/secrets
     ~/.ssh/!(known_hosts)
   )
