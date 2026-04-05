@@ -38,3 +38,9 @@ RR = :reply<Enter>
   a\
 RQ = :reply -q<Enter>
 }
+
+/\[compose::review\]/ {
+  a\
+A = :attach -m<Enter>
+
+}
