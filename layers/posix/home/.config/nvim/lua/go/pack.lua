@@ -62,6 +62,10 @@ do
     vim.notify(err, vim.log.levels.ERROR)
   end
 
+  if not coq then
+    vim.opt.autocomplete = true
+  end
+
   safe_require("go.pack.theme")
   lsp_on()
 end
