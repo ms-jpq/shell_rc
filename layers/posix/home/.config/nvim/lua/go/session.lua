@@ -12,6 +12,11 @@ for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 end
 
 local detect_stdin = function()
+  local acc = {}
+  for _, name in pairs(vim.fn.argv(-1)) do
+    acc[name] = true
+  end
+
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     local dirty = function()
       if vim.api.nvim_buf_line_count(buf) > 1 then
@@ -22,7 +27,8 @@ local detect_stdin = function()
       return #lines > 0 and #lines[1] > 0
     end
 
-    if dirty() then
+    local name = vim.api.nvim_buf_get_name(buf)
+    if not acc[name] and dirty() then
       return true
     end
   end
@@ -52,7 +58,9 @@ local session_path = function(cwd)
   local argv = vim.fn.argv(-1)
   local name = vim.re.gsub(cwd or vim.fn.getcwd(), "[/\\]", ".")
   local postfix = table.concat(argv, "&")
-  local path = vim.fs.joinpath(vim.fn.stdpath("cache"), "sessions", name, postfix)
+  local dir = vim.fs.joinpath(vim.fn.stdpath("cache"), "sessions", name)
+  local path = vim.fs.joinpath(dir, postfix == "" and "." or postfix)
+
   local norm = vim.fs.normalize(path, {expand_env = false})
   local escaped = vim.fn.fnameescape(norm)
   return norm .. ".vim", escaped
