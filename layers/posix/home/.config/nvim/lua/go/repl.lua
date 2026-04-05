@@ -1,7 +1,6 @@
 local lib = require("go")
 
 local tmux_buf = string.gsub("nvim-" .. vim.fn.tempname(), "/", "-")
-local ns = vim.api.nvim_create_namespace(tmux_buf)
 local tmux_send = function(buf, pane, lo, hi)
   local sep = lib.buf_linefeed(buf)
   local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
@@ -13,7 +12,7 @@ local tmux_send = function(buf, pane, lo, hi)
       for _, stdin in ipairs {text, sep} do
         local proc1 = vim.system({"tmux", "load-buffer", "-b", tmux_buf, "--", "-"}, {stdin = stdin}):wait()
         assert(proc1.code == 0, vim.inspect(proc1))
-        local proc2 = vim.system("tmux", "paste-buffer", "-r", "-p", "-t", pane, "-b", tmux_buf):wait()
+        local proc2 = vim.system({"tmux", "paste-buffer", "-r", "-p", "-t", pane, "-b", tmux_buf}):wait()
         assert(proc2.code == 0, vim.inspect(proc2))
       end
     end
@@ -33,20 +32,22 @@ local pick_pane = function(pane_id, callback)
   assert(proc1.code == 0, vim.inspect(proc1))
   local proc2 =
     vim.system(
-    "tmux",
-    "list-panes",
-    "-a",
-    "-F",
-    table.concat(
-      {"#{pane_id}", "#{window_id}", "#{window_active}", "#{session_name} -> #{window_index} -> #{pane_index}"},
-      sep
-    )
+    {
+      "tmux",
+      "list-panes",
+      "-a",
+      "-F",
+      table.concat(
+        {"#{pane_id}", "#{window_id}", "#{window_active}", "#{session_name} -> #{window_index} -> #{pane_index}"},
+        sep
+      )
+    }
   ):wait()
   assert(proc2.code == 0, vim.inspect(proc2))
 
   local acc = {}
   local win_id = vim.fn.trim(proc1.stdout)
-  for idx, line in vim.split(proc2.stdout, "\n", {plain = true}) do
+  for idx, line in ipairs(vim.split(proc2.stdout, "\n", {plain = true})) do
     local p_id, w_id, w_active, info = unpack(vim.split(line, sep, {plain = true}))
     if p_id ~= pane_id then
       local this = w_id == win_id
@@ -114,4 +115,4 @@ local repl = function()
   )
 end
 
-vim.keymap.set("n", [[<leader>o]], repl)
+vim.keymap.set("n", [[<leader>w]], repl)
