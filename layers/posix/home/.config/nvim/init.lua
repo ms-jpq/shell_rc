@@ -1,14 +1,17 @@
 Go = {}
 
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 require("go.bookmark")
 require("go.checktime")
 require("go.clipboard")
 require("go.commands")
 require("go.cursor")
 require("go.cwd")
-require("go.diagnostics")
 require("go.fmt")
 require("go.keymap")
+require("go.diagnostics")
 require("go.lsp")
 require("go.misc")
 require("go.operators.casing")

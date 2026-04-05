@@ -1,6 +1,3 @@
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
 -- quit
 vim.keymap.set({"n", "v"}, "Q", [[<nop>]])
 vim.keymap.set({"n", "v"}, "QQ", [[<cmd>quitall!<cr>]])
