@@ -3,10 +3,8 @@
 set -o pipefail
 
 if [[ -v AERC_MIME_TYPE ]]; then
-  COLOUR=1
   COLS="$(stty size < /dev/tty | cut -d ' ' -f 2)"
 else
-  COLOUR=0
   COLS=88
 fi
 
@@ -15,7 +13,7 @@ ARGV=(
   -T text/html
   -graph
   -cols "$COLS"
-  -o color="$COLOUR"
+  -o color=1
   -o display_image=1
   -o display_link_number=1
   -o ignorecase_search=1
