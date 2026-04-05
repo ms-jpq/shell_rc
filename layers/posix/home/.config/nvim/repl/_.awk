@@ -1,4 +1,5 @@
 #!/usr/bin/env -S -- awk -f
+
 BEGIN {
   DEDENT = -2
   PRINTED = 0
@@ -29,6 +30,5 @@ DEDENT == -2 && $0 {
 }
 
 END {
-  printf "%c", 0
+  # printf "%c", 0
 }
-
