@@ -141,8 +141,9 @@ local seek = function(match, row, direction)
 end
 
 local matching = function(buf)
+  local re = vim.b[buf].__page_regex__
   return function(line)
-    return line == "---"
+    return re and vim.fn.match(line, re) ~= -1
   end
 end
 
