@@ -85,25 +85,27 @@ vim.api.nvim_create_autocmd(
 vim.keymap.set("n", [[<c-p>]], [[<cmd>cprevious<cr>]])
 vim.keymap.set("n", [[<c-n>]], [[<cmd>cnext<cr>]])
 
-local toggle_qf = function(lo)
-  return function()
-    local closed = false
-    local wins = vim.api.nvim_tabpage_list_wins(0)
+do
+  local toggle_qf = function(lo)
+    return function()
+      local closed = false
+      local wins = vim.api.nvim_tabpage_list_wins(0)
 
-    for _, win in pairs(wins) do
-      local buf = vim.api.nvim_win_get_buf(win)
-      local ft = vim.bo[buf].filetype
-      if ft == "qf" then
-        vim.api.nvim_win_close(win, true)
-        closed = true
+      for _, win in pairs(wins) do
+        local buf = vim.api.nvim_win_get_buf(win)
+        local ft = vim.bo[buf].filetype
+        if ft == "qf" then
+          vim.api.nvim_win_close(win, true)
+          closed = true
+        end
+      end
+
+      if not closed then
+        local height = vim.o.previewheight
+        vim.cmd([[copen ]] .. height)
       end
     end
-
-    if not closed then
-      local height = vim.o.previewheight
-      vim.cmd([[copen ]] .. height)
-    end
   end
-end
 
-vim.keymap.set("n", [[<leader>l]], toggle_qf(true))
+  vim.keymap.set("n", [[<leader>l]], toggle_qf(true))
+end
