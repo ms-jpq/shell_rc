@@ -1,5 +1,6 @@
 local lib = require("go")
 
+local filters = vim.fs.joinpath(vim.fn.stdpath("config"), "repl")
 local rand = string.gsub(vim.fn.tempname(), "/", "-")
 local ns = vim.api.nvim_create_namespace(rand)
 local tmux_buf = "nvim-" .. rand
@@ -96,10 +97,10 @@ local pick_pane = function(buf, pane_id, callback)
 end
 
 local process = function(buf, text)
-  local ft = vim.bo[buf].filetype
-  local found = unpack(vim.api.nvim_get_runtime_file("plugin/" .. ft .. ".*", true))
+  local prefix = vim.fs.joinpath(filters, vim.bo[buf].filetype)
+  local found = unpack(vim.api.nvim_get_runtime_file(prefix .. ".*", true))
   if not found then
-    return text
+    found = vim.fs.joinpath(filters, "_.awk")
   end
 
   local ok, rsp =
