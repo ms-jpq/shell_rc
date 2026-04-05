@@ -15,7 +15,8 @@ local detect_stdin = function(cwd)
   local acc = {}
   for _, name in pairs(vim.fn.argv(-1)) do
     local path = vim.fs.joinpath(cwd, name)
-    acc[path] = true
+    local norm = vim.fs.normalize(path, {expand_env = false})
+    acc[norm] = true
   end
 
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
