@@ -11,12 +11,9 @@ fi
 ARGV=(
   w3m -W
   -T text/html
-  -graph
+  -s
   -cols "$COLS"
-  -o color=1
-  -o display_image=1
   -o display_link_number=1
-  -o ignorecase_search=1
   -o tabstop=2
 )
 
