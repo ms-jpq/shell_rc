@@ -1,3 +1,7 @@
+if not coq then
+  vim.opt.autocomplete = true
+end
+
 vim.g.coq_settings = {
   xdg = true,
   auto_start = true,
