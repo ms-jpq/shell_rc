@@ -7,7 +7,7 @@ if [[ -v AERC_MIME_TYPE ]]; then
   COLS="$(stty size < /dev/tty | cut -d ' ' -f 2)"
 else
   COLOUR=0
-  COLS=168
+  COLS=88
 fi
 
 ARGV=(
