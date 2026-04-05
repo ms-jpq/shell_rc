@@ -27,7 +27,21 @@ local tmux_send = function(buf, pane, lo, hi)
   end
 end
 
-local pick_pane = function(pane_id, callback)
+vim.api.nvim_create_user_command(
+  "ReplClear",
+  function()
+    vim.b.__tmux_target__ = nil
+  end,
+  {}
+)
+
+local pick_pane = function(buf, pane_id, callback)
+  local state = vim.b[buf]
+  if state.__tmux_target__ then
+    callback(state.__tmux_target__)
+    return
+  end
+
   local proc1 = vim.system({"tmux", "display-message", "-p", "-F", "#{window_id}"}):wait()
   assert(proc1.code == 0, vim.inspect(proc1))
   local proc2 =
@@ -97,6 +111,7 @@ local pick_pane = function(pane_id, callback)
     function(item)
       if item ~= nil then
         local _, _, _, _, p_id = unpack(item)
+        state.__tmux_target__ = p_id
         callback(p_id)
       end
     end
@@ -109,7 +124,9 @@ local repl = function()
   end
 
   local buf = vim.api.nvim_get_current_buf()
+
   pick_pane(
+    buf,
     pane_id,
     function(pane)
       tmux_send(buf, pane, 0, -1)
