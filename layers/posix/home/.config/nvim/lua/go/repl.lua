@@ -2,42 +2,6 @@ local lib = require("go")
 
 local rand = string.gsub(vim.fn.tempname(), "/", "-")
 local tmux_buf = "nvim-" .. rand
-local tmux_send = function(buf, pane, lo, hi)
-  local sep = lib.buf_linefeed(buf)
-  local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
-  local text = table.concat(lines, sep)
-
-  if text == "" then
-    return
-  end
-
-  local ok, err =
-    pcall(
-    function()
-      for _, stdin in ipairs {text, sep} do
-        local proc1 = vim.system({"tmux", "load-buffer", "-b", tmux_buf, "--", "-"}, {stdin = stdin}):wait()
-        assert(proc1.code == 0, vim.inspect(proc1))
-        local proc2 = vim.system({"tmux", "paste-buffer", "-r", "-p", "-b", tmux_buf, "-t", pane}):wait()
-        assert(proc2.code == 0, vim.inspect(proc2))
-      end
-    end
-  )
-
-  local proc3 = vim.system({"tmux", "delete-buffer", "-b", tmux_buf}):wait()
-  assert(proc3.code == 0, vim.inspect(proc3))
-
-  if not ok then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
-end
-
-vim.api.nvim_create_user_command(
-  "ReplClear",
-  function()
-    vim.b.__tmux_target__ = nil
-  end,
-  {}
-)
 
 local pick_pane = function(buf, pane_id, callback)
   local state = vim.b[buf]
@@ -121,6 +85,43 @@ local pick_pane = function(buf, pane_id, callback)
     end
   )
 end
+
+local tmux_send = function(buf, pane, lo, hi)
+  local sep = lib.buf_linefeed(buf)
+  local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
+  local text = table.concat(lines, sep)
+
+  if text == "" then
+    return
+  end
+
+  local ok, err =
+    pcall(
+    function()
+      for _, stdin in ipairs {text, sep} do
+        local proc1 = vim.system({"tmux", "load-buffer", "-b", tmux_buf, "--", "-"}, {stdin = stdin}):wait()
+        assert(proc1.code == 0, vim.inspect(proc1))
+        local proc2 = vim.system({"tmux", "paste-buffer", "-r", "-p", "-b", tmux_buf, "-t", pane}):wait()
+        assert(proc2.code == 0, vim.inspect(proc2))
+      end
+    end
+  )
+
+  local proc3 = vim.system({"tmux", "delete-buffer", "-b", tmux_buf}):wait()
+  assert(proc3.code == 0, vim.inspect(proc3))
+
+  if not ok then
+    vim.notify(err, vim.log.levels.ERROR)
+  end
+end
+
+vim.api.nvim_create_user_command(
+  "ReplClear",
+  function()
+    vim.b.__tmux_target__ = nil
+  end,
+  {}
+)
 
 local seek = function(match, row, direction)
   local count = direction < 0 and 0 or vim.api.nvim_buf_line_count(0)
