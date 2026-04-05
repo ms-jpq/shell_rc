@@ -6,9 +6,10 @@ local magic_escape = function(text)
 end
 
 local selected_text = function(visual_type)
-  local row1, col1, row2, col2 = to.operator_marks(0, visual_type)
+  local buf = vim.api.nvim_get_current_buf()
+  local row1, col1, row2, col2 = to.operator_marks(buf, visual_type)
   local lines = vim.api.nvim_buf_get_text(0, row1, col1, row2, col2, {})
-  local text = table.concat(lines, lib.buf_linefeed(0))
+  local text = table.concat(lines, lib.buf_linefeed(buf))
 
   return text
 end
