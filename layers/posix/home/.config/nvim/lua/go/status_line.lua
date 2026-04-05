@@ -7,20 +7,22 @@ local lhs = (function()
   return preview .. ql .. name .. modified
 end)()
 
-local rhs =
-  (function()
-  local progress = "%{%v:lua.vim.ui.progress_status()%}"
-  local diagnostics = "%{%v:lua.vim.diagnostic.status()%}"
-
-  local busy = "%{&busy > 0 ? '◐ ' : ''}"
+local classic = (function()
   local ft = "%y"
   local tabs = "%{&tabstop .. (&expandtab ? 'S' : 'T')}"
   local linefeed = "%{&fileformat}"
   local pos = "%5l:%-3c"
   local scroll = "%3p%%"
 
-  return progress ..
-    " " .. busy .. diagnostics .. " | " .. ft .. " " .. tabs .. " " .. linefeed .. " @ " .. pos .. "≡ " .. scroll
+  return ft .. " " .. tabs .. " " .. linefeed .. " @ " .. pos .. "≡ " .. scroll
+end)()
+
+local rhs = (function()
+  local progress = "%{%v:lua.vim.ui.progress_status()%}"
+  local diagnostics = "%{%v:lua.vim.diagnostic.status()%}"
+  local busy = "%{&busy > 0 ? '◐ ' : ''}"
+
+  return progress .. " " .. busy .. diagnostics .. " | " .. classic()
 end)()
 
 vim.opt.statusline = lhs .. " %= " .. rhs
