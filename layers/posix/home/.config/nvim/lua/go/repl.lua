@@ -23,11 +23,11 @@ local tmux_send = function(buf, pane, lo, hi)
     end
   )
 
+  local proc3 = vim.system({"tmux", "delete-buffer", "-b", tmux_buf}):wait()
+  assert(proc3.code == 0, vim.inspect(proc3))
+
   if not ok then
     vim.notify(err, vim.log.levels.ERROR)
-
-    local proc3 = vim.system({"tmux", "delete-buffer", "-b", tmux_buf}):wait()
-    assert(proc3.code == 0, vim.inspect(proc3))
   end
 end
 
@@ -123,22 +123,27 @@ local pick_pane = function(buf, pane_id, callback)
 end
 
 local seek = function(match, row, direction)
-  local count = direction < 0 and -1 or (vim.api.nvim_buf_line_count(0) - 1)
+  local count = direction < 0 and 0 or vim.api.nvim_buf_line_count(0)
 
   local r = row
   for i = row, count, direction do
-    r = i
-    local line = unpack(vim.api.nvim_buf_get_lines(0, r, r + 1, true))
+    if i == count then
+      return i
+    end
+
+    local line = unpack(vim.api.nvim_buf_get_lines(0, i, i + 1, true))
     if match(line) then
       break
     end
+
+    r = i
   end
   return r
 end
 
 local matching = function(buf)
   return function(line)
-    return line == "==="
+    return line == "---"
   end
 end
 
@@ -150,6 +155,7 @@ local repl = function()
 
   local buf = vim.api.nvim_get_current_buf()
   local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
+  row = row - 1
   local match = matching(buf)
 
   pick_pane(
