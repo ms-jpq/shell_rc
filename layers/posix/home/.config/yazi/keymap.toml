@@ -1,14 +1,14 @@
 [input]
 prepend_keymap = [{ on = "<Esc>", run = "close" }]
 
-[mgr]
-prepend_keymap = [
-  { on = [
-    "e",
-    "x",
-  ], run = "shell -- chmod -- +x %s" },
-  { on = [
-    "e",
-    "X",
-  ], run = "shell -- chmod -- -x %s" },
-]
+[[mgr.prepend_keymap]]
+on  = ["e", "x"]
+run = "shell -- chmod -- +x %s"
+[[mgr.prepend_keymap]]
+on  = ["e", "X"]
+run = "shell -- chmod -- -x %s"
+
+[[mgr.prepend_keymap]]
+desc = "Copy the relative path"
+on   = ["c", "r"]
+run  = 'shell --block -- realpath --no-symlinks --relative-to "$PWD" -- %h | sed -E -z -e "s/\n$//" | ~/.config/zsh/bin/c'

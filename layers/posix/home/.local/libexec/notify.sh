@@ -38,7 +38,7 @@ ID=1
     printf -- '\e'
   fi
 
-  # OSC52 end
+  # OSC99 end
   # shellcheck disable=SC1003
   printf -- '\e\\'
 }
@@ -59,7 +59,7 @@ ID=1
     printf -- '\e'
   fi
 
-  # OSC52 end
+  # OSC99 end
   # shellcheck disable=SC1003
   printf -- '\e\\'
 }
