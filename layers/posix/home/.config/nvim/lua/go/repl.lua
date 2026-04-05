@@ -135,14 +135,33 @@ local tmux_send = function(pane, text)
   local _, _ =
     pcall(
     function()
-      local proc3 = vim.system({"tmux", "delete-buffer", "-b", tmux_buf}):wait()
-      assert(proc3.code == 0)
+      local proc = vim.system({"tmux", "delete-buffer", "-b", tmux_buf}):wait()
+      assert(proc.code == 0)
     end
   )
 
   if not ok then
     vim.notify(err, vim.log.levels.ERROR)
   end
+end
+
+local eof = function(pane)
+  vim.defer_fn(
+    function()
+      local ok, err =
+        pcall(
+        function()
+          local proc = vim.system({"tmux", "send-keys", "-t", pane, "--", "Enter"}):wait()
+          assert(proc.code == 0)
+        end
+      )
+
+      if not ok then
+        vim.notify(err, vim.log.levels.ERROR)
+      end
+    end,
+    99
+  )
 end
 
 local matching = function(buf)
@@ -210,6 +229,7 @@ local repl = function()
     highlight(buf, lo, hi)
     tmux_send(pane, processed)
     nohighlight(buf)
+    eof(pane)
   end
 
   pick_pane(buf, pane_id, callback)
