@@ -9,6 +9,7 @@
 *.tfstate.backup
 *.tfvars
 *.uwu
+.claude/
 .crush/
 .DS_Store
 .git/
