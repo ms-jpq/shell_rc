@@ -99,17 +99,20 @@ local tmux_send = function(pane, text)
   local ok, err =
     pcall(
     function()
-      for _, stdin in ipairs {text, sep} do
-        local proc1 = vim.system({"tmux", "load-buffer", "-b", tmux_buf, "--", "-"}, {stdin = stdin}):wait()
-        assert(proc1.code == 0, vim.inspect(proc1))
-        local proc2 = vim.system({"tmux", "paste-buffer", "-r", "-p", "-b", tmux_buf, "-t", pane}):wait()
-        assert(proc2.code == 0, vim.inspect(proc2))
-      end
+      local proc1 = vim.system({"tmux", "load-buffer", "-b", tmux_buf, "--", "-"}, {stdin = stdin}):wait()
+      assert(proc1.code == 0, vim.inspect(proc1))
+      local proc2 = vim.system({"tmux", "paste-buffer", "-r", "-p", "-b", tmux_buf, "-t", pane}):wait()
+      assert(proc2.code == 0, vim.inspect(proc2))
     end
   )
 
-  local proc3 = vim.system({"tmux", "delete-buffer", "-b", tmux_buf}):wait()
-  assert(proc3.code == 0, vim.inspect(proc3))
+  local _, _ =
+    pcall(
+    function()
+      local proc3 = vim.system({"tmux", "delete-buffer", "-b", tmux_buf}):wait()
+      assert(proc3.code == 0, vim.inspect(proc3))
+    end
+  )
 
   if not ok then
     vim.notify(err, vim.log.levels.ERROR)
@@ -178,7 +181,7 @@ local repl = function()
     end
 
     highlight(buf, lo, hi)
-    pcall(tmux_send, pane, text)
+    tmux_send(pane, text)
     nohighlight(buf)
   end
 
