@@ -63,6 +63,7 @@ do
   end
 
   safe_require("go.pack.theme")
+  safe_require("go.pack.treesitter")
   lsp_on()
 end
 
@@ -82,7 +83,6 @@ vim.api.nvim_create_autocmd(
         safe_require("go.pack.gitsigns")
         safe_require("go.pack.illuminate")
         safe_require("go.pack.leap")
-        safe_require("go.pack.treesitter")
       end
     )
   }
