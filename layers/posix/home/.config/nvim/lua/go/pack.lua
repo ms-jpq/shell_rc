@@ -63,6 +63,7 @@ do
   end
 
   if not coq then
+    -- basic autocomplete
     vim.opt.autocomplete = true
   end
 
