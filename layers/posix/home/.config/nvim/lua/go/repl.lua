@@ -20,7 +20,7 @@ local pick_pane = function(buf, pane_id, callback)
   end
 
   local proc1 = vim.system({"tmux", "display-message", "-p", "-F", "#{window_id}"}):wait()
-  assert(proc1.code == 0, vim.inspect(proc1))
+  assert(proc1.code == 0)
   local proc2 =
     vim.system(
     {
@@ -34,7 +34,7 @@ local pick_pane = function(buf, pane_id, callback)
       )
     }
   ):wait()
-  assert(proc2.code == 0, vim.inspect(proc2))
+  assert(proc2.code == 0)
 
   local acc = {}
   local win_id = vim.fn.trim(proc1.stdout)
@@ -95,14 +95,37 @@ local pick_pane = function(buf, pane_id, callback)
   )
 end
 
+local process = function(buf, text)
+  local ft = vim.bo[buf].filetype
+  local found = unpack(vim.api.nvim_get_runtime_file("plugin/" .. ft .. ".*", true))
+  if not found then
+    return text
+  end
+
+  local ok, rsp =
+    pcall(
+    function()
+      local proc = vim.system({found}, {stdin = text}):wait()
+      assert(proc.code == 0)
+      return proc.stdout
+    end
+  )
+
+  if not ok then
+    vim.notify(rsp, vim.log.levels.ERROR)
+    return ""
+  end
+  return rsp
+end
+
 local tmux_send = function(pane, text)
   local ok, err =
     pcall(
     function()
-      local proc1 = vim.system({"tmux", "load-buffer", "-b", tmux_buf, "--", "-"}, {stdin = stdin}):wait()
-      assert(proc1.code == 0, vim.inspect(proc1))
+      local proc1 = vim.system({"tmux", "load-buffer", "-b", tmux_buf, "--", "-"}, {stdin = text}):wait()
+      assert(proc1.code == 0)
       local proc2 = vim.system({"tmux", "paste-buffer", "-r", "-p", "-b", tmux_buf, "-t", pane}):wait()
-      assert(proc2.code == 0, vim.inspect(proc2))
+      assert(proc2.code == 0)
     end
   )
 
@@ -110,7 +133,7 @@ local tmux_send = function(pane, text)
     pcall(
     function()
       local proc3 = vim.system({"tmux", "delete-buffer", "-b", tmux_buf}):wait()
-      assert(proc3.code == 0, vim.inspect(proc3))
+      assert(proc3.code == 0)
     end
   )
 
@@ -176,12 +199,14 @@ local repl = function()
 
     local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
     local text = table.concat(lines, sep)
-    if text == "" then
+    local processed = process(buf, text)
+    if processed == "" then
       return
     end
 
+    vim.inspect(processed)
     highlight(buf, lo, hi)
-    tmux_send(pane, text)
+    tmux_send(pane, processed)
     nohighlight(buf)
   end
 
