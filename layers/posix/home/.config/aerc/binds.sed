@@ -43,4 +43,9 @@ RQ = :reply -q<Enter>
   a\
 A = :attach -m<Enter>
 
+  a\
+m = :multipart text/html<Enter>
+
+  a\
+M = :multipart -d text/html<Enter>
 }
