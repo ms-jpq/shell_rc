@@ -13,7 +13,7 @@ vim.g.fzf_vim = {
   preview_window = {"right:wrap"}
 }
 
-local az = vim.split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "", true)
+local az = vim.split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "", {plain = true})
 
 vim.keymap.set("n", [[<leader>|]], [[<cmd>Maps!<cr>]])
 vim.keymap.set("n", [[<leader>\]], [[<cmd>Commands!<cr>]])

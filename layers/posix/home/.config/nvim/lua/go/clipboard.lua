@@ -46,7 +46,7 @@ end
 
 local recv = function(text, ...)
   local proc = vim.system({...}, {text = text}):wait()
-  return vim.split(proc.stdout, sep)
+  return vim.split(proc.stdout, sep, {plain = true})
 end
 
 local copy = function(lines)
@@ -104,7 +104,7 @@ vim.g.clipboard = {
 }
 
 local undo_quoting = function(line)
-  return vim.split(line, "\027%[27;5;106~")
+  return vim.split(line, "\027%[27;5;106~", {plain = true})
 end
 
 vim.paste = (function(paste)
