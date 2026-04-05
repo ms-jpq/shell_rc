@@ -62,7 +62,6 @@ do
     vim.notify(err, vim.log.levels.ERROR)
   end
 
-  safe_require("go.pack.treesitter")
   safe_require("go.pack.theme")
   lsp_on()
 end
@@ -83,6 +82,7 @@ vim.api.nvim_create_autocmd(
         safe_require("go.pack.gitsigns")
         safe_require("go.pack.illuminate")
         safe_require("go.pack.leap")
+        safe_require("go.pack.treesitter")
       end
     )
   }
