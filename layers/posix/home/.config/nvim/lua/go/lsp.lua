@@ -10,22 +10,24 @@ if vim.fn.has [[nvim-0.12]] == 1 then
   vim.lsp.semantic_tokens.enable(true)
 end
 
-local virtual_text = true
-local virtual_lines = false
-vim.diagnostic.config({virtual_text = virtual_text, virtual_lines = virtual_lines})
+do
+  local virtual_text = true
+  local virtual_lines = false
+  vim.diagnostic.config({virtual_text = virtual_text, virtual_lines = virtual_lines})
 
-local toggle = function()
-  virtual_text = not virtual_text
-  virtual_lines = not virtual_lines
-  local conf = {virtual_text = virtual_text, virtual_lines = virtual_lines}
-  local text = [[🎱 ]] .. string.gsub(vim.inspect(conf), [[%s]], "")
+  local toggle = function()
+    virtual_text = not virtual_text
+    virtual_lines = not virtual_lines
+    local conf = {virtual_text = virtual_text, virtual_lines = virtual_lines}
+    local text = [[🎱 ]] .. string.gsub(vim.inspect(conf), [[%s]], "")
 
-  vim.diagnostic.config(conf)
-  vim.notify(text, vim.log.levels.INFO, {})
+    vim.diagnostic.config(conf)
+    vim.notify(text, vim.log.levels.INFO, {})
+  end
+
+  vim.keymap.set("n", "gO", toggle)
+  vim.api.nvim_create_user_command("DToggle", toggle, {})
 end
-
-vim.keymap.set("n", "gO", toggle)
-vim.api.nvim_create_user_command("DToggle", toggle, {})
 
 vim.api.nvim_create_autocmd(
   {"BufEnter", "CursorHold", "InsertLeave"},

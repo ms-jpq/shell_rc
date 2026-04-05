@@ -36,31 +36,33 @@ for _, key in pairs {"p", "n", "l", "f", "o"} do
   vim.keymap.set("i", key, [[<c-x>]] .. key)
 end
 
-local ce = vim.api.nvim_replace_termcodes([[<c-e>]], true, true, true)
+do
+  local ce = vim.api.nvim_replace_termcodes([[<c-e>]], true, true, true)
 
--- insert movement keys do not enter
-for _, key in pairs {"<left>", "<right>"} do
+  -- insert movement keys do not enter
+  for _, key in pairs {"<left>", "<right>"} do
+    vim.keymap.set(
+      "i",
+      key,
+      function()
+        return (vim.fn.pumvisible() == 1 and ce or "") .. key
+      end,
+      {expr = true, noremap = true}
+    )
+  end
+
+  -- add emacs key binds
+  vim.keymap.set("i", [[<c-a>]], [[<c-o>^]])
+  vim.keymap.set("i", [[<c-x><c-a>]], [[<c-a>]])
   vim.keymap.set(
     "i",
-    key,
+    "<c-e>",
     function()
-      return (vim.fn.pumvisible() == 1 and ce or "") .. key
+      return (vim.fn.pumvisible() == 1 and ce or "") .. [[<end>]]
     end,
     {expr = true, noremap = true}
   )
 end
-
--- add emacs key binds
-vim.keymap.set("i", [[<c-a>]], [[<c-o>^]])
-vim.keymap.set("i", [[<c-x><c-a>]], [[<c-a>]])
-vim.keymap.set(
-  "i",
-  "<c-e>",
-  function()
-    return (vim.fn.pumvisible() == 1 and ce or "") .. [[<end>]]
-  end,
-  {expr = true, noremap = true}
-)
 
 -- emacs arrow movements
 vim.keymap.set("c", [[<c-a>]], [[<home>]])
