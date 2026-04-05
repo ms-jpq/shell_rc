@@ -11,4 +11,4 @@ run = "shell -- chmod -- -x %s"
 [[mgr.prepend_keymap]]
 desc = "Copy the relative path"
 on   = ["c", "r"]
-run  = 'shell --block -- realpath --no-symlinks --relative-to "$PWD" -- %h | sed -E -z -e "s/\n$//" | ~/.config/zsh/bin/c'
+run  = "shell --block -- ~/.config/yazi/libexec/copy-relative.sh '%h'"
