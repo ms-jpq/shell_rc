@@ -1,10 +1,10 @@
 X-Mailer: aerc {{version}}
 
-Forwarded message from {{.OriginalFrom | names | join ", "}} on {{dateFormat .OriginalDate "Mon Jan 2, 2006 at 3:04 PM"}}:
+Forwarded message from {{.OriginalFrom | names | join ", "}} on {{dateFormat .OriginalDate "2006-01-02 15:04 MST"}}:
 {{ if eq .OriginalMIMEType "text/html" -}}
-{{- exec `html` .OriginalText -}}
+{{- exec `html` .OriginalText | replace `\s+$` "" -}}
 {{- else -}}
-{{ .OriginalText }}
+{{- .OriginalText | replace `\s+$` "" -}}
 {{- end}}
 {{- with .Signature }}
 
