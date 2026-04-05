@@ -95,15 +95,7 @@ local pick_pane = function(buf, pane_id, callback)
   )
 end
 
-local tmux_send = function(buf, pane, lo, hi)
-  local sep = lib.buf_linefeed(buf)
-  local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
-  local text = table.concat(lines, sep)
-
-  if text == "" then
-    return
-  end
-
+local tmux_send = function(pane, text)
   local ok, err =
     pcall(
     function()
@@ -175,10 +167,22 @@ local repl = function()
   local match = matching(buf)
 
   local callback = function(pane)
+    local sep = lib.buf_linefeed(buf)
     local lo = seek(match, row, -1)
     local hi = seek(match, row, 1)
+
+    local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
+    local text = table.concat(lines, sep)
+    if text == "" then
+      return
+    end
+
     highlight(buf, lo, hi)
-    tmux_send(buf, pane, lo, hi)
+    pcall(
+      function()
+        tmux_send(pane, text)
+      end
+    )
     nohighlight(buf)
   end
 
