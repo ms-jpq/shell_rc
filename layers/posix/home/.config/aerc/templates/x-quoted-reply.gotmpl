@@ -1,6 +1,7 @@
 X-Mailer: aerc {{version}}
 
 On {{dateFormat (.OriginalDate | toLocal) "2006-01-02 15:04 MST"}}, {{.OriginalFrom | names | join ", "}} wrote:
+
 {{ if eq .OriginalMIMEType "text/html" -}}
 {{- exec `html.sh` .OriginalText | trimSignature | quote -}}
 {{- else -}}

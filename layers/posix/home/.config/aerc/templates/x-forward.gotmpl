@@ -1,6 +1,7 @@
 X-Mailer: aerc {{version}}
 
 Forwarded message from {{.OriginalFrom | names | join ", "}} on {{dateFormat .OriginalDate "2006-01-02 15:04 MST"}}:
+
 {{ if eq .OriginalMIMEType "text/html" -}}
 {{- exec `html.sh` .OriginalText -}}
 {{- else -}}
