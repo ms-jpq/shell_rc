@@ -12,7 +12,7 @@ vim.api.nvim_create_autocmd(
   {group = lib.group, command = "silent! checktime"}
 )
 
-vim.api.nvim_create_autocmd({"VimLeavePre"}, {group = lib.group, once = true, command = [[silent! wall!]]})
+vim.api.nvim_create_autocmd({"VimLeavePre"}, {group = lib.group, once = true, command = [[silent! wall! ++p]]})
 
 do
   local check_time = function(lo)
@@ -26,7 +26,7 @@ do
         vim.cmd [[silent! checktime]]
       end
 
-      vim.cmd [[silent! wall!]]
+      vim.cmd [[silent! wall! ++p]]
     end
   end
 
