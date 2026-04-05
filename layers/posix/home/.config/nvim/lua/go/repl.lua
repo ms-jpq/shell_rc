@@ -168,13 +168,11 @@ local seek = function(match, row, direction)
   return row
 end
 
-local highlight = function(buf, lo, hi)
+local highlight = function(buf, lo, hi, fn)
   hi = math.max(0, hi - 1)
   local line = unpack(vim.api.nvim_buf_get_lines(0, hi, hi + 1, true))
   vim.highlight.range(buf, ns, "HighlightedyankRegion", {lo, 0}, {hi, #line}, {inclusive = false})
-end
-
-local nohighlight = function(buf)
+  fn()
   vim.defer_fn(
     function()
       vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
@@ -182,6 +180,7 @@ local nohighlight = function(buf)
     66
   )
 end
+
 local repl = function()
   local current_pane = vim.env.TMUX_PANE
   if not current_pane then
@@ -205,9 +204,14 @@ local repl = function()
       return
     end
 
-    highlight(buf, lo, hi)
-    tmux_send(pane_id, processed)
-    nohighlight(buf)
+    highlight(
+      buf,
+      lo,
+      hi,
+      function()
+        tmux_send(pane_id, processed)
+      end
+    )
     eof(pane_id)
   end
 
