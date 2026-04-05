@@ -207,7 +207,6 @@ local repl = function()
       return
     end
 
-    vim.inspect(processed)
     highlight(buf, lo, hi)
     tmux_send(pane, processed)
     nohighlight(buf)
