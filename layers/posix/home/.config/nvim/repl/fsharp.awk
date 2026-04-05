@@ -1,4 +1,5 @@
 #!/usr/bin/env -S -- awk -f
+
 BEGIN {
   DEDENT = -2
   SKIPPED = 0
@@ -29,4 +30,3 @@ DEDENT == -2 && $0 {
 END {
   print ";;"
 }
-
