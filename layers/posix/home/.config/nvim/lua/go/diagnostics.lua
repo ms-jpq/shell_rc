@@ -1,10 +1,8 @@
 vim.diagnostic.config {
   severity_sort = true,
-  virtual_lines = true,
-  virtual_text = false,
-  status = {
-    format = {}
-  }
+  virtual_lines = false,
+  virtual_text = true,
+  status = {format = {}}
 }
 
 vim.keymap.set(
