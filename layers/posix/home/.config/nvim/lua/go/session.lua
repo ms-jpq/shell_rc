@@ -59,11 +59,11 @@ local session_path = function(cwd)
   local name = vim.re.gsub(cwd or vim.fn.getcwd(), "[/\\]", ".")
   local postfix = table.concat(argv, "&")
   local dir = vim.fs.joinpath(vim.fn.stdpath("cache"), "sessions", name)
-  local path = vim.fs.joinpath(dir, postfix == "" and "." or postfix)
+  local path = vim.fs.joinpath(dir, postfix .. ".vim")
 
   local norm = vim.fs.normalize(path, {expand_env = false})
   local escaped = vim.fn.fnameescape(norm)
-  return norm .. ".vim", escaped
+  return norm, escaped
 end
 
 local mk_session = function(kill)
