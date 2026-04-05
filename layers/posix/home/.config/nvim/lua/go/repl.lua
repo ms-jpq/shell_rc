@@ -1,6 +1,7 @@
 local lib = require("go")
 
-local tmux_buf = string.gsub("nvim-" .. vim.fn.tempname(), "/", "-")
+local sep = string.gsub(vim.fn.tempname(), "/", "-")
+local tmux_buf = "nvim-" .. sep
 local tmux_send = function(buf, pane, lo, hi)
   local sep = lib.buf_linefeed(buf)
   local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
@@ -27,7 +28,6 @@ local tmux_send = function(buf, pane, lo, hi)
 end
 
 local pick_pane = function(pane_id, callback)
-  local sep = "u"
   local proc1 = vim.system({"tmux", "display-message", "-p", "-F", "#{window_id}"}):wait()
   assert(proc1.code == 0, vim.inspect(proc1))
   local proc2 =
@@ -47,7 +47,8 @@ local pick_pane = function(pane_id, callback)
 
   local acc = {}
   local win_id = vim.fn.trim(proc1.stdout)
-  for idx, line in ipairs(vim.split(proc2.stdout, "\n", {plain = true})) do
+  local lines = vim.split(proc2.stdout, "\n", {plain = true, trimempty = true})
+  for idx, line in ipairs(lines) do
     local p_id, w_id, w_active, info = unpack(vim.split(line, sep, {plain = true}))
     if p_id ~= pane_id then
       local this = w_id == win_id
@@ -57,6 +58,7 @@ local pick_pane = function(pane_id, callback)
       table.insert(acc, {active, this, idx, pid, p_id, info})
     end
   end
+
   table.sort(
     acc,
     function(lhs, rhs)
@@ -94,7 +96,7 @@ local pick_pane = function(pane_id, callback)
     },
     function(item)
       if item ~= nil then
-        local _, _, _, p_id = unpack(item)
+        local _, _, _, _, p_id = unpack(item)
         callback(p_id)
       end
     end
