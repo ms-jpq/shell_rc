@@ -11,10 +11,11 @@ for _, buf in ipairs(vim.api.nvim_list_bufs()) do
   end
 end
 
-local detect_stdin = function()
+local detect_stdin = function(cwd)
   local acc = {}
   for _, name in pairs(vim.fn.argv(-1)) do
-    acc[name] = true
+    local path = vim.fs.joinpath(cwd, name)
+    acc[path] = true
   end
 
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -48,7 +49,7 @@ local no_session = (function()
       return cached
     end
 
-    cached = vim.fn.getcwd() == vim.uv.os_homedir() or detect_stdin()
+    cached = vim.fn.getcwd() == vim.uv.os_homedir() or detect_stdin(cwd)
 
     return cached
   end
