@@ -33,21 +33,23 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-local toggle_cursorcolumn =
-  vim.schedule_wrap(
-  function()
-    if vim.o.cursorcolumn then
-      vim.opt.virtualedit = vcol
-      vim.opt.cursorcolumn = false
-    else
-      vim.opt.virtualedit = "all"
-      vim.opt.cursorcolumn = true
+do
+  local toggle_cursorcolumn =
+    vim.schedule_wrap(
+    function()
+      if vim.o.cursorcolumn then
+        vim.opt.virtualedit = vcol
+        vim.opt.cursorcolumn = false
+      else
+        vim.opt.virtualedit = "all"
+        vim.opt.cursorcolumn = true
+      end
     end
-  end
-)
+  )
 
-vim.keymap.set("n", [[<leader>y]], toggle_cursorcolumn)
-vim.api.nvim_create_user_command([[ToggleCursorColumn]], toggle_cursorcolumn, {})
+  vim.keymap.set("n", [[<leader>y]], toggle_cursorcolumn)
+  vim.api.nvim_create_user_command([[ToggleCursorColumn]], toggle_cursorcolumn, {})
+end
 
 vim.keymap.set({"n", "v"}, "$", "$<right>")
 
