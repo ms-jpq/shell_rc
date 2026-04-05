@@ -13,11 +13,27 @@ vim.api.nvim_create_user_command(
   {}
 )
 
+local run = function(stdin, args)
+  local ok, p = pcall(vim.system, args, {stdin = stdin})
+  if not ok then
+    vim.notify(p, vim.log.levels.ERROR)
+    return false, ""
+  end
+
+  local proc = p:wait()
+  local ok = proc.code == 0
+
+  if not ok then
+    vim.notify(vim.inspect(proc), vim.log.levels.ERROR)
+  end
+  return ok, proc.stdout
+end
+
 local parse_panes = function()
-  local proc1 = vim.system({"tmux", "display-message", "-p", "-F", "#{window_id}"}):wait()
-  assert(proc1.code == 0)
-  local proc2 =
-    vim.system(
+  local ok1, win = run(nil, {"tmux", "display-message", "-p", "-F", "#{window_id}"})
+  local ok2, listed =
+    run(
+    nil,
     {
       "tmux",
       "list-panes",
@@ -28,13 +44,12 @@ local parse_panes = function()
         rand
       )
     }
-  ):wait()
-  assert(proc2.code == 0)
-
-  local win_id = vim.fn.trim(proc1.stdout)
-  local lines = vim.split(proc2.stdout, "\n", {plain = true, trimempty = true})
-  return win_id, lines
+  )
+  local win_id = vim.fn.trim(win)
+  local lines = vim.split(listed, "\n", {plain = true, trimempty = true})
+  return ok1 and ok2, win_id, lines
 end
+
 local pick_pane = function(buf, pane_id, callback)
   local state = vim.b[buf]
   if state.__tmux_target__ then
@@ -42,7 +57,11 @@ local pick_pane = function(buf, pane_id, callback)
     return
   end
 
-  local win_id, lines = parse_panes()
+  local ok, win_id, lines = parse_panes()
+  if not ok then
+    return
+  end
+
   local acc = {}
   for idx, line in ipairs(lines) do
     local p_id, w_id, w_active, info = unpack(vim.split(line, rand, {plain = true}))
@@ -98,67 +117,27 @@ local pick_pane = function(buf, pane_id, callback)
   vim.ui.select(acc, {format_item = format}, pick)
 end
 
-local process = function(buf, text)
+local process = function(buf, stdin)
   local prefix = vim.fs.joinpath(filters, vim.bo[buf].filetype)
   local found = unpack(vim.api.nvim_get_runtime_file(prefix .. ".*", true))
   if not found then
     found = vim.fs.joinpath(filters, "_.awk")
   end
 
-  local ok, rsp =
-    pcall(
-    function()
-      local proc = vim.system({found}, {stdin = text}):wait()
-      assert(proc.code == 0)
-      return proc.stdout
-    end
-  )
-
-  if not ok then
-    vim.notify(rsp, vim.log.levels.ERROR)
-    return ""
-  end
-  return rsp
+  local ok, text = run(stdin, {found})
+  return ok and text or ""
 end
 
-local tmux_send = function(pane, text)
-  local ok, err =
-    pcall(
-    function()
-      local proc1 = vim.system({"tmux", "load-buffer", "-b", tmux_buf, "--", "-"}, {stdin = text}):wait()
-      assert(proc1.code == 0)
-      local proc2 = vim.system({"tmux", "paste-buffer", "-r", "-p", "-b", tmux_buf, "-t", pane}):wait()
-      assert(proc2.code == 0)
-    end
-  )
-
-  local _, _ =
-    pcall(
-    function()
-      local proc = vim.system({"tmux", "delete-buffer", "-b", tmux_buf}):wait()
-      assert(proc.code == 0)
-    end
-  )
-
-  if not ok then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
+local tmux_send = function(pane_id, text)
+  local _ = run(text, {"tmux", "load-buffer", "-b", tmux_buf, "--", "-"})
+  local _ = run(nil, {"tmux", "paste-buffer", "-r", "-p", "-b", tmux_buf, "-t", pane_id})
+  local _ = run(nil, {"tmux", "delete-buffer", "-b", tmux_buf})
 end
 
-local eof = function(pane)
+local eof = function(pane_id)
   vim.defer_fn(
     function()
-      local ok, err =
-        pcall(
-        function()
-          local proc = vim.system({"tmux", "send-keys", "-t", pane, "--", "Enter"}):wait()
-          assert(proc.code == 0)
-        end
-      )
-
-      if not ok then
-        vim.notify(err, vim.log.levels.ERROR)
-      end
+      local _ = run(nil, {"tmux", "send-keys", "-t", pane_id, "--", "Enter"})
     end,
     99
   )
@@ -204,8 +183,8 @@ local nohighlight = function(buf)
   )
 end
 local repl = function()
-  local pane_id = vim.env.TMUX_PANE
-  if not pane_id then
+  local current_pane = vim.env.TMUX_PANE
+  if not current_pane then
     return
   end
 
@@ -214,7 +193,7 @@ local repl = function()
   row = row - 1
   local match = matching(buf)
 
-  local callback = function(pane)
+  local callback = function(pane_id)
     local sep = lib.buf_linefeed(buf)
     local lo = seek(match, row, -1)
     local hi = seek(match, row, 1)
@@ -227,12 +206,12 @@ local repl = function()
     end
 
     highlight(buf, lo, hi)
-    tmux_send(pane, processed)
+    tmux_send(pane_id, processed)
     nohighlight(buf)
-    eof(pane)
+    eof(pane_id)
   end
 
-  pick_pane(buf, pane_id, callback)
+  pick_pane(buf, current_pane, callback)
 end
 
 vim.keymap.set("n", [[<leader>w]], repl)
