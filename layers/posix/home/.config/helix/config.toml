@@ -87,9 +87,7 @@ C-h     = ["move_prev_word_end", "move_char_left", "move_char_right"]
 C-l     = ["move_next_word_start", "move_char_right"]
 C-u     = ["half_page_up", "align_view_center"]
 
-"+" = "expand_selection"
-X   = "extend_line_above"
-"_" = "shrink_selection"
+X = "extend_line_above"
 
 D = ["yank_to_clipboard", "delete_selection_noyank"]
 Y = ["extend_to_line_end", "yank_to_clipboard"]

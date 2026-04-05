@@ -1,5 +1,16 @@
 #!/usr/bin/env -S -- sed -E -f
 
+/d = :choose/d
+/a = :archive/d
+/A = :unmark/d
+/A = :archive/d
+
+/D = :delete/ {
+  i\
+D = :move 已删除邮件<Enter>
+  d
+}
+
 /\[messages\]/ {
   a\
 <C-r> = :connect<Enter>
@@ -12,29 +23,18 @@ w = :read -t<Enter>
 
   a\
 } = :next 5<Enter>
+}
 
+/\[messages\]|\[view\]/ {
   a\
 E = :envelope<Enter>
 
   a\
 F = :forward -A<Enter>
-}
-
-/\[view\]/ {
-  a\
-E = :envelope<Enter>
 
   a\
-F = :forward -A<Enter>
-}
+RR = :reply<Enter>
 
-/d = :choose/d
-/D = :delete/ {
-  i\
-D = :move 已删除邮件<Enter>
-  d
+  a\
+RQ = :reply -q<Enter>
 }
-
-/a = :archive/d
-/A = :unmark/d
-/A = :archive/d

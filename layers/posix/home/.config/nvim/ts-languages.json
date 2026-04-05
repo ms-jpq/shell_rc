@@ -25,6 +25,7 @@
     "go",
     "gomod",
     "gosum",
+    "gotmpl",
     "gpg",
     "haskell",
     "hcl",
