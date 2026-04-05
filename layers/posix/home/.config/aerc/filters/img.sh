@@ -4,4 +4,4 @@ set -o pipefail
 
 COLS="$(stty size < /dev/tty | cut -d ' ' -f 2)"
 
-exec -- catimg -w "$COLS" -
+exec -- catimg -w $((COLS * 2 - 2)) -
