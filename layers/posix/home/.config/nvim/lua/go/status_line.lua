@@ -10,5 +10,5 @@ local pos = "%5l:%-3c"
 local scroll = "%3p%%"
 
 local lhs = preview .. ql .. name .. modified
-local rhs = lsp_status .. "|" .. ft .. " " .. tabs .. " " .. linefeed .. " @ " .. pos .. "≡ " .. scroll
+local rhs = lsp_status .. " | " .. ft .. " " .. tabs .. " " .. linefeed .. " @ " .. pos .. "≡ " .. scroll
 vim.opt.statusline = lhs .. " %= " .. rhs
