@@ -6,7 +6,7 @@ local ns = vim.api.nvim_create_namespace(rand)
 local tmux_buf = "nvim-" .. rand
 
 vim.api.nvim_create_user_command(
-  "ReplClear",
+  "REPLclear",
   function()
     vim.b.__tmux_target__ = nil
   end,
@@ -179,7 +179,7 @@ local nohighlight = function(buf)
     function()
       vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
     end,
-    99
+    66
   )
 end
 local repl = function()
