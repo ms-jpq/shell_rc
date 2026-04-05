@@ -14,15 +14,15 @@ local classic = (function()
   local pos = "%5l:%-3c"
   local scroll = "%3p%%"
 
-  return ft .. " " .. tabs .. " " .. linefeed .. " @ " .. pos .. "≡ " .. scroll
+  return "| " .. ft .. " " .. tabs .. " " .. linefeed .. " @ " .. pos .. "≡ " .. scroll
 end)()
 
 local rhs = (function()
   local progress = "%{%v:lua.vim.ui.progress_status()%}"
   local diagnostics = "%{%v:lua.vim.diagnostic.status()%}"
-  local busy = "%{&busy > 0 ? '◐ ' : ''}"
+  local busy = "%{&busy > 0 ? ' ◐ ' : ' '}"
 
-  return progress .. " " .. busy .. diagnostics .. " | " .. classic()
+  return progress .. " " .. diagnostics .. busy .. classic
 end)()
 
 vim.opt.statusline = lhs .. " %= " .. rhs
