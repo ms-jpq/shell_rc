@@ -11,6 +11,7 @@
 + b3sum
 + bat
 + bb
++ bubblewrap
 + cgdb
 + chafa
 + cloc
