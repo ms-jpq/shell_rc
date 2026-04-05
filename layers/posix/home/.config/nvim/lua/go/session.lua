@@ -11,6 +11,25 @@ for _, buf in ipairs(vim.api.nvim_list_bufs()) do
   end
 end
 
+local detect_stdin = function()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    local dirty = function()
+      if vim.api.nvim_buf_line_count(buf) > 1 then
+        return true
+      end
+
+      local lines = vim.api.nvim_buf_get_lines(buf, -2, -1, true)
+      return #lines > 0 and #lines[1] > 0
+    end
+
+    if dirty() then
+      return true
+    end
+  end
+
+  return false
+end
+
 local no_session = (function()
   local cached = nil
 
@@ -23,28 +42,17 @@ local no_session = (function()
       return cached
     end
 
-    cached = vim.fn.getcwd() == vim.uv.os_homedir() or vim.fn.argc(-1) > 0 or (function()
-        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-          local stdin = vim.api.nvim_buf_line_count(buf) > 1 or (function()
-              local lines = vim.api.nvim_buf_get_lines(buf, -2, -1, true)
-
-              return #lines > 0 and #lines[1] > 0
-            end)()
-
-          if stdin then
-            return true
-          end
-        end
-        return false
-      end)()
+    cached = vim.fn.getcwd() == vim.uv.os_homedir() or detect_stdin()
 
     return cached
   end
 end)()
 
 local session_path = function(cwd)
+  local argv = vim.fn.argv(-1)
   local name = vim.re.gsub(cwd or vim.fn.getcwd(), "[/\\]", ".")
-  local path = vim.fs.joinpath(vim.fn.stdpath("cache"), "sessions", name)
+  local postfix = table.concat(argv, "&")
+  local path = vim.fs.joinpath(vim.fn.stdpath("cache"), "sessions", name, postfix)
   local norm = vim.fs.normalize(path, {expand_env = false})
   local escaped = vim.fn.fnameescape(norm)
   return norm .. ".vim", escaped
