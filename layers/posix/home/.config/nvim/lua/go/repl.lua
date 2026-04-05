@@ -21,12 +21,12 @@ local run = function(stdin, args)
   end
 
   local proc = p:wait()
-  local ok = proc.code == 0
+  local k = proc.code == 0
 
-  if not ok then
+  if not k then
     vim.notify(vim.inspect(proc), vim.log.levels.ERROR)
   end
-  return ok, proc.stdout
+  return k, proc.stdout
 end
 
 local parse_panes = function()
