@@ -124,8 +124,6 @@ end
 
 local seek = function(match, row, direction)
   local count = direction < 0 and 0 or vim.api.nvim_buf_line_count(0)
-
-  local r = row
   for i = row, count, direction do
     if i == count then
       return i
@@ -133,12 +131,13 @@ local seek = function(match, row, direction)
 
     local line = unpack(vim.api.nvim_buf_get_lines(0, i, i + 1, true))
     if match(line) then
-      break
+      if direction < 0 then
+        return i + (direction * -1)
+      end
+      return i
     end
-
-    r = i
   end
-  return r
+  return row
 end
 
 local matching = function(buf)
