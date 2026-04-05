@@ -77,27 +77,52 @@ vim.api.nvim_create_autocmd(
   }
 )
 
--- locallist
--- vim.keymap.set("n", [[<c-a>]], [[<cmd>lprevious<cr>]])
--- vim.keymap.set("n", [[<c-e>]], [[<cmd>lnext<cr>]])
-
--- quickfix
-vim.keymap.set("n", [[<c-p>]], [[<cmd>cprevious<cr>]])
-vim.keymap.set("n", [[<c-n>]], [[<cmd>cnext<cr>]])
-
 do
+  local find_qfs = function(lo)
+    local key = lo and "loclist" or "quickfix"
+    local wins = vim.api.nvim_tabpage_list_wins(0)
+
+    local acc = {}
+    for _, win in pairs(wins) do
+      local info = unpack(vim.fn.getwininfo(win))
+      if info and info[key] == 1 then
+        acc[win] = info
+      end
+    end
+
+    return acc
+  end
+
+  -- quickfix & loclist
+  vim.keymap.set(
+    "n",
+    [[<c-p>]],
+    function()
+      for _, _ in pairs(find_qfs(true)) do
+        vim.cmd [[silent! lprevious]]
+        return
+      end
+      vim.cmd [[silent! cprevious]]
+    end
+  )
+  vim.keymap.set(
+    "n",
+    [[<c-n>]],
+    function()
+      for _, _ in pairs(find_qfs(true)) do
+        vim.cmd [[silent! lnext]]
+        return
+      end
+      vim.cmd [[silent! cnext]]
+    end
+  )
+
   local toggle_qf = function(lo)
     return function()
       local closed = false
-      local wins = vim.api.nvim_tabpage_list_wins(0)
-
-      for _, win in pairs(wins) do
-        local buf = vim.api.nvim_win_get_buf(win)
-        local ft = vim.bo[buf].filetype
-        if ft == "qf" then
-          vim.api.nvim_win_close(win, true)
-          closed = true
-        end
+      for win, _ in pairs(find_qfs(lo)) do
+        vim.api.nvim_win_close(win, true)
+        closed = true
       end
 
       if not closed then
@@ -107,5 +132,5 @@ do
     end
   end
 
-  vim.keymap.set("n", [[<leader>l]], toggle_qf(true))
+  vim.keymap.set("n", [[<leader>l]], toggle_qf(false))
 end
