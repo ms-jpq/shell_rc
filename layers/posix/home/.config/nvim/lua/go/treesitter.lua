@@ -11,11 +11,7 @@ vim.api.nvim_create_autocmd(
   {
     group = lib.group,
     callback = function(args)
-      local start = function()
-        vim.treesitter.start(args.buf)
-      end
-
-      local _, _ = pcall(start)
+      local _, _ = pcall(vim.treesitter.start, args.buf)
     end
   }
 )

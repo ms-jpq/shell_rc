@@ -178,11 +178,7 @@ local repl = function()
     end
 
     highlight(buf, lo, hi)
-    pcall(
-      function()
-        tmux_send(pane, text)
-      end
-    )
+    pcall(tmux_send, pane, text)
     nohighlight(buf)
   end
 
