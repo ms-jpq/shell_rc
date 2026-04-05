@@ -27,7 +27,7 @@ local tmux_send = function(buf, pane, lo, hi)
   end
 end
 
-local pick_pane = function()
+local pick_pane = function(pane_id, callback)
   local sep = "u"
   local proc1 = vim.system({"tmux", "display-message", "-p", "-F", "#{window_id}"}):wait()
   assert(proc1.code == 0, vim.inspect(proc1))
@@ -51,16 +51,67 @@ local pick_pane = function()
     if p_id ~= pane_id then
       local this = w_id == win_id
       local active = w_active == "1"
+      local pid = tonumber(string.sub(p_id, 2))
+
+      table.insert(acc, {active, this, idx, pid, p_id, info})
     end
   end
+  table.sort(
+    acc,
+    function(lhs, rhs)
+      local l_active, l_this, l_idx, l_pid = unpack(lhs)
+      local r_active, r_this, r_idx, r_pid = unpack(rhs)
+
+      if l_active ~= r_active then
+        return l_active
+      elseif l_this ~= r_this then
+        return l_this
+      elseif l_idx ~= r_idx then
+        return l_idx < r_idx
+      else
+        return l_pid < r_pid
+      end
+    end
+  )
+
+  vim.ui.select(
+    acc,
+    {
+      format_item = function(item)
+        local active, this, _, _, _, info = unpack(item)
+        local postfix = (function()
+          if this then
+            return "✱"
+          elseif active then
+            return "◉"
+          else
+            return nil
+          end
+        end)()
+        return table.concat({info, postfix}, " ")
+      end
+    },
+    function(item)
+      if item ~= nil then
+        local _, _, _, p_id = unpack(item)
+        callback(p_id)
+      end
+    end
+  )
+end
+local repl = function()
+  local pane_id = vim.env.TMUX_PANE
+  if not pane_id then
+    return
+  end
+
+  local buf = vim.api.nvim_get_current_buf()
+  pick_pane(
+    pane_id,
+    function(pane)
+      tmux_send(buf, pane, 0, -1)
+    end
+  )
 end
 
-vim.keymap.set(
-  "n",
-  [[<leader>e]],
-  function()
-    local buf = vim.api.nvim_get_current_buf()
-    local pane = pick_pane()
-    tmux_send(buf, pane, 0, -1)
-  end
-)
+vim.keymap.set("n", [[<leader>o]], repl)
