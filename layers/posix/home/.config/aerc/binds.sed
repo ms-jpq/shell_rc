@@ -15,6 +15,9 @@ w = :read -t<Enter>
 
   a\
 E = :envelope<Enter>
+
+  a\
+F = :forward -A<Enter>
 }
 
 /\[view\]/ {
