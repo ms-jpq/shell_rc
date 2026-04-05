@@ -62,8 +62,8 @@ do
     vim.notify(err, vim.log.levels.ERROR)
   end
 
-  safe_require("go.pack.theme")
   safe_require("go.pack.treesitter")
+  safe_require("go.pack.theme")
   lsp_on()
 end
 

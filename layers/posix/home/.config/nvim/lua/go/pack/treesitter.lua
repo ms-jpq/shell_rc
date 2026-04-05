@@ -1,30 +1,4 @@
-local lib = require("go")
-
 require("nvim-treesitter").setup {}
-
-do
-  local filetypes = {}
-  for parser, _ in pairs(require("nvim-treesitter.parsers")) do
-    for _, ft in pairs(vim.treesitter.language.get_filetypes(parser)) do
-      table.insert(filetypes, ft)
-    end
-  end
-
-  vim.api.nvim_create_autocmd(
-    "FileType",
-    {
-      group = lib.group,
-      pattern = filetypes,
-      callback = function(args)
-        pcall(
-          function()
-            vim.treesitter.start(args.buf)
-          end
-        )
-      end
-    }
-  )
-end
 
 require("treesitter-context").setup {
   enable = true,
