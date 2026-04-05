@@ -75,7 +75,6 @@ vim.api.nvim_create_autocmd(
       function()
         packloadopt()
 
-        safe_require("go.pack.copilot")
         safe_require("go.pack.coq-3p")
         safe_require("go.pack.easyalign")
         safe_require("go.pack.fzf")
