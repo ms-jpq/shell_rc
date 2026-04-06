@@ -1,5 +1,9 @@
 local lib = require("go")
 
+-- set terminal title
+vim.opt.title = true
+vim.opt.titlestring = [[-- %t]]
+
 vim.api.nvim_create_autocmd(
   {"BufEnter"},
   {

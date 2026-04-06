@@ -1,6 +1,10 @@
 local lib = require("go")
 local to = require("go.text_objects")
 
+-- show invisible characters
+vim.opt.list = true
+vim.opt.listchars = {trail = "·", nbsp = "␣", tab = "→ "}
+
 -- merge spaces on join
 vim.opt.joinspaces = true
 
