@@ -15,4 +15,4 @@ run = "shell -- chmod -- -x %s"
 [[mgr.prepend_keymap]]
 desc = "Copy the relative path"
 on   = ["c", "r"]
-run  = "shell --block -- ~/.config/yazi/libexec/copy-relative.sh '%h'"
+run  = "shell -- ~/.config/yazi/libexec/copy-relative.sh '%h'"

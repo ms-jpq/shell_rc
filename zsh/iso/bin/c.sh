@@ -2,6 +2,10 @@
 
 set -o pipefail
 
+if [[ -v TMUX_PANE ]] && command -v -- tmux; then
+  exec -- tmux load-buffer -w -- -
+fi
+
 if command -v -- pbcopy > /dev/null; then
   exec -- pbcopy
 elif command -v -- wl-copy > /dev/null; then
