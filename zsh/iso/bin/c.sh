@@ -5,7 +5,7 @@ set -o pipefail
 if [[ -x pbcopy ]]; then
   exec -- pbcopy
 elif [[ -x wl-copy ]]; then
-  exec -- pbcopy
+  exec -- wl-copy
 fi
 
 T=0
