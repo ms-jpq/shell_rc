@@ -4,7 +4,7 @@ local lib = require("go")
 vim.opt.termguicolors = true
 
 -- remove welcome message
-vim.opt.shortmess:append "I"
+vim.opt.shortmess:append "AIW"
 
 -- always show tabline
 vim.opt.showtabline = 2

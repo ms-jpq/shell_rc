@@ -1,8 +1,5 @@
 local lib = require("go")
 
--- failable options instead ask for intervention
-vim.opt.confirm = true
-
 -- limit session restoration info
 vim.opt.sessionoptions:remove {"blank", "buffers", "curdir", "help", "terminal"}
 vim.opt.sessionoptions:append {"skiprtp"}

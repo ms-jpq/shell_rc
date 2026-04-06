@@ -1,5 +1,8 @@
 local lib = require("go")
 
+-- failable options instead ask for intervention
+vim.opt.confirm = true
+
 -- auto save file
 vim.opt.autowrite = true
 vim.opt.autowriteall = true
