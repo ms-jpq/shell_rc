@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- nvim -l
 
 local jit = require "jit"
-local run, bin = vim.env.RUN, vim.env.BIN
+local bin = vim.env.BIN
 
 local repo = [[JohnnyMorganz/StyLua]]
 local prefix = [[https://github.com/]] .. repo .. [[/releases/latest/download/stylua]]
