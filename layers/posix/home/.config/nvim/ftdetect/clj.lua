@@ -1,7 +1,5 @@
-vim.filetype.add(
-  {
-    extension = {
-      boot = "clojure"
-    }
-  }
-)
+vim.filetype.add {
+  extension = {
+    boot = "clojure",
+  },
+}

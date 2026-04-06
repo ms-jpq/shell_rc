@@ -13,7 +13,7 @@ local ftdetect = function(filename, bufnr)
       python = "python3?",
       r = "Rscript",
       ruby = "ruby",
-      sh = "(pw)@<!(ba|z)?sh"
+      sh = "(pw)@<!(ba|z)?sh",
     }
 
     for ft, pattern in pairs(matches) do
@@ -23,17 +23,17 @@ local ftdetect = function(filename, bufnr)
       end
     end
 
-    return vim.filetype.match({filename = filename})
+    return vim.filetype.match { filename = filename }
   end
 end
 vim.filetype.add {
   pattern = {
     ["[^.]*"] = {
       priority = -math.huge,
-      ftdetect
-    }
+      ftdetect,
+    },
   },
   extension = {
-    cgi = ftdetect
-  }
+    cgi = ftdetect,
+  },
 }

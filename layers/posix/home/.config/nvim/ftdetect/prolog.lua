@@ -1,7 +1,5 @@
-vim.filetype.add(
-  {
-    extension = {
-      pro = "prolog"
-    }
-  }
-)
+vim.filetype.add {
+  extension = {
+    pro = "prolog",
+  },
+}

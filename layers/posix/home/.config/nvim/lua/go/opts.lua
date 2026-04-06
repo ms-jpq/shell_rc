@@ -1,4 +1,4 @@
-local lib = require("go")
+local lib = require "go"
 
 -- do not exec arbitrary code
 vim.opt.modeline = false
@@ -59,7 +59,7 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- dont follow tags
-vim.opt.complete:remove("i")
+vim.opt.complete:remove "i"
 
 -- vimdiff options
 vim.opt.diffopt:append("followwrap", "algorithm:patience")

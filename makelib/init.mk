@@ -59,3 +59,8 @@ $(VAR)/bin/shfmt: | $(VAR)/bin
 	URI='https://github.com/mvdan/sh/releases/latest/download/shfmt_$(V_SHFMT)_$(OS)_$(GOARCH)'
 	$(CURL) --output '$@' -- "$$URI"
 	chmod +x '$@'
+
+$(VAR)/bin/stylua: | $(VAR)/bin
+	URI='https://github.com/JohnnyMorganz/StyLua/releases/latest/download/stylua-$(HADO_OS)-$(HOSTTYPE).zip'
+	$(CURL) -- "$$URI" | bsdtar --extract --file - --directory $(VAR)/bin
+	chmod +x '$@'

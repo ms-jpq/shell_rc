@@ -6,8 +6,8 @@ do
 end
 
 do
-  vim.cmd.colorscheme([[iceberg]])
+  vim.cmd.colorscheme [[iceberg]]
 
   -- theme
-  vim.cmd.source(vim.fs.joinpath(vim.fn.stdpath("config"), "plugin", "theme.vim"))
+  vim.cmd.source(vim.fs.joinpath(vim.fn.stdpath "config", "plugin", "theme.vim"))
 end

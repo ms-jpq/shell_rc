@@ -1,11 +1,11 @@
 #!/usr/bin/env -S -- nvim -l
 
-local jit = require("jit")
+local jit = require "jit"
 local run, lib = vim.env.RUN, vim.env.LIB
 
 local repo = [[LuaLS/lua-language-server]]
 local base = [[https://github.com/]] .. repo .. [[/releases/latest/download/lua-language-server]]
-local version = vim.system({"gh-latest.sh", ".", repo}):wait().stdout
+local version = vim.system({ "gh-latest.sh", ".", repo }):wait().stdout
 local prefix = base .. "-" .. version
 
 local uri = (function()
@@ -19,16 +19,16 @@ local uri = (function()
 end)()
 
 local std = function(out, err)
-  for _, txt in pairs {o = out, e = err} do
+  for _, txt in pairs { o = out, e = err } do
     print(txt)
   end
 end
 
-local proc1 = vim.system({"get.sh", uri}, {stderr = std}):wait()
+local proc1 = vim.system({ "get.sh", uri }, { stderr = std }):wait()
 assert(proc1.code == 0, vim.inspect(proc1))
 
-local proc2 = vim.system({"unpack.sh", run, proc1.stdout}, {stdout = std, stderr = std}):wait()
+local proc2 = vim.system({ "unpack.sh", run, proc1.stdout }, { stdout = std, stderr = std }):wait()
 assert(proc2.code == 0, vim.inspect(proc2))
 
-vim.fs.rm(lib, {recursive = true, force = true})
+vim.fs.rm(lib, { recursive = true, force = true })
 assert(vim.uv.fs_rename(run, lib))

@@ -1,7 +1,5 @@
-vim.filetype.add(
-  {
-    extension = {
-      tfrc = "hcl"
-    }
-  }
-)
+vim.filetype.add {
+  extension = {
+    tfrc = "hcl",
+  },
+}

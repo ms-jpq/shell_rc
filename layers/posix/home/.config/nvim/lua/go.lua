@@ -1,14 +1,14 @@
 -- https://github.com/luvit/luv/blob/master/docs/docs.md
 
 local group = [[lv_go]]
-vim.api.nvim_create_augroup(group, {clear = true})
+vim.api.nvim_create_augroup(group, { clear = true })
 
 return {
   group = group,
   is_win = vim.fn.has [[win32]] == 1 or vim.fn.has [[win32unix]] == 1,
   read_json = function(path)
     local json = vim.fn.readblob(path)
-    return vim.json.decode(json, {luanil = {object = true, array = true}})
+    return vim.json.decode(json, { luanil = { object = true, array = true } })
   end,
   buf_linefeed = function(buf)
     local ff = vim.bo[buf].fileformat
@@ -24,5 +24,5 @@ return {
         assert(false, ff)
       end
     end
-  end
+  end,
 }

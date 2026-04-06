@@ -1,4 +1,4 @@
-local lib = require("go")
+local lib = require "go"
 
 -- failable options instead ask for intervention
 vim.opt.confirm = true
@@ -11,11 +11,11 @@ vim.opt.autowriteall = true
 vim.opt.backupskip = ""
 
 vim.api.nvim_create_autocmd(
-  {"FocusGained", "VimResume", "WinEnter"},
-  {group = lib.group, command = "silent! checktime"}
+  { "FocusGained", "VimResume", "WinEnter" },
+  { group = lib.group, command = "silent! checktime" }
 )
 
-vim.api.nvim_create_autocmd({"VimLeavePre"}, {group = lib.group, once = true, command = [[silent! wall! ++p]]})
+vim.api.nvim_create_autocmd({ "VimLeavePre" }, { group = lib.group, once = true, command = [[silent! wall! ++p]] })
 
 do
   local check_time = function(lo)
@@ -33,8 +33,8 @@ do
     end
   end
 
-  vim.api.nvim_create_autocmd({"BufLeave", "FocusLost"}, {group = lib.group, callback = check_time(false)})
-  vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {group = lib.group, callback = check_time(true)})
+  vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost" }, { group = lib.group, callback = check_time(false) })
+  vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, { group = lib.group, callback = check_time(true) })
 
   local cycle = 600
   local check_times = nil

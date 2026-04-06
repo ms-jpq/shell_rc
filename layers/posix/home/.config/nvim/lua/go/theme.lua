@@ -1,4 +1,4 @@
-local lib = require("go")
+local lib = require "go"
 
 -- use 256 colours
 vim.opt.termguicolors = true
@@ -31,15 +31,12 @@ vim.opt.guicursor = ""
 -- completion menu transparency
 vim.opt.pumblend = 5
 
-vim.api.nvim_create_autocmd(
-  {"TextYankPost"},
-  {
-    group = lib.group,
-    callback = function()
-      vim.hl.on_yank {higroup = "HighlightedyankRegion"}
-    end
-  }
-)
+vim.api.nvim_create_autocmd({ "TextYankPost" }, {
+  group = lib.group,
+  callback = function()
+    vim.hl.on_yank { higroup = "HighlightedyankRegion" }
+  end,
+})
 
 -- preview height
 vim.opt.previewheight = 11

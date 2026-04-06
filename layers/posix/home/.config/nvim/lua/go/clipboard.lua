@@ -1,4 +1,4 @@
-local lib = require("go")
+local lib = require "go"
 
 local esc = "\027"
 local sep = "\n"
@@ -41,12 +41,12 @@ local osc52 = function(data)
 end
 
 local send = function(stdin, ...)
-  vim.system({...}, {stdin = stdin})
+  vim.system({ ... }, { stdin = stdin })
 end
 
 local recv = function(text, ...)
-  local proc = vim.system({...}, {text = text}):wait()
-  return vim.split(proc.stdout, sep, {plain = true})
+  local proc = vim.system({ ... }, { text = text }):wait()
+  return vim.split(proc.stdout, sep, { plain = true })
 end
 
 local copy = function(lines)
@@ -78,7 +78,7 @@ local paste = function()
         "powershell.exe",
         "-NoProfile",
         "-Command",
-        "Get-Clipboard -Raw"
+        "Get-Clipboard -Raw",
       }
       return recv(true, unpack(pwsh))
     end
@@ -95,16 +95,16 @@ vim.g.clipboard = {
   cache_enabled = true,
   copy = {
     ["+"] = copy,
-    ["*"] = copy
+    ["*"] = copy,
   },
   paste = {
     ["+"] = paste,
-    ["*"] = paste
-  }
+    ["*"] = paste,
+  },
 }
 
 local undo_quoting = function(line)
-  return vim.split(line, "\027%[27;5;106~", {plain = true})
+  return vim.split(line, "\027%[27;5;106~", { plain = true })
 end
 
 vim.paste = (function(paste)

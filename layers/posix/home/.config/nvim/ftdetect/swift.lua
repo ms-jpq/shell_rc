@@ -1,7 +1,5 @@
-vim.filetype.add(
-  {
-    extension = {
-      swiftinterface = "swift"
-    }
-  }
-)
+vim.filetype.add {
+  extension = {
+    swiftinterface = "swift",
+  },
+}

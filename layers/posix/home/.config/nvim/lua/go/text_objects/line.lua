@@ -1,4 +1,4 @@
-local to = require("go.text_objects")
+local to = require "go.text_objects"
 
 Go.op_select_line = function(hold_pos, is_inside)
   local hold = to.hold_position()

@@ -1,10 +1,8 @@
-vim.filetype.add(
-  {
-    extension = {
-      zsh = "sh"
-    },
-    filename = {
-      [".zshenv"] = "sh"
-    }
-  }
-)
+vim.filetype.add {
+  extension = {
+    zsh = "sh",
+  },
+  filename = {
+    [".zshenv"] = "sh",
+  },
+}

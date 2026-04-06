@@ -118,8 +118,16 @@
     },
     "lua": {
       "formatter": {
-        "args": ["--indent-count=2", "--stdin"],
-        "command": "luafmt"
+        "args": [
+          "--syntax=LuaJit",
+          "--indent-type=Spaces",
+          "--indent-width=2",
+          "--sort-requires",
+          "--call-parentheses=None",
+          "--",
+          "-"
+        ],
+        "command": "stylua"
       }
     },
     "mail": {

@@ -1,25 +1,25 @@
-local lib = require("go")
+local lib = require "go"
 
 -- hide background buffers
 vim.opt.hidden = true
 -- reuse buf
-vim.opt.switchbuf:append {"useopen", "usetab"}
+vim.opt.switchbuf:append { "useopen", "usetab" }
 
 -- modern split direction
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 -- move between windows
-for _, key in pairs {"<c-up>", "<c-k>"} do
+for _, key in pairs { "<c-up>", "<c-k>" } do
   vim.keymap.set("n", key, [[<cmd>wincmd k<cr>]])
 end
-for _, key in pairs {"<c-down>", "<c-j>"} do
+for _, key in pairs { "<c-down>", "<c-j>" } do
   vim.keymap.set("n", key, [[<cmd>wincmd j<cr>]])
 end
-for _, key in pairs {"<c-left>", "<c-h>"} do
+for _, key in pairs { "<c-left>", "<c-h>" } do
   vim.keymap.set("n", key, [[<cmd>wincmd h<cr>]])
 end
-for _, key in pairs {"<c-right>", "<c-l>"} do
+for _, key in pairs { "<c-right>", "<c-l>" } do
   vim.keymap.set("n", key, [[<cmd>wincmd l<cr>]])
 end
 
@@ -59,23 +59,17 @@ for i = 1, 9 do
   vim.keymap.set("n", [[<leader>]] .. i, [[<cmd>tabnext ]] .. i .. [[<cr>]])
 end
 
-vim.api.nvim_create_autocmd(
-  {"VimResized"},
-  {
-    group = lib.group,
-    command = [[wincmd =]]
-  }
-)
+vim.api.nvim_create_autocmd({ "VimResized" }, {
+  group = lib.group,
+  command = [[wincmd =]],
+})
 
 -- pin quickfix to window
-vim.api.nvim_create_autocmd(
-  {"FileType"},
-  {
-    group = lib.group,
-    pattern = {"qf"},
-    command = [[setlocal winfixbuf]]
-  }
-)
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  group = lib.group,
+  pattern = { "qf" },
+  command = [[setlocal winfixbuf]],
+})
 
 do
   local find_qfs = function(lo)
@@ -94,28 +88,20 @@ do
   end
 
   -- quickfix & loclist
-  vim.keymap.set(
-    "n",
-    [[<c-p>]],
-    function()
-      for _, _ in pairs(find_qfs(true)) do
-        vim.cmd [[silent! lprevious]]
-        return
-      end
-      vim.cmd [[silent! cprevious]]
+  vim.keymap.set("n", [[<c-p>]], function()
+    for _, _ in pairs(find_qfs(true)) do
+      vim.cmd [[silent! lprevious]]
+      return
     end
-  )
-  vim.keymap.set(
-    "n",
-    [[<c-n>]],
-    function()
-      for _, _ in pairs(find_qfs(true)) do
-        vim.cmd [[silent! lnext]]
-        return
-      end
-      vim.cmd [[silent! cnext]]
+    vim.cmd [[silent! cprevious]]
+  end)
+  vim.keymap.set("n", [[<c-n>]], function()
+    for _, _ in pairs(find_qfs(true)) do
+      vim.cmd [[silent! lnext]]
+      return
     end
-  )
+    vim.cmd [[silent! cnext]]
+  end)
 
   local toggle_qf = function(lo)
     return function()

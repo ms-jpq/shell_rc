@@ -1,7 +1,5 @@
-vim.filetype.add(
-  {
-    pattern = {
-      [".*/ssh/.*%.conf"] = "sshconfig"
-    }
-  }
-)
+vim.filetype.add {
+  pattern = {
+    [".*/ssh/.*%.conf"] = "sshconfig",
+  },
+}

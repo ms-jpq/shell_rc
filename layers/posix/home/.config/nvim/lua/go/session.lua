@@ -1,8 +1,8 @@
-local lib = require("go")
+local lib = require "go"
 
 -- limit session restoration info
-vim.opt.sessionoptions:remove {"blank", "buffers", "curdir", "help", "terminal"}
-vim.opt.sessionoptions:append {"skiprtp"}
+vim.opt.sessionoptions:remove { "blank", "buffers", "curdir", "help", "terminal" }
+vim.opt.sessionoptions:append { "skiprtp" }
 
 -- scratch buffer
 for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -15,7 +15,7 @@ local detect_stdin = function(cwd)
   local acc = {}
   for _, name in pairs(vim.fn.argv(-1)) do
     local path = vim.fs.joinpath(cwd, name)
-    local norm = vim.fs.normalize(path, {expand_env = false})
+    local norm = vim.fs.normalize(path, { expand_env = false })
     acc[norm] = true
   end
 
@@ -60,10 +60,10 @@ local session_path = function(cwd)
   local argv = vim.fn.argv(-1)
   local name = vim.re.gsub(cwd or vim.fn.getcwd(), "[/\\]", ".")
   local postfix = table.concat(argv, "&")
-  local dir = vim.fs.joinpath(vim.fn.stdpath("cache"), "sessions", name)
+  local dir = vim.fs.joinpath(vim.fn.stdpath "cache", "sessions", name)
   local path = vim.fs.joinpath(dir, postfix .. ".vim")
 
-  local norm = vim.fs.normalize(path, {expand_env = false})
+  local norm = vim.fs.normalize(path, { expand_env = false })
   local escaped = vim.fn.fnameescape(norm)
   return norm, escaped
 end
@@ -98,59 +98,43 @@ local prune_buffers = function()
   end
 end
 
-vim.api.nvim_create_user_command(
-  "PS",
-  function()
-    prune_buffers()
-    mk_session(true)
-  end,
-  {}
-)
+vim.api.nvim_create_user_command("PS", function()
+  prune_buffers()
+  mk_session(true)
+end, {})
 
-vim.api.nvim_create_user_command(
-  "KS",
-  function()
-    vim.cmd [[silent! %bwipeout!]]
-    mk_session(true)
-  end,
-  {}
-)
+vim.api.nvim_create_user_command("KS", function()
+  vim.cmd [[silent! %bwipeout!]]
+  mk_session(true)
+end, {})
 
-vim.api.nvim_create_autocmd({"VimSuspend", "FocusLost", "CursorHold"}, {group = lib.group, callback = mk_session})
+vim.api.nvim_create_autocmd({ "VimSuspend", "FocusLost", "CursorHold" }, { group = lib.group, callback = mk_session })
 
-vim.api.nvim_create_autocmd(
-  {"QuitPre"},
-  {
-    group = lib.group,
-    once = true,
-    callback = function()
-      if no_session() then
-        return
-      end
-
-      prune_buffers()
-      mk_session()
+vim.api.nvim_create_autocmd({ "QuitPre" }, {
+  group = lib.group,
+  once = true,
+  callback = function()
+    if no_session() then
+      return
     end
-  }
-)
 
-vim.api.nvim_create_autocmd(
-  {"VimEnter"},
-  {
-    group = lib.group,
-    once = true,
-    callback = vim.schedule_wrap(
-      function()
-        local cwd = vim.fn.getcwd()
-        if no_session(cwd) then
-          return
-        end
+    prune_buffers()
+    mk_session()
+  end,
+})
 
-        local path, escaped = session_path(cwd)
-        if vim.fn.filereadable(path) == 1 then
-          vim.cmd([[silent! source ]] .. escaped)
-        end
-      end
-    )
-  }
-)
+vim.api.nvim_create_autocmd({ "VimEnter" }, {
+  group = lib.group,
+  once = true,
+  callback = vim.schedule_wrap(function()
+    local cwd = vim.fn.getcwd()
+    if no_session(cwd) then
+      return
+    end
+
+    local path, escaped = session_path(cwd)
+    if vim.fn.filereadable(path) == 1 then
+      vim.cmd([[silent! source ]] .. escaped)
+    end
+  end),
+})

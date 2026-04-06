@@ -1,4 +1,4 @@
-local to = require("go.text_objects")
+local to = require "go.text_objects"
 
 Go.op_entire = function(hold_pos)
   local hold = to.hold_position()

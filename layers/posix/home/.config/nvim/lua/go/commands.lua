@@ -1,7 +1,3 @@
-vim.api.nvim_create_user_command(
-  "FTdetect",
-  function()
-    vim.cmd [[filetype detect]]
-  end,
-  {}
-)
+vim.api.nvim_create_user_command("FTdetect", function()
+  vim.cmd [[filetype detect]]
+end, {})

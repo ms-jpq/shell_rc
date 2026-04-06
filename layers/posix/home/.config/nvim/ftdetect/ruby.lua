@@ -1,7 +1,5 @@
-vim.filetype.add(
-  {
-    extension = {
-      rbi = "ruby"
-    }
-  }
-)
+vim.filetype.add {
+  extension = {
+    rbi = "ruby",
+  },
+}

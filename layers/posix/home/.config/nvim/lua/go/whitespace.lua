@@ -1,9 +1,9 @@
-local lib = require("go")
-local to = require("go.text_objects")
+local lib = require "go"
+local to = require "go.text_objects"
 
 -- show invisible characters
 vim.opt.list = true
-vim.opt.listchars = {trail = "·", nbsp = "␣", tab = "→ "}
+vim.opt.listchars = { trail = "·", nbsp = "␣", tab = "→ " }
 
 -- merge spaces on join
 vim.opt.joinspaces = true
@@ -15,7 +15,7 @@ vim.opt.expandtab = true
 vim.opt.smarttab = true
 
 local set_tabsize = function(tabsize, setter)
-  for _, key in pairs {"tabstop", "softtabstop", "shiftwidth"} do
+  for _, key in pairs { "tabstop", "softtabstop", "shiftwidth" } do
     setter[key] = tabsize
   end
 end
@@ -50,31 +50,26 @@ local detect_tabs = function()
         divisibility = divisibility + 1
       end
     end
-    table.insert(indent_lvs, {ts, divisibility})
+    table.insert(indent_lvs, { ts, divisibility })
   end
 
-  table.sort(
-    indent_lvs,
-    function(lhs, rhs)
-      local lt, ld = unpack(lhs)
-      local rt, rd = unpack(rhs)
+  table.sort(indent_lvs, function(lhs, rhs)
+    local lt, ld = unpack(lhs)
+    local rt, rd = unpack(rhs)
 
-      if ld == rd then
-        return lt < rt
-      else
-        return ld > rd
-      end
+    if ld == rd then
+      return lt < rt
+    else
+      return ld > rd
     end
-  )
+  end)
 
   local winner = unpack(indent_lvs)
   local tabsize = unpack(winner)
   local buf = vim.api.nvim_get_current_buf()
-  vim.schedule(
-    function()
-      set_tabsize(tabsize, vim.bo[buf])
-    end
-  )
+  vim.schedule(function()
+    set_tabsize(tabsize, vim.bo[buf])
+  end)
 end
 
-vim.api.nvim_create_autocmd({"BufReadPost"}, {group = lib.group, callback = detect_tabs})
+vim.api.nvim_create_autocmd({ "BufReadPost" }, { group = lib.group, callback = detect_tabs })

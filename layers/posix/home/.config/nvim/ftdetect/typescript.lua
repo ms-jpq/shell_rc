@@ -1,8 +1,6 @@
-vim.filetype.add(
-  {
-    extension = {
-      cts = "typescript",
-      mts = "typescript"
-    }
-  }
-)
+vim.filetype.add {
+  extension = {
+    cts = "typescript",
+    mts = "typescript",
+  },
+}

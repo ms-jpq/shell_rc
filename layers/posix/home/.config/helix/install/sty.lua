@@ -1,6 +1,6 @@
 #!/usr/bin/env -S -- nvim -l
 
-local jit = require("jit")
+local jit = require "jit"
 local run, bin = vim.env.RUN, vim.env.BIN
 
 local repo = [[JohnnyMorganz/StyLua]]
@@ -18,18 +18,18 @@ local uri = (function()
 end)()
 
 local std = function(out, err)
-  for _, txt in pairs {o = out, e = err} do
+  for _, txt in pairs { o = out, e = err } do
     print(txt)
   end
 end
 
-local proc1 = vim.system({"get.sh", uri}, {stderr = std}):wait()
+local proc1 = vim.system({ "get.sh", uri }, { stderr = std }):wait()
 assert(proc1.code == 0, vim.inspect(proc1))
 
 vim.fn.mkdir(bin, "p", 0755)
 
-local proc2 = vim.system({"chmod", "--", "755", bin}, {stdout = std, stderr = std}):wait()
+local proc2 = vim.system({ "chmod", "--", "755", bin }, { stdout = std, stderr = std }):wait()
 assert(proc2.code == 0, vim.inspect(proc2))
 
-local proc3 = vim.system({"unpack.sh", bin, proc1.stdout}, {stdout = std, stderr = std}):wait()
+local proc3 = vim.system({ "unpack.sh", bin, proc1.stdout }, { stdout = std, stderr = std }):wait()
 assert(proc3.code == 0, vim.inspect(proc3))

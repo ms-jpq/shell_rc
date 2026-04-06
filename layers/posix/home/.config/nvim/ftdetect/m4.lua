@@ -1,7 +1,5 @@
-vim.filetype.add(
-  {
-    pattern = {
-      [".*%.m4%.conf"] = "m4"
-    }
-  }
-)
+vim.filetype.add {
+  pattern = {
+    [".*%.m4%.conf"] = "m4",
+  },
+}

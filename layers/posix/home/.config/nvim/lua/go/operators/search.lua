@@ -1,5 +1,5 @@
-local lib = require("go")
-local to = require("go.text_objects")
+local lib = require "go"
+local to = require "go.text_objects"
 
 local magic_escape = function(text)
   return vim.fn.escape(text, "\\/\n\r\t&")
@@ -44,8 +44,8 @@ do
   Go.op_blines = searcher [[BL!]]
   Go.op_rg = searcher [[RG!]]
 
-  for key, val in pairs {op_blines = "gF", op_rg = "gf"} do
-    vim.keymap.set("n", val, [[<cmd>set opfunc=v:lua.Go.]] .. key .. [[<cr>g@]], {nowait = true, noremap = true})
-    vim.keymap.set("x", val, to.norm .. [[<cmd>lua Go.]] .. key .. [[(nil)<cr>]], {nowait = true, noremap = true})
+  for key, val in pairs { op_blines = "gF", op_rg = "gf" } do
+    vim.keymap.set("n", val, [[<cmd>set opfunc=v:lua.Go.]] .. key .. [[<cr>g@]], { nowait = true, noremap = true })
+    vim.keymap.set("x", val, to.norm .. [[<cmd>lua Go.]] .. key .. [[(nil)<cr>]], { nowait = true, noremap = true })
   end
 end

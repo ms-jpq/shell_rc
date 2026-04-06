@@ -1,4 +1,4 @@
-local to = require("go.text_objects")
+local to = require "go.text_objects"
 
 local iter_around_lines = function(is_inside, tabsize, row, init_indent, direction)
   local count = vim.api.nvim_buf_line_count(0)

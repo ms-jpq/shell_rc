@@ -8,5 +8,5 @@ vim.opt.foldtext = ""
 vim.opt.foldlevel = 9
 
 -- auto open / close folds
-vim.opt.foldopen:append {"insert", "jump"}
+vim.opt.foldopen:append { "insert", "jump" }
 -- vim.opt.foldclose = "all"

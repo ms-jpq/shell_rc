@@ -1,4 +1,4 @@
-local to = require("go.text_objects")
+local to = require "go.text_objects"
 local cmd = function(name, hold)
   return [[<cmd>lua Go.]] .. name .. [[(]] .. tostring(hold) .. [[)<cr>]]
 end

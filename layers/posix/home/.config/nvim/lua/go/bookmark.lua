@@ -1,4 +1,4 @@
-local lib = require("go")
+local lib = require "go"
 local az = "abcdefghijklmnopqrstuvwxyz"
 
 local hl = "IncSearch"
@@ -29,7 +29,7 @@ local mark_signs = function()
       sign_text = name,
       hl_mode = "combine",
       sign_hl_group = hl,
-      number_hl_group = hl
+      number_hl_group = hl,
     }
 
     if row >= 0 and row <= count then
@@ -38,4 +38,4 @@ local mark_signs = function()
   end
 end
 
-vim.api.nvim_create_autocmd({"BufEnter", "CursorHold", "CursorHoldI"}, {group = lib.group, callback = mark_signs})
+vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "CursorHoldI" }, { group = lib.group, callback = mark_signs })

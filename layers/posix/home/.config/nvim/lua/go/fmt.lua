@@ -1,4 +1,4 @@
-local lib = require("go")
+local lib = require "go"
 
 local timeout = 8888
 
@@ -6,7 +6,7 @@ local data = nil
 
 local fmt_command = function(buf)
   if data == nil then
-    local loadpath = vim.fs.joinpath(vim.fn.stdpath("config"), "apriori", "fmt.json")
+    local loadpath = vim.fs.joinpath(vim.fn.stdpath "config", "apriori", "fmt.json")
     data = lib.read_json(loadpath)
   end
 
@@ -16,19 +16,20 @@ local fmt_command = function(buf)
 
   if spec ~= nil then
     if vim.fn.executable(spec.command) == 1 then
-      local mapped =
-        vim.iter({{spec.command}, spec.args}):flatten():map(
-        function(val)
+      local mapped = vim
+        .iter({ { spec.command }, spec.args })
+        :flatten()
+        :map(function(val)
           local l1 = string.gsub(val, [[%%{buffer_name}]], name)
           return l1
-        end
-      ):totable()
+        end)
+        :totable()
 
       return mapped
     end
   end
 
-  return {"sed", "-E", "-e", [[:l1]], "-e", [[/./,$!d]], "-e", [[/^\n*$/{$d;N;}]], "-e", [[/\n$/bl1]]}
+  return { "sed", "-E", "-e", [[:l1]], "-e", [[/./,$!d]], "-e", [[/^\n*$/{$d;N;}]], "-e", [[/\n$/bl1]] }
 end
 
 Go.run_fmt = function()
@@ -51,7 +52,7 @@ Go.run_fmt = function()
     end
 
     if vim.api.nvim_get_current_buf() == buf then
-      local lines = vim.split(waited.stdout, "\n", {plain = true})
+      local lines = vim.split(waited.stdout, "\n", { plain = true })
 
       if lines[#lines] == "" then
         lines[#lines] = nil
@@ -62,21 +63,17 @@ Go.run_fmt = function()
   end
 
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local opts = {cwd = cwd, stdin = lines, text = true}
+  local opts = { cwd = cwd, stdin = lines, text = true }
   local proc = vim.system(cmd, opts, vim.schedule_wrap(on_exit))
 
-  handle =
-    vim.defer_fn(
-    function()
-      proc:kill(9)
-      proc:wait(0)
-      vim.notify([[⚠️ ]] .. vim.inspect(proc), vim.log.levels.ERROR)
-    end,
-    timeout
-  )
+  handle = vim.defer_fn(function()
+    proc:kill(9)
+    proc:wait(0)
+    vim.notify([[⚠️ ]] .. vim.inspect(proc), vim.log.levels.ERROR)
+  end, timeout)
   vim.notify([[⏳...]], vim.log.levels.INFO, {})
 end
 
 vim.opt.formatexpr = "v:lua.Go.run_fmt()"
 
-vim.keymap.set("n", "gq", Go.run_fmt, {noremap = true, nowait = true})
+vim.keymap.set("n", "gq", Go.run_fmt, { noremap = true, nowait = true })

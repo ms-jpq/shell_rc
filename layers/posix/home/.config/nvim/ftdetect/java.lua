@@ -1,7 +1,5 @@
-vim.filetype.add(
-  {
-    extension = {
-      jsh = "java"
-    }
-  }
-)
+vim.filetype.add {
+  extension = {
+    jsh = "java",
+  },
+}

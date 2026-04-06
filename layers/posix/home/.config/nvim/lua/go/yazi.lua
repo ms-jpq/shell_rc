@@ -1,24 +1,18 @@
 local termstart = function(cmd, env, die)
   local buf = vim.api.nvim_create_buf(false, true)
 
-  vim.api.nvim_buf_call(
-    buf,
-    function()
-      vim.fn.jobstart(
-        cmd,
-        {
-          term = true,
-          env = env,
-          on_exit = function()
-            vim.cmd.bwipeout(buf)
-            if die then
-              die()
-            end
-          end
-        }
-      )
-    end
-  )
+  vim.api.nvim_buf_call(buf, function()
+    vim.fn.jobstart(cmd, {
+      term = true,
+      env = env,
+      on_exit = function()
+        vim.cmd.bwipeout(buf)
+        if die then
+          die()
+        end
+      end,
+    })
+  end)
 
   vim.api.nvim_win_set_buf(0, buf)
 end
@@ -36,7 +30,7 @@ local file_exp_die = function()
 
   local current = vim.api.nvim_get_current_buf()
   local cur_name = vim.api.nvim_buf_get_name(current)
-  local alt = vim.fn.getreg("#")
+  local alt = vim.fn.getreg "#"
 
   return function()
     local dead = {}
@@ -60,47 +54,39 @@ local spawn_yz = function(use_cwd)
     local tmp = vim.fn.tempname()
     local path = use_cwd(vim.fn.getcwd())
 
-    local cmd = {"yazi", "--chooser-file", tmp, "--", path}
+    local cmd = { "yazi", "--chooser-file", tmp, "--", path }
     local die = file_exp_die()
-    termstart(
-      cmd,
-      vim.empty_dict(),
-      function()
-        if vim.fn.filereadable(tmp) == 1 then
-          local select = vim.fn.readblob(tmp)
-          local escaped = vim.fn.fnameescape(select)
-          if vim.fn.isdirectory(select) == 1 then
-            vim.cmd.cd(escaped)
-          else
-            vim.cmd.edit(escaped)
-          end
+    termstart(cmd, vim.empty_dict(), function()
+      if vim.fn.filereadable(tmp) == 1 then
+        local select = vim.fn.readblob(tmp)
+        local escaped = vim.fn.fnameescape(select)
+        if vim.fn.isdirectory(select) == 1 then
+          vim.cmd.cd(escaped)
+        else
+          vim.cmd.edit(escaped)
         end
-        die()
       end
-    )
+      die()
+    end)
   end
 end
 
 vim.keymap.set(
   "n",
   [[<c-t>]],
-  spawn_yz(
-    function(cwd)
-      local path = vim.api.nvim_buf_get_name(0)
-      if vim.fn.filereadable(path) == 0 then
-        path = cwd
-      end
-      return path
+  spawn_yz(function(cwd)
+    local path = vim.api.nvim_buf_get_name(0)
+    if vim.fn.filereadable(path) == 0 then
+      path = cwd
     end
-  )
+    return path
+  end)
 )
 
 vim.keymap.set(
   "n",
   [[<leader>t]],
-  spawn_yz(
-    function(cwd)
-      return cwd
-    end
-  )
+  spawn_yz(function(cwd)
+    return cwd
+  end)
 )
