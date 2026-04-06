@@ -90,7 +90,7 @@ off)
   ;;
 rm)
   if [[ -d $DEFAULT_VENV_PATH ]]; then
-    if [[ "{VIRTUAL_ENV" == "$DEFAULT_VENV_PATH" ]]; then
+    if [[ $VIRTUAL_ENV == "$DEFAULT_VENV_PATH" ]]; then
       "$0" off
     fi
     printf -- '%q ' 'rm' '-rf' '--' "$DEFAULT_VENV_PATH"

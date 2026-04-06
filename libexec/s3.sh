@@ -26,19 +26,20 @@ dir() {
   chmod -v g-rwx,o-rwx "$TMP"
 }
 
+FILES=(
+  ~/.config/aerc/accounts.conf
+  ~/.config/git/config
+  ~/.config/isyncrc
+  ~/.gnupg/sshcontrol
+  ~/.local/secrets
+  ~/.ssh/!(known_hosts)
+)
+
 case "${1:-""}" in
 '' | s3 | ls)
   "${S3[@]}" ls --recursive --human-readable-sizes -- "$BUCKET"
   ;;
 push)
-  FILES=(
-    ~/.config/aerc/accounts.conf
-    ~/.config/git/config
-    ~/.config/isyncrc
-    ~/.gnupg/sshcontrol
-    ~/.local/secrets
-    ~/.ssh/!(known_hosts)
-  )
 
   dir
   "$SELF/s3-prep.sh" push "$TMP" "${FILES[@]}"

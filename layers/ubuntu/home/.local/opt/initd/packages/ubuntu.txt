@@ -11,6 +11,7 @@
 + b3sum
 + bat
 + bb
++ bottom
 + bubblewrap
 + cgdb
 + chafa
@@ -20,14 +21,19 @@
 + cowsay
 + dialog
 + diffnav
++ difft
 + duf
++ dust
 + entr
 + eza
 + fd-find
 + figlet
++ fzf
 + gdu
 + gettext-base
 + git
++ git-delta
++ gitui
 + glow
 + gping
 + grep
@@ -44,6 +50,7 @@
 + kubectl
 + language-pack-en
 + language-pack-zh-hans
++ lazygit
 + libimage-exiftool-perl
 + libxml2-utils
 + locales
@@ -59,8 +66,11 @@
 + neovim
 + nmap
 + nyancat
++ oh-my-posh
 + openssh-server
++ packages-microsoft-prod
 + parallel
++ pastel
 + pipexec
 + presenterm
 + progress
@@ -73,6 +83,7 @@
 + rlwrap
 + rs
 + rsync
++ sad
 + sl
 + socat
 + sudo
@@ -85,6 +96,7 @@
 + unison
 + unzip
 + w3m
++ watchexec-cli
 + wget
 + xmlstarlet
 + yazi
