@@ -16,7 +16,7 @@ local packloadopt = function()
   for name in vim.fs.dir(opt) do
     local path = vim.fs.joinpath(opt, name)
     vim.cmd.packadd(vim.fn.escape(name, [[\ ]]))
-    vim.opt.runtimepath:append(path)
+    vim.opt.runtimepath:append {path}
 
     for _, dir in pairs {"plugin", "lua"} do
       local pat = vim.fs.joinpath(path, dir, "*.{vim,lua}")
@@ -56,7 +56,7 @@ end
 do
   safe_require("go.pack.coq-nvim")
 
-  vim.opt.packpath:append(packed)
+  vim.opt.packpath:append {packed}
   local ok, err = pcall(vim.cmd.packloadall)
   if not ok then
     vim.notify(err, vim.log.levels.ERROR)

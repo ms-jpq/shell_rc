@@ -30,7 +30,7 @@ vim.opt.timeoutlen = 500
 -- cursor hold time
 vim.opt.updatetime = 300
 -- allow nav keys to wrap around
-vim.opt.whichwrap:append("h", "l", "<", ">", "[", "]")
+vim.opt.whichwrap:append "h,l,<,>,[,]"
 
 -- enable mouse
 vim.opt.mouse = "a"

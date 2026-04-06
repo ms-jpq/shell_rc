@@ -3,7 +3,7 @@ local lib = require("go")
 -- hide background buffers
 vim.opt.hidden = true
 -- reuse buf
-vim.opt.switchbuf:append("useopen", "usetab")
+vim.opt.switchbuf:append {"useopen", "usetab"}
 
 -- modern split direction
 vim.opt.splitright = true

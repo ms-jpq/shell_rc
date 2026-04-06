@@ -1,8 +1,8 @@
 local lib = require("go")
 
 -- limit session restoration info
-vim.opt.sessionoptions:remove("blank", "buffers", "curdir", "help", "terminal")
-vim.opt.sessionoptions:append("skiprtp")
+vim.opt.sessionoptions:remove {"blank", "buffers", "curdir", "help", "terminal"}
+vim.opt.sessionoptions:append {"skiprtp"}
 
 -- scratch buffer
 for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -147,7 +147,7 @@ vim.api.nvim_create_autocmd(
         end
 
         local path, escaped = session_path(cwd)
-        if vim.fn.filereadable(path) then
+        if vim.fn.filereadable(path) == 1 then
           vim.cmd([[silent! source ]] .. escaped)
         end
       end
