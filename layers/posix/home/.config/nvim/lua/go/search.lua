@@ -1,3 +1,6 @@
+-- offscreen previewing of commands
+vim.opt.inccommand = "split"
+
 -- use ripgrep
 vim.opt.grepprg = [[rg\ --vimgrep]]
 
