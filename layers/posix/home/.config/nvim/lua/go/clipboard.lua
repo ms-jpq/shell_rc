@@ -53,10 +53,8 @@ local copy = function(lines)
   local s = table.concat(lines, sep)
 
   if tmux then
-    send(s, "tmux", "load-buffer", "--", "-")
-  end
-
-  if ssh then
+    send(s, "tmux", "load-buffer", "-w", "--", "-")
+  elseif ssh then
     local b = vim.base64.encode(s)
     vim.api.nvim_chan_send(2, osc52(b))
   elseif vim.fn.has [[mac]] == 1 then
