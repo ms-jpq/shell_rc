@@ -14,6 +14,8 @@ RG=(
   --
 )
 printf -v CHANGE -- '%q ' "${RG[@]}"
+printf -v START -- '%q ' "${RG[@]}" "$*"
+
 BAT=(
   bat
   --color always
@@ -47,7 +49,7 @@ FZF_ARGS=(
   --delimiter ':'
   --preview "$PREVIEW {2} -- {1}"
   --preview-window '~3,+{2}+3/3'
-  --bind "start:reload:$CHANGE '' || :"
+  --bind "start:reload:$START || :"
   --bind "change:reload:$CHANGE {q} || :"
   --bind "enter:become:$OPENER {+f1,2,3,4}"
   --query "$*"
