@@ -23,14 +23,7 @@ BAT=(
 )
 printf -v PREVIEW -- '%q ' "${BAT[@]}"
 
-EDIT=()
-if [[ $* == --tmux ]]; then
-  shift -- 1
-  EDIT+=(tmux new-window -a -c '#{pane_current_path}' --)
-fi
-
-# shellcheck disable=SC2154
-EDIT+=(nvim -c copen -q)
+EDIT=(nvim -c copen -q)
 
 MULT=()
 if [[ -t 1 ]]; then
