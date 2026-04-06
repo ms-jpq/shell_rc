@@ -19,11 +19,11 @@ vim.keymap.set("n", [[<leader>\]], [[<cmd>Commands!<cr>]])
 vim.keymap.set("n", [[<leader>b]], [[<cmd>Buffers!<cr>]])
 
 do
-  local az = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  local az = "abcdefghijklmnopqrstuvwxyz"
   local AZ = string.upper(az)
   local azt = vim.split(az, "", {plain = true})
   local AZT = vim.split(AZ, "", {plain = true})
-  vim.keymap.set("n", [[<leader>J]], [[<cmd>Marks! ]] .. table.concat(azt, " ") .. [[<cr>]])
+  vim.keymap.set("n", [[<leader>j]], [[<cmd>Marks! ]] .. table.concat(azt, " ") .. [[<cr>]])
   vim.keymap.set("n", [[<leader>J]], [[<cmd>Marks! ]] .. table.concat(AZT, " ") .. [[<cr>]])
 end
 
