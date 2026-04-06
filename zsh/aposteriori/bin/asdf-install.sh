@@ -86,7 +86,7 @@ if ((LOCAL)); then
   asdf local "$LANG" "$VERSION"
 fi
 
-if ((VERSION_INSTALLED + GLOBAL)); then
+if ((VERSION_INSTALLED || GLOBAL)); then
   asdf reshim
 fi
 

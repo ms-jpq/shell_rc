@@ -3,6 +3,7 @@
 clobber: clobber.git
 
 GIT_TMP := $(TMP)/git
+GIT_DIRS :=
 
 $(GIT_TMP):
 	mkdir -v -p -- '$@'
@@ -20,6 +21,7 @@ endef
 
 define GIT_TEMPLATE
 
+GIT_DIRS += $1
 git: $1
 $1: | $(GIT_TMP)
 	if [[ -d '$$@' ]]; then
@@ -30,6 +32,9 @@ $1: | $(GIT_TMP)
 
 endef
 
+
+clobber.git:
+	rm -vfr -- $(GIT_DIRS)
 
 GIT_REPOS := $(shell tr -s -- ' ' '!' <<<'$(GIT_REPOS)')
 

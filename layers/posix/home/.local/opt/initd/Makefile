@@ -42,7 +42,7 @@ CURL := curl --fail --location --remove-on-error --create-dirs --no-progress-met
 
 clean:
 	shopt -u failglob
-	rm -v -rf -- $(TMP)
+	rm -v -rf --
 
 clobber: clean
 	shopt -u failglob

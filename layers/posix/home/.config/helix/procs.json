@@ -31,6 +31,7 @@
     "rust-analyzer.rs": [],
     "shellcheck.sh": [],
     "shfmt.sh": [],
+    "sty.lua": [],
     "stylish.hs": [],
     "superhtml.sh": [],
     "taplo.sh": [],
@@ -81,7 +82,6 @@
     "htmlhint": [],
     "ibm-openapi-validator": [],
     "intelephense": [],
-    "lua-fmt": [],
     "perlnavigator-server": [],
     "prettier": [
       "@prettier/plugin-xml",

@@ -18,7 +18,7 @@ linux*)
 msys)
   PATH="/usr/bin:$PATH"
   LOCALAPPDATA="$(cygpath -- "$LOCALAPPDATA")"
-  PATH="$LOCALAPPDATA/Local/Microsoft/WinGet/Links:$PATH"
+  PATH="$LOCALAPPDATA/Microsoft/WinGet/Links:$PATH"
 
   WINGET=(
     winget install

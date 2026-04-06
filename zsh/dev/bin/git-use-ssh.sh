@@ -1,4 +1,6 @@
-#!/usr/bin/env -S -- bash
+#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
+
+set -o pipefail
 
 REMOTE="$(git remote)"
 URI="$(git remote get-url "$REMOTE")"

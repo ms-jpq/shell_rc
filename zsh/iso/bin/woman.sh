@@ -13,7 +13,7 @@ darwin*)
   ;;
 *) ;;
 esac
-man -P "$PR" -- "$*" < /dev/null > "$TMP"
+man -P "$PR" -- "$@" < /dev/null > "$TMP"
 
 if command -v -- open > /dev/null; then
   exec -- open "$TMP"
