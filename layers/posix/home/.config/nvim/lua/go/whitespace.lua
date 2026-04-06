@@ -1,7 +1,7 @@
 local lib = require("go")
 local to = require("go.text_objects")
 
--- join only add 1 space
+-- merge spaces on join
 vim.opt.joinspaces = true
 
 -- insert spaces instead of tabs
