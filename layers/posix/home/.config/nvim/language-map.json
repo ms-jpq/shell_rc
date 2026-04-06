@@ -1,5 +1,6 @@
 {
   "bash": ["sh"],
+  "devicetree": ["dts"],
   "javascript": ["javascript", "javascriptreact"],
   "powershell": ["ps1"],
   "typescript": ["typescript", "typescriptreact"]

@@ -37,6 +37,12 @@
       }
     },
     "css": {},
+    "devicetree": {
+      "formatter": {
+        "args": ["--stdin"],
+        "command": "dtsfmt"
+      }
+    },
     "dockerfile": {
       "formatter": {
         "args": ["format", "--spaces=2"],
