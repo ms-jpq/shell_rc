@@ -76,7 +76,7 @@ local mk_session = function(kill)
 
   local path, escaped = session_path(cwd)
   local parent = vim.fs.dirname(path)
-  vim.fn.mkdir(parent, "p", 0755)
+  vim.fn.mkdir(parent, "p")
   vim.fn.setfperm(parent, [[rwxr-xr-x]])
 
   vim.cmd([[mksession! ]] .. escaped)
