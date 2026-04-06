@@ -12,12 +12,12 @@ vim.api.nvim_create_autocmd(
   "LspAttach",
   {
     group = lib.group,
-    callback = function()
+    callback = function(args)
       vim.api.nvim_create_autocmd(
         {"BufEnter", "CursorHold", "InsertLeave"},
         {
           group = lib.group,
-          pattern = "<buffer>",
+          pattern = args.buf,
           command = [[silent! lua vim.lsp.codelens.refresh()]]
         }
       )
@@ -26,7 +26,7 @@ vim.api.nvim_create_autocmd(
         {"CursorHold", "CursorHoldI"},
         {
           group = lib.group,
-          pattern = {"<buffer>"},
+          pattern = args.buf,
           command = [[silent! lua vim.lsp.buf.document_highlight()]]
         }
       )
@@ -35,7 +35,7 @@ vim.api.nvim_create_autocmd(
         {"CursorMoved"},
         {
           group = lib.group,
-          pattern = {"<buffer>"},
+          pattern = args.buf,
           command = [[silent! lua vim.lsp.buf.clear_references()]]
         }
       )
