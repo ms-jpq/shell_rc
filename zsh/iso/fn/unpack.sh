@@ -10,7 +10,10 @@ unpack() {
   *.7z | *.zip | *.vsix | *.jar)
     7zz x -- "$FILE"
     ;;
-  *.gz | *.xz)
+  *.xz)
+    xz --decompress --keep -- "$FILE"
+    ;;
+  *.gz)
     gzip --decompress --keep -- "$FILE"
     ;;
   *.rar)

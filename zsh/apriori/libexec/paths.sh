@@ -4,7 +4,7 @@ set -o pipefail
 IFS=':'
 
 print_err() {
-  printf -- '%q' "$PATH"
+  printf -- '%s' "$PATH"
   {
     printf -- 'paths {show, add, rm|remove} path\n'
     printf -- '%s\n' "$1"
@@ -24,7 +24,7 @@ remove() {
     fi
   done
   local -- ret="${acc[*]}"
-  printf -- '%q' "$ret"
+  printf -- '%s' "$ret"
 
   if ! ((silent)); then
     printf -- '%s\n' "REMOVED -- $target" >&2
@@ -37,7 +37,7 @@ add() {
 
   if [[ -d $target ]]; then
     dedup="$target:$(remove "$target" 1)"
-    printf -- '%q' "$dedup"
+    printf -- '%s' "$dedup"
     printf -- '%s\n' "ADDED   -- $target" >&2
   else
     print_err "ERR! -- Not a Directory: $target"
@@ -47,7 +47,7 @@ add() {
 ACTION="${1:-""}"
 case "$ACTION" in
 show)
-  printf -- '%q' "$PATH"
+  printf -- '%s' "$PATH"
   printf -- '%s' "$PATH" | awk -v 'RS=:' '!seen[$0]++' >&2
   ;;
 add)
