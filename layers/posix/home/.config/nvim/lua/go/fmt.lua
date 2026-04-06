@@ -46,7 +46,7 @@ Go.run_fmt = function()
       vim.notify([[☠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR, {})
       return
     elseif waited.code ~= 0 then
-      vim.notify([[⚠️ ]] .. vim.inspect(waited), waited.stderr, vim.log.levels.ERROR, {})
+      vim.notify([[⚠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR, {})
       return
     end
 
