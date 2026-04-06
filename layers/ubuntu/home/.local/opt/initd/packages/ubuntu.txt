@@ -51,6 +51,7 @@
 + language-pack-en
 + language-pack-zh-hans
 + lazygit
++ libarchive-tools
 + libimage-exiftool-perl
 + libxml2-utils
 + locales

@@ -40,7 +40,7 @@ jobs:
 
       - run: |-
           sudo -- apt-get update
-          sudo -- apt-get install --no-install-recommends --yes -- swi-prolog-nox gnucobol moreutils
+          sudo -- apt-get install --no-install-recommends --yes -- swi-prolog-nox gnucobol moreutils libarchive-tools
           sudo -- apt purge --yes -- firefox
 
       - run: |-
