@@ -22,9 +22,9 @@ end
 
 set_tabsize(2, vim.opt)
 
-local detect_tabs = function()
-  local count = vim.api.nvim_buf_line_count(0)
-  local lines = vim.api.nvim_buf_get_lines(0, 0, math.min(count, 99), true)
+local detect_tabs = function(buf)
+  local count = vim.api.nvim_buf_line_count(buf)
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, math.min(count, 99), true)
 
   local leading_tabs = 0
   local leading_spaces = 0
@@ -66,10 +66,17 @@ local detect_tabs = function()
 
   local winner = unpack(indent_lvs)
   local tabsize = unpack(winner)
-  local buf = vim.api.nvim_get_current_buf()
-  vim.schedule(function()
-    set_tabsize(tabsize, vim.bo[buf])
-  end)
+  return tabsize
 end
 
-vim.api.nvim_create_autocmd({ "BufReadPost" }, { group = lib.group, callback = detect_tabs })
+vim.api.nvim_create_autocmd({ "BufReadPost" }, {
+  group = lib.group,
+  callback = function()
+    local buf = vim.api.nvim_get_current_buf()
+    local tabsize = vim.b.__tabsize__ or detect_tabs(buf)
+
+    vim.schedule(function()
+      set_tabsize(tabsize, vim.bo[buf])
+    end)
+  end,
+})
