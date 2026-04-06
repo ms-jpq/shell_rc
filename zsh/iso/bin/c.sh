@@ -2,6 +2,12 @@
 
 set -o pipefail
 
+if [[ -x pbcopy ]]; then
+  exec -- pbcopy
+elif [[ -x wl-copy ]]; then
+  exec -- pbcopy
+fi
+
 T=0
 case "$TERM" in
 tmux*)
