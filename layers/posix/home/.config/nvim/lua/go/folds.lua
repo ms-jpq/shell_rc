@@ -1,3 +1,5 @@
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+
 -- use buffer text for folds
 vim.opt.foldtext = ""
 
