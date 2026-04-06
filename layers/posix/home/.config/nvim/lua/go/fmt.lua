@@ -43,10 +43,10 @@ Go.run_fmt = function()
     vim.uv.timer_stop(handle)
 
     if waited.signal ~= 0 then
-      vim.notify([[☠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR, {})
+      vim.notify([[☠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR)
       return
     elseif waited.code ~= 0 then
-      vim.notify([[⚠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR, {})
+      vim.notify([[⚠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR)
       return
     end
 
@@ -68,7 +68,9 @@ Go.run_fmt = function()
   handle =
     vim.defer_fn(
     function()
+      proc:kill(9)
       proc:wait(0)
+      vim.notify([[⚠️ ]] .. vim.inspect(proc), vim.log.levels.ERROR)
     end,
     timeout
   )
