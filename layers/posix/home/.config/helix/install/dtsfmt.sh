@@ -11,7 +11,7 @@ darwin*)
 linux*)
   case "$HOSTTYPE" in
   x86_64)
-    URI="$BASE-$HOSTTYPE-unknown-linux-gnu.tar.gz"
+    URI="$BASE-$HOSTTYPE-unknown-linux-musl.tar.gz"
     ;;
   *)
     URI="$BASE-arm-unknown-linux-gnueabihf.tar.gz"
