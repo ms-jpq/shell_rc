@@ -2,9 +2,9 @@
 
 set -o pipefail
 
-if [[ -x pbcopy ]]; then
+if command -v -- pbcopy > /dev/null; then
   exec -- pbcopy
-elif [[ -x wl-copy ]]; then
+elif command -v -- wl-copy > /dev/null; then
   exec -- wl-copy
 fi
 

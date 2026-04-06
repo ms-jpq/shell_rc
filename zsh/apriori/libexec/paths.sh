@@ -13,7 +13,7 @@ print_err() {
 }
 
 remove() {
-  local -- target="$1" slient="$2"
+  local -- target="$1" silent="$2"
 
   local -- acc=()
   local -- arr
@@ -26,7 +26,7 @@ remove() {
   local -- ret="${acc[*]}"
   printf -- '%q' "$ret"
 
-  if ! ((slient)); then
+  if ! ((silent)); then
     printf -- '%s\n' "REMOVED -- $target" >&2
   fi
 }
