@@ -22,13 +22,10 @@ if [[ -v RECURSION ]]; then
 
   if ((${#SOCK[@]})); then
     ARGV=(
-      /Applications/kitty.app/Contents/MacOS/kitten @
-      --to "unix:${SOCK[*]}"
-      --
-      kitten notify
+      ~/.local/libexec/notify.kitty.sh "${SOCK[*]}"
+      "📩 ↘ $FROM" "$SUBJECT"
       --identifier "$ID"
       --icon info
-      -- "📩 ↘ $FROM" "$SUBJECT"
     )
     "${ARGV[@]}"
   else
