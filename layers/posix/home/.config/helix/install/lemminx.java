@@ -14,7 +14,7 @@ public class lemminx {
     final var dst = lib.resolve("org.eclipse.lemminx-uber.jar");
     final var base =
         URI.create(
-            "https://repo.eclipse.org/content/repositories/lemminx-releases/org/eclipse/lemminx/org.eclipse.lemminx");
+            "https://repo.eclipse.org/content/repositories/lemminx-releases/org/eclipse/lemminx/org.eclipse.lemminx/");
 
     final var builder =
         DocumentBuilderFactory.newInstance()
@@ -26,7 +26,9 @@ public class lemminx {
             .evaluate("/metadata/versioning/versions/version[last()]", builder);
 
     final var uri =
-        base.resolve(version + "/org.eclipse.lemminx-" + version + "-uber.jar").toString();
+        base.resolve(version + "/")
+            .resolve("org.eclipse.lemminx-" + version + "-uber.jar")
+            .toString();
 
     final var p =
         new ProcessBuilder("env", "--", "get.sh", uri).redirectError(Redirect.INHERIT).start();
