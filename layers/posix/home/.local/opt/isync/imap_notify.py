@@ -115,7 +115,7 @@ def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
                         if line.endswith(b"EXISTS"):
                             break
 
-            except:
+            except BaseException:
                 cooked = True
                 raise
             finally:
