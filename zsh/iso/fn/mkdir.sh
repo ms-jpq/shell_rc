@@ -1,3 +1,3 @@
 #!/usr/bin/env -S -- bash
 
-command -- mkdir --parents "$@"
+command -- mkdir -p "$@"

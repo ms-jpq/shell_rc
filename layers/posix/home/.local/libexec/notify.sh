@@ -31,7 +31,7 @@ ID=1
   # OSC99 start
   printf -- '\e]99;e=1:i=%s:d=0:p=title;' "$ID"
   # OSC99 title
-  base64 --wrap 0 <<< "$*"
+  base64 -w 0 <<< "$*"
 
   if ((T)); then
     # TMUX escape `ESC`
@@ -52,7 +52,7 @@ ID=1
   # OSC99 start
   printf -- '\e]99;e=1:i=%s:d=1:p=body;' "$ID"
   # OSC99 body
-  base64 --wrap 0
+  base64 -w 0
 
   if ((T)); then
     # TMUX escape `ESC`

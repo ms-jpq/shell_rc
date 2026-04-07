@@ -13,5 +13,8 @@ function s:colours()
   highlight! link                  WinSeparator  LineNr
 endfunction
 
-autocmd ColorScheme * call s:colours()
+augroup theme_colours
+  autocmd!
+  autocmd ColorScheme * call s:colours()
+augroup END
 call s:colours()

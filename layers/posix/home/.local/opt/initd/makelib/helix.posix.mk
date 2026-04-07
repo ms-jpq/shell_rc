@@ -1,4 +1,4 @@
 .PHONY: helix
 
 helix: | $(CONFIG)/helix
-	'$|//make.sh'
+	'$|/make.sh'

@@ -11,7 +11,7 @@ SHELL := bash
 
 .DEFAULT_GOAL := all
 
-.PHONY: clean clobber
+.PHONY: all clean clobber
 
 clean:
 	shopt -u failglob
@@ -19,7 +19,7 @@ clean:
 
 clobber: clean
 	shopt -u failglob
-	rm -v -rf -- $(VAR) $(VENV) ./node_modules
+	rm -v -rf -- '$(VAR)' '$(VENV)' ./node_modules
 
 GOOS := darwin ubuntu nt
 CURL := curl --fail --location --remove-on-error --create-dirs --no-progress-meter

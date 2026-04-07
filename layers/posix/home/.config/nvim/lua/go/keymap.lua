@@ -30,7 +30,7 @@ vim.keymap.set("v", ">", ">gv")
 
 -- previous, next, line, file, omnifunc
 for _, key in pairs { "p", "n", "l", "f", "o" } do
-  vim.keymap.set("i", key, [[<c-x>]] .. key)
+  vim.keymap.set("i", [[<c-]] .. key .. [[>]], [[<c-x><c-]] .. key .. [[>]])
 end
 
 do

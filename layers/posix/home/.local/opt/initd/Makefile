@@ -36,7 +36,7 @@ STATE := $(LOCAL)/state
 TP := $(CACHE)/initd
 
 # TODO: gnumake 4.4 .WAIT
-.PHONY: noop clean clobber .WAIT
+.PHONY: all noop clean clobber .WAIT
 
 CURL := curl --fail --location --remove-on-error --create-dirs --no-progress-meter
 

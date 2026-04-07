@@ -1,3 +1,3 @@
 #!/usr/bin/env -S -- bash
 
-command -- cp -v --interactive "$@"
+command -- cp -v -i "$@"

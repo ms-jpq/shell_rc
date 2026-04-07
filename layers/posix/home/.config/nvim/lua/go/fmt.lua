@@ -66,14 +66,17 @@ Go.run_fmt = function()
 
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local opts = { cwd = cwd, stdin = lines, text = true }
-  local proc = vim.system(cmd, opts, vim.schedule_wrap(on_exit))
 
-  handle = vim.defer_fn(function()
-    proc:kill(9)
-    proc:wait(0)
-    vim.notify([[⚠️ ]] .. vim.inspect(proc), vim.log.levels.ERROR)
-  end, timeout)
   vim.notify([[⏳...]], vim.log.levels.INFO, {})
+  local proc = nil
+  handle = vim.defer_fn(function()
+    if proc then
+      proc:kill(9)
+      proc:wait(0)
+      vim.notify([[⚠️ ]] .. vim.inspect(proc), vim.log.levels.ERROR)
+    end
+  end, timeout)
+  proc = vim.system(cmd, opts, vim.schedule_wrap(on_exit))
 
   return 0
 end

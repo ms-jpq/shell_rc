@@ -1,3 +1,3 @@
 #!/usr/bin/env -S -- bash
 
-command -- rm -v --interactive "$@"
+command -- rm -v -i "$@"

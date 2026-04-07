@@ -20,10 +20,10 @@ if [[ -f $AK ]]; then
 fi
 
 SALT="$(uuidgen)"
-PASSWD="$(openssl passwd -1 -salt "$SALT" root | jq --raw-input)"
+PASSWD="$(openssl passwd -6 -salt "$SALT" root | jq --raw-input)"
 AUTHORIZED_KEYS="$(cat -- "${KEYS[@]}" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')"
 IPV6_TOKEN="$(./libexec/ip64alloc.sh <<< "$MACHINE.$HOSTNAME")"
-DATE="$(date --utc -- '+%Y-%m-%d %H:%M:%S')"
+DATE="$(date -u -- '+%Y-%m-%d %H:%M:%S')"
 
 for YML in ./cloud-init/*.yml; do
   BASENAME="${YML##*/}"
