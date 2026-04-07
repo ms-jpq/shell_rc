@@ -24,7 +24,7 @@ typos_lsp:
 #   bin: harper-ls
 
 lemminx:
-  bin: lemminx
+  bin: lemminx.jsh
   args:
     - -Dlemminx.workdir=/var/tmp/lemminx
 

@@ -282,8 +282,8 @@
       }
     },
     "lemminx": {
-      "args": [],
-      "command": "lemminx"
+      "args": ["-Dlemminx.workdir=/var/tmp/lemminx"],
+      "command": "lemminx.jsh"
     },
     "lua-language-server": {
       "command": "lua-language-server.sh"
