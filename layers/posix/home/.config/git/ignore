@@ -14,6 +14,7 @@
 .DS_Store
 .git/
 .ignore
+.markdown/
 .nvim/
 .phan/
 .php-cs-fixer.cache
