@@ -62,7 +62,7 @@ ARGV=(
   "${CURL[@]}"
 )
 
-read -r -d '' -- BODY
+read -r -d '' -- BODY || :
 
 {
   printf -- '\n'

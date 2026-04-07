@@ -5,7 +5,7 @@ set -o pipefail
 hash -- curl jq gpg
 
 # shellcheck disable=SC1091
-source -- /etc/os-release gpg
+source -- /etc/os-release
 
 PPA="$1"
 
