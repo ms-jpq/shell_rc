@@ -177,7 +177,7 @@ def _process_account(cache_dir: Path, account: Path) -> None:
         path, addrs = row
         added.add(normcase(path))
         for mtime, addr in addrs:
-            if not addr in compiled:
+            if addr not in compiled:
                 getLogger().info("%s", addr)
             compiled[addr] = max(compiled.get(addr, mtime), mtime)
 
