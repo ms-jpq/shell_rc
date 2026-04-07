@@ -1,4 +1,4 @@
-// ; exec java -ea -Dprogram.name="$0" "$0" "$@"
+// ; exec java -enableassertions -Dprogram.name="$0" "$0" "$@"
 
 import java.lang.ProcessBuilder.Redirect;
 import java.net.URI;

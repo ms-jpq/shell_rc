@@ -1,4 +1,4 @@
-#!/usr/bin/env -S -- java --source 18
+#!/usr/bin/env -S -- java -enableassertions --source 18
 
 import java.nio.file.Path;
 import java.util.stream.Stream;
