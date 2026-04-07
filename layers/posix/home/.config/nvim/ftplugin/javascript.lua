@@ -1,4 +1,1 @@
-local kw = vim.bo.iskeyword
-if kw then
-  kw:append { "-" }
-end
+vim.bo.iskeyword = vim.bo.iskeyword .. ",-"
