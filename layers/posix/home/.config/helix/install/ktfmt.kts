@@ -11,15 +11,15 @@ import kotlin.io.path.deleteRecursively
 val root = URI("https://repo1.maven.org/maven2/com/facebook/ktfmt/")
 val lib = Path(System.getenv("LIB")!!)
 
+val builder =
+    DocumentBuilderFactory.newInstance()
+        .newDocumentBuilder()
+        .parse(root.resolve("maven-metadata.xml").toString())
+
 val version =
     XPathFactory.newInstance()
         .newXPath()
-        .evaluate(
-            "/metadata/versioning/versions/version[last()]",
-            DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder()
-                .parse(root.resolve("maven-metadata.xml").toString()),
-        )
+        .evaluate("/metadata/versioning/versions/version[last()]", builder)
 
 val jar = root.resolve("$version/ktfmt-$version-with-dependencies.jar").toString()
 val proc = ProcessBuilder("env", "--", "get.sh", jar).redirectError(Redirect.INHERIT).start()
