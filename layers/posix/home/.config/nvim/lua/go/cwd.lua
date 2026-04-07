@@ -1,6 +1,6 @@
 local cwd = vim.fn.getcwd()
 
-local cycle = 600
+local cycle = 666
 local check_cwd = nil
 check_cwd = function()
   local chk = function()

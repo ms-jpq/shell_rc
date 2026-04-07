@@ -62,4 +62,4 @@ vim.opt.smartcase = true
 vim.opt.complete:remove "i"
 
 -- vimdiff options
-vim.opt.diffopt:append("followwrap", "algorithm:patience")
+vim.opt.diffopt:append { "followwrap", "algorithm:patience" }

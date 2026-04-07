@@ -4,7 +4,7 @@ set -o pipefail
 
 cleanup() {
   set -x
-  kill -9 "$PGID" || :
+  kill -9 "-$PGID" || :
 }
 
 trap -- cleanup EXIT

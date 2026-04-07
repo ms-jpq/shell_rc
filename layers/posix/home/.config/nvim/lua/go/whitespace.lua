@@ -46,7 +46,7 @@ local detect_tabs = function(buf)
     local divisibility = 0
     for _, line in pairs(lines) do
       local indent_lv = to.p_indent(line, ts)
-      if indent_lv % ts == 0 then
+      if indent_lv ~= 0 and indent_lv % ts == 0 then
         divisibility = divisibility + 1
       end
     end

@@ -1,1 +1,1 @@
-vim.bo.iskeyword = vim.bo.iskeyword .. ",-"
+vim.bo.iskeyword:append { "-" }

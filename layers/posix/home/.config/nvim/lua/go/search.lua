@@ -13,11 +13,6 @@ vim.keymap.set("n", "#", "#N")
 vim.keymap.set("n", "g*", "g*N")
 vim.keymap.set("n", "g#", "g#N")
 
--- centre on search result
-for _, key in pairs { "n", "N" } do
-  vim.keymap.set("n", key, key .. "zz")
-end
-
 -- use no magic
 vim.keymap.set({ "n", "v" }, "/", [[/\V]])
 vim.keymap.set({ "n", "v" }, "?", [[?\V]])

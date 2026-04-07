@@ -7,7 +7,7 @@ OS="$1"
 GIT="$2"
 Z_OUT="$3"
 B_OUT="$4"
-shift -- 3
+shift -- 4
 
 FUNC="$Z_OUT/fn"
 BINS="$Z_OUT/bin"

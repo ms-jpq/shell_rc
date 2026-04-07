@@ -114,7 +114,7 @@ vim.api.nvim_create_autocmd({ "QuitPre" }, {
   group = lib.group,
   once = true,
   callback = function()
-    if no_session() then
+    if no_session(nil) then
       return
     end
 

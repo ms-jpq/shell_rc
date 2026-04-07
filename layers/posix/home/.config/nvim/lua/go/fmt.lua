@@ -41,7 +41,9 @@ Go.run_fmt = function()
 
   local handle = nil
   local on_exit = function(waited)
-    vim.uv.timer_stop(handle)
+    if handle then
+      vim.uv.timer_stop(handle)
+    end
 
     if waited.signal ~= 0 then
       vim.notify([[☠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR)
@@ -72,6 +74,8 @@ Go.run_fmt = function()
     vim.notify([[⚠️ ]] .. vim.inspect(proc), vim.log.levels.ERROR)
   end, timeout)
   vim.notify([[⏳...]], vim.log.levels.INFO, {})
+
+  return 0
 end
 
 vim.opt.formatexpr = "v:lua.Go.run_fmt()"

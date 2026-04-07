@@ -10,14 +10,14 @@ local mark_signs = function()
   local marks = {}
   for key in string.gmatch(az, [[%w]]) do
     local big_key = string.upper(key)
-    local b_row, b_col = unpack(vim.api.nvim_buf_get_mark(buf, key))
-    local g_row, g_col, g_buf = unpack(vim.api.nvim_get_mark(big_key, {}))
+    local b_row = unpack(vim.api.nvim_buf_get_mark(buf, key))
+    local g_row, _, g_buf, _ = unpack(vim.api.nvim_get_mark(big_key, {}))
 
-    if b_row ~= 0 and b_col ~= 0 then
+    if b_row ~= 0 then
       marks[key] = b_row
     end
 
-    if g_row ~= 0 and g_col ~= 0 and g_buf == buf then
+    if g_row ~= 0 and g_buf == buf then
       marks[big_key] = g_row
     end
   end

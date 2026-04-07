@@ -40,7 +40,7 @@ LABEL="mnotify.$CHANNEL"
 shift -- 1
 
 {
-  if [[ -f "$STATE/$CHANNEL.slient" ]]; then
+  if [[ -f "$STATE/$CHANNEL.silent" ]]; then
     exit
   fi
   RECURSION=1 find "$@" -maxdepth 1 -type f -exec ~/.local/opt/maildir/launched.sh '{}' ';'

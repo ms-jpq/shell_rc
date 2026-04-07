@@ -16,7 +16,7 @@ end
 do
   local replace_line = function()
     local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
-    local text = string.gsub(vim.fn.getreg(), [[^%s+|%s+$]], "")
+    local text = string.gsub(string.gsub(vim.fn.getreg(), [[^%s+]], ""), [[%s+$]], "")
     local lines = vim.split(text, "\n", { plain = true })
 
     vim.api.nvim_buf_set_lines(0, row - 1, row, true, lines)

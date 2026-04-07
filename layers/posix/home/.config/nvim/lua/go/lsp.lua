@@ -11,6 +11,11 @@ vim.lsp.semantic_tokens.enable(true)
 vim.api.nvim_create_autocmd("LspAttach", {
   group = lib.group,
   callback = function(args)
+    if vim.b.__attached__ then
+      return
+    end
+    vim.b.__attached__ = true
+
     vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
       group = lib.group,
       buffer = args.buf,

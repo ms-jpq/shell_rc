@@ -11,7 +11,7 @@ SHELL := bash
 
 .DEFAULT_GOAL := all
 
-.PHONY: clean clobber localhost
+.PHONY: clean clobber
 
 clean:
 	shopt -u failglob
