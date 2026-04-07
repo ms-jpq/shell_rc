@@ -6,6 +6,7 @@
 *.lock
 *.log
 *.owo
+*.sock
 *.tfstate
 *.tfstate.backup
 *.tfvars
