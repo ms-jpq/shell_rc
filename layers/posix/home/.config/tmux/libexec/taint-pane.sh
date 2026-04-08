@@ -2,6 +2,5 @@
 
 set -o pipefail
 
-if ! [[ -v TMUX_PANE ]]; then
-  exit
-fi
+TMUX_PANE="${1:-"$TMUX_PANE"}"
+exec -- tmux select-pane -t "$TMUX_PANE" -P 'bg=#f5eeff'
