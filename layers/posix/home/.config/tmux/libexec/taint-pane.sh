@@ -3,4 +3,4 @@
 set -o pipefail
 
 TMUX_PANE="${1:-"$TMUX_PANE"}"
-exec -- tmux select-pane -t "$TMUX_PANE" -P 'bg=#f5eeff'
+exec -- tmux set-option -t "$TMUX_PANE" -p window-style 'bg=#f5eeff'
