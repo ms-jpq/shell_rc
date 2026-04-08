@@ -33,6 +33,10 @@ local fmt_command = function(buf)
 end
 
 Go.run_fmt = function()
+  if not vim.bo.modifiable or vim.bo.readonly then
+    return
+  end
+
   local buf = vim.api.nvim_get_current_buf()
   local name = vim.api.nvim_buf_get_name(buf)
   local cwd = name ~= "" and vim.fs.dirname(name) or vim.fn.getcwd()
