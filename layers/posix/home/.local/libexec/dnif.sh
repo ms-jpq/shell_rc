@@ -1,0 +1,27 @@
+#!/usr/bin/env -S -- bash -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar
+
+set -o pipefail
+
+ROOT="$1"
+shift -- 1
+
+STEP="$ROOT"
+while [[ $STEP != "/" ]] && [[ $STEP != '' ]]; do
+  for FILE in "$STEP/"*; do
+    BASE="${FILE##*/}"
+
+    for PAT in "$@"; do
+      # shellcheck disable=SC2254
+      case "$BASE" in
+      $PAT)
+        printf -- '%s' "$FILE"
+        exit 0
+        ;;
+      *) ;;
+      esac
+    done
+  done
+  STEP="${STEP%/*}"
+done
+
+exit 1
