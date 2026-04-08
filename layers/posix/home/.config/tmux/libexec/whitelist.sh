@@ -7,7 +7,7 @@ if ! (($#)); then
 fi
 
 case "$1" in
-aerc | autossh | */autossh | nvim | */nvim | hx | */hx | */notificationd)
+aerc | autossh | */autossh | nvim | */nvim | hx | */hx | notificationd | */notificationd)
   exit
   ;;
 "$HOME/.local/opt/isomorphic-copy/tmp/python"* | "$HOME/.local/opt/pyradio/venv/bin/python"*)
