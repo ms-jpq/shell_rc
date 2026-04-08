@@ -10,7 +10,7 @@ case "$STATUS" in
 111)
   exit
   ;;
-11*) ;;
+110) ;;
 *)
   tmux set-option -t "$TMUX_PANE" -w window-status-style 'reverse'
   ;;
