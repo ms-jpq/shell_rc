@@ -18,15 +18,14 @@ blocks:
         style: plain
         template: "\ue5ff <lightBlue>{{ .Parent }}</>{{ if or (eq .PWD .Env.HOME) (eq .PWD \"~\") }}~{{ else }}{{ .Folder }}{{ end }}"
         foreground: blue
-        properties:
+        options:
           style: agnoster_full
 
       - type: git
         style: plain
         foreground: green
-        properties:
+        options:
           fetch_status: True
-          fetch_stash_count: True
           fetch_upstream_icon: True
 
   - type: prompt
@@ -102,13 +101,13 @@ blocks:
         template: " {{ .FormattedMs }}"
         style: plain
         foreground: yellow
-        properties:
+        options:
           threshold: 99
 
       - type: status
         style: plain
         template: " {{ if .Error }}<red>\uf00d<b>{{ .Meaning }}</b></>{{ else }}<green>\uf42e</> {{ end }}"
-        properties:
+        options:
           always_enabled: True
 
       - type: text
