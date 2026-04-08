@@ -70,6 +70,7 @@ trustExitCode = true
 [fetch]
 all       = true
 parallel  = 0
+prune     = true
 pruneTags = true
 # TODO: this segfaults git on ubuntu 24
 # writeCommitGraph  = true
