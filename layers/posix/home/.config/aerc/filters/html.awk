@@ -21,6 +21,10 @@ PARSING_REFS {
     $2 = _COLOURIZE($2)
   } else if (! /^[[:space:]]*$/) {
     PARSING_REFS = 0
+    if (! length(REFS)) {
+      print | command
+      next
+    }
   }
   print
   next
