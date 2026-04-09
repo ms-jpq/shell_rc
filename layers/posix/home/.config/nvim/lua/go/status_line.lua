@@ -27,7 +27,7 @@ Go.lsp_status = function()
     table.insert(acc, client.name)
   end
   table.sort(acc, function(l, r)
-    return vim.stricmp(l, r) <= 0
+    return vim.stricmp(l, r) < 0
   end)
   return "[" .. table.concat(acc, " ") .. "]"
 end
