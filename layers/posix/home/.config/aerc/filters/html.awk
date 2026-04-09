@@ -1,13 +1,8 @@
 #!/usr/bin/env -S -- awk -f
 
 BEGIN {
-  if (ENVIRON["TMUX"] != "") {
-    OSC8 = "\033Ptmux;\033\033]8;;"
-    ST = "\033\033\\\033\\"
-  } else {
-    OSC8 = "\033]8;;"
-    ST = "\033\\"
-  }
+  OSC8 = "\033]8;;"
+  ST = "\033\\"
   CLS = "\033[0m"
   BOLD = "\033[1m"
   RED = "\033[31m"

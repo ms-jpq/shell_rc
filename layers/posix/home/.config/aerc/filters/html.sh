@@ -17,28 +17,12 @@ ARGV=(
   -o tabstop=2
 )
 
-BOLD_RED=$'\e[1;31m'
-GREEN=$'\e[0;32m'
-YELLOW=$'\e[0;33m'
-BOLD_YELLOW=$'\e[1;33m'
-CLS=$'\e[0m'
-
-if [[ -v AERC_MIME_TYPE ]]; then
-  FILTER=(
-    sed -E
-    -e "s#(\[[[:digit:]]+\])[[:space:]]?#$BOLD_RED\1 $CLS#g"
-    -e "s#(https?://[^ ]+)#$GREEN\1$CLS#g"
-    -e "s#(mailto:[^ ]+)#$YELLOW\1$CLS#g"
-    -e "s#(^|[[:space:]]+)([[:digit:]]{6,})([[:space:]]+|$)#$BOLD_YELLOW\2$CLS#g"
-  )
-else
-  FILTER=(cat --)
-fi
-
 SED=(
   sed -E
   -e $'s/[\u2007\u200b\u034f\u200c\u202b]/ /g'
   -e '/[[:space:]]+$/d'
 )
 
-"${ARGV[@]}" "$@" | "${FILTER[@]}" | "${SED[@]}"
+"${ARGV[@]}" "$@" | if [[ -v AERC_MIME_TYPE ]]; then
+  "${0%/*}/html.awk"
+fi | "${SED[@]}"
