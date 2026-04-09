@@ -8,6 +8,7 @@ BEGIN {
   RED = "\033[31m"
   GREEN = "\033[0;32m"
   YELLOW = "\033[0;33m"
+  PURPLE = "\033[0;35m"
   PARSING_REFS = 1
   command = "pr --omit-header --omit-pagination --indent " ENVIRON["COLS"] " --width " ENVIRON["COLS"]
 }
@@ -37,8 +38,11 @@ PARSING_REFS && /^[[:space:]]*$/ {
 
 function _COLOURIZE(LINK)
 {
-  if (LINK ~ /^mailto:/) {
+  if (LINK ~ /^file:/) {
     return (YELLOW LINK CLS)
+  }
+  if (LINK ~ /^mailto:/) {
+    return (PURPLE LINK CLS)
   }
   return (GREEN LINK CLS)
 }
