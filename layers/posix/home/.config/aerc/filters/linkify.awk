@@ -43,5 +43,5 @@ function _COLOURIZE(LINK)
 
 function _LINKIFY(TEXT, LINK)
 {
-  return (OSC8 TEXT OSC8 ST)
+  return (OSC8 LINK ST TEXT OSC8 ST)
 }
