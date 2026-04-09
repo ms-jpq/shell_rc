@@ -2,6 +2,14 @@
 
 set -o pipefail
 
-TOP="$(git --no-optional-locks rev-parse --path-format=absolute --show-toplevel || printf -- '%s' "$PWD")"
+NAME="$*"
 
-realpath --no-symlinks --relative-to "$TOP" -- "$@" | sed -E -z -e 's/\n$//' | ~/.config/zsh/bin/c
+if TOP="$(git --no-optional-locks rev-parse --path-format=absolute --show-toplevel)"; then
+  realpath --no-symlinks --relative-to "$TOP" -- "$NAME"
+elif [[ $NAME == "$HOME"/* ]]; then
+  # shellcheck disable=SC2088
+  printf -- '%s' '~/'
+  realpath --no-symlinks --relative-base "$HOME" -- "$NAME"
+else
+  printf -- '%s' "$NAME"
+fi | sed -E -z -e 's/\n$//' | ~/.config/zsh/bin/c
