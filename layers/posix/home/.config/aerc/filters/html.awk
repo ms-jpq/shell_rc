@@ -25,7 +25,7 @@ PARSING_REFS {
 
 ! PARSING_REFS {
   for (N in REFS) {
-    gsub("\\[" N "\\]", _LINKIFY("[" N "] ", REFS[N]), $0)
+    gsub("\\[" N "\\]", _LINKIFY("[" N "]", REFS[N]) " ", $0)
   }
 }
 
