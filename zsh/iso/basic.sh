@@ -8,7 +8,6 @@ _less=(
   --incsearch
   --mouse
   --no-histdups
-  --quit-if-one-screen
   --tabs=2
   --tilde
   --underline-special
