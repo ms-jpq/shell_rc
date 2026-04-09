@@ -12,25 +12,23 @@ BEGIN {
   command = "pr --omit-header --omit-pagination --indent " ENVIRON["COLS"] " --width " ENVIRON["COLS"]
 }
 
-PARSING_REFS {
-  if (NF == 2 && $1 ~ /^\[[0-9]+\]$/) {
-    N = $1
-    gsub(/[\[\]]/, "", N)
-    REFS[N] = $2
-    $1 = _LINKIFY($1, $2)
-    $2 = _COLOURIZE($2)
-  } else if (! /^[[:space:]]*$/) {
-    PARSING_REFS = 0
-    if (! length(REFS)) {
-      print | command
-      next
-    }
-  }
+PARSING_REFS && NF == 2 && $1 ~ /^\[[0-9]+\]$/ {
+  N = $1
+  gsub(/[\[\]]/, "", N)
+  REFS[N] = $2
+  $1 = _LINKIFY($1, $2)
+  $2 = _COLOURIZE($2)
   print
   next
 }
 
-! PARSING_REFS {
+PARSING_REFS && /^[[:space:]]*$/ {
+  print
+  next
+}
+
+{
+  PARSING_REFS = 0
   for (N in REFS) {
     gsub("\\[" N "\\]", _LINKIFY("[" N "]", REFS[N]) " ", $0)
   }
