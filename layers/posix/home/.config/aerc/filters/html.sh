@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-MAX=88
+MAX=128
 COLS=$((MAX))
 
 if [[ -v AERC_MIME_TYPE ]]; then
