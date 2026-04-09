@@ -22,17 +22,20 @@ Go.lsp_status = function()
   if #clients == 0 then
     return ""
   end
-  local names = {}
-  for _, c in ipairs(clients) do
-    table.insert(names, c.name)
+  local acc = {}
+  for _, client in ipairs(clients) do
+    table.insert(acc, client.name)
   end
-  return "[" .. table.concat(names, ",") .. "]"
+  table.sort(acc, function(l, r)
+    return vim.stricmp(l, r) <= 0
+  end)
+  return "[" .. table.concat(acc, " ") .. "]"
 end
 
 local rhs = (function()
   local progress = "%{%v:lua.vim.ui.progress_status()%}"
   local diagnostics = "%{%v:lua.vim.diagnostic.status()%}"
-  local lsp_servers = "%{v:lua.lsp_status()}"
+  local lsp_servers = "%{v:lua.Go.lsp_status()}"
   local busy = "%{&busy > 0 ? ' ◐ ' : ' '}"
 
   return progress .. " " .. diagnostics .. busy .. lsp_servers .. " " .. classic
