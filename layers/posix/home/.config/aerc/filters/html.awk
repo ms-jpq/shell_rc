@@ -10,7 +10,7 @@ BEGIN {
   YELLOW = "\033[0;33m"
   PURPLE = "\033[0;35m"
   PARSING_REFS = 1
-  command = "pr --omit-header --omit-pagination --indent " ENVIRON["COLS"] " --width " ENVIRON["COLS"]
+  command = "pr --omit-header --omit-pagination --indent " ENVIRON["IDENT"] " --width " ENVIRON["WIDTH"]
 }
 
 PARSING_REFS && NF == 2 && $1 ~ /^\[[0-9]+\]$/ {
