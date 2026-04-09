@@ -24,5 +24,7 @@ SED=(
 )
 
 "${ARGV[@]}" "$@" | if [[ -v AERC_MIME_TYPE ]]; then
-  "${0%/*}/html.awk"
+  tac | html.awk | tac
+else
+  tee
 fi | "${SED[@]}"
