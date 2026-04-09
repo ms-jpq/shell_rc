@@ -1,8 +1,13 @@
 #!/usr/bin/env -S -- awk -f
 
 BEGIN {
-  OSC8 = "\033]8;;"
-  ST = "\033\\"
+  if (ENVIRON["TMUX"] != "") {
+    OSC8 = "\033Ptmux;\033\033]8;;"
+    ST = "\033\033\\\033\\"
+  } else {
+    OSC8 = "\033]8;;"
+    ST = "\033\\"
+  }
   CLS = "\033[0m"
   BOLD = "\033[1m"
   RED = "\033[31m"
@@ -16,7 +21,7 @@ PARSING_REFS {
     N = $1
     gsub(/[\[\]]/, "", N)
     REFS[N] = $2
-    $1 = BOLD RED _LINKIFY($1, $2) CLS
+    $1 = _LINKIFY($1, $2) CLS
     $2 = _COLOURIZE($2)
   } else if (! /^[[:space:]]*$/) {
     PARSING_REFS = 0
@@ -25,7 +30,7 @@ PARSING_REFS {
 
 ! PARSING_REFS {
   for (N in REFS) {
-    gsub("\\[" N "\\]", "[" N "](" REFS[N] ")", $0)
+    gsub("\\[" N "\\]", _LINKIFY("[" N "]", REFS[N]), $0)
   }
 }
 
@@ -43,5 +48,5 @@ function _COLOURIZE(LINK)
 
 function _LINKIFY(TEXT, LINK)
 {
-  return (OSC8 LINK ST TEXT OSC8 ST)
+  return (BOLD RED OSC8 LINK ST TEXT OSC8 ST CLS)
 }
