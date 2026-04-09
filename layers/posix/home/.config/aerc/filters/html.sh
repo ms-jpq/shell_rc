@@ -2,15 +2,15 @@
 
 set -o pipefail
 
-MAX=128
-COLS=$((MAX))
-
 if [[ -v AERC_MIME_TYPE ]]; then
-  COLS="$(stty size < /dev/tty | cut -d ' ' -f 2)"
-fi
+  MAX=128
 
-if ((COLS > MAX)); then
-  COLS=$((MAX))
+  COLS="$(stty size < /dev/tty | cut -d ' ' -f 2)"
+  if ((COLS > MAX)); then
+    COLS=$((MAX))
+  fi
+else
+  COLS=88
 fi
 
 ARGV=(
