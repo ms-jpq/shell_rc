@@ -9,6 +9,7 @@ BEGIN {
   GREEN = "\033[0;32m"
   YELLOW = "\033[0;33m"
   PARSING_REFS = 1
+  command = "pr --omit-header --omit-pagination --indent " ENVIRON["COLS"] " --width " ENVIRON["COLS"]
 }
 
 PARSING_REFS {
@@ -20,17 +21,22 @@ PARSING_REFS {
     $2 = _COLOURIZE($2)
   } else if (! /^[[:space:]]*$/) {
     PARSING_REFS = 0
+    if (length(REFS) > 0) {
+      next
+    }
   }
+  print
 }
 
 ! PARSING_REFS {
   for (N in REFS) {
     gsub("\\[" N "\\]", _LINKIFY("[" N "]", REFS[N]) " ", $0)
   }
+  print | command
 }
 
-{
-  print
+END {
+  close(command)
 }
 
 function _COLOURIZE(LINK)
@@ -43,5 +49,5 @@ function _COLOURIZE(LINK)
 
 function _LINKIFY(TEXT, LINK)
 {
-  return (BOLD RED (TMUX_PRE TMUX_ESC OSC8 LINK TMUX_ESC ST TEXT TMUX_ESC OSC8 TMUX_ESC ST TMUX_FIN) CLS)
+  return (BOLD RED (OSC8 LINK ST TEXT OSC8 ST) CLS)
 }

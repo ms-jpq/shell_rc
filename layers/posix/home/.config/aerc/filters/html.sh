@@ -2,10 +2,15 @@
 
 set -o pipefail
 
+MAX=88
+
+COLS=$((MAX))
 if [[ -v AERC_MIME_TYPE ]]; then
   COLS="$(stty size < /dev/tty | cut -d ' ' -f 2)"
-else
-  COLS=88
+fi
+
+if ((COLS > MAX)); then
+  COLS=$((MAX))
 fi
 
 ARGV=(
@@ -25,7 +30,8 @@ SED=(
 
 "${ARGV[@]}" "$@" | if [[ -v AERC_MIME_TYPE ]]; then
   SELF="$(realpath -- "$0")"
-  tac | "${SELF%/*}/html.awk" | tac
+  BASE="${SELF%/*}"
+  tac | COLS="$COLS" "$BASE/html.awk" | tac
 else
   tee
 fi | "${SED[@]}"
