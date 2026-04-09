@@ -16,7 +16,7 @@ PARSING_REFS {
     N = $1
     gsub(/[\[\]]/, "", N)
     REFS[N] = $2
-    $1 = _LINKIFY($1, $2) CLS
+    $1 = _LINKIFY($1, $2)
     $2 = _COLOURIZE($2)
   } else if (! /^[[:space:]]*$/) {
     PARSING_REFS = 0
