@@ -19,7 +19,7 @@ PARSING_REFS && NF == 2 && $1 ~ /^\[[0-9]+\]$/ {
   REFS[N] = $2
   $1 = _LINKIFY($1, $2)
   $2 = _COLOURIZE($2)
-  print
+  # print
   next
 }
 
