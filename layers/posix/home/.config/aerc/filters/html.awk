@@ -21,11 +21,9 @@ PARSING_REFS {
     $2 = _COLOURIZE($2)
   } else if (! /^[[:space:]]*$/) {
     PARSING_REFS = 0
-    if (length(REFS) > 0) {
-      next
-    }
   }
   print
+  next
 }
 
 ! PARSING_REFS {
@@ -33,10 +31,6 @@ PARSING_REFS {
     gsub("\\[" N "\\]", _LINKIFY("[" N "]", REFS[N]) " ", $0)
   }
   print | command
-}
-
-END {
-  close(command)
 }
 
 function _COLOURIZE(LINK)
