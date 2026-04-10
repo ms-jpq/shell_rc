@@ -50,7 +50,7 @@ local no_session = (function()
       return cached
     end
 
-    cached = vim.fn.getcwd() == vim.uv.os_homedir() or detect_stdin(cwd)
+    cached = vim.fn.getcwd() == vim.uv.os_homedir() or vim.wo.diff or detect_stdin(cwd)
 
     return cached
   end
