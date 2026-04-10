@@ -76,7 +76,9 @@ vim.api.nvim_create_autocmd({ "BufReadPost" }, {
     local tabsize = vim.b.__tabsize__ or detect_tabs(buf)
 
     vim.schedule(function()
-      set_tabsize(tabsize, vim.bo[buf])
+      if vim.api.nvim_buf_is_valid(buf) then
+        set_tabsize(tabsize, vim.bo[buf])
+      end
     end)
   end,
 })
