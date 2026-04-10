@@ -6,7 +6,7 @@ local termstart = function(cmd, env, die)
       term = true,
       env = env,
       on_exit = function()
-        vim.cmd.bwipeout(buf)
+        vim.api.nvim_buf_delete(buf, { force = true })
         if die then
           die()
         end
