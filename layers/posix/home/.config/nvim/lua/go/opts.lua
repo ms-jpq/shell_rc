@@ -60,6 +60,3 @@ vim.opt.smartcase = true
 
 -- dont follow tags
 vim.opt.complete:remove "i"
-
--- vimdiff options
-vim.opt.diffopt:append { "followwrap", "algorithm:patience" }

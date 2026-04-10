@@ -8,4 +8,3 @@ local parens = unpack(vim.api.nvim_get_runtime_file("plugin/matchparen.vim", tru
 vim.cmd.source(vim.fn.fnameescape(parens))
 
 vim.cmd.packadd [[matchit]]
-vim.cmd.packadd [[nvim.difftool]]
