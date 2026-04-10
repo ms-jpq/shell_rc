@@ -36,6 +36,7 @@ while true; do
     break
     ;;
   *)
+    set -x
     exit 2
     ;;
   esac
