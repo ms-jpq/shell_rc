@@ -40,8 +40,8 @@ local file_exp_die = function()
       end
     end
 
-    if #dead > 0 then
-      vim.cmd([[bwipeout! ]] .. table.concat(dead, " "))
+    for _, buf in pairs(dead) do
+      vim.api.nvim_buf_delete(buf, { force = true })
     end
 
     local altfile = vim.api.nvim_get_current_buf() == current and alt or cur_name
