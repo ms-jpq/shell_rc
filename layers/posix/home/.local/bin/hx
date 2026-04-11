@@ -37,12 +37,4 @@ if [[ ! -d $HELIX_RUNTIME ]]; then
   esac
 fi
 
-ENV="$HOME/.local/opt/ai/.env"
-if [[ -f $ENV ]]; then
-  set -a
-  # shellcheck disable=SC1090
-  source -- "$ENV"
-  set +a
-fi
-
 exec -- hp "$HX" --config "$HOME/.config/helix/config.toml" "$@"

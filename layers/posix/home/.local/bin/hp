@@ -5,7 +5,6 @@ shopt -u failglob
 
 RT="$HOME/.cache/helix-rt"
 PATHS=(
-  "$RT/bin"
   "$RT/"{more,go,ruby}/*/bin
   "$RT/php/"*/vendor/bin
   "$RT/nodejs"/*/node_modules/.bin
