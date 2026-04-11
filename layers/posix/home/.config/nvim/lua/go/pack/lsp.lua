@@ -28,7 +28,7 @@ return function()
       vim.lsp.enable(name)
     end
 
-    acc[name] = { merged, conf.extensions or {} }
+    table.insert(acc, { merged, conf.extensions or {} })
   end
 
   return acc

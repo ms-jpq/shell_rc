@@ -10,17 +10,19 @@ require "lspconfig"
 local lsp_on = require "go.pack.lsp"
 
 local acc = {}
-for name, row in pairs(lsp_on()) do
+for _, row in pairs(lsp_on()) do
   local merged, extensions = unpack(row)
   local mapping = vim.empty_dict()
   for _, ext in pairs(extensions) do
     mapping[ext] = merged.filetypes[1]
   end
 
+  local command = merged.cmd[1]
+  local stem = vim.fn.fnamemodify(command, ":t:r")
   if #extensions ~= 0 then
-    acc[name] = {
+    acc[stem] = {
       extensionToLanguage = mapping,
-      command = merged.cmd[1],
+      command = command,
       args = vim.list_slice(merged.cmd, 2),
       initializationOptions = merged.init_options,
       settings = merged.settings,
