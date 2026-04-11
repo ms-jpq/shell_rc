@@ -32,7 +32,7 @@ typos_lsp:
 #   bin: harper-ls
 
 lemminx:
-  bin: lemminx.jsh
+  bin: lemminx
   args:
     - -Dlemminx.workdir=/var/tmp/lemminx
   extensions:
@@ -60,7 +60,7 @@ ast_grep:
 #   bin: ltex-ls
 
 ltex_plus:
-  bin: ltex-ls-plus.sh
+  bin: ltex-ls-plus
   extensions:
     - .bib
     - .md
@@ -170,7 +170,7 @@ perlnavigator:
     - .pm
 
 powershell_es:
-  bin: pwsh-es.ps1
+  bin: pwsh-es
   extensions:
     - .ps1
     - .psm1
@@ -267,7 +267,7 @@ fortls:
 #   bin: steep
 
 ruby_lsp:
-  bin: ruby-lsp.rb
+  bin: ruby-lsp
   extensions:
     - .rb
     - .gemspec
@@ -275,7 +275,7 @@ ruby_lsp:
     - .ru
 
 sorbet:
-  bin: srb.rb
+  bin: srb
   extensions:
     - .rb
     - .gemspec
@@ -283,7 +283,7 @@ sorbet:
     - .ru
 
 solargraph:
-  bin: solargraph.rb
+  bin: solargraph
   extensions:
     - .rb
     - .gemspec
@@ -358,7 +358,7 @@ vimls:
     - .vim
 
 r_language_server:
-  bin: lsp.R
+  bin: lsp
   extensions:
     - .r
     - .R
@@ -379,7 +379,7 @@ phan:
 #   bin: psalm
 
 phpactor:
-  bin: phpactor.phar
+  bin: phpactor
   extensions:
     - .php
 
@@ -391,14 +391,14 @@ intelephense:
     - .php
 
 fsautocomplete:
-  bin: fsautocomplete.fsx
+  bin: fsautocomplete
   extensions:
     - .fs
     - .fsi
     - .fsx
 
 omnisharp:
-  bin: omnisharp.fsx
+  bin: omnisharp
   extensions:
     - .cs
 
@@ -431,7 +431,7 @@ jdtls:
     - .java
 
 prolog_ls:
-  bin: prolog-ls.pro
+  bin: prolog-ls
   args: []
   extensions:
     - .pro
@@ -440,7 +440,7 @@ prolog_ls:
 #   bin: sql-language-server
 
 lua_ls:
-  bin: lua-language-server.sh
+  bin: lua-language-server
   settings:
     Lua:
       runtime:

@@ -71,7 +71,6 @@
     "@mdx-js/language-server": [],
     "@microsoft/compose-language-service": [],
     "@prisma/language-server": [],
-    "@stainless-api/stainless-language-server": [],
     "@tailwindcss/language-server": [],
     "@typespec/compiler": [],
     "@vue/language-server": [],

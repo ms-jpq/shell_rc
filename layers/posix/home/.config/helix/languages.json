@@ -253,8 +253,7 @@
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
         "command": "prettier.js"
-      },
-      "language-servers": ["stainless"]
+      }
     }
   },
   "language-server": {
@@ -263,7 +262,7 @@
       "command": "copilot-language-server"
     },
     "fsharp-ls": {
-      "command": "fsautocomplete.fsx"
+      "command": "fsautocomplete"
     },
     "helix-gpt": {
       "args": [
@@ -283,35 +282,31 @@
     },
     "lemminx": {
       "args": ["-Dlemminx.workdir=/var/tmp/lemminx"],
-      "command": "lemminx.jsh"
+      "command": "lemminx"
     },
     "lua-language-server": {
-      "command": "lua-language-server.sh"
+      "command": "lua-language-server"
     },
     "omnisharp": {
-      "command": "omnisharp.fsx"
+      "command": "omnisharp"
     },
     "phpactor": {
       "args": ["language-server"],
-      "command": "phpactor.phar"
+      "command": "phpactor"
     },
     "powershell-es": {
       "args": [],
-      "command": "pwsh-es.ps1"
+      "command": "pwsh-es"
     },
     "r": {
-      "command": "lsp.R"
+      "command": "lsp"
     },
     "solargraph": {
-      "command": "solargraph.rb"
+      "command": "solargraph"
     },
     "sorbet": {
       "args": ["tc", "--lsp"],
       "command": "srb"
-    },
-    "stainless": {
-      "args": ["--stdio"],
-      "command": "stainless-language-server"
     },
     "tabby": {
       "args": ["--stdio"],
