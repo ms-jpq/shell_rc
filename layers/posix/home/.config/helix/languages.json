@@ -4,7 +4,7 @@
   "language": {
     "awk": {
       "formatter": {
-        "command": "awk-fmt.sh"
+        "command": "awk-fmt"
       }
     },
     "bash": {
@@ -58,7 +58,7 @@
     "fsharp": {
       "formatter": {
         "args": ["%{buffer_name}"],
-        "command": "fantomas.fsx"
+        "command": "fantomas"
       }
     },
     "go": {
@@ -90,13 +90,13 @@
     "java": {
       "formatter": {
         "args": ["-"],
-        "command": "javafmt.jsh"
+        "command": "javafmt"
       }
     },
     "javascript": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier.js"
+        "command": "prettier"
       }
     },
     "jq": {
@@ -107,18 +107,18 @@
     "json": {
       "formatter": {
         "args": ["--tabsize=2"],
-        "command": "json-fmt.js"
+        "command": "json-fmt"
       }
     },
     "kotlin": {
       "formatter": {
         "args": ["2", "--stdin-name=%{buffer_name}", "-"],
-        "command": "ktfmt.jsh"
+        "command": "ktfmt"
       }
     },
     "latex": {
       "formatter": {
-        "command": "latexindent.pl"
+        "command": "latexindent"
       },
       "language-servers": ["ltex-ls-plus"]
     },
@@ -142,7 +142,7 @@
     "markdown": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier.js"
+        "command": "prettier"
       },
       "language-servers": ["ltex-ls-plus"]
     },
@@ -150,44 +150,44 @@
       "file-types": ["nginx"],
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier.js"
+        "command": "prettier"
       }
     },
     "perl": {
       "formatter": {
         "args": ["--indent-columns=2"],
-        "command": "perltidy.pl"
+        "command": "perltidy"
       }
     },
     "php": {
       "formatter": {
         "args": [],
-        "command": "cs-fixer.php"
+        "command": "cs-fixer"
       },
       "language-servers": ["phpactor"]
     },
     "powershell": {
       "formatter": {
-        "command": "pwsh-fmt.ps1"
+        "command": "pwsh-fmt"
       },
       "language-servers": ["powershell-lsp"]
     },
     "prolog": {
       "formatter": {
-        "command": "prolog-fmt.pro"
+        "command": "prolog-fmt"
       }
     },
     "python": {
       "formatter": {
         "args": [],
-        "command": "isort-black.py"
+        "command": "isort-black"
       },
       "language-servers": ["pyright"]
     },
     "r": {
       "formatter": {
         "args": [],
-        "command": "styler.R"
+        "command": "styler"
       }
     },
     "ruby": {
@@ -201,7 +201,7 @@
           "--no-color",
           "--autocorrect"
         ],
-        "command": "rubocop.rb"
+        "command": "rubocop"
       },
       "language-servers": ["srb"]
     },
@@ -220,7 +220,7 @@
     },
     "systemd": {
       "formatter": {
-        "command": "systemd-fmt.sh"
+        "command": "systemd-fmt"
       }
     },
     "toml": {
@@ -239,20 +239,20 @@
     "typescript": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier.js"
+        "command": "prettier"
       }
     },
     "xml": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier.js"
+        "command": "prettier"
       },
       "language-servers": ["lemminx"]
     },
     "yaml": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier.js"
+        "command": "prettier"
       }
     }
   },
