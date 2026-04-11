@@ -28,7 +28,7 @@ return function()
       vim.lsp.enable(name)
     end
 
-    acc[name] = merged
+    acc[name] = { merged, conf.extensions or {} }
   end
 
   return acc

@@ -10,24 +10,23 @@ require "lspconfig"
 local lsp_on = require "go.pack.lsp"
 
 local acc = {}
-for name, merged in pairs(lsp_on()) do
-  acc[name] = {
-    _filetypes = merged.filetypes,
-    extensionToLanguage = vim.empty_dict(),
-    command = merged.cmd[1],
-    args = vim.list_slice(merged.cmd, 2),
-    initializationOptions = merged.init_options,
-    settings = merged.settings,
-  }
+for name, row in pairs(lsp_on()) do
+  local merged, extensions = unpack(row)
+  local mapping = vim.empty_dict()
+  for _, ext in pairs(extensions) do
+    mapping[ext] = merged.filetypes[1]
+  end
+
+  if #extensions ~= 0 then
+    acc[name] = {
+      extensionToLanguage = mapping,
+      command = merged.cmd[1],
+      args = vim.list_slice(merged.cmd, 2),
+      initializationOptions = merged.init_options,
+      settings = merged.settings,
+    }
+  end
 end
 
 local json = vim.json.encode(acc, { indent = [[  ]], sort_keys = true })
-local jq =
-  "map_values(.extensionToLanguage = ([._filetypes[]? as $ft | ($map[0][$ft] // [])[] | {(.): $ft}] | add // {}) | del(._filetypes))"
-
-local proc = vim
-  .system({ "jq", "-e", "--slurpfile", "map", vim.fs.joinpath(cfg, "ftdetect", "mappings.json"), jq }, { stdin = json })
-  :wait()
-
-assert(proc.code == 0)
-io.stdout:write(proc.stdout)
+io.stdout:write(json)
