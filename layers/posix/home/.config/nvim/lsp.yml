@@ -24,9 +24,7 @@ typos_lsp:
   init_options:
     diagnosticSeverity: Information
 
-# harper_ls:
-#   cmd:
-#     - harper-ls
+# harper_ls: {}
 
 lemminx:
   cmd:
@@ -39,25 +37,13 @@ lemminx:
     - .xsl
     - .xslt
 
-contextive:
-  cmd:
-    - Contextive.LanguageServer_which
-
 ast_grep: {}
 
-# marksman:
-#   cmd:
-#     - marksman
+# marksman: {}
 
 # markdown:
-#   cmd:
-#     - vscode-markdown-language-server
 #   filetypes:
 #     - markdown
-
-# ltex:
-#   cmd:
-#     - ltex-ls
 
 ltex_plus: {}
 
@@ -175,13 +161,9 @@ pyright:
     - .py
     - .pyi
 
-# pylyzer:
-#   cmd:
-#     - pylyzer
-#
-# ruff_lsp:
-#   cmd:
-#     - ruff
+# pylyzer: {}
+
+# ruff_lsp: {}
 
 hls:
   extensions:
@@ -241,8 +223,6 @@ fortls:
     - .f95
 
 ruby_lsp:
-  cmd:
-    - ruby-lsp
   extensions:
     - .gemspec
     - .rake
@@ -304,9 +284,7 @@ cssls:
     - .less
     - .scss
 
-# tailwindcss:
-#   cmd:
-#     - tailwindcss-language-server
+# tailwindcss: {}
 
 svelte:
   extensions:
@@ -340,9 +318,7 @@ phan:
   extensions:
     - .php
 
-# psalm:
-#   cmd:
-#     - psalm
+# psalm: {}
 
 phpactor:
   extensions:
@@ -371,9 +347,7 @@ clojure_lsp:
     - .cljs
     - .edn
 
-# gradle_ls:
-#   cmd:
-#     - gradle-language-server
+# gradle_ls: {}
 
 kotlin_lsp:
   extensions:
@@ -386,8 +360,6 @@ kotlin_language_server:
     - .kts
 
 jdtls:
-  cmd:
-    - jdtls
   extensions:
     - .java
 
@@ -397,9 +369,7 @@ prolog_ls:
   extensions:
     - .pro
 
-# sqlls:
-#   cmd:
-#     - sql-language-server
+# sqlls: {}
 
 lua_ls:
   settings:
@@ -421,13 +391,9 @@ glsl_analyzer:
     - .tese
     - .vert
 
-# theme_check:
-#   cmd:
-#     - theme-check-language-server
+# theme_check: {}
 
-# emmet_language_server:
-#   cmd:
-#     - emmet-language-server
+# emmet_language_server: {}
 
 terraformls:
   extensions:
@@ -456,17 +422,11 @@ nginx_language_server:
   extensions:
     - .nginx
 
-# copilot:
-#   cmd:
-#     - copilot-language-server
+# copilot: {}
 
-# gh_actions_ls:
-#   cmd:
-#     - gh-actions-language-server
+# gh_actions_ls: {}
 
-# volar:
-#   cmd:
-#     - vue-language-server
+# volar: {}
 
 tsp_server:
   extensions:
