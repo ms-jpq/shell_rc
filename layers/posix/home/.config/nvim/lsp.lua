@@ -18,9 +18,8 @@ for _, row in pairs(lsp_on()) do
   end
 
   local command = merged.cmd[1]
-  local stem = vim.fn.fnamemodify(command, ":t:r")
   if #extensions ~= 0 then
-    acc[stem] = {
+    acc[command] = {
       extensionToLanguage = mapping,
       command = command,
       args = vim.list_slice(merged.cmd, 2),

@@ -5,7 +5,7 @@ return function()
   local acc = {}
 
   for name, conf in pairs(lib.read_json(lsp_path)) do
-    local keys = { "filetypes", "init_options", "settings" }
+    local keys = { "cmd", "filetypes", "init_options", "settings" }
     local overrides = { detached = false }
     for _, k in pairs(keys) do
       if conf[k] then
@@ -13,18 +13,14 @@ return function()
       end
     end
 
-    local argv = conf.args and { { "" }, conf.args } or { (vim.lsp.config[name] or {}).cmd or {} }
-    local cmds = vim.iter(argv):flatten():totable()
-    cmds[1] = conf.bin
-    overrides.cmd = cmds
-
     if coq then
       overrides = coq.lsp_ensure_capabilities(overrides)
     end
     vim.lsp.config(name, overrides)
     local merged = vim.lsp.config[name]
 
-    if vim.fn.executable(conf.bin) ~= 0 then
+    local bin = unpack(merged.cmd)
+    if bin and vim.fn.executable(bin) ~= 0 then
       vim.lsp.enable(name)
     end
 

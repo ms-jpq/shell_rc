@@ -1,12 +1,14 @@
 ---
 jsonls:
-  bin: vscode-json-language-server
+  cmd:
+    - vscode-json-language-server
   extensions:
     - .json
     - .jsonc
 
 yamlls:
-  bin: yaml-language-server
+  cmd:
+    - yaml-language-server
   filetypes:
     - yaml
     - yaml.ansible
@@ -19,21 +21,24 @@ yamlls:
   #     keyOrdering: false
 
 taplo:
-  bin: taplo
+  cmd:
+    - taplo
   extensions:
     - .toml
 
 typos_lsp:
-  bin: typos-lsp
+  cmd:
+    - typos-lsp
   init_options:
     diagnosticSeverity: Information
 
 # harper_ls:
-#   bin: harper-ls
+#   cmd:
+#     - harper-ls
 
 lemminx:
-  bin: lemminx
-  args:
+  cmd:
+    - lemminx
     - -Dlemminx.workdir=/var/tmp/lemminx
   extensions:
     - .xml
@@ -42,25 +47,27 @@ lemminx:
     - .xslt
     - .svg
 
-contextive:
-  bin: Contextive.LanguageServer_which
-
 ast_grep:
-  bin: ast-grep
+  cmd:
+    - ast-grep
 
 # marksman:
-#   bin: marksman
+#   cmd:
+#     - marksman
 
 # markdown:
-#   bin: vscode-markdown-language-server
+#   cmd:
+#     - vscode-markdown-language-server
 #   filetypes:
 #     - markdown
 
 # ltex:
-#   bin: ltex-ls
+#   cmd:
+#     - ltex-ls
 
 ltex_plus:
-  bin: ltex-ls-plus
+  cmd:
+    - ltex-ls-plus
   extensions:
     - .bib
     - .md
@@ -72,7 +79,8 @@ ltex_plus:
     - .xhtml
 
 texlab:
-  bin: texlab
+  cmd:
+    - texlab
   settings:
     texlab:
       build:
@@ -100,13 +108,15 @@ texlab:
     - .bib
 
 digestif:
-  bin: digestif
+  cmd:
+    - digestif
   extensions:
     - .tex
     - .sty
 
 diagnosticls:
-  bin: diagnostic-languageserver
+  cmd:
+    - diagnostic-languageserver
   filetypes:
     - dockerfile
     - sh
@@ -145,85 +155,102 @@ diagnosticls:
     - .zsh
 
 bashls:
-  bin: bash-language-server
+  cmd:
+    - bash-language-server
   extensions:
     - .sh
     - .bash
 
 jqls:
-  bin: jq-lsp
+  cmd:
+    - jq-lsp
   extensions:
     - .jq
 
 awk_ls:
-  bin: awk-language-server
+  cmd:
+    - awk-language-server
   extensions:
     - .awk
 
 systemd_lsp:
-  bin: systemd-lsp
+  cmd:
+    - systemd-lsp
 
 perlnavigator:
-  bin: perlnavigator
+  cmd:
+    - perlnavigator
   extensions:
     - .pl
     - .pm
 
 powershell_es:
-  bin: pwsh-es
+  cmd:
+    - pwsh-es
   extensions:
     - .ps1
     - .psm1
 
 dockerls:
-  bin: docker-langserver
+  cmd:
+    - docker-langserver
   extensions:
     - .dockerfile
 
 docker_compose_language_service:
-  bin: docker-compose-langserver
+  cmd:
+    - docker-compose-langserver
 
 pyright:
-  bin: pyright-langserver
+  cmd:
+    - pyright-langserver
   extensions:
     - .py
     - .pyi
 
 # pylyzer:
-#   bin: pylyzer
+#   cmd:
+#     - pylyzer
 #
 # ruff_lsp:
-#   bin: ruff
+#   cmd:
+#     - ruff
 
 hls:
-  bin: haskell-language-server-wrapper
+  cmd:
+    - haskell-language-server-wrapper
   extensions:
     - .hs
     - .lhs
 
 rust_analyzer:
-  bin: rust-analyzer
+  cmd:
+    - rust-analyzer
   extensions:
     - .rs
 
 gopls:
-  bin: gopls
+  cmd:
+    - gopls
   extensions:
     - .go
     - .mod
 
 golangci_lint_ls:
-  bin: golangci-lint-langserver
+  cmd:
+    - golangci-lint-langserver
   extensions:
     - .go
 
 sourcekit:
-  bin: sourcekit-lsp
+  cmd:
+    - sourcekit-lsp
   extensions:
     - .swift
 
 clangd:
-  bin: clangd
+  cmd:
+    - clangd
   extensions:
     - .c
     - .h
@@ -238,7 +265,8 @@ clangd:
     - .cuh
 
 ccls:
-  bin: ccls
+  cmd:
+    - ccls
   extensions:
     - .c
     - .h
@@ -253,7 +281,8 @@ ccls:
     - .cuh
 
 fortls:
-  bin: fortls
+  cmd:
+    - fortls
   extensions:
     - .f90
     - .f95
@@ -261,13 +290,16 @@ fortls:
     - .f08
 
 # typeprof:
-#   bin: typeprof
+#   cmd:
+#     - typeprof
 
 # steep:
-#   bin: steep
+#   cmd:
+#     - steep
 
 ruby_lsp:
-  bin: ruby-lsp
+  cmd:
+    - ruby-lsp
   extensions:
     - .rb
     - .gemspec
@@ -275,7 +307,8 @@ ruby_lsp:
     - .ru
 
 sorbet:
-  bin: srb
+  cmd:
+    - srb
   extensions:
     - .rb
     - .gemspec
@@ -283,7 +316,8 @@ sorbet:
     - .ru
 
 solargraph:
-  bin: solargraph
+  cmd:
+    - solargraph
   extensions:
     - .rb
     - .gemspec
@@ -291,12 +325,14 @@ solargraph:
     - .ru
 
 mdx_analyzer:
-  bin: mdx-language-server
+  cmd:
+    - mdx-language-server
   extensions:
     - .mdx
 
 ts_ls:
-  bin: typescript-language-server
+  cmd:
+    - typescript-language-server
   extensions:
     - .js
     - .cjs
@@ -308,12 +344,14 @@ ts_ls:
     - .tsx
 
 prismals:
-  bin: prisma-language-server
+  cmd:
+    - prisma-language-server
   extensions:
     - .prisma
 
 # eslint:
-#   bin: vscode-eslint-language-server
+#   cmd:
+#     - vscode-eslint-language-server
 #   settings:
 #     run: onSave
 #     rulesCustomizations:
@@ -323,42 +361,50 @@ prismals:
 #         severity: info
 
 # denols:
-#   bin: deno
+#   cmd:
+#     - deno
 
 superhtml:
-  bin: superhtml
+  cmd:
+    - superhtml
   extensions:
     - .html
     - .htm
 
 cssls:
-  bin: vscode-css-language-server
+  cmd:
+    - vscode-css-language-server
   extensions:
     - .css
     - .less
     - .scss
 
 # tailwindcss:
-#   bin: tailwindcss-language-server
+#   cmd:
+#     - tailwindcss-language-server
 
 svelte:
-  bin: svelteserver
+  cmd:
+    - svelteserver
   extensions:
     - .svelte
 
 graphql:
-  bin: graphql-lsp
+  cmd:
+    - graphql-lsp
   extensions:
     - .graphql
     - .gql
 
 vimls:
-  bin: vim-language-server
+  cmd:
+    - vim-language-server
   extensions:
     - .vim
 
 r_language_server:
-  bin: lsp
+  cmd:
+    - lsp
   extensions:
     - .r
     - .R
@@ -366,44 +412,52 @@ r_language_server:
     - .Rmd
 
 julials:
-  bin: julia-lsp
+  cmd:
+    - julia-lsp
   extensions:
     - .jl
 
 phan:
-  bin: phan
+  cmd:
+    - phan
   extensions:
     - .php
 
 # psalm:
-#   bin: psalm
+#   cmd:
+#     - psalm
 
 phpactor:
-  bin: phpactor
+  cmd:
+    - phpactor
   extensions:
     - .php
 
 intelephense:
-  bin: intelephense
+  cmd:
+    - intelephense
   init_options:
     globalStoragePath: /var/tmp/intelephense
   extensions:
     - .php
 
 fsautocomplete:
-  bin: fsautocomplete
+  cmd:
+    - fsautocomplete
   extensions:
     - .fs
     - .fsi
     - .fsx
 
 omnisharp:
-  bin: omnisharp
+  cmd:
+    - OmniSharp
   extensions:
     - .cs
 
 clojure_lsp:
-  bin: clojure-lsp
+  cmd:
+    - clojure-lsp
   extensions:
     - .clj
     - .cljs
@@ -411,36 +465,42 @@ clojure_lsp:
     - .edn
 
 # gradle_ls:
-#   bin: gradle-language-server
+#   cmd:
+#     - gradle-language-server
 
 kotlin_lsp:
-  bin: kotlin-lsp
+  cmd:
+    - kotlin-lsp
   extensions:
     - .kt
     - .kts
 
 kotlin_language_server:
-  bin: kotlin-language-server
+  cmd:
+    - kotlin-language-server
   extensions:
     - .kt
     - .kts
 
 jdtls:
-  bin: jdtls
+  cmd:
+    - jdtls
   extensions:
     - .java
 
 prolog_ls:
-  bin: prolog-ls
-  args: []
+  cmd:
+    - prolog-ls
   extensions:
     - .pro
 
 # sqlls:
-#   bin: sql-language-server
+#   cmd:
+#     - sql-language-server
 
 lua_ls:
-  bin: lua-language-server
+  cmd:
+    - lua-language-server
   settings:
     Lua:
       runtime:
@@ -449,10 +509,12 @@ lua_ls:
     - .lua
 
 ansiblels:
-  bin: ansible-language-server
+  cmd:
+    - ansible-language-server
 
 glsl_analyzer:
-  bin: glsl_analyzer
+  cmd:
+    - glsl_analyzer
   extensions:
     - .glsl
     - .vert
@@ -463,28 +525,33 @@ glsl_analyzer:
     - .tese
 
 # theme_check:
-#   bin: theme-check-language-server
+#   cmd:
+#     - theme-check-language-server
 
 # emmet_language_server:
-#   bin: emmet-language-server
+#   cmd:
+#     - emmet-language-server
 
 terraformls:
-  bin: terraform-ls
+  cmd:
+    - terraform-ls
   extensions:
     - .tf
     - .tfvars
 
 helm_ls:
-  bin: helm_ls
+  cmd:
+    - helm_ls
 
 tflint:
-  bin: tflint
+  cmd:
+    - tflint
   extensions:
     - .tf
 
 cobol_ls:
-  bin: cobol-language-support
-  args:
+  cmd:
+    - cobol-language-support
     - pipeEnabled
     - '-Dline.separator=\r\n'
     - -Dlogback.statusListenerClass=ch.qos.logback.core.status.NopStatusListener
@@ -494,45 +561,25 @@ cobol_ls:
     - .cbl
 
 nginx_language_server:
-  bin: nginx-language-server
+  cmd:
+    - nginx-language-server
   extensions:
     - .nginx
 
-lsp_ai:
-  bin: lsp-ai
-  # https://github.com/SilasMarvin/lsp-ai/wiki/In%E2%80%90Editor-Chatting
-  filetypes: []
-  init_options:
-    memory:
-      file_store: {}
-    models: []
-    chat: []
-
-# tabby_ml:
-#   bin: tabby-agent
-#   filetypes:
-#     - bash
-#     - java
-#     - javascript
-#     - kotlin
-#     - mail
-#     - markdown
-#     - php
-#     - python
-#     - ruby
-#     - text
-#     - typescript
-
 # copilot:
-#   bin: copilot-language-server
+#   cmd:
+#     - copilot-language-server
 
 # gh_actions_ls:
-#   bin: gh-actions-language-server
+#   cmd:
+#     - gh-actions-language-server
 
 # volar:
-#   bin: vue-language-server
+#   cmd:
+#     - vue-language-server
 
 tsp_server:
-  bin: tsp-server
+  cmd:
+    - tsp-server
   extensions:
     - .tsp

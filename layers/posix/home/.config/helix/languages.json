@@ -203,7 +203,7 @@
         ],
         "command": "rubocop.rb"
       },
-      "language-servers": ["sorbet"]
+      "language-servers": ["srb"]
     },
     "rust": {
       "formatter": {
@@ -257,12 +257,9 @@
     }
   },
   "language-server": {
-    "chatty": {
+    "copilot-language-server": {
       "args": ["--stdio"],
       "command": "copilot-language-server"
-    },
-    "fsharp-ls": {
-      "command": "fsautocomplete"
     },
     "helix-gpt": {
       "args": [
@@ -287,9 +284,6 @@
     "lua-language-server": {
       "command": "lua-language-server"
     },
-    "omnisharp": {
-      "command": "omnisharp"
-    },
     "phpactor": {
       "args": ["language-server"],
       "command": "phpactor"
@@ -304,13 +298,9 @@
     "solargraph": {
       "command": "solargraph"
     },
-    "sorbet": {
+    "srb": {
       "args": ["tc", "--lsp"],
       "command": "srb"
-    },
-    "tabby": {
-      "args": ["--stdio"],
-      "command": "tabby-agent"
     }
   }
 }
