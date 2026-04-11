@@ -19,7 +19,13 @@ return function()
     vim.lsp.config(name, overrides)
     local merged = vim.lsp.config[name]
 
-    local bin = unpack(merged.cmd)
+    local argv = merged.cmd
+    if type(argv) == "function" then
+      argv = {}
+      vim.notify([[☠️ ]] .. name, vim.log.levels.ERROR)
+    end
+
+    local bin = unpack(argv)
     if bin and vim.fn.executable(bin) ~= 0 then
       vim.lsp.enable(name)
     end
