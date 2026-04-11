@@ -140,7 +140,17 @@ awk_ls:
   extensions:
     - .awk
 
-systemd_lsp: {}
+systemd_lsp:
+  extensions:
+    - .automount
+    - .dnssd
+    - .link
+    - .mount
+    - .netdev
+    - .network
+    - .service
+    - .socket
+    - .target
 
 perlnavigator:
   extensions:
