@@ -223,6 +223,8 @@ fortls:
     - .f95
 
 ruby_lsp:
+  cmd:
+    - ruby-lsp
   extensions:
     - .gemspec
     - .rake
@@ -360,6 +362,8 @@ kotlin_language_server:
     - .kts
 
 jdtls:
+  cmd:
+    - jdtls
   extensions:
     - .java
 
