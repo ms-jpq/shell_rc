@@ -1,14 +1,10 @@
 ---
 jsonls:
-  cmd:
-    - vscode-json-language-server
   extensions:
     - .json
     - .jsonc
 
 yamlls:
-  cmd:
-    - yaml-language-server
   filetypes:
     - yaml
     - yaml.ansible
@@ -21,14 +17,10 @@ yamlls:
   #     keyOrdering: false
 
 taplo:
-  cmd:
-    - taplo
   extensions:
     - .toml
 
 typos_lsp:
-  cmd:
-    - typos-lsp
   init_options:
     diagnosticSeverity: Information
 
@@ -41,15 +33,17 @@ lemminx:
     - lemminx
     - -Dlemminx.workdir=/var/tmp/lemminx
   extensions:
+    - .svg
     - .xml
     - .xsd
     - .xsl
     - .xslt
-    - .svg
 
-ast_grep:
+contextive:
   cmd:
-    - ast-grep
+    - Contextive.LanguageServer_which
+
+ast_grep: {}
 
 # marksman:
 #   cmd:
@@ -65,22 +59,9 @@ ast_grep:
 #   cmd:
 #     - ltex-ls
 
-ltex_plus:
-  cmd:
-    - ltex-ls-plus
-  extensions:
-    - .bib
-    - .md
-    - .org
-    - .tex
-    - .sty
-    - .rst
-    - .Rnw
-    - .xhtml
+ltex_plus: {}
 
 texlab:
-  cmd:
-    - texlab
   settings:
     texlab:
       build:
@@ -103,20 +84,16 @@ texlab:
       #     - "%p"
       #     - '"code -g %f:%l"'
   extensions:
-    - .tex
-    - .sty
     - .bib
+    - .sty
+    - .tex
 
 digestif:
-  cmd:
-    - digestif
   extensions:
-    - .tex
     - .sty
+    - .tex
 
 diagnosticls:
-  cmd:
-    - diagnostic-languageserver
   filetypes:
     - dockerfile
     - sh
@@ -149,61 +126,39 @@ diagnosticls:
           style: hint
           warning: warning
         sourceName: hadolint
-  extensions:
-    - .dockerfile
-    - .sh
-    - .zsh
 
 bashls:
-  cmd:
-    - bash-language-server
   extensions:
-    - .sh
     - .bash
+    - .sh
 
 jqls:
-  cmd:
-    - jq-lsp
   extensions:
     - .jq
 
 awk_ls:
-  cmd:
-    - awk-language-server
   extensions:
     - .awk
 
-systemd_lsp:
-  cmd:
-    - systemd-lsp
+systemd_lsp: {}
 
 perlnavigator:
-  cmd:
-    - perlnavigator
   extensions:
     - .pl
     - .pm
 
 powershell_es:
-  cmd:
-    - pwsh-es
   extensions:
     - .ps1
     - .psm1
 
 dockerls:
-  cmd:
-    - docker-langserver
   extensions:
     - .dockerfile
 
-docker_compose_language_service:
-  cmd:
-    - docker-compose-langserver
+docker_compose_language_service: {}
 
 pyright:
-  cmd:
-    - pyright-langserver
   extensions:
     - .py
     - .pyi
@@ -217,163 +172,119 @@ pyright:
 #     - ruff
 
 hls:
-  cmd:
-    - haskell-language-server-wrapper
   extensions:
     - .hs
     - .lhs
 
 rust_analyzer:
-  cmd:
-    - rust-analyzer
   extensions:
     - .rs
 
 gopls:
-  cmd:
-    - gopls
   extensions:
     - .go
     - .mod
 
 golangci_lint_ls:
-  cmd:
-    - golangci-lint-langserver
   extensions:
     - .go
 
 sourcekit:
-  cmd:
-    - sourcekit-lsp
   extensions:
     - .swift
 
 clangd:
-  cmd:
-    - clangd
   extensions:
     - .c
-    - .h
     - .cc
     - .cpp
+    - .cu
+    - .cuh
     - .cxx
+    - .h
     - .hpp
     - .hxx
     - .m
     - .mm
-    - .cu
-    - .cuh
 
 ccls:
-  cmd:
-    - ccls
   extensions:
     - .c
-    - .h
     - .cc
     - .cpp
+    - .cu
+    - .cuh
     - .cxx
+    - .h
     - .hpp
     - .hxx
     - .m
     - .mm
-    - .cu
-    - .cuh
 
 fortls:
-  cmd:
-    - fortls
   extensions:
-    - .f90
-    - .f95
     - .f03
     - .f08
-
-# typeprof:
-#   cmd:
-#     - typeprof
-
-# steep:
-#   cmd:
-#     - steep
+    - .f90
+    - .f95
 
 ruby_lsp:
-  cmd:
-    - ruby-lsp
   extensions:
-    - .rb
     - .gemspec
     - .rake
+    - .rb
     - .ru
 
 sorbet:
-  cmd:
-    - srb
   extensions:
-    - .rb
     - .gemspec
     - .rake
+    - .rb
     - .ru
 
 solargraph:
-  cmd:
-    - solargraph
   extensions:
-    - .rb
     - .gemspec
     - .rake
+    - .rb
     - .ru
 
 mdx_analyzer:
-  cmd:
-    - mdx-language-server
   extensions:
     - .mdx
 
 ts_ls:
-  cmd:
-    - typescript-language-server
   extensions:
-    - .js
     - .cjs
-    - .mjs
-    - .jsx
-    - .ts
     - .cts
+    - .js
+    - .jsx
+    - .mjs
     - .mts
+    - .ts
     - .tsx
 
 prismals:
-  cmd:
-    - prisma-language-server
   extensions:
     - .prisma
 
-# eslint:
-#   cmd:
-#     - vscode-eslint-language-server
-#   settings:
-#     run: onSave
-#     rulesCustomizations:
-#       - rule: "*"
-#         severity: downgrade
-#       - rule: prettier/*
-#         severity: info
+eslint:
+  settings:
+    run: onSave
+    rulesCustomizations:
+      - rule: "*"
+        severity: downgrade
+      - rule: prettier/*
+        severity: info
 
-# denols:
-#   cmd:
-#     - deno
+# denols: {}
 
 superhtml:
-  cmd:
-    - superhtml
   extensions:
-    - .html
     - .htm
+    - .html
 
 cssls:
-  cmd:
-    - vscode-css-language-server
   extensions:
     - .css
     - .less
@@ -384,21 +295,15 @@ cssls:
 #     - tailwindcss-language-server
 
 svelte:
-  cmd:
-    - svelteserver
   extensions:
     - .svelte
 
 graphql:
-  cmd:
-    - graphql-lsp
   extensions:
-    - .graphql
     - .gql
+    - .graphql
 
 vimls:
-  cmd:
-    - vim-language-server
   extensions:
     - .vim
 
@@ -406,10 +311,10 @@ r_language_server:
   cmd:
     - lsp
   extensions:
-    - .r
     - .R
-    - .rmd
+    - .r
     - .Rmd
+    - .rmd
 
 julials:
   cmd:
@@ -418,8 +323,6 @@ julials:
     - .jl
 
 phan:
-  cmd:
-    - phan
   extensions:
     - .php
 
@@ -428,40 +331,30 @@ phan:
 #     - psalm
 
 phpactor:
-  cmd:
-    - phpactor
   extensions:
     - .php
 
 intelephense:
-  cmd:
-    - intelephense
   init_options:
     globalStoragePath: /var/tmp/intelephense
   extensions:
     - .php
 
 fsautocomplete:
-  cmd:
-    - fsautocomplete
   extensions:
     - .fs
     - .fsi
     - .fsx
 
 omnisharp:
-  cmd:
-    - OmniSharp
   extensions:
     - .cs
 
 clojure_lsp:
-  cmd:
-    - clojure-lsp
   extensions:
     - .clj
-    - .cljs
     - .cljc
+    - .cljs
     - .edn
 
 # gradle_ls:
@@ -469,22 +362,16 @@ clojure_lsp:
 #     - gradle-language-server
 
 kotlin_lsp:
-  cmd:
-    - kotlin-lsp
   extensions:
     - .kt
     - .kts
 
 kotlin_language_server:
-  cmd:
-    - kotlin-language-server
   extensions:
     - .kt
     - .kts
 
 jdtls:
-  cmd:
-    - jdtls
   extensions:
     - .java
 
@@ -499,8 +386,6 @@ prolog_ls:
 #     - sql-language-server
 
 lua_ls:
-  cmd:
-    - lua-language-server
   settings:
     Lua:
       runtime:
@@ -508,21 +393,17 @@ lua_ls:
   extensions:
     - .lua
 
-ansiblels:
-  cmd:
-    - ansible-language-server
+ansiblels: {}
 
 glsl_analyzer:
-  cmd:
-    - glsl_analyzer
   extensions:
-    - .glsl
-    - .vert
+    - .comp
     - .frag
     - .geom
-    - .comp
+    - .glsl
     - .tesc
     - .tese
+    - .vert
 
 # theme_check:
 #   cmd:
@@ -533,19 +414,14 @@ glsl_analyzer:
 #     - emmet-language-server
 
 terraformls:
-  cmd:
-    - terraform-ls
   extensions:
+    - .hcl
     - .tf
     - .tfvars
 
-helm_ls:
-  cmd:
-    - helm_ls
+helm_ls: {}
 
 tflint:
-  cmd:
-    - tflint
   extensions:
     - .tf
 
@@ -557,12 +433,10 @@ cobol_ls:
     - -Dlogback.statusListenerClass=ch.qos.logback.core.status.NopStatusListener
     - -DserverType=NATIVE
   extensions:
-    - .cob
     - .cbl
+    - .cob
 
 nginx_language_server:
-  cmd:
-    - nginx-language-server
   extensions:
     - .nginx
 
@@ -579,7 +453,5 @@ nginx_language_server:
 #     - vue-language-server
 
 tsp_server:
-  cmd:
-    - tsp-server
   extensions:
     - .tsp
