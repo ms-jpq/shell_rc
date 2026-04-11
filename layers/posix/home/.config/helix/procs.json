@@ -1,5 +1,6 @@
 {
   "$": {
+    "bin-link.sh": [],
     "clj-fmt.clj": [],
     "clj-lint.clj": [],
     "clj-lsp.clj": [],
