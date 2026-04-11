@@ -22,7 +22,8 @@ for name, merged in pairs(lsp_on()) do
 end
 
 local json = vim.json.encode(acc, { indent = [[  ]], sort_keys = true })
-local jq = "map_values(.extensionToLanguage = [._filetypes[]? | ($map[0][.] // [])[]] | del(._filetypes))"
+local jq =
+  "map_values(.extensionToLanguage = ([._filetypes[]? as $ft | ($map[0][$ft] // [])[] | {(.): $ft}] | add // {}) | del(._filetypes))"
 
 local proc = vim
   .system({ "jq", "-e", "--slurpfile", "map", vim.fs.joinpath(cfg, "ftdetect", "mappings.json"), jq }, { stdin = json })
