@@ -13,7 +13,7 @@ local acc = {}
 for name, merged in pairs(lsp_on()) do
   acc[name] = {
     _filetypes = merged.filetypes,
-    extensionToLanguage = {},
+    extensionToLanguage = vim.empty_dict(),
     command = merged.cmd[1],
     args = vim.list_slice(merged.cmd, 2),
     initializationOptions = merged.init_options,
