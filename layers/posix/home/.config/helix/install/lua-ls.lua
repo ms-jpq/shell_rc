@@ -11,7 +11,7 @@ local prefix = base .. "-" .. version
 local uri = (function()
   if vim.fn.has [[win32]] == 1 or vim.fn.has [[win32unix]] == 1 then
     return prefix .. "-win32-" .. jit.arch .. ".zip"
-  elseif vim.fn.has [[mac]] then
+  elseif vim.fn.has [[mac]] == 1 then
     return prefix .. "-darwin-" .. jit.arch .. ".tar.gz"
   else
     return prefix .. "-linux-" .. jit.arch .. ".tar.gz"

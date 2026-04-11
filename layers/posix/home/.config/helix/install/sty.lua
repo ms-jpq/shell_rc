@@ -10,7 +10,7 @@ local arch = jit.arch == [[arm64]] and [[aarch64]] or [[x86_64]]
 local uri = (function()
   if vim.fn.has [[win32]] == 1 or vim.fn.has [[win32unix]] == 1 then
     return prefix .. "-windows-" .. arch .. ".zip"
-  elseif vim.fn.has [[mac]] then
+  elseif vim.fn.has [[mac]] == 1 then
     return prefix .. "-macos-" .. arch .. ".zip"
   else
     return prefix .. "-linux-" .. arch .. ".zip"
