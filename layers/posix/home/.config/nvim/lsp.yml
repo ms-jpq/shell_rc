@@ -149,7 +149,7 @@ perlnavigator:
 
 powershell_es:
   cmd:
-    - pwsh-es
+    - powershell-lsp
   extensions:
     - .ps1
     - .psm1
@@ -313,7 +313,7 @@ vimls:
 
 r_language_server:
   cmd:
-    - lsp
+    - r-lsp
   extensions:
     - .R
     - .r

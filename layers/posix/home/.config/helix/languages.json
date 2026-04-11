@@ -170,7 +170,7 @@
       "formatter": {
         "command": "pwsh-fmt.ps1"
       },
-      "language-servers": ["powershell-es"]
+      "language-servers": ["powershell-lsp"]
     },
     "prolog": {
       "formatter": {
@@ -288,12 +288,12 @@
       "args": ["language-server"],
       "command": "phpactor"
     },
-    "powershell-es": {
+    "powershell-lsp": {
       "args": [],
-      "command": "pwsh-es"
+      "command": "powershell-lsp"
     },
     "r": {
-      "command": "lsp"
+      "command": "r-lsp"
     },
     "solargraph": {
       "command": "solargraph"
