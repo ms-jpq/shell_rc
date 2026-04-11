@@ -13,7 +13,10 @@ if [[ -v RECURSION ]]; then
   SID="$STATE/$ID"
   find "$STATE" -type f -mtime +7 -delete
 
-  if [[ -f $SID ]]; then
+  if ! (
+    set -C
+    true > "$SID"
+  ) 2> /dev/null; then
     exit
   fi
 
@@ -32,7 +35,7 @@ if [[ -v RECURSION ]]; then
     ~/.local/libexec/notify.cjs "📩 ↘ $FROM" '' "$SUBJECT" ping
   fi
 
-  exec -- touch -- "$SID"
+  exit
 fi
 
 CHANNEL="$1"
