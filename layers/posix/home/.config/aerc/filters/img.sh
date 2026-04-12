@@ -2,6 +2,6 @@
 
 set -o pipefail
 
-COLS="$(stty size < /dev/tty | cut -d ' ' -f 2)"
+C="$COLUMNS"
 
 exec -- catimg -w $((COLS * 2 - 2)) -

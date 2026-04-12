@@ -4,7 +4,7 @@ set -o pipefail
 
 MAX=128
 
-C="$(stty size < /dev/tty | cut -d ' ' -f 2)"
+C="$COLUMNS"
 if ((C > MAX)); then
   C=$((MAX))
 fi

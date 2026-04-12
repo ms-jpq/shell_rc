@@ -5,7 +5,7 @@ set -o pipefail
 if [[ -v AERC_MIME_TYPE ]]; then
   MAX=128
 
-  C="$(stty size < /dev/tty | cut -d ' ' -f 2)"
+  C="$COLUMNS"
   COLS="$C"
   if ((COLS > MAX)); then
     COLS=$((MAX))
