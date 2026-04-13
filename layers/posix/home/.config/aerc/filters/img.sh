@@ -2,6 +2,6 @@
 
 set -o pipefail
 
-C="$COLUMNS"
+COLS="$COLUMNS"
 
 exec -- catimg -w $((COLS * 2 - 2)) -
