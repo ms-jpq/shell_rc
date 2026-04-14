@@ -37,7 +37,7 @@ for NEW in "${DIFFS[@]}"; do
   fi
   OLD="$(mktemp --suffix "$SUFFIX")"
 
-  git show "$BASE:$NEW" > "$OLD" 2> /dev/null
+  git show "$BASE:$NEW" > "$OLD"
   tmux "${SPLIT[@]}" -c "$PWD" -- nvim -d -- "$OLD" "$NEW"
   SPLIT=(split-window)
 done
