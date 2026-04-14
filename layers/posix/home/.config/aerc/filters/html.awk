@@ -18,7 +18,7 @@ PARSING_REFS && NF == 2 && $1 ~ /^\[[0-9]+\]$/ {
   gsub(/[\[\]]/, "", N)
   REFS[N] = $2
   $1 = _LINKIFY($1, $2)
-  $2 = _COLOURIZE($2)
+  $2 = _COLOURIZE($2) $2 CLS
   # print
   next
 }
@@ -39,15 +39,15 @@ PARSING_REFS && /^[[:space:]]*$/ {
 function _COLOURIZE(LINK)
 {
   if (LINK ~ /^file:/) {
-    return (YELLOW LINK CLS)
+    return PURPLE
   }
   if (LINK ~ /^mailto:/) {
-    return (PURPLE LINK CLS)
+    return YELLOW
   }
-  return (GREEN LINK CLS)
+  return RED
 }
 
 function _LINKIFY(TEXT, LINK)
 {
-  return (BOLD RED (OSC8 LINK ST TEXT OSC8 ST) CLS)
+  return (BOLD _COLOURIZE(LINK) (OSC8 LINK ST TEXT OSC8 ST) CLS)
 }
