@@ -3,14 +3,34 @@
 set -o pipefail
 
 if ! [[ -v RECUR ]]; then
-  git diff --name-only -z "$@" | exec -- "$0" "$@"
+  export -- BASE=''
+
+  for ARG in "$@"; do
+    case "$*" in
+    --cached | --staged)
+      BASE='HEAD'
+      break
+      ;;
+    *)
+      if git rev-parse --verify --quiet "$ARG" > /dev/null; then
+        BASE="$ARG"
+        break
+      fi
+      ;;
+    esac
+
+  done
+
+  git diff --name-only -z "$@" | RECUR=1 "$0"
+  exit
 fi
 
 readarray -t -d '' -- DIFFS
 
 SPLIT=(new-window -a)
 for NEW in "${DIFFS[@]}"; do
-  OLD="$(tee)"
+  OLD="$(mktemp)"
+  git show "$BASE:$NEW" > "$OLD" 2> /dev/null || : > "$OLD"
   tmux "${SPLIT[@]}" -c "$PWD" -- nvim -d -- "$OLD" "$NEW"
   SPLIT=(split-window)
 done
