@@ -1,5 +1,8 @@
 ---
 jsonls:
+  cmd:
+    - vscode-json-language-server
+    - --stdio
   extensions:
     - .json
     - .jsonc
@@ -253,6 +256,9 @@ mdx_analyzer:
     - .mdx
 
 ts_ls:
+  cmd:
+    - typescript-language-server
+    - --stdio
   extensions:
     - .cjs
     - .cts
@@ -268,6 +274,9 @@ prismals:
     - .prisma
 
 eslint:
+  cmd:
+    - vscode-eslint-language-server
+    - --stdio
   settings:
     run: onSave
     rulesCustomizations:
@@ -284,6 +293,9 @@ superhtml:
     - .html
 
 cssls:
+  cmd:
+    - vscode-css-language-server
+    - --stdio
   extensions:
     - .css
     - .less
