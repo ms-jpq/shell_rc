@@ -21,7 +21,7 @@ if ! [[ -v RECUR ]]; then
 
   done
 
-  git diff --name-only -z "$@" | RECUR=1 "$0"
+  git status --porcelain --no-renames -z -- . | sed -E -z -e 's#^...##' | RECUR=1 "$0"
   exit
 fi
 
