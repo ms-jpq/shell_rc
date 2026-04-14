@@ -2,4 +2,4 @@
 
 set -o pipefail
 
-bsdtar --list -z --file - | tree --fromfile -F -C
+bsdtar --no-mac-metadata --list -z --file - | tree --fromfile -F -C
