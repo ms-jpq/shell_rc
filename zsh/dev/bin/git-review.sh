@@ -43,10 +43,9 @@ for FILE in "${DIFFS[@]}"; do
     SUFFIX="${BASENAME##*.}"
   fi
 
-  TMP="$(mktemp --suffix "$SUFFIX")"
-  git show "$BASE:$FILE" > "$TMP" 2> /dev/null || :
+  LHS="$(mktemp --suffix "$SUFFIX")"
+  git show "$BASE:$FILE" > "$LHS" 2> /dev/null || :
 
-  LHS="$TMP"
   RHS="$FILE"
   if [[ $BASE == 'HEAD' ]] && ! git diff --quiet -- "$FILE"; then
     RHS="$(mktemp --suffix "$SUFFIX")"
@@ -56,3 +55,7 @@ for FILE in "${DIFFS[@]}"; do
   tmux "${SPLIT[@]}" -c "$PWD" -- nvim -d -- "$LHS" "$RHS"
   SPLIT=(split-window)
 done
+
+if ((${#DIFFS[@]})); then
+  exec -- tmux select-layout tiled
+fi
