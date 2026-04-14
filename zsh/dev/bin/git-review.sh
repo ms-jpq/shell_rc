@@ -48,7 +48,7 @@ for FILE in "${DIFFS[@]}"; do
 
   LHS="$TMP"
   RHS="$FILE"
-  if [[ $BASE == 'HEAD' ]]; then
+  if [[ $BASE == 'HEAD' ]] && ! git diff --quiet -- "$FILE"; then
     RHS="$(mktemp --suffix "$SUFFIX")"
     git show ":$FILE" > "$RHS" 2> /dev/null || :
   fi
