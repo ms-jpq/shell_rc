@@ -2,26 +2,39 @@
 
 set -o pipefail
 
-if ! [[ -v RECUR ]]; then
-  export -- BASE=''
+OPTS=''
+LONG_OPTS=''
+GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
+eval -- set -- "$GO"
 
-  for ARG in "$@"; do
-    case "$*" in
-    --cached | --staged)
-      BASE='HEAD'
+export -- BASE=''
+FILTER=(tee)
+while (($#)); do
+  case "$1" in
+  --staged)
+    BASE='HEAD'
+    FILTER=(sed -z -E -e '/^[ ?]/d')
+    break
+    ;;
+  --unstaged)
+    FILTER=(sed -z -E -e '/^.[ ?]/d')
+    break
+    ;;
+  --)
+    shift -- 1
+    break
+    ;;
+  *)
+    if git rev-parse --verify --quiet "$1" > /dev/null; then
+      BASE="$1"
       break
-      ;;
-    *)
-      if git rev-parse --verify --quiet "$ARG" > /dev/null; then
-        BASE="$ARG"
-        break
-      fi
-      ;;
-    esac
+    fi
+    ;;
+  esac
+done
 
-  done
-
-  git status --porcelain --no-renames -z -- . | sed -E -z -e 's#^...##' | RECUR=1 "$0"
+if ! [[ -v RECUR ]]; then
+  git status --porcelain --no-renames -z -- "${*:-.}" | "${FILTER[@]}" | sed -E -z -e 's#^...##' | RECUR=1 "$0"
   exit
 fi
 
@@ -37,7 +50,7 @@ for NEW in "${DIFFS[@]}"; do
   fi
   OLD="$(mktemp --suffix "$SUFFIX")"
 
-  git show "$BASE:$NEW" > "$OLD"
+  git show "$BASE:$NEW" > "$OLD" 2> /dev/null || :
   tmux "${SPLIT[@]}" -c "$PWD" -- nvim -d -- "$OLD" "$NEW"
   SPLIT=(split-window)
 done
