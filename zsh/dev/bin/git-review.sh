@@ -2,42 +2,36 @@
 
 set -o pipefail
 
-OPTS=''
-LONG_OPTS=''
+OPTS='s'
+LONG_OPTS='staged'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
-export -- BASE=''
-FILTER=(tee)
-while (($#)); do
-  case "$1" in
-  --staged)
-    BASE='HEAD'
-    FILTER=(sed -z -E -e '/^[ ?]/d')
-    break
-    ;;
-  --unstaged)
-    FILTER=(sed -z -E -e '/^.[ ?]/d')
-    break
-    ;;
-  --)
-    shift -- 1
-    break
-    ;;
-  *)
-    if git rev-parse --verify --quiet "$1" > /dev/null; then
-      BASE="$1"
-      break
-    fi
-    ;;
-  esac
-done
-
 if ! [[ -v RECUR ]]; then
-  git status --porcelain --no-renames -z -- "${*:-.}" | "${FILTER[@]}" | sed -E -z -e 's#^...##' | RECUR=1 "$0"
+  FILTER=(sed -z -E -e '/^.[ ?]/d')
+  BASE=''
+  while (($#)); do
+    case "$1" in
+    -s | --staged)
+      BASE='HEAD'
+      FILTER=(sed -z -E -e '/^[ ?]/d')
+      break
+      ;;
+    --)
+      shift -- 1
+      break
+      ;;
+    *)
+      BASE="$*"
+      break
+      ;;
+    esac
+  done
+  git status --porcelain --no-renames -z -- . | "${FILTER[@]}" | sed -E -z -e 's#^...##' | RECUR=1 "$0" "$BASE"
   exit
 fi
 
+BASE="$1"
 readarray -t -d '' -- DIFFS
 
 SPLIT=(new-window -a)
