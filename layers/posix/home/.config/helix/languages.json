@@ -220,7 +220,7 @@
     },
     "systemd": {
       "formatter": {
-        "command": "systemd-fmt"
+        "command": "systemd-fmt.sh"
       }
     },
     "toml": {
