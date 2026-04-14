@@ -8,13 +8,13 @@ GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 if ! [[ -v RECUR ]]; then
-  FILTER=(sed -z -E -e '/^.[ ?]/d')
+  SED='/^[? ]/p'
   BASE=''
   while (($#)); do
     case "$1" in
     -s | --staged)
       BASE='HEAD'
-      FILTER=(sed -z -E -e '/^[ ?]/d')
+      SED='/^[^? ]/p'
       break
       ;;
     --)
@@ -27,7 +27,7 @@ if ! [[ -v RECUR ]]; then
       ;;
     esac
   done
-  git status --porcelain --no-renames -z -- . | "${FILTER[@]}" | sed -E -z -e 's#^...##' | RECUR=1 "$0" "$BASE"
+  git status --porcelain --no-renames -z -- . | sed -E -z --quiet -e "$SED" | sed -E -z -e 's#^...##' | RECUR=1 "$0" "$BASE"
   exit
 fi
 
