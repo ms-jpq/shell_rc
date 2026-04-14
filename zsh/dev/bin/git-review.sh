@@ -2,14 +2,15 @@
 
 set -o pipefail
 
-git diff --name-only -z "$@"
+if ! [[ -v RECUR ]]; then
+  git diff --name-only -z "$@" | exec -- "$0" "$@"
+fi
 
-readarray -t -d '' -- DIFFS <<< ""
+readarray -t -d '' -- DIFFS
 
 SPLIT=(new-window -a)
 for NEW in "${DIFFS[@]}"; do
-  OLD=''
-  NEW=''
+  OLD="$(tee)"
   tmux "${SPLIT[@]}" -c "$PWD" -- nvim -d -- "$OLD" "$NEW"
   SPLIT=(split-window)
 done
