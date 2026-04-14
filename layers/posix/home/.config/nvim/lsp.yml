@@ -5,6 +5,9 @@ jsonls:
     - .jsonc
 
 yamlls:
+  cmd:
+    - yaml-language-server
+    - --stdio
   filetypes:
     - yaml
     - yaml.ansible
