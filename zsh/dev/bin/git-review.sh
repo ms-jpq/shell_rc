@@ -31,20 +31,28 @@ if ! [[ -v RECUR ]]; then
   exit
 fi
 
+shift -- 1
 BASE="$1"
 readarray -t -d '' -- DIFFS
 
 SPLIT=(new-window -a)
-for NEW in "${DIFFS[@]}"; do
-  BASENAME="$(basename -- "$NEW")"
-
+for FILE in "${DIFFS[@]}"; do
+  BASENAME="$(basename -- "$FILE")"
   SUFFIX=''
   if [[ $BASENAME == *.* ]]; then
     SUFFIX="${BASENAME##*.}"
   fi
-  OLD="$(mktemp --suffix "$SUFFIX")"
 
-  git show "$BASE:$NEW" > "$OLD" 2> /dev/null || :
-  tmux "${SPLIT[@]}" -c "$PWD" -- nvim -d -- "$OLD" "$NEW"
+  TMP="$(mktemp --suffix "$SUFFIX")"
+  git show "$BASE:$FILE" > "$TMP" 2> /dev/null || :
+
+  LHS="$TMP"
+  RHS="$FILE"
+  if [[ $BASE == 'HEAD' ]]; then
+    RHS="$(mktemp --suffix "$SUFFIX")"
+    git show ":$FILE" > "$RHS" 2> /dev/null || :
+  fi
+
+  tmux "${SPLIT[@]}" -c "$PWD" -- nvim -d -- "$LHS" "$RHS"
   SPLIT=(split-window)
 done
