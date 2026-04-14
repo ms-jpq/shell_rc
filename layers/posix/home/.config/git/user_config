@@ -109,7 +109,7 @@ ff               = "only"
 tool             = "nvimdiff"
 
 [pager]
-diff = "diffnav"
+diff = "delta"
 
 [pull]
 rebase = true
