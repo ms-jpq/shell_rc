@@ -29,7 +29,14 @@ readarray -t -d '' -- DIFFS
 
 SPLIT=(new-window -a)
 for NEW in "${DIFFS[@]}"; do
-  OLD="$(mktemp)"
+  BASENAME="$(basename -- "$NEW")"
+
+  SUFFIX=''
+  if [[ $BASENAME == *.* ]]; then
+    SUFFIX="${BASENAME##*.}"
+  fi
+  OLD="$(mktemp --suffix "$SUFFIX")"
+
   git show "$BASE:$NEW" > "$OLD" 2> /dev/null || : > "$OLD"
   tmux "${SPLIT[@]}" -c "$PWD" -- nvim -d -- "$OLD" "$NEW"
   SPLIT=(split-window)
