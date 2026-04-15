@@ -2,7 +2,7 @@ local lib = require "go"
 local to = require "go.text_objects"
 
 local magic_escape = function(text)
-  local e1 = vim.fn.escape(text, [[\/&]])
+  local e1 = vim.fn.escape(text, [[\]])
   local e2 = string.gsub(e1, "\t", [[\t]])
   local e3 = string.gsub(e2, "\n", [[\n]])
   local e4 = string.gsub(e3, "\r", [[\r]])
@@ -19,12 +19,22 @@ local selected_text = function(visual_type)
 end
 
 do
+  local candidates = vim.split([[!#%&+,:;=@~]], "")
+  local select_sep = function(text)
+    for sep in candidates do
+      if not string.find(text, sep, 1, true) then
+        return sep
+      end
+    end
+    return "/"
+  end
   Go.op_buf_edit = function(visual_type)
     local text = selected_text(visual_type)
     local escaped = magic_escape(text)
-    local cmd = [[:%s/\V]] .. escaped .. [[//g<left><left>]]
+    local sep = select_sep(escaped)
+    local cmd = [[:%s]] .. sep .. [[\V]] .. escaped .. sep .. sep .. [[g<left><left>]]
 
-    vim.api.nvim_feedkeys(cmd)
+    vim.api.nvim_input(cmd)
   end
 
   vim.keymap.set("n", "gs", [[<cmd>set opfunc=v:lua.Go.op_buf_edit<cr>g@]])
