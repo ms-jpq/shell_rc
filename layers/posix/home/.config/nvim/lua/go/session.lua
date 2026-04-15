@@ -1,3 +1,4 @@
+local async = require "go.async"
 local lib = require "go"
 
 -- limit session restoration info
@@ -128,7 +129,9 @@ vim.api.nvim_create_autocmd({ "QuitPre" }, {
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
   group = lib.group,
   once = true,
-  callback = vim.schedule_wrap(function()
+  callback = async(function()
+    async.scheduled()
+
     local cwd = vim.fn.getcwd()
     if no_session(cwd) then
       return

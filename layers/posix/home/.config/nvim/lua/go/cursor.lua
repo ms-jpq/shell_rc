@@ -1,3 +1,4 @@
+local async = require "go.async"
 local lib = require "go"
 
 -- normalize cursor pos
@@ -28,7 +29,9 @@ vim.api.nvim_create_autocmd("InsertLeave", {
 })
 
 do
-  local toggle_cursorcolumn = vim.schedule_wrap(function()
+  local toggle_cursorcolumn = async(function()
+    async.scheduled()
+
     if vim.o.cursorcolumn then
       vim.opt.virtualedit = vcol
       vim.opt.cursorcolumn = false
