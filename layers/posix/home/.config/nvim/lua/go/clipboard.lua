@@ -1,7 +1,6 @@
 local lib = require "go"
 
 local esc = "\027"
-local sep = "\n"
 local tmux = vim.env.TMUX
 local ssh = vim.env.SSH_TTY
 
@@ -45,11 +44,13 @@ local send = function(stdin, ...)
 end
 
 local recv = function(text, ...)
+  local sep = lib.buf_linefeed(0)
   local proc = vim.system({ ... }, { text = text }):wait()
   return vim.split(proc.stdout, sep, { plain = true })
 end
 
 local copy = function(lines)
+  local sep = lib.buf_linefeed(0)
   local s = table.concat(lines, sep)
 
   if tmux then

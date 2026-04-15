@@ -17,6 +17,7 @@ vim.api.nvim_create_autocmd("InsertEnter", {
     vim.opt.cursorcolumn = false
   end,
 })
+
 vim.api.nvim_create_autocmd("InsertLeave", {
   group = lib.group,
   callback = function()
