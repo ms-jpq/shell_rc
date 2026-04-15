@@ -7,7 +7,7 @@ SESSION="$*"
 # shellcheck disable=2154
 PLANNED_SESSION="$XDG_CONFIG_HOME/tmux/sessions/$SESSION.sh"
 
-if TMUX_SESSIONS="$(tmux list-sessions -F '#{session_name}')"; then
+if TMUX_SESSIONS="$(tmux list-sessions -F '#{session_name}' 2> /dev/null)"; then
   readarray -t -- SESSIONS <<< "$TMUX_SESSIONS"
 else
   SESSIONS=()

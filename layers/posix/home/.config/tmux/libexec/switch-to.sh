@@ -12,16 +12,11 @@ if (($#)); then
 fi
 
 if [[ -v TMUX ]]; then
-  if ((LISTED)); then
-    exec -- tmux switch -t "$SESSION"
+  if ! ((LISTED)); then
+    tmux new-session -d -c "$HOME" -s "$SESSION" -- "${ARGV[@]}"
   fi
 
-  tmux new-session -d -c "$HOME" -s "$SESSION"
   exec -- tmux switch-client -t "$SESSION"
 else
   exec -- tmux new-session -A -c "$HOME" -s "$SESSION" -- "${ARGV[@]}"
 fi
-
-# printf -v A -- '%q ' tmux new-session -A -c "$HOME" -s "$SNAME" -- bash -Eeu "$DST"
-# printf -v B -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$DST"
-# printf -v C -- '%q ' tmux switch-client -t "$SNAME"
