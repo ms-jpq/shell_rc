@@ -64,7 +64,11 @@ return {
   end,
   scheduled = wrap(vim.schedule),
   system = wrap(vim.system),
-  api = {
-    nvim_buf_call = wrap(vim.api.nvim_buf_call),
+  fn = {
+    jobstart = wrap(function(cmd, opts, on_exit)
+      opts = opts or {}
+      opts.on_exit = on_exit
+      vim.fn.jobstart(cmd, opts)
+    end),
   },
 }
