@@ -21,7 +21,7 @@ end
 do
   local candidates = vim.split([[!#%&+,:;=@~]], "")
   local select_sep = function(text)
-    for sep in candidates do
+    for _, sep in pairs(candidates) do
       if not string.find(text, sep, 1, true) then
         return sep
       end
