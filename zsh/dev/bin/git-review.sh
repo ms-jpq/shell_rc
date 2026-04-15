@@ -32,7 +32,13 @@ if ! [[ -v RECUR ]]; then
 { print }
 AWK
 
-  git status --porcelain --no-renames -z -- . | sed -E -z --quiet -e "$SED" | sed -E -z -e 's#^...##' | RECUR=1 "$0" "$BASE"
+  git status --porcelain --no-renames -z -- . | sed -E -z --quiet -e "$SED" | sed -E -z -e 's#^...##' | while IFS='' read -r -d '' -- F; do
+    if [[ $F == */ ]]; then
+      find -- "$F" -type f -print0
+    else
+      printf -- '%s\0' "$F"
+    fi
+  done | RECUR=1 "$0" "$BASE"
   exit
 fi
 
