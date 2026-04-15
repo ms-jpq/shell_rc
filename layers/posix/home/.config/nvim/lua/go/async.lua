@@ -3,11 +3,11 @@ local future = function()
   assert(thread, "future: must be called inside running coroutine")
 
   local resolved = nil
-  local resolve = function(err, result)
+  local resolve = function(...)
     if coroutine.status(thread) == "running" then
-      resolved = { err, result }
+      resolved = { ... }
     else
-      local ok, msg = coroutine.resume(thread, err, result)
+      local ok, msg = coroutine.resume(thread, ...)
       if not ok then
         error(msg)
       end
