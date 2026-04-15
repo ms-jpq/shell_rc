@@ -34,7 +34,7 @@ for _, key in pairs { "p", "n", "l", "f", "o" } do
 end
 
 do
-  local ce = vim.api.nvim_replace_termcodes([[<c-e>]], true, true, true)
+  local ce = vim.keycode [[<c-e>]]
 
   -- insert movement keys do not enter
   for _, key in pairs { "<left>", "<right>" } do
@@ -46,7 +46,8 @@ do
   -- add emacs key binds
   vim.keymap.set("i", [[<c-a>]], [[<c-o>^]])
   vim.keymap.set("i", [[<c-x><c-a>]], [[<c-a>]])
-  vim.keymap.set("i", "<c-e>", function()
+
+  vim.keymap.set("i", [[<c-e>]], function()
     return (vim.fn.pumvisible() == 1 and ce or "") .. [[<end>]]
   end, { expr = true, noremap = true })
 end
