@@ -1,3 +1,4 @@
+local async = require "go.async"
 local lib = require "go"
 
 local timeout = 8888
@@ -32,7 +33,7 @@ local fmt_command = function(buf)
   return { "sed", "-E", "-e", [[:l1]], "-e", [[/./,$!d]], "-e", [[/^\n*$/{$d;N;}]], "-e", [[/\n$/bl1]] }
 end
 
-Go.run_fmt = function()
+Go.run_fmt = async.thunk(function()
   if not vim.bo.modifiable or vim.bo.readonly then
     return
   end
@@ -42,36 +43,12 @@ Go.run_fmt = function()
   local cwd = name ~= "" and vim.fs.dirname(name) or vim.fn.getcwd()
 
   local cmd = fmt_command(buf)
-
-  local handle = nil
-  local on_exit = function(waited)
-    if handle then
-      vim.uv.timer_stop(handle)
-    end
-
-    if waited.signal ~= 0 then
-      vim.notify([[☠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR)
-      return
-    elseif waited.code ~= 0 then
-      vim.notify([[⚠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR)
-      return
-    end
-
-    if vim.api.nvim_get_current_buf() == buf then
-      local lines = vim.split(waited.stdout, "\n", { plain = true })
-
-      if lines[#lines] == "" then
-        lines[#lines] = nil
-      end
-      vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
-      vim.notify([[✅...]], vim.log.levels.INFO, {})
-    end
-  end
-
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local opts = { cwd = cwd, stdin = lines, text = true }
 
   vim.notify([[⏳...]], vim.log.levels.INFO, {})
+
+  local handle = nil
   local proc = nil
   handle = vim.defer_fn(function()
     if proc then
@@ -80,10 +57,35 @@ Go.run_fmt = function()
       vim.notify([[⚠️ ]] .. vim.inspect(proc), vim.log.levels.ERROR)
     end
   end, timeout)
-  proc = vim.system(cmd, opts, vim.schedule_wrap(on_exit))
+
+  local waited = async.system(cmd, opts)
+
+  if handle then
+    vim.uv.timer_stop(handle)
+  end
+
+  async.scheduled()
+
+  if waited.signal ~= 0 then
+    vim.notify([[☠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR)
+    return
+  elseif waited.code ~= 0 then
+    vim.notify([[⚠️ ]] .. vim.inspect(waited), vim.log.levels.ERROR)
+    return
+  end
+
+  if vim.api.nvim_get_current_buf() == buf then
+    local result = vim.split(waited.stdout, "\n", { plain = true })
+
+    if result[#result] == "" then
+      result[#result] = nil
+    end
+    vim.api.nvim_buf_set_lines(buf, 0, -1, true, result)
+    vim.notify([[✅...]], vim.log.levels.INFO, {})
+  end
 
   return 0
-end
+end)
 
 vim.opt.formatexpr = "v:lua.Go.run_fmt()"
 

@@ -63,4 +63,5 @@ return {
     return await()
   end,
   scheduled = wrap(vim.schedule),
+  system = wrap(vim.system),
 }
