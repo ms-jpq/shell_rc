@@ -1,4 +1,4 @@
-.PHONY: mail app.aerc
+.PHONY: app.aerc
 
 mail: $(CONFIG)/aerc/binds.conf
 $(BREW_PREFIX)/opt/aerc/share/aerc/binds.conf: | pkg.posix
