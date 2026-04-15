@@ -14,14 +14,12 @@ $(APP_AERC): $(OPT)/initd/libexec/aerc-mailto.cjs
 mail: app.aerc
 app.aerc: $(APP_AERC)/Contents/Info.plist
 $(APP_AERC)/Contents/Info.plist: $(APP_AERC)
-	ARGV=(
-		/usr/libexec/PlistBuddy
-		-c 'Add :CFBundleIdentifier string com.aerc.mailto'
-		-c 'Add :CFBundleURLTypes array'
-		-c 'Add :CFBundleURLTypes:0 dict'
-		-c 'Add :CFBundleURLTypes:0:CFBundleURLName string mailto'
-		-c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes array'
-		-c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string mailto'
-		'$@'
-	)
-	"$${ARGV[@]}"
+	ARGV=(/usr/libexec/PlistBuddy)
+	ARGV+=(-c 'Add :CFBundleIdentifier string com.aerc.mailto')
+	ARGV+=(-c 'Add :CFBundleURLTypes array')
+	ARGV+=(-c 'Add :CFBundleURLTypes:0 dict')
+	ARGV+=(-c 'Add :CFBundleURLTypes:0:CFBundleURLName string mailto')
+	ARGV+=(-c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes array')
+	ARGV+=(-c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string mailto')
+
+	"$${ARGV[@]}" '$@'
