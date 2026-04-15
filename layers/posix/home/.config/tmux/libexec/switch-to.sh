@@ -21,3 +21,7 @@ if [[ -v TMUX ]]; then
 else
   exec -- tmux new-session -A -c "$HOME" -s "$SESSION" -- "${ARGV[@]}"
 fi
+
+# printf -v A -- '%q ' tmux new-session -A -c "$HOME" -s "$SNAME" -- bash -Eeu "$DST"
+# printf -v B -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$DST"
+# printf -v C -- '%q ' tmux switch-client -t "$SNAME"

@@ -105,10 +105,8 @@ done
 for SID in "${!SESSIONS[@]}"; do
   SNAME="${SESSIONS["$SID"]}"
   FILE="$TMUX_SESSIONS/$SNAME"
-  F1="$FILE.1.sh"
-  F2="$FILE.2.sh"
-  F3="$F1.tmp"
-  F4="$F2.tmp"
+  DST="$FILE.sh"
+  TMP="$DST.tmp"
   I=0
   W_MARK=0
 
@@ -173,24 +171,9 @@ for SID in "${!SESSIONS[@]}"; do
 
     printf -- '%q ' tmux set-environment -g -h -u -- "$ENV"
     printf -- '\n'
-  } > "$F4"
-
-  printf -v A -- '%q ' tmux new-session -A -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
-  printf -v B -- '%q ' tmux new-session -d -c "$HOME" -s "$SNAME" -- bash -Eeu "$F2"
-  printf -v C -- '%q ' tmux switch-client -t "$SNAME"
-
-  read -r -d '' -- SH <<- EOF || true
-if [[ -v TMUX ]]; then
-  $B
-  $C
-else
-  $A
-fi
-EOF
-  printf -- '%s\n' "$SH" > "$F3"
+  } > "$TMP"
 
   if ((S_OK)); then
-    mv -f -- "$F4" "$F2"
-    mv -f -- "$F3" "$F1"
+    mv -f -- "$TMP" "$DST"
   fi
 done
