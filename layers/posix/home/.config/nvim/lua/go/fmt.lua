@@ -33,7 +33,7 @@ local fmt_command = function(buf)
   return { "sed", "-E", "-e", [[:l1]], "-e", [[/./,$!d]], "-e", [[/^\n*$/{$d;N;}]], "-e", [[/\n$/bl1]] }
 end
 
-Go.run_fmt = async(function()
+local fmt = function()
   if not vim.bo.modifiable or vim.bo.readonly then
     return
   end
@@ -75,9 +75,12 @@ Go.run_fmt = async(function()
     vim.api.nvim_buf_set_lines(buf, 0, -1, true, result)
     vim.notify([[✅...]], vim.log.levels.INFO, {})
   end
+end
 
+Go.run_fmt = function()
+  async.run(fmt)
   return 0
-end)
+end
 
 vim.opt.formatexpr = "v:lua.Go.run_fmt()"
 
