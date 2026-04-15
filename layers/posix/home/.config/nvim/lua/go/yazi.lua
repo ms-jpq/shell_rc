@@ -3,20 +3,19 @@ local async = require "go.async"
 local termstart = async.wrap(function(cmd, env, die)
   local buf = vim.api.nvim_create_buf(false, true)
 
-  vim.api.nvim_buf_call(buf, function()
-    vim.fn.jobstart(cmd, {
-      term = true,
-      env = env,
-      on_exit = function()
-        vim.api.nvim_buf_delete(buf, { force = true })
-        if die then
-          die()
-        end
-      end,
-    })
-  end)
-
+  async.api.nvim_buf_call(buf)
   vim.api.nvim_win_set_buf(0, buf)
+
+  vim.fn.jobstart(cmd, {
+    term = true,
+    env = env,
+    on_exit = function()
+      vim.api.nvim_buf_delete(buf, { force = true })
+      if die then
+        die()
+      end
+    end,
+  })
 end)
 
 local file_exp_die = function()

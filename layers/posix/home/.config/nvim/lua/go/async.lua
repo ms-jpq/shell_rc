@@ -64,4 +64,7 @@ return {
   end,
   scheduled = wrap(vim.schedule),
   system = wrap(vim.system),
+  api = {
+    nvim_buf_call = wrap(vim.api.nvim_buf_call),
+  },
 }
