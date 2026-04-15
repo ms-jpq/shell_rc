@@ -1,3 +1,4 @@
+local async = require "go.async"
 local lib = require "go"
 
 local filters = vim.fs.joinpath(vim.fn.stdpath "config", "repl")
@@ -10,19 +11,17 @@ vim.api.nvim_create_user_command("REPLclear", function()
 end, {})
 
 local run = function(stdin, args)
-  local ok, p = pcall(vim.system, args, { stdin = stdin })
+  local ok, ret = pcall(async.system, args, { stdin = stdin })
   if not ok then
-    vim.notify(p, vim.log.levels.ERROR)
+    vim.notify(ret, vim.log.levels.ERROR)
     return false, ""
   end
 
-  local proc = p:wait()
-  local k = proc.code == 0
-
+  local k = ret.code == 0
   if not k then
-    vim.notify(vim.inspect(proc), vim.log.levels.ERROR)
+    vim.notify(vim.inspect(ret), vim.log.levels.ERROR)
   end
-  return k, proc.stdout
+  return k, ret.stdout
 end
 
 local parse_panes = function()
