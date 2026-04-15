@@ -1,3 +1,4 @@
+local async = require "go.async"
 local lib = require "go"
 
 local base = vim.fs.joinpath(vim.uv.os_homedir(), ".cache", "helix-rt", "nvim")
@@ -49,7 +50,9 @@ end
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
   group = lib.group,
   once = true,
-  callback = vim.schedule_wrap(function()
+  callback = async(function()
+    async.scheduled()
+
     packloadopt()
 
     safe_require "go.pack.coq-3p"

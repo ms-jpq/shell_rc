@@ -1,3 +1,4 @@
+local async = require "go.async"
 local lib = require "go"
 local to = require "go.text_objects"
 
@@ -71,14 +72,14 @@ end
 
 vim.api.nvim_create_autocmd({ "BufReadPost" }, {
   group = lib.group,
-  callback = function()
+  callback = async(function()
     local buf = vim.api.nvim_get_current_buf()
     local tabsize = vim.b.__tabsize__ or detect_tabs(buf)
 
-    vim.schedule(function()
-      if vim.api.nvim_buf_is_valid(buf) then
-        set_tabsize(tabsize, vim.bo[buf])
-      end
-    end)
-  end,
+    async.scheduled()
+
+    if vim.api.nvim_buf_is_valid(buf) then
+      set_tabsize(tabsize, vim.bo[buf])
+    end
+  end),
 })
