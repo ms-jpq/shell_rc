@@ -13,7 +13,7 @@ TEXT="$(tee)"
 MAX_LINE_LEN="$(wc --max-line-length <<< "$TEXT")"
 
 colorize <<< "$TEXT" | if ((MAX_LINE_LEN > (COLUMNS / 2))); then
-  printf -- '%s' "$TEXT"
+  tee
 else
   pr --omit-header --omit-pagination --indent $((C / 2)) --width $((C))
 fi
