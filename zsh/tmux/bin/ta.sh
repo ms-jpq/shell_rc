@@ -13,19 +13,20 @@ else
   SESSIONS=()
 fi
 
+SESSION_SCRIPT='/dev/null'
+
 if [[ -s $PLANNED_SESSION ]]; then
   SESSION_SCRIPT="$PLANNED_SESSION"
-elif (($#)); then
+elif [[ -n $SESSION ]]; then
   # shellcheck disable=2154
-  SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.2.sh"
+  SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
 elif ((${#SESSIONS[@]})); then
   if ! SESSION="$(fzf <<< "$TMUX_SESSIONS")"; then
     exit
   fi
-  SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.1.sh"
 else
   SESSION='owo'
-  SESSION_SCRIPT='/dev/null'
+  SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
 fi
 
 LISTED=0
@@ -40,4 +41,5 @@ ARGV=("$LISTED" "$SESSION")
 if [[ -f $SESSION_SCRIPT ]]; then
   ARGV+=("$SESSION_SCRIPT")
 fi
+
 exec -- "$XDG_CONFIG_HOME/tmux/libexec/switch-to.sh" "${ARGV[@]}"
