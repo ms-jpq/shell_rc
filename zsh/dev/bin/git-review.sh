@@ -40,16 +40,17 @@ for FILE in "${DIFFS[@]}"; do
   BASENAME="$(basename -- "$FILE")"
   SUFFIX=''
   if [[ $BASENAME == *.* ]]; then
-    SUFFIX="${BASENAME##*.}"
+    SUFFIX=".${BASENAME##*.}"
   fi
 
   LHS="$(mktemp --suffix "$SUFFIX")"
   git show "$BASE:$FILE" > "$LHS" 2> /dev/null || :
 
-  RHS="$FILE"
   if [[ $BASE == 'HEAD' ]] && ! git diff --quiet -- "$FILE"; then
     RHS="$(mktemp --suffix "$SUFFIX")"
     git show ":$FILE" > "$RHS" 2> /dev/null || :
+  else
+    RHS="$(git --no-optional-locks rev-parse --path-format=absolute --show-toplevel)/$FILE"
   fi
 
   tmux "${SPLIT[@]}" -c "$PWD" -- nvim -d -- "$LHS" "$RHS"
