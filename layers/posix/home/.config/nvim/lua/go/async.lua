@@ -70,6 +70,9 @@ return setmetatable({
       vim.fn.jobstart(cmd, opts)
     end),
   },
+  ui = {
+    select = wrap(vim.ui.select),
+  },
 }, {
   __call = function(_, fn)
     return thunk(fn)

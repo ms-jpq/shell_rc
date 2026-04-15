@@ -36,16 +36,18 @@ local parse_panes = function()
       rand
     ),
   })
+
+  async.scheduled()
+
   local win_id = vim.fn.trim(win)
   local lines = vim.split(listed, "\n", { plain = true, trimempty = true })
   return ok1 and ok2, win_id, lines
 end
 
-local pick_pane = function(buf, pane_id, callback)
+local pick_pane = function(buf, pane_id)
   local state = vim.b[buf]
   if state.__tmux_target__ then
-    callback(state.__tmux_target__)
-    return
+    return state.__tmux_target__
   end
 
   local ok, win_id, lines = parse_panes()
@@ -94,15 +96,14 @@ local pick_pane = function(buf, pane_id, callback)
     return table.concat({ info, postfix }, " ")
   end
 
-  local pick = function(item)
-    if item ~= nil then
-      local _, _, _, _, p_id = unpack(item)
-      state.__tmux_target__ = p_id
-      callback(p_id)
-    end
+  local item = async.ui.select(acc, { format_item = format })
+  if item == nil then
+    return nil
   end
 
-  vim.ui.select(acc, { format_item = format }, pick)
+  local _, _, _, _, p_id = unpack(item)
+  state.__tmux_target__ = p_id
+  return p_id
 end
 
 local process = function(buf, stdin)
@@ -154,13 +155,14 @@ local seek = function(match, row, direction)
 end
 
 local highlight = function(buf, lo, hi, fn)
+  async.scheduled()
+
   hi = math.max(0, hi - 1)
   local line = unpack(vim.api.nvim_buf_get_lines(0, hi, hi + 1, true))
   vim.highlight.range(buf, ns, "HighlightedyankRegion", { lo, 0 }, { hi, #line }, { inclusive = false })
   fn()
-  vim.defer_fn(function()
-    vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-  end, 66)
+  async.sleep(66)
+  vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
 end
 
 local repl = function()
@@ -172,27 +174,28 @@ local repl = function()
   local buf = vim.api.nvim_get_current_buf()
   local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
   row = row - 1
-  local match = matching(buf)
 
-  local callback = function(pane_id)
-    local sep = lib.buf_linefeed(buf)
-    local lo = seek(match, row, -1)
-    local hi = seek(match, row, 1)
-
-    local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
-    local text = table.concat(lines, sep)
-    local processed = process(buf, text)
-    if processed == "" then
-      return
-    end
-
-    highlight(buf, lo, hi, function()
-      tmux_send(pane_id, processed)
-    end)
-    eof(pane_id)
+  local pane_id = pick_pane(buf, current_pane)
+  if not pane_id then
+    return
   end
 
-  pick_pane(buf, current_pane, callback)
+  local match = matching(buf)
+  local sep = lib.buf_linefeed(buf)
+  local lo = seek(match, row, -1)
+  local hi = seek(match, row, 1)
+
+  local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
+  local text = table.concat(lines, sep)
+  local processed = process(buf, text)
+  if processed == "" then
+    return
+  end
+
+  highlight(buf, lo, hi, function()
+    tmux_send(pane_id, processed)
+  end)
+  eof(pane_id)
 end
 
-vim.keymap.set("n", [[<leader>w]], repl)
+vim.keymap.set("n", [[<leader>w]], async(repl))

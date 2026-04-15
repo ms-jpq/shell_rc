@@ -130,8 +130,6 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
   group = lib.group,
   once = true,
   callback = async(function()
-    async.scheduled()
-
     local cwd = vim.fn.getcwd()
     if no_session(cwd) then
       return
@@ -139,6 +137,7 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
 
     local path, escaped = session_path(cwd)
     if vim.fn.filereadable(path) == 1 then
+      async.scheduled()
       vim.cmd([[silent! source ]] .. escaped)
     end
   end),
