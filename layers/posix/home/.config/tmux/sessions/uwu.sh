@@ -15,6 +15,6 @@ tmux set-buffer -- $'bash ~/.local/opt/ai/bin/notificationd \n'
 tmux paste-buffer -d -p
 tmux select-pane -t '{marked}'
 tmux select-pane -M
-tmux select-window -t :-1
 
+tmux select-window -t :-1
 tmux set-environment -g -h -u -- TMUX_NO_SAVE
