@@ -35,24 +35,32 @@ local wrap = function(fn)
   end
 end
 
-return {
-  future = future,
-  wrap = wrap,
-  run = function(fn)
-    local thread = coroutine.create(fn)
+local thunk = function(fn)
+  return function(...)
+    local argv = { ... }
+    local thread = coroutine.create(function()
+      fn(unpack(argv))
+    end)
 
     local ok, ret = coroutine.resume(thread)
     if not ok then
       local tb = debug.traceback(thread, ret)
       error(tb)
     end
-  end,
+  end
+end
 
+return {
+  future = future,
+  wrap = wrap,
+  thunk = thunk,
+  run = function(fn)
+    thunk(fn)()
+  end,
   sleep = function(milliseconds)
     local resolve, await = future()
     vim.defer_fn(resolve, milliseconds)
     return await()
   end,
-
   scheduled = wrap(vim.schedule),
 }
