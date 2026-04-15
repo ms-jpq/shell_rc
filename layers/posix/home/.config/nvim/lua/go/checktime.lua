@@ -1,3 +1,4 @@
+local async = require "go.async"
 local lib = require "go"
 
 -- failable options instead ask for intervention
@@ -23,7 +24,7 @@ do
       if lo then
         if vim.api.nvim_buf_get_name(0) ~= "" then
           local nr = vim.api.nvim_get_current_buf()
-          vim.cmd("checktime" .. nr)
+          vim.cmd.checktime(nr)
         end
       else
         vim.cmd [[silent! checktime]]
@@ -37,13 +38,14 @@ do
   vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, { group = lib.group, callback = check_time(true) })
 
   local cycle = 1888
-  local check_times = nil
-  check_times = function()
-    local mode = vim.api.nvim_get_mode().mode
-    if vim.startswith(mode, "i") then
-      check_time(true)()
+  async.run(function()
+    while true do
+      async.sleep(cycle)
+
+      local mode = vim.api.nvim_get_mode().mode
+      if not vim.startswith(mode, "i") then
+        check_time(true)()
+      end
     end
-    vim.defer_fn(check_times, cycle)
-  end
-  vim.defer_fn(check_times, cycle)
+  end)
 end
