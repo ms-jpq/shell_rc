@@ -11,7 +11,7 @@ tmux select-pane -M
 
 tmux new-window -c ~/Downloads
 tmux select-pane -m
-tmux set-buffer -- $'bash ~/.local/opt/ai/bin/notificationd \n'
+tmux set-buffer -- $'~/.local/opt/ai/bin/notificationd \n'
 tmux paste-buffer -d -p
 tmux select-pane -t '{marked}'
 tmux select-pane -M
