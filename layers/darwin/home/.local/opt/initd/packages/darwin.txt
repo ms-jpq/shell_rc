@@ -11,6 +11,7 @@
 + bash
 + bat
 + bottom
++ catimg
 + cgdb
 + chafa
 + cloc
