@@ -33,7 +33,7 @@ Go.op_indent = function(hold_pos, is_inside)
   local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
   row = row - 1
 
-  local hold = to.hold_position()
+  local restore = to.hold_position()
 
   local line = unpack(vim.api.nvim_buf_get_lines(0, row, row + 1, true))
   local indent = to.p_indent(line, tabsize)
@@ -54,7 +54,7 @@ Go.op_indent = function(hold_pos, is_inside)
   to.set_visual_selection("v", lo + 1, 0, hi + 1, #last, false)
 
   if hold_pos then
-    hold()
+    restore()
   end
 end
 

@@ -1,7 +1,7 @@
 local to = require "go.text_objects"
 
 Go.op_select_line = function(hold_pos, is_inside)
-  local hold = to.hold_position()
+  local restore = to.hold_position()
   local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
   local line = unpack(vim.api.nvim_buf_get_lines(0, row - 1, row, true))
 
@@ -17,7 +17,7 @@ Go.op_select_line = function(hold_pos, is_inside)
 
   to.set_visual_selection("v", row, lhs, row, rhs, false)
   if hold_pos then
-    hold()
+    restore()
   end
 end
 
