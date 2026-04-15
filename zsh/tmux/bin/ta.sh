@@ -24,7 +24,7 @@ if [[ -f $SESSION_SCRIPT ]]; then
   source -- "$SESSION_SCRIPT"
 elif [[ -v TMUX ]]; then
   tmux new-session -d -c "$HOME" -s "$SESSION"
-  tmux switch-client -t "$SESSION"
+  exec -- tmux switch-client -t "$SESSION"
 else
-  tmux new-session -A -c "$HOME" -s "$SESSION"
+  exec -- tmux new-session -A -c "$HOME" -s "$SESSION"
 fi
