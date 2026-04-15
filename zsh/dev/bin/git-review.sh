@@ -8,7 +8,7 @@ GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 if ! [[ -v RECUR ]]; then
-  SED='/^[? ]/p'
+  SED='/^.[^ ]/p'
   BASE=''
   while (($#)); do
     case "$1" in
