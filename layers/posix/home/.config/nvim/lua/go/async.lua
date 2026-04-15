@@ -53,7 +53,6 @@ end
 return setmetatable({
   future = future,
   wrap = wrap,
-  thunk = thunk,
   run = function(fn)
     thunk(fn)()
   end,
