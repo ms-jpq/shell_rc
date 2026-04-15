@@ -8,7 +8,7 @@ MESSAGE="$3"
 shift -- 3
 
 ARGV=(
-  /Applications/kitty.app/Contents/MacOS/kitten @
+  /opt/homebrew/bin/kitten @
   --to "unix:$SOCK"
   --
   kitten notify

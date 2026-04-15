@@ -1,4 +1,27 @@
+.PHONY: mail app.aerc
+
 mail: $(CONFIG)/aerc/binds.conf
 $(BREW_PREFIX)/opt/aerc/share/aerc/binds.conf: | pkg.posix
 $(CONFIG)/aerc/binds.conf: $(CONFIG)/aerc/binds.sed | $(BREW_PREFIX)/opt/aerc/share/aerc/binds.conf
 	'$^' -- '$|' > '$@'
+
+
+APP_AERC := $(OPT)/Aerc.app
+$(APP_AERC): $(OPT)/initd/libexec/aerc-mailto.cjs
+	rm -fr -v -- '$@'
+	osacompile -l JavaScript -o '$@' '$<'
+
+mail: app.aerc
+app.aerc: $(APP_AERC)/Contents/Info.plist
+$(APP_AERC)/Contents/Info.plist: $(APP_AERC)
+	ARGV=(
+		/usr/libexec/PlistBuddy
+		-c 'Add :CFBundleIdentifier string com.aerc.mailto'
+		-c 'Add :CFBundleURLTypes array'
+		-c 'Add :CFBundleURLTypes:0 dict'
+		-c 'Add :CFBundleURLTypes:0:CFBundleURLName string mailto'
+		-c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes array'
+		-c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string mailto'
+		'$@'
+	)
+	"$${ARGV[@]}"
