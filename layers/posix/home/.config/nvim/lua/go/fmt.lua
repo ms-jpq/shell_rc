@@ -48,22 +48,14 @@ Go.run_fmt = async.thunk(function()
 
   vim.notify([[⏳...]], vim.log.levels.INFO, {})
 
-  local handle = nil
-  local proc = nil
-  handle = vim.defer_fn(function()
-    if proc then
-      proc:kill(9)
-      proc:wait(0)
-      vim.notify([[⚠️ ]] .. vim.inspect(proc), vim.log.levels.ERROR)
-    end
-  end, timeout)
+  local resolve, await = async.future()
+  local proc = vim.system(cmd, opts, resolve)
+  async.run(function()
+    async.sleep(timeout)
+    proc:kill(9)
+  end)
 
-  local waited = async.system(cmd, opts)
-
-  if handle then
-    vim.uv.timer_stop(handle)
-  end
-
+  local waited = await()
   async.scheduled()
 
   if waited.signal ~= 0 then
