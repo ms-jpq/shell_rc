@@ -124,9 +124,8 @@ local tmux_send = function(pane_id, text)
 end
 
 local eof = function(pane_id)
-  vim.defer_fn(function()
-    local _ = run(nil, { "tmux", "send-keys", "-t", pane_id, "--", "Enter" })
-  end, 99)
+  async.sleep(99)
+  local _ = run(nil, { "tmux", "send-keys", "-t", pane_id, "--", "Enter" })
 end
 
 local matching = function(buf)
