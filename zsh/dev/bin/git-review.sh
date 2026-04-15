@@ -27,6 +27,11 @@ if ! [[ -v RECUR ]]; then
       ;;
     esac
   done
+
+  read -r -d '' -- _AWK <<- 'AWK' || true
+{ print }
+AWK
+
   git status --porcelain --no-renames -z -- . | sed -E -z --quiet -e "$SED" | sed -E -z -e 's#^...##' | RECUR=1 "$0" "$BASE"
   exit
 fi
@@ -35,9 +40,16 @@ shift -- 1
 BASE="$1"
 readarray -t -d '' -- DIFFS
 
-SPLIT=(new-window -a)
-for FILE in "${DIFFS[@]}"; do
-  BASENAME="$(basename -- "$FILE")"
+for I in "${!DIFFS[@]}"; do
+  FILE="${DIFFS[$I]}"
+
+  if ((I % 4 == 0)); then
+    SPLIT=(new-window -a)
+  else
+    SPLIT=(split-window)
+  fi
+
+  BASENAME="${FILE##*/}"
   SUFFIX=''
   if [[ $BASENAME == *.* ]]; then
     SUFFIX=".${BASENAME##*.}"
@@ -54,9 +66,8 @@ for FILE in "${DIFFS[@]}"; do
   fi
 
   tmux "${SPLIT[@]}" -c "$PWD" -- nvim -d -- "$LHS" "$RHS"
-  SPLIT=(split-window)
-done
 
-if ((${#DIFFS[@]})); then
-  exec -- tmux select-layout tiled
-fi
+  if ((I % 4 == 3)) || ((I == ${#DIFFS[@]} - 1)); then
+    tmux select-layout -- tiled
+  fi
+done
