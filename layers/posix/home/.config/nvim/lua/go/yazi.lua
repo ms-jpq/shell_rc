@@ -5,7 +5,7 @@ local termstart = async.wrap(function(cmd, env, die)
 
   vim.api.nvim_buf_call(
     buf,
-    async.thunk(function()
+    async(function()
       async.fn.jobstart(cmd, { term = true, env = env })
       vim.api.nvim_buf_delete(buf, { force = true })
       die()
@@ -48,7 +48,7 @@ local file_exp_die = function()
 end
 
 local spawn_yz = function(use_cwd)
-  return async.thunk(function()
+  return async(function()
     local tmp = vim.fn.tempname()
     local path = use_cwd(vim.fn.getcwd())
 

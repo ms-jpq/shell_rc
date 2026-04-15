@@ -50,7 +50,7 @@ local thunk = function(fn)
   end
 end
 
-return {
+return setmetatable({
   future = future,
   wrap = wrap,
   thunk = thunk,
@@ -71,4 +71,8 @@ return {
       vim.fn.jobstart(cmd, opts)
     end),
   },
-}
+}, {
+  __call = function(_, fn)
+    return thunk(fn)
+  end,
+})

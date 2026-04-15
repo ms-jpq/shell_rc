@@ -33,7 +33,7 @@ local fmt_command = function(buf)
   return { "sed", "-E", "-e", [[:l1]], "-e", [[/./,$!d]], "-e", [[/^\n*$/{$d;N;}]], "-e", [[/\n$/bl1]] }
 end
 
-Go.run_fmt = async.thunk(function()
+Go.run_fmt = async(function()
   if not vim.bo.modifiable or vim.bo.readonly then
     return
   end
