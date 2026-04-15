@@ -1,4 +1,6 @@
-local termstart = function(cmd, env, die)
+local async = require "go.async"
+
+local termstart = async.wrap(function(cmd, env, die)
   local buf = vim.api.nvim_create_buf(false, true)
 
   vim.api.nvim_buf_call(buf, function()
@@ -15,7 +17,7 @@ local termstart = function(cmd, env, die)
   end)
 
   vim.api.nvim_win_set_buf(0, buf)
-end
+end)
 
 local file_exp_die = function()
   local bufs = {}
@@ -50,25 +52,25 @@ local file_exp_die = function()
 end
 
 local spawn_yz = function(use_cwd)
-  return function()
+  return async.thunk(function()
     local tmp = vim.fn.tempname()
     local path = use_cwd(vim.fn.getcwd())
 
     local cmd = { "yazi", "--chooser-file", tmp, "--", path }
     local die = file_exp_die()
-    termstart(cmd, vim.empty_dict(), function()
-      if vim.fn.filereadable(tmp) == 1 then
-        local select = vim.fn.readblob(tmp)
-        local escaped = vim.fn.fnameescape(select)
-        if vim.fn.isdirectory(select) == 1 then
-          vim.cmd.cd(escaped)
-        else
-          vim.cmd.edit(escaped)
-        end
+    termstart(cmd, vim.empty_dict())
+
+    if vim.fn.filereadable(tmp) == 1 then
+      local select = vim.fn.readblob(tmp)
+      local escaped = vim.fn.fnameescape(select)
+      if vim.fn.isdirectory(select) == 1 then
+        vim.cmd.cd(escaped)
+      else
+        vim.cmd.edit(escaped)
       end
-      die()
-    end)
-  end
+    end
+    die()
+  end)
 end
 
 vim.keymap.set(
