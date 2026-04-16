@@ -12,13 +12,17 @@ for _, buf in ipairs(vim.api.nvim_list_bufs()) do
   end
 end
 
-local detect_stdin = function(cwd)
+local argv_names = function(cwd)
   local acc = {}
   for _, name in pairs(vim.fn.argv(-1)) do
-    local path = vim.fs.joinpath(cwd, name)
-    local norm = vim.fs.normalize(path, { expand_env = false })
+    local norm = vim.fs.normalize(vim.fs.joinpath(cwd, name), { expand_env = false })
     acc[norm] = true
   end
+  return acc
+end
+
+local detect_stdin = function(cwd)
+  local argv = argv_names(cwd)
 
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     local dirty = function()
@@ -31,7 +35,7 @@ local detect_stdin = function(cwd)
     end
 
     local name = vim.api.nvim_buf_get_name(buf)
-    if not acc[name] and dirty() then
+    if not argv[name] and dirty() then
       return true
     end
   end
@@ -126,23 +130,43 @@ vim.api.nvim_create_autocmd({ "QuitPre" }, {
   end,
 })
 
+local restore = function()
+  local cwd = vim.fn.getcwd()
+  if no_session(cwd) then
+    return
+  end
+
+  local path, escaped = session_path(cwd)
+  if vim.fn.filereadable(path) == 1 then
+    async.scheduled()
+    vim.cmd([[silent! source ]] .. escaped)
+  end
+end
+
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
   group = lib.group,
   once = true,
   callback = async(function()
-    local cwd = vim.fn.getcwd()
-    if no_session(cwd) then
-      return
+    restore()
+
+    async.scheduled()
+    local argv = argv_names(vim.fn.getcwd())
+
+    for name in vim.iter(vim.fn.argv(-1)):rev() do
+      vim.cmd("0tabedit " .. vim.fn.fnameescape(name))
     end
 
-    local path, escaped = session_path(cwd)
-    if vim.fn.filereadable(path) == 1 then
-      async.scheduled()
-      vim.cmd([[silent! source ]] .. escaped)
+    local tabs = vim.api.nvim_list_tabpages()
+    for i = #tabs, #argv + 1, -1 do
+      local tab = tabs[i]
+      local win = vim.api.nvim_tabpage_get_win(tab)
+      local buf = vim.api.nvim_win_get_buf(win)
+      local name = vim.api.nvim_buf_get_name(buf)
 
-      local first = vim.fn.argv(0)
-      if first ~= "" then
-        vim.cmd.buffer(vim.fn.fnameescape(first))
+      if argv[name] then
+        for _, w in pairs(vim.api.nvim_tabpage_list_wins(tab)) do
+          vim.api.nvim_win_close(w, true)
+        end
       end
     end
   end),
