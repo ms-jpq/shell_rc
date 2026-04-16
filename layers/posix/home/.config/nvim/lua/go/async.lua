@@ -1,3 +1,7 @@
+local new_token = require "go.async.token"
+
+local threads = setmetatable({}, { __mode = "k" })
+
 local future = function()
   local thread = coroutine.running()
   assert(thread, "future: must be called inside running coroutine")
@@ -35,12 +39,18 @@ local wrap = function(fn)
   end
 end
 
-local thunk = function(fn)
+local thunk = function(fn, token)
   return function(...)
+    if not token then
+      token = threads[coroutine.running()]
+    end
+
     local argv = { ... }
     local thread = coroutine.create(function()
       fn(unpack(argv))
     end)
+
+    threads[thread] = token
 
     local ok, ret = coroutine.resume(thread)
     if not ok then
@@ -53,8 +63,8 @@ end
 return setmetatable({
   future = future,
   wrap = wrap,
-  run = function(fn)
-    thunk(fn)()
+  run = function(fn, token)
+    thunk(fn, token)()
   end,
   sleep = function(milliseconds)
     local resolve, await = future()
@@ -74,7 +84,7 @@ return setmetatable({
     select = wrap(vim.ui.select),
   },
 }, {
-  __call = function(_, fn)
-    return thunk(fn)
+  __call = function(_, fn, token)
+    return thunk(fn, token)
   end,
 })
