@@ -19,7 +19,7 @@ local selected_text = function(visual_type)
 end
 
 do
-  local candidates = vim.split([[!#%&+,:;=@~]], "")
+  local candidates = vim.split([[!#%+,:;=@~]], "")
   local select_sep = function(text)
     for _, sep in pairs(candidates) do
       if not string.find(text, sep, 1, true) then
@@ -28,6 +28,7 @@ do
     end
     return "/"
   end
+
   Go.op_buf_edit = function(visual_type)
     local text = selected_text(visual_type)
     local escaped = magic_escape(text)
@@ -49,7 +50,7 @@ do
     return function(visual_type)
       local text = selected_text(visual_type)
       local escaped = magic_escape(text)
-      vim.fn.setreg("/", escaped)
+      vim.fn.setreg("/", [[\V]] .. escaped)
       vim.opt.hlsearch = true
       vim.cmd(cmd .. " " .. text)
     end
