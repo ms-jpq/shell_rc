@@ -1,5 +1,3 @@
-local new_token = require "go.async.token"
-
 local threads = setmetatable({}, { __mode = "k" })
 
 local future = function()
@@ -41,8 +39,13 @@ end
 
 local thunk = function(fn, token)
   return function(...)
-    if not token then
-      token = threads[coroutine.running()]
+    local parent = threads[coroutine.running()]
+    if token then
+      if parent then
+        parent.watch(token)
+      end
+    else
+      token = parent
     end
 
     local argv = { ... }
