@@ -3,9 +3,9 @@
 set -o pipefail
 
 TXT="${1:-"${TXT:-"/dev/null"}"}"
-COMMENT="${2:-"${COMMENT:-"^#"}"}"
-PORT="${3:-8888}"
-ADDR="${4:-"127.0.0.1"}"
+PORT="${2:-8888}"
+ADDR="${3:-"127.0.0.1"}"
+COMMENT="${4:-"${COMMENT:-"^#"}"}"
 
 if [[ -t 0 ]]; then
   export -- TXT COMMENT
