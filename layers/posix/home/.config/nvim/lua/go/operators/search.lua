@@ -31,7 +31,8 @@ do
 
   Go.op_buf_edit = function(visual_type)
     local text = selected_text(visual_type)
-    local escaped = magic_escape(text)
+    local escaped = string.gsub(magic_escape(text), "<", [[<lt>]])
+
     local sep = select_sep(escaped)
     local cmd = [[:%s]] .. sep .. [[\V]] .. escaped .. sep .. sep .. [[g<left><left>]]
 
