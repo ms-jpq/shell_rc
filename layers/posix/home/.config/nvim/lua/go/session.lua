@@ -154,14 +154,12 @@ local move_tabs = function(cwd)
     vim.cmd("0tabedit " .. vim.fn.fnameescape(name))
   end
 
-  local tabs = vim.api.nvim_list_tabpages()
-  for i = #tabs, #argv + 1, -1 do
-    local win = vim.api.nvim_tabpage_get_win(tabs[i])
-    local buf = vim.api.nvim_win_get_buf(win)
-    local name = vim.api.nvim_buf_get_name(buf)
-
-    if names[name] then
-      vim.api.nvim_win_close(win, true)
+  for tab in vim.iter(vim.api.nvim_list_tabpages()):skip(#argv) do
+    for _, win in pairs(vim.api.nvim_tabpage_list_wins(tab)) do
+      local buf = vim.api.nvim_win_get_buf(win)
+      if names[vim.api.nvim_buf_get_name(buf)] then
+        vim.api.nvim_win_close(win, true)
+      end
     end
   end
 
