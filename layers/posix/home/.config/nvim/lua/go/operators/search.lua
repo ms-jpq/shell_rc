@@ -19,7 +19,7 @@ local selected_text = function(visual_type)
 end
 
 do
-  local candidates = vim.split([[!#%+,:;=@~]], "")
+  local candidates = vim.split([[!#%&+,:;=@~]], "")
   local select_sep = function(text)
     for _, sep in pairs(candidates) do
       if not string.find(text, sep, 1, true) then
