@@ -2,9 +2,9 @@
 
 set -o pipefail
 
-TXT="${1:-"${TXT:-"/dev/null"}"}"
-PORT="${2:-8888}"
-ADDR="${3:-"127.0.0.1"}"
+PORT="${1:-8888}"
+ADDR="${2:-"127.0.0.1"}"
+TXT="${3:-"${TXT:-"/dev/null"}"}"
 COMMENT="${4:-"${COMMENT:-"^#"}"}"
 
 if [[ -t 0 ]]; then
