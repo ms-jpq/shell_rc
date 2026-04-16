@@ -150,17 +150,18 @@ local move_tabs = function(cwd)
   end
 
   async.scheduled()
-  local pos = 0
-  for _, tab in pairs(vim.api.nvim_list_tabpages()) do
-    for _, win in pairs(vim.api.nvim_tabpage_list_wins(tab)) do
-      local buf = vim.api.nvim_win_get_buf(win)
-      local name = vim.api.nvim_buf_get_name(buf)
-      if names[name] then
-        local nr = vim.api.nvim_tabpage_get_number(tab)
-        vim.cmd(nr .. "tabmove " .. pos)
-        pos = pos + 1
-        break
-      end
+  for name in vim.iter(argv):rev() do
+    vim.cmd("0tabedit " .. vim.fn.fnameescape(name))
+  end
+
+  local tabs = vim.api.nvim_list_tabpages()
+  for i = #tabs, #argv + 1, -1 do
+    local win = vim.api.nvim_tabpage_get_win(tabs[i])
+    local buf = vim.api.nvim_win_get_buf(win)
+    local name = vim.api.nvim_buf_get_name(buf)
+
+    if names[name] then
+      vim.api.nvim_win_close(win, true)
     end
   end
 
