@@ -31,20 +31,17 @@ do
 
   Go.op_buf_edit = function(visual_type)
     local text = selected_text(visual_type)
-    local escaped = string.gsub(magic_escape(text), "<", [[<lt>]])
-
+    local escaped = magic_escape(text)
     local sep = select_sep(escaped)
-    local cmd = [[:%s]] .. sep .. [[\V]] .. escaped .. sep .. sep .. [[g<left><left>]]
+    vim.fn.setreg("/", [[\V]] .. vim.fn.escape(escaped, sep))
 
+    local cmd = [[:%s]] .. sep .. [[<c-r>/]] .. sep .. sep .. [[g<left><left>]]
     vim.api.nvim_input(cmd)
   end
 
   vim.keymap.set("n", "gs", [[<cmd>set opfunc=v:lua.Go.op_buf_edit<cr>g@]])
   vim.keymap.set("x", "gs", to.norm .. [[<cmd>lua Go.op_buf_edit(nil)<cr>]])
 end
-
--- very magic
-vim.keymap.set("n", "gS", [[:%s/\v//g<left><left><left>]])
 
 do
   local searcher = function(cmd)
