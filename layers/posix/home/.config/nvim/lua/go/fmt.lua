@@ -46,7 +46,7 @@ local fmt = function()
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local opts = { cwd = cwd, stdin = lines, text = true }
 
-  vim.notify([[⏳...]], vim.log.levels.INFO, {})
+  vim.notify([[⏳...]], vim.log.levels.INFO)
 
   local resolve, await = async.future()
   local proc = vim.system(cmd, opts, resolve)
