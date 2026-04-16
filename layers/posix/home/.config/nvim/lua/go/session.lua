@@ -13,16 +13,17 @@ for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 end
 
 local argv_names = function(cwd)
+  local argv = vim.fn.argv(-1)
   local acc = {}
-  for _, name in pairs(vim.fn.argv(-1)) do
+  for _, name in pairs(argv) do
     local norm = vim.fs.normalize(vim.fs.joinpath(cwd, name), { expand_env = false })
     acc[norm] = true
   end
-  return acc
+  return argv, acc
 end
 
 local detect_stdin = function(cwd)
-  local argv = argv_names(cwd)
+  local _, argvn = argv_names(cwd)
 
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     local dirty = function()
@@ -35,7 +36,7 @@ local detect_stdin = function(cwd)
     end
 
     local name = vim.api.nvim_buf_get_name(buf)
-    if not argv[name] and dirty() then
+    if not argvn[name] and dirty() then
       return true
     end
   end
@@ -130,8 +131,7 @@ vim.api.nvim_create_autocmd({ "QuitPre" }, {
   end,
 })
 
-local restore = function()
-  local cwd = vim.fn.getcwd()
+local restore = function(cwd)
   if no_session(cwd) then
     return
   end
@@ -143,31 +143,36 @@ local restore = function()
   end
 end
 
+local move_tabs = function(cwd)
+  local argv, names = argv_names(cwd)
+  if #argv == 0 then
+    return
+  end
+
+  async.scheduled()
+  local pos = 0
+  for _, tab in pairs(vim.api.nvim_list_tabpages()) do
+    for _, win in pairs(vim.api.nvim_tabpage_list_wins(tab)) do
+      local buf = vim.api.nvim_win_get_buf(win)
+      local name = vim.api.nvim_buf_get_name(buf)
+      if names[name] then
+        local nr = vim.api.nvim_tabpage_get_number(tab)
+        vim.cmd(nr .. "tabmove " .. pos)
+        pos = pos + 1
+        break
+      end
+    end
+  end
+
+  vim.cmd "tabfirst"
+end
+
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
   group = lib.group,
   once = true,
   callback = async(function()
-    restore()
-
-    async.scheduled()
-    local argv = argv_names(vim.fn.getcwd())
-
-    for name in vim.iter(vim.fn.argv(-1)):rev() do
-      vim.cmd("0tabedit " .. vim.fn.fnameescape(name))
-    end
-
-    local tabs = vim.api.nvim_list_tabpages()
-    for i = #tabs, #argv + 1, -1 do
-      local tab = tabs[i]
-      local win = vim.api.nvim_tabpage_get_win(tab)
-      local buf = vim.api.nvim_win_get_buf(win)
-      local name = vim.api.nvim_buf_get_name(buf)
-
-      if argv[name] then
-        for _, w in pairs(vim.api.nvim_tabpage_list_wins(tab)) do
-          vim.api.nvim_win_close(w, true)
-        end
-      end
-    end
+    local cwd = vim.fn.getcwd()
+    restore(cwd)
+    move_tabs(cwd)
   end),
 })
