@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-TXT="${1:-"$TXT"}"
+TXT="${1:-"${TXT:-"/dev/null"}"}"
 COMMENT="${2:-"${COMMENT:-"^#"}"}"
 PORT="${3:-8888}"
 ADDR="${4:-"127.0.0.1"}"
