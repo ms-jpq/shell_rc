@@ -70,6 +70,7 @@ const argv = (function* () {
   const ext = extname(filename).substring(1)
   yield `--stdin-filepath=${filename}`
   yield `--tab-width=${tabsize}`
+  yield `--log-level=warn`
 
   for (const [plugin, re] of Object.entries(plugins)) {
     if (ext.match(re)) {
