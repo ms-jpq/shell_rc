@@ -139,6 +139,11 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
     if vim.fn.filereadable(path) == 1 then
       async.scheduled()
       vim.cmd([[silent! source ]] .. escaped)
+
+      local first = vim.fn.argv(0)
+      if first ~= "" then
+        vim.cmd.buffer(vim.fn.fnameescape(first))
+      end
     end
   end),
 })
