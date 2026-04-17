@@ -19,8 +19,23 @@ ARGV=(
   -T text/html
   -s
   -cols "$COLS"
+  -graph
+  -o auto_uncompress=0
+  -o display_image=0
   -o display_link_number=1
+  -o follow_redirection=0
+  -o frame=0
+  -o http_proxy=http://0.0.0.0:0
+  -o https_proxy=http://0.0.0.0:0
+  -o localhost_only=1
+  -o mailcap=/dev/null
+  -o meta_refresh=0
+  -o no_proxy=
   -o tabstop=2
+  -o urimethodmap=/dev/null
+  -o use_cookie=0
+  -o use_proxy=1
+  -o view_unseenobject=0
 )
 
 SED=(
