@@ -12,15 +12,10 @@ local lsp_on = require "go.pack.lsp"
 local acc = {}
 for _, row in pairs(lsp_on()) do
   local merged, extensions = unpack(row)
-  local mapping = vim.empty_dict()
-  for _, ext in pairs(extensions) do
-    mapping[ext] = merged.filetypes[1]
-  end
-
   local command = merged.cmd[1]
-  if #extensions ~= 0 then
+  if next(extensions) ~= nil then
     acc[command] = {
-      extensionToLanguage = mapping,
+      extensionToLanguage = extensions,
       command = command,
       args = vim.list_slice(merged.cmd, 2),
       initializationOptions = merged.init_options,

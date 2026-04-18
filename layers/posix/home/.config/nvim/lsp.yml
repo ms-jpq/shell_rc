@@ -4,8 +4,8 @@ jsonls:
     - vscode-json-language-server
     - --stdio
   extensions:
-    - .json
-    - .jsonc
+    .json: json
+    .jsonc: jsonc
 
 yamlls:
   cmd:
@@ -16,15 +16,15 @@ yamlls:
     - yaml.ansible
     - yaml.docker-compose
   extensions:
-    - .yml
-    - .yaml
+    .yml: yaml
+    .yaml: yaml
   # settings:
   #   yaml:
   #     keyOrdering: false
 
 taplo:
   extensions:
-    - .toml
+    .toml: toml
 
 typos_lsp:
   init_options:
@@ -37,11 +37,11 @@ lemminx:
     - lemminx
     - -Dlemminx.workdir=/var/tmp/lemminx
   extensions:
-    - .svg
-    - .xml
-    - .xsd
-    - .xsl
-    - .xslt
+    .svg: svg
+    .xml: xml
+    .xsd: xsd
+    .xsl: xslt
+    .xslt: xslt
 
 ast_grep: {}
 
@@ -76,14 +76,14 @@ texlab:
       #     - "%p"
       #     - '"code -g %f:%l"'
   extensions:
-    - .bib
-    - .sty
-    - .tex
+    .bib: bib
+    .sty: tex
+    .tex: tex
 
 digestif:
   extensions:
-    - .sty
-    - .tex
+    .sty: tex
+    .tex: tex
 
 diagnosticls:
   filetypes:
@@ -121,51 +121,51 @@ diagnosticls:
 
 bashls:
   extensions:
-    - .bash
-    - .sh
+    .bash: bash
+    .sh: sh
 
 jqls:
   extensions:
-    - .jq
+    .jq: jq
 
 awk_ls:
   extensions:
-    - .awk
+    .awk: awk
 
 systemd_lsp:
   extensions:
-    - .automount
-    - .dnssd
-    - .link
-    - .mount
-    - .netdev
-    - .network
-    - .service
-    - .socket
-    - .target
+    .automount: systemd
+    .dnssd: systemd
+    .link: systemd
+    .mount: systemd
+    .netdev: systemd
+    .network: systemd
+    .service: systemd
+    .socket: systemd
+    .target: systemd
 
 perlnavigator:
   extensions:
-    - .pl
-    - .pm
+    .pl: perl
+    .pm: perl
 
 powershell_es:
   cmd:
     - powershell-lsp
   extensions:
-    - .ps1
-    - .psm1
+    .ps1: ps1
+    .psm1: ps1
 
 dockerls:
   extensions:
-    - .dockerfile
+    .dockerfile: dockerfile
 
 docker_compose_language_service: {}
 
 pyright:
   extensions:
-    - .py
-    - .pyi
+    .py: python
+    .pyi: python
 
 # pylyzer: {}
 
@@ -173,105 +173,105 @@ pyright:
 
 hls:
   extensions:
-    - .hs
-    - .lhs
+    .hs: haskell
+    .lhs: lhaskell
 
 rust_analyzer:
   extensions:
-    - .rs
+    .rs: rust
 
 gopls:
   extensions:
-    - .go
-    - .mod
+    .go: go
+    .mod: gomod
 
 golangci_lint_ls:
   extensions:
-    - .go
+    .go: go
 
 sourcekit:
   extensions:
-    - .swift
+    .swift: swift
 
 clangd:
   extensions:
-    - .c
-    - .cc
-    - .cpp
-    - .cu
-    - .cuh
-    - .cxx
-    - .h
-    - .hpp
-    - .hxx
-    - .m
-    - .mm
+    .c: c
+    .cc: cpp
+    .cpp: cpp
+    .cu: cuda
+    .cuh: cuda
+    .cxx: cpp
+    .h: c
+    .hpp: cpp
+    .hxx: cpp
+    .m: objc
+    .mm: objcpp
 
 ccls:
   extensions:
-    - .c
-    - .cc
-    - .cpp
-    - .cu
-    - .cuh
-    - .cxx
-    - .h
-    - .hpp
-    - .hxx
-    - .m
-    - .mm
+    .c: c
+    .cc: cpp
+    .cpp: cpp
+    .cu: cuda
+    .cuh: cuda
+    .cxx: cpp
+    .h: c
+    .hpp: cpp
+    .hxx: cpp
+    .m: objc
+    .mm: objcpp
 
 fortls:
   extensions:
-    - .f03
-    - .f08
-    - .f90
-    - .f95
+    .f03: fortran
+    .f08: fortran
+    .f90: fortran
+    .f95: fortran
 
 ruby_lsp:
   cmd:
     - ruby-lsp
   extensions:
-    - .gemspec
-    - .rake
-    - .rb
-    - .ru
+    .gemspec: ruby
+    .rake: ruby
+    .rb: ruby
+    .ru: ruby
 
 sorbet:
   extensions:
-    - .gemspec
-    - .rake
-    - .rb
-    - .ru
+    .gemspec: ruby
+    .rake: ruby
+    .rb: ruby
+    .ru: ruby
 
 solargraph:
   extensions:
-    - .gemspec
-    - .rake
-    - .rb
-    - .ru
+    .gemspec: ruby
+    .rake: ruby
+    .rb: ruby
+    .ru: ruby
 
 mdx_analyzer:
   extensions:
-    - .mdx
+    .mdx: mdx
 
 ts_ls:
   cmd:
     - typescript-language-server
     - --stdio
   extensions:
-    - .cjs
-    - .cts
-    - .js
-    - .jsx
-    - .mjs
-    - .mts
-    - .ts
-    - .tsx
+    .cjs: javascript
+    .cts: typescript
+    .js: javascript
+    .jsx: javascriptreact
+    .mjs: javascript
+    .mts: typescript
+    .ts: typescript
+    .tsx: typescriptreact
 
 prismals:
   extensions:
-    - .prisma
+    .prisma: prisma
 
 eslint:
   cmd:
@@ -289,104 +289,104 @@ eslint:
 
 superhtml:
   extensions:
-    - .htm
-    - .html
+    .htm: html
+    .html: html
 
 cssls:
   cmd:
     - vscode-css-language-server
     - --stdio
   extensions:
-    - .css
-    - .less
-    - .scss
+    .css: css
+    .less: less
+    .scss: scss
 
 # tailwindcss: {}
 
 svelte:
   extensions:
-    - .svelte
+    .svelte: svelte
 
 graphql:
   extensions:
-    - .gql
-    - .graphql
+    .gql: graphql
+    .graphql: graphql
 
 vimls:
   extensions:
-    - .vim
+    .vim: vim
 
 r_language_server:
   cmd:
     - r-lsp
   extensions:
-    - .R
-    - .r
-    - .Rmd
-    - .rmd
+    .R: r
+    .r: r
+    .Rmd: rmd
+    .rmd: rmd
 
 julials:
   cmd:
     - julia-lsp
   extensions:
-    - .jl
+    .jl: julia
 
 phan:
   extensions:
-    - .php
+    .php: php
 
 # psalm: {}
 
 phpactor:
   extensions:
-    - .php
+    .php: php
 
 intelephense:
   init_options:
     globalStoragePath: /var/tmp/intelephense
   extensions:
-    - .php
+    .php: php
 
 fsautocomplete:
   extensions:
-    - .fs
-    - .fsi
-    - .fsx
+    .fs: fsharp
+    .fsi: fsharp
+    .fsx: fsharp
 
 omnisharp:
   extensions:
-    - .cs
+    .cs: cs
 
 clojure_lsp:
   extensions:
-    - .clj
-    - .cljc
-    - .cljs
-    - .edn
+    .clj: clojure
+    .cljc: clojure
+    .cljs: clojurescript
+    .edn: clojure
 
 # gradle_ls: {}
 
 kotlin_lsp:
   extensions:
-    - .kt
-    - .kts
+    .kt: kotlin
+    .kts: kotlin
 
 kotlin_language_server:
   extensions:
-    - .kt
-    - .kts
+    .kt: kotlin
+    .kts: kotlin
 
 jdtls:
   cmd:
     - jdtls
   extensions:
-    - .java
+    .java: java
 
 prolog_ls:
   cmd:
     - prolog-ls
   extensions:
-    - .pro
+    .pro: prolog
 
 # sqlls: {}
 
@@ -396,19 +396,19 @@ lua_ls:
       runtime:
         version: "Lua 5.1"
   extensions:
-    - .lua
+    .lua: lua
 
 ansiblels: {}
 
 glsl_analyzer:
   extensions:
-    - .comp
-    - .frag
-    - .geom
-    - .glsl
-    - .tesc
-    - .tese
-    - .vert
+    .comp: glsl
+    .frag: glsl
+    .geom: glsl
+    .glsl: glsl
+    .tesc: glsl
+    .tese: glsl
+    .vert: glsl
 
 # theme_check: {}
 
@@ -416,15 +416,15 @@ glsl_analyzer:
 
 terraformls:
   extensions:
-    - .hcl
-    - .tf
-    - .tfvars
+    .hcl: hcl
+    .tf: terraform
+    .tfvars: terraform
 
 helm_ls: {}
 
 tflint:
   extensions:
-    - .tf
+    .tf: terraform
 
 cobol_ls:
   cmd:
@@ -434,12 +434,12 @@ cobol_ls:
     - -Dlogback.statusListenerClass=ch.qos.logback.core.status.NopStatusListener
     - -DserverType=NATIVE
   extensions:
-    - .cbl
-    - .cob
+    .cbl: cobol
+    .cob: cobol
 
 nginx_language_server:
   extensions:
-    - .nginx
+    .nginx: nginx
 
 # copilot: {}
 
@@ -449,4 +449,4 @@ nginx_language_server:
 
 tsp_server:
   extensions:
-    - .tsp
+    .tsp: typespec
