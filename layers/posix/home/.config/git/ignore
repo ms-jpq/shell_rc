@@ -5,12 +5,10 @@
 *.local.*
 *.lock
 *.log
-*.owo
 *.sock
 *.tfstate
 *.tfstate.backup
 *.tfvars
-*.uwu
 .claude/
 .crush/
 .DS_Store
@@ -28,10 +26,6 @@
 __pycache__/
 CRUSH.md
 node_modules/
-owo.*
-owo/
 Package.resolved
 thumbs.db
-uwu.*
-uwu/
 vendor/
