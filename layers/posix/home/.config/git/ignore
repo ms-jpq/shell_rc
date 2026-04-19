@@ -14,6 +14,7 @@
 .claude/
 .crush/
 .DS_Store
+.exp/
 .git/
 .ignore
 .nvim/
