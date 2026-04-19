@@ -145,7 +145,7 @@ end
 
 local move_tabs = function(cwd)
   local argv, names = argv_names(cwd)
-  if #argv == 0 or vim.opt.diff then
+  if #argv == 0 or vim.wo.diff then
     return
   end
 
