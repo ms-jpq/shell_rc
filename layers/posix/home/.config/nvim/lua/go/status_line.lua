@@ -18,7 +18,7 @@ local classic = (function()
 end)()
 
 Go.lsp_status = function()
-  local clients = vim.lsp.get_clients()
+  local clients = vim.lsp.get_clients { bufnr = 0 }
   if #clients == 0 then
     return ""
   end
