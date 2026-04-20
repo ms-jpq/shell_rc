@@ -15,8 +15,8 @@ REQS += ./layers/posix/home/.config/k9s/skins/rose-pine-dawn.yaml
 
 define FS_TEMPLATE
 
-$(TMP)/$1/$2: ./libexec/lsync.sh $(shell shopt -u failglob && printf -- '%s ' ./layers/{posix,$1}/$2/**/*) $(REQS)
-	'$$<' '$$@' ./layers/{posix,$1}/$2/
+$(TMP)/$1/$2: ./libexec/lsync.sh $(shell shopt -u failglob && printf -- '%s ' ./layers/{posix,$1}/$2/**/*) $(REQS) $(if $(filter home,$2),$(TMP)/$1/rc/.bashrc $(TMP)/$1/rc/.config/zsh/.zshrc)
+	'$$<' '$$@' ./layers/{posix,$1}/$2/$(if $(filter home,$2), $(TMP)/$1/rc/)
 ifeq ($2,home)
 	chmod g-rwx,o-rwx '$$@/.gnupg' '$$@/.ssh' '$$@/.local/secrets'
 endif
