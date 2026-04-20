@@ -14,7 +14,7 @@ BINS="$Z_OUT/bin"
 BLIB="$Z_OUT/libexec"
 
 rm -fr -- "$Z_OUT"
-mkdir -p -- "$FUNC" "$BINS" "$BLIB"
+mkdir -p -- "$FUNC" "$BINS" "$BLIB" "$B_OUT"
 
 DIRS=(
   ./zsh/apriori
