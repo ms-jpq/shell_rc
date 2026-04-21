@@ -16,7 +16,7 @@ local argv_names = function(cwd)
   local argv = vim.fn.argv(-1)
   local acc = {}
   for _, name in pairs(argv) do
-    local joined = string.sub(name, 1, 1) ~= "/" and vim.fs.joinpath(cwd, name) or name
+    local joined = string.sub(name, 1, 1) ~= lib.os.sep and vim.fs.joinpath(cwd, name) or name
     local norm = vim.fs.normalize(joined, { expand_env = false })
     acc[norm] = true
   end

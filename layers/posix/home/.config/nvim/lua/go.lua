@@ -3,9 +3,14 @@
 local group = [[lv_go]]
 vim.api.nvim_create_augroup(group, { clear = true })
 
+local is_win = vim.fn.has [[win32]] == 1 or vim.fn.has [[win32unix]] == 1
+
 return {
   group = group,
-  is_win = vim.fn.has [[win32]] == 1 or vim.fn.has [[win32unix]] == 1,
+  is_win = is_win,
+  os = {
+    sep = is_win and [[\]] or [[/]],
+  },
   read_json = function(path)
     local json = vim.fn.readblob(path)
     return vim.json.decode(json, { luanil = { object = true, array = true } })
