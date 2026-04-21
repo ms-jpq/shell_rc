@@ -18,6 +18,7 @@
 .nvim/
 .phan/
 .terraform/
+.tmp/
 .venv/
 .worktree/
 .yardoc/
