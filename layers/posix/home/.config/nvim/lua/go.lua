@@ -31,7 +31,7 @@ return {
     end
   end,
   sandbox = (function()
-    if is_win then
+    if is_win or 1 then
       return {}
     end
 
