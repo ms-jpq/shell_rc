@@ -87,6 +87,7 @@ JQ
       --auth
       --network
       --dir "$CWD"
+      --dir ~/Library/'Application Support'/nvim
       --
     )
     ;;
