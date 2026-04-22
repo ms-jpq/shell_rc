@@ -141,10 +141,9 @@ if ((NETWORK)); then
   fi
 fi
 
+UNSHARE=(--unshare-ipc --unshare-pid --unshare-net --unshare-uts --unshare-cgroup-try)
 if ((UID)); then
-  UNSHARE=(--unshare-all)
-else
-  UNSHARE=(--unshare-ipc --unshare-pid --unshare-net --unshare-uts --unshare-cgroup-try)
+  UNSHARE+=(--unshare-user-try)
 fi
 
 BWRAP=(
