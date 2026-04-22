@@ -97,7 +97,9 @@ RO_BIND=(
 RW_BIND=(
   "$HOME/.local/asdf"
   "$PWD"
+
   "$XDG_CACHE_HOME"
+  "$XDG_STATE_HOME/ssh"
 )
 
 TMPFS=(
