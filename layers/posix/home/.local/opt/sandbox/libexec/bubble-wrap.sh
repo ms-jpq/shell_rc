@@ -140,19 +140,19 @@ if ((NETWORK)); then
   fi
 fi
 
-if systemd-detect-virt | grep -F -q -- 'systemd-nspawn'; then
-  PROC=(--ro-bind /proc /proc)
+if ((UID)); then
+  UNSHARE=(--unshare-all)
 else
-  PROC=(--proc /proc)
+  UNSHARE=(--unshare-ipc --unshare-pid --unshare-net --unshare-uts --unshare-cgroup-try)
 fi
 
 BWRAP=(
   bwrap
   --die-with-parent
   --new-session
-  --unshare-all
+  "${UNSHARE[@]}"
 
-  "${PROC[@]}"
+  --proc /proc
   --dev /dev
   --dev-bind /dev/tty /dev/tty
 
