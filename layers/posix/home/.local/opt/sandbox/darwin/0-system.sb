@@ -38,8 +38,6 @@
 
 ;; ---- ---- ---- ----
 
-(allow distributed-notification-post)
-
 (allow sysctl-read)
 (allow sysctl-write
   (sysctl-name "kern.tcsm_enable"))
