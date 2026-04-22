@@ -91,5 +91,4 @@ PROFILE="${PROFILES[*]}"
 unset -- IFS
 ARGV+=(-p "$PROFILE")
 
-set -x
 exec -- "${ARGV[@]}" -- "$@"
