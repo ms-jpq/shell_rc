@@ -131,7 +131,13 @@ if ((AUTH)); then
   fi
 fi
 
-RW_BIND+=("${DIRS[@]}" "${FILES[@]}")
+for P in "${DIRS[@]}" "${FILES[@]}"; do
+  if [[ $P == *:ro ]]; then
+    RO_BIND+=("${P%:ro}")
+  else
+    RW_BIND+=("$P")
+  fi
+done
 
 for P in "${USER_PROFILES[@]}"; do
   case "$P" in
