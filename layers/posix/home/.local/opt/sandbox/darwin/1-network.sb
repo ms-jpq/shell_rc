@@ -4,8 +4,5 @@
 ; (allow system-socket)
 
 (allow file-read*
-  (literal "/private/var/run/resolv.conf"))
-
-(allow file-read*
   (subpath (xdg-config "curl")
            (xdg-config "wget")))

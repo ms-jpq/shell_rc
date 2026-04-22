@@ -1,0 +1,54 @@
+(version 1)
+
+;; ---- ---- ---- ----
+
+(allow mach-lookup)
+(allow process-exec)
+(allow process-fork)
+
+(allow process-info* (target same-sandbox))
+(allow signal (target same-sandbox))
+(allow mach-priv-task-port (target same-sandbox))
+
+(allow ipc-posix-shm)
+(allow ipc-posix-sem)
+
+(allow user-preference-read)
+
+;; ---- ---- ---- ----
+
+(allow file-ioctl
+  (literal "/dev/dtracehelper")
+  (literal "/dev/null")
+  (literal "/dev/random")
+  (literal "/dev/tty")
+  (literal "/dev/urandom")
+  (literal "/dev/zero"))
+
+(allow file-read* file-write* file-ioctl
+  (literal "/dev/tty"))
+
+(allow file-ioctl file-read-data file-write-data
+  (require-all
+    (literal "/dev/null")
+    (vnode-type CHARACTER-DEVICE)))
+
+(allow system-socket (require-all (socket-domain AF_SYSTEM) (socket-protocol 2)))
+
+;; ---- ---- ---- ----
+
+(allow distributed-notification-post)
+
+(allow sysctl-write
+  (sysctl-name "kern.tcsm_enable"))
+
+
+;; ---- ---- ---- ----
+
+(allow iokit-open
+  (iokit-registry-entry-class "IOSurfaceRootUserClient")
+  (iokit-registry-entry-class "RootDomainUserClient")
+  (iokit-user-client-class "IOSurfaceSendRight"))
+
+(allow iokit-get-properties)
+
