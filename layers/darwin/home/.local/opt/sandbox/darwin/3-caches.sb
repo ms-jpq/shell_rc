@@ -3,6 +3,6 @@
 (allow file-read* file-write*
   (subpath
     (xdg-cache "asdf")
-    (xdg-config "zsh")
+    (xdg-cache "oh-my-posh")
   ))
 
