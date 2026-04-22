@@ -16,21 +16,24 @@ return function()
     if coq then
       overrides = coq.lsp_ensure_capabilities(overrides)
     end
+
     vim.lsp.config(name, overrides)
     local merged = vim.lsp.config[name]
 
     local argv = merged.cmd
-    if type(argv) == "function" then
-      argv = {}
+    if type(argv) == "table" then
+      local bin = unpack(argv)
+
+      if bin and vim.fn.executable(bin) == 1 then
+        overrides.cmd = vim.iter({ lib.sandbox, argv }):flatten():totable()
+        vim.lsp.config(name, overrides)
+        vim.lsp.enable(name)
+      end
+
+      table.insert(acc, { merged, conf.extensions or vim.empty_dict() })
+    else
       vim.notify([[☠️ ]] .. name, vim.log.levels.ERROR)
     end
-
-    local bin = unpack(argv)
-    if bin and vim.fn.executable(bin) ~= 0 then
-      vim.lsp.enable(name)
-    end
-
-    table.insert(acc, { merged, conf.extensions or {} })
   end
 
   return acc
