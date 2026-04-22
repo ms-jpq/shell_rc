@@ -110,7 +110,9 @@ JQ
   "${ARGV[@]}" || CODE="$?"
   if ((CODE)); then
     NOW="$(date -- '+%y-%m-%d %H:%M:%S')"
-    printf -- '%s\n' "!!! $NOW - $PKG \$?=$CODE" | tee -a -- "$HOME/.cache/helix-rt/failed.log" >&2
+    RT="$HOME/.cache/helix-rt"
+    mkdir -p -- "$RT"
+    printf -- '%s\n' "!!! $NOW - $PKG \$?=$CODE" | tee -a -- "$RT/failed.log" >&2
   fi
   exit "$CODE"
   ;;
