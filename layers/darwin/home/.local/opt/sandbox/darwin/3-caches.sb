@@ -11,6 +11,8 @@
     (string-append "^" (xdg-cache "askpermissiond"))
     (string-append "^" (xdg-cache "CloudKit"))
     (string-append "^" (xdg-cache "containers"))
+    (string-append "^" (xdg-cache "Firefox"))
+    (string-append "^" (xdg-cache "GameKit"))
     (string-append "^" (xdg-cache "maildir"))
   ))
 
