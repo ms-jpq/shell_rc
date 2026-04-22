@@ -102,12 +102,8 @@ RW_BIND=(
 
 TMPFS=(
   "$XDG_CACHE_HOME/aerc"
-  "$XDG_CACHE_HOME/containers"
-  "$XDG_CACHE_HOME/Firefox"
   "$XDG_CACHE_HOME/isync"
   "$XDG_CACHE_HOME/maildir"
-  "$XDG_CACHE_HOME/Mozilla"
-  "$XDG_CACHE_HOME/nvim"
   "$XDG_CACHE_HOME/tmux"
 )
 
