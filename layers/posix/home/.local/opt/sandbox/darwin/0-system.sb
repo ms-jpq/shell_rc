@@ -102,7 +102,6 @@
 (allow sysctl-write
   (sysctl-name "kern.tcsm_enable"))
 
-
 ;; ---- ---- ---- ----
 
 (allow iokit-open
@@ -112,3 +111,6 @@
 
 (allow iokit-get-properties)
 
+;; ---- ---- ---- ----
+
+(allow mach-lookup (global-name "com.apple.trustd.agent")
