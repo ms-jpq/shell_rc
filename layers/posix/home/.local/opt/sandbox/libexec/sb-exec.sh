@@ -72,23 +72,41 @@ if ((NETWORK)); then
 fi
 
 for I in "${!DIRS[@]}"; do
-  read -r -d '' -- RULE <<- SCHEME || true
+  DIR="${DIRS[$I]}"
+  if [[ $DIR == *:ro ]]; then
+    DIR="${DIR%:ro}"
+    read -r -d '' -- RULE <<- SCHEME || true
+(allow file-read*
+  (subpath (param "D${I}")))
+SCHEME
+  else
+    read -r -d '' -- RULE <<- SCHEME || true
 (allow file-read* file-write*
   (subpath (param "D${I}")))
 SCHEME
+  fi
 
   PROFILES+=("$RULE")
-  ARGV+=(-D "D${I}=${DIRS[$I]}")
+  ARGV+=(-D "D${I}=$DIR")
 done
 
 for I in "${!FILES[@]}"; do
-  read -r -d '' -- RULE <<- SCHEME || true
+  FILE="${FILES[$I]}"
+  if [[ $FILE == *:ro ]]; then
+    FILE="${FILE%:ro}"
+    read -r -d '' -- RULE <<- SCHEME || true
+(allow file-read*
+  (literal (param "F${I}")))
+SCHEME
+  else
+    read -r -d '' -- RULE <<- SCHEME || true
 (allow file-read* file-write*
   (literal (param "F${I}")))
 SCHEME
+  fi
 
   PROFILES+=("$RULE")
-  ARGV+=(-D "F${I}=${FILES[$I]}")
+  ARGV+=(-D "F${I}=$FILE")
 done
 
 PROFILES+=("${USER_PROFILES[@]}")

@@ -86,7 +86,7 @@ JQ
       ~/.local/opt/sandbox/libexec/dispatch.sh
       --auth
       --network
-      --dir "$CWD"
+      --dir "$CWD:ro"
       --dir ~/Library/'Application Support'/nvim
       --
     )
