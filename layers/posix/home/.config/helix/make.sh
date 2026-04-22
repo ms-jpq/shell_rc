@@ -78,7 +78,6 @@ JQ
   ARGV=()
   case "$OSTYPE" in
   linux* | darwin*)
-    CWD="$(realpath -- .)"
     ARGV+=(
       nice
       -n 19
@@ -86,7 +85,7 @@ JQ
       ~/.local/opt/sandbox/libexec/dispatch.sh
       --auth
       --network
-      --dir "$CWD"
+      --dir "$PWD"
       --dir ~/Library/'Application Support'/nvim
       --
     )
