@@ -1,0 +1,30 @@
+(version 1)
+
+(deny file-read* file-write*
+  (subpath
+    (home "Desktop")
+    (xdg-cache "aerc")
+    (xdg-cache "askpermissiond")
+    (xdg-cache "CloudKit")
+    (xdg-cache "containers")
+    (xdg-cache "EnergyKit")
+    (xdg-cache "Firefox")
+    (xdg-cache "GameKit")
+    (xdg-cache "GeoServices")
+    (xdg-cache "icloudmailagent")
+    (xdg-cache "isync")
+    (xdg-cache "maildir")
+    (xdg-cache "Mozilla")
+    (xdg-cache "PassKit")
+    (xdg-cache "SharedImageCache")
+    (xdg-cache "SiriTTS")
+    (xdg-cache "tmux")
+  )
+  (literal
+    (xdg-cache "aerc.sock")
+  )
+  (regex
+    (string-append "^" (xdg-cache "") "com\\.apple\\.")
+    (string-append "^" (xdg-cache "") "nvim\\.")
+    (string-append "^" (xdg-cache "") "tmux-")
+  ))
