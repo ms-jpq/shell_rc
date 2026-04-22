@@ -3,13 +3,14 @@
 set -o pipefail
 
 OPTS=''
-LONG_OPTS='auth,network,path:'
+LONG_OPTS='auth,network,dir:,file:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 AUTH=0
 NETWORK=0
-FILESYSTEM=()
+DIRS=()
+FILES=()
 while true; do
   case "$1" in
   --auth)
@@ -20,8 +21,12 @@ while true; do
     NETWORK=1
     shift -- 1
     ;;
-  --path)
-    FILESYSTEM+=("$2")
+  --dir)
+    DIRS+=("$2")
+    shift -- 2
+    ;;
+  --file)
+    FILES+=("$2")
     shift -- 2
     ;;
   --)
@@ -61,8 +66,24 @@ if ((NETWORK)); then
   PROFILES+=('(import-profile "1-network.sb")')
 fi
 
-for _ in "${FILESYSTEM[@]}"; do
-  :
+for I in "${!DIRS[@]}"; do
+  read -r -d '' -- RULE <<- SCHEME || true
+(allow file-read* file-write*
+  (subpath (param "D${I}")))
+SCHEME
+
+  PROFILES+=("$RULE")
+  ARGV+=(-D "D${I}=${DIRS[$I]}")
+done
+
+for I in "${!FILES[@]}"; do
+  read -r -d '' -- RULE <<- SCHEME || true
+(allow file-read* file-write*
+  (literal (param "F${I}")))
+SCHEME
+
+  PROFILES+=("$RULE")
+  ARGV+=(-D "F${I}=${FILES[$I]}")
 done
 
 IFS=$'\n'
@@ -70,4 +91,5 @@ PROFILE="${PROFILES[*]}"
 unset -- IFS
 ARGV+=(-p "$PROFILE")
 
+set -x
 exec -- "${ARGV[@]}" -- "$@"
