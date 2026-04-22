@@ -2,7 +2,10 @@
 
 (allow file-read* file-write*
   (subpath
-    (xdg-cache "asdf")
-    (xdg-cache "oh-my-posh")
+    (xdg-cache "")))
+
+(deny file-read* file-write*
+  (regex
+    (string-append "^" (xdg-cache "") "com\\.apple\\.")
   ))
 
