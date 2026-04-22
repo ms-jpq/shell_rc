@@ -82,7 +82,9 @@ func main() {
 		log.Panicln(err)
 	}
 
-	if err = os.Rename(globbed[0], bin); err != nil {
+	install := exec.Command("install", "-v", "-b", "--", globbed[0], bin)
+	install.Stdout, install.Stderr = os.Stdout, os.Stderr
+	if err = install.Run(); err != nil {
 		log.Panicln(err)
 	}
 }
