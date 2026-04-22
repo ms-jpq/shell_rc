@@ -45,7 +45,12 @@ while true; do
   esac
 done
 
-# shellcheck disable=SC2154
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$HOME/.config"}"
+XDG_DATA_HOME="${XDG_DATA_HOME:-"$HOME/.local/share"}"
+XDG_STATE_HOME="${XDG_STATE_HOME:-"$HOME/.local/state"}"
+XDG_CACHE_HOME="${XDG_CACHE_HOME:-"$HOME/.cache"}"
+XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-"$XDG_CACHE_HOME"}"
+
 RO_BIND=(
   /bin
   /etc
@@ -93,7 +98,6 @@ RO_BIND=(
   "$XDG_CONFIG_HOME/zsh"
 )
 
-# shellcheck disable=SC2154
 RW_BIND=(
   "$HOME/.local/asdf"
   "$PWD"
