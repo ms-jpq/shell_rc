@@ -22,3 +22,16 @@
 
 (allow file-read* file-write*
   (subpath (xdg-cache "ssh")))
+
+;; ---- ---- ---- ----
+
+(allow ipc-posix-shm)
+
+(allow file-read* file-write*
+  (subpath (home "Library/Keychains")))
+
+(allow file-read*
+  (subpath "/Library/Keychains")
+  (subpath "/System/Library/Keychains")
+  (subpath "/System/Library/Security"))
+

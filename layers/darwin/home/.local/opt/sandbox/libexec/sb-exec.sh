@@ -3,12 +3,13 @@
 set -o pipefail
 
 OPTS=''
-LONG_OPTS='auth,network,dir:,file:'
+LONG_OPTS='auth,network,profile:,dir:,file:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 AUTH=0
 NETWORK=0
+USER_PROFILES=()
 DIRS=()
 FILES=()
 while true; do
@@ -20,6 +21,10 @@ while true; do
   --network)
     NETWORK=1
     shift -- 1
+    ;;
+  --profile)
+    USER_PROFILES+=("$2")
+    shift -- 2
     ;;
   --dir)
     DIRS+=("$2")
@@ -85,6 +90,8 @@ SCHEME
   PROFILES+=("$RULE")
   ARGV+=(-D "F${I}=${FILES[$I]}")
 done
+
+PROFILES+=("${USER_PROFILES[@]}")
 
 IFS=$'\n'
 PROFILE="${PROFILES[*]}"
