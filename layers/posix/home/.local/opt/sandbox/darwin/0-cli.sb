@@ -13,7 +13,6 @@
   (subpath "/bin")
   (subpath "/Library/Preferences")
   (subpath "/private/etc")
-  (subpath "/private/var/db/dyld")
   (subpath "/sbin")
   (subpath "/usr/bin")
   (subpath "/usr/libexec")

@@ -67,3 +67,7 @@
 
 (allow mach-lookup)
 (allow user-preference-read)
+
+;; ---- ---- ---- ----
+
+(allow dynamic-code-generation)
