@@ -21,9 +21,6 @@
 (allow file-read* file-map-executable
   (subpath "/opt/homebrew"))
 
-(allow file-read*
-  (literal "/Library/Preferences/com.apple.networkd.plist"))
-
 ;; ---- ---- ---- ----
 
 (allow file-read* file-write*
