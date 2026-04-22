@@ -7,6 +7,6 @@ darwin*)
   exec -- "${0%/*}/sb-exec.sh" "$@"
   ;;
 *)
-  exec -- "$@"
+  exec -- "${0%/*}/bubble-wrap.sh" "$@"
   ;;
 esac
