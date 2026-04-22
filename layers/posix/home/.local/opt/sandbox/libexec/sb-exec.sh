@@ -92,7 +92,6 @@ SCHEME
 done
 
 PROFILES+=("${USER_PROFILES[@]}")
-PROFILES+=('(import-profile "0-deny.sb")')
 
 IFS=$'\n'
 PROFILE="${PROFILES[*]}"
