@@ -11,7 +11,9 @@
 
 (allow file-read*
   (subpath "/bin")
+  (subpath "/Library/Preferences")
   (subpath "/private/etc")
+  (subpath "/private/var/db/dyld")
   (subpath "/sbin")
   (subpath "/usr/bin")
   (subpath "/usr/libexec")
@@ -19,7 +21,11 @@
   (subpath "/usr/sbin"))
 
 (allow file-read* file-map-executable
-  (subpath "/opt/homebrew"))
+  (subpath "/Library/Apple/System")
+  (subpath "/opt/homebrew")
+  (subpath "/System/Library/Frameworks")
+  (subpath "/System/Library/PrivateFrameworks")
+  (subpath "/usr/lib"))
 
 ;; ---- ---- ---- ----
 
