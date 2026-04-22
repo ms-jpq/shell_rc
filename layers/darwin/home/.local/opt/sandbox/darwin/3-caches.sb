@@ -8,11 +8,16 @@
   (regex
     (string-append "^" (xdg-cache "") "com\\.apple\\.")
     (string-append "^" (xdg-cache "") "nvim\\.")
+    (string-append "^" (xdg-cache "aerc"))
+    (string-append "^" (xdg-cache "aerc.sock"))
     (string-append "^" (xdg-cache "askpermissiond"))
     (string-append "^" (xdg-cache "CloudKit"))
     (string-append "^" (xdg-cache "containers"))
     (string-append "^" (xdg-cache "Firefox"))
     (string-append "^" (xdg-cache "GameKit"))
+    (string-append "^" (xdg-cache "icloudmailagent"))
+    (string-append "^" (xdg-cache "isync"))
     (string-append "^" (xdg-cache "maildir"))
+    (string-append "^" (xdg-cache "PassKit"))
   ))
 
