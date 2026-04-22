@@ -17,6 +17,8 @@
 
 ;; ---- ---- ---- ----
 
+(allow pseudo-tty)
+
 (allow file-ioctl
   (literal "/dev/dtracehelper")
   (literal "/dev/null")
