@@ -12,21 +12,15 @@
 
 (allow file-read*
   (subpath "/bin")
-  (subpath "/Library/Preferences")
   (subpath "/private/etc")
   (subpath "/sbin")
   (subpath "/usr/bin")
   (subpath "/usr/libexec")
   (subpath "/usr/local")
-  (subpath "/usr/sbin")
-  (subpath "/usr/share"))
+  (subpath "/usr/sbin"))
 
 (allow file-read* file-map-executable
-  (subpath "/Library/Apple/System")
-  (subpath "/opt/homebrew")
-  (subpath "/System/Library/Frameworks")
-  (subpath "/System/Library/PrivateFrameworks")
-  (subpath "/usr/lib"))
+  (subpath "/opt/homebrew"))
 
 ;; ---- ---- ---- ----
 
