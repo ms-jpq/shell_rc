@@ -134,13 +134,25 @@ for P in "${DIRS[@]}" "${FILES[@]}"; do
   fi
 done
 
+if ((NETWORK)); then
+  if RESOLV="$(realpath -- /etc/resolv.conf 2> /dev/null)" && [[ $RESOLV != /etc/* ]]; then
+    RO_BIND+=("$RESOLV")
+  fi
+fi
+
+if systemd-detect-virt | grep -F -q -- 'systemd-nspawn'; then
+  PROC=(--ro-bind /proc /proc)
+else
+  PROC=(--proc /proc)
+fi
+
 BWRAP=(
   bwrap
-  --unshare-all
   --die-with-parent
   --new-session
+  --unshare-all
 
-  --proc /proc
+  "${PROC[@]}"
   --dev /dev
   --dev-bind /dev/tty /dev/tty
 
@@ -164,4 +176,4 @@ for P in "${TMPFS[@]}"; do
   BWRAP+=(--tmpfs "$P")
 done
 
-exec -- "$@"
+exec -- "${BWRAP[@]}" "$@"
