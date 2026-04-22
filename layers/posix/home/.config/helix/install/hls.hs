@@ -4,12 +4,12 @@ import           Control.Arrow      ((>>>))
 import           Data.Function      ((&))
 import           Data.Functor       ((<&>))
 import           System.Directory   (copyFileWithMetadata, getCurrentDirectory,
-                                     removePathForcibly, renameDirectory)
+                                     removePathForcibly)
 import           System.Environment (getEnv)
 import           System.Exit        (exitSuccess)
 import           System.FilePath    (addExtension, takeDirectory, (</>))
 import           System.Info        (os)
-import           System.Process     (readProcess)
+import           System.Process     (callProcess, readProcess)
 import           Text.Printf        (printf)
 
 repo = "haskell/haskell-language-server"
@@ -37,7 +37,7 @@ run os = do
     >>= putStr
 
   _ <- removePathForcibly lib
-  _ <- contents os version tmp & flip renameDirectory lib
+  _ <- callProcess "cp" ["-r", "--", contents os version tmp, lib]
   exitSuccess
 
 main = run os

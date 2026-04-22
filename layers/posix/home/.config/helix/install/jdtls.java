@@ -49,12 +49,8 @@ public class jdtls {
             throw new RuntimeException(e);
           }
         };
-    if (win) {
-      try (final var st = Files.walk(tmp)) {
-        st.forEach(cp);
-      }
-    } else {
-      Files.move(tmp, lib);
+    try (final var st = Files.walk(tmp)) {
+      st.forEach(cp);
     }
     Files.createDirectories(bin.getParent());
     Files.createSymbolicLink(bin, src);

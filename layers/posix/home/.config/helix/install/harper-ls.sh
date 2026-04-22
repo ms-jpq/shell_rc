@@ -21,4 +21,4 @@ get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=2154
 
 mkdir -p -- "$BIN"
-mv -f -- "$RUN/"* "$BIN/"
+install -v -b -- "$RUN/"* "$BIN/"

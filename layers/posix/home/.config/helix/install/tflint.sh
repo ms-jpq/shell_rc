@@ -31,4 +31,4 @@ esac
 get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
 mkdir -p -- "$BIN"
-mv -v -f -- "$RUN/"* "$BIN/tflint$EXT"
+install -v -b -- "$RUN/"* "$BIN/tflint$EXT"

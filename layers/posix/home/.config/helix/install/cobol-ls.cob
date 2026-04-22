@@ -143,7 +143,7 @@
 
            MOVE SPACES TO SH.
 
-           STRING "mv -v -f -- " NAIVE BIN
+           STRING "install -v -b -- " NAIVE BIN
            DELIMITED BY SIZE INTO SH.
            CALL "SYSTEM" USING SH RETURNING RETVAL.
            IF RETVAL NOT = 0

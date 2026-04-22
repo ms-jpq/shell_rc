@@ -2,14 +2,12 @@
 
 import           Data.Function      ((&))
 import           Data.Functor       ((<&>))
-import           System.Directory   (createDirectoryIfMissing, getPermissions,
-                                     renameFile, setOwnerExecutable,
-                                     setPermissions)
-import           System.Environment (getEnv, getExecutablePath)
+import           System.Directory   (createDirectoryIfMissing)
+import           System.Environment (getEnv)
 import           System.Exit        (exitSuccess)
 import           System.FilePath    (dropExtension, takeBaseName, (</>))
 import           System.Info        (os)
-import           System.Process     (readProcess)
+import           System.Process     (callProcess, readProcess)
 import           Text.Printf        (printf)
 
 
@@ -36,9 +34,8 @@ run os = do
     >>= readProcess "env" ["--", "unpack.sh", run]
     >>= putStr
 
-  _ <- getExecutablePath >>= getPermissions >>= setPermissions srv
   _ <- createDirectoryIfMissing True binDir
-  _ <- binDir </> "stylish" & renameFile srv
+  _ <- callProcess "install" ["-v", "-b", "--", srv, binDir </> "stylish"]
   exitSuccess
 
 main = run os

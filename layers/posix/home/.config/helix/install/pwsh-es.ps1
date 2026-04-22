@@ -21,4 +21,4 @@ if (Test-Path -Path $Env:LIB) {
     Remove-Item -Recurse -Force -Path $Env:LIB
 }
 
-Move-Item -Path $tmp -Destination $Env:LIB
+Copy-Item -Recurse -Force -Path $tmp -Destination $Env:LIB

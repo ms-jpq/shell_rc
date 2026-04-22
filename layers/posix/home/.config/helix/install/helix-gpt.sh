@@ -98,4 +98,4 @@ popd > /dev/null
 # shellcheck disable=SC2154
 rm -fr -- "$BIN"
 # shellcheck disable=SC2154
-mv -vf -- "$LIB/dist" "$BIN"
+install -v -b -- "$LIB/dist" "$BIN"

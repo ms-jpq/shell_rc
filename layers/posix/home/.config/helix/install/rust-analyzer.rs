@@ -7,15 +7,9 @@ use std::{
   backtrace::Backtrace,
   env::{consts::ARCH, var_os},
   error::Error,
-  fs::{create_dir_all, read_dir, rename},
+  fs::{create_dir_all, read_dir},
   path::PathBuf,
   process::{Command, Stdio},
-};
-
-#[cfg(target_family = "unix")]
-use std::{
-  fs::{set_permissions, Permissions},
-  os::unix::fs::PermissionsExt,
 };
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -89,10 +83,14 @@ fn main() -> Result<(), Box<dyn Error>> {
       .starts_with(prefix)
     {
       let path = entry.path();
-      #[cfg(target_family = "unix")]
-      set_permissions(&path, Permissions::from_mode(0o755))?;
-
-      rename(&path, &bin)?;
+      let status = Command::new("install")
+        .arg("-v")
+        .arg("-b")
+        .arg("--")
+        .arg(&path)
+        .arg(&bin)
+        .status()?;
+      assert!(status.success());
       return Ok(());
     }
   }
