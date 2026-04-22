@@ -150,7 +150,6 @@ fi
 BWRAP=(
   bwrap
   --die-with-parent
-  --new-session
   "${UNSHARE[@]}"
 
   --proc /proc
