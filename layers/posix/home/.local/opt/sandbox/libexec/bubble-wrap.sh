@@ -168,4 +168,4 @@ for P in "${TMPFS[@]}"; do
   BWRAP+=(--tmpfs "$P")
 done
 
-exec -- "${BWRAP[@]}" -- "$@"
+exec -- "$@"
