@@ -7,5 +7,8 @@
 (deny file-read* file-write*
   (regex
     (string-append "^" (xdg-cache "") "com\\.apple\\.")
+    (string-append "^" (xdg-cache "askpermissiond"))
+    (string-append "^" (xdg-cache "CloudKit"))
+    (string-append "^" (xdg-cache "containers"))
   ))
 
