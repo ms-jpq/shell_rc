@@ -31,4 +31,5 @@ local proc2 = vim.system({ "unpack.sh", run, proc1.stdout }, { stdout = std, std
 assert(proc2.code == 0, vim.inspect(proc2))
 
 vim.fs.rm(lib, { recursive = true, force = true })
-assert(vim.uv.fs_rename(run, lib))
+local cp = vim.system({ "cp", "-r", "--", run, lib }, { stdout = std, stderr = std }):wait()
+assert(cp.code == 0, vim.inspect(cp))

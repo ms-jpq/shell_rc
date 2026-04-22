@@ -49,4 +49,7 @@ try
 with :? DirectoryNotFoundException ->
     ()
 
-Directory.Move(run, lib)
+do
+  use proc = Process.Start("cp", [ "-r"; "--"; run; lib ])
+  proc.WaitForExit()
+  assert (proc.ExitCode = 0)
