@@ -5,7 +5,7 @@ local timeout = 8888
 
 local data = nil
 
-local fmt_command = function(buf)
+local fmt_command = function(workdir, buf)
   if data == nil then
     local loadpath = vim.fs.joinpath(vim.fn.stdpath "config", "apriori", "fmt.json")
     data = lib.read_json(loadpath)
@@ -18,7 +18,7 @@ local fmt_command = function(buf)
   if spec ~= nil then
     if vim.fn.executable(spec.command) == 1 then
       local mapped = vim
-        .iter({ lib.sandbox, { spec.command }, spec.args })
+        .iter({ lib.sandbox(workdir), { spec.command }, spec.args })
         :flatten()
         :map(function(val)
           local l1 = string.gsub(val, [[%%{buffer_name}]], name)
@@ -42,7 +42,7 @@ local fmt = function()
   local name = vim.api.nvim_buf_get_name(buf)
   local cwd = name ~= "" and vim.fs.dirname(name) or vim.fn.getcwd()
 
-  local cmd = fmt_command(buf)
+  local cmd = fmt_command(cwd, buf)
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local opts = { cwd = cwd, stdin = lines, text = true }
 

@@ -30,14 +30,12 @@ return {
       end
     end
   end,
-  sandbox = (function()
+  sandbox = function(workdir)
     if is_win or false then
       return {}
     end
 
-    -- local rt = vim.fs.joinpath(vim.fn.stdpath "cache", "..", "helix-rt")
-    -- local norm = vim.fs.normalize(rt, { expand_env = false })
     local exec = vim.fs.joinpath(vim.env.HOME, ".local", "opt", "sandbox", "libexec", "dispatch.sh")
-    return { exec, "--" }
-  end)(),
+    return { exec, "--dir", workdir, "--" }
+  end,
 }
