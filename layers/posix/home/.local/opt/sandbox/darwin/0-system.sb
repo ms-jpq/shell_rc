@@ -1,5 +1,7 @@
 (version 1)
 
+;; -- https://github.com/anthropic-experimental/sandbox-runtime/blob/main/src/sandbox/macos-sandbox-utils.ts --
+
 ;; ---- ---- ---- ----
 
 (allow process-exec)
