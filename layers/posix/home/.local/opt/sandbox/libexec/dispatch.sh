@@ -2,11 +2,13 @@
 
 set -o pipefail
 
+ROOT="$(realpath -- "$0")"
+
 case "$OSTYPE" in
 darwin*)
-  exec -- "${0%/*}/sb-exec.sh" "$@"
+  exec -- "${ROOT%/*}/sb-exec.sh" "$@"
   ;;
 *)
-  exec -- "${0%/*}/bubble-wrap.sh" "$@"
+  exec -- "${ROOT%/*}/bubble-wrap.sh" "$@"
   ;;
 esac
