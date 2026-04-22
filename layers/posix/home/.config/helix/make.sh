@@ -66,7 +66,7 @@ JQ
     TMPDIR="$TEMP/helix-rt/var"
     ;;
   *)
-    set -v
+    set -x
     exit 1
     ;;
   esac
@@ -76,13 +76,28 @@ JQ
   LIBEXEC="$DIR/libexec"
   PATH="$LIBEXEC:$HOME/.local/opt/initd/libexec:$PATH"
   ARGV=()
-  if [[ $OSTYPE == msys ]]; then
+  case "$OSTYPE" in
+  linux* | darwin*)
+    # ARGV+=(
+    #   ~/.local/opt/sandbox/libexec/dispatch.sh
+    #   --auth
+    #   --network
+    #   --dir ~/.local/opt/initd
+    #   --
+    # )
+    ;;
+  msys)
     ARGV+=(
       python
       -c "$PYTHON"
       "$TIMEOUT"
     )
-  fi
+    ;;
+  *)
+    set -x
+    exit 1
+    ;;
+  esac
   ARGV+=(
     "$LIBEXEC/cond-exec.sh" "$MAN"
     "${PKGS[@]}"

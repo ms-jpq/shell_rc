@@ -1,6 +1,9 @@
 (version 1)
 (deny default)
 
+; (deny default (with report))
+; log stream --predicate 'sender == "Sandbox" or subsystem == "com.apple.sandbox.reporting"' --style compact
+
 (import "bsd.sb")
 
 ;; ---- ---- ---- ----
