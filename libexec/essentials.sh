@@ -9,8 +9,8 @@ darwin*)
   fi
   ;;
 linux*)
-  if ! hash -- rsync gmake curl jq gpg git unzip || ! [[ -d /usr/share/doc/python3-venv ]] || ! [[ -f /etc/ssl/certs/ca-certificates.crt ]]; then
-    PKG=(ca-certificates rsync make curl jq gnupg git unzip python3-venv)
+  if ! hash -- rsync gmake curl jq gpg git unzip bwrap || ! [[ -d /usr/share/doc/python3-venv ]] || ! [[ -f /etc/ssl/certs/ca-certificates.crt ]]; then
+    PKG=(ca-certificates rsync make curl jq gnupg git unzip python3-venv bubblewrap)
     sudo -- apt-get update
     sudo -- env -- DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- "${PKG[@]}"
   fi
