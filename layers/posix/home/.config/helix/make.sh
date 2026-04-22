@@ -80,6 +80,9 @@ JQ
   linux* | darwin*)
     CWD="$(realpath -- .)"
     ARGV+=(
+      nice
+      -n 19
+      --
       ~/.local/opt/sandbox/libexec/dispatch.sh
       --auth
       --network
