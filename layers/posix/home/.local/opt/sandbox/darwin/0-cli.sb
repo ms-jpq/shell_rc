@@ -1,7 +1,8 @@
 (version 1)
-(deny default (with message "dogged"))
 
-; (deny default (with report))
+(deny default (with message "dogged"))
+; (allow default (with report))
+
 ; log stream --predicate 'sender == "Sandbox" or subsystem == "com.apple.sandbox.reporting"' --style compact
 ; log stream --predicate 'eventMessage CONTAINS "dogged" or subsystem == "com.apple.sandbox.reporting"' --style compact
 
@@ -17,7 +18,8 @@
   (subpath "/usr/bin")
   (subpath "/usr/libexec")
   (subpath "/usr/local")
-  (subpath "/usr/sbin"))
+  (subpath "/usr/sbin")
+  (subpath "/usr/share"))
 
 (allow file-read* file-map-executable
   (subpath "/Library/Apple/System")
