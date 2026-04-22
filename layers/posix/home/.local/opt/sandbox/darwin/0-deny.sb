@@ -2,6 +2,12 @@
 
 (deny file-read* file-write*
   (subpath
+    (home "Desktop")
+    (home "Documents")
+    (home "Movies")
+    (home "Music")
+    (home "Pictures")
+    (home "Public")
     (xdg-cache "aerc")
     (xdg-cache "askpermissiond")
     (xdg-cache "CloudKit")
