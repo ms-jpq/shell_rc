@@ -132,10 +132,10 @@ if ((AUTH)); then
 fi
 
 for P in "${DIRS[@]}" "${FILES[@]}"; do
-  if [[ $P == *:ro ]]; then
-    RO_BIND+=("${P%:ro}")
+  if [[ $P == *:rw ]]; then
+    RW_BIND+=("${P%:rw}")
   else
-    RW_BIND+=("$P")
+    RO_BIND+=("$P")
   fi
 done
 

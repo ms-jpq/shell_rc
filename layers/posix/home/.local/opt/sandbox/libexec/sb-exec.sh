@@ -73,15 +73,16 @@ fi
 
 for I in "${!DIRS[@]}"; do
   DIR="${DIRS[$I]}"
-  if [[ $DIR == *:ro ]]; then
-    DIR="${DIR%:ro}"
+  if [[ $DIR == *:rw ]]; then
+    DIR="${DIR%:rw}"
+
     read -r -d '' -- RULE <<- SCHEME || true
-(allow file-read*
+(allow file-read* file-write*
   (subpath (param "D${I}")))
 SCHEME
   else
     read -r -d '' -- RULE <<- SCHEME || true
-(allow file-read* file-write*
+(allow file-read*
   (subpath (param "D${I}")))
 SCHEME
   fi
@@ -92,15 +93,16 @@ done
 
 for I in "${!FILES[@]}"; do
   FILE="${FILES[$I]}"
-  if [[ $FILE == *:ro ]]; then
-    FILE="${FILE%:ro}"
+  if [[ $FILE == *:rw ]]; then
+    FILE="${FILE%:rw}"
+
     read -r -d '' -- RULE <<- SCHEME || true
-(allow file-read*
+(allow file-read* file-write*
   (literal (param "F${I}")))
 SCHEME
   else
     read -r -d '' -- RULE <<- SCHEME || true
-(allow file-read* file-write*
+(allow file-read*
   (literal (param "F${I}")))
 SCHEME
   fi
