@@ -53,8 +53,24 @@
 
 ;; ---- ---- ---- ----
 
-(allow mach-lookup)
 (allow user-preference-read)
+
+(allow mach-lookup
+  (global-name "com.apple.audio.systemsoundserver")
+  (global-name "com.apple.distributed_notifications@uv3")
+  (global-name "com.apple.fontobjectsserver")
+  (global-name "com.apple.fonts")
+  (global-name "com.apple.logd")
+  (global-name "com.apple.lsd.mapdb")
+  (global-name "com.apple.powermanagement.control")
+  (global-name "com.apple.system.logger")
+  (global-name "com.apple.system.notification_center")
+  (global-name "com.apple.system.opendirectoryd.libinfo")
+  (global-name "com.apple.system.opendirectoryd.membership")
+  (global-name "com.apple.bsd.dirhelper")
+  (global-name "com.apple.securityd.xpc")
+  (global-name "com.apple.coreservices.launchservicesd")
+)
 
 ;; ---- ---- ---- ----
 
