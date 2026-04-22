@@ -11,7 +11,7 @@
 
 ;; ---- ---- ---- ----
 
-(allow file-read* file-write*
+(allow file-read* file-write* file-ioctl
   (literal "/dev/tty"))
 
 ;; ---- ---- ---- ----

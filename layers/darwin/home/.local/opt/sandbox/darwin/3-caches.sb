@@ -2,7 +2,9 @@
 
 (allow file-read* file-write*
   (subpath
-    (xdg-cache "")))
+    (xdg-cache "")
+    (home ".local/asdf")
+  ))
 
 (deny file-read* file-write*
   (subpath
