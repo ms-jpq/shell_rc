@@ -30,4 +30,12 @@ return {
       end
     end
   end,
+  sandbox = (function()
+    if is_win then
+      return {}
+    end
+
+    local exec = vim.fs.joinpath(vim.env.HOME, ".local", "opt", "sandbox", "libexec", "dispatch.sh")
+    return { exec, "--" }
+  end)(),
 }

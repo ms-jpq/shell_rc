@@ -18,7 +18,7 @@ local fmt_command = function(buf)
   if spec ~= nil then
     if vim.fn.executable(spec.command) == 1 then
       local mapped = vim
-        .iter({ { spec.command }, spec.args })
+        .iter({ lib.sandbox, { spec.command }, spec.args })
         :flatten()
         :map(function(val)
           local l1 = string.gsub(val, [[%%{buffer_name}]], name)
