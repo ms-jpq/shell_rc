@@ -12,6 +12,10 @@
 (allow process-exec)
 (allow process-fork)
 
+(allow signal
+  (target self)
+  (target children))
+
 ;; ---- ---- ---- ----
 
 (allow file-read* file-write* file-ioctl
