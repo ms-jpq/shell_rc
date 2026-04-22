@@ -24,7 +24,7 @@
     (xdg-cache "tmux")
   )
   (literal
-    (string-append "^" (xdg-cache "aerc.sock"))
+    (xdg-cache "aerc.sock")
   )
   (regex
     (string-append "^" (xdg-cache "") "com\\.apple\\.")
