@@ -1,7 +1,6 @@
 (version 1)
 
 (allow network*)
-; (allow system-socket)
 
 (allow file-read*
   (subpath (xdg-config "curl")
