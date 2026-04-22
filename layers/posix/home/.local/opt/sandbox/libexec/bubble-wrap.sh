@@ -2,35 +2,30 @@
 
 set -o pipefail
 
-OPTS=''
-LONG_OPTS='auth,network,profile:,dir:,file:'
+OPTS='a,n,d:,f:'
+LONG_OPTS='auth,network,dir:,file:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
 AUTH=0
 NETWORK=0
-USER_PROFILES=()
 DIRS=()
 FILES=()
 while true; do
   case "$1" in
-  --auth)
+  -a | --auth)
     AUTH=1
     shift -- 1
     ;;
-  --network)
+  -n | --network)
     NETWORK=1
     shift -- 1
     ;;
-  --profile)
-    USER_PROFILES+=("$2")
-    shift -- 2
-    ;;
-  --dir)
+  -d | --dir)
     DIRS+=("$2")
     shift -- 2
     ;;
-  --file)
+  -f | --file)
     FILES+=("$2")
     shift -- 2
     ;;
@@ -137,15 +132,6 @@ for P in "${DIRS[@]}" "${FILES[@]}"; do
   else
     RO_BIND+=("$P")
   fi
-done
-
-for P in "${USER_PROFILES[@]}"; do
-  case "$P" in
-  *)
-    set -x
-    exit 2
-    ;;
-  esac
 done
 
 BWRAP=(
