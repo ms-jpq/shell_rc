@@ -56,6 +56,7 @@ RO_BIND=(
   /usr
 
   "$HOME/.bashrc"
+  "$HOME/.gitconfig"
   "$HOME/.netrc"
   "$HOME/.tool-versions"
   "$HOME/.zshenv"

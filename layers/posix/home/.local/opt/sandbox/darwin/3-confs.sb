@@ -8,6 +8,7 @@
     (home ".zshenv")
   )
   (subpath
+    (home ".gitconfig")
     (home ".local/bin")
     (home ".local/lbin")
     (home ".local/libexec")
