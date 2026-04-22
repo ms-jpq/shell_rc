@@ -46,6 +46,17 @@
 (allow sysctl-write
   (sysctl-name "kern.tcsm_enable"))
 
+(allow distributed-notification-post)
+
+;; ---- ---- ---- ----
+
+(allow iokit-open
+  (iokit-registry-entry-class "IOSurfaceRootUserClient")
+  (iokit-registry-entry-class "RootDomainUserClient")
+  (iokit-user-client-class "IOSurfaceSendRight"))
+
+(allow iokit-get-properties)
+
 ;; ---- ---- ---- ----
 
 (allow file-read*
