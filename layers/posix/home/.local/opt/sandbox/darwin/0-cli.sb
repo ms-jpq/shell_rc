@@ -3,6 +3,7 @@
 
 ; (deny default (with report))
 ; log stream --predicate 'sender == "Sandbox" or subsystem == "com.apple.sandbox.reporting"' --style compact
+; log stream --predicate 'eventMessage CONTAINS "dogged" or subsystem == "com.apple.sandbox.reporting"' --style compact
 
 (import "bsd.sb")
 
@@ -19,6 +20,9 @@
 
 (allow file-read* file-map-executable
   (subpath "/opt/homebrew"))
+
+(allow file-read*
+  (literal "/Library/Preferences/com.apple.networkd.plist"))
 
 ;; ---- ---- ---- ----
 
