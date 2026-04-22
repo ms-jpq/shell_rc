@@ -20,10 +20,6 @@
 (allow file-read* file-map-executable
   (subpath "/opt/homebrew"))
 
-(allow file-read*
-  (literal "/private/var/run/resolv.conf")
-  (literal "/private/var/run/mDNSResponder"))
-
 ;; ---- ---- ---- ----
 
 (allow file-read* file-write*
