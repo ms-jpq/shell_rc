@@ -1,6 +1,12 @@
 (version 1)
 
 (allow file-read*
+  (literal
+    (home ".bashrc")
+    (home ".netrc")
+    (home ".tool-versions")
+    (home ".zshenv")
+  )
   (subpath
     (home ".local/bin")
     (home ".local/lbin")
@@ -32,4 +38,4 @@
     (xdg-config "vim")
     (xdg-config "yazi")
     (xdg-config "zsh")
-    ))
+  ))
