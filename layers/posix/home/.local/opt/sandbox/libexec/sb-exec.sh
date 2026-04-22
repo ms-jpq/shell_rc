@@ -75,13 +75,11 @@ for I in "${!DIRS[@]}"; do
     DIR="${DIR%:rw}"
 
     read -r -d '' -- RULE <<- SCHEME || true
-(allow file-read* file-write*
-  (subpath (param "D${I}")))
+(allow file-read* file-write* (subpath (param "D${I}")))
 SCHEME
   else
     read -r -d '' -- RULE <<- SCHEME || true
-(allow file-read*
-  (subpath (param "D${I}")))
+(allow file-read* (subpath (param "D${I}")))
 SCHEME
   fi
 
@@ -95,13 +93,11 @@ for I in "${!FILES[@]}"; do
     FILE="${FILE%:rw}"
 
     read -r -d '' -- RULE <<- SCHEME || true
-(allow file-read* file-write*
-  (literal (param "F${I}")))
+(allow file-read* file-write* (literal (param "F${I}")))
 SCHEME
   else
     read -r -d '' -- RULE <<- SCHEME || true
-(allow file-read*
-  (literal (param "F${I}")))
+(allow file-read* (literal (param "F${I}")))
 SCHEME
   fi
 
