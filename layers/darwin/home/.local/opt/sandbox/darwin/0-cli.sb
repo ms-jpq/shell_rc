@@ -1,0 +1,56 @@
+(version 1)
+(deny default)
+
+(import "bsd.sb")
+
+;; ---- ---- ---- ----
+
+(allow mach-lookup)
+(allow process-exec)
+(allow process-fork)
+
+;; ---- ---- ---- ----
+
+(allow file-read* file-write*
+  (literal "/dev/tty"))
+
+;; ---- ---- ---- ----
+
+(allow file-read*
+  (subpath "/bin")
+  (subpath "/private/etc")
+  (subpath "/sbin")
+  (subpath "/usr/bin")
+  (subpath "/usr/libexec")
+  (subpath "/usr/local")
+  (subpath "/usr/sbin"))
+
+(allow file-read* file-map-executable
+  (subpath "/opt/homebrew"))
+
+;; ---- ---- ---- ----
+
+(allow file-read* file-write*
+  (subpath "/private/tmp")
+  (subpath "/private/var/tmp")
+  (subpath (param "TMPDIR"))
+  (subpath (param "CWD")))
+
+;; ---- ---- ---- ----
+
+(define (import-profile profile)
+  (import (string-append (param "PROFILES") "/" profile)))
+
+(define (home path)
+  (string-append (param "HOME") "/" path))
+
+(define (xdg-config path)
+  (string-append (home "Library/Preferences") "/" path))
+
+(define (xdg-cache path)
+  (string-append (home "Library/Caches") "/" path))
+
+(define (xdg-state path) (xdg-cache path))
+
+(define (local-share path)
+  (string-append (home "Library/Application Support") "/" path))

@@ -1,0 +1,24 @@
+(version 1)
+
+(allow file-read* file-write*
+  (subpath (home ".gnupg")))
+
+(allow network-outbound
+  (literal (home ".gnupg/S.gpg-agent"))
+  (literal (home ".gnupg/S.gpg-agent.browser"))
+  (literal (home ".gnupg/S.gpg-agent.extra"))
+  (literal (home ".gnupg/S.gpg-agent.ssh"))
+  (literal (home ".gnupg/S.scdaemon")))
+
+;; ---- ---- ---- ----
+
+(allow network-outbound
+  (literal (param "SSH_AUTH_SOCK")))
+
+(allow file-read*
+  (subpath (home ".ssh")
+           (xdg-config "ssh")
+           (local-share "ssh")))
+
+(allow file-read* file-write*
+  (subpath (xdg-cache "ssh")))
