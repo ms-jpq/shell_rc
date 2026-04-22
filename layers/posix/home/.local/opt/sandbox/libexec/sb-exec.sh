@@ -55,6 +55,7 @@ ARGV=(
 
 PROFILES=(
   '(import (string-append (param "PROFILES") "/0-cli.sb"))'
+  '(import-profile "0-system.sb")'
   '(import-profile "3-confs.sb")'
   '(import-profile "3-caches.sb")'
 )
