@@ -2,7 +2,6 @@
 
 (deny file-read* file-write*
   (subpath
-    (home "Desktop")
     (xdg-cache "aerc")
     (xdg-cache "askpermissiond")
     (xdg-cache "CloudKit")
