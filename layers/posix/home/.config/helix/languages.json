@@ -261,17 +261,6 @@
       "args": ["--stdio"],
       "command": "copilot-language-server"
     },
-    "helix-gpt": {
-      "args": [
-        "--numSuggestions",
-        "1",
-        "--handler",
-        "copilot",
-        "--copilotModel",
-        "claude-sonnet-4-0"
-      ],
-      "command": "helix-gpt"
-    },
     "intelephense": {
       "config": {
         "globalStoragePath": "/var/tmp/intelephense"
