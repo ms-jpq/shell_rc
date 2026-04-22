@@ -45,7 +45,7 @@ ROOT="$(realpath -- "${0%/*}/..")"
 ARGV=(
   sandbox-exec
   -D PROFILES="$ROOT/darwin"
-  -D TMPDIR="$TMPDIR"
+  -D TMPDIR="${TMPDIR%/*}"
   -D HOME="$HOME"
   -D CWD="$PWD"
 )
