@@ -3,5 +3,13 @@
 (allow network*)
 
 (allow file-read*
+  (literal "/private/var/run/resolv.conf"))
+
+(allow network-outbound
+  (literal "/private/var/run/mDNSResponder"))
+
+;; ---- ---- ---- ----
+
+(allow file-read*
   (subpath (xdg-config "curl")
            (xdg-config "wget")))

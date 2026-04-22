@@ -38,14 +38,6 @@
 
 ;; ---- ---- ---- ----
 
-(allow file-read*
-  (literal "/private/var/run/resolv.conf"))
-
-(allow network-outbound
-  (literal "/private/var/run/mDNSResponder"))
-
-;; ---- ---- ---- ----
-
 (allow distributed-notification-post)
 
 (allow sysctl-read)
@@ -68,4 +60,4 @@
 
 ;; ---- ---- ---- ----
 
-; (allow dynamic-code-generation)
+(allow dynamic-code-generation)
