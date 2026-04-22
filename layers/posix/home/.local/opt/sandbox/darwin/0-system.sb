@@ -22,13 +22,11 @@
   (literal "/dev/dtracehelper")
   (literal "/dev/null")
   (literal "/dev/random")
-  (literal "/dev/tty")
   (literal "/dev/urandom")
   (literal "/dev/zero"))
 
 (allow file-read* file-write* file-ioctl
-  (literal "/dev/tty")
-  (regex #"^/dev/ttys"))
+  (literal "/dev/tty"))
 
 (allow file-read-data file-write-data file-ioctl
   (require-all
