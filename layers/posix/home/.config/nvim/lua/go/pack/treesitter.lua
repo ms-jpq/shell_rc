@@ -1,8 +1,7 @@
 do
-  local start =
-    vim.fs.joinpath(vim.fn.stdpath "cache", "..", "helix-rt", "nvim", "pack", "start", "nvim-treesitter", "plugin")
+  local start = vim.fs.joinpath(vim.fn.stdpath "cache", "..", "helix-rt", "nvim", "pack", "start", "nvim-treesitter")
 
-  for _, lua in pairs(vim.fn.globpath(start, "*.lua", true, true)) do
+  for _, lua in pairs(vim.fn.globpath(start, "{plugin,lua}/*.lua", true, true)) do
     vim.cmd.source(vim.fn.fnameescape(lua))
   end
 end
