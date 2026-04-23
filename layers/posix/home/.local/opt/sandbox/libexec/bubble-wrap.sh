@@ -102,6 +102,8 @@ RO_BIND=(
   "$XDG_CONFIG_HOME/vim"
   "$XDG_CONFIG_HOME/yazi"
   "$XDG_CONFIG_HOME/zsh"
+
+  "$XDG_RUNTIME_DIR"
 )
 
 RW_BIND=(
@@ -122,7 +124,6 @@ if ((AUTH)); then
   )
   RW_BIND+=(
     "$HOME/.gnupg"
-    "$XDG_RUNTIME_DIR/gnupg"
     "$XDG_STATE_HOME/ssh"
   )
   if [[ -v SSH_AUTH_SOCK ]]; then
