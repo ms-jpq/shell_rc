@@ -39,8 +39,8 @@ local fmt = function()
   end
 
   local buf = vim.api.nvim_get_current_buf()
-  local name = vim.api.nvim_buf_get_name(buf)
-  local cwd = name ~= "" and vim.fs.dirname(name) or vim.fn.getcwd()
+  -- local name = vim.api.nvim_buf_get_name(buf)
+  local cwd = vim.fn.getcwd()
 
   local cmd = fmt_command(cwd, buf)
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)

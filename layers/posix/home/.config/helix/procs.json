@@ -107,13 +107,7 @@
     "https://github.com/lewis6991/gitsigns.nvim": ["--lazy"],
     "https://github.com/ms-jpq/coq.artifacts": [],
     "https://github.com/ms-jpq/coq.thirdparty": [],
-    "https://github.com/ms-jpq/coq_nvim": [
-      "python3",
-      "-m",
-      "coq",
-      "deps",
-      "--xdg=~/.local/share/nvim"
-    ],
+    "https://github.com/ms-jpq/coq_nvim": ["python3", "-m", "coq", "deps"],
     "https://github.com/ms-jpq/snips": [],
     "https://github.com/neovim/nvim-lspconfig": [],
     "https://github.com/nvim-treesitter/nvim-treesitter": ["--lazy"],
