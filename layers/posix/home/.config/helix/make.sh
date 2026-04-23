@@ -78,16 +78,18 @@ JQ
   ARGV=()
   case "$OSTYPE" in
   linux* | darwin*)
-    ARGV+=(
-      nice
-      -n 19
-      --
-      ~/.local/opt/sandbox/libexec/dispatch.sh
-      --auth
-      --network
-      --dir "$PWD"
-      --
-    )
+    if ! [[ -v CI ]]; then
+      ARGV+=(
+        nice
+        -n 19
+        --
+        ~/.local/opt/sandbox/libexec/dispatch.sh
+        --auth
+        --network
+        --dir "$PWD"
+        --
+      )
+    fi
     ;;
   msys)
     ARGV+=(
