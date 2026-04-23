@@ -119,11 +119,11 @@ if ((AUTH)); then
     "$HOME/.ssh"
     "$XDG_CONFIG_HOME/ssh"
     "$XDG_DATA_HOME/ssh"
-    "$XDG_STATE_HOME/ssh"
   )
   RW_BIND+=(
     "$HOME/.gnupg"
     "$XDG_RUNTIME_DIR/gnupg"
+    "$XDG_STATE_HOME/ssh"
   )
   if [[ -v SSH_AUTH_SOCK ]]; then
     RW_BIND+=("$SSH_AUTH_SOCK")
