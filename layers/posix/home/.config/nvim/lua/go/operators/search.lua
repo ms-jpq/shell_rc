@@ -36,6 +36,7 @@ do
     local escaped = magic_escape(text)
     local sep = select_sep(escaped)
     local reg = [[\V]] .. vim.fn.escape(escaped, sep)
+    local line = "%s" .. sep .. reg .. sep .. sep .. "g"
     vim.fn.setreg("/", reg)
 
     vim.api.nvim_create_autocmd("CmdlineEnter", {
@@ -43,7 +44,6 @@ do
       once = true,
       pattern = ":",
       callback = function()
-        local line = "%s" .. sep .. reg .. sep .. sep .. "g"
         vim.fn.setcmdline(line, #line - 1)
       end,
     })

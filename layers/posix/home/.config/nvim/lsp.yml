@@ -3,9 +3,6 @@ jsonls:
   cmd:
     - vscode-json-language-server
     - --stdio
-  extensions:
-    .json: json
-    .jsonc: jsonc
 
 yamlls:
   cmd:
@@ -15,16 +12,11 @@ yamlls:
     - yaml
     - yaml.ansible
     - yaml.docker-compose
-  extensions:
-    .yml: yaml
-    .yaml: yaml
   # settings:
   #   yaml:
   #     keyOrdering: false
 
-taplo:
-  extensions:
-    .toml: toml
+taplo: {}
 
 typos_lsp:
   init_options:
@@ -37,11 +29,7 @@ lemminx:
     - lemminx
     - -Dlemminx.workdir=/var/tmp/lemminx
   extensions:
-    .svg: svg
     .xml: xml
-    .xsd: xsd
-    .xsl: xslt
-    .xslt: xslt
 
 ast_grep: {}
 
@@ -76,13 +64,10 @@ texlab:
       #     - "%p"
       #     - '"code -g %f:%l"'
   extensions:
-    .bib: bib
-    .sty: tex
     .tex: tex
 
 digestif:
   extensions:
-    .sty: tex
     .tex: tex
 
 diagnosticls:
@@ -124,13 +109,9 @@ bashls:
     .bash: bash
     .sh: sh
 
-jqls:
-  extensions:
-    .jq: jq
+jqls: {}
 
-awk_ls:
-  extensions:
-    .awk: awk
+awk_ls: {}
 
 systemd_lsp:
   extensions:
@@ -152,58 +133,35 @@ perlnavigator:
 powershell_es:
   cmd:
     - powershell-lsp
-  extensions:
-    .ps1: ps1
-    .psm1: ps1
 
-dockerls:
-  extensions:
-    .dockerfile: dockerfile
+dockerls: {}
 
 docker_compose_language_service: {}
 
-pyright:
-  extensions:
-    .py: python
-    .pyi: python
+pyright: {}
 
 # pylyzer: {}
 
 # ruff_lsp: {}
 
-hls:
-  extensions:
-    .hs: haskell
-    .lhs: lhaskell
+hls: {}
 
-rust_analyzer:
-  extensions:
-    .rs: rust
+rust_analyzer: {}
 
 gopls:
   extensions:
-    .go: go
     .mod: gomod
 
-golangci_lint_ls:
-  extensions:
-    .go: go
+golangci_lint_ls: {}
 
-sourcekit:
-  extensions:
-    .swift: swift
+sourcekit: {}
 
 clangd:
   extensions:
     .c: c
     .cc: cpp
     .cpp: cpp
-    .cu: cuda
-    .cuh: cuda
-    .cxx: cpp
     .h: c
-    .hpp: cpp
-    .hxx: cpp
     .m: objc
     .mm: objcpp
 
@@ -212,44 +170,19 @@ ccls:
     .c: c
     .cc: cpp
     .cpp: cpp
-    .cu: cuda
-    .cuh: cuda
-    .cxx: cpp
     .h: c
-    .hpp: cpp
-    .hxx: cpp
     .m: objc
     .mm: objcpp
 
-fortls:
-  extensions:
-    .f03: fortran
-    .f08: fortran
-    .f90: fortran
-    .f95: fortran
+fortls: {}
 
 ruby_lsp:
   cmd:
     - ruby-lsp
-  extensions:
-    .gemspec: ruby
-    .rake: ruby
-    .rb: ruby
-    .ru: ruby
 
-sorbet:
-  extensions:
-    .gemspec: ruby
-    .rake: ruby
-    .rb: ruby
-    .ru: ruby
+sorbet: {}
 
-solargraph:
-  extensions:
-    .gemspec: ruby
-    .rake: ruby
-    .rb: ruby
-    .ru: ruby
+solargraph: {}
 
 mdx_analyzer:
   extensions:
@@ -260,18 +193,9 @@ ts_ls:
     - typescript-language-server
     - --stdio
   extensions:
-    .cjs: javascript
-    .cts: typescript
-    .js: javascript
-    .jsx: javascriptreact
-    .mjs: javascript
-    .mts: typescript
     .ts: typescript
-    .tsx: typescriptreact
 
-prismals:
-  extensions:
-    .prisma: prisma
+prismals: {}
 
 eslint:
   cmd:
@@ -296,25 +220,14 @@ cssls:
   cmd:
     - vscode-css-language-server
     - --stdio
-  extensions:
-    .css: css
-    .less: less
-    .scss: scss
 
 # tailwindcss: {}
 
-svelte:
-  extensions:
-    .svelte: svelte
+svelte: {}
 
-graphql:
-  extensions:
-    .gql: graphql
-    .graphql: graphql
+graphql: {}
 
-vimls:
-  extensions:
-    .vim: vim
+vimls: {}
 
 r_language_server:
   cmd:
@@ -322,65 +235,41 @@ r_language_server:
   extensions:
     .R: r
     .r: r
-    .Rmd: rmd
-    .rmd: rmd
 
 julials:
   cmd:
     - julia-lsp
-  extensions:
-    .jl: julia
 
-phan:
-  extensions:
-    .php: php
+phan: {}
 
 # psalm: {}
 
-phpactor:
-  extensions:
-    .php: php
+phpactor: {}
 
 intelephense:
   init_options:
     globalStoragePath: /var/tmp/intelephense
-  extensions:
-    .php: php
 
 fsautocomplete:
   extensions:
     .fs: fsharp
-    .fsi: fsharp
-    .fsx: fsharp
 
-omnisharp:
-  extensions:
-    .cs: cs
+omnisharp: {}
 
 clojure_lsp:
   extensions:
-    .clj: clojure
-    .cljc: clojure
     .cljs: clojurescript
     .edn: clojure
 
 # gradle_ls: {}
 
-kotlin_lsp:
-  extensions:
-    .kt: kotlin
-    .kts: kotlin
+kotlin_lsp: {}
 
-kotlin_language_server:
-  extensions:
-    .kt: kotlin
-    .kts: kotlin
+kotlin_language_server: {}
 
 jdtls:
   cmd:
     - jdtls
-  extensions:
-    .java: java
 
 prolog_ls:
   cmd:
@@ -395,20 +284,10 @@ lua_ls:
     Lua:
       runtime:
         version: "Lua 5.1"
-  extensions:
-    .lua: lua
 
 ansiblels: {}
 
-glsl_analyzer:
-  extensions:
-    .comp: glsl
-    .frag: glsl
-    .geom: glsl
-    .glsl: glsl
-    .tesc: glsl
-    .tese: glsl
-    .vert: glsl
+glsl_analyzer: {}
 
 # theme_check: {}
 
@@ -433,13 +312,8 @@ cobol_ls:
     - '-Dline.separator=\r\n'
     - -Dlogback.statusListenerClass=ch.qos.logback.core.status.NopStatusListener
     - -DserverType=NATIVE
-  extensions:
-    .cbl: cobol
-    .cob: cobol
 
-nginx_language_server:
-  extensions:
-    .nginx: nginx
+nginx_language_server: {}
 
 # copilot: {}
 
@@ -447,6 +321,4 @@ nginx_language_server:
 
 # volar: {}
 
-tsp_server:
-  extensions:
-    .tsp: typespec
+tsp_server: {}
