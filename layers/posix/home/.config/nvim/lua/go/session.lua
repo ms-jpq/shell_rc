@@ -151,8 +151,8 @@ local move_tabs = function(cwd)
   end
 
   async.scheduled()
-  for name in vim.iter(argv):rev() do
-    vim.cmd("0tabedit " .. vim.fn.fnameescape(name))
+  for name in vim.iter(argv):skip(1):rev() do
+    vim.cmd("1tabedit " .. vim.fn.fnameescape(name))
   end
 
   for tab in vim.iter(vim.api.nvim_list_tabpages()):skip(#argv) do
