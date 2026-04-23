@@ -1,6 +1,3 @@
-local async = require "go.async"
-local lib = require "go"
-
 local base = vim.fs.joinpath(vim.uv.os_homedir(), ".cache", "helix-rt", "nvim")
 local packed = vim.fs.joinpath(base, "pack")
 
@@ -10,22 +7,6 @@ local safe_require = function(module)
     vim.notify(err, vim.log.levels.ERROR)
   end
   return err
-end
-
-local packloadopt = function()
-  local opt = vim.fs.joinpath(base, "pack", "opt")
-  for name in vim.fs.dir(opt) do
-    local path = vim.fs.joinpath(opt, name)
-    vim.cmd.packadd(vim.fn.escape(name, [[\ ]]))
-    vim.opt.runtimepath:append { path }
-
-    for _, dir in pairs { "plugin", "lua" } do
-      local pat = vim.fs.joinpath(path, dir, "*.{vim,lua}")
-      for _, f in ipairs(vim.fn.glob(pat, false, true)) do
-        vim.cmd.source(f)
-      end
-    end
-  end
 end
 
 do
@@ -42,25 +23,15 @@ do
     vim.opt.autocomplete = true
   end
 
+  safe_require "go.pack.coq-3p"
+  safe_require "go.pack.easyalign"
+  safe_require "go.pack.fzf"
+  safe_require "go.pack.gitsigns"
+  safe_require "go.pack.illuminate"
+  safe_require "go.pack.leap"
   safe_require "go.pack.theme"
+  safe_require "go.pack.treesitter"
+
   local lsp_on = safe_require "go.pack.lsp"
   lsp_on()
 end
-
-vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  group = lib.group,
-  once = true,
-  callback = async(function()
-    async.scheduled()
-
-    packloadopt()
-
-    safe_require "go.pack.coq-3p"
-    safe_require "go.pack.easyalign"
-    safe_require "go.pack.fzf"
-    safe_require "go.pack.gitsigns"
-    safe_require "go.pack.illuminate"
-    safe_require "go.pack.leap"
-    safe_require "go.pack.treesitter"
-  end),
-})
