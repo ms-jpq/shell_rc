@@ -5,6 +5,7 @@ set -o pipefail
 ROOT="$1"
 shift -- 1
 
+EXIT=1
 STEP="$ROOT"
 while [[ $STEP != "/" ]] && [[ $STEP != '' ]]; do
   for FILE in "$STEP/"*; do
@@ -14,8 +15,8 @@ while [[ $STEP != "/" ]] && [[ $STEP != '' ]]; do
       # shellcheck disable=SC2254
       case "$NAME" in
       $PAT)
-        printf -- '%s' "${FILE%/*}"
-        exit 0
+        printf -- '%s\n' "${FILE%/*}"
+        EXIT=0
         ;;
       *) ;;
       esac
@@ -24,4 +25,4 @@ while [[ $STEP != "/" ]] && [[ $STEP != '' ]]; do
   STEP="${STEP%/*}"
 done
 
-exit 1
+exit "$EXIT"
