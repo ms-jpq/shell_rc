@@ -23,7 +23,6 @@
     (xdg-cache "PassKit")
     (xdg-cache "SharedImageCache")
     (xdg-cache "SiriTTS")
-    (xdg-cache "tmux")
   )
   (literal
     (xdg-cache "aerc.sock")
@@ -31,5 +30,4 @@
   (regex
     (string-append "^" (xdg-cache "") "com\\.apple\\.")
     (string-append "^" (xdg-cache "") "nvim\\.")
-    (string-append "^" (xdg-cache "") "tmux-")
   ))
