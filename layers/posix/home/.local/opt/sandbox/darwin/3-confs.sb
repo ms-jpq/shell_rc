@@ -48,6 +48,9 @@
     (xdg-config "zsh")
   ))
 
+(allow file-read* file-map-executable
+  (subpath (home "Library/Application Support/nvim/site")))
+
 (allow file-read*
   (subpath
     (xdg-config "gh")))
