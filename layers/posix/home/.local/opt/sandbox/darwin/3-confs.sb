@@ -1,5 +1,11 @@
 (version 1)
 
+(deny file-read* file-write*
+  (subpath
+    (home "Library")))
+
+;; ---- ---- ---- ----
+
 (allow file-read*
   (literal
     (home ".bashrc")

@@ -51,7 +51,3 @@
   (string-append (home "Library/Application Support") "/" path))
 
 ;; ---- ---- ---- ----
-
-(deny file-read* file-write*
-  (subpath
-    (home "Library")))
