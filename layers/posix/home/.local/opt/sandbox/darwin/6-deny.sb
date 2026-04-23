@@ -4,7 +4,6 @@
   (subpath
     (home "Desktop")
     (home "Documents")
-    (home "Library")
     (home "Movies")
     (home "Music")
     (home "Pictures")
