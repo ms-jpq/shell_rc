@@ -106,7 +106,7 @@ diagnosticls:
 
 bashls:
   extensions:
-    .bash: bash
+    .bash: sh
     .sh: sh
 
 jqls: {}
