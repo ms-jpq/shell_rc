@@ -1,3 +1,12 @@
+do
+  local start =
+    vim.fs.joinpath(vim.fn.stdpath "cache", "..", "helix-rt", "nvim", "pack", "start", "nvim-treesitter", "plugin")
+
+  for _, lua in pairs(vim.fn.globpath(start, "*.lua", true, true)) do
+    vim.cmd.source(vim.fn.fnameescape(lua))
+  end
+end
+
 require("nvim-treesitter").setup {}
 
 vim.opt.indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
