@@ -13,13 +13,13 @@ darwin*)
   ;;
 msys) ;;
 *)
-  set -x
+  set -v
   exit 1
   ;;
 esac
 
 if ! command -v -- "$NVIM" > /dev/null; then
-  set -x
+  set -v
   exit
 fi
 

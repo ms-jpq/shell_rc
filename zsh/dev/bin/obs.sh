@@ -13,7 +13,7 @@ msys)
   ARGV=(start "obsidian://$*")
   ;;
 *)
-  set -x
+  set -v
   exit 1
   ;;
 esac

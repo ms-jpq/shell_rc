@@ -49,7 +49,7 @@ uninstall)
   rm -v -fr -- "$DST" "$AUTO"
   ;;
 *)
-  set -x
+  set -v
   exit 1
   ;;
 esac

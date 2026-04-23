@@ -17,7 +17,7 @@ if ! [[ -x $HX ]]; then
     HX='/usr/bin/hx'
     ;;
   *)
-    set -x
+    set -v
     exit 1
     ;;
   esac

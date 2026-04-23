@@ -36,14 +36,14 @@ while true; do
     break
     ;;
   *)
-    set -x
+    set -v
     exit 2
     ;;
   esac
 done
 
 if [[ -z $HOST ]]; then
-  set -x
+  set -v
   exit 2
 fi
 
