@@ -5,6 +5,8 @@ return function()
   local acc = {}
 
   for name, conf in pairs(lib.read_json(lsp_path)) do
+    conf = conf or {}
+
     local keys = { "cmd", "filetypes", "init_options", "settings" }
     local overrides = { detached = false }
     for _, k in pairs(keys) do

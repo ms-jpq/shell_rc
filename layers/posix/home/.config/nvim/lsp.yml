@@ -16,13 +16,13 @@ yamlls:
   #   yaml:
   #     keyOrdering: false
 
-taplo: {}
+taplo:
 
 typos_lsp:
   init_options:
     diagnosticSeverity: Information
 
-# harper_ls: {}
+# harper_ls:
 
 lemminx:
   cmd:
@@ -31,15 +31,15 @@ lemminx:
   extensions:
     .xml: xml
 
-ast_grep: {}
+ast_grep:
 
-# marksman: {}
+# marksman:
 
 # markdown:
 #   filetypes:
 #     - markdown
 
-ltex_plus: {}
+ltex_plus:
 
 texlab:
   settings:
@@ -109,9 +109,9 @@ bashls:
     .bash: sh
     .sh: sh
 
-jqls: {}
+jqls:
 
-awk_ls: {}
+awk_ls:
 
 systemd_lsp:
   extensions:
@@ -134,27 +134,27 @@ powershell_es:
   cmd:
     - powershell-lsp
 
-dockerls: {}
+dockerls:
 
-docker_compose_language_service: {}
+docker_compose_language_service:
 
-pyright: {}
+pyright:
 
-# pylyzer: {}
+# pylyzer:
 
-# ruff_lsp: {}
+# ruff_lsp:
 
-hls: {}
+hls:
 
-rust_analyzer: {}
+rust_analyzer:
 
 gopls:
   extensions:
     .mod: gomod
 
-golangci_lint_ls: {}
+golangci_lint_ls:
 
-sourcekit: {}
+sourcekit:
 
 clangd:
   extensions:
@@ -174,15 +174,15 @@ ccls:
     .m: objc
     .mm: objcpp
 
-fortls: {}
+fortls:
 
 ruby_lsp:
   cmd:
     - ruby-lsp
 
-sorbet: {}
+sorbet:
 
-solargraph: {}
+solargraph:
 
 mdx_analyzer:
   extensions:
@@ -195,7 +195,7 @@ ts_ls:
   extensions:
     .ts: typescript
 
-prismals: {}
+prismals:
 
 eslint:
   cmd:
@@ -209,7 +209,7 @@ eslint:
       - rule: prettier/*
         severity: info
 
-# denols: {}
+# denols:
 
 superhtml:
   extensions:
@@ -221,13 +221,13 @@ cssls:
     - vscode-css-language-server
     - --stdio
 
-# tailwindcss: {}
+# tailwindcss:
 
-svelte: {}
+svelte:
 
-graphql: {}
+graphql:
 
-vimls: {}
+vimls:
 
 r_language_server:
   cmd:
@@ -240,11 +240,11 @@ julials:
   cmd:
     - julia-lsp
 
-phan: {}
+phan:
 
-# psalm: {}
+# psalm:
 
-phpactor: {}
+phpactor:
 
 intelephense:
   init_options:
@@ -254,18 +254,18 @@ fsautocomplete:
   extensions:
     .fs: fsharp
 
-omnisharp: {}
+omnisharp:
 
 clojure_lsp:
   extensions:
     .cljs: clojurescript
     .edn: clojure
 
-# gradle_ls: {}
+# gradle_ls:
 
-kotlin_lsp: {}
+kotlin_lsp:
 
-kotlin_language_server: {}
+kotlin_language_server:
 
 jdtls:
   cmd:
@@ -277,7 +277,7 @@ prolog_ls:
   extensions:
     .pro: prolog
 
-# sqlls: {}
+# sqlls:
 
 lua_ls:
   settings:
@@ -285,13 +285,13 @@ lua_ls:
       runtime:
         version: "Lua 5.1"
 
-ansiblels: {}
+ansiblels:
 
-glsl_analyzer: {}
+glsl_analyzer:
 
-# theme_check: {}
+# theme_check:
 
-# emmet_language_server: {}
+# emmet_language_server:
 
 terraformls:
   extensions:
@@ -299,7 +299,7 @@ terraformls:
     .tf: terraform
     .tfvars: terraform
 
-helm_ls: {}
+helm_ls:
 
 tflint:
   extensions:
@@ -313,12 +313,12 @@ cobol_ls:
     - -Dlogback.statusListenerClass=ch.qos.logback.core.status.NopStatusListener
     - -DserverType=NATIVE
 
-nginx_language_server: {}
+nginx_language_server:
 
-# copilot: {}
+# copilot:
 
-# gh_actions_ls: {}
+# gh_actions_ls:
 
-# volar: {}
+# volar:
 
-tsp_server: {}
+tsp_server:
