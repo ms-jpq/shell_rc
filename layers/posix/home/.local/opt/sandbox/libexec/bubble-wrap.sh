@@ -63,8 +63,6 @@ RO_BIND=(
   /opt
   /sbin
   /usr
-  /tmp
-  /var/tmp
 
   "$HOME/.bashrc"
   "$HOME/.gitconfig"
@@ -109,6 +107,9 @@ RO_BIND=(
 )
 
 RW_BIND=(
+  /tmp
+  /var/tmp
+
   "$HOME/.local/asdf"
 
   "$XDG_CACHE_HOME"
