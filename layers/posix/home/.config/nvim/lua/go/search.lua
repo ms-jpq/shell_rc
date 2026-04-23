@@ -1,3 +1,5 @@
+local lib = require "go"
+
 -- offscreen previewing of commands
 vim.opt.inccommand = "split"
 
@@ -14,8 +16,13 @@ vim.keymap.set("n", "g*", "g*N")
 vim.keymap.set("n", "g#", "g#N")
 
 -- use no magic
-vim.keymap.set({ "n", "v" }, "/", [[/\V]])
-vim.keymap.set({ "n", "v" }, "?", [[?\V]])
+vim.api.nvim_create_autocmd("CmdlineEnter", {
+  group = lib.group,
+  pattern = { "/", [[\?]] },
+  callback = function()
+    vim.fn.setcmdline [[\V]]
+  end,
+})
 
 do
   local function with_redraw(wrapped)

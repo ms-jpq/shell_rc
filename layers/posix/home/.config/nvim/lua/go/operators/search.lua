@@ -19,7 +19,9 @@ local selected_text = function(visual_type)
 end
 
 do
-  local candidates = vim.split([[~!@#$%^&*]], "")
+  local candidates = vim.split([[#@~!$%^&*]], "")
+  local group = vim.api.nvim_create_augroup([[lv_search]], { clear = true })
+
   local select_sep = function(text)
     for _, sep in pairs(candidates) do
       if not string.find(text, sep, 1, true) then
@@ -33,10 +35,19 @@ do
     local text = selected_text(visual_type)
     local escaped = magic_escape(text)
     local sep = select_sep(escaped)
-    vim.fn.setreg("/", [[\V]] .. vim.fn.escape(escaped, sep))
+    local reg = [[\V]] .. vim.fn.escape(escaped, sep)
+    vim.fn.setreg("/", reg)
 
-    local cmd = [[:%s]] .. sep .. [[<c-r>/]] .. sep .. sep .. [[g<left><left>]]
-    vim.api.nvim_input(cmd)
+    vim.api.nvim_create_autocmd("CmdlineEnter", {
+      group = group,
+      once = true,
+      pattern = ":",
+      callback = function()
+        local line = "%s" .. sep .. reg .. sep .. sep .. "g"
+        vim.fn.setcmdline(line, #line - 1)
+      end,
+    })
+    vim.api.nvim_feedkeys(":", "n", false)
   end
 
   vim.keymap.set("n", "gs", [[<cmd>set opfunc=v:lua.Go.op_buf_edit<cr>g@]])
