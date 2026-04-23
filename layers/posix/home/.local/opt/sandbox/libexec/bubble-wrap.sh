@@ -49,6 +49,7 @@ XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-"$XDG_CACHE_HOME"}"
 TMPFS=(
   "$HOME"
   /tmp
+  /var/tmp
 
   "$XDG_CACHE_HOME/aerc"
   "$XDG_CACHE_HOME/isync"
