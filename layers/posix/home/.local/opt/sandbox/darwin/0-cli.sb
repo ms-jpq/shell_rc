@@ -15,11 +15,14 @@
   (subpath "/private/etc")
   (subpath "/sbin")
   (subpath "/usr/bin")
+  (subpath "/usr/lib")
   (subpath "/usr/libexec")
   (subpath "/usr/local")
   (subpath "/usr/sbin"))
 
 (allow file-read* file-map-executable
+  (subpath "/Applications/Xcode.app")
+  (subpath "/Library/Developer/CommandLineTools")
   (subpath "/opt/homebrew"))
 
 ;; ---- ---- ---- ----
