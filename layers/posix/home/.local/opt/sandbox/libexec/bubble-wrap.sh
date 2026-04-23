@@ -48,7 +48,6 @@ XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-"$XDG_CACHE_HOME"}"
 
 TMPFS=(
   "$HOME"
-  /tmp
 
   "$XDG_CACHE_HOME/aerc"
   "$XDG_CACHE_HOME/isync"
@@ -64,6 +63,7 @@ RO_BIND=(
   /opt
   /sbin
   /usr
+  /tmp
   /var/tmp
 
   "$HOME/.bashrc"
