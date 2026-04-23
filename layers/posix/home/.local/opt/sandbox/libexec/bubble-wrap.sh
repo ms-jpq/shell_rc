@@ -104,12 +104,12 @@ RO_BIND=(
   "$XDG_CONFIG_HOME/yazi"
   "$XDG_CONFIG_HOME/zsh"
 
+  "$XDG_CONFIG_HOME/gh"
   "$XDG_RUNTIME_DIR"
 )
 
 RW_BIND=(
   "$HOME/.local/asdf"
-  "$XDG_CONFIG_HOME/gh"
 
   "$XDG_CACHE_HOME"
 )
