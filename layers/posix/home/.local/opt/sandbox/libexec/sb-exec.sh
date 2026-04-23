@@ -43,14 +43,12 @@ done
 ROOT="$(realpath -- "${0%/*}/..")"
 
 TMPDIR="$(realpath -- "$TMPDIR")"
-CWD="$(realpath -- "$PWD")"
 
 ARGV=(
   sandbox-exec
   -D PROFILES="$ROOT/darwin"
   -D TMPDIR="$TMPDIR"
   -D HOME="$HOME"
-  -D CWD="$CWD"
 )
 
 PROFILES=(
@@ -69,6 +67,8 @@ fi
 if ((NETWORK)); then
   PROFILES+=('(import-profile "1-network.sb")')
 fi
+
+DIRS+=("$(realpath -- "$PWD:rw")")
 
 for I in "${!DIRS[@]}"; do
   DIR="${DIRS[$I]}"
@@ -105,6 +105,8 @@ SCHEME
   PROFILES+=("$RULE")
   ARGV+=(-D "F${I}=$FILE")
 done
+
+PROFILES+=('(import-profile "6-deny.sb")')
 
 IFS=$'\n'
 PROFILE="${PROFILES[*]}"

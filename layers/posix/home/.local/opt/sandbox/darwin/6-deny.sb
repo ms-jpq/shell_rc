@@ -1,0 +1,11 @@
+(version 1)
+
+(deny file-read* file-write*
+  (subpath
+    (home "Desktop")
+    (home "Documents")
+    (home "Library")
+    (home "Movies")
+    (home "Music")
+    (home "Pictures")
+    (home "Public")))

@@ -106,8 +106,6 @@ RO_BIND=(
 
 RW_BIND=(
   "$HOME/.local/asdf"
-  "$PWD"
-
   "$XDG_CACHE_HOME"
 )
 
@@ -139,11 +137,10 @@ for P in "${DIRS[@]}" "${FILES[@]}"; do
     RO_BIND+=("$P")
   fi
 done
+RW_BIND+=("$PWD")
 
 if ((NETWORK)); then
-  if RESOLV="$(realpath -- /etc/resolv.conf 2> /dev/null)" && [[ $RESOLV != /etc/* ]]; then
-    RO_BIND+=("$RESOLV")
-  fi
+  RO_BIND+=(/run/systemd/resolve/stub-resolv.conf)
 fi
 
 UNSHARE=(--unshare-ipc --unshare-pid --unshare-net --unshare-uts --unshare-cgroup-try)

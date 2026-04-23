@@ -30,8 +30,7 @@
 (allow file-read* file-write*
   (subpath "/private/tmp")
   (subpath "/private/var/tmp")
-  (subpath (param "TMPDIR"))
-  (subpath (param "CWD")))
+  (subpath (param "TMPDIR")))
 
 ;; ---- ---- ---- ----
 
@@ -51,15 +50,3 @@
 
 (define (local-share path)
   (string-append (home "Library/Application Support") "/" path))
-
-;; ---- ---- ---- ----
-
-(deny file-read* file-write*
-  (subpath
-    (home "Desktop")
-    (home "Documents")
-    (home "Library")
-    (home "Movies")
-    (home "Music")
-    (home "Pictures")
-    (home "Public")))
