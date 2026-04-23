@@ -109,6 +109,8 @@ RO_BIND=(
 
 RW_BIND=(
   "$HOME/.local/asdf"
+  "$XDG_CONFIG_HOME/gh"
+
   "$XDG_CACHE_HOME"
 )
 
