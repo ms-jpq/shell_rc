@@ -36,6 +36,6 @@ return {
     end
 
     local exec = vim.fs.joinpath(vim.env.HOME, ".local", "opt", "sandbox", "libexec", "dispatch.sh")
-    return { exec, "--dir", workdir, "--" }
+    return { "nice", "-n", "19", "--", exec, "--dir", workdir, "--" }
   end,
 }
