@@ -8,13 +8,13 @@ shift -- 1
 STEP="$ROOT"
 while [[ $STEP != "/" ]] && [[ $STEP != '' ]]; do
   for FILE in "$STEP/"*; do
-    BASE="${FILE##*/}"
+    NAME="${FILE##*/}"
 
     for PAT in "$@"; do
       # shellcheck disable=SC2254
-      case "$BASE" in
+      case "$NAME" in
       $PAT)
-        printf -- '%s' "$FILE"
+        printf -- '%s' "${FILE%/*}"
         exit 0
         ;;
       *) ;;
