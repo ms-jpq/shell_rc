@@ -29,8 +29,7 @@
 
 (allow file-read* file-write*
   (subpath "/private/tmp")
-  (subpath "/private/var/tmp")
-  (subpath (param "TMPDIR")))
+  (subpath "/private/var/tmp"))
 
 ;; ---- ---- ---- ----
 

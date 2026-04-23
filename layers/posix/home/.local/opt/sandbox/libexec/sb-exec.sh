@@ -42,12 +42,9 @@ done
 
 ROOT="$(realpath -- "${0%/*}/..")"
 
-TMPDIR="$(realpath -- "$TMPDIR")"
-
 ARGV=(
   sandbox-exec
   -D PROFILES="$ROOT/darwin"
-  -D TMPDIR="$TMPDIR"
   -D HOME="$HOME"
 )
 
@@ -68,7 +65,8 @@ if ((NETWORK)); then
   PROFILES+=('(import-profile "1-network.sb")')
 fi
 
-DIRS+=("$(realpath -- "$PWD:rw")")
+DIRS+=("$(realpath -- "$TMPDIR"):rw")
+DIRS+=("$(realpath -- "$PWD"):rw")
 
 for I in "${!DIRS[@]}"; do
   DIR="${DIRS[$I]}"
