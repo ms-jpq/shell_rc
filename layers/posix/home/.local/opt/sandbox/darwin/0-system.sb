@@ -26,7 +26,8 @@
   (literal "/dev/zero"))
 
 (allow file-read* file-write* file-ioctl
-  (literal "/dev/tty"))
+  (literal "/dev/tty")
+  (regex #"^/dev/ttys"))
 
 (allow file-read-data file-write-data file-ioctl
   (require-all

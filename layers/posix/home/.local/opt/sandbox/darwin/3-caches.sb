@@ -6,6 +6,13 @@
     (home ".local/asdf")
   ))
 
+(allow network-bind
+  (subpath (xdg-cache "")))
+
+(allow network-outbound
+  (regex
+    (string-append "^" (xdg-cache "") "nvim\\.")))
+
 (deny file-read* file-write*
   (subpath
     (xdg-cache "aerc")
@@ -24,10 +31,5 @@
     (xdg-cache "SharedImageCache")
     (xdg-cache "SiriTTS")
   )
-  (literal
-    (xdg-cache "aerc.sock")
-  )
   (regex
-    (string-append "^" (xdg-cache "") "com\\.apple\\.")
-    (string-append "^" (xdg-cache "") "nvim\\.")
-  ))
+    (string-append "^" (xdg-cache "") "com\\.apple\\.")))
