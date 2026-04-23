@@ -110,16 +110,16 @@ RO_BIND=(
   "$XDG_CONFIG_HOME/zsh"
 
   "$XDG_CONFIG_HOME/gh"
-  "$XDG_RUNTIME_DIR"
 )
 
 RW_BIND=(
   /tmp
   /var/tmp
 
-  "$HOME/.local/asdf"
-
+  "$XDG_RUNTIME_DIR"
   "$XDG_CACHE_HOME"
+
+  "$HOME/.local/asdf"
 )
 
 if [[ -v TMPDIR && $TMPDIR != /tmp ]]; then
