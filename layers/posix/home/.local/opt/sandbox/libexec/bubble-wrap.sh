@@ -143,7 +143,7 @@ if ((NETWORK)); then
   RO_BIND+=(/run/systemd/resolve/stub-resolv.conf)
 fi
 
-UNSHARE=(--unshare-ipc --unshare-pid --unshare-net --unshare-uts --unshare-cgroup-try)
+UNSHARE=(--unshare-ipc --unshare-net --unshare-uts --unshare-cgroup-try)
 if ((UID)); then
   UNSHARE+=(--unshare-user-try)
 fi
