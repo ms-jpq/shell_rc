@@ -19,6 +19,7 @@
     (home ".local/lbin")
     (home ".local/libexec")
     (home ".local/lprofile.d")
+    (home "Applications")
     (xdg-config "asdf")
     (xdg-config "bat")
     (xdg-config "bottom")

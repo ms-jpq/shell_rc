@@ -40,6 +40,11 @@ while true; do
   esac
 done
 
+SELF_NS="$(readlink -- /proc/self/ns/ipc)"
+if INIT_NS="$(readlink -- /proc/1/ns/ipc 2> /dev/null)" && [[ $SELF_NS != "$INIT_NS" ]]; then
+  exec -- "$@"
+fi
+
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$HOME/.config"}"
 XDG_DATA_HOME="${XDG_DATA_HOME:-"$HOME/.local/share"}"
 XDG_STATE_HOME="${XDG_STATE_HOME:-"$HOME/.local/state"}"
@@ -63,6 +68,8 @@ RO_BIND=(
   /opt
   /sbin
   /usr
+
+  "$HOME/.local/opt/sandbox"
 
   "$HOME/.bashrc"
   "$HOME/.gitconfig"

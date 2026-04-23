@@ -40,6 +40,10 @@ while true; do
   esac
 done
 
+if ! touch -- "$HOME/Library" 2> /dev/null; then
+  exec -- "$@"
+fi
+
 ROOT="$(realpath -- "${0%/*}/..")"
 
 ARGV=(
