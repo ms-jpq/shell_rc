@@ -46,3 +46,8 @@
     (xdg-config "yazi")
     (xdg-config "zsh")
   ))
+
+(allow file-read* file-write*
+  (subpath
+    (xdg-config "gh")))
+
