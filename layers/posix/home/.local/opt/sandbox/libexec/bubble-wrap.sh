@@ -148,7 +148,18 @@ if ((UID)); then
   UNSHARE+=(--unshare-user-try)
 fi
 
+SUDO=()
+if ((UID)) && [[ -v CI ]]; then
+  SUDO+=(
+    sudo
+    --preserve-env
+    --
+  )
+fi
+
 BWRAP=(
+  "${SUDO[@]}"
+
   bwrap
   --die-with-parent
   "${UNSHARE[@]}"
