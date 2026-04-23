@@ -30,8 +30,11 @@ do
   safe_require "go.pack.illuminate"
   safe_require "go.pack.leap"
   safe_require "go.pack.theme"
-  safe_require "go.pack.treesitter"
 
   local lsp_on = safe_require "go.pack.lsp"
   lsp_on()
 end
+
+vim.schedule(function()
+  safe_require "go.pack.treesitter"
+end)

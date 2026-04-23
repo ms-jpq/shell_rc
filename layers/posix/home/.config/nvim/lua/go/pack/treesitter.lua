@@ -1,5 +1,3 @@
-vim.cmd.packadd [[nvim-treesitter]]
-
 require("nvim-treesitter").setup {}
 
 vim.opt.indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
