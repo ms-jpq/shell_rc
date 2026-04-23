@@ -13,7 +13,7 @@ return {
   },
   read_json = function(path)
     local json = vim.fn.readblob(path)
-    return vim.json.decode(json, { luanil = { object = true, array = true } })
+    return vim.json.decode(json)
   end,
   buf_linefeed = function(buf)
     local ff = vim.bo[buf].fileformat

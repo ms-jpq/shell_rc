@@ -4,8 +4,11 @@ local lsp_path = vim.fs.joinpath(vim.fn.stdpath "config", "apriori", "lsp.json")
 return function()
   local acc = {}
 
-  for name, conf in pairs(lib.read_json(lsp_path)) do
-    conf = conf or {}
+  local json = lib.read_json(lsp_path)
+  for name, conf in pairs(json) do
+    if conf == vim.NIL then
+      conf = {}
+    end
 
     local keys = { "cmd", "filetypes", "init_options", "settings" }
     local overrides = { detached = false }
