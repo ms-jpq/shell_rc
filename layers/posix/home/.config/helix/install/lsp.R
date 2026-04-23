@@ -10,23 +10,23 @@ parent <- dirname(sub("^--file=", "", location))
 r <- paste(parent, "lsr.ex.r", sep = "/")
 lib <- Sys.getenv("LIB")
 
-apt <- Sys.which("apt-get")
-if (apt != "") {
-  code <- system2("sudo", c(
-    "--",
-    apt,
-    "install",
-    "--no-install-recommends",
-    "--yes",
-    "--",
-    "libcurl4-openssl-dev",
-    "libssl-dev",
-    "libxml2-dev"
-  ), env = c("DEBIAN_FRONTEND=noninteractive"))
-  if (code != 0) {
-    stop()
-  }
-}
+# apt <- Sys.which("apt-get")
+# if (apt != "") {
+#   code <- system2("sudo", c(
+#     "--",
+#     apt,
+#     "install",
+#     "--no-install-recommends",
+#     "--yes",
+#     "--",
+#     "libcurl4-openssl-dev",
+#     "libssl-dev",
+#     "libxml2-dev"
+#   ), env = c("DEBIAN_FRONTEND=noninteractive"))
+#   if (code != 0) {
+#     stop()
+#   }
+# }
 
 if (Sys.getenv("CI") != "" || Sys.getenv("NO_R") != "") {
   quit()

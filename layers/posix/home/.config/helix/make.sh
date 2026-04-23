@@ -86,7 +86,6 @@ JQ
       --auth
       --network
       --dir "$PWD"
-      --dir ~/Library/'Application Support'/nvim
       --
     )
     ;;

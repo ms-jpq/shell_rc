@@ -46,6 +46,16 @@ XDG_STATE_HOME="${XDG_STATE_HOME:-"$HOME/.local/state"}"
 XDG_CACHE_HOME="${XDG_CACHE_HOME:-"$HOME/.cache"}"
 XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-"$XDG_CACHE_HOME"}"
 
+TMPFS=(
+  "$HOME"
+  /tmp
+
+  "$XDG_CACHE_HOME/aerc"
+  "$XDG_CACHE_HOME/isync"
+  "$XDG_CACHE_HOME/maildir"
+  "$XDG_CACHE_HOME/tmux"
+)
+
 RO_BIND=(
   /bin
   /etc
@@ -99,14 +109,6 @@ RW_BIND=(
   "$PWD"
 
   "$XDG_CACHE_HOME"
-  "$XDG_STATE_HOME/ssh"
-)
-
-TMPFS=(
-  "$XDG_CACHE_HOME/aerc"
-  "$XDG_CACHE_HOME/isync"
-  "$XDG_CACHE_HOME/maildir"
-  "$XDG_CACHE_HOME/tmux"
 )
 
 if [[ -v TMPDIR && $TMPDIR != /tmp ]]; then
@@ -119,6 +121,7 @@ if ((AUTH)); then
     "$HOME/.ssh"
     "$XDG_CONFIG_HOME/ssh"
     "$XDG_DATA_HOME/ssh"
+    "$XDG_STATE_HOME/ssh"
   )
   RW_BIND+=(
     "$HOME/.gnupg"
@@ -167,14 +170,15 @@ BWRAP=(
   --proc /proc
   --dev /dev
   --dev-bind /dev/tty /dev/tty
-
-  --tmpfs /tmp
-  --tmpfs "$HOME"
 )
 
 if ((NETWORK)); then
   BWRAP+=(--share-net)
 fi
+
+for P in "${TMPFS[@]}"; do
+  BWRAP+=(--tmpfs "$P")
+done
 
 for P in "${RO_BIND[@]}"; do
   BWRAP+=(--ro-bind-try "$P" "$P")
@@ -182,10 +186,6 @@ done
 
 for P in "${RW_BIND[@]}"; do
   BWRAP+=(--bind-try "$P" "$P")
-done
-
-for P in "${TMPFS[@]}"; do
-  BWRAP+=(--tmpfs "$P")
 done
 
 exec -- "${BWRAP[@]}" "$@"
