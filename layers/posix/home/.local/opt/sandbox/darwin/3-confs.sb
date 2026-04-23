@@ -47,7 +47,6 @@
     (xdg-config "zsh")
   ))
 
-(allow file-read* file-write*
+(allow file-read*
   (subpath
     (xdg-config "gh")))
-
