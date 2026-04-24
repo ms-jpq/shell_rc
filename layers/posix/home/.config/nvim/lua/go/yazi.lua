@@ -39,8 +39,6 @@ local termstart = async.wrap(function(buf, cmd, cb)
 
   async.scheduled()
   if buf then
-    vim.opt.cursorline = false
-    vim.opt.cursorcolumn = false
     vim.api.nvim_buf_delete(buf, { force = true })
   end
 
@@ -59,14 +57,23 @@ local spawn_yz = function(buf, path)
 
   local cmd = { "yazi", "--chooser-file", tmp, "--", path }
   local die = file_exp_die()
+
+  if buf then
+    vim.opt.cursorline = false
+    vim.opt.cursorcolumn = false
+  end
   termstart(buf, cmd)
-  die()
+  if buf then
+    vim.opt.cursorline = true
+  end
 
   if vim.fn.filereadable(tmp) == 1 then
     local select = vim.fn.readblob(tmp)
     local escaped = vim.fn.fnameescape(select)
     vim.cmd.edit(escaped)
   end
+
+  die()
 end
 
 -- replace directory buffers with yazi
@@ -76,7 +83,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
     local name = vim.api.nvim_buf_get_name(args.buf)
     if name ~= "" and vim.fn.isdirectory(name) == 1 then
       spawn_yz(args.buf, name)
-      vim.opt.cursorline = true
     end
   end),
 })
