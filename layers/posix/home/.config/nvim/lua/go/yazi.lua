@@ -1,21 +1,6 @@
 local async = require "go.async"
 local lib = require "go"
 
-local termstart = async.wrap(function(cmd, env, die)
-  local buf = vim.api.nvim_create_buf(false, true)
-
-  vim.api.nvim_buf_call(
-    buf,
-    async(function()
-      async.fn.jobstart(cmd, { term = true, env = env })
-      vim.api.nvim_buf_delete(buf, { force = true })
-      die()
-    end)
-  )
-
-  vim.api.nvim_win_set_buf(0, buf)
-end)
-
 local file_exp_die = function()
   local bufs = {}
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -48,22 +33,38 @@ local file_exp_die = function()
   end
 end
 
-local spawn_yz = function(use_cwd)
-  return async(function()
-    local tmp = vim.fn.tempname()
-    local path = use_cwd(vim.fn.getcwd())
+local termstart = async.wrap(function(buf, cmd, cb)
+  local new_buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_win_set_buf(0, new_buf)
 
-    local cmd = { "yazi", "--chooser-file", tmp, "--", path }
-    local die = file_exp_die()
-    termstart(cmd, vim.empty_dict())
+  async.scheduled()
+  if buf then
+    vim.api.nvim_buf_delete(buf, { force = true })
+  end
 
-    if vim.fn.filereadable(tmp) == 1 then
-      local select = vim.fn.readblob(tmp)
-      local escaped = vim.fn.fnameescape(select)
-      vim.cmd.edit(escaped)
-    end
-    die()
-  end)
+  vim.api.nvim_buf_call(
+    new_buf,
+    async(function()
+      async.fn.jobstart(cmd, { term = true })
+      vim.api.nvim_buf_delete(new_buf, { force = true })
+      cb()
+    end)
+  )
+end)
+
+local spawn_yz = function(buf, path)
+  local tmp = vim.fn.tempname()
+
+  local cmd = { "yazi", "--chooser-file", tmp, "--", path }
+  local die = file_exp_die()
+  termstart(buf, cmd)
+  die()
+
+  if vim.fn.filereadable(tmp) == 1 then
+    local select = vim.fn.readblob(tmp)
+    local escaped = vim.fn.fnameescape(select)
+    vim.cmd.edit(escaped)
+  end
 end
 
 -- replace directory buffers with yazi
@@ -72,11 +73,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
   callback = async(function(args)
     local name = vim.api.nvim_buf_get_name(args.buf)
     if name ~= "" and vim.fn.isdirectory(name) == 1 then
-      spawn_yz(function()
-        return name
-      end)()
-      vim.cmd [[startinsert]]
-      vim.api.nvim_buf_delete(args.buf, { force = true })
+      spawn_yz(args.buf, name)
     end
   end),
 })
@@ -84,19 +81,20 @@ vim.api.nvim_create_autocmd("BufEnter", {
 vim.keymap.set(
   "n",
   [[<c-t>]],
-  spawn_yz(function(cwd)
+  async(function()
     local path = vim.api.nvim_buf_get_name(0)
     if vim.fn.filereadable(path) == 0 then
-      path = cwd
+      path = vim.fn.getcwd()
     end
-    return path
+    spawn_yz(nil, path)
   end)
 )
 
 vim.keymap.set(
   "n",
   [[<leader>t]],
-  spawn_yz(function(cwd)
-    return cwd
+  async(function()
+    local path = vim.fn.getcwd()
+    spawn_yz(nil, path)
   end)
 )
