@@ -19,16 +19,18 @@ vim.api.nvim_create_autocmd("BufEnter", {
 local argv_names = function(cwd)
   local argv = vim.fn.argv(-1)
   local acc = {}
-  for _, name in pairs(argv) do
+  local mapping = {}
+  for i, name in ipairs(argv) do
     local joined = string.sub(name, 1, 1) == lib.os.sep and name or vim.fs.joinpath(cwd, name)
     local norm = vim.fs.normalize(joined, { expand_env = false })
-    acc[norm] = true
+    table.insert(acc, norm)
+    mapping[norm] = i
   end
-  return argv, acc
+  return acc, mapping
 end
 
 local detect_stdin = function(cwd)
-  local _, argvn = argv_names(cwd)
+  local _, mapping = argv_names(cwd)
 
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     local dirty = function()
@@ -41,7 +43,7 @@ local detect_stdin = function(cwd)
     end
 
     local name = vim.api.nvim_buf_get_name(buf)
-    if not argvn[name] and dirty() then
+    if not mapping[name] and dirty() then
       return true
     end
   end
@@ -149,22 +151,41 @@ local restore = function(cwd)
 end
 
 local move_tabs = function(cwd)
-  local argv, names = argv_names(cwd)
+  local argv, mapping = argv_names(cwd)
   if #argv == 0 or vim.wo.diff then
     return
   end
 
   async.scheduled()
-  for name in vim.iter(argv):skip(1):rev() do
-    vim.cmd("1tabedit " .. vim.fn.fnameescape(name))
+  local tabs = {}
+  for name in vim.iter(argv):rev() do
+    vim.cmd [[0tabnew]]
+    local tab = vim.api.nvim_get_current_tabpage()
+    local win = vim.api.nvim_tabpage_get_win(tab)
+    tabs[name] = { tab, win }
   end
 
+  local acc = {}
   for tab in vim.iter(vim.api.nvim_list_tabpages()):skip(#argv) do
     for _, win in pairs(vim.api.nvim_tabpage_list_wins(tab)) do
       local buf = vim.api.nvim_win_get_buf(win)
-      if names[vim.api.nvim_buf_get_name(buf)] then
+      local name = vim.api.nvim_buf_get_name(buf)
+      if mapping[name] then
+        acc[name] = buf
         vim.api.nvim_win_close(win, true)
       end
+    end
+  end
+
+  for name in pairs(mapping) do
+    local buf = acc[name]
+    local tab, win = unpack(tabs[name])
+    if buf then
+      vim.api.nvim_win_set_buf(win, buf)
+    else
+      local escaped = vim.fn.fnameescape(name)
+      vim.api.nvim_set_current_tabpage(tab)
+      vim.cmd.edit(escaped)
     end
   end
 
