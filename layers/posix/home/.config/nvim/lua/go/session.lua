@@ -157,12 +157,12 @@ local move_tabs = function(cwd)
   end
 
   async.scheduled()
-  local tabs = {}
+  local wins = {}
   for name in vim.iter(argv):rev() do
     vim.cmd [[0tabnew]]
-    local tab = vim.api.nvim_get_current_tabpage()
-    local win = vim.api.nvim_tabpage_get_win(tab)
-    tabs[name] = { tab, win }
+    local win = vim.api.nvim_get_current_win()
+    local blank = vim.api.nvim_win_get_buf(win)
+    wins[name] = { win, blank }
   end
 
   local acc = {}
@@ -179,14 +179,16 @@ local move_tabs = function(cwd)
 
   for name in pairs(mapping) do
     local buf = acc[name]
-    local tab, win = unpack(tabs[name])
+    local win, blank = unpack(wins[name])
     if buf then
       vim.api.nvim_win_set_buf(win, buf)
     else
       local escaped = vim.fn.fnameescape(name)
-      vim.api.nvim_set_current_tabpage(tab)
-      vim.cmd.edit(escaped)
+      vim.api.nvim_win_call(win, function()
+        vim.cmd.edit(escaped)
+      end)
     end
+    vim.api.nvim_buf_delete(blank, { force = true })
   end
 
   vim.cmd "tabfirst"
