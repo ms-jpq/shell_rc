@@ -11,10 +11,10 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      # - run: |-
-      #     HOMEBREW_INTERNAL_ALLOW_PACKAGES_FROM_PATHS=1 brew install --HEAD --formula -- ./formulae/*
+      - run: |-
+          HOMEBREW_DEVELOPER=1 brew install --HEAD --formula -- ./formulae/*
 
   docker:
     strategy:
