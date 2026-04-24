@@ -6,11 +6,15 @@ vim.opt.sessionoptions:remove { "blank", "buffers", "curdir", "help", "terminal"
 vim.opt.sessionoptions:append { "skiprtp" }
 
 -- scratch buffer
-for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-  if vim.api.nvim_buf_get_name(buf) == "" then
-    vim.bo[buf].buftype = "nofile"
-  end
-end
+vim.api.nvim_create_autocmd("BufEnter", {
+  group = lib.group,
+  callback = function(args)
+    if vim.api.nvim_buf_get_name(args.buf) == "" and vim.bo[args.buf].buftype == "" then
+      vim.bo[args.buf].buftype = "nofile"
+      vim.bo[args.buf].filetype = "markdown"
+    end
+  end,
+})
 
 local argv_names = function(cwd)
   local argv = vim.fn.argv(-1)
