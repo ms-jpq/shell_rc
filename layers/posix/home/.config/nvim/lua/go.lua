@@ -30,12 +30,13 @@ return {
       end
     end
   end,
-  sandbox = function(workdir)
+  sandbox = function(workdir, opts)
     if is_win or false then
       return {}
     end
 
     local exec = vim.fs.joinpath(vim.env.HOME, ".local", "opt", "sandbox", "libexec", "dispatch.sh")
-    return { "nice", "-n", "19", "--", exec, "--network", "--dir", workdir, "--" }
+    local net = opts.network and { "--network" } or {}
+    return vim.iter({ { "nice", "-n", "19", "--", exec }, net, { "--dir", workdir, "--" } }):flatten():totable()
   end,
 }

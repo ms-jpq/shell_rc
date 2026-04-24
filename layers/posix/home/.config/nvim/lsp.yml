@@ -3,6 +3,8 @@ jsonls:
   cmd:
     - vscode-json-language-server
     - --stdio
+  sandbox:
+    network: true
 
 yamlls:
   cmd:
@@ -12,6 +14,8 @@ yamlls:
     - yaml
     - yaml.ansible
     - yaml.docker-compose
+  sandbox:
+    network: true
   # settings:
   #   yaml:
   #     keyOrdering: false
