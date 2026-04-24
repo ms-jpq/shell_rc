@@ -1,6 +1,7 @@
-#!/usr/bin/env -S -- bash -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob
+#!/usr/bin/env -S -- bash -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar
 
 set -o pipefail
+shopt -u failglob
 
 CHANNEL="$1"
 LABEL="mbsync.$CHANNEL"
