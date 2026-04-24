@@ -191,7 +191,7 @@ local move_tabs = function(cwd)
     vim.api.nvim_buf_delete(blank, { force = true })
   end
 
-  vim.cmd "tabfirst"
+  vim.cmd [[tabfirst]]
 end
 
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
