@@ -15,6 +15,7 @@ jobs:
 
       - run: |-
           HOMEBREW_DEVELOPER=1 brew install --HEAD --formula -- ./formulae/*
+          HOMEBREW_DEVELOPER=1 brew reinstall --formula -- ./formulae/*
 
   docker:
     strategy:
