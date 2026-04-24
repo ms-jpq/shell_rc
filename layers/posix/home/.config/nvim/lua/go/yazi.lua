@@ -56,14 +56,7 @@ local spawn_yazi = function(buf, path)
   local cmd = { "yazi", "--chooser-file", tmp, "--", path }
   local die = file_exp_die()
 
-  if buf then
-    vim.opt.cursorline = false
-    vim.opt.cursorcolumn = false
-  end
   termstart(buf, cmd)
-  if buf then
-    vim.opt.cursorline = true
-  end
 
   if vim.fn.filereadable(tmp) == 1 then
     local select = vim.fn.readblob(tmp)
@@ -71,6 +64,7 @@ local spawn_yazi = function(buf, path)
     vim.cmd.edit(escaped)
   end
 
+  vim.fs.rm(tmp, { force = true })
   die()
 end
 
@@ -81,7 +75,10 @@ vim.api.nvim_create_autocmd("BufEnter", {
     local name = vim.api.nvim_buf_get_name(args.buf)
     if name ~= "" and vim.fn.isdirectory(name) == 1 then
       async.scheduled()
+      vim.opt.cursorline = false
+      vim.opt.cursorcolumn = false
       spawn_yazi(args.buf, name)
+      vim.opt.cursorline = true
     end
   end),
 })
