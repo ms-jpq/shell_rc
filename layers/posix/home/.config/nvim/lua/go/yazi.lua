@@ -36,8 +36,6 @@ end
 local termstart = async.wrap(function(buf, cmd, cb)
   local new_buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_win_set_buf(0, new_buf)
-
-  async.scheduled()
   if buf then
     vim.api.nvim_buf_delete(buf, { force = true })
   end
@@ -82,6 +80,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
   callback = async(function(args)
     local name = vim.api.nvim_buf_get_name(args.buf)
     if name ~= "" and vim.fn.isdirectory(name) == 1 then
+      async.scheduled()
       spawn_yz(args.buf, name)
     end
   end),
