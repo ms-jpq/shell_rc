@@ -50,7 +50,7 @@ local termstart = async.wrap(function(buf, cmd, cb)
   )
 end)
 
-local spawn_yz = function(buf, path)
+local spawn_yazi = function(buf, path)
   local tmp = vim.fn.tempname()
 
   local cmd = { "yazi", "--chooser-file", tmp, "--", path }
@@ -81,7 +81,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
     local name = vim.api.nvim_buf_get_name(args.buf)
     if name ~= "" and vim.fn.isdirectory(name) == 1 then
       async.scheduled()
-      spawn_yz(args.buf, name)
+      spawn_yazi(args.buf, name)
     end
   end),
 })
@@ -94,7 +94,7 @@ vim.keymap.set(
     if vim.fn.filereadable(path) == 0 then
       path = vim.fn.getcwd()
     end
-    spawn_yz(nil, path)
+    spawn_yazi(nil, path)
   end)
 )
 
@@ -103,6 +103,6 @@ vim.keymap.set(
   [[<leader>t]],
   async(function()
     local path = vim.fn.getcwd()
-    spawn_yz(nil, path)
+    spawn_yazi(nil, path)
   end)
 )
