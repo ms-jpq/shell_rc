@@ -1,4 +1,5 @@
 local async = require "go.async"
+local lib = require "go"
 
 local termstart = async.wrap(function(cmd, env, die)
   local buf = vim.api.nvim_create_buf(false, true)
@@ -59,15 +60,26 @@ local spawn_yz = function(use_cwd)
     if vim.fn.filereadable(tmp) == 1 then
       local select = vim.fn.readblob(tmp)
       local escaped = vim.fn.fnameescape(select)
-      if vim.fn.isdirectory(select) == 1 then
-        vim.cmd.cd(escaped)
-      else
-        vim.cmd.edit(escaped)
-      end
+      vim.cmd.edit(escaped)
     end
     die()
   end)
 end
+
+-- replace directory buffers with yazi
+vim.api.nvim_create_autocmd("BufEnter", {
+  group = lib.group,
+  callback = async(function(args)
+    local name = vim.api.nvim_buf_get_name(args.buf)
+    if name ~= "" and vim.fn.isdirectory(name) == 1 then
+      spawn_yz(function()
+        return name
+      end)()
+      vim.cmd [[startinsert]]
+      vim.api.nvim_buf_delete(args.buf, { force = true })
+    end
+  end),
+})
 
 vim.keymap.set(
   "n",
