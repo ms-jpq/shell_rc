@@ -10,9 +10,14 @@ vim.opt.grepprg = [[rg\ --vimgrep]]
 vim.keymap.set("n", "<leader>h", [[<cmd>call setreg('/', '')<cr>]])
 
 do
-  Go.findfunc = function(arg)
+  Go.findfunc = function(search, init)
     local cwd = vim.fn.getcwd()
-    local proc = vim.system({ "fd", "--hidden", "--no-ignore-parent", "--print0", "--", arg }, { cwd = cwd }):wait()
+    if init then
+      search = string.gsub(search, ".", ".*%0") .. ".*"
+    end
+
+    local argv = { "fd", "--hidden", "--no-ignore-parent", "--full-path", "--print0", "--", search }
+    local proc = vim.system(argv, { cwd = cwd }):wait()
     return vim.split(proc.stdout, "\0", { plain = true, trimempty = true })
   end
 
