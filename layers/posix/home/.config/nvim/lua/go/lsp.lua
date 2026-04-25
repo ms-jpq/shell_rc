@@ -8,7 +8,7 @@ vim.lsp.inline_completion.enable(true)
 vim.lsp.linked_editing_range.enable(true)
 vim.lsp.semantic_tokens.enable(true)
 
-vim.api.nvim_create_autocmd("LspAttach", {
+vim.api.nvim_create_autocmd({ "LspAttach" }, {
   group = lib.group,
   callback = function(args)
     if vim.b.__attached__ then

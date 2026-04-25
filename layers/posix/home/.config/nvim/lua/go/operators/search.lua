@@ -39,7 +39,7 @@ do
     local line = "%s" .. sep .. reg .. sep .. sep .. "g"
     vim.fn.setreg("/", reg)
 
-    vim.api.nvim_create_autocmd("CmdlineEnter", {
+    vim.api.nvim_create_autocmd({ "CmdlineEnter" }, {
       group = group,
       once = true,
       pattern = ":",

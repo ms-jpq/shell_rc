@@ -69,7 +69,7 @@ local spawn_yazi = function(buf, path)
 end
 
 -- replace directory buffers with yazi
-vim.api.nvim_create_autocmd("BufEnter", {
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
   group = lib.group,
   callback = async(function(args)
     local name = vim.api.nvim_buf_get_name(args.buf)

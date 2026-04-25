@@ -11,7 +11,7 @@ do
   -- show cursor
   vim.opt.cursorline = true
 
-  vim.api.nvim_create_autocmd("InsertEnter", {
+  vim.api.nvim_create_autocmd({ "InsertEnter" }, {
     group = lib.group,
     callback = function()
       vim.b.__column_highlight__ = vim.o.cursorcolumn
@@ -21,7 +21,7 @@ do
     end,
   })
 
-  vim.api.nvim_create_autocmd("InsertLeave", {
+  vim.api.nvim_create_autocmd({ "InsertLeave" }, {
     group = lib.group,
     callback = function()
       local cc = vim.b.__column_highlight__

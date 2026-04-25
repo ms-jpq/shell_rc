@@ -6,7 +6,7 @@ vim.opt.sessionoptions:remove { "blank", "buffers", "curdir", "help", "terminal"
 vim.opt.sessionoptions:append { "skiprtp" }
 
 -- scratch buffer
-vim.api.nvim_create_autocmd("BufEnter", {
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
   group = lib.group,
   callback = function(args)
     if vim.api.nvim_buf_get_name(args.buf) == "" and vim.bo[args.buf].buftype == "" then

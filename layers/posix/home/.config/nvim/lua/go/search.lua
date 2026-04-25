@@ -26,7 +26,7 @@ vim.keymap.set("n", "g*", "g*N")
 vim.keymap.set("n", "g#", "g#N")
 
 -- use no magic
-vim.api.nvim_create_autocmd("CmdlineEnter", {
+vim.api.nvim_create_autocmd({ "CmdlineEnter" }, {
   group = lib.group,
   pattern = { "/", [[\?]] },
   callback = function()
