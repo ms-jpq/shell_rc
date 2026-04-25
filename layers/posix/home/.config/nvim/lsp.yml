@@ -35,8 +35,6 @@ lemminx:
   extensions:
     .xml: xml
 
-ast_grep:
-
 # marksman:
 
 # markdown:
