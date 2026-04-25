@@ -9,6 +9,15 @@ vim.opt.grepprg = [[rg\ --vimgrep]]
 -- clear hlsearch result
 vim.keymap.set("n", "<leader>h", [[<cmd>call setreg('/', '')<cr>]])
 
+do
+  Go.findfunc = function(arg)
+    local proc = vim.system({ "fd", "--hidden", "--no-ignore-parent", "--print0", "--", arg }):wait()
+    return vim.split(proc.stdout, "\0", { plain = true, trimempty = true })
+  end
+
+  vim.opt.findfunc = [[v:lua.Go.findfunc]]
+end
+
 -- search without moving
 vim.keymap.set("n", "*", "*N")
 vim.keymap.set("n", "#", "#N")
