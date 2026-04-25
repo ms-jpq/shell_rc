@@ -75,6 +75,10 @@ vim.api.nvim_create_autocmd("BufEnter", {
     local name = vim.api.nvim_buf_get_name(args.buf)
     if name ~= "" and vim.fn.isdirectory(name) == 1 then
       async.scheduled()
+      if not vim.api.nvim_buf_is_valid(args.buf) then
+        return
+      end
+
       vim.opt.cursorline = false
       vim.opt.cursorcolumn = false
       spawn_yazi(args.buf, name)

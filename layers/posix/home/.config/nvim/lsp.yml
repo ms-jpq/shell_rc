@@ -288,6 +288,8 @@ lua_ls:
     Lua:
       runtime:
         version: "Lua 5.1"
+      codeLens:
+        enable: false
 
 ansiblels:
 
