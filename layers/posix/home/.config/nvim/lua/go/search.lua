@@ -11,7 +11,8 @@ vim.keymap.set("n", "<leader>h", [[<cmd>call setreg('/', '')<cr>]])
 
 do
   Go.findfunc = function(arg)
-    local proc = vim.system({ "fd", "--hidden", "--no-ignore-parent", "--print0", "--", arg }):wait()
+    local cwd = vim.fn.getcwd()
+    local proc = vim.system({ "fd", "--hidden", "--no-ignore-parent", "--print0", "--", arg }, { cwd = cwd }):wait()
     return vim.split(proc.stdout, "\0", { plain = true, trimempty = true })
   end
 
