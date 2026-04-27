@@ -1,7 +1,14 @@
 #!/usr/bin/env -S -- PYTHONSAFEPATH= /usr/bin/python3
 
 from argparse import ArgumentParser, Namespace
-from collections.abc import Iterable, Iterator, Mapping, MutableMapping, MutableSequence
+from collections.abc import (
+    Generator,
+    Iterable,
+    Iterator,
+    Mapping,
+    MutableMapping,
+    MutableSequence,
+)
 from configparser import RawConfigParser
 from contextlib import contextmanager, nullcontext
 from functools import lru_cache
@@ -124,7 +131,7 @@ def _print(key: str, val: str) -> None:
 
 
 @contextmanager
-def _man() -> Iterator[None]:
+def _man() -> Generator[None]:
     if _isatty():
         getLogger().info("%s", f"<<")
     try:

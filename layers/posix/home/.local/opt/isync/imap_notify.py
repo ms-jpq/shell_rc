@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- PYTHONSAFEPATH= python3
 
 from argparse import ArgumentParser, Namespace
-from collections.abc import Iterator
+from collections.abc import Generator, Iterator
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager, nullcontext, suppress
 from functools import cache, lru_cache, partial
@@ -50,7 +50,7 @@ def _auth(authn: str, user: str, now: int) -> bytes:
 
 
 @contextmanager
-def _imap(host: str, authn: str, user: str) -> Iterator[IMAP4]:
+def _imap(host: str, authn: str, user: str) -> Generator[IMAP4]:
     now = int(monotonic() / _MINUTE)
     with _lock():
         auth = _auth(authn, user=user, now=now)
