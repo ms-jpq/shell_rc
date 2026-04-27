@@ -16,17 +16,10 @@ local run = function(stdin, args)
 end
 
 local parse_panes = function()
+  local fmt =
+    { "#{pane_id}", "#{window_id}", "#{window_active}", "#{session_name} -> #{window_index} -> #{pane_index}" }
   local win = run(nil, { "tmux", "display-message", "-p", "-F", "#{window_id}" })
-  local listed = run(nil, {
-    "tmux",
-    "list-panes",
-    "-a",
-    "-F",
-    table.concat(
-      { "#{pane_id}", "#{window_id}", "#{window_active}", "#{session_name} -> #{window_index} -> #{pane_index}" },
-      rand
-    ),
-  })
+  local listed = run(nil, { "tmux", "list-panes", "-a", "-F", table.concat(fmt, rand) })
 
   async.scheduled()
 
