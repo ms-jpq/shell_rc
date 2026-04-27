@@ -141,21 +141,21 @@ def _man() -> Generator[None]:
             getLogger().info("%s", f"<<")
 
 
+@_man()
 def _trans(
     stream: Iterable[Tuple[str, Optional[str]]], env: Mapping[str, str]
 ) -> Mapping[str, str]:
     seen: MutableMapping[str, str] = {}
 
-    with _man():
-        for key, val in stream:
-            if val is None:
-                es = repr(ValueError(key))
-                getLogger().error("%s", f">! {es}")
-                exit(True)
+    for key, val in stream:
+        if val is None:
+            es = repr(ValueError(key))
+            getLogger().error("%s", f">! {es}")
+            exit(True)
 
-            if key not in env:
-                seen[key] = val = _subst(val, env={**seen, **env})
-            _print(key, val)
+        if key not in env:
+            seen[key] = val = _subst(val, env={**seen, **env})
+        _print(key, val)
 
     return seen
 
