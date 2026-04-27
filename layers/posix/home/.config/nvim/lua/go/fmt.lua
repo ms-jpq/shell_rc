@@ -34,7 +34,7 @@ local fmt_command = function(workdir, buf)
 end
 
 local fmt = function()
-  if not vim.bo.modifiable or vim.bo.readonly then
+  if not vim.bo.modifiable then
     return
   end
 
