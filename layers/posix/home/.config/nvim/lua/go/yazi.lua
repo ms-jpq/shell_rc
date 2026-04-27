@@ -51,21 +51,23 @@ local termstart = async.wrap(function(buf, cmd, cb)
 end)
 
 local spawn_yazi = function(buf, path)
-  local tmp = vim.fn.tempname()
+  lib.scope(function(defer)
+    defer(file_exp_die())
 
-  local cmd = { "yazi", "--chooser-file", tmp, "--", path }
-  local die = file_exp_die()
+    local tmp = vim.fn.tempname()
+    defer(function()
+      vim.fs.rm(tmp, { force = true })
+    end)
 
-  termstart(buf, cmd)
+    local cmd = { "yazi", "--chooser-file", tmp, "--", path }
+    termstart(buf, cmd)
 
-  if vim.fn.filereadable(tmp) == 1 then
-    local select = vim.fn.readblob(tmp)
-    local escaped = vim.fn.fnameescape(select)
-    vim.cmd.edit(escaped)
-  end
-
-  vim.fs.rm(tmp, { force = true })
-  die()
+    if vim.fn.filereadable(tmp) == 1 then
+      local select = vim.fn.readblob(tmp)
+      local escaped = vim.fn.fnameescape(select)
+      vim.cmd.edit(escaped)
+    end
+  end)
 end
 
 local netrw = function(args)

@@ -154,14 +154,19 @@ local seek = function(match, row, direction)
 end
 
 local highlight = function(buf, lo, hi, fn)
-  async.scheduled()
+  lib.scope(function(defer)
+    async.scheduled()
 
-  hi = math.max(0, hi - 1)
-  local line = unpack(vim.api.nvim_buf_get_lines(0, hi, hi + 1, true))
-  vim.highlight.range(buf, ns, "HighlightedyankRegion", { lo, 0 }, { hi, #line }, { inclusive = false })
-  fn()
-  async.sleep(66)
-  vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+    hi = math.max(0, hi - 1)
+    local line = unpack(vim.api.nvim_buf_get_lines(0, hi, hi + 1, true))
+    vim.highlight.range(buf, ns, "HighlightedyankRegion", { lo, 0 }, { hi, #line }, { inclusive = false })
+    defer(function()
+      vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+    end)
+
+    fn()
+    async.sleep(66)
+  end)
 end
 
 local repl = function()
