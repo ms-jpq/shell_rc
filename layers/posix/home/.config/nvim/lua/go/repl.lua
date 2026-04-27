@@ -148,13 +148,13 @@ end
 local highlight = function(buf, lo, hi, fn)
   lib.scope(function(defer)
     async.scheduled()
+    defer(function()
+      vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+    end)
 
     hi = math.max(0, hi - 1)
     local line = unpack(vim.api.nvim_buf_get_lines(0, hi, hi + 1, true))
     vim.highlight.range(buf, ns, "HighlightedyankRegion", { lo, 0 }, { hi, #line }, { inclusive = false })
-    defer(function()
-      vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-    end)
 
     fn()
     async.sleep(66)
