@@ -11,22 +11,13 @@ vim.api.nvim_create_user_command("REPLclear", function()
 end, {})
 
 local run = function(stdin, args)
-  local ok, ret = pcall(async.system, args, { stdin = stdin })
-  if not ok then
-    vim.notify(ret, vim.log.levels.ERROR)
-    return false, ""
-  end
-
-  local k = ret.code == 0
-  if not k then
-    vim.notify(vim.inspect(ret), vim.log.levels.ERROR)
-  end
-  return k, ret.stdout
+  local proc = async.system(args, { stdin = stdin })
+  return proc.stdout
 end
 
 local parse_panes = function()
-  local ok1, win = run(nil, { "tmux", "display-message", "-p", "-F", "#{window_id}" })
-  local ok2, listed = run(nil, {
+  local win = run(nil, { "tmux", "display-message", "-p", "-F", "#{window_id}" })
+  local listed = run(nil, {
     "tmux",
     "list-panes",
     "-a",
@@ -41,7 +32,7 @@ local parse_panes = function()
 
   local win_id = vim.fn.trim(win)
   local lines = vim.split(listed, "\n", { plain = true, trimempty = true })
-  return ok1 and ok2, win_id, lines
+  return win_id, lines
 end
 
 local pick_pane = function(buf, pane_id)
@@ -50,10 +41,7 @@ local pick_pane = function(buf, pane_id)
     return state.__tmux_target__
   end
 
-  local ok, win_id, lines = parse_panes()
-  if not ok then
-    return
-  end
+  local win_id, lines = parse_panes()
 
   local acc = {}
   for idx, line in ipairs(lines) do
@@ -113,19 +101,23 @@ local process = function(buf, stdin)
     found = vim.fs.joinpath(filters, "_.awk")
   end
 
-  local ok, text = run(stdin, { found })
-  return ok and text or ""
+  return run(stdin, { found })
 end
 
 local tmux_send = function(pane_id, text)
-  local _ = run(text, { "tmux", "load-buffer", "-b", tmux_buf, "--", "-" })
-  local _ = run(nil, { "tmux", "paste-buffer", "-r", "-p", "-b", tmux_buf, "-t", pane_id })
-  local _ = run(nil, { "tmux", "delete-buffer", "-b", tmux_buf })
+  lib.scope(function(defer)
+    defer(function()
+      run(nil, { "tmux", "delete-buffer", "-b", tmux_buf })
+    end)
+
+    run(text, { "tmux", "load-buffer", "-b", tmux_buf, "--", "-" })
+    run(nil, { "tmux", "paste-buffer", "-r", "-p", "-b", tmux_buf, "-t", pane_id })
+  end)
 end
 
 local eof = function(pane_id)
   async.sleep(99)
-  local _ = run(nil, { "tmux", "send-keys", "-t", pane_id, "--", "Enter" })
+  run(nil, { "tmux", "send-keys", "-t", pane_id, "--", "Enter" })
 end
 
 local matching = function(buf)
