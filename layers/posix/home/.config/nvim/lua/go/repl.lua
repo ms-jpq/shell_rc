@@ -21,8 +21,6 @@ local parse_panes = function()
   local win = run(nil, { "tmux", "display-message", "-p", "-F", "#{window_id}" })
   local listed = run(nil, { "tmux", "list-panes", "-a", "-F", table.concat(fmt, rand) })
 
-  async.scheduled()
-
   local win_id = vim.fn.trim(win)
   local lines = vim.split(listed, "\n", { plain = true, trimempty = true })
   return win_id, lines
@@ -77,6 +75,7 @@ local pick_pane = function(buf, pane_id)
     return table.concat({ info, postfix }, " ")
   end
 
+  async.scheduled()
   local item = async.ui.select(acc, { format_item = format })
   if item == nil then
     return nil
