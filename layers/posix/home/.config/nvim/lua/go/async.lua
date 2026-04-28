@@ -11,7 +11,7 @@ local future = function()
     else
       local ok, msg = coroutine.resume(thread, ...)
       if not ok then
-        error(msg)
+        error(msg, 0)
       end
     end
   end
@@ -58,7 +58,7 @@ local thunk = function(fn, token)
     local ok, ret = coroutine.resume(thread)
     if not ok then
       local tb = debug.traceback(thread, ret)
-      error(tb)
+      error(tb, 0)
     end
   end
 end

@@ -27,7 +27,7 @@ return {
     if ok then
       return ret
     else
-      error(ret)
+      error(ret, 0)
     end
   end,
   read_json = function(path)
