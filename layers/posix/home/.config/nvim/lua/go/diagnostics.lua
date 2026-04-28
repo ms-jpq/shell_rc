@@ -23,12 +23,12 @@ end)
 
 vim.keymap.set("n", "[d", function()
   local severity = highest_severity(0)
-  vim.diagnostic.jump { count = vim.v.count1, severity = severity }
+  vim.diagnostic.jump { count = -vim.v.count1, severity = severity }
 end)
 
 vim.keymap.set("n", "]d", function()
   local severity = highest_severity(0)
-  vim.diagnostic.setqflist { count = vim.v.count1, severity = severity }
+  vim.diagnostic.jump { count = vim.v.count1, severity = severity }
 end)
 
 vim.keymap.set("n", [[<leader>d]], function()
