@@ -10,7 +10,6 @@
 *.tfstate
 *.tfstate.*
 *.tfvars
-.claude/
 .DS_Store
 .exp/
 .git/

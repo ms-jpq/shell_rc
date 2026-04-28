@@ -3,7 +3,11 @@
 local group = [[lv_go]]
 vim.api.nvim_create_augroup(group, { clear = true })
 
-local is_win = vim.fn.has [[win32]] == 1 or vim.fn.has [[win32unix]] == 1
+local is_win = vim.fn.has [[win64]] == 1
+  or vim.fn.has [[win64unix]] == 1
+  or vim.fn.has [[win32]] == 1
+  or vim.fn.has [[win32unix]] == 1
+local is_linux = vim.fn.has [[linux]]
 
 return {
   group = group,
@@ -54,8 +58,9 @@ return {
       return {}
     end
 
+    local oom = is_linux and { "choom", "--adjust", "1000", "--" } or {}
     local exec = vim.fs.joinpath(vim.env.HOME, ".local", "opt", "sandbox", "libexec", "dispatch.sh")
     local net = opts.network and { "--network" } or {}
-    return vim.iter({ { "nice", "-n", "19", "--", exec }, net, { "--dir", workdir, "--" } }):flatten():totable()
+    return vim.iter({ { "nice", "-n", "19", "--" }, oom, { exec }, net, { "--dir", workdir, "--" } }):flatten():totable()
   end,
 }
