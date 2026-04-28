@@ -7,7 +7,7 @@ local is_win = vim.fn.has [[win64]] == 1
   or vim.fn.has [[win64unix]] == 1
   or vim.fn.has [[win32]] == 1
   or vim.fn.has [[win32unix]] == 1
-local is_linux = vim.fn.has [[linux]]
+local is_linux = vim.fn.has [[linux]] == 1
 
 return {
   group = group,
