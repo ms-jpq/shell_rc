@@ -11,6 +11,11 @@ local build_overrides = function(conf)
   return acc
 end
 
+if not coq then
+  -- basic autocomplete
+  vim.opt.autocomplete = true
+end
+
 return function()
   local acc = {}
 
