@@ -30,9 +30,6 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
   group = lib.group,
   once = true,
   callback = async(function()
-    local lsp_on = require "go.pack.lsp"
-    lsp_on()
-
     async.scheduled()
 
     safe_require "go.pack.coq-nvim"
@@ -40,6 +37,9 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
     for _, file in pairs(globbed) do
       vim.cmd.source(file)
     end
+    local lsp_on = require "go.pack.lsp"
+    lsp_on()
+
     if not coq then
       -- basic autocomplete
       vim.opt.autocomplete = true
