@@ -1,18 +1,6 @@
-local lib = require "go"
-
--- set terminal title
-vim.opt.title = true
-vim.opt.titlestring = [[「%t」]]
-
-vim.api.nvim_create_autocmd({ "BufEnter" }, {
-  group = lib.group,
-  pattern = { "*.txt" },
-  callback = function()
-    if vim.bo.filetype == "help" then
-      vim.cmd.wincmd "T"
-    end
-  end,
-})
+vim.api.nvim_create_user_command("FTdetect", function()
+  vim.cmd [[filetype detect]]
+end, {})
 
 -- Go.reap = function()
 --   local children = vim.api.nvim_get_proc_children(pid)

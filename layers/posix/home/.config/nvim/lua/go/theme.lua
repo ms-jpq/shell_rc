@@ -1,5 +1,9 @@
 local lib = require "go"
 
+-- set terminal title
+vim.opt.title = true
+vim.opt.titlestring = [[「%t」]]
+
 -- use 256 colours
 vim.opt.termguicolors = true
 
