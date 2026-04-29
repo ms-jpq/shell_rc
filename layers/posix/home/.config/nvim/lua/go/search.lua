@@ -40,13 +40,13 @@ vim.api.nvim_create_autocmd({ "CmdlineEnter" }, {
 })
 
 do
-  local function with_redraw(wrapped)
-    local l = [[<cmd>set lazyredraw<cr><cmd>set noincsearch<cr>]]
-    local r = [[<cmd>nohlsearch<cr><cmd>set incsearch<cr><cmd>set nolazyredraw<cr>]]
-    return l .. wrapped .. r
-  end
+  -- local function with_redraw(wrapped)
+  --   local l = [[<cmd>set lazyredraw<cr><cmd>set noincsearch<cr>]]
+  --   local r = [[<cmd>nohlsearch<cr><cmd>set incsearch<cr><cmd>set nolazyredraw<cr>]]
+  --   return l .. wrapped .. r
+  -- end
 
   -- () search next params
-  vim.keymap.set({ "n", "v" }, "(", with_redraw [[?(\|[\|{<cr>]])
-  vim.keymap.set({ "n", "v" }, ")", with_redraw [[/)\|]\|}<cr>]])
+  -- vim.keymap.set({ "n", "x" }, "(", with_redraw [[?(\|[\|{<cr>]])
+  -- vim.keymap.set({ "n", "x" }, ")", with_redraw [[/)\|]\|}<cr>]])
 end
