@@ -105,9 +105,15 @@
     "https://github.com/junegunn/fzf.vim": ["--lazy"],
     "https://github.com/junegunn/vim-easy-align": ["--lazy"],
     "https://github.com/lewis6991/gitsigns.nvim": ["--lazy"],
-    "https://github.com/ms-jpq/coq.artifacts": [],
-    "https://github.com/ms-jpq/coq.thirdparty": [],
-    "https://github.com/ms-jpq/coq_nvim": ["python3", "-m", "coq", "deps"],
+    "https://github.com/ms-jpq/coq.artifacts": ["--lazy"],
+    "https://github.com/ms-jpq/coq.thirdparty": ["--lazy"],
+    "https://github.com/ms-jpq/coq_nvim": [
+      "--lazy",
+      "python3",
+      "-m",
+      "coq",
+      "deps"
+    ],
     "https://github.com/ms-jpq/snips": [],
     "https://github.com/neovim/nvim-lspconfig": [],
     "https://github.com/nvim-treesitter/nvim-treesitter": [],
