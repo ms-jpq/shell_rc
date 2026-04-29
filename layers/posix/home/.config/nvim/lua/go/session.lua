@@ -11,7 +11,6 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
   callback = function(args)
     if vim.api.nvim_buf_get_name(args.buf) == "" and vim.bo[args.buf].buftype == "" then
       vim.bo[args.buf].buftype = "nofile"
-      vim.bo[args.buf].filetype = "markdown"
     end
   end,
 })
