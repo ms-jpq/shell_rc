@@ -43,6 +43,7 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
   once = true,
   callback = async(function()
     async.scheduled()
+
     local globbed = vim.fn.globpath(opt, "*/plugin/*.{lua,vim}", true, true)
     for _, file in pairs(globbed) do
       vim.cmd.source(file)
@@ -52,7 +53,6 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
     safe_require "go.pack.fzf"
     safe_require "go.pack.gitsigns"
     safe_require "go.pack.illuminate"
-
     safe_require "go.pack.leap"
   end),
 })
