@@ -28,30 +28,31 @@ return function()
     if type(argv) ~= "table" then
       vim.notify([[☠️ ]] .. name, vim.log.levels.ERROR)
     else
-      vim.api.nvim_create_autocmd("FileType", {
-        group = lib.group,
-        pattern = merged.filetypes or { "*" },
-        once = true,
-        callback = function()
-          local bin = unpack(argv)
-          if bin and vim.fn.executable(bin) == 1 then
-            if coq then
-              overrides = coq.lsp_ensure_capabilities(overrides)
-            end
-
-            overrides.cmd = function(dispatchers, config)
-              local workdir = (config or {}).root_dir or vim.fn.getcwd()
-              local cmd = vim.iter({ lib.sandbox(workdir, conf.sandbox or {}), argv }):flatten():totable()
-
-              return vim.lsp.rpc.start(cmd, dispatchers)
-            end
-            vim.lsp.config(name, overrides)
-            vim.lsp.enable(name)
-          end
-        end,
-      })
       table.insert(acc, { merged, conf.extensions or vim.empty_dict() })
     end
+
+    vim.api.nvim_create_autocmd("FileType", {
+      group = lib.group,
+      pattern = merged.filetypes or { "*" },
+      once = true,
+      callback = function()
+        local bin = unpack(argv)
+        if bin and vim.fn.executable(bin) == 1 then
+          if coq then
+            overrides = coq.lsp_ensure_capabilities(overrides)
+          end
+
+          overrides.cmd = function(dispatchers, config)
+            local workdir = (config or {}).root_dir or vim.fn.getcwd()
+            local cmd = vim.iter({ lib.sandbox(workdir, conf.sandbox or {}), argv }):flatten():totable()
+
+            return vim.lsp.rpc.start(cmd, dispatchers)
+          end
+          vim.lsp.config(name, overrides)
+          vim.lsp.enable(name)
+        end
+      end,
+    })
   end
 
   return acc
