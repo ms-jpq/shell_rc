@@ -63,8 +63,10 @@ local spawn_yazi = function(buf, path)
     termstart(buf, cmd)
 
     if vim.fn.filereadable(tmp) == 1 then
-      local select = vim.fn.readblob(tmp)
-      local escaped = vim.fn.fnameescape(select)
+      local selected = vim.fn.readblob(tmp)
+      local parsed = string.match(selected, [[.*/(/.*)]]) or selected
+
+      local escaped = vim.fn.fnameescape(parsed)
       vim.cmd.edit(escaped)
     end
   end)
