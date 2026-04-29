@@ -1,6 +1,16 @@
 local lib = require "go"
 local lsp_path = vim.fs.joinpath(vim.fn.stdpath "config", "apriori", "lsp.json")
 
+local build_overrides = function(conf)
+  local acc = { detached = false }
+  for _, k in pairs { "cmd", "filetypes", "init_options", "settings" } do
+    if conf[k] and conf[k] ~= vim.NIL then
+      acc[k] = conf[k]
+    end
+  end
+  return acc
+end
+
 return function()
   local acc = {}
 
@@ -9,19 +19,15 @@ return function()
     if conf == vim.NIL then
       conf = {}
     end
-
-    local overrides = { detached = false }
-    for _, k in pairs { "cmd", "filetypes", "init_options", "settings" } do
-      if conf[k] and conf[k] ~= vim.NIL then
-        overrides[k] = conf[k]
-      end
-    end
+    local overrides = build_overrides(conf)
 
     vim.lsp.config(name, overrides)
     local merged = vim.lsp.config[name]
     local argv = merged.cmd
 
-    if type(argv) == "table" then
+    if type(argv) ~= "table" then
+      vim.notify([[☠️ ]] .. name, vim.log.levels.ERROR)
+    else
       vim.api.nvim_create_autocmd("FileType", {
         group = lib.group,
         pattern = merged.filetypes or { "*" },
@@ -44,10 +50,7 @@ return function()
           end
         end,
       })
-
       table.insert(acc, { merged, conf.extensions or vim.empty_dict() })
-    else
-      vim.notify([[☠️ ]] .. name, vim.log.levels.ERROR)
     end
   end
 
