@@ -9,11 +9,8 @@ SRC="${2:-"$(cat)"}"
 FMT="${FMT:-"$SRC"}"
 
 case "$OSTYPE" in
-linux*)
-  T='tar'
-  ;;
-darwin*)
-  T='/usr/bin/tar'
+linux* | darwin*)
+  T='bsdtar'
   ;;
 msys)
   # shellcheck disable=SC2154
@@ -34,12 +31,8 @@ case "$FMT" in
 *.tar.bz | *.tar.bz2 | *.tbz | *.tbz2 | *.tar.gz | *.tgz | *.tar.xz | *.txz | *.tar.zst)
   "${TAR[@]}"
   ;;
-*.zip | *.vsix)
-  if [[ $OSTYPE == linux* ]]; then
-    unzip -o -d "$DST" -q -- "$SRC"
-  else
-    "${TAR[@]}"
-  fi
+*.zip | *.vsix | *.sit)
+  "${TAR[@]}"
   ;;
 *.gz | *.xz)
   NAME="$DST/$(basename -- "$SRC")"

@@ -17,9 +17,7 @@ val builder =
         .parse(root.resolve("maven-metadata.xml").toString())
 
 val version =
-    XPathFactory.newInstance()
-        .newXPath()
-        .evaluate("/metadata/versioning/release", builder)
+    XPathFactory.newInstance().newXPath().evaluate("/metadata/versioning/release", builder)
 
 val jar = root.resolve("$version/ktfmt-$version-with-dependencies.jar").toString()
 val proc = ProcessBuilder("env", "--", "get.sh", jar).redirectError(Redirect.INHERIT).start()

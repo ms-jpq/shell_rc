@@ -1,12 +1,13 @@
 #!/usr/bin/env -S -- kotlinc -script
 import java.lang.ProcessBuilder.Redirect
+import java.nio.file.Files
 import kotlin.io.path.Path
-import kotlin.io.path.createDirectories
 import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.deleteIfExists
 
+val run = Path(System.getenv("RUN")!!)
 val lib = Path(System.getenv("LIB")!!)
-val sh = lib.resolve("kotlin-lsp.sh")
+val launcher = lib.resolve("bin").resolve("intellij-server")
 val bin = Path(System.getenv("BIN")!!).resolve("kotlin-lsp")
 val repo = "Kotlin/kotlin-lsp"
 
@@ -19,34 +20,33 @@ if (code != 0) {
   System.exit(code)
 }
 
-val uri =
-    {
-      val version = String(p1.getInputStream().readAllBytes()).replaceFirst("kotlin-lsp/v", "")
-      val name = System.getProperty("os.name")
-      val os =
-          when {
-            name.startsWith("Windows") -> "win"
-            name.startsWith("Mac") -> "mac"
-            else -> "linux"
-          }
+val version = String(p1.getInputStream().readAllBytes()).replaceFirst("kotlin-lsp/v", "")
 
-      val arch =
-          when (System.getProperty("os.arch")) {
-            "aarch64",
-            "army64" -> "aarch64"
-            else -> "x64"
-          }
+val ext =
+    when {
+      System.getProperty("os.name").startsWith("Windows") -> "win.zip"
+      System.getProperty("os.name").startsWith("Mac") -> "sit"
+      else -> "tar.gz"
+    }
 
-      "https://download-cdn.jetbrains.com/kotlin-lsp/$version/kotlin-lsp-$version-$os-$arch.zip"
-    }()
+val arch =
+    when (System.getProperty("os.arch")) {
+      "aarch64",
+      "army64" -> "-aarch64"
+      else -> ""
+    }
 
-lib.toFile().mkdirs()
+val dir = "kotlin-server-$version"
+
+val uri = "https://download-cdn.jetbrains.com/kotlin-lsp/$version/$dir$arch.$ext"
+
+run.toFile().mkdirs()
 
 val procs =
     ProcessBuilder.startPipeline(
         listOf(
             ProcessBuilder("env", "--", "get.sh", uri).redirectError(Redirect.INHERIT),
-            ProcessBuilder("env", "--", "unpack.sh", lib.toString())
+            ProcessBuilder("env", "--", "unpack.sh", run.toString())
                 .redirectOutput(Redirect.INHERIT)
                 .redirectError(Redirect.INHERIT),
         )
@@ -59,8 +59,10 @@ procs.forEach {
   }
 }
 
-bin.getParent().createDirectories()
+lib.toFile().deleteRecursively()
+
+Files.move(run.resolve(dir), lib)
 
 bin.deleteIfExists()
 
-bin.createSymbolicLinkPointingTo(sh)
+bin.createSymbolicLinkPointingTo(launcher)
