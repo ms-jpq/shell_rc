@@ -3,15 +3,17 @@
 set -o pipefail
 
 SCRIPT="$HOME/Library/Script Libraries"
+CACHE="$HOME/Library/Caches"
 mkdir -v -p -- "$SCRIPT"
 
 declare -A -- LINKS=()
 LINKS=(
-  ["$HOME/.cache"]="$HOME/Library/Caches"
+  ["$HOME/.cache"]="$CACHE"
   ["$HOME/.config"]="$HOME/Library/Preferences"
   ["$HOME/.local/opt"]="$HOME/Applications"
   ["$HOME/.local/scripts"]="$SCRIPT"
   ["$HOME/.local/share"]="$HOME/Library/Application Support"
+  ["$HOME/.local/state"]="$CACHE"
 )
 
 for FROM in "${!LINKS[@]}"; do
