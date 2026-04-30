@@ -8,6 +8,8 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.deleteIfExists
 
+val name = System.getProperty("os.name")
+val win = name.startsWith("Windows")
 val run = Path(System.getenv("RUN")!!)
 val lib = Path(System.getenv("LIB")!!)
 val launcher = lib.resolve("bin").resolve("intellij-server")
@@ -27,8 +29,8 @@ val version = String(p1.getInputStream().readAllBytes()).replaceFirst("kotlin-ls
 
 val ext =
     when {
-      System.getProperty("os.name").startsWith("Windows") -> "win.zip"
-      System.getProperty("os.name").startsWith("Mac") -> "sit"
+      win -> "win.zip"
+      name.startsWith("Mac") -> "sit"
       else -> "tar.gz"
     }
 
@@ -66,7 +68,9 @@ lib.toFile().deleteRecursively()
 
 lib.createDirectories()
 
-run.resolve(dir).copyToRecursively(lib, followLinks = false)
+val src = if (win) run.resolve("extension").resolve("server") else run.resolve(dir)
+
+src.copyToRecursively(lib, followLinks = false)
 
 bin.getParent().createDirectories()
 

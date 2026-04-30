@@ -23,7 +23,8 @@ do
   local function has_text_before_cursor()
     local _, col = unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
-    return string.match(string.sub(line, 1, col), "%S") ~= nil
+    local before_cursor = string.sub(line, 1, col)
+    return string.match(before_cursor, "%S") ~= nil
   end
 
   vim.keymap.set("i", [[<cr>]], function()
