@@ -54,7 +54,7 @@ jobs:
           eval -- "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           CLJ="$(command -v -- clojure)"
           sudo -- ln -v -s -- "$CLJ" /usr/local/bin/clojure
-          clojure -version
+          mkdir -p ~/.config/clojure/.cpcache
 
       - run: |-
           gmake lint
@@ -83,7 +83,7 @@ jobs:
       - run: |-
           brew install -- bash make gnu-getopt coreutils
           rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
-          clojure -version
+          mkdir -p ~/.config/clojure/.cpcache
 
       - env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
