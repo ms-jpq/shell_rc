@@ -2,6 +2,7 @@
 import java.lang.ProcessBuilder.Redirect
 import java.nio.file.Files
 import kotlin.io.path.Path
+import kotlin.io.path.createDirectories
 import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.deleteIfExists
 
@@ -62,6 +63,8 @@ procs.forEach {
 lib.toFile().deleteRecursively()
 
 Files.move(run.resolve(dir), lib)
+
+bin.getParent().createDirectories()
 
 bin.deleteIfExists()
 
