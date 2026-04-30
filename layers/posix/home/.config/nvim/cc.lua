@@ -7,7 +7,7 @@ vim.opt.rtp:append {
 }
 
 require "lspconfig"
-local lsp_on = require "go.pack.lsp"
+local lsp_on = require "go.pack.lsps"
 
 local filetypes = {}
 for ext, filetype in pairs(vim.filetype.inspect().extension) do
