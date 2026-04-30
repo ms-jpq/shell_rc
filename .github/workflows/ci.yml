@@ -39,6 +39,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - uses: actions/setup-java@v5
+        with:
+          distribution: "microsoft"
+          java-version: "25"
+
       - run: |-
           sudo -- apt-get update
           sudo -- apt-get install --no-install-recommends --yes -- swi-prolog-nox gnucobol moreutils libarchive-tools
@@ -69,6 +74,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - uses: actions/setup-java@v5
+        with:
+          distribution: "microsoft"
+          java-version: "25"
+
       - run: |-
           brew install -- bash make gnu-getopt coreutils
           rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
@@ -96,7 +106,7 @@ jobs:
 
       - uses: actions/setup-python@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: "microsoft"
           java-version: "25"
