@@ -1,1 +1,1 @@
-vim.keymap.set({ "n", "v" }, "ga", [[<plug>(EasyAlign)]])
+vim.keymap.set({ "n", "x" }, "ga", [[<plug>(EasyAlign)]])

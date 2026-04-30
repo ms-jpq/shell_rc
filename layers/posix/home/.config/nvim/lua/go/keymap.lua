@@ -1,6 +1,6 @@
 -- quit
-vim.keymap.set({ "n", "v" }, "Q", [[<nop>]])
-vim.keymap.set({ "n", "v" }, "QQ", [[<cmd>quitall!<cr>]])
+vim.keymap.set({ "n", "x" }, "Q", [[<nop>]])
+vim.keymap.set({ "n", "x" }, "QQ", [[<cmd>quitall!<cr>]])
 
 -- prevent macro recording
 vim.keymap.set({ "n" }, "q", [[<nop>]])
@@ -21,12 +21,12 @@ vim.keymap.set({ "c" }, [[<c-v>]], [[<c-r>"]])
 vim.keymap.set({ "t" }, [[<c-g>]], [[<c-\><c-n>]])
 
 -- dont shift move too much
-vim.keymap.set({ "v" }, [[<s-up>]], [[g<up>]])
-vim.keymap.set({ "v" }, [[<s-down>]], [[g<down>]])
+vim.keymap.set({ "x" }, [[<s-up>]], [[g<up>]])
+vim.keymap.set({ "x" }, [[<s-down>]], [[g<down>]])
 
 -- keep selected when indenting
-vim.keymap.set({ "v" }, "<", "<gv")
-vim.keymap.set({ "v" }, ">", ">gv")
+vim.keymap.set({ "x" }, "<", "<gv")
+vim.keymap.set({ "x" }, ">", ">gv")
 
 -- previous, next, line, file, omnifunc
 for _, key in pairs { "p", "n", "l", "f", "o" } do
@@ -57,37 +57,37 @@ vim.keymap.set({ "c" }, [[<m-left>]], [[<s-left>]])
 vim.keymap.set({ "c" }, [[<m-right>]], [[<s-right>]])
 
 -- add emacs key binds
-vim.keymap.set({ "n", "o", "v" }, [[<m-left>]], "b")
-vim.keymap.set({ "n", "o", "v" }, [[<m-right>]], [[e<right>]])
+vim.keymap.set({ "n", "o", "x" }, [[<m-left>]], "b")
+vim.keymap.set({ "n", "o", "x" }, [[<m-right>]], [[e<right>]])
 
 -- delete dont copy
 for _, key in pairs { "c", "C", "d", "D", "x", "X" } do
-  vim.keymap.set({ "n", "v" }, key, [["_]] .. key)
+  vim.keymap.set({ "n", "x" }, key, [["_]] .. key)
 end
 
 -- leave cursor 1 behind instead of before
 for _, key in pairs { "p", "P" } do
   vim.keymap.set({ "n" }, key, "g" .. key)
-  vim.keymap.set({ "v" }, key, [["_dg]] .. key)
+  vim.keymap.set({ "x" }, key, [["_dg]] .. key)
 end
 
 -- scroll fixed lines
-vim.keymap.set({ "n", "v" }, "{", [[5g<up>zz]])
-vim.keymap.set({ "n", "v" }, "}", [[5g<down>zz]])
+vim.keymap.set({ "n", "x", "o" }, "{", [[5g<up>zz]])
+vim.keymap.set({ "n", "x", "o" }, "}", [[5g<down>zz]])
 
 -- re-center
 for _, key in pairs { "o", "O", "c", "C", "a", "A", "v", "x", "X", "m", "M", "r", "R" } do
-  vim.keymap.set({ "n", "v" }, "z" .. key, "z" .. key .. "zz")
+  vim.keymap.set({ "n", "x" }, "z" .. key, "z" .. key .. "zz")
 end
 
 -- re-center
 for _, key in pairs { "n", "N", "[c", "]c", "<c-f>", "<c-b>" } do
-  vim.keymap.set({ "n", "v" }, key, key .. "zz")
+  vim.keymap.set({ "n", "x" }, key, key .. "zz")
 end
 
 -- movement relative to window size
 for key, val in pairs { ["<c-u>"] = "<up>", ["<c-d>"] = "<down>" } do
-  vim.keymap.set({ "n", "v" }, key, function()
+  vim.keymap.set({ "n", "x" }, key, function()
     local rel = math.floor(vim.fn.winheight(0) / 4)
     return math.max(5, math.min(rel, 9)) .. "g" .. val .. "zz"
   end, { expr = true, noremap = true })
@@ -95,13 +95,13 @@ end
 
 -- movement w linewrap
 for _, key in pairs { "<up>", "<down>", "j", "k" } do
-  vim.keymap.set({ "n", "v" }, key, function()
+  vim.keymap.set({ "n", "x" }, key, function()
     return (vim.v.count ~= 0 and "m'" .. vim.v.count or "g") .. key
   end, { expr = true, noremap = true })
 end
 
 -- cut to clipboard
-vim.keymap.set({ "v" }, "X", "d")
+vim.keymap.set({ "x" }, "X", "d")
 
 -- go to file
-vim.keymap.set({ "n", "v" }, "gx", "gF")
+vim.keymap.set({ "n", "x" }, "gx", "gF")

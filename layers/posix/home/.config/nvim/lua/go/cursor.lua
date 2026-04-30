@@ -1,7 +1,7 @@
 local async = require "go.async"
 local lib = require "go"
 
-vim.keymap.set({ "n", "v" }, "$", "$<right>")
+vim.keymap.set({ "n", "x", "o" }, "$", "$<right>")
 
 do
   -- normalize cursor pos
