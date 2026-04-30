@@ -9,34 +9,32 @@ import java.util.Objects;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
 
-public class lemminx {
-  public static void main(String args[]) throws Exception {
-    final var lib = Path.of(Objects.requireNonNull(System.getenv("LIB")));
-    final var dst = lib.resolve("org.eclipse.lemminx-uber.jar");
-    final var base =
-        URI.create(
-            "https://repo.eclipse.org/content/repositories/lemminx-releases/org/eclipse/lemminx/org.eclipse.lemminx/");
+void main() throws Exception {
+  final var lib = Path.of(Objects.requireNonNull(System.getenv("LIB")));
+  final var dst = lib.resolve("org.eclipse.lemminx-uber.jar");
+  final var base =
+      URI.create(
+          "https://repo.eclipse.org/content/repositories/lemminx-releases/org/eclipse/lemminx/org.eclipse.lemminx/");
 
-    final var builder =
-        DocumentBuilderFactory.newInstance()
-            .newDocumentBuilder()
-            .parse(base.resolve("maven-metadata.xml").toString());
-    final var version =
-        XPathFactory.newInstance()
-            .newXPath()
-            .evaluate("/metadata/versioning/versions/version[last()]", builder);
+  final var builder =
+      DocumentBuilderFactory.newInstance()
+          .newDocumentBuilder()
+          .parse(base.resolve("maven-metadata.xml").toString());
+  final var version =
+      XPathFactory.newInstance()
+          .newXPath()
+          .evaluate("/metadata/versioning/versions/version[last()]", builder);
 
-    final var uri =
-        base.resolve(version + "/")
-            .resolve("org.eclipse.lemminx-" + version + "-uber.jar")
-            .toString();
+  final var uri =
+      base.resolve(version + "/")
+          .resolve("org.eclipse.lemminx-" + version + "-uber.jar")
+          .toString();
 
-    final var p =
-        new ProcessBuilder("env", "--", "get.sh", uri).redirectError(Redirect.INHERIT).start();
-    assert p.waitFor() == 0;
-    final var jar = new String(p.getInputStream().readAllBytes());
+  final var p =
+      new ProcessBuilder("env", "--", "get.sh", uri).redirectError(Redirect.INHERIT).start();
+  assert p.waitFor() == 0;
+  final var jar = new String(p.getInputStream().readAllBytes());
 
-    Files.createDirectories(lib);
-    Files.copy(Path.of(jar), dst, StandardCopyOption.REPLACE_EXISTING);
-  }
+  Files.createDirectories(lib);
+  Files.copy(Path.of(jar), dst, StandardCopyOption.REPLACE_EXISTING);
 }

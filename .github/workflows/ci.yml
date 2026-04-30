@@ -99,7 +99,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: "microsoft"
-          java-version: "21"
+          java-version: "25"
 
       - run: |-
           winget.exe install '--disable-interactivity' '--accept-source-agreements' '--accept-package-agreements' '--exact' '--id' 'ezwinports.make'
