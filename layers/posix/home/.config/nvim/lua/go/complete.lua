@@ -6,7 +6,7 @@ vim.opt.complete:remove { "u", "t" }
 vim.opt.complete:append { "Fv:lua.vim.lsp.omnifunc" }
 
 -- basic autocomplete
-vim.opt.autocomplete = true
+-- vim.opt.autocomplete = true
 
 do
   local ce = vim.keycode [[<c-e>]]
@@ -51,10 +51,10 @@ do
     return [[<bs>]]
   end, { noremap = true, expr = true })
 
-  vim.keymap.set({ "i", "s" }, [[<c-y>]], function()
-    if vim.snippet.active { direction = 1 } then
-      return [[<cmd>lua vim.snippet.jump(1)<cr>]]
-    end
-    return [[<c-y>]]
-  end, { noremap = true, expr = true })
+  -- vim.keymap.set({ "i", "s" }, [[<c-y>]], function()
+  --   if vim.snippet.active { direction = 1 } then
+  --     return [[<cmd>lua vim.snippet.jump(1)<cr>]]
+  --   end
+  --   return [[<c-y>]]
+  -- end, { noremap = true, expr = true })
 end
