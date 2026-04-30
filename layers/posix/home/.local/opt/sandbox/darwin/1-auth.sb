@@ -32,3 +32,11 @@
   (subpath "/Library/Keychains")
   (subpath "/System/Library/Keychains")
   (subpath "/System/Library/Security"))
+
+
+;; ---- ---- ---- ----
+
+(allow file-read* file-write*
+  (subpath
+    (xdg-config "aws")
+    (xdg-config "gcloud")))

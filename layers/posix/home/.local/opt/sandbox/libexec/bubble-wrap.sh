@@ -136,6 +136,9 @@ if ((AUTH)); then
   RW_BIND+=(
     "$HOME/.gnupg"
     "$XDG_STATE_HOME/ssh"
+
+    "$XDG_CONFIG_HOME/aws"
+    "$XDG_CONFIG_HOME/gcloud"
   )
   if [[ -v SSH_AUTH_SOCK ]]; then
     RW_BIND+=("$SSH_AUTH_SOCK")

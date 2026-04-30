@@ -12,7 +12,7 @@ val name = System.getProperty("os.name")
 val win = name.startsWith("Windows")
 val run = Path(System.getenv("RUN")!!)
 val lib = Path(System.getenv("LIB")!!)
-val launcher = lib.resolve("bin").resolve("intellij-server")
+val launcher = lib.resolve("bin").resolve("intellij-server${if (win) ".exe" else ""}")
 val bin = Path(System.getenv("BIN")!!).resolve("kotlin-lsp")
 val repo = "Kotlin/kotlin-lsp"
 
@@ -68,7 +68,7 @@ lib.toFile().deleteRecursively()
 
 lib.createDirectories()
 
-val src = if (win) run.resolve("extension").resolve("server") else run.resolve(dir)
+val src = if (win) run else run.resolve(dir)
 
 src.copyToRecursively(lib, followLinks = false)
 

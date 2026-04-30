@@ -54,6 +54,7 @@ jobs:
           eval -- "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           CLJ="$(command -v -- clojure)"
           sudo -- ln -v -s -- "$CLJ" /usr/local/bin/clojure
+          clojure -version
 
       - run: |-
           gmake lint
