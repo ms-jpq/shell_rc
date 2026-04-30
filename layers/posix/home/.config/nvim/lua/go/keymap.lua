@@ -36,13 +36,6 @@ end
 do
   local ce = vim.keycode [[<c-e>]]
 
-  -- insert movement keys do not enter
-  for _, key in pairs { "<left>", "<right>" } do
-    vim.keymap.set("i", key, function()
-      return (vim.fn.pumvisible() == 1 and ce or "") .. key
-    end, { expr = true, noremap = true })
-  end
-
   -- add emacs key binds
   vim.keymap.set("i", [[<c-a>]], [[<c-o>^]])
   vim.keymap.set("i", [[<c-x><c-a>]], [[<c-a>]])
