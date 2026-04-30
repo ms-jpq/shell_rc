@@ -83,6 +83,7 @@ jobs:
       - run: |-
           brew install -- bash make gnu-getopt coreutils
           rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
+          clojure -version
 
       - env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
