@@ -15,10 +15,6 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
 })
 
 do
-  local convert = function(tbl)
-    return tbl
-  end
-
   vim.api.nvim_create_autocmd({ "LspAttach" }, {
     group = lib.group,
     callback = function(args)
@@ -27,7 +23,7 @@ do
       end
       vim.b.__attached__ = true
 
-      vim.lsp.completion.enable(true, args.data.client_id, args.buf, { convert = convert })
+      vim.lsp.completion.enable(true, args.data.client_id, args.buf)
 
       vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
         group = lib.group,
