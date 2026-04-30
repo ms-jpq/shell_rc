@@ -64,6 +64,8 @@ procs.forEach {
 
 lib.toFile().deleteRecursively()
 
+lib.createDirectory()
+
 run.resolve(dir).copyToRecursively(lib, followLinks = false)
 
 bin.getParent().createDirectories()
