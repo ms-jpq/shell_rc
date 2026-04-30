@@ -267,8 +267,6 @@ clojure_lsp:
 
 kotlin_lsp:
 
-kotlin_language_server:
-
 jdtls:
   cmd:
     - jdtls

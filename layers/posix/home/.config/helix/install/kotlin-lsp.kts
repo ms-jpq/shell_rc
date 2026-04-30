@@ -62,7 +62,7 @@ procs.forEach {
 
 lib.toFile().deleteRecursively()
 
-Files.move(run.resolve(dir), lib)
+run.resolve(dir).copyTo(lib)
 
 bin.getParent().createDirectories()
 

@@ -29,7 +29,7 @@ if (code != 0) {
 
 val file = Path(String(proc.getInputStream().readAllBytes()))
 
-@OptIn(kotlin.io.path.ExperimentalPathApi::class) lib.deleteRecursively()
+lib.toFile().deleteRecursively()
 
 lib.createDirectory()
 
