@@ -14,6 +14,8 @@
     (string-append "^" (xdg-cache "") "nvim\\.")))
 
 (deny file-read* file-write*
+  (regex
+    (string-append "^" (xdg-cache "") "com\\.apple\\."))
   (subpath
     (xdg-cache "aerc")
     (xdg-cache "askpermissiond")
@@ -30,6 +32,4 @@
     (xdg-cache "PassKit")
     (xdg-cache "SharedImageCache")
     (xdg-cache "SiriTTS")
-  )
-  (regex
-    (string-append "^" (xdg-cache "") "com\\.apple\\.")))
+  ))
