@@ -5,12 +5,13 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
 
 public class lemminx {
   public static void main(String args[]) throws Exception {
-    final var lib = Path.of(System.getenv("LIB"));
+    final var lib = Path.of(Objects.requireNonNull(System.getenv("LIB")));
     final var dst = lib.resolve("org.eclipse.lemminx-uber.jar");
     final var base =
         URI.create(

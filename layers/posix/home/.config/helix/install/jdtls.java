@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class jdtls {
@@ -15,13 +16,13 @@ public class jdtls {
 
     final var uri =
         "https://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz";
-    final var lib = Path.of(System.getenv("LIB"));
-    var bin = Path.of(System.getenv("BIN")).resolve("jdtls");
+    final var lib = Path.of(Objects.requireNonNull(System.getenv("LIB")));
+    var bin = Path.of(Objects.requireNonNull(System.getenv("BIN"))).resolve("jdtls");
     if (win) {
       bin = bin.resolveSibling("jdtls.bat");
     }
     final var src = lib.resolve("bin").resolve(bin.getFileName().toString());
-    final var tmp = Path.of(System.getenv("RUN"));
+    final var tmp = Path.of(Objects.requireNonNull(System.getenv("RUN")));
 
     final var procs =
         ProcessBuilder.startPipeline(

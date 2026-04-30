@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class gradle_ls {
@@ -15,13 +16,13 @@ public class gradle_ls {
 
     final var win = System.getProperty("os.name").startsWith("Windows");
 
-    final var lib = Path.of(System.getenv("LIB"));
-    var bin = Path.of(System.getenv("BIN")).resolve("gradle");
+    final var lib = Path.of(Objects.requireNonNull(System.getenv("LIB")));
+    var bin = Path.of(Objects.requireNonNull(System.getenv("BIN"))).resolve("gradle");
     if (win) {
       bin = bin.resolveSibling("gradle" + (win ? ".bat" : ""));
     }
     final var name = "gradle-language-server";
-    final var tmp = Path.of(System.getenv("RUN"));
+    final var tmp = Path.of(Objects.requireNonNull(System.getenv("RUN")));
     final var dst = lib.resolve("bin").resolve(name);
     final var repo = "microsoft/vscode-gradle";
 
