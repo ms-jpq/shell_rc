@@ -14,35 +14,41 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "LspAttach" }, {
-  group = lib.group,
-  callback = function(args)
-    if vim.b.__attached__ then
-      return
-    end
-    vim.b.__attached__ = true
+do
+  local convert = function(tbl)
+    return tbl
+  end
 
-    vim.lsp.completion.enable(true, args.data.client_id, args.buf)
+  vim.api.nvim_create_autocmd({ "LspAttach" }, {
+    group = lib.group,
+    callback = function(args)
+      if vim.b.__attached__ then
+        return
+      end
+      vim.b.__attached__ = true
 
-    vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-      group = lib.group,
-      buffer = args.buf,
-      command = [[silent! lua vim.lsp.codelens.refresh()]],
-    })
+      vim.lsp.completion.enable(true, args.data.client_id, args.buf, { convert = convert })
 
-    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-      group = lib.group,
-      buffer = args.buf,
-      command = [[silent! lua vim.lsp.buf.document_highlight()]],
-    })
+      vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+        group = lib.group,
+        buffer = args.buf,
+        command = [[silent! lua vim.lsp.codelens.refresh()]],
+      })
 
-    vim.api.nvim_create_autocmd({ "CursorMoved" }, {
-      group = lib.group,
-      buffer = args.buf,
-      command = [[silent! lua vim.lsp.buf.clear_references()]],
-    })
-  end,
-})
+      vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+        group = lib.group,
+        buffer = args.buf,
+        command = [[silent! lua vim.lsp.buf.document_highlight()]],
+      })
+
+      vim.api.nvim_create_autocmd({ "CursorMoved" }, {
+        group = lib.group,
+        buffer = args.buf,
+        command = [[silent! lua vim.lsp.buf.clear_references()]],
+      })
+    end,
+  })
+end
 
 vim.keymap.set("i", [[<c-f>]], function()
   if not vim.lsp.inline_completion.get() then
