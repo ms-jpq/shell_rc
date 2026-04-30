@@ -22,6 +22,8 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
     end
     vim.b.__attached__ = true
 
+    vim.lsp.completion.enable(true, args.data.client_id, args.buf)
+
     vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
       group = lib.group,
       buffer = args.buf,

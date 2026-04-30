@@ -41,11 +41,6 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
       vim.cmd.source(file)
     end
 
-    if not coq then
-      -- basic autocomplete
-      vim.opt.autocomplete = true
-    end
-
     safe_require "go.pack.coq-3p"
     safe_require "go.pack.easyalign"
     safe_require "go.pack.fzf"
