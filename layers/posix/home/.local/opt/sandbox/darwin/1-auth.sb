@@ -16,12 +16,12 @@
   (literal (param "SSH_AUTH_SOCK")))
 
 (allow file-read*
-  (subpath (home ".ssh")
-           (xdg-config "ssh")
+  (subpath (xdg-config "ssh")
            (local-share "ssh")))
 
 (allow file-read* file-write*
-  (subpath (xdg-cache "ssh")))
+  (subpath (home ".ssh")
+           (xdg-cache "ssh")))
 
 ;; ---- ---- ---- ----
 

@@ -129,11 +129,11 @@ fi
 # shellcheck disable=SC2154
 if ((AUTH)); then
   RO_BIND+=(
-    "$HOME/.ssh"
     "$XDG_CONFIG_HOME/ssh"
     "$XDG_DATA_HOME/ssh"
   )
   RW_BIND+=(
+    "$HOME/.ssh"
     "$HOME/.gnupg"
     "$XDG_STATE_HOME/ssh"
 
