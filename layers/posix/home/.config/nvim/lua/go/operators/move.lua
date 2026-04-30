@@ -19,8 +19,8 @@ do
     end
   end
 
-  vim.keymap.set("n", [[<m-up>]], cmd("op_norm_move", true))
-  vim.keymap.set("n", [[<m-down>]], cmd("op_norm_move", false))
+  vim.keymap.set({ "n" }, [[<m-up>]], cmd("op_norm_move", true))
+  vim.keymap.set({ "n" }, [[<m-down>]], cmd("op_norm_move", false))
 end
 
 do
@@ -46,6 +46,6 @@ do
     end
   end
 
-  vim.keymap.set("x", [[<m-up>]], to.norm .. cmd("op_visual_move", true))
-  vim.keymap.set("x", [[<m-down>]], to.norm .. cmd("op_visual_move", false))
+  vim.keymap.set({ "x" }, [[<m-up>]], to.norm .. cmd("op_visual_move", true))
+  vim.keymap.set({ "x" }, [[<m-down>]], to.norm .. cmd("op_visual_move", false))
 end

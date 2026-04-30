@@ -50,8 +50,8 @@ do
     vim.api.nvim_feedkeys(":", "n", false)
   end
 
-  vim.keymap.set("n", "gs", [[<cmd>set opfunc=v:lua.Go.op_buf_edit<cr>g@]])
-  vim.keymap.set("x", "gs", to.norm .. [[<cmd>lua Go.op_buf_edit(nil)<cr>]])
+  vim.keymap.set({ "n" }, "gs", [[<cmd>set opfunc=v:lua.Go.op_buf_edit<cr>g@]])
+  vim.keymap.set({ "x" }, "gs", to.norm .. [[<cmd>lua Go.op_buf_edit(nil)<cr>]])
 end
 
 do
@@ -69,7 +69,7 @@ do
   Go.op_rg = searcher [[RG!]]
 
   for key, val in pairs { op_blines = "gF", op_rg = "gf" } do
-    vim.keymap.set("n", val, [[<cmd>set opfunc=v:lua.Go.]] .. key .. [[<cr>g@]], { nowait = true, noremap = true })
-    vim.keymap.set("x", val, to.norm .. [[<cmd>lua Go.]] .. key .. [[(nil)<cr>]], { nowait = true, noremap = true })
+    vim.keymap.set({ "n" }, val, [[<cmd>set opfunc=v:lua.Go.]] .. key .. [[<cr>g@]], { nowait = true, noremap = true })
+    vim.keymap.set({ "x" }, val, to.norm .. [[<cmd>lua Go.]] .. key .. [[(nil)<cr>]], { nowait = true, noremap = true })
   end
 end

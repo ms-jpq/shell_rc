@@ -1,6 +1,6 @@
 local lib = require "go"
 
-vim.keymap.set("n", "<M-o>", "van", { remap = true })
+vim.keymap.set({ "n" }, "<M-o>", "van", { remap = true })
 vim.keymap.set({ "x", "o" }, "<M-o>", "an", { remap = true })
 vim.keymap.set({ "x", "o" }, "<M-i>", "in", { remap = true })
 

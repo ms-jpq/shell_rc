@@ -7,7 +7,7 @@ vim.opt.inccommand = "split"
 vim.opt.grepprg = [[rg\ --vimgrep]]
 
 -- clear hlsearch result
-vim.keymap.set("n", "<leader>h", [[<cmd>call setreg('/', '')<cr>]])
+vim.keymap.set({ "n" }, "<leader>h", [[<cmd>call setreg('/', '')<cr>]])
 
 do
   Go.findfunc = function(search, init)
@@ -25,10 +25,10 @@ do
 end
 
 -- search without moving
-vim.keymap.set("n", "*", "*N")
-vim.keymap.set("n", "#", "#N")
-vim.keymap.set("n", "g*", "g*N")
-vim.keymap.set("n", "g#", "g#N")
+vim.keymap.set({ "n" }, "*", "*N")
+vim.keymap.set({ "n" }, "#", "#N")
+vim.keymap.set({ "n" }, "g*", "g*N")
+vim.keymap.set({ "n" }, "g#", "g#N")
 
 -- use no magic
 vim.api.nvim_create_autocmd({ "CmdlineEnter" }, {

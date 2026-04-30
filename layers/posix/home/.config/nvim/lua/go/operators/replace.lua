@@ -9,8 +9,8 @@ do
     vim.api.nvim_buf_set_text(0, row1, col1, row2, col2, replacement)
   end
 
-  vim.keymap.set("n", "gb", [[<cmd>set opfunc=v:lua.Go.op_replace<cr>g@]])
-  vim.keymap.set("x", "gb", to.norm .. [[<cmd>lua Go.op_replace(nil)<cr>]])
+  vim.keymap.set({ "n" }, "gb", [[<cmd>set opfunc=v:lua.Go.op_replace<cr>g@]])
+  vim.keymap.set({ "x" }, "gb", to.norm .. [[<cmd>lua Go.op_replace(nil)<cr>]])
 end
 
 do
@@ -22,5 +22,5 @@ do
     vim.api.nvim_buf_set_lines(0, row - 1, row, true, lines)
   end
 
-  vim.keymap.set("n", "gbb", replace_line)
+  vim.keymap.set({ "n" }, "gbb", replace_line)
 end

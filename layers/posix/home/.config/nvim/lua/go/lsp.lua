@@ -78,7 +78,7 @@ do
   })
 end
 
-vim.keymap.set("i", [[<c-f>]], function()
+vim.keymap.set({ "i", "s" }, [[<c-f>]], function()
   if not vim.lsp.inline_completion.get() then
     return [[<c-f>]]
   end
@@ -87,26 +87,26 @@ end, {
   replace_keycodes = true,
 })
 
-vim.keymap.set("n", [[<leader>a]], function()
+vim.keymap.set({ "n" }, [[<leader>a]], function()
   vim.lsp.buf.code_action()
 end)
 
-vim.keymap.set("n", [[<leader>s]], function()
+vim.keymap.set({ "n" }, [[<leader>s]], function()
   vim.lsp.buf.document_symbol()
 end)
 
-vim.keymap.set("n", [[<leader>S]], function()
+vim.keymap.set({ "n" }, [[<leader>S]], function()
   vim.lsp.buf.workspace_symbol()
 end)
 
-vim.keymap.set("n", "gp", function()
+vim.keymap.set({ "n" }, "gp", function()
   vim.lsp.buf.definition()
 end)
 
-vim.keymap.set("n", "gP", function()
+vim.keymap.set({ "n" }, "gP", function()
   vim.lsp.buf.references()
 end)
 
-vim.keymap.set("n", "L", function()
+vim.keymap.set({ "n" }, "L", function()
   vim.lsp.buf.signature_help()
 end)

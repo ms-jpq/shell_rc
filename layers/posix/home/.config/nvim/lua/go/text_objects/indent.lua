@@ -62,7 +62,7 @@ local cmd = function(hold, inside)
   return [[<cmd>lua Go.op_indent(]] .. tostring(hold) .. "," .. tostring(inside) .. [[)<cr>]]
 end
 
-vim.keymap.set("o", "ii", cmd(true, true))
-vim.keymap.set("x", "ii", to.norm .. cmd(false, true))
-vim.keymap.set("o", "ai", cmd(true, false))
-vim.keymap.set("x", "ai", to.norm .. cmd(false, false))
+vim.keymap.set({ "o" }, "ii", cmd(true, true))
+vim.keymap.set({ "x" }, "ii", to.norm .. cmd(false, true))
+vim.keymap.set({ "o" }, "ai", cmd(true, false))
+vim.keymap.set({ "x" }, "ai", to.norm .. cmd(false, false))

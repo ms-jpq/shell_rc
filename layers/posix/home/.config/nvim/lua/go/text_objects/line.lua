@@ -25,7 +25,7 @@ local cmd = function(hold_pos, inside)
   return [[<cmd>lua Go.op_select_line(]] .. tostring(hold_pos) .. "," .. tostring(inside) .. [[)<cr>]]
 end
 
-vim.keymap.set("o", "il", cmd(true, true))
-vim.keymap.set("o", "al", cmd(true, false))
-vim.keymap.set("x", "il", to.norm .. cmd(false, true))
-vim.keymap.set("x", "al", to.norm .. cmd(false, false))
+vim.keymap.set({ "o" }, "il", cmd(true, true))
+vim.keymap.set({ "o" }, "al", cmd(true, false))
+vim.keymap.set({ "x" }, "il", to.norm .. cmd(false, true))
+vim.keymap.set({ "x" }, "al", to.norm .. cmd(false, false))

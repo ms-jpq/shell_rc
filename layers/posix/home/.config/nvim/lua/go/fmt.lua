@@ -84,4 +84,4 @@ end
 
 vim.opt.formatexpr = "v:lua.Go.run_fmt()"
 
-vim.keymap.set("n", "gq", Go.run_fmt, { noremap = true, nowait = true })
+vim.keymap.set({ "n" }, "gq", Go.run_fmt, { noremap = true, nowait = true })

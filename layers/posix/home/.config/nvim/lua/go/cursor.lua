@@ -44,7 +44,7 @@ do
     end
   end)
 
-  vim.keymap.set("n", [[<leader>y]], toggle_cursorcolumn)
+  vim.keymap.set({ "n" }, [[<leader>y]], toggle_cursorcolumn)
   vim.api.nvim_create_user_command([[ToggleCursorColumn]], toggle_cursorcolumn, {})
 end
 

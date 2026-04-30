@@ -97,8 +97,7 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
   end),
 })
 
-vim.keymap.set(
-  "n",
+vim.keymap.set({ "n" },
   [[<c-t>]],
   async(function()
     local path = vim.api.nvim_buf_get_name(0)
@@ -109,8 +108,7 @@ vim.keymap.set(
   end)
 )
 
-vim.keymap.set(
-  "n",
+vim.keymap.set({ "n" },
   [[<leader>t]],
   async(function()
     local path = vim.fn.getcwd()

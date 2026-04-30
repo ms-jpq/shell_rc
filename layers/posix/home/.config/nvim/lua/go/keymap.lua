@@ -3,58 +3,58 @@ vim.keymap.set({ "n", "v" }, "Q", [[<nop>]])
 vim.keymap.set({ "n", "v" }, "QQ", [[<cmd>quitall!<cr>]])
 
 -- prevent macro recording
-vim.keymap.set("n", "q", [[<nop>]])
+vim.keymap.set({ "n" }, "q", [[<nop>]])
 
 -- manual save
-vim.keymap.set("n", [[<c-s>]], [[<cmd>w<cr>]])
+vim.keymap.set({ "n" }, [[<c-s>]], [[<cmd>w<cr>]])
 
 -- dont go into ex mode
-vim.keymap.set("c", [[<c-f>]], "")
+vim.keymap.set({ "c" }, [[<c-f>]], "")
 
 -- quit
-vim.keymap.set("c", [[<c-q>]], [[<esc>]])
+vim.keymap.set({ "c" }, [[<c-q>]], [[<esc>]])
 
 -- enable paste
-vim.keymap.set("c", [[<c-v>]], [[<c-r>"]])
+vim.keymap.set({ "c" }, [[<c-v>]], [[<c-r>"]])
 
 -- leave terminal
-vim.keymap.set("t", [[<c-g>]], [[<c-\><c-n>]])
+vim.keymap.set({ "t" }, [[<c-g>]], [[<c-\><c-n>]])
 
 -- dont shift move too much
-vim.keymap.set("v", [[<s-up>]], [[g<up>]])
-vim.keymap.set("v", [[<s-down>]], [[g<down>]])
+vim.keymap.set({ "v" }, [[<s-up>]], [[g<up>]])
+vim.keymap.set({ "v" }, [[<s-down>]], [[g<down>]])
 
 -- keep selected when indenting
-vim.keymap.set("v", "<", "<gv")
-vim.keymap.set("v", ">", ">gv")
+vim.keymap.set({ "v" }, "<", "<gv")
+vim.keymap.set({ "v" }, ">", ">gv")
 
 -- previous, next, line, file, omnifunc
 for _, key in pairs { "p", "n", "l", "f", "o" } do
-  vim.keymap.set("i", [[<c-]] .. key .. [[>]], [[<c-x><c-]] .. key .. [[>]])
+  vim.keymap.set({ "i" }, [[<c-]] .. key .. [[>]], [[<c-x><c-]] .. key .. [[>]])
 end
 
 do
   local ce = vim.keycode [[<c-e>]]
 
   -- add emacs key binds
-  vim.keymap.set("i", [[<c-a>]], [[<c-o>^]])
-  vim.keymap.set("i", [[<c-x><c-a>]], [[<c-a>]])
+  vim.keymap.set({ "i" }, [[<c-a>]], [[<c-o>^]])
+  vim.keymap.set({ "i" }, [[<c-x><c-a>]], [[<c-a>]])
 
-  vim.keymap.set("i", [[<c-e>]], function()
+  vim.keymap.set({ "i" }, [[<c-e>]], function()
     return (vim.fn.pumvisible() == 1 and ce or "") .. [[<end>]]
   end, { expr = true, noremap = true })
 end
 
 -- emacs arrow movements
-vim.keymap.set("c", [[<c-a>]], [[<home>]])
-vim.keymap.set("c", [[<c-x><c-a>]], [[<c-a>]])
-vim.keymap.set("c", [[<c-e>]], [[<end>]])
+vim.keymap.set({ "c" }, [[<c-a>]], [[<home>]])
+vim.keymap.set({ "c" }, [[<c-x><c-a>]], [[<c-a>]])
+vim.keymap.set({ "c" }, [[<c-e>]], [[<end>]])
 
 -- emacs arrow movements
-vim.keymap.set("i", [[<m-left>]], [[<c-o>b]])
-vim.keymap.set("i", [[<m-right>]], [[<c-o>e<right>]])
-vim.keymap.set("c", [[<m-left>]], [[<s-left>]])
-vim.keymap.set("c", [[<m-right>]], [[<s-right>]])
+vim.keymap.set({ "i" }, [[<m-left>]], [[<c-o>b]])
+vim.keymap.set({ "i" }, [[<m-right>]], [[<c-o>e<right>]])
+vim.keymap.set({ "c" }, [[<m-left>]], [[<s-left>]])
+vim.keymap.set({ "c" }, [[<m-right>]], [[<s-right>]])
 
 -- add emacs key binds
 vim.keymap.set({ "n", "o", "v" }, [[<m-left>]], "b")
@@ -67,8 +67,8 @@ end
 
 -- leave cursor 1 behind instead of before
 for _, key in pairs { "p", "P" } do
-  vim.keymap.set("n", key, "g" .. key)
-  vim.keymap.set("v", key, [["_dg]] .. key)
+  vim.keymap.set({ "n" }, key, "g" .. key)
+  vim.keymap.set({ "v" }, key, [["_dg]] .. key)
 end
 
 -- scroll fixed lines
@@ -101,7 +101,7 @@ for _, key in pairs { "<up>", "<down>", "j", "k" } do
 end
 
 -- cut to clipboard
-vim.keymap.set("v", "X", "d")
+vim.keymap.set({ "v" }, "X", "d")
 
 -- go to file
 vim.keymap.set({ "n", "v" }, "gx", "gF")

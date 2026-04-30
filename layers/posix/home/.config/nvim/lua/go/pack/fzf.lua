@@ -13,27 +13,27 @@ vim.g.fzf_vim = {
   preview_window = { "right:wrap" },
 }
 
-vim.keymap.set("n", [[<leader>|]], [[<cmd>Maps!<cr>]])
-vim.keymap.set("n", [[<leader>\]], [[<cmd>Commands!<cr>]])
+vim.keymap.set({ "n" }, [[<leader>|]], [[<cmd>Maps!<cr>]])
+vim.keymap.set({ "n" }, [[<leader>\]], [[<cmd>Commands!<cr>]])
 
-vim.keymap.set("n", [[<leader>b]], [[<cmd>Buffers!<cr>]])
+vim.keymap.set({ "n" }, [[<leader>b]], [[<cmd>Buffers!<cr>]])
 
 do
   local az = "abcdefghijklmnopqrstuvwxyz"
   local AZ = string.upper(az)
   local azt = vim.split(az, "", { plain = true })
   local AZT = vim.split(AZ, "", { plain = true })
-  vim.keymap.set("n", [[<leader>j]], [[<cmd>Marks! ]] .. table.concat(azt, " ") .. [[<cr>]])
-  vim.keymap.set("n", [[<leader>J]], [[<cmd>Marks! ]] .. table.concat(AZT, " ") .. [[<cr>]])
+  vim.keymap.set({ "n" }, [[<leader>j]], [[<cmd>Marks! ]] .. table.concat(azt, " ") .. [[<cr>]])
+  vim.keymap.set({ "n" }, [[<leader>J]], [[<cmd>Marks! ]] .. table.concat(AZT, " ") .. [[<cr>]])
 end
 
-vim.keymap.set("n", [[<leader>f]], [[<cmd>Files!<cr>]])
+vim.keymap.set({ "n" }, [[<leader>f]], [[<cmd>Files!<cr>]])
 
-vim.keymap.set("n", [[<leader>g]], [[<cmd>GFiles!?<cr>]])
-vim.keymap.set("n", [[<leader>G]], [[<cmd>GFiles!<cr>]])
+vim.keymap.set({ "n" }, [[<leader>g]], [[<cmd>GFiles!?<cr>]])
+vim.keymap.set({ "n" }, [[<leader>G]], [[<cmd>GFiles!<cr>]])
 
-vim.keymap.set("n", [[<leader>/]], [[<cmd>BL!<cr>]])
-vim.keymap.set("n", [[<leader>?]], [[<cmd>RG!<cr>]])
+vim.keymap.set({ "n" }, [[<leader>/]], [[<cmd>BL!<cr>]])
+vim.keymap.set({ "n" }, [[<leader>?]], [[<cmd>RG!<cr>]])
 
 do
   local rg_args = table.concat({

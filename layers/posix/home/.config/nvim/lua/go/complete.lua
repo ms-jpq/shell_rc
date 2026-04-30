@@ -13,7 +13,7 @@ do
 
   -- insert movement keys do not enter
   for _, key in pairs { "<esc>", "<c-c>", "<left>", "<right>", "<bs>", "<c-w>", "<c-u>" } do
-    vim.keymap.set("i", key, function()
+    vim.keymap.set({ "i" }, key, function()
       return (vim.fn.pumvisible() == 1 and ce or "") .. key
     end, { noremap = true, expr = true })
   end
@@ -27,7 +27,7 @@ do
     return string.match(before_cursor, "%S") ~= nil
   end
 
-  vim.keymap.set("i", [[<cr>]], function()
+  vim.keymap.set({ "i", "s" }, [[<cr>]], function()
     if vim.fn.pumvisible() == 0 then
       return [[<cr>]]
     end
@@ -37,14 +37,14 @@ do
     return [[<c-y>]]
   end, { noremap = true, expr = true })
 
-  vim.keymap.set("i", [[<tab>]], function()
+  vim.keymap.set({ "i", "s" }, [[<tab>]], function()
     if vim.fn.pumvisible() ~= 0 and has_text_before_cursor() then
       return [[<c-n>]]
     end
     return [[<tab>]]
   end, { noremap = true, expr = true })
 
-  vim.keymap.set("i", [[<s-tab>]], function()
+  vim.keymap.set({ "i", "s" }, [[<s-tab>]], function()
     if vim.fn.pumvisible() ~= 0 and has_text_before_cursor() then
       return [[<c-p>]]
     end

@@ -186,4 +186,4 @@ local repl = function()
   eof(pane_id)
 end
 
-vim.keymap.set("n", [[<leader>w]], async(repl))
+vim.keymap.set({ "n" }, [[<leader>w]], async(repl))

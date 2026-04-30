@@ -16,7 +16,7 @@ local cmd = function(hold)
   return [[<cmd>lua Go.op_entire(]] .. tostring(hold) .. [[)<cr>]]
 end
 
-vim.keymap.set("o", "ie", cmd(true))
-vim.keymap.set("o", "ae", cmd(true))
-vim.keymap.set("x", "ie", to.norm .. cmd(false))
-vim.keymap.set("x", "ae", to.norm .. cmd(false))
+vim.keymap.set({ "o" }, "ie", cmd(true))
+vim.keymap.set({ "o" }, "ae", cmd(true))
+vim.keymap.set({ "x" }, "ie", to.norm .. cmd(false))
+vim.keymap.set({ "x" }, "ae", to.norm .. cmd(false))
