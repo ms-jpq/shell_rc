@@ -1,7 +1,9 @@
 #!/usr/bin/env -S -- kotlinc -script
+@file:OptIn(kotlin.io.path.ExperimentalPathApi::class)
+
 import java.lang.ProcessBuilder.Redirect
-import java.nio.file.Files
 import kotlin.io.path.Path
+import kotlin.io.path.copyToRecursively
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.deleteIfExists
@@ -62,7 +64,7 @@ procs.forEach {
 
 lib.toFile().deleteRecursively()
 
-run.resolve(dir).copyTo(lib)
+run.resolve(dir).copyToRecursively(lib, followLinks = false)
 
 bin.getParent().createDirectories()
 

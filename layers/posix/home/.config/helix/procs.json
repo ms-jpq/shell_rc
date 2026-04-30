@@ -8,7 +8,7 @@
     "dtsfmt.sh": [],
     "glsl-analyzer.sh": [],
     "golangci-lint.go": [],
-    "gradle-ls.java": [],
+    "gradle_ls.java": [],
     "hadolint.sh": [],
     "harper-ls.sh": [],
     "hls.hs": [],

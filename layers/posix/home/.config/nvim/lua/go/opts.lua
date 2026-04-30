@@ -57,6 +57,3 @@ vim.opt.history = 10000
 -- ignore case
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
-
--- dont follow tags
-vim.opt.complete:remove "i"
