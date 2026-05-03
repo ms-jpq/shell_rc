@@ -96,7 +96,7 @@
     "javascript": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier"
+        "command": "run-prettier"
       }
     },
     "jq": {
@@ -142,7 +142,7 @@
     "markdown": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier"
+        "command": "run-prettier"
       },
       "language-servers": ["ltex-ls-plus"]
     },
@@ -150,7 +150,7 @@
       "file-types": ["nginx"],
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier"
+        "command": "run-prettier"
       }
     },
     "perl": {
@@ -239,20 +239,20 @@
     "typescript": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier"
+        "command": "run-prettier"
       }
     },
     "xml": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier"
+        "command": "run-prettier"
       },
       "language-servers": ["lemminx"]
     },
     "yaml": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "prettier"
+        "command": "run-prettier"
       }
     }
   },

@@ -20,7 +20,7 @@ const p1 = spawn("jq", ["--sort-keys", "."], {
 })
 
 const p2 = spawn(
-  "prettier",
+  "run-prettier",
   ["--filename=tsconfig.json", "--tabsize", tabsize],
   {
     stdio: [p1.stdout, "inherit", "inherit"],
