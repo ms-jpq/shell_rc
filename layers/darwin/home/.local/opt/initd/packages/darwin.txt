@@ -99,6 +99,7 @@
 + rlwrap
 + rsync
 + sad
++ senpai
 + sevenzip
 + sl
 + socat
@@ -114,7 +115,6 @@
 + w3m
 + watch
 + watchexec
-+ weechat
 + wget
 + wireguard-tools
 + xdg-ninja

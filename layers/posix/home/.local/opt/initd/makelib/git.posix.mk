@@ -25,7 +25,6 @@ $(OPT)/ai                      https://github.com/ms-jpq/ai
 $(OPT)/fzf-tab                 https://github.com/Aloxaf/fzf-tab
 $(OPT)/helix                   https://github.com/helix-editor/helix
 $(OPT)/pipes.sh                https://github.com/pipeseroni/pipes.sh
-$(OPT)/weechat-scripts         https://github.com/weechat/scripts
 
 endef
 
