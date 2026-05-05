@@ -87,7 +87,7 @@ def _accumulate(stream: Iterable[tuple[str, str]]) -> MutableMapping[str, str]:
     env = {**environ}
 
     for key, val in stream:
-        env[key] = val = Template("".join(val)).substitute(env)
+        env[key] = val = Template(val).substitute(env)
         _print(key, val)
 
     return env
