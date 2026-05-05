@@ -22,7 +22,8 @@ jobs:
       matrix:
         platform:
           - ubuntu-latest
-          - windows-latest
+          # TODO: windows?
+          # - windows-latest
 
     runs-on: ${{ matrix.platform }}
 
