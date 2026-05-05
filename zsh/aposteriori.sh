@@ -1,9 +1,15 @@
 #!/usr/bin/env -S -- bash
 
-# shellcheck disable=SC1090
-source -- /dev/null ~/.local/lprofile.d/*.sh
+for _sh in ~/.local/lprofile.d/*.sh; do
+  # shellcheck disable=SC1090
+  source -- "$_sh"
+done
 
-_sh="${SHELL##*/}"
+if [[ -v BASH_VERSION ]]; then
+  _sh='bash'
+else
+  _sh='zsh'
+fi
 
 # shellcheck disable=SC2154
 _posh_conf="$XDG_CONFIG_HOME/posh/config.yml"
@@ -15,7 +21,7 @@ if [[ ! -s $_posh_cache || $_posh_conf -nt $_posh_cache || $(command -v -- oh-my
   oh-my-posh init "$_sh" --config "$_posh_conf" > "$_posh_cache"
 fi
 
-# shellcheck disable=SC2312
+# shellcheck disable=SC1090
 source -- "$_posh_cache"
 
 unset -- _sh _posh_conf _posh_cache
