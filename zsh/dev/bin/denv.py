@@ -14,7 +14,6 @@ from itertools import chain
 from json import dumps
 from logging import INFO, basicConfig, captureWarnings, getLogger
 from os import environ, execle, name, pathsep
-from os.path import normcase
 from pathlib import Path, PurePath
 from re import RegexFlag, compile
 from shlex import quote, split
@@ -134,7 +133,7 @@ def main() -> None:
     env["PATH"] = path = pathsep.join(_path(env))
 
     if cmd := which(args.arg0, path=path):
-        execle(cmd, normcase(cmd), *args.argv, env)
+        execle(cmd, cmd, *args.argv, env)
     else:
         raise OSError(args.arg0)
 
