@@ -21,7 +21,6 @@ from shlex import quote, split
 from shutil import which
 from string import Template
 from sys import exit, stderr, stdout
-from unicodedata import normalize
 
 _CODEC = "utf-8"
 _IS_TTY = stdout.isatty() and stderr.isatty()
@@ -131,8 +130,7 @@ def main() -> None:
     env_path = Path(args.path)
     dotenv = "" if env_path == PurePath("-") else env_path.read_text(_CODEC)
 
-    norm = normalize("NFKD", dotenv)
-    env = _accumulate(_parse(norm))
+    env = _accumulate(_parse(dotenv))
     env["PATH"] = path = pathsep.join(_path(env))
 
     if cmd := which(args.arg0, path=path):
