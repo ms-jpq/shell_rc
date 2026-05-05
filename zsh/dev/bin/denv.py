@@ -15,7 +15,7 @@ from functools import lru_cache
 from itertools import chain
 from json import dumps
 from logging import INFO, basicConfig, captureWarnings, getLogger
-from os import environ, execle, linesep, name
+from os import environ, execle, linesep, name, pathsep
 from os.path import normcase
 from pathlib import Path, PurePath
 from shlex import quote, shlex
@@ -26,11 +26,60 @@ from typing import Optional, Tuple
 from unicodedata import normalize
 from uuid import uuid4
 
+_IS_WIN = name == "nt"
 _CODEC = "utf-8"
+_PASS_THROUGH = (
+    "ASDF_DATA_DIR",
+    "AWS_SHARED_CREDENTIALS_FILE",
+    "COLORTERM",
+    "EDITOR",
+    "FORCE_COLOR",
+    "HOME",
+    "LANG",
+    "LC_ALL",
+    "LC_COLLATE",
+    "LC_CTYPE",
+    "LC_MESSAGES",
+    "LC_MONETARY",
+    "LC_NUMERIC",
+    "LC_TIME",
+    "LESS",
+    "LOGNAME",
+    "NO_COLOR",
+    "PAGER",
+    "PATH",
+    "SHELL",
+    "SSH_AUTH_SOCK",
+    "SSH_CLIENT",
+    "SSH_CONNECTION",
+    "SSH_TTY",
+    "TERM",
+    "TERM_PROGRAM",
+    "TERM_PROGRAM_VERSION",
+    "TERMINFO",
+    "TIME_STYLE",
+    "TMPDIR",
+    "TMUX",
+    "TMUX_PANE",
+    "TMUX_TMPDIR",
+    "TZ",
+    "USER",
+    "XDG_CACHE_HOME",
+    "XDG_CONFIG_HOME",
+    "XDG_DATA_HOME",
+    "XDG_RUNTIME_DIR",
+    "XDG_STATE_HOME",
+)
 
 with nullcontext():
     captureWarnings(True)
     basicConfig(format="%(message)s", level=INFO)
+
+
+def _pass_through() -> Iterator[str]:
+    yield from _PASS_THROUGH
+    if _IS_WIN:
+        yield from ("PATHEXT", "TEMP")
 
 
 def _parse(text: str) -> Iterator[Tuple[str, Optional[str]]]:
@@ -160,6 +209,28 @@ def _trans(
     return seen
 
 
+def _workdir() -> Path:
+    cwd = Path.cwd()
+    for parent in chain((cwd,), cwd.parents):
+        if parent.joinpath(".git").is_dir():
+            return parent
+    else:
+        return cwd
+
+
+def _path(env: Mapping[str, str]) -> Iterator[str]:
+    work_dir = _workdir()
+    for dir in (
+        work_dir / ".venv" / ("Scripts" if _IS_WIN else "bin"),
+        work_dir / "node_modules" / ".bin",
+    ):
+        if dir.is_dir():
+            yield str(dir)
+
+    if p := env.get("PATH"):
+        yield p
+
+
 def _arg_parse() -> Namespace:
     parser = ArgumentParser(add_help=False)
     parser.add_argument("path", type=PurePath)
@@ -177,35 +248,11 @@ def main() -> None:
     norm = normalize("NFKD", dotenv)
     p_env = {**environ}
     env = _trans(_parse(norm), env=p_env)
-    pass_through = {
-        "ASDF_DATA_DIR",
-        "AWS_SHARED_CREDENTIALS_FILE",
-        "EDITOR",
-        "HOME",
-        "LC_ALL",
-        "LESS",
-        "PAGER",
-        "PATH",
-        "SHELL",
-        "SSH_AUTH_SOCK",
-        "TERM",
-        "TIME_STYLE",
-        "TMPDIR",
-        "TMUX",
-        "TMUX_PANE",
-        "TMUX_TMPDIR",
-        "TZ",
-        "USER",
-        "XDG_CACHE_HOME",
-        "XDG_CONFIG_HOME",
-        "XDG_DATA_HOME",
-        "XDG_STATE_HOME",
-    }
-    if name == "nt":
-        pass_through |= {"PATHEXT"}
+    pass_through = {*_pass_through()}
     new_env = {**env, **{k: v for k, v in p_env.items() if k in pass_through}}
+    new_env["PATH"] = path = pathsep.join(_path(new_env))
 
-    if cmd := which(args.arg0):
+    if cmd := which(args.arg0, path=path):
         execle(cmd, normcase(cmd), *args.argv, new_env)
     else:
         raise OSError(args.arg0)
