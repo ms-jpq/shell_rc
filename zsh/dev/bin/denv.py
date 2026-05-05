@@ -7,206 +7,92 @@ from collections.abc import (
     Iterator,
     Mapping,
     MutableMapping,
-    MutableSequence,
 )
-from configparser import RawConfigParser
 from contextlib import contextmanager, nullcontext
-from functools import lru_cache
+from enum import Enum
 from itertools import chain
 from json import dumps
 from logging import INFO, basicConfig, captureWarnings, getLogger
-from os import environ, execle, linesep, name, pathsep
+from os import environ, execle, name, pathsep
 from os.path import normcase
 from pathlib import Path, PurePath
-from shlex import quote, shlex
+from re import RegexFlag, compile
+from shlex import quote, split
 from shutil import which
 from string import Template
 from sys import exit, stderr, stdout
-from typing import Optional, Tuple
 from unicodedata import normalize
-from uuid import uuid4
 
-_IS_WIN = name == "nt"
 _CODEC = "utf-8"
-_PASS_THROUGH = (
-    "ASDF_DATA_DIR",
-    "AWS_SHARED_CREDENTIALS_FILE",
-    "COLORTERM",
-    "EDITOR",
-    "FORCE_COLOR",
-    "HOME",
-    "LANG",
-    "LC_ALL",
-    "LC_COLLATE",
-    "LC_CTYPE",
-    "LC_MESSAGES",
-    "LC_MONETARY",
-    "LC_NUMERIC",
-    "LC_TIME",
-    "LESS",
-    "LOGNAME",
-    "NO_COLOR",
-    "PAGER",
-    "PATH",
-    "SHELL",
-    "SSH_AUTH_SOCK",
-    "SSH_CLIENT",
-    "SSH_CONNECTION",
-    "SSH_TTY",
-    "TERM",
-    "TERM_PROGRAM",
-    "TERM_PROGRAM_VERSION",
-    "TERMINFO",
-    "TIME_STYLE",
-    "TMPDIR",
-    "TMUX",
-    "TMUX_PANE",
-    "TMUX_TMPDIR",
-    "TZ",
-    "USER",
-    "XDG_CACHE_HOME",
-    "XDG_CONFIG_HOME",
-    "XDG_DATA_HOME",
-    "XDG_RUNTIME_DIR",
-    "XDG_STATE_HOME",
-)
+_IS_TTY = stdout.isatty() and stderr.isatty()
+_IS_WIN = name == "nt"
+_RE = compile(r"^([A-Za-z_][A-Za-z0-9_]*)=(.*)$", flags=RegexFlag.DOTALL)
+
 
 with nullcontext():
     captureWarnings(True)
     basicConfig(format="%(message)s", level=INFO)
 
 
-def _pass_through() -> Iterator[str]:
-    yield from _PASS_THROUGH
-    if _IS_WIN:
-        yield from ("PATHEXT", "TEMP")
+class _State(Enum):
+    NORM = 0
+    EXPORT = 1
 
 
-def _parse(text: str) -> Iterator[Tuple[str, Optional[str]]]:
-    class _Parser(RawConfigParser):
-        def optionxform(self, optionstr: str) -> str:
-            return optionstr
+def _parse(text: str) -> Iterator[tuple[str, str]]:
+    state = _State.NORM
+    for token in split(text, comments=True):
+        if state is _State.NORM:
+            if token == "export":
+                state = _State.EXPORT
+                continue
 
-    lines = "".join(chain((f"[{uuid4()}]", linesep), text))
-    parser = _Parser(
-        allow_no_value=True,
-        strict=False,
-        interpolation=None,
-        comment_prefixes=("#",),
-        delimiters=("=",),
-    )
+        elif state is _State.EXPORT:
+            if token == "--":
+                continue
 
-    try:
-        parser.read_string(lines)
-    except AttributeError:
-        ls = linesep.join(f">! {line}" for line in text.splitlines())
-        getLogger().error("%s", ls)
-        exit(True)
-    else:
-        for section in parser.values():
-            yield from section.items()
+            state = _State.NORM
+        else:
+            assert False
 
+        if match := _RE.match(token):
+            yield match.group(1), match.group(2)
+        else:
+            assert False, token
 
-def _decode(text: str) -> str:
-    return text.encode(_CODEC).decode("unicode_escape")
-
-
-def _codec(text: str) -> str:
-    def cont() -> Iterator[str]:
-        acc: MutableSequence[str] = []
-        for ch in text:
-            if ch.isascii():
-                acc.append(ch)
-            else:
-                yield _decode("".join(acc))
-                acc.clear()
-                yield ch
-
-        yield _decode("".join(acc))
-
-    try:
-        return "".join(cont())
-    except UnicodeDecodeError as e:
-        es = repr(type(e))
-        getLogger().error("%s", f">! {es}")
-        exit(True)
-
-
-def _subst(val: str, env: Mapping[str, str]) -> str:
-    if val.startswith("'") and val.endswith("'"):
-        return val[1:-1]
-    else:
-        text = _codec(val)
-
-    def cont() -> Iterator[str]:
-        lex = shlex(text, posix=True)
-        lex.whitespace = ""
-        acc: MutableSequence[str] = []
-
-        for token in lex:
-            if token.isspace():
-                yield Template("".join(acc)).substitute(env)
-                acc.clear()
-                yield token
-            else:
-                acc.append(token)
-
-        yield Template("".join(acc)).substitute(env)
-
-    try:
-        parsed = "".join(cont())
-    except (KeyError, ValueError) as e:
-        es = repr(type(e)(text))
-        getLogger().error("%s", f">! {es}")
-        exit(True)
-    else:
-        return parsed
+    assert state is _State.NORM
 
 
 def _quote(text: str) -> str:
     return quote(dumps(text, ensure_ascii=False)[1:-1])
 
 
-@lru_cache(maxsize=None)
-def _isatty() -> bool:
-    return stdout.isatty() and stderr.isatty()
-
-
 def _print(key: str, val: str) -> None:
-    lhs = _quote(key)
-    rhs = _quote(val)
-    if _isatty():
+    if _IS_TTY:
+        lhs, rhs = _quote(key), _quote(val)
         getLogger().info("%s", f">> {lhs}={rhs}")
 
 
 @contextmanager
 def _man() -> Generator[None]:
-    if _isatty():
+    if _IS_TTY:
         getLogger().info("%s", f"<<")
     try:
         yield None
     finally:
-        if _isatty():
+        if _IS_TTY:
             getLogger().info("%s", f"<<")
 
 
 @_man()
-def _trans(
-    stream: Iterable[Tuple[str, Optional[str]]], env: Mapping[str, str]
-) -> Mapping[str, str]:
-    seen: MutableMapping[str, str] = {}
+def _accumulate(stream: Iterable[tuple[str, str]]) -> MutableMapping[str, str]:
+    env = {**environ}
 
     for key, val in stream:
-        if val is None:
-            es = repr(ValueError(key))
-            getLogger().error("%s", f">! {es}")
-            exit(True)
-
-        if key not in env:
-            seen[key] = val = _subst(val, env={**seen, **env})
+        env[key] = val = Template("".join(val)).substitute(env)
         _print(key, val)
 
-    return seen
+    return env
 
 
 def _workdir() -> Path:
@@ -246,14 +132,11 @@ def main() -> None:
     dotenv = "" if env_path == PurePath("-") else env_path.read_text(_CODEC)
 
     norm = normalize("NFKD", dotenv)
-    p_env = {**environ}
-    env = _trans(_parse(norm), env=p_env)
-    pass_through = {*_pass_through()}
-    new_env = {**env, **{k: v for k, v in p_env.items() if k in pass_through}}
-    new_env["PATH"] = path = pathsep.join(_path(new_env))
+    env = _accumulate(_parse(norm))
+    env["PATH"] = path = pathsep.join(_path(env))
 
     if cmd := which(args.arg0, path=path):
-        execle(cmd, normcase(cmd), *args.argv, new_env)
+        execle(cmd, normcase(cmd), *args.argv, env)
     else:
         raise OSError(args.arg0)
 
