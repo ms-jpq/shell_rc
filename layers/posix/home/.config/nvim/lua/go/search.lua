@@ -7,7 +7,9 @@ vim.opt.inccommand = "split"
 vim.opt.grepprg = [[rg\ --vimgrep]]
 
 -- clear hlsearch result
-vim.keymap.set({ "n" }, "<leader>h", [[<cmd>call setreg('/', '')<cr>]])
+vim.keymap.set({ "n" }, "<leader>h", function()
+  vim.fn.setreg("/", "")
+end)
 
 do
   Go.findfunc = function(search, init)
