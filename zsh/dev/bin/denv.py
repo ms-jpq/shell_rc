@@ -67,7 +67,7 @@ def _quote(text: str) -> str:
 
 def _print(key: str, val: str) -> None:
     if _IS_TTY:
-        lhs, rhs = _quote(key), _quote(val)
+        lhs, rhs = _quote(key), "*" * min(len(val), 44)
         getLogger().info("%s", f">> {lhs}={rhs}")
 
 
