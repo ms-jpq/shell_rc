@@ -14,7 +14,7 @@ do
   vim.api.nvim_create_autocmd({ "InsertEnter" }, {
     group = lib.group,
     callback = function()
-      vim.b.__column_highlight__ = vim.o.cursorcolumn
+      vim.w.__column_highlight__ = vim.o.cursorcolumn
       vim.opt.virtualedit = vcol
       vim.opt.cursorline = false
       vim.opt.cursorcolumn = false
@@ -24,7 +24,7 @@ do
   vim.api.nvim_create_autocmd({ "InsertLeave" }, {
     group = lib.group,
     callback = function()
-      local cc = vim.b.__column_highlight__
+      local cc = vim.w.__column_highlight__
       vim.opt.cursorline = true
       if cc then
         vim.opt.cursorcolumn = cc
@@ -52,14 +52,14 @@ vim.api.nvim_create_autocmd({ "InsertEnter", "CursorMovedI", "TextChangedP" }, {
   group = lib.group,
   callback = function()
     local _, col = unpack(vim.api.nvim_win_get_cursor(0))
-    vim.b.__cursor_column__ = col
+    vim.w.__cursor_column__ = col
   end,
 })
 
 vim.api.nvim_create_autocmd({ "InsertLeave" }, {
   group = lib.group,
   callback = function()
-    local col = vim.b.__cursor_column__
+    local col = vim.w.__cursor_column__
     if col then
       local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
       vim.api.nvim_win_set_cursor(0, { row, col })
