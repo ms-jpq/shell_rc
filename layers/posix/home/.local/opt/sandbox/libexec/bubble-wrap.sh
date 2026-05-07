@@ -120,6 +120,7 @@ RW_BIND=(
   "$XDG_CACHE_HOME"
 
   "$HOME/.local/asdf"
+  "$XDG_DATA_HOME/pnpm"
 )
 
 if [[ -v TMPDIR && $TMPDIR != /tmp ]]; then
