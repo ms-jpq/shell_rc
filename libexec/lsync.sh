@@ -8,9 +8,10 @@ shift -- 1
 mkdir -v -p -- "$DST"
 
 CP=(-a -f)
-# if [[ $OSTYPE == msys ]]; then
-#   CP+=(--dereference)
-# fi
+if [[ $OSTYPE == msys ]]; then
+  CP+=(--dereference)
+  tree -L 2 -- "$@"
+fi
 
 for SRC in "$@"; do
   if [[ -d $SRC ]]; then
