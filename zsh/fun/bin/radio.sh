@@ -7,7 +7,7 @@ PYRADIO="$OPT/pyradio"
 VENV="$PYRADIO/venv"
 
 case "$OSTYPE" in
-msys)
+msys | cygwin)
   BIN="$VENV/Scripts"
   ;;
 *)

@@ -15,7 +15,7 @@ linux*)
     sudo -- env -- DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --yes -- "${PKG[@]}"
   fi
   ;;
-msys)
+msys | cygwin)
   PATH="/usr/bin:$PATH"
   LOCALAPPDATA="$(cygpath -- "$LOCALAPPDATA")"
   PATH="$LOCALAPPDATA/Microsoft/WinGet/Links:$PATH"

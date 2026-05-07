@@ -9,7 +9,7 @@ darwin*)
 linux*)
   ARGV=(xdg-open "obsidian://$*")
   ;;
-msys)
+msys | cygwin)
   ARGV=(start "obsidian://$*")
   ;;
 *)

@@ -35,7 +35,7 @@ bindkey -- '^f' autosuggest-accept
 bindkey -- '^[f' autosuggest-accept
 
 case "$OSTYPE" in
-linux* | msys)
+linux* | msys | cygwin)
   # shellcheck disable=SC1091
   source -- '/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh'
   # shellcheck disable=SC1091

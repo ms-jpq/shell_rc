@@ -7,13 +7,13 @@ shift -- 1
 
 mkdir -v -p -- "$DST"
 
-set -x
-
 CP=(-a -f)
-if [[ $OSTYPE == msys ]]; then
+case "$OSTYPE" in
+msys | cygwin)
   CP+=(--dereference)
-  tree -L 2 -- "$@"
-fi
+  ;;
+*) ;;
+esac
 
 for SRC in "$@"; do
   if [[ -d $SRC ]]; then

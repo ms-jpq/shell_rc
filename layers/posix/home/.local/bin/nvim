@@ -12,7 +12,7 @@ linux*)
 darwin*)
   NVIM='/opt/homebrew/bin/nvim'
   ;;
-msys) ;;
+msys | cygwin) ;;
 *)
   set -v
   exit 1

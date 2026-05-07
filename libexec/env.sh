@@ -17,7 +17,7 @@ darwin*)
   NPROC="$(sysctl -n hw.physicalcpu)"
   MEMBYTES="$(sysctl -n hw.memsize)"
   ;;
-msys)
+msys | cygwin)
   PATH="/usr/bin:$PATH"
 
   # shellcheck disable=2154

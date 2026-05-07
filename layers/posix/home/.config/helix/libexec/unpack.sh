@@ -12,7 +12,7 @@ case "$OSTYPE" in
 linux* | darwin*)
   T='bsdtar'
   ;;
-msys)
+msys | cygwin)
   # shellcheck disable=SC2154
   T="$(cygpath -- "$SYSTEMROOT/system32/tar.exe")"
   ;;

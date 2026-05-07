@@ -9,7 +9,7 @@ linux*)
 darwin*)
   MAKE='gmake'
   ;;
-msys)
+msys | cygwin)
   shopt -u failglob
   # shellcheck disable=SC2154
   LOCALAPPDATA="$(/usr/bin/cygpath -- "$LOCALAPPDATA")"

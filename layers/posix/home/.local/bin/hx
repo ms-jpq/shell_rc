@@ -14,7 +14,7 @@ if ! [[ -x $HX ]]; then
   darwin*)
     HX='/opt/homebrew/bin/hx'
     ;;
-  msys)
+  msys | cygwin)
     HX='/usr/bin/hx'
     ;;
   *)

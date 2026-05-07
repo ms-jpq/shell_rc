@@ -6,7 +6,7 @@ darwin*)
 linux*)
 	printf -- '%s' linux
 	;;
-msys)
+msys | cygwin)
 	printf -- '%s' nt
 	;;
 *)

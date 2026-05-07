@@ -19,7 +19,7 @@ darwin*)
 linux*)
   PKGS="$(dpkg --get-selections | cut --field 1 | cut --delimiter : --field 1)"
   ;;
-msys)
+msys | cygwin)
   S1=(winget list --disable-interactivity --accept-source-agreements)
   # shellcheck disable=SC2016
   S2=(awk '{ print $(NF > 3 ? NF-2 : 1) "\n" $(NF > 4 ? NF-3 : 1) }')
@@ -78,7 +78,7 @@ if (("${#RM[@]}")); then
     sudo -- apt-get purge --yes -- "${RM[@]}"
     sudo -- apt-get autoremove --yes
     ;;
-  msys)
+  msys | cygwin)
     WINGET=(
       winget uninstall
       --disable-interactivity
@@ -116,7 +116,7 @@ if (("${#ADD[@]}")); then
     sudo -- apt-get autoremove --yes
     sudo -- apt-get clean
     ;;
-  msys)
+  msys | cygwin)
     WINGET=(
       winget install
       --disable-interactivity

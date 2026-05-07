@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- bash
 
 case "$OSTYPE" in
-msys)
+msys | cygwin)
   export -- MSYSTEM="${MSYSTEM:-"MSYS"}" MSYS="${MSYS:-"winsymlinks:nativestrict"}"
 
   export -- XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"$LOCALAPPDATA"}"

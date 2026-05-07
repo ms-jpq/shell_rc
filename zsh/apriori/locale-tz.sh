@@ -30,7 +30,7 @@ if [[ -z ${TZ:-""} ]]; then
     TZ="$(readlink -- /etc/localtime)"
     TZ="${TZ#'/usr/share/zoneinfo/'}"
     ;;
-  msys)
+  msys | cygwin)
     :
     ;;
   *) ;;

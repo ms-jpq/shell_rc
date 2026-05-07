@@ -61,7 +61,7 @@ JQ
   linux* | darwin*)
     TMPDIR="/var/tmp/helix-rt"
     ;;
-  msys)
+  msys | cygwin)
     # shellcheck disable=SC2154
     TMPDIR="$TEMP/helix-rt/var"
     ;;
@@ -91,7 +91,7 @@ JQ
       )
     fi
     ;;
-  msys)
+  msys | cygwin)
     ARGV+=(
       python
       -c "$PYTHON"

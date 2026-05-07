@@ -7,7 +7,7 @@ VIRTUAL_ENV="${VIRTUAL_ENV:-""}"
 export -- DEFAULT_VENV_PATH="${DEFAULT_VENV_PATH:-"${2:-"$PWD/.venv"}"}"
 
 case "$OSTYPE" in
-msys)
+msys | cygwin)
   PY_EXE="$DEFAULT_VENV_PATH/Scripts/python.exe"
   ;;
 *)

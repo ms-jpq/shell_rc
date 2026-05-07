@@ -20,7 +20,7 @@ if ! [[ -v UNDER ]]; then
   done
 
   case "$OSTYPE" in
-  msys)
+  msys | cygwin)
     make
     ;;
   *)
@@ -104,7 +104,7 @@ darwin*)
 linux*)
   OS=ubuntu
   ;;
-msys)
+msys | cygwin)
   OS=nt
   RSY=(./libexec/rsync.sh "$RSH")
   if ((LOCAL)); then

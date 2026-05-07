@@ -1,7 +1,7 @@
 #!/usr/bin/env -S -- bash
 
 case "$OSTYPE" in
-msys)
+msys | cygwin)
   nt2unix() {
     local -- drive ntpath="$*"
     drive="${ntpath%%:*}"

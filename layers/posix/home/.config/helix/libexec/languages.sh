@@ -36,9 +36,12 @@ dump(j, stdout.buffer)
 PYTHON
 
 PY_BIN='bin'
-if [[ $OSTYPE == msys ]]; then
+case "$OSTYPE" in
+msys | cygwin)
   PY_BIN='Scripts'
-fi
+  ;;
+*) ;;
+esac
 
 export -- PYTHONIOENCODING=utf-8
 PATH="$ROOT/.venv/$PY_BIN:$PATH"
