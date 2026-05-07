@@ -26,6 +26,10 @@ _FILE = Path(__file__).resolve()
 
 
 with nullcontext():
+    captureWarnings(True)
+    basicConfig(format="%(message)s", level=INFO)
+
+with nullcontext():
     Commands["IDLE"] = ("SELECTED",)
 
 
@@ -221,27 +225,23 @@ def main() -> None:
         raise
 
 
-with nullcontext():
-    captureWarnings(True)
-    basicConfig(format="%(message)s", level=INFO)
+if system() == "Darwin":
 
-    if system() == "Darwin":
+    class _SysLogHandler(SysLogHandler):
+        def emit(self, record: LogRecord) -> None:
+            try:
+                pri = self.encodePriority(
+                    self.facility,
+                    self.mapPriority(record.levelname),
+                )
+                msg = self.format(record)
+            except Exception:
+                self.handleError(record)
+            else:
+                syslog(pri, msg)
 
-        class _SysLogHandler(SysLogHandler):
-            def emit(self, record: LogRecord) -> None:
-                try:
-                    pri = self.encodePriority(
-                        self.facility,
-                        self.mapPriority(record.levelname),
-                    )
-                    msg = self.format(record)
-                except Exception:
-                    self.handleError(record)
-                else:
-                    syslog(pri, msg)
-
-        openlog(ident=_FILE.name, facility=LOG_MAIL)
-        getLogger().addHandler(_SysLogHandler(facility=LOG_MAIL))
+    openlog(ident=_FILE.name, facility=LOG_MAIL)
+    getLogger().addHandler(_SysLogHandler(facility=LOG_MAIL))
 
 
 try:
