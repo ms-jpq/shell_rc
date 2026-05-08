@@ -86,7 +86,12 @@
         "command": "terraform"
       }
     },
-    "html": {},
+    "html": {
+      "formatter": {
+        "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
+        "command": "run-prettier"
+      }
+    },
     "java": {
       "formatter": {
         "args": ["-"],
