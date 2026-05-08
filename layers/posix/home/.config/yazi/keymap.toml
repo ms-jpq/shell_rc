@@ -19,5 +19,5 @@ run  = "shell -- ~/.config/yazi/libexec/copy-relative.sh %h"
 
 [[mgr.prepend_keymap]]
 desc = "Symlink selected paths"
-on   = ["s", "l"]
+on   = ["c", "l"]
 run  = "shell -- ~/.config/yazi/libexec/symlink-relative.sh %s"
