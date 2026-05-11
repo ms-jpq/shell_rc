@@ -37,6 +37,10 @@ PARSING_REFS && /^[[:space:]]*$/ {
   print | command
 }
 
+END {
+  close(command)
+}
+
 function _COLOURIZE(LINK)
 {
   if (LINK ~ /^file:/) {
