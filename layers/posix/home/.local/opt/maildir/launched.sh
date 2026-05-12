@@ -9,7 +9,7 @@ if [[ -v RECURSION ]]; then
   SOCK=(/tmp/kitty.*.sock)
 
   MAIL="$1"
-  ID="$(b3sum --length 16 <<< "$MAIL" | cut -d ' ' -f 1)"
+  ID="$(b3sum --length 16 -- "$MAIL" | cut -d ' ' -f 1)"
   SID="$STATE/$ID"
   find "$STATE" -type f -mtime +7 -delete
 
