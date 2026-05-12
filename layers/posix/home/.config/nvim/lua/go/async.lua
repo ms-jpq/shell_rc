@@ -1,5 +1,3 @@
-local threads = setmetatable({}, { __mode = "k" })
-
 local future = function()
   local thread = coroutine.running()
   assert(thread, "future: must be called inside running coroutine")
@@ -37,23 +35,14 @@ local wrap = function(fn)
   end
 end
 
-local thunk = function(fn, token)
+local thunk = function(fn)
   return function(...)
-    local parent = threads[coroutine.running()]
-    if token then
-      if parent then
-        parent.watch(token)
-      end
-    else
-      token = parent
-    end
 
     local argv = { ... }
     local thread = coroutine.create(function()
       fn(unpack(argv))
     end)
 
-    threads[thread] = token
 
     local ok, ret = coroutine.resume(thread)
     if not ok then
@@ -66,8 +55,8 @@ end
 return setmetatable({
   future = future,
   wrap = wrap,
-  run = function(fn, token)
-    thunk(fn, token)()
+  run = function(fn)
+    thunk(fn)()
   end,
   sleep = function(milliseconds)
     local resolve, await = future()
@@ -87,7 +76,7 @@ return setmetatable({
     select = wrap(vim.ui.select),
   },
 }, {
-  __call = function(_, fn, token)
-    return thunk(fn, token)
+  __call = function(_, fn)
+    return thunk(fn)
   end,
 })
