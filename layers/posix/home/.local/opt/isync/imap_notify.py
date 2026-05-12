@@ -14,7 +14,7 @@ from pathlib import Path
 from platform import system
 from socket import gaierror
 from string import Template
-from subprocess import CalledProcessError, check_output
+from subprocess import STDOUT, CalledProcessError, check_output
 from sys import argv, exit
 from syslog import LOG_MAIL, openlog, syslog
 from threading import Lock
@@ -27,6 +27,25 @@ _FILE = Path(__file__).resolve()
 with nullcontext():
     captureWarnings(True)
     basicConfig(format="%(message)s", level=INFO)
+
+if system() == "Darwin":
+
+    # log stream --process logger --process python --info --debug
+    class _SysLogHandler(SysLogHandler):
+        def emit(self, record: LogRecord) -> None:
+            try:
+                pri = self.encodePriority(
+                    self.facility,
+                    self.mapPriority(record.levelname),
+                )
+                msg = self.format(record)
+            except Exception:
+                self.handleError(record)
+            else:
+                syslog(pri, msg)
+
+    openlog(ident=_FILE.name, facility=LOG_MAIL)
+    getLogger().addHandler(_SysLogHandler(facility=LOG_MAIL))
 
 
 @cache
@@ -42,8 +61,12 @@ def _auth(authn: str, user: str, now: int) -> bytes:
     match authn:
         case "oauth":
             argv = (parent / "oauth.sh", "--", state / f"{user}.oauth.gpg")
-            password = check_output(argv, text=True, timeout=_MINUTE).rstrip()
-            return f"user={user}\1auth=Bearer {password}\1\1".encode()
+            try:
+                out = check_output(argv, text=True, timeout=_MINUTE, stderr=STDOUT)
+            except CalledProcessError as e:
+                getLogger().error("%s\n%s", e, e.output)
+                raise
+            return f"user={user}\1auth=Bearer {out.rstrip()}\1\1".encode()
         case "plain":
             return state.joinpath(f"{user}.password").read_bytes().strip()
         case _:
@@ -65,6 +88,7 @@ def _imap(host: str, authn: str, user: str) -> Generator[IMAP4]:
             case "plain":
                 m.login(user, password=auth.decode())
 
+        m._get_capabilities()
         yield m
     finally:
         with suppress(IMAP4.error, OSError):
@@ -191,25 +215,6 @@ def main() -> None:
     except Exception as e:
         getLogger().exception("%s", e)
         raise
-
-
-if system() == "Darwin":
-
-    class _SysLogHandler(SysLogHandler):
-        def emit(self, record: LogRecord) -> None:
-            try:
-                pri = self.encodePriority(
-                    self.facility,
-                    self.mapPriority(record.levelname),
-                )
-                msg = self.format(record)
-            except Exception:
-                self.handleError(record)
-            else:
-                syslog(pri, msg)
-
-    openlog(ident=_FILE.name, facility=LOG_MAIL)
-    getLogger().addHandler(_SysLogHandler(facility=LOG_MAIL))
 
 
 try:

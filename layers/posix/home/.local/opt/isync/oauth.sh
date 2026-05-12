@@ -12,6 +12,6 @@ darwin*)
 esac
 
 RUN="$SHARE/neomutt/oauth2/mutt_oauth2.py"
-OAUTH=(/usr/bin/python3 "$RUN")
+OAUTH=(/opt/homebrew/bin/python3 "$RUN")
 
 exec -- "${OAUTH[@]}" "$@"

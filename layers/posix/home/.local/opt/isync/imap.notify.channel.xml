@@ -9,6 +9,8 @@
     <dict>
       <key>PATH</key>
       <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+      <key>HOME</key>
+      <string>${HOME}</string>
     </dict>
     <key>Program</key>
     <string>${HOME}/.local/opt/isync/${SELF}</string>
