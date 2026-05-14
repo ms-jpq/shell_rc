@@ -9,21 +9,9 @@ do
   vim.opt.packpath:append { packed }
 end
 
-local safe_require = function(module)
-  local ok, err = pcall(require, module)
-  if not ok then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
-  return err
-end
-
 do
-  local ok, err = pcall(vim.cmd.packloadall)
-  if not ok then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
-
-  safe_require "go.pack.theme"
+  lib.report(vim.cmd.packloadall)
+  lib.report(require, "go.pack.theme")
 end
 
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
@@ -35,18 +23,18 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
 
     async.scheduled()
 
-    safe_require "go.pack.coq-nvim"
+    lib.report(require, "go.pack.coq-nvim")
     local globbed = vim.fn.globpath(opt, "*/plugin/*.{lua,vim}", true, true)
     for _, file in pairs(globbed) do
       vim.cmd.source(file)
     end
 
-    safe_require "go.pack.coq-3p"
-    safe_require "go.pack.easyalign"
-    safe_require "go.pack.fzf"
-    safe_require "go.pack.gitsigns"
-    safe_require "go.pack.illuminate"
-    safe_require "go.pack.leap"
-    safe_require "go.pack.treesitter"
+    lib.report(require, "go.pack.coq-3p")
+    lib.report(require, "go.pack.easyalign")
+    lib.report(require, "go.pack.fzf")
+    lib.report(require, "go.pack.gitsigns")
+    lib.report(require, "go.pack.illuminate")
+    lib.report(require, "go.pack.leap")
+    lib.report(require, "go.pack.treesitter")
   end),
 })

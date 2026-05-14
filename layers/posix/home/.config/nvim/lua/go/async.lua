@@ -1,9 +1,13 @@
-local future = function()
+local M = {}
+
+M.future = function()
   local thread = coroutine.running()
   assert(thread, "future: must be called inside running coroutine")
 
+  local f = {}
   local resolved = nil
-  local resolve = function(...)
+
+  f.resolve = function(...)
     if coroutine.status(thread) == "running" then
       resolved = { ... }
     else
@@ -14,24 +18,24 @@ local future = function()
     end
   end
 
-  local await = function()
+  f.await = function()
     if resolved then
       return unpack(resolved)
     end
     return coroutine.yield()
   end
 
-  return resolve, await
+  return f
 end
 
-local wrap = function(fn)
+M.wrap = function(fn)
   return function(...)
-    local resolve, await = future()
+    local f = M.future()
     local argv = { ... }
-    table.insert(argv, resolve)
+    table.insert(argv, f.resolve)
 
     fn(unpack(argv))
-    return await()
+    return f.await()
   end
 end
 
@@ -50,30 +54,32 @@ local thunk = function(fn)
   end
 end
 
-return setmetatable({
-  future = future,
-  wrap = wrap,
-  run = function(fn)
-    thunk(fn)()
-  end,
-  sleep = function(milliseconds)
-    local resolve, await = future()
-    vim.defer_fn(resolve, milliseconds)
-    return await()
-  end,
-  scheduled = wrap(vim.schedule),
-  system = wrap(vim.system),
-  fn = {
-    jobstart = wrap(function(cmd, opts, on_exit)
-      opts = opts or {}
-      opts.on_exit = on_exit
-      vim.fn.jobstart(cmd, opts)
-    end),
-  },
-  ui = {
-    select = wrap(vim.ui.select),
-  },
-}, {
+M.run = function(fn)
+  thunk(fn)()
+end
+
+M.sleep = function(milliseconds)
+  local f = M.future()
+  vim.defer_fn(f.resolve, milliseconds)
+  return f.await()
+end
+
+M.scheduled = M.wrap(vim.schedule)
+M.system = M.wrap(vim.system)
+
+M.fn = {
+  jobstart = M.wrap(function(cmd, opts, on_exit)
+    opts = opts or {}
+    opts.on_exit = on_exit
+    vim.fn.jobstart(cmd, opts)
+  end),
+}
+
+M.ui = {
+  select = M.wrap(vim.ui.select),
+}
+
+return setmetatable(M, {
   __call = function(_, fn)
     return thunk(fn)
   end,

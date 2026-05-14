@@ -48,14 +48,14 @@ local fmt = function()
 
   vim.notify([[⏳...]], vim.log.levels.INFO)
 
-  local resolve, await = async.future()
-  local proc = vim.system(cmd, opts, resolve)
+  local f = async.future()
+  local proc = vim.system(cmd, opts, f.resolve)
   async.run(function()
     async.sleep(timeout)
     proc:kill(9)
   end)
 
-  local waited = await()
+  local waited = f.await()
   async.scheduled()
 
   if waited.signal ~= 0 then

@@ -1,4 +1,5 @@
 local async = require "go.async"
+local lib = require "go"
 
 local cwd = vim.fn.getcwd()
 
@@ -6,7 +7,7 @@ async.run(function()
   while true do
     async.sleep(666)
 
-    local ok, err = pcall(function()
+    local ok = lib.report(function()
       if vim.fn.getcwd() == "" then
         vim.fn.mkdir(cwd, "p")
         vim.cmd.cd(vim.fn.fnameescape(cwd))
@@ -14,7 +15,6 @@ async.run(function()
     end)
 
     if not ok then
-      vim.notify(err, vim.log.levels.ERROR)
       return
     end
   end
