@@ -37,12 +37,10 @@ end
 
 local thunk = function(fn)
   return function(...)
-
     local argv = { ... }
     local thread = coroutine.create(function()
       fn(unpack(argv))
     end)
-
 
     local ok, ret = coroutine.resume(thread)
     if not ok then
