@@ -19,4 +19,4 @@ taplo: ./node_modules/.bin
 	git ls-files --deduplicate -z -- '*.toml' | xargs -r -0 -- '$</taplo' format --
 
 luafmt: $(VAR)/bin/stylua
-	git ls-files --deduplicate --stage -- '*.lua' | awk -- '$$1 !~ /^120000/ { print $$4 }' | tr -- '\n' '\0' | xargs -r -0 -n 1 -P 0 -- '$<' --syntax=LuaJit --indent-type=Spaces --indent-width=2 --sort-requires --call-parentheses=None --
+	git ls-files --deduplicate --stage -- '*.lua' | awk -- '$$1 !~ /^120000/ { print $$4 }' | tr -- '\n' '\0' | xargs -r -0 -n 1 -P 0 -- '$<' --
