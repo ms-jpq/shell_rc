@@ -41,5 +41,5 @@ printf -- '%s\n' '<hola>' | logger -t '<tag>'
 ## Tail
 
 ```bash
-log stream --process logger --process python --info --debug
+log stream --process logger --info --debug
 ```

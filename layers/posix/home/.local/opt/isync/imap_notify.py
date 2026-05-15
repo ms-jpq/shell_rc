@@ -7,16 +7,13 @@ from contextlib import contextmanager, nullcontext, suppress
 from functools import cache, lru_cache, partial
 from imaplib import IMAP4, IMAP4_SSL
 from itertools import islice
-from logging import INFO, LogRecord, basicConfig, captureWarnings, getLogger
-from logging.handlers import SysLogHandler
+from logging import INFO, basicConfig, captureWarnings, getLogger
 from os import linesep
 from pathlib import Path
-from platform import system
 from socket import gaierror
 from string import Template
 from subprocess import STDOUT, CalledProcessError, check_output
 from sys import argv, exit
-from syslog import LOG_MAIL, openlog, syslog
 from threading import Lock
 from time import monotonic, sleep
 
@@ -27,25 +24,6 @@ _FILE = Path(__file__).resolve()
 with nullcontext():
     captureWarnings(True)
     basicConfig(format="%(message)s", level=INFO)
-
-if system() == "Darwin":
-
-    # log stream --process logger --process python --info --debug
-    class _SysLogHandler(SysLogHandler):
-        def emit(self, record: LogRecord) -> None:
-            try:
-                pri = self.encodePriority(
-                    self.facility,
-                    self.mapPriority(record.levelname),
-                )
-                msg = self.format(record)
-            except Exception:
-                self.handleError(record)
-            else:
-                syslog(pri, msg)
-
-    openlog(ident=_FILE.name, facility=LOG_MAIL)
-    getLogger().addHandler(_SysLogHandler(facility=LOG_MAIL))
 
 
 @cache
@@ -168,7 +146,10 @@ def _install(channel: str, path: Path) -> None:
         )
     )
     rendered = template.substitute(
-        HOME=Path.home(), CHANNEL=channel, SELF=_FILE.name, ARGV=av
+        HOME=Path.home(),
+        CHANNEL=channel,
+        SELF=_FILE.with_suffix(".sh").name,
+        ARGV=av,
     )
     path.write_text(rendered)
     getLogger().info("%s", rendered)
@@ -210,6 +191,7 @@ def main() -> None:
             with _imap(host, authn=authn, user=user) as m:
                 mailbox_names = tuple(_mailboxes(m))
 
+        getLogger().info("%s", launchd)
         with ThreadPoolExecutor() as ex:
             tuple(ex.map(idle, mailbox_names))
     except Exception as e:
