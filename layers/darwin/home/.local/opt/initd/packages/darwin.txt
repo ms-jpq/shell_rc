@@ -78,6 +78,7 @@
 + ncspot
 + neomutt
 + neovim
++ newsboat
 + nmap
 + nyancat
 + oh-my-posh
