@@ -6,4 +6,5 @@ shopt -u failglob
 SELF="$(realpath -- "$0")"
 BASE="${SELF%/*}"
 
+# shellcheck disable=SC2154
 "$BASE/imap_notify.py" "$@" 2>&1 | logger -t "imap_notify.$CHANNEL"
