@@ -9,6 +9,13 @@ tmux paste-buffer -d -p
 tmux select-pane -t '{marked}'
 tmux select-pane -M
 
+tmux new-window -c "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents"
+tmux select-pane -m
+tmux set-buffer -- $'yazi \n'
+tmux paste-buffer -d -p
+tmux select-pane -t '{marked}'
+tmux select-pane -M
+
 tmux new-window -c ~/Downloads
 tmux select-pane -m
 tmux set-buffer -- $'~/.local/opt/ai/bin/notificationd \n'
@@ -16,5 +23,5 @@ tmux paste-buffer -d -p
 tmux select-pane -t '{marked}'
 tmux select-pane -M
 
-tmux select-window -t :-1
+tmux select-window -t :-2
 tmux set-environment -g -h -u -- TMUX_NO_SAVE
