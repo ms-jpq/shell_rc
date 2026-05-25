@@ -32,7 +32,7 @@ FILES=(
   ~/.config/isyncrc
   ~/.gnupg/sshcontrol
   ~/.local/secrets
-  ~/.ssh/!(known_hosts)
+  ~/.ssh/!(known_hosts|agent)
 )
 
 case "${1:-""}" in
