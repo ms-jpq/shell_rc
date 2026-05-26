@@ -39,7 +39,7 @@ M.wrap = function(fn)
   end
 end
 
-local thunk = function(fn)
+local lift = function(fn)
   return function(...)
     local argv = { ... }
     local thread = coroutine.create(function()
@@ -55,7 +55,7 @@ local thunk = function(fn)
 end
 
 M.run = function(fn)
-  thunk(fn)()
+  lift(fn)()
 end
 
 M.sleep = function(milliseconds)
@@ -81,6 +81,6 @@ M.ui = {
 
 return setmetatable(M, {
   __call = function(_, fn)
-    return thunk(fn)
+    return lift(fn)
   end,
 })
