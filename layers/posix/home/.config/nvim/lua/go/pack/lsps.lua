@@ -38,6 +38,7 @@ return function()
       callback = function()
         local bin = unpack(argv)
         if bin and vim.fn.executable(bin) == 1 then
+          local coq = _G.coq --[[@as table?]]
           if coq then
             overrides = coq.lsp_ensure_capabilities(overrides)
           end

@@ -1,4 +1,5 @@
-Go = {}
+---@diagnostic disable-next-line: global-element
+_G.Go = {}
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "

@@ -1,5 +1,5 @@
----@diagnostic disable: undefined-global
-function remove_attr(x)
+---@diagnostic disable: undefined-global, global-element
+_G.remove_attr = function(x)
   if x.attr then
     x.attr = pandoc.Attr()
     return x

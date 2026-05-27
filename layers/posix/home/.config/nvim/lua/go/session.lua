@@ -16,7 +16,7 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 })
 
 local argv_names = function(cwd)
-  local argv = vim.fn.argv(-1)
+  local argv = vim.fn.argv(-1) --[[@as string[] ]]
   local acc = {}
   local mapping = {}
   for i, name in ipairs(argv) do
@@ -69,7 +69,7 @@ local no_session = (function()
 end)()
 
 local session_path = function(cwd)
-  local argv = vim.fn.argv(-1)
+  local argv = vim.fn.argv(-1) --[[@as string[] ]]
   local name = vim.re.gsub(cwd or vim.fn.getcwd(), "[/\\]", ".")
   local postfix = table.concat(argv, "&")
   local dir = vim.fs.joinpath(vim.fn.stdpath "cache", "sessions", name)
