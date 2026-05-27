@@ -1,5 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
-  "Lua.diagnostics.globals": ["vim"],
-  "Lua.runtime.version": "LuaJIT"
+  "Lua.runtime.version": "LuaJIT",
+  "Lua.workspace.library": ["/opt/homebrew/share/nvim/runtime/lua"],
+  "Lua.workspace.checkThirdParty": false,
+  "Lua.workspace.ignoreDir": ["nvim"]
 }

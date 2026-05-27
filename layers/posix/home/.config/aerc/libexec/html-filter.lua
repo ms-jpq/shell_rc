@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 function remove_attr(x)
   if x.attr then
     x.attr = pandoc.Attr()

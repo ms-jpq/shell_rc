@@ -1,6 +1,6 @@
-.PHONY: lint mypy shellcheck hadolint tsc
+.PHONY: lint mypy shellcheck hadolint tsc lualint
 
-lint: mypy shellcheck hadolint tsc
+lint: mypy shellcheck hadolint tsc lualint
 
 mypy: $(VENV)/$(PY_BIN)
 	git ls-files --deduplicate -z -- '*.py' | xargs -r -0 -- '$</mypy' --
@@ -13,3 +13,7 @@ hadolint: $(VAR)/bin/hadolint
 
 tsc: ./node_modules/.bin
 	'$</tsc' --noEmit
+
+lualint: $(VAR)/opt/lua-language-server/bin/lua-language-server | $(TMP)
+	mkdir -v -p -- '$(TMP)/luals'
+	'$<' --check '$(CURDIR)' --configpath '$(CURDIR)/.luarc.json' --logpath '$(TMP)/luals' --checklevel Warning
