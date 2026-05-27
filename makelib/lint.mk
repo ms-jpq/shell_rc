@@ -16,4 +16,4 @@ tsc: ./node_modules/.bin
 
 lualint: $(VAR)/opt/lua-language-server/bin/lua-language-server | $(TMP)
 	mkdir -v -p -- '$(TMP)/luals'
-	'$<' --check '$(CURDIR)' --configpath '$(CURDIR)/.luarc.json' --logpath '$(TMP)/luals' --checklevel Warning
+	'$<' --check '.' --configpath '.luarc.json' --logpath '$(TMP)/luals' --checklevel Warning
