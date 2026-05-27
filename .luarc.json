@@ -3,8 +3,6 @@
   "Lua.runtime.version": "LuaJIT",
   "Lua.type.castNumberToInteger": false,
   "Lua.type.inferParamType": true,
-  "Lua.type.weakNilCheck": false,
-  "Lua.type.weakUnionCheck": false,
   "Lua.workspace.checkThirdParty": false,
   "Lua.workspace.ignoreDir": ["nvim", "var"],
   "Lua.workspace.library": [

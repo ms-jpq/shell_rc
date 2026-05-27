@@ -46,8 +46,14 @@ jobs:
           java-version: "25"
 
       - run: |-
+          curl --disable --fail --location --no-progress-meter -- 'https://raw.githubusercontent.com/ms-jpq/deb/refs/heads/deb/pubkey.asc' | sudo -- gpg --batch --dearmor --yes --output /etc/apt/trusted.gpg.d/ms-jpq.gpg
+          sudo -- tee -- /etc/apt/sources.list.d/ms-jpq.list <<-'EOF'
+          deb https://raw.githubusercontent.com/ms-jpq/deb/refs/heads/deb/ /
+          EOF
+
+      - run: |-
           sudo -- apt-get update
-          sudo -- apt-get install --no-install-recommends --yes -- swi-prolog-nox gnucobol moreutils libarchive-tools
+          sudo -- apt-get install --no-install-recommends --yes -- swi-prolog-nox gnucobol moreutils libarchive-tools neovim
           sudo -- apt purge --yes -- firefox
 
       - run: |-
@@ -82,7 +88,7 @@ jobs:
           java-version: "25"
 
       - run: |-
-          brew install -- bash make gnu-getopt coreutils
+          brew install -- bash make gnu-getopt coreutils neovim
           rm -v -fr -- "$HOME/.config" "$HOME/.cache" "$HOME/.local/share"
           mkdir -p ~/.config/clojure/.cpcache
 
