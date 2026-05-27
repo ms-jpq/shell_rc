@@ -27,7 +27,7 @@ VAR  := var
 TMP  := $(VAR)/tmp
 VENV := ./.venv
 
-$(VAR)/bin $(TMP):
+$(VAR) $(VAR)/bin $(TMP):
 	mkdir -v -p -- '$@'
 
 include layers/posix/home/.local/opt/initd/lib/*.mk
