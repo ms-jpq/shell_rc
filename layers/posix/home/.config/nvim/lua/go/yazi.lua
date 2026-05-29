@@ -80,10 +80,10 @@ local netrw = function(args)
       return
     end
 
-    vim.opt_local.cursorline = false
-    vim.opt_local.cursorcolumn = false
+    vim.opt.cursorline = false
+    vim.opt.cursorcolumn = false
     spawn_yazi(args.buf, name)
-    vim.opt_local.cursorline = true
+    vim.opt.cursorline = true
   end
 end
 
