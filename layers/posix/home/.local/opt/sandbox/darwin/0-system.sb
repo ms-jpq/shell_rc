@@ -10,6 +10,7 @@
 (allow process-info* (target same-sandbox))
 (allow signal)
 (allow mach-priv-task-port (target same-sandbox))
+(allow system-sched)
 
 (allow ipc-posix-shm)
 (allow ipc-posix-sem)
@@ -27,6 +28,7 @@
 
 (allow file-read* file-write* file-ioctl
   (literal "/dev/tty")
+  (literal "/dev/ptmx")
   (regex #"^/dev/ttys"))
 
 (allow file-read-data file-write-data file-ioctl
