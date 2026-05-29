@@ -48,8 +48,8 @@ do
     while true do
       async.sleep(cycle)
 
-      if not vim.startswith(vim.api.nvim_get_mode().mode, "i") or not focused then
-        sweep()
+      if not focused or not vim.startswith(vim.api.nvim_get_mode().mode, "i") then
+        lib.report(sweep)
       end
     end
   end)
