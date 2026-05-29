@@ -62,10 +62,12 @@ local spawn_yazi = function(buf, path)
 
     if vim.fn.filereadable(tmp) == 1 then
       local selected = vim.fn.readblob(tmp)
-      local parsed = string.match(selected, [[.*/(/.*)]]) or selected
+      local parsed = unpack(vim.split(selected, "\n", { plain = true, trimempty = true }))
 
-      local escaped = vim.fn.fnameescape(parsed)
-      vim.cmd.edit(escaped)
+      if parsed then
+        local escaped = vim.fn.fnameescape(parsed)
+        vim.cmd.edit(escaped)
+      end
     end
   end)
 end
@@ -78,10 +80,10 @@ local netrw = function(args)
       return
     end
 
-    vim.opt.cursorline = false
-    vim.opt.cursorcolumn = false
+    vim.opt_local.cursorline = false
+    vim.opt_local.cursorcolumn = false
     spawn_yazi(args.buf, name)
-    vim.opt.cursorline = true
+    vim.opt_local.cursorline = true
   end
 end
 

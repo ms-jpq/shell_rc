@@ -10,25 +10,34 @@ require "lspconfig"
 local lsp_on = require "go.pack.lsps"
 
 local filetypes = {}
-for ext, filetype in pairs(vim.filetype.inspect().extension) do
-  if type(filetype) == "string" then
-    if not filetypes[filetype] then
-      filetypes[filetype] = {}
-    end
-
+vim
+  .iter(vim.filetype.inspect().extension)
+  :filter(function(_, filetype)
+    return type(filetype) == "string"
+  end)
+  :each(function(ext, filetype)
+    filetypes[filetype] = filetypes[filetype] or {}
     table.insert(filetypes[filetype], ext)
-  end
-end
+  end)
 
-local acc = {}
-for _, row in pairs(lsp_on()) do
+local acc = vim.iter(lsp_on()):fold({}, function(acc, row)
   local merged, exts = unpack(row)
-  local extensions = vim.empty_dict()
-  for _, filetype in pairs(merged.filetypes or {}) do
-    for _, ext in pairs(filetypes[filetype] or {}) do
-      extensions["." .. ext] = filetype
-    end
-  end
+
+  local extensions = vim
+    .iter(merged.filetypes or {})
+    :map(function(filetype)
+      return vim
+        .iter(filetypes[filetype] or {})
+        :map(function(ext)
+          return { "." .. ext, filetype }
+        end)
+        :totable()
+    end)
+    :flatten()
+    :fold(vim.empty_dict(), function(extensions, pair)
+      extensions[pair[1]] = pair[2]
+      return extensions
+    end)
 
   local mapping = vim.tbl_extend("force", extensions, exts)
   if next(mapping) then
@@ -41,7 +50,9 @@ for _, row in pairs(lsp_on()) do
       settings = merged.settings,
     }
   end
-end
+
+  return acc
+end)
 
 local json = vim.json.encode(acc, { indent = [[  ]], sort_keys = true })
 io.stdout:write(json)

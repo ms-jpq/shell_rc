@@ -45,7 +45,7 @@ vim.opt.sidescrolloff = 10
 vim.opt.smoothscroll = true
 
 -- ui for cmd auto complete
-vim.opt.wildcharm = vim.fn.char2nr [[\t]]
+vim.opt.wildcharm = vim.fn.char2nr "\t"
 vim.opt.wildignorecase = true
 vim.opt.wildmenu = true
 vim.opt.wildmode = "list:longest,full"

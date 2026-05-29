@@ -14,10 +14,10 @@ do
   vim.api.nvim_create_autocmd({ "InsertEnter" }, {
     group = lib.group,
     callback = function()
-      vim.w.__column_highlight__ = vim.o.cursorcolumn
-      vim.opt.virtualedit = vcol
-      vim.opt.cursorline = false
-      vim.opt.cursorcolumn = false
+      vim.w.__column_highlight__ = vim.wo.cursorcolumn
+      vim.opt_local.virtualedit = vcol
+      vim.opt_local.cursorline = false
+      vim.opt_local.cursorcolumn = false
     end,
   })
 
@@ -25,9 +25,9 @@ do
     group = lib.group,
     callback = function()
       local cc = vim.w.__column_highlight__
-      vim.opt.cursorline = true
+      vim.opt_local.cursorline = true
       if cc then
-        vim.opt.cursorcolumn = cc
+        vim.opt_local.cursorcolumn = cc
       end
     end,
   })
@@ -35,12 +35,12 @@ do
   local toggle_cursorcolumn = async(function()
     async.scheduled()
 
-    if vim.o.cursorcolumn then
-      vim.opt.virtualedit = vcol
-      vim.opt.cursorcolumn = false
+    if vim.wo.cursorcolumn then
+      vim.opt_local.virtualedit = vcol
+      vim.opt_local.cursorcolumn = false
     else
-      vim.opt.virtualedit = "all"
-      vim.opt.cursorcolumn = true
+      vim.opt_local.virtualedit = "all"
+      vim.opt_local.cursorcolumn = true
     end
   end)
 
