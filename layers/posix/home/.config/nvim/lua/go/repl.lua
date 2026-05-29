@@ -149,7 +149,7 @@ local highlight = function(buf, lo, hi, fn)
 
     hi = math.max(0, hi - 1)
     local line = unpack(vim.api.nvim_buf_get_lines(0, hi, hi + 1, true))
-    vim.highlight.range(buf, ns, "HighlightedyankRegion", { lo, 0 }, { hi, #line }, { inclusive = false })
+    vim.hl.range(buf, ns, "HighlightedyankRegion", { lo, 0 }, { hi, #line }, { inclusive = false })
 
     fn()
     async.sleep(66)

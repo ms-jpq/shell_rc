@@ -70,7 +70,7 @@ end)()
 
 local session_path = function(cwd)
   local argv = vim.fn.argv(-1) --[[@as string[] ]]
-  local name = vim.re.gsub(cwd or vim.fn.getcwd(), "[/\\]", ".")
+  local name = string.gsub(cwd or vim.fn.getcwd(), "[/\\]", ".")
   local postfix = table.concat(argv, "&")
   local dir = vim.fs.joinpath(vim.fn.stdpath "cache", "sessions", name)
   local path = vim.fs.joinpath(dir, postfix .. ".vim")
