@@ -34,17 +34,20 @@ local pick_pane = function(buf, pane_id)
 
   local win_id, lines = parse_panes()
 
-  local acc = {}
-  for idx, line in ipairs(lines) do
-    local p_id, w_id, w_active, info = unpack(vim.split(line, rand, { plain = true }))
-    if p_id ~= pane_id then
-      local this = w_id == win_id
-      local active = w_active == "1"
-      local pid = tonumber(string.sub(p_id, 2))
+  local acc = vim
+    .iter(lines)
+    :enumerate()
+    :map(function(idx, line)
+      local p_id, w_id, w_active, info = unpack(vim.split(line, rand, { plain = true }))
+      if p_id ~= pane_id then
+        local this = w_id == win_id
+        local active = w_active == "1"
+        local pid = tonumber(string.sub(p_id, 2))
 
-      table.insert(acc, { active, this, idx, pid, p_id, info })
-    end
-  end
+        return { active, this, idx, pid, p_id, info }
+      end
+    end)
+    :totable()
 
   table.sort(acc, function(lhs, rhs)
     local l_active, l_this, l_idx, l_pid = unpack(lhs)

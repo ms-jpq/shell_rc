@@ -95,19 +95,14 @@ local mk_session = function(kill)
 end
 
 local prune_buffers = function()
-  local dead = {}
-  for _, buf in pairs(vim.api.nvim_list_bufs()) do
-    if vim.bo[buf].buflisted then
-      local name = vim.api.nvim_buf_get_name(buf)
-      if vim.fn.filereadable(name) == 0 then
-        table.insert(dead, buf)
-      end
-    end
-  end
-
-  for _, buf in pairs(dead) do
-    vim.api.nvim_buf_delete(buf, { force = true })
-  end
+  vim
+    .iter(vim.api.nvim_list_bufs())
+    :filter(function(buf)
+      return vim.bo[buf].buflisted and vim.fn.filereadable(vim.api.nvim_buf_get_name(buf)) == 0
+    end)
+    :each(function(buf)
+      vim.api.nvim_buf_delete(buf, { force = true })
+    end)
 end
 
 vim.api.nvim_create_user_command("PS", function()

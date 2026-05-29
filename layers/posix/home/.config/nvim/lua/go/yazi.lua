@@ -17,16 +17,14 @@ local file_exp_die = function()
   local alt = vim.fn.getreg "#"
 
   return function()
-    local dead = {}
-    for buf, name in pairs(bufs) do
-      if vim.fn.filereadable(name) == 0 then
-        table.insert(dead, buf)
-      end
-    end
-
-    for _, buf in pairs(dead) do
-      vim.api.nvim_buf_delete(buf, { force = true })
-    end
+    vim
+      .iter(bufs)
+      :filter(function(_, name)
+        return vim.fn.filereadable(name) == 0
+      end)
+      :each(function(buf)
+        vim.api.nvim_buf_delete(buf, { force = true })
+      end)
 
     local altfile = vim.api.nvim_get_current_buf() == current and alt or cur_name
     pcall(vim.fn.setreg, "#", altfile)

@@ -22,10 +22,12 @@ Go.lsp_status = function()
   if #clients == 0 then
     return ""
   end
-  local acc = {}
-  for _, client in ipairs(clients) do
-    table.insert(acc, client.name)
-  end
+  local acc = vim
+    .iter(clients)
+    :map(function(client)
+      return client.name
+    end)
+    :totable()
   table.sort(acc, function(l, r)
     return vim.stricmp(l, r) < 0
   end)

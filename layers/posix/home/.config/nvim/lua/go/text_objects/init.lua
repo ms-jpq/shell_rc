@@ -60,11 +60,7 @@ M.p_indent = function(line, tabsize)
     return 0
   end
 
-  local tabs = {}
-  for _ = 1, tabsize do
-    table.insert(tabs, " ")
-  end
-  local subbed = string.gsub(match, "\t", table.concat(tabs, ""))
+  local subbed = string.gsub(match, "\t", string.rep(" ", tabsize))
   return #subbed
 end
 
