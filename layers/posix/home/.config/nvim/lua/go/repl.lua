@@ -22,7 +22,7 @@ local parse_panes = function()
   local listed = run(nil, { "tmux", "list-panes", "-a", "-F", table.concat(fmt, rand) })
 
   local win_id = vim.fn.trim(win)
-  local lines = vim.split(listed, "\n", { plain = true, trimempty = true })
+  local lines = vim.gsplit(listed, "\n", { plain = true, trimempty = true })
   return win_id, lines
 end
 
