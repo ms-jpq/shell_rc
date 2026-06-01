@@ -18,7 +18,7 @@ local file_exp_die = function()
 
   return function()
     vim
-      .iter(bufs)
+      .iter(pairs(bufs))
       :filter(function(_, name)
         return vim.fn.filereadable(name) == 0
       end)
