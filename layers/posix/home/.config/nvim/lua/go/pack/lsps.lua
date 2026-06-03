@@ -38,11 +38,6 @@ return function()
       callback = function()
         local bin = unpack(argv)
         if bin and vim.fn.executable(bin) == 1 then
-          local coq = _G.coq --[[@as table?]]
-          if coq then
-            overrides = coq.lsp_ensure_capabilities(overrides)
-          end
-
           overrides.cmd = function(dispatchers, config)
             local workdir = (config or {}).root_dir or vim.fn.getcwd()
             local cmd = vim.iter({ lib.sandbox(workdir, conf.sandbox or {}), argv }):flatten():totable()

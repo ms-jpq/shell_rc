@@ -1,3 +1,5 @@
+vim.g.coq_v2 = 1
+
 vim.g.coq_settings = {
   auto_start = true,
   display = {
