@@ -3,8 +3,7 @@
 local M = {}
 
 do
-  M.group = [[lv_go]]
-  vim.api.nvim_create_augroup(M.group, { clear = true })
+  M.group = vim.api.nvim_create_augroup([[lv_go]], { clear = true })
 end
 
 M.is_win = vim.fn.has [[win64]] == 1
