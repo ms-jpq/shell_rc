@@ -44,6 +44,9 @@ vim.opt.scrolloff = 0
 vim.opt.sidescrolloff = 10
 vim.opt.smoothscroll = true
 
+-- restore view on jumplist navigation
+vim.opt.jumpoptions:append "view"
+
 -- ui for cmd auto complete
 vim.opt.wildcharm = vim.fn.char2nr "\t"
 vim.opt.wildignorecase = true
