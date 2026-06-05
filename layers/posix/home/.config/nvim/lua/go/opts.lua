@@ -44,15 +44,20 @@ vim.opt.scrolloff = 0
 vim.opt.sidescrolloff = 10
 vim.opt.smoothscroll = true
 
--- restore view on jumplist navigation
-vim.opt.jumpoptions:append "view"
+-- browser-like jumplist; restore view on navigation
+vim.opt.jumpoptions:append { "stack", "view" }
+
+-- rounded borders on all floating windows
+vim.opt.winborder = "rounded"
+
+-- keep on-screen text stable across split open/close
+vim.opt.splitkeep = "screen"
 
 -- ui for cmd auto complete
 vim.opt.wildcharm = vim.fn.char2nr "\t"
 vim.opt.wildignorecase = true
 vim.opt.wildmenu = true
-vim.opt.wildmode = "list:longest,full"
-vim.opt.wildoptions = "tagfile"
+vim.opt.wildmode:append { "list:longest" }
 
 -- more history
 vim.opt.history = 10000
