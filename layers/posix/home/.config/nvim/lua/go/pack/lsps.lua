@@ -40,7 +40,7 @@ return function()
         if bin and vim.fn.executable(bin) == 1 then
           overrides.cmd = function(dispatchers, config)
             local workdir = (config or {}).root_dir or vim.fn.getcwd()
-            local cmd = vim.iter({ lib.sandbox(workdir, conf.sandbox or {}), argv }):flatten():totable()
+            local cmd = vim.list_extend(lib.sandbox(workdir, conf.sandbox or {}), argv)
 
             return vim.lsp.rpc.start(cmd, dispatchers)
           end

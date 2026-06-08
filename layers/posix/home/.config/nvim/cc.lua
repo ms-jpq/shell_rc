@@ -40,7 +40,7 @@ local acc = vim.iter(lsp_on()):fold({}, function(acc, row)
     end)
 
   local mapping = vim.tbl_extend("force", extensions, exts)
-  if next(mapping) then
+  if not vim.tbl_isempty(mapping) then
     local command = merged.cmd[1]
     acc[command] = {
       extensionToLanguage = mapping,

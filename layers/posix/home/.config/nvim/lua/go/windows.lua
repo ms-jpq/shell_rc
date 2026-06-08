@@ -89,18 +89,18 @@ do
 
   -- quickfix & loclist
   vim.keymap.set({ "n" }, [[<c-p>]], function()
-    for _, _ in pairs(find_qfs(true)) do
+    if not vim.tbl_isempty(find_qfs(true)) then
       vim.cmd [[silent! lprevious]]
-      return
+    else
+      vim.cmd [[silent! cprevious]]
     end
-    vim.cmd [[silent! cprevious]]
   end)
   vim.keymap.set({ "n" }, [[<c-n>]], function()
-    for _, _ in pairs(find_qfs(true)) do
+    if not vim.tbl_isempty(find_qfs(true)) then
       vim.cmd [[silent! lnext]]
-      return
+    else
+      vim.cmd [[silent! cnext]]
     end
-    vim.cmd [[silent! cnext]]
   end)
 
   local toggle_qf = function(lo)
