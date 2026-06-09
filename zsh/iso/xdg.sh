@@ -3,7 +3,7 @@
 # shellcheck disable=SC2154
 export -- AWS_CONFIG_FILE="$XDG_CONFIG_HOME/aws/config"
 export -- AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/credentials"
-export -- BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME/bundle"
+export -- BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME/bundle/config"
 export -- NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/rc.conf"
 export -- NUGET_PACKAGES="$XDG_DATA_HOME/NuGet/packages"
 export -- PNPM_HOME="$XDG_DATA_HOME/pnpm"
