@@ -21,7 +21,7 @@ do
     group = lib.group,
     callback = function()
       focused = true
-      vim.cmd "silent! checktime"
+      vim.cmd.checktime { mods = { silent = true, emsg_silent = true } }
     end,
   })
 
@@ -30,7 +30,7 @@ do
     callback = function()
       focused = false
       if vim.api.nvim_buf_get_name(0) ~= "" then
-        vim.cmd("silent! checktime " .. vim.api.nvim_get_current_buf())
+        vim.cmd.checktime { count = vim.api.nvim_get_current_buf(), mods = { silent = true, emsg_silent = true } }
       end
       vim.cmd [[silent! wall! ++p]]
     end,
@@ -46,7 +46,7 @@ do
   local sweep = function()
     for _, b in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(b) and vim.bo[b].buftype == "" and vim.api.nvim_buf_get_name(b) ~= "" then
-        vim.cmd("silent! checktime " .. b)
+        vim.cmd.checktime { count = b, mods = { silent = true, emsg_silent = true } }
       end
     end
   end

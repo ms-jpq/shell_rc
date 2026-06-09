@@ -61,7 +61,7 @@ do
   vim.api.nvim_create_user_command("BL", function(opts)
     local absname = vim.api.nvim_buf_get_name(0)
     if vim.fn.filereadable(absname) == 0 then
-      vim.cmd([[BLines! ]] .. opts.args)
+      vim.cmd.BLines { opts.args ~= "" and opts.args or nil, bang = true }
       return
     end
 

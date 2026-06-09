@@ -39,17 +39,16 @@ M.translate_visual_type = function(visual_type)
 end
 
 M.set_visual_selection = function(mode, r1, c1, r2, c2, reverse)
-  local cmd = [[norm! ]] .. mode
   local lo = { r1, c1 }
   local hi = { r2, math.max(0, c2 - 1) }
 
   if reverse then
     vim.api.nvim_win_set_cursor(0, hi)
-    vim.cmd(cmd)
+    vim.cmd.normal { mode, bang = true }
     vim.api.nvim_win_set_cursor(0, lo)
   else
     vim.api.nvim_win_set_cursor(0, lo)
-    vim.cmd(cmd)
+    vim.cmd.normal { mode, bang = true }
     vim.api.nvim_win_set_cursor(0, hi)
   end
 end

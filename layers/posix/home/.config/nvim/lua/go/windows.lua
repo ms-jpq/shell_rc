@@ -90,16 +90,16 @@ do
   -- quickfix & loclist
   vim.keymap.set({ "n" }, [[<c-p>]], function()
     if not vim.tbl_isempty(find_qfs(true)) then
-      vim.cmd [[silent! lprevious]]
+      vim.cmd.lprevious { mods = { silent = true, emsg_silent = true } }
     else
-      vim.cmd [[silent! cprevious]]
+      vim.cmd.cprevious { mods = { silent = true, emsg_silent = true } }
     end
   end)
   vim.keymap.set({ "n" }, [[<c-n>]], function()
     if not vim.tbl_isempty(find_qfs(true)) then
-      vim.cmd [[silent! lnext]]
+      vim.cmd.lnext { mods = { silent = true, emsg_silent = true } }
     else
-      vim.cmd [[silent! cnext]]
+      vim.cmd.cnext { mods = { silent = true, emsg_silent = true } }
     end
   end)
 
@@ -113,7 +113,7 @@ do
 
       if not closed then
         local height = vim.o.previewheight
-        vim.cmd([[copen ]] .. height)
+        vim.cmd.copen(height)
       end
     end
   end

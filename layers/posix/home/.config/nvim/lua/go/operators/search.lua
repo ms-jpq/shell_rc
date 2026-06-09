@@ -55,18 +55,18 @@ do
 end
 
 do
-  local searcher = function(cmd)
+  local searcher = function(name)
     return function(visual_type)
       local text = selected_text(visual_type)
       local escaped = magic_escape(text)
       vim.fn.setreg("/", [[\V]] .. escaped)
       vim.opt.hlsearch = true
-      vim.cmd(cmd .. " " .. text)
+      vim.cmd[name] { text ~= "" and text or nil, bang = true }
     end
   end
 
-  Go.op_blines = searcher [[BL!]]
-  Go.op_rg = searcher [[RG!]]
+  Go.op_blines = searcher [[BL]]
+  Go.op_rg = searcher [[RG]]
 
   for key, val in pairs { op_blines = "gF", op_rg = "gf" } do
     vim.keymap.set({ "n" }, val, [[<cmd>set opfunc=v:lua.Go.]] .. key .. [[<cr>g@]], { nowait = true, noremap = true })

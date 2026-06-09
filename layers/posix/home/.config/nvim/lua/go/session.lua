@@ -97,7 +97,7 @@ local mk_session = function(kill)
   vim.fn.mkdir(parent, "p")
   vim.fn.setfperm(parent, [[rwxr-xr-x]])
 
-  vim.cmd([[mksession! ]] .. escaped)
+  vim.cmd.mksession { escaped, bang = true }
 end
 
 local prune_buffers = function()
@@ -146,7 +146,7 @@ local restore = function(cwd)
   local path, escaped = session_path(cwd)
   if vim.fn.filereadable(path) == 1 then
     async.scheduled()
-    vim.cmd([[silent! source ]] .. escaped)
+    vim.cmd.source { escaped, mods = { silent = true, emsg_silent = true } }
   end
 end
 
