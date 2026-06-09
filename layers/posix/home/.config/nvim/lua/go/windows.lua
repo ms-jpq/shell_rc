@@ -7,7 +7,7 @@ vim.opt.switchbuf:append { "useopen", "usetab" }
 
 -- modern split direction
 -- vim.opt.splitright = true
--- vim.opt.splitbelow = true
+vim.opt.splitbelow = true
 
 -- move between windows
 for _, key in pairs { "<c-up>", "<c-k>" } do
