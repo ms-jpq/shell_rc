@@ -25,6 +25,10 @@ if.app-id = 'org.mozilla.firefox'
 run       = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+run       = 'move-node-to-workspace 4'
+
+[[on-window-detected]]
 if.app-id = 'org.whispersystems.signal-desktop'
 run       = 'move-node-to-workspace 5'
 
