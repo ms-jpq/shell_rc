@@ -81,7 +81,6 @@
 + newsboat
 + nmap
 + nyancat
-+ oh-my-posh
 + openssh
 + openvpn
 + pam-reattach
@@ -104,6 +103,7 @@
 + sevenzip
 + sl
 + socat
++ starship
 + swi-prolog
 + tidy-viewer
 + tmux
@@ -123,6 +123,7 @@
 + yank
 + yazi
 + zellij
++ zoxide
 + zsh
 + zsh-autosuggestions
 + zsh-syntax-highlighting

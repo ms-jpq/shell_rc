@@ -1,4 +1,4 @@
-local lib = require "go"
+local lib = require "go.lib"
 
 vim.opt.tagfunc = "v:lua.vim.lsp.tagfunc"
 vim.opt.formatexpr = "v:lua.vim.lsp.formatexpr()"

@@ -4,3 +4,6 @@ vim.g.coq_settings = {
     ["snippets.user_path"] = "~/.cache/helix-rt/nvim/pack/opt/snips",
   },
 }
+
+-- basic autocomplete
+-- vim.opt.autocomplete = true

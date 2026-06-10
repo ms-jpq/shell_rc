@@ -1,13 +1,13 @@
-#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
+#!/usr/bin/env -S -- bash
 
+set -Eeu
 set -o pipefail
-shopt -u failglob
+shopt -s dotglob nullglob extglob globstar
 
 OS="$1"
-GIT="$2"
-Z_OUT="$3"
-B_OUT="$4"
-shift -- 4
+Z_OUT="$2"
+B_OUT="$3"
+shift -- 3
 
 FUNC="$Z_OUT/fn"
 BINS="$Z_OUT/bin"
@@ -32,13 +32,12 @@ for DIR in "${DIRS[@]}"; do
   BSH+=("$DIR"/*.{sh,bash})
 done
 
-SH=("$GIT/dircolors.sh" "$GIT/z/z.sh" ./zsh/_*.sh)
+SH=(./zsh/_*.sh)
 
 # TODO: this somehow blows up gnu-tar on windows?
 if [[ $OS != 'nt' ]]; then
-  FZF="$GIT/fzf/shell"
-  BSH+=(./zsh/aposteriori.{bash,sh} "${SH[@]}" "$FZF"/*.bash)
-  ZSH+=(./zsh/aposteriori.{zs,sh} "${SH[@]}" "$FZF"/*.zsh)
+  BSH+=(./zsh/aposteriori.{bash,sh} "${SH[@]}")
+  ZSH+=(./zsh/aposteriori.{zs,sh} "${SH[@]}")
 fi
 
 ZACC=("$(cat -- /dev/null "${ZSH[@]}")")

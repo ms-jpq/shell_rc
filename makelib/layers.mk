@@ -8,11 +8,6 @@ REQS += ./layers/posix/home/.config/kitty/conf.d/colours.conf
 ./layers/posix/home/.config/kitty/conf.d/colours.conf: ./libexec/kitty.sh ./layers/posix/home/.config/kitty/map.json ./layers/posix/home/.config/ttyd/theme.json
 	'$<' >'$@'
 
-REQS += ./layers/posix/home/.config/k9s/skins/rose-pine-dawn.yaml
-./layers/posix/home/.config/k9s/skins/rose-pine-dawn.yaml: $(GIT_TMP)/k9s
-	cp -v -f -- '$</skins/rose-pine-dawn.yaml' '$@'
-
-
 define FS_TEMPLATE
 
 $(TMP)/$1/$2: ./libexec/lsync.sh $(shell shopt -u failglob && printf -- '%s ' ./layers/{posix,$1}/$2/**/*) $(REQS) $(if $(filter home,$2),$(TMP)/$1/rc/.bashrc $(TMP)/$1/rc/.config/zsh/.zshrc)

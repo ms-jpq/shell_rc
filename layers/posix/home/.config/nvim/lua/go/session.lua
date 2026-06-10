@@ -1,5 +1,5 @@
 local async = require "go.async"
-local lib = require "go"
+local lib = require "go.lib"
 
 -- limit session restoration info
 vim.opt.sessionoptions:remove { "blank", "buffers", "curdir", "help", "terminal" }

@@ -1,4 +1,4 @@
-local lib = require "go"
+local lib = require "go.lib"
 
 -- set terminal title
 vim.opt.title = true

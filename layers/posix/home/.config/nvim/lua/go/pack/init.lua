@@ -1,5 +1,5 @@
 local async = require "go.async"
-local lib = require "go"
+local lib = require "go.lib"
 local base = vim.fs.joinpath(vim.uv.os_homedir(), ".cache", "helix-rt", "nvim")
 local packed = vim.fs.joinpath(base, "pack")
 local opt = vim.fs.joinpath(packed, "opt")

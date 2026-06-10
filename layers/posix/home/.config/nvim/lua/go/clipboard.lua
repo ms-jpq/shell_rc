@@ -1,4 +1,4 @@
-local lib = require "go"
+local lib = require "go.lib"
 
 local esc = "\027"
 local tmux = vim.env.TMUX

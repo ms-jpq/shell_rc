@@ -1,5 +1,5 @@
 local async = require "go.async"
-local lib = require "go"
+local lib = require "go.lib"
 
 vim.keymap.set({ "n", "x", "o" }, "$", "$<right>")
 

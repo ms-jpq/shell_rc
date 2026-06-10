@@ -1,77 +1,45 @@
--- https://github.com/luvit/luv/blob/master/docs/docs.md
+---@diagnostic disable-next-line: global-element
+_G.Go = {}
 
-local M = {}
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
-do
-  M.group = vim.api.nvim_create_augroup([[lv_go]], { clear = true })
-end
+require "go.bookmark"
+require "go.checktime"
+require "go.clipboard"
+require "go.complete"
+require "go.cursor"
+require "go.cwd"
+require "go.diagnostics"
+require "go.diff"
+require "go.fmt"
+require "go.folds"
+require "go.keymap"
+require "go.lsp"
+require "go.misc"
+require "go.operators.casing"
+require "go.operators.move"
+require "go.operators.replace"
+require "go.operators.search"
+require "go.operators.sort"
+require "go.opts"
+require "go.paths"
+require "go.plugins"
+require "go.repl"
+require "go.search"
+require "go.status_line"
+require "go.terminal"
+require "go.text_objects.entire"
+require "go.text_objects.indent"
+require "go.text_objects.line"
+require "go.theme"
+require "go.treesitter"
+require "go.undo"
+require "go.unstable"
+require "go.whitespace"
+require "go.windows"
+require "go.yazi"
 
-M.is_win = vim.fn.has [[win64]] == 1
-  or vim.fn.has [[win64unix]] == 1
-  or vim.fn.has [[win32]] == 1
-  or vim.fn.has [[win32unix]] == 1
-
-M.is_linux = vim.fn.has [[linux]] == 1
-
-M.os = {
-  sep = M.is_win and [[\]] or [[/]],
-}
-
-M.report = function(fn, ...)
-  local ok, err = xpcall(fn, debug.traceback, ...)
-  if not ok then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
-  return ok
-end
-
-M.scope = function(fn)
-  local defers = {}
-  local ok, ret = xpcall(fn, debug.traceback, function(defer)
-    table.insert(defers, defer)
-  end)
-
-  for defer in vim.iter(defers):rev() do
-    M.report(defer)
-  end
-
-  if ok then
-    return ret
-  else
-    error(ret, 0)
-  end
-end
-
-M.read_json = function(path)
-  local json = vim.fn.readblob(path)
-  return vim.json.decode(json)
-end
-
-M.buf_linefeed = function(buf)
-  local ff = vim.bo[buf].fileformat
-
-  if ff == "dos" then
-    return "\r\n"
-  elseif ff == "unix" then
-    return "\n"
-  else
-    if ff == "mac" then
-      return "\r"
-    else
-      assert(false, ff)
-    end
-  end
-end
-
-M.sandbox = function(workdir, opts)
-  if M.is_win or false then
-    return {}
-  end
-
-  local oom = M.is_linux and { "choom", "--adjust", "1000", "--" } or {}
-  local exec = vim.fs.joinpath(vim.env.HOME, ".local", "opt", "sandbox", "libexec", "dispatch.sh")
-  local net = opts.network and { "--network" } or {}
-  return vim.iter({ { "nice", "-n", "19", "--" }, oom, { exec }, net, { "--dir", workdir, "--" } }):flatten():totable()
-end
-
-return M
+--
+require "go.pack"
+require "go.session"

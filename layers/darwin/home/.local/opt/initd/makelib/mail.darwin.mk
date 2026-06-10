@@ -1,11 +1,5 @@
 .PHONY: app.aerc
 
-mail: $(CONFIG)/aerc/binds.conf
-$(BREW_PREFIX)/opt/aerc/share/aerc/binds.conf: | pkg.posix
-$(CONFIG)/aerc/binds.conf: $(CONFIG)/aerc/binds.sed | $(BREW_PREFIX)/opt/aerc/share/aerc/binds.conf
-	'$^' -- '$|' > '$@'
-
-
 APP_AERC := $(OPT)/Aerc.app
 $(APP_AERC): $(OPT)/initd/libexec/aerc-mailto.cjs
 	rm -fr -v -- '$@'

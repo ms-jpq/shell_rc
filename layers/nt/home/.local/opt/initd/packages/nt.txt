@@ -30,7 +30,7 @@
 + eza-community.eza
 + GnuWin32.M4
 + Helix.Helix
-+ JanDeDobbeleer.OhMyPosh
++ Starship.Starship
 + JesseDuffield.lazygit
 + jqlang.jq
 + junegunn.fzf

@@ -1,4 +1,4 @@
-local lib = require "go"
+local lib = require "go.lib"
 
 -- do not exec arbitrary code
 vim.opt.modeline = false

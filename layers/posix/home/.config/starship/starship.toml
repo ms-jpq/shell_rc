@@ -1,0 +1,62 @@
+"$schema"    = 'https://starship.rs/config-schema.json'
+add_newline  = false
+format       = "$directory$git_branch$git_status$fill$python$env_var$shell$username$hostname$line_break$character"
+right_format = "$cmd_duration$status"
+
+[fill]
+symbol = ' '
+
+[directory]
+format            = "[ $path]($style) "
+style             = 'blue'
+truncate_to_repo  = false
+truncation_length = 0
+truncation_symbol = ''
+
+[git_branch]
+format = '[$symbol$branch]($style) '
+style  = 'green'
+symbol = " "
+
+[git_status]
+format = '([$all_status$ahead_behind]($style)) '
+style  = 'green'
+
+[cmd_duration]
+format   = '[ $duration]($style)'
+min_time = 99
+style    = 'yellow'
+
+[status]
+disabled       = false
+format         = "$symbol[$common_meaning$signal_name$maybe_int](red)"
+map_symbol     = true
+success_symbol = "[ ](green)"
+symbol         = "[ ](red)"
+
+[env_var.LF_LEVEL]
+format   = '[ LF$env_value]($style) '
+style    = 'blue'
+variable = 'LF_LEVEL'
+
+[shell]
+bash_indicator = 'bash'
+disabled       = false
+format         = '[ $indicator]($style) '
+style          = 'red'
+zsh_indicator  = 'zsh'
+
+[username]
+format      = '[ $user]($style)'
+show_always = false
+style_root  = 'bright-red'
+style_user  = 'bright-black'
+
+[hostname]
+format   = '[@$hostname]($style) '
+ssh_only = true
+style    = 'bright-black'
+
+[character]
+error_symbol   = '[❯](red)'
+success_symbol = '[❯](green)'

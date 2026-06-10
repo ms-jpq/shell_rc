@@ -1,4 +1,4 @@
-local lib = require "go"
+local lib = require "go.lib"
 
 -- hide background buffers
 vim.opt.hidden = true

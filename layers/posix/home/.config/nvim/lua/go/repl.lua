@@ -1,5 +1,5 @@
 local async = require "go.async"
-local lib = require "go"
+local lib = require "go.lib"
 
 local filters = vim.fs.joinpath(vim.fn.stdpath "config", "repl")
 local rand = string.gsub(vim.fn.tempname(), "/", "-")

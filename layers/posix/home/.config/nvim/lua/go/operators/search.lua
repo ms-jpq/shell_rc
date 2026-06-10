@@ -1,4 +1,4 @@
-local lib = require "go"
+local lib = require "go.lib"
 local to = require "go.text_objects"
 
 local magic_escape = function(text)

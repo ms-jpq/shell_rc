@@ -1,4 +1,4 @@
-local lib = require "go"
+local lib = require "go.lib"
 
 -- offscreen previewing of commands
 vim.opt.inccommand = "split"

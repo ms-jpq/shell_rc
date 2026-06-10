@@ -15,9 +15,6 @@ for key, dir in pairs { ["<c-j>"] = 1, ["<c-k>"] = -1 } do
   end, { expr = true })
 end
 
--- basic autocomplete
--- vim.opt.autocomplete = true
-
 -- do
 --   local ce = vim.keycode [[<c-e>]]
 --
