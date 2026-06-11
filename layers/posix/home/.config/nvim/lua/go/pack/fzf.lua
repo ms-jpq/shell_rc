@@ -181,7 +181,6 @@ do
     "--color=always",
     "--smart-case",
     "--",
-    "{q}",
   }
 
   local live_grep = function(reload)
@@ -206,7 +205,7 @@ do
   end
 
   vim.keymap.set({ "n" }, [[<leader>?]], function()
-    live_grep(rg_args)
+    live_grep(rg_args .. " {q}")
   end)
 
   vim.keymap.set({ "n" }, [[<leader>/]], function()
@@ -215,7 +214,7 @@ do
 
     if vim.fn.filereadable(absname) ~= 0 then
       local name = vim.fn.shellescape(vim.fn.fnamemodify(absname, [[:~:.]]))
-      live_grep(rg_args .. " " .. name)
+      live_grep(rg_args .. " {q} " .. name)
       return
     end
 
