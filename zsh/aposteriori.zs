@@ -19,10 +19,14 @@ _comp_init() {
 _comp_init
 unset -f -- _comp_init
 
-zstyle ':fzf-tab:*' fzf-flags '--no-color'
+_fzf_tab="$HOME/.local/opt/fzf-tab/fzf-tab.zsh"
+if [[ -f $_fzf_tab ]]; then
+  zstyle ':fzf-tab:*' fzf-flags '--no-color'
 
-# shellcheck disable=SC1091
-source -- "$HOME/.local/opt/fzf-tab/fzf-tab.zsh"
+  # shellcheck disable=SC1091
+  source -- "$HOME/.local/opt/fzf-tab/fzf-tab.zsh"
+fi
+unset -- _fzf_tab
 
 # shellcheck disable=SC2034
 ZSH_AUTOSUGGEST_USE_ASYNC=true
