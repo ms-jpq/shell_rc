@@ -34,7 +34,7 @@ mkdir -p -- ~/.config ~/.local/{share,state} ~/.cache
 
 pushd -- "$SRC/config" > /dev/null
 for NAME in ./*; do
-  echo ln -snf -- "$PWD/$NAME" ~/.config/"$NAME"
+  ln -snf -- "$PWD/$NAME" ~/.config/"$NAME"
 done
 
-echo rsync --archive -- "$SRC/local" ~/.local/
+rsync --archive -- "$SRC/local" ~/.local/
