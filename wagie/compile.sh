@@ -1,24 +1,39 @@
-#!/usr/bin/env -S -- bash
+#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
 
-set -Eeu
 set -o pipefail
-shopt -s dotglob nullglob extglob globstar
 
 OUT="$1"
 
 SELF="${0%/*}"
 HOME_LAYER=./layers/posix/home
 CONFIG="$OUT/config"
-ZOUT="$OUT/zsh"
+ZOUT="$CONFIG/zsh"
+
+case "$OSTYPE" in
+darwin*)
+  OS=darwin
+  ;;
+linux*)
+  OS=ubuntu
+  ;;
+msys | cygwin)
+  OS=nt
+  ;;
+*)
+  set -v
+  exit 2
+  ;;
+esac
 
 rm -fr -- "$OUT"
 mkdir -p -- "$CONFIG"
+env -C "$SELF/.." -- ./libexec/zsh.sh "$OS" "$ZOUT" "$OUT"
 
 CP=(cp -a -f --)
-
 COPIES=(
+  "$HOME_LAYER/.config/." "$CONFIG/"
   "$HOME_LAYER/.zshenv" "$OUT/zshenv"
-  "$SELF/z-compile.sh" "$OUT/"
+  "$SELF/link.sh" "$OUT/"
   ./libexec/zsh.sh "$OUT/"
   ./zsh "$ZOUT"
 )
@@ -27,7 +42,14 @@ for ((I = 0; I < ${#COPIES[@]}; I += 2)); do
   "${CP[@]}" "${COPIES[I]}" "${COPIES[I + 1]}"
 done
 
-"${CP[@]}" "$HOME_LAYER/.config"/* "$CONFIG"
-"${CP[@]}" "$SELF/.gitignore" "$CONFIG/"
+COPIES=(
+  bin
+  lbin
+  libexec
+  lprofile.d
+)
+for NAME in "${COPIES[@]}"; do
+  "${CP[@]}" "$HOME_LAYER/.local/$NAME" "$OUT/local/$NAME"
+done
 
-rm -fr -- "$CONFIG/tmux/sessions"
+rm -fr -- "$CONFIG/tmux/sessions" "$CONFIG/pip"/*

@@ -2,4 +2,8 @@
 
 set -o pipefail
 
-exec -- yazi -- "$@"
+if command -v -- yazi > /dev/null; then
+  exec -- yazi -- "$@"
+else
+  exec -- ranger -- "$@"
+fi

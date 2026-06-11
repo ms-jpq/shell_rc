@@ -1,4 +1,6 @@
-#!/usr/bin/env -S -- bash -Eeuo pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar
+#!/usr/bin/env -S -- bash -Eeu -O dotglob -O nullglob -O extglob -O failglob -O globstar
+
+set -o pipefail
 
 WORD="${1-"#"}"
 COLS="${FZF_PREVIEW_COLUMNS:-${2:-"$(tput -- cols 2> /dev/null || :)"}}"

@@ -18,6 +18,7 @@
 # + SWI-Prolog.SWI-Prolog
 # + Swift.Toolchain
 + 7zip.7zip
++ ajeetdsouza.zoxide
 + bootandy.dust
 + BurntSushi.ripgrep.MSVC
 + charmbracelet.glow
@@ -30,7 +31,6 @@
 + eza-community.eza
 + GnuWin32.M4
 + Helix.Helix
-+ Starship.Starship
 + JesseDuffield.lazygit
 + jqlang.jq
 + junegunn.fzf
@@ -47,6 +47,7 @@
 + sharkdp.hyperfine
 + sharkdp.pastel
 + SoftwareFreedomConservancy.QEMU
++ Starship.Starship
 + StephanDilly.gitui
 + UniversalCtags.Ctags
 + Wilfred.difftastic
