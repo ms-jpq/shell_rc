@@ -69,7 +69,7 @@ RO_BIND=(
   /sbin
   /usr
 
-  "$HOME/.local/opt/sandbox"
+  "$HOME/.local/libexec/sandbox"
 
   "$HOME/.bashrc"
   "$HOME/.gitconfig"

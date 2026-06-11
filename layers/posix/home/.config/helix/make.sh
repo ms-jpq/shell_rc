@@ -83,7 +83,7 @@ JQ
         nice
         -n 19
         --
-        ~/.local/opt/sandbox/libexec/dispatch.sh
+        ~/.local/libexec/sandbox/libexec/dispatch.sh
         --auth
         --network
         --dir "$PWD"

@@ -30,7 +30,7 @@ esac
 
 env -C "$SRC" -- ./zsh.sh "$OS" "$ZOUT" "$SRC"
 
-mkdir -p -- ~/.config ~/.local/{share,state} ~/.cache
+mkdir -p -- ~/.config ~/.local/share ~/.local/state/{shell_history,ssh,tmux} ~/.cache
 
 pushd -- "$SRC/config" > /dev/null
 for NAME in ./*; do
