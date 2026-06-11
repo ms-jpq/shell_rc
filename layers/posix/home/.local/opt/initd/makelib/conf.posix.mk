@@ -11,4 +11,8 @@ endif
 
 $(CONFIG)/git/config: | $(GIT_BIN)
 	git config --file '$@' -- include.path user_config
+	git config --file '$@' -- commit.gpgSign true
+	git config --file '$@' -- tag.gpgSign true
+	git config --file '$@' -- push.gpgSign if-asked
+
 	# git config --global -- 'url.git@github.com:ms-jpq/.insteadOf' 'https://github.com/ms-jpq/'
