@@ -28,7 +28,12 @@ mkdir -p -- ~/.config ~/.local/share ~/.local/state/{shell_history,ssh,tmux} ~/.
 
 pushd -- "$SRC/config" > /dev/null
 for NAME in ./*; do
-  ln -snf -- "$PWD/$NAME" ~/.config/"$NAME"
+  DST=~/.config/"$NAME"
+  if [[ -d $DST ]]; then
+    rm -fr -- "$DST"
+  fi
+
+  ln -snf -- "$PWD/$NAME" "$DST"
 done
 
 rsync --archive -- "$SRC/local/" ~/.local/
