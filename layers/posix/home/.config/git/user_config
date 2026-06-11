@@ -5,6 +5,7 @@ ignoreWhitespace = "change"
 # coloring = "highlightRecent"
 
 [branch]
+autoSetupMerge  = "always"
 autoSetupRebase = "always"
 sort            = "-committerdate"
 
