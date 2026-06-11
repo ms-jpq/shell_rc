@@ -23,7 +23,7 @@ return function()
 
     vim.lsp.config(name, overrides)
     local merged = vim.lsp.config[name]
-    local argv = merged.cmd
+    local argv = merged.cmd or {}
 
     if type(argv) ~= "table" then
       vim.notify([[☠️ ]] .. name, vim.log.levels.ERROR)

@@ -101,7 +101,6 @@
     "https://github.com/RRethy/vim-illuminate": ["--lazy"],
     "https://github.com/cocopon/iceberg.vim": [],
     "https://github.com/junegunn/fzf": ["--lazy"],
-    "https://github.com/junegunn/fzf.vim": ["--lazy"],
     "https://github.com/junegunn/vim-easy-align": ["--lazy"],
     "https://github.com/lewis6991/gitsigns.nvim": ["--lazy"],
     "https://github.com/ms-jpq/coq.artifacts": ["--lazy"],
