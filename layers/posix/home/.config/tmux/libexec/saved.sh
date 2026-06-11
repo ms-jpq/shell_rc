@@ -2,9 +2,17 @@
 
 set -o pipefail
 
+LOCK="/tmp/tmux-saved.$UID.lock"
+
 if ! [[ -v TMUX_SAVED ]]; then
-  TMUX_SAVED=1 exec -- flock --conflict-exit-code 0 --nonblock "$0" "$0" "$@"
+  if ! mkdir -- "$LOCK" 2> /dev/null; then
+    exit 0
+  fi
+  TMUX_SAVED=1 exec -- "$0" "$@"
 fi
+
+trap 'exit' INT TERM HUP
+trap 'rmdir -- "$LOCK" 2> /dev/null || true' EXIT
 
 while true; do
   sleep -- 1

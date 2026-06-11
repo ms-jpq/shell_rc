@@ -11,7 +11,7 @@ ifeq ($(OS),nt)
 PIPX_E := $(PIPX_E).exe
 endif
 
-PIPX_EX := env -- 'HOME=$(HOME)' 'USERPROFILE=$(HOME)' ./libexec/flock.sh '$(PIPX_E)' '$(PIPX_E)'
+PIPX_EX := env -- 'HOME=$(HOME)' 'USERPROFILE=$(HOME)' ~/.local/libexec/flock.sh '$(PIPX_E)' '$(PIPX_E)'
 
 
 clobber: clobber.pipx
