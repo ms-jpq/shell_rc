@@ -4,12 +4,6 @@ set -o pipefail
 
 SRC="$(realpath -- "$1")"
 
-SELF="${0%/*}"
-ANT="$SELF/../var/ant"
-
-mkdir -p -- "$SRC"
-cp -a -f -- "$ANT"/. "$SRC/"
-
 ZOUT="$SRC/config/zsh"
 
 case "$OSTYPE" in

@@ -24,7 +24,7 @@ define GIT_TEMPLATE
 .PHONY: clobber.git.$(notdir $1)
 clobber.git: clobber.git.$(notdir $1)
 clobber.git.$(notdir $1):
-	rm -v -rf -- '$(call UNIX_2_NT,$1)'
+	rm -v -rf -- '$1'
 
 git: $1
 $1:
@@ -50,4 +50,5 @@ $(call META_2D,GIT_REPOS,GIT_TEMPLATE)
 
 sync: var/shell_rc | git
 	make --directory '$<' -- ant
+	cp -a -f -- '$</var/ant' ./
 	'$</wagie/link.sh' .
