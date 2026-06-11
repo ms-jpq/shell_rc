@@ -11,17 +11,43 @@ SHELL := bash
 
 .DEFAULT_GOAL := sync
 
+.PHONY: clobber sync git clobber.git
 
-REPO := https://github.com/ms-jpq/shell_rc
-SRC := var/$(notdir $(REPO))
+clobber: clobber.git
 
-$(SRC):
-	if [[ -d '$@' ]]; then
-		git -C '$@' pull --rebase
+define META_2D
+$(foreach line,$($1),$(eval $(call $2,$(firstword $(subst !, ,$(line))),$(lastword $(subst !, ,$(line))))))
+endef
+
+define GIT_TEMPLATE
+
+.PHONY: clobber.git.$(notdir $1)
+clobber.git: clobber.git.$(notdir $1)
+clobber.git.$(notdir $1):
+	rm -v -rf -- '$(call UNIX_2_NT,$1)'
+
+git: $1
+$1:
+	if [[ -d '$$@' ]]; then
+		git -C '$$@' pull --recurse-submodules --no-tags
 	else
-		git clone --recurse-submodules --shallow-submodules -- '$(REPO)' '$@'
+		git clone --recurse-submodules --shallow-submodules --depth=1 -- '$2' '$$@'
 	fi
 
-sync: $(SRC)
-	make --directory '$(SRC)' -- ant
+endef
+
+define GIT_REPOS
+
+var/shell_rc https://github.com/ms-jpq/shell_rc
+var/ai       https://github.com/ms-jpq/ai
+var/fzf      https://github.com/junegunn/fzf
+
+endef
+
+GIT_REPOS := $(shell tr -s -- ' ' '!' <<<'$(GIT_REPOS)')
+
+$(call META_2D,GIT_REPOS,GIT_TEMPLATE)
+
+sync: var/shell_rc | git
+	make --directory '$<' -- ant
 	'$</wagie/link.sh' .
