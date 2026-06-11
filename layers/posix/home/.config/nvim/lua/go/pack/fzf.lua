@@ -94,6 +94,27 @@ do
   vim.keymap.set({ "n" }, [[<leader>G]], function()
     run("gfiles", { source = "git ls-files", options = file_opts, ["sink*"] = file_sink })
   end)
+
+  vim.keymap.set({ "n" }, [[<leader>g]], function()
+    run("gstatus", {
+      source = "git status --short --untracked-files=all",
+      options = opts {
+        multi = true,
+        preview = preview .. " {2..}",
+        preview_window = "right:wrap",
+      },
+      ["sink*"] = sink(function(line)
+        local path = string.sub(line, 4)
+        local arrow = string.find(path, " %-> ")
+        if arrow then
+          path = string.sub(path, arrow + 4)
+        end
+        if path ~= "" then
+          return { filename = path }
+        end
+      end),
+    })
+  end)
 end
 
 do
