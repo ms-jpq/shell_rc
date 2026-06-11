@@ -1,6 +1,6 @@
 "$schema"    = 'https://starship.rs/config-schema.json'
 add_newline  = false
-format       = "$directory$git_branch$git_status$fill$python$env_var$shell$username$hostname$line_break$character"
+format       = "$directory$git_branch$fill$env_var$shell$username$hostname$line_break$character"
 right_format = "$cmd_duration$status"
 
 [fill]
@@ -18,21 +18,16 @@ format = '[$symbol$branch]($style) '
 style  = 'green'
 symbol = " "
 
-[git_status]
-format = '([$all_status$ahead_behind]($style)) '
-style  = 'green'
-
 [cmd_duration]
 format   = '[ $duration]($style)'
 min_time = 99
 style    = 'yellow'
 
 [status]
-disabled       = false
-format         = "$symbol[$common_meaning$signal_name$maybe_int](red)"
-map_symbol     = true
-success_symbol = "[ ](green)"
-symbol         = "[ ](red)"
+disabled   = false
+format     = "$symbol[$int](red)"
+map_symbol = true
+symbol     = "[󰯈 ](red)"
 
 [env_var.LF_LEVEL]
 format   = '[ LF$env_value]($style) '
