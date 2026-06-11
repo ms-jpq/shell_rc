@@ -37,10 +37,6 @@ if.app-id = 'com.tencent.xinWeChat'
 run       = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
-if.app-id = 'notion.id'
-run       = 'move-node-to-workspace 5'
-
-[[on-window-detected]]
 if.app-id = 'us.zoom.xos'
 run       = 'move-node-to-workspace 7'
 
