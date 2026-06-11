@@ -9,6 +9,10 @@ vim.g.fzf_layout = {
 
 local preview = vim.fs.joinpath(vim.fs.dirname(vim.fn.stdpath "config"), "zsh", "libexec", "preview.sh")
 
+local function shelljoin(args)
+  return vim.iter(args):map(vim.fn.shellescape):join " "
+end
+
 local run = function(name, spec)
   vim.fn["fzf#run"](vim.fn["fzf#wrap"](name, spec, true))
 end
@@ -88,7 +92,11 @@ do
   end)
 
   vim.keymap.set({ "n" }, [[<leader>f]], function()
-    run("files", { source = "fd --type f", options = file_opts, ["sink*"] = file_sink })
+    run("files", {
+      source = shelljoin { "fd", "--hidden", "--no-ignore-parent", "--type=f", "--" },
+      options = file_opts,
+      ["sink*"] = file_sink,
+    })
   end)
 
   vim.keymap.set({ "n" }, [[<leader>G]], function()
@@ -97,7 +105,7 @@ do
 
   vim.keymap.set({ "n" }, [[<leader>g]], function()
     run("gstatus", {
-      source = "git status --short --untracked-files=all",
+      source = shelljoin { "git", "status", "--short", "--untracked-files=all" },
       options = opts {
         multi = true,
         preview = preview .. " {2..}",
@@ -163,8 +171,8 @@ do
 end
 
 do
-  local rg_args = table.concat({
-    "",
+  local rg_args = shelljoin {
+    "rg",
     "--fixed-strings",
     "--with-filename",
     "--column",
@@ -173,7 +181,8 @@ do
     "--color=always",
     "--smart-case",
     "--",
-  }, " ")
+    "{q}",
+  }
 
   local live_grep = function(reload)
     run("rg", {
@@ -184,7 +193,7 @@ do
         disabled = true,
         delimiter = ":",
         bind = "change:reload:" .. reload .. " || true",
-        preview = "bat --force-colorization --highlight-line {2} -- {1}",
+        preview = shelljoin { "bat", "--force-colorization", "--highlight-line", "{2}", "--", "{1}" },
         preview_window = "right:wrap",
       },
       ["sink*"] = sink(function(line)
@@ -197,7 +206,7 @@ do
   end
 
   vim.keymap.set({ "n" }, [[<leader>?]], function()
-    live_grep("rg " .. rg_args .. " {q}")
+    live_grep(rg_args)
   end)
 
   vim.keymap.set({ "n" }, [[<leader>/]], function()
@@ -206,7 +215,7 @@ do
 
     if vim.fn.filereadable(absname) ~= 0 then
       local name = vim.fn.shellescape(vim.fn.fnamemodify(absname, [[:~:.]]))
-      live_grep("rg " .. rg_args .. " {q} " .. name)
+      live_grep(rg_args .. name)
       return
     end
 
