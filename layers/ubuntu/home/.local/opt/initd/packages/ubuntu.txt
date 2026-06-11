@@ -67,7 +67,6 @@
 + neovim
 + nmap
 + nyancat
-+ oh-my-posh
 + openssh-server
 + packages-microsoft-prod
 + parallel
@@ -87,6 +86,7 @@
 + sad
 + sl
 + socat
++ starship
 + sudo
 + swi-prolog-nox
 + sysstat

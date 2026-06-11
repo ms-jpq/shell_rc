@@ -73,7 +73,6 @@ if ($IsWindows) {
             Join-Path -Path $pf 'Git' 'usr' 'bin'
             Join-Path -Path $Env:HOMEDRIVE 'msys64' 'usr' 'bin'
             Join-Path -Path $HOME '.cargo' 'bin'
-            Join-Path -Path $localappdata 'Programs' 'oh-my-posh' 'bin'
         ) | Where-Object { Test-Path -PathType 'Container' -Path $_ }
     ) + @($Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 
@@ -88,5 +87,7 @@ else {
 
 @('cat', 'cp', 'mv', 'rm') | Remove-Alias -ErrorAction 'SilentlyContinue'
 
+$Env:STARSHIP_CONFIG = Join-Path -Path $Env:XDG_CONFIG_HOME 'starship' 'starship.toml'
+
 # env -- script --log-out /dev/null --quiet --command "exec -- tmux"
-oh-my-posh init pwsh --config (Join-Path -Path $Env:XDG_CONFIG_HOME 'posh' 'config.yml') | Invoke-Expression
+Invoke-Expression (&starship init powershell)

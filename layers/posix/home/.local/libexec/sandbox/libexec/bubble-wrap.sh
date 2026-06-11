@@ -102,7 +102,7 @@ RO_BIND=(
   "$XDG_CONFIG_HOME/readline"
   "$XDG_CONFIG_HOME/rediscli"
   "$XDG_CONFIG_HOME/ripgrep"
-  "$XDG_CONFIG_HOME/starship.toml"
+  "$XDG_CONFIG_HOME/starship"
   "$XDG_CONFIG_HOME/terraform"
   "$XDG_CONFIG_HOME/tmux"
   "$XDG_CONFIG_HOME/vim"
