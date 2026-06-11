@@ -9,7 +9,7 @@ if tmux show-environment -g -h -- "$ENV" > /dev/null 2>&1; then
 fi
 
 if ! [[ -v TMUX_SAVE_LOCK ]]; then
-  TMUX_SAVE_LOCK=1 exec -- flock "$0" "$0" "$@"
+  TMUX_SAVE_LOCK=1 exec -- ~/.local/libexec/flock.sh "$0" "$0" "$@"
 fi
 
 if ! [[ -v UNDER_THE_DOG ]]; then
