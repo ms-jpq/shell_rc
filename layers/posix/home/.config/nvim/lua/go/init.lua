@@ -1,5 +1,5 @@
 ---@diagnostic disable-next-line: global-element
-_G.Go = {}
+_G.Go = _G.Go or { pack = {} }
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "

@@ -11,7 +11,7 @@ end
 
 do
   lib.report(vim.cmd.packloadall)
-  lib.report(require, "go.pack.theme")
+  lib.pack "theme"
 end
 
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
@@ -23,18 +23,18 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
 
     async.scheduled()
 
-    lib.report(require, "go.pack.coq-nvim")
+    lib.pack "coq-nvim"
     local globbed = vim.fn.globpath(opt, "*/plugin/*.{lua,vim}", true, true)
     for _, file in pairs(globbed) do
       vim.cmd.source(file)
     end
 
-    lib.report(require, "go.pack.coq-3p")
-    lib.report(require, "go.pack.easyalign")
-    lib.report(require, "go.pack.fzf")
-    lib.report(require, "go.pack.gitsigns")
-    lib.report(require, "go.pack.illuminate")
-    lib.report(require, "go.pack.leap")
-    lib.report(require, "go.pack.treesitter")
+    lib.pack "easyalign"
+    lib.pack "fzf"
+    lib.pack "gitsigns"
+    lib.pack "illuminate"
+    lib.pack "leap"
+    lib.pack "treesitter"
+    -- lib.report(require, "go.pack.coq-3p")
   end),
 })

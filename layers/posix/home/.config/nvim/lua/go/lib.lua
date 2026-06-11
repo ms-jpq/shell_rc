@@ -74,4 +74,10 @@ M.sandbox = function(workdir, opts)
   return vim.iter({ { "nice", "-n", "19", "--" }, oom, { exec }, net, { "--dir", workdir, "--" } }):flatten():totable()
 end
 
+M.pack = function(name)
+  if _G.Go.pack[name] ~= false then
+    M.report(require, "go.pack." .. name)
+  end
+end
+
 return M
