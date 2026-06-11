@@ -2,7 +2,6 @@ vim.diagnostic.config {
   severity_sort = true,
   virtual_lines = false,
   virtual_text = true,
-  status = { format = {} },
 }
 
 local highest_severity = function(buf)
