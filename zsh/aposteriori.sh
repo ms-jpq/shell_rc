@@ -37,4 +37,13 @@ export -- STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
 # shellcheck disable=SC1090,2312
 source -- <(starship init "$_sh")
 
+if [[ $_sh == zsh ]]; then
+  _set_title() {
+    if ! [[ -v SSH_TTY ]]; then
+      title "${PWD##*/}"
+    fi
+  }
+  add-zsh-hook -- precmd _set_title
+fi
+
 unset -- _sh
