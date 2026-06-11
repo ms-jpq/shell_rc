@@ -40,7 +40,12 @@ source -- <(starship init "$_sh")
 if [[ $_sh == zsh ]]; then
   _set_title() {
     if ! [[ -v SSH_TTY ]]; then
-      title "${PWD##*/}"
+      if [[ $PWD == "$HOME" ]]; then
+        # shellcheck disable=SC2088
+        title '~/'
+      else
+        title "${PWD##*/}"
+      fi
     fi
   }
   add-zsh-hook -- precmd _set_title
