@@ -4,17 +4,37 @@ set -o pipefail
 
 SRC="$(realpath -- "$1")"
 
-ANT="${0%/*}/../var/ant"
+SELF="${0%/*}"
+ANT="$SELF/../var/ant"
 
 mkdir -p -- "$SRC"
 cp -a -f -- "$ANT"/. "$SRC/"
-rm -fr -- "${ANT:?}"
+
+ZOUT="$SRC/config/zsh"
+
+case "$OSTYPE" in
+darwin*)
+  OS=darwin
+  ;;
+linux*)
+  OS=ubuntu
+  ;;
+msys | cygwin)
+  OS=nt
+  ;;
+*)
+  set -v
+  exit 2
+  ;;
+esac
+
+env -C "$SRC" -- ./zsh.sh "$OS" "$ZOUT" "$SRC"
 
 mkdir -p -- ~/.config ~/.local/{share,state} ~/.cache
 
 pushd -- "$SRC/config" > /dev/null
 for NAME in ./*; do
-  ln -snf -- "$PWD/$NAME" ~/.config/"$NAME"
+  echo ln -snf -- "$PWD/$NAME" ~/.config/"$NAME"
 done
 
-rsync --archive -- "$SRC/local" ~/.local/
+echo rsync --archive -- "$SRC/local" ~/.local/

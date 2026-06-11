@@ -7,27 +7,11 @@ OUT="$1"
 SELF="${0%/*}"
 HOME_LAYER=./layers/posix/home
 CONFIG="$OUT/config"
-ZOUT="$CONFIG/zsh"
-
-case "$OSTYPE" in
-darwin*)
-  OS=darwin
-  ;;
-linux*)
-  OS=ubuntu
-  ;;
-msys | cygwin)
-  OS=nt
-  ;;
-*)
-  set -v
-  exit 2
-  ;;
-esac
+LOCAL="$OUT/local"
+STUB="$OUT/layers/posix/home"
 
 rm -fr -- "$OUT"
-mkdir -p -- "$CONFIG"
-env -C "$SELF/.." -- ./libexec/zsh.sh "$OS" "$ZOUT" "$OUT"
+mkdir -p -- "$CONFIG" "$LOCAL" "$STUB"
 
 CP=(cp -a -f --)
 COPIES=(
@@ -35,7 +19,7 @@ COPIES=(
   "$HOME_LAYER/.zshenv" "$OUT/zshenv"
   "$SELF/link.sh" "$OUT/"
   ./libexec/zsh.sh "$OUT/"
-  ./zsh "$ZOUT"
+  ./zsh "$OUT/zsh"
 )
 
 for ((I = 0; I < ${#COPIES[@]}; I += 2)); do
@@ -49,7 +33,8 @@ COPIES=(
   lprofile.d
 )
 for NAME in "${COPIES[@]}"; do
-  "${CP[@]}" "$HOME_LAYER/.local/$NAME" "$OUT/local/$NAME"
+  "${CP[@]}" "$HOME_LAYER/.local/$NAME" "$LOCAL/$NAME"
 done
 
+ln -snf -- /dev/null "$STUB/.zshenv"
 rm -fr -- "$CONFIG/tmux/sessions" "$CONFIG/pip"/*
