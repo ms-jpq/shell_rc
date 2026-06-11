@@ -27,13 +27,13 @@ env -C "$SRC" -- ./zsh.sh "$OS" "$ZOUT" "$SRC"
 mkdir -p -- ~/.config ~/.local/share ~/.local/state/{shell_history,ssh,tmux} ~/.cache
 
 pushd -- "$SRC/config" > /dev/null
-for NAME in ./*; do
+for NAME in *; do
   DST=~/.config/"$NAME"
-  if [[ -d $DST ]]; then
-    rm -fr -- "$DST"
+  if [[ $NAME == nvim ]]; then
+    rsync --archive --exclude=/init.lua -- "$PWD/$NAME/" "$DST"
+  else
+    ln -snf -- "$PWD/$NAME" "$DST"
   fi
-
-  ln -snf -- "$PWD/$NAME" "$DST"
 done
 
 rsync --archive -- "$SRC/local/" ~/.local/
