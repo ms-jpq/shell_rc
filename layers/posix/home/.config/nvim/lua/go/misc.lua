@@ -1,11 +1,15 @@
-vim.api.nvim_create_user_command("FTdetect", function()
-  vim.cmd [[filetype detect]]
-end, {})
+local async = require "go.async"
+local lib = require "go.lib"
 
--- Go.reap = function()
---   local children = vim.api.nvim_get_proc_children(pid)
---   for _, child in ipairs(children) do
---     -- local proc = vim.api.nvim_get_proc(child) or {}
---     vim.uv.kill(child, vim.uv.constants.SIGTERM)
---   end
--- end
+-- fix stale treesitter commentstring cache
+vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+  group = lib.group,
+  callback = async(function(args)
+    local bo = vim.bo[args.buf]
+    async.scheduled()
+
+    if vim.api.nvim_buf_is_valid(args.buf) and bo.commentstring == "" then
+      bo.commentstring = [[# %s]]
+    end
+  end),
+})
