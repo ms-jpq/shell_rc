@@ -31,4 +31,4 @@ for NAME in ./*; do
   ln -snf -- "$PWD/$NAME" ~/.config/"$NAME"
 done
 
-rsync --archive -- "$SRC/local" ~/.local/
+rsync --archive -- "$SRC/local/" ~/.local/
