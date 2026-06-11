@@ -7,7 +7,10 @@ NVIM='nvim'
 
 case "$OSTYPE" in
 linux*)
-  NVIM='/usr/bin/nvim'
+  BIN='/usr/bin/nvim'
+  if [[ -x $BIN ]]; then
+    NVIM="$BIN"
+  fi
   ;;
 darwin*)
   NVIM='/opt/homebrew/bin/nvim'
@@ -18,11 +21,6 @@ msys | cygwin) ;;
   exit 1
   ;;
 esac
-
-if ! command -v -- "$NVIM" > /dev/null; then
-  set -v
-  exit
-fi
 
 ARGV=("$NVIM")
 
