@@ -50,5 +50,5 @@ $(call META_2D,GIT_REPOS,GIT_TEMPLATE)
 
 sync: var/shell_rc | git
 	make --directory '$<' -- ant
-	cp -a -f -- '$</var/ant' ./
+	cp -a -f -- '$</var/ant/.' ./
 	'$</wagie/link.sh' .
