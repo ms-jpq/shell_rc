@@ -3,9 +3,6 @@ add_newline  = false
 format       = "$directory$git_branch$fill$env_var$shell$username$hostname$line_break$character"
 right_format = "$cmd_duration$status"
 
-[fill]
-symbol = ' '
-
 [directory]
 format            = "[ $path]($style) "
 style             = 'blue'
@@ -18,16 +15,8 @@ format = '[$symbol$branch]($style) '
 style  = 'green'
 symbol = " "
 
-[cmd_duration]
-format   = '[ $duration]($style)'
-min_time = 99
-style    = 'yellow'
-
-[status]
-disabled   = false
-format     = "$symbol[$int](red)"
-map_symbol = true
-symbol     = "[󰯈 ](red)"
+[fill]
+symbol = ' '
 
 [env_var.LF_LEVEL]
 format   = '[ LF$env_value]($style) '
@@ -38,7 +27,7 @@ variable = 'LF_LEVEL'
 bash_indicator = 'bash'
 disabled       = false
 format         = '[ $indicator]($style) '
-style          = 'red'
+style          = 'black'
 zsh_indicator  = 'zsh'
 
 [username]
@@ -55,3 +44,14 @@ style    = 'bright-black'
 [character]
 error_symbol   = '[❯](red)'
 success_symbol = '[❯](green)'
+
+[cmd_duration]
+format   = '[ $duration]($style)'
+min_time = 99
+style    = 'yellow'
+
+[status]
+disabled   = false
+format     = "$symbol[$int](red)"
+map_symbol = true
+symbol     = "[󰯈 ](red)"
