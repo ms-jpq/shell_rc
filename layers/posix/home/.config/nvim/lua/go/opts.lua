@@ -57,7 +57,7 @@ vim.opt.splitkeep = "screen"
 vim.opt.wildcharm = vim.fn.char2nr "\t"
 vim.opt.wildignorecase = true
 vim.opt.wildmenu = true
-vim.opt.wildmode:append { "list:longest" }
+vim.opt.wildmode:append { "longest:full" }
 
 -- more history
 vim.opt.history = 10000
