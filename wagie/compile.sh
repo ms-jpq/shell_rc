@@ -37,4 +37,5 @@ for NAME in "${COPIES[@]}"; do
 done
 
 ln -snf -- /dev/null "$STUB/.zshenv"
-rm -fr -- "$CONFIG/tmux/sessions" "$CONFIG/pip"/*
+
+rm -fr -- "$CONFIG/tmux/sessions"
