@@ -2,8 +2,6 @@
 
 set -o pipefail
 
-set -x
-
 SRC="$(realpath -- "$1")"
 
 ANT="${0%/*}/../var/ant"
