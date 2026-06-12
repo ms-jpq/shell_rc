@@ -21,7 +21,7 @@
   (subpath "/usr/sbin"))
 
 (allow file-read* file-map-executable
-  (subpath "/Applications/Xcode.app")
+  (subpath "/Applications")
   (subpath "/Library/Developer/CommandLineTools")
   (subpath "/opt/homebrew"))
 
