@@ -2,16 +2,11 @@
 
 set -o pipefail
 
-OPTS='a,n,d:,f:'
-LONG_OPTS='auth,network,dir:,file:'
-GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
-eval -- set -- "$GO"
-
 AUTH=0
 NETWORK=0
 DIRS=()
 FILES=()
-while true; do
+while (($#)); do
   case "$1" in
   -a | --auth)
     AUTH=1
@@ -25,17 +20,28 @@ while true; do
     DIRS+=("$2")
     shift -- 2
     ;;
+  --dir=*)
+    DIRS+=("${1#*=}")
+    shift -- 1
+    ;;
   -f | --file)
     FILES+=("$2")
     shift -- 2
+    ;;
+  --file=*)
+    FILES+=("${1#*=}")
+    shift -- 1
     ;;
   --)
     shift -- 1
     break
     ;;
-  *)
+  -*)
     set -v
     exit 2
+    ;;
+  *)
+    break
     ;;
   esac
 done
