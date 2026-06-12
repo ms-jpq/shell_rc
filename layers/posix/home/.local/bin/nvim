@@ -3,17 +3,24 @@
 set -o pipefail
 shopt -u failglob
 
+BASE="${0%/*}"
+PATH=":$PATH:"
+PATH="${PATH//:$BASE:/:}"
+PATH="${PATH#:}"
+PATH="${PATH%:}"
+
 NVIM='nvim'
 
 case "$OSTYPE" in
 linux*)
-  BIN='/usr/bin/nvim'
-  if [[ -x $BIN ]]; then
-    NVIM="$BIN"
+  if [[ -x /usr/bin/nvim ]]; then
+    NVIM='/usr/bin/nvim'
   fi
   ;;
 darwin*)
-  NVIM='/opt/homebrew/bin/nvim'
+  if [[ -x /opt/homebrew/bin/nvim ]]; then
+    NVIM='/opt/homebrew/bin/nvim'
+  fi
   ;;
 msys | cygwin) ;;
 *)
