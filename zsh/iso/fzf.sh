@@ -5,6 +5,16 @@ export -- FZF_TMUX_HEIGHT='100%'
 # shellcheck disable=SC2154
 export -- FZF_DEFAULT_OPTS_FILE="$XDG_CONFIG_HOME/fzf/rc.conf"
 
+_zo_fzf_opts=(
+  --no-sort
+  --keep-right
+  --exit-0
+  --preview "$(printf -- '%q' "$XDG_CONFIG_HOME/zsh/libexec/preview.sh") {2..}"
+)
+printf -v _ZO_FZF_OPTS -- '%q ' "${_zo_fzf_opts[@]}"
+unset -- _zo_fzf_opts
+export -- _ZO_FZF_OPTS
+
 _fzf_default_command=(
   fd
   --hidden

@@ -30,6 +30,7 @@ unset -- _fzf _fzf_shell
 
 # shellcheck disable=SC2312,SC1090
 source -- <(zoxide init "$_sh")
+alias z=zi
 
 # shellcheck disable=SC2154
 export -- STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
