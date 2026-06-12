@@ -6,6 +6,10 @@ on  = "R"
 run = "refresh"
 
 [[mgr.prepend_keymap]]
+on   = "!"
+run  = 'shell --block -- "$SHELL"'
+
+[[mgr.prepend_keymap]]
 on  = ["e", "x"]
 run = "shell -- chmod -- +x %s"
 [[mgr.prepend_keymap]]

@@ -1,11 +1,16 @@
+*.isorted
 .clj-kondo
 .DS_Store
 .git/
 .lsp/
 .mypy_cache/
 .venv/
-*.isorted
 layers/posix/home/.config/helix/languages.toml
+layers/posix/home/.config/nvim/apriori/*
+layers/posix/home/.config/ranger/*.conf
 package-lock.json
 tsconfig.tsbuildinfo
 var/
+
+!layers/posix/home/.config/ranger/keymap.conf
+!layers/posix/home/.config/ranger/rc2.conf
