@@ -72,7 +72,6 @@ digestif:
   extensions:
     .tex: tex
 
-
 bashls:
   extensions:
     .bash: sh

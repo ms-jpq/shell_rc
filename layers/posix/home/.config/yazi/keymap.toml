@@ -6,8 +6,8 @@ on  = "R"
 run = "refresh"
 
 [[mgr.prepend_keymap]]
-on   = "!"
-run  = 'shell --block -- "$SHELL"'
+on  = "!"
+run = 'shell --block -- "$SHELL"'
 
 [[mgr.prepend_keymap]]
 on  = ["e", "x"]
