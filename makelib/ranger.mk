@@ -3,14 +3,16 @@
 clobber: clobber.ranger
 all: ranger
 
-RANGER    := ./layers/posix/home/.config/ranger
-RANGER_RC := https://raw.githubusercontent.com/ranger/ranger/refs/heads/master/ranger/config/rc.conf
+RANGER := ./layers/posix/home/.config/ranger
 
 clobber.ranger:
-	rm -vfr -- $(RANGER)/reference.conf $(RANGER)/unmap.conf $(RANGER)/rc.conf
+	rm -vfr -- $(RANGER)/reference.conf $(RANGER)/unmap.conf $(RANGER)/rc.conf $(VAR)/ranger
 
-$(RANGER)/reference.conf:
-	$(CURL) --output '$@' -- '$(RANGER_RC)'
+$(VAR)/ranger: | $(VAR)
+	./libexec/git-sync.sh https://github.com/ranger/ranger '$@'
+
+$(RANGER)/reference.conf: | $(VAR)/ranger
+	cp -- '$|/ranger/config/rc.conf' '$@'
 
 $(RANGER)/unmap.conf: $(RANGER)/unmap.sed $(RANGER)/reference.conf
 	'$<' -- '$(lastword $^)' > '$@'
