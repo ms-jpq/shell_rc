@@ -25,5 +25,4 @@ esac
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
-mkdir -p -- "$BIN"
-install -v -b -- "$RUN/"**'/typos-lsp'* "$BIN/typos-lsp$EXT"
+install -v -bD -- "$RUN/"**'/typos-lsp'* "$BIN/typos-lsp$EXT"

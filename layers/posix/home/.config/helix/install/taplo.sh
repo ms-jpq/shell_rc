@@ -23,5 +23,4 @@ get.sh "$URI" | unpack.sh "$RUN"
 F=("$RUN"/*)
 chmod +x "${F[@]}"
 # shellcheck disable=SC2154
-mkdir -p -- "$BIN"
-install -v -b -- "${F[@]}" "$BIN/taplo$EXT"
+install -v -bD -- "${F[@]}" "$BIN/taplo$EXT"

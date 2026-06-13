@@ -5,6 +5,7 @@ set -o pipefail
 SRC="$(realpath -- "$1")"
 
 ZOUT="$SRC/config/zsh"
+BIN_LINK=~/.cache/helix-rt/more/bin-link.sh
 
 case "$OSTYPE" in
 darwin*)
@@ -25,6 +26,9 @@ esac
 env -C "$SRC" -- ./zsh.sh "$OS" "$ZOUT" "$SRC"
 
 mkdir -p -- ~/.config ~/.local/share ~/.local/state/{shell_history,ssh,tmux} ~/.cache
+
+mkdir -p -- "$BIN_LINK"
+ln -sTnfr -- "$SRC/bin-link" "$BIN_LINK/bin"
 
 pushd -- "$SRC/config" > /dev/null
 for NAME in *; do

@@ -32,5 +32,4 @@ URI="$BASE_URI/$VERSION/terraform-ls_${VERSION}_$NAME.zip"
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
-mkdir -p -- "$BIN"
-install -v -b -- "$RUN/terraform"* "$BIN/"
+install -v -bD -t "$BIN" -- "$RUN/terraform"*

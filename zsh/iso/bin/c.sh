@@ -2,6 +2,10 @@
 
 set -o pipefail
 
+if [[ -t 0 ]]; then
+  exit 2
+fi
+
 if [[ -v TMUX_PANE ]] && command -v -- tmux > /dev/null; then
   exec -- tmux load-buffer -w -- -
 fi

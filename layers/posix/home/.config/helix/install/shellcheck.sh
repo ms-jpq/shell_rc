@@ -21,5 +21,4 @@ esac
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
-mkdir -p -- "$BIN"
-install -v -b -- "$RUN/shellcheck"*'/shellcheck' "$BIN/shellcheck"
+install -v -bD -- "$RUN/shellcheck"*'/shellcheck' "$BIN/shellcheck"

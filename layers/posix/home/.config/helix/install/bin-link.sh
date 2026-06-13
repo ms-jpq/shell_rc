@@ -9,11 +9,10 @@ BASE="${BASE%/*}"
 SRC="$BASE/bin"
 # shellcheck disable=SC2154
 DST="$BIN"
-mkdir -p -- "$BIN"
 
 shopt -u failglob
 for F in "$SRC"/*; do
   NAME="$(basename -- "$F")"
   STEM="${NAME%.*}"
-  install -b -- "$F" "$DST/$STEM"
+  install -bD -- "$F" "$DST/$STEM"
 done

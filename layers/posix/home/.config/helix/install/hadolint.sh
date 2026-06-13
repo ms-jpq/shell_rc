@@ -29,5 +29,4 @@ esac
 
 FILE="$(get.sh "$URI")"
 # shellcheck disable=SC2154
-mkdir -p -- "$BIN"
-install -v -b -- "$FILE" "$BIN/hadolint$EXT"
+install -v -bD -- "$FILE" "$BIN/hadolint$EXT"

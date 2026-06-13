@@ -21,5 +21,4 @@ esac
 # shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
-mkdir -p -- "$BIN"
-install -v -b -- "$RUN/bin/glsl_analyzer$EXT" "$BIN/glsl_analyzer$EXT"
+install -v -bD -- "$RUN/bin/glsl_analyzer$EXT" "$BIN/glsl_analyzer$EXT"

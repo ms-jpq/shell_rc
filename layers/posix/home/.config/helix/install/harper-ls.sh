@@ -20,5 +20,4 @@ esac
 get.sh "$URI" | unpack.sh "$RUN"
 # shellcheck disable=2154
 
-mkdir -p -- "$BIN"
-install -v -b -- "$RUN/"* "$BIN/"
+install -v -bD -t "$BIN" -- "$RUN/"*

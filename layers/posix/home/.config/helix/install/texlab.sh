@@ -33,6 +33,5 @@ esac
 get.sh "$URI" | unpack.sh "$RUN"
 get.sh "$T_URI" | unpack.sh "$RUN"
 # shellcheck disable=SC2154
-mkdir -p -- "$BIN"
-install -v -b -- "$RUN/texlab"* "$BIN/texlab$EXT"
-install -v -b -- "$RUN/tectonic"* "$T_BIN"
+install -v -bD -- "$RUN/texlab"* "$BIN/texlab$EXT"
+install -v -bD -- "$RUN/tectonic"* "$T_BIN"
