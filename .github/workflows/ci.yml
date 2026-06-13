@@ -53,7 +53,7 @@ jobs:
 
       - run: |-
           sudo -- apt-get update
-          sudo -- apt-get install --no-install-recommends --yes -- swi-prolog-nox gnucobol moreutils libarchive-tools neovim
+          sudo -- apt-get install --no-install-recommends --yes -- swi-prolog-nox gnucobol moreutils libarchive-tools neovim util-linux
           sudo -- apt purge --yes -- firefox
 
       - run: |-
@@ -89,7 +89,7 @@ jobs:
 
       - run: |-
           PATH="$(brew --prefix)/opt/coreutils/libexec/gnubin:$PATH"
-          brew install -- bash make gnu-getopt coreutils neovim
+          brew install -- bash make gnu-getopt coreutils neovim flock
           rm -v -fr -- "$HOME"/{.config,.cache} "$HOME/.local"/{share,state,opt}
           ./layers/darwin/home.sh
           mkdir -p ~/.config/clojure/.cpcache
