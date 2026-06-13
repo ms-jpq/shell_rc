@@ -38,9 +38,10 @@ endef
 
 define GIT_REPOS
 
-var/shell_rc https://github.com/ms-jpq/shell_rc
 var/ai       https://github.com/ms-jpq/ai
+var/coq_nvim https://github.com/ms-jpq/coq_nvim
 var/fzf      https://github.com/junegunn/fzf
+var/shell_rc https://github.com/ms-jpq/shell_rc
 
 endef
 
