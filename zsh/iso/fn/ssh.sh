@@ -1,7 +1,9 @@
 #!/usr/bin/env -S -- bash
 
-# if (($# > 1)); then
-command -- ssh "$@"
-# else
-#   autossh -M 0 "$@"
-# fi
+ssh() {
+  command -- ssh "$@"
+  local -- ret=$?
+  stty sane
+  tput -- rmcup cnorm sgr0 rmacs
+  return "$ret"
+}
