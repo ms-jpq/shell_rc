@@ -2,4 +2,16 @@
 
 set -o pipefail
 
-exec -- "$HOME/.cache/helix-rt/more/lua-ls.lua/lib/bin/lua-language-server" "$@"
+BIN=~/.cache/helix-rt/more/lua-ls.lua/lib/bin/lua-language-server
+
+if [[ -x $BIN ]]; then
+  exec -- "$BIN" "$@"
+fi
+
+SELF="${0%/*}"
+PATH=":$PATH:"
+PATH="${PATH//:$SELF:/:}"
+PATH="${PATH#:}"
+PATH="${PATH%:}"
+
+exec -- lua-language-server "$@"

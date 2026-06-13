@@ -118,7 +118,7 @@ const _eslint = async (eslint = "", filename = "") => {
 
   const dir = dirname(fileURLToPath(import.meta.url))
   await _spawn(execPath, [
-    join(dir, "prettier"),
+    join(dir, "run-prettier"),
     "--tabsize=2",
     "--sort",
     "--filename",

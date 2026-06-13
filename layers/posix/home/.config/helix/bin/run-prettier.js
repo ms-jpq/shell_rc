@@ -3,7 +3,8 @@
 
 import { ok } from "node:assert/strict"
 import { spawnSync } from "node:child_process"
-import { existsSync } from "node:fs"
+import { constants, existsSync } from "node:fs"
+import { access } from "node:fs/promises"
 import { homedir } from "node:os"
 import { dirname, extname, join } from "node:path"
 import { cwd, execPath, stdin, stdout } from "node:process"
@@ -33,6 +34,10 @@ const node_modules = join(
   "node_modules",
 )
 const bin = join(node_modules, ".bin", "prettier")
+const managed = await access(bin, constants.X_OK).then(
+  () => true,
+  () => false,
+)
 
 const _parents = function* (path = cwd()) {
   const parent = dirname(path)
@@ -72,9 +77,11 @@ const argv = (function* () {
   yield `--tab-width=${tabsize}`
   yield `--log-level=warn`
 
-  for (const [plugin, re] of Object.entries(plugins)) {
-    if (ext.match(re)) {
-      yield `--plugin=${join(node_modules, plugin)}`
+  if (managed) {
+    for (const [plugin, re] of Object.entries(plugins)) {
+      if (ext.match(re)) {
+        yield `--plugin=${join(node_modules, plugin)}`
+      }
     }
   }
 
@@ -85,8 +92,9 @@ const argv = (function* () {
   }
 })()
 
-const execArgs = [bin, ...argv, ...positionals]
-const { error, status, signal } = spawnSync(execPath, execArgs, {
+const [arg0, head] = managed ? [execPath, [bin]] : ["prettier", []]
+const execArgs = [...head, ...argv, ...positionals]
+const { error, status, signal } = spawnSync(arg0, execArgs, {
   stdio: "inherit",
 })
 

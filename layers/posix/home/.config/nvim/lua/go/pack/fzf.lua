@@ -193,7 +193,7 @@ do
         delimiter = ":",
         bind = "change:reload:" .. reload .. " || true",
         preview = shelljoin { "bat", "--force-colorization", "--highlight-line", "{2}", "--", "{1}" },
-        preview_window = "right:wrap",
+        preview_window = "right:wrap:+{2}-/2",
       },
       ["sink*"] = sink(function(line)
         local file, lnum, col, text = string.match(line, "^(.-):(%d+):(%d+):(.*)")

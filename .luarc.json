@@ -17,8 +17,9 @@
   "Lua.workspace.checkThirdParty": false,
   "Lua.workspace.ignoreDir": ["var"],
   "Lua.workspace.library": [
-    "/usr/share/nvim/runtime/lua",
+    "layers/posix/home/.config/nvim/lua",
     "/opt/homebrew/share/nvim/runtime/lua",
+    "/usr/share/nvim/runtime/lua",
     "var/hammerspoon/EmmyLua.spoon/annotations"
   ]
 }
