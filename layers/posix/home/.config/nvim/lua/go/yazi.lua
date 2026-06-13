@@ -41,8 +41,10 @@ local termstart = async.wrap(function(buf, cmd, cb)
   vim.api.nvim_buf_call(
     new_buf,
     async(function()
-      async.fn.jobstart(cmd, { term = true })
-      vim.api.nvim_buf_delete(new_buf, { force = true })
+      local _, code = async.fn.jobstart(cmd, { term = true })
+      if code == 0 then
+        vim.api.nvim_buf_delete(new_buf, { force = true })
+      end
       cb()
     end)
   )
@@ -53,7 +55,8 @@ local file_explorer = function(tmp, path)
     return { "yazi", "--chooser-file", tmp, "--", path }
   end
 
-  return { "ranger", "--choosefile", tmp, "--", path }
+  local dir = vim.fn.isdirectory(path) == 1 and path or vim.fs.dirname(path)
+  return { "ranger", "--choosefile", tmp, "--selectfile", path, "--", dir }
 end
 
 local spawn_yazi = function(buf, path)

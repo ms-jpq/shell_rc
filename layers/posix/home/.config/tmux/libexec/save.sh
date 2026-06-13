@@ -13,7 +13,7 @@ if ! [[ -v TMUX_SAVE_LOCK ]]; then
 fi
 
 if ! [[ -v UNDER_THE_DOG ]]; then
-  if UNDER_THE_DOG=1 exec -- "$@" "$@"; then
+  if UNDER_THE_DOG=1 exec -- "$0" "$@"; then
     :
   fi
 fi

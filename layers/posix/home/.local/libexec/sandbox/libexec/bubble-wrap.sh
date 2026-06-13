@@ -65,6 +65,7 @@ RO_BIND=(
   /etc
   /lib
   /lib64
+  /nix
   /opt
   /sbin
   /usr
@@ -108,6 +109,8 @@ RO_BIND=(
   "$XDG_CONFIG_HOME/vim"
   "$XDG_CONFIG_HOME/yazi"
   "$XDG_CONFIG_HOME/zsh"
+
+  "$XDG_STATE_HOME/nix"
 
   "$XDG_CONFIG_HOME/gh"
 )
