@@ -29,7 +29,7 @@ clobber.git.$(notdir $1):
 git: $1
 $1:
 	if [[ -d '$$@' ]]; then
-		git -C '$$@' pull --recurse-submodules --no-tags
+		git -C '$$@' pull --recurse-submodules --force --no-tags
 	else
 		git clone --recurse-submodules --shallow-submodules --depth=1 -- '$2' '$$@'
 	fi
