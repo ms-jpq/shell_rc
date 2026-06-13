@@ -72,39 +72,6 @@ digestif:
   extensions:
     .tex: tex
 
-diagnosticls:
-  filetypes:
-    - dockerfile
-    - sh
-    - zsh
-  root:
-    fallback: cwd
-  init_options:
-    filetypes:
-      dockerfile:
-        - hadolint
-    linters:
-      hadolint:
-        args:
-          - --format
-          - json
-          - --
-          - "%file"
-        command: hadolint
-        parseJson:
-          column: column
-          line: line
-          message: "${message} [${code}]"
-          security: level
-        rootPatterns:
-          - .hadolint.yml
-          - .hadolint.yaml
-        securities:
-          error: error
-          info: info
-          style: hint
-          warning: warning
-        sourceName: hadolint
 
 bashls:
   extensions:
