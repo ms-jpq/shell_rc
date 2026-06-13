@@ -82,6 +82,7 @@ RO_BIND=(
   "$HOME/.local/lbin"
   "$HOME/.local/libexec"
   "$HOME/.local/lprofile.d"
+  "$HOME/.local/opt/initd/libexec"
 
   "$XDG_CONFIG_HOME/asdf"
   "$XDG_CONFIG_HOME/bat"

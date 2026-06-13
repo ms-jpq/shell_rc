@@ -11,11 +11,7 @@ clobber.git.$(notdir $1):
 
 git: $1
 $1: | $(CONFIG)/git/config
-	if [[ -d '$$@' ]]; then
-		git -C '$$@' pull --recurse-submodules --no-tags '--jobs=$(NPROC)'
-	else
-		git clone --recurse-submodules --shallow-submodules --depth=1 '--jobs=$(NPROC)' -- '$2' '$$@'
-	fi
+	./libexec/git-sync.sh '$2' '$$@'
 
 endef
 

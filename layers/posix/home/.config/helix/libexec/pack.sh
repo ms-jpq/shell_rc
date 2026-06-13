@@ -18,33 +18,7 @@ case "${1:-""}" in
 esac
 DST="$LIB/${SRC##*/}"
 
-GET=(
-  git
-  clone
-  --config core.symlinks=true
-  --recurse-submodules
-  --shallow-submodules
-  --depth 1
-  --quiet
-  --
-  "$SRC" "$DST"
-)
-
-PATCH=(
-  git
-  -C "$DST"
-  pull
-  --recurse-submodules
-  --no-tags
-  --force
-  --quiet
-)
-
-if [[ -d $DST ]]; then
-  "${PATCH[@]}"
-else
-  "${GET[@]}"
-fi
+~/.local/opt/initd/libexec/git-sync.sh "$SRC" "$DST"
 
 printf -- '%s\n' "-> $SRC" >&2
 

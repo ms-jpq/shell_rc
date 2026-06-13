@@ -47,6 +47,7 @@ return function()
             end
             vim.lsp.config(name, overrides)
             local ok, err = pcall(vim.lsp.enable, name)
+
             if not ok then
               vim.schedule(function()
                 vim.notify(name .. ": " .. err, vim.log.levels.WARN)
