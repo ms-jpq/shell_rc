@@ -2,9 +2,11 @@ require "hs.ipc"
 
 do
   local function main_screen()
+    local pid = hs.screen.primaryScreen():id()
     for _, screen in ipairs(hs.screen.allScreens()) do
-      if not string.find(string.lower(screen:name() or ""), "built%-in") then
-        if screen:id() ~= hs.screen.primaryScreen():id() then
+      local name = string.lower(screen:name() or "")
+      if not string.find(name, "built%-in") then
+        if screen:id() ~= pid then
           screen:setPrimary()
         end
         return
