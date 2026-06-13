@@ -88,9 +88,10 @@ jobs:
           java-version: "25"
 
       - run: |-
+          PATH="$(brew --prefix)/opt/coreutils/libexec/gnubin:$PATH"
           brew install -- bash make gnu-getopt coreutils neovim
-          rm -v -fr -- "$HOME"/{.config,.cache} "$HOME/.local"/{share,state}
-          ln -sfn -- "$HOME/Library/Preferences" "$HOME/.config"
+          rm -v -fr -- "$HOME"/{.config,.cache} "$HOME/.local"/{share,state,opt}
+          ./layers/darwin/home.sh
           mkdir -p ~/.config/clojure/.cpcache
 
       - env:

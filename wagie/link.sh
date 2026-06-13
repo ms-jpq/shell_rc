@@ -35,7 +35,7 @@ for NAME in *; do
   DST=~/.config/"$NAME"
   if [[ $NAME == nvim ]]; then
     rsync --archive --exclude=/init.lua -- "$PWD/$NAME/" "$DST"
-  elif ! [[ -L $DST ]]; then
+  elif ! [[ -L $DST ]] && ! [[ -d $DST ]]; then
     ln -sTnfr -- "$PWD/$NAME" "$DST"
   fi
 done

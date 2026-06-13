@@ -4,7 +4,7 @@ set -o pipefail
 
 SCRIPT="$HOME/Library/Script Libraries"
 CACHE="$HOME/Library/Caches"
-mkdir -v -p -- "$SCRIPT"
+mkdir -v -p -- "$SCRIPT" "$HOME/Applications"
 
 declare -A -- LINKS=()
 LINKS=(
