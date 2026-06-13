@@ -75,9 +75,13 @@ M.sandbox = function(workdir, opts)
 end
 
 M.pack = function(name)
+  local ret = {}
   if _G.Go.pack[name] ~= false then
-    M.report(require, "go.pack." .. name)
+    M.report(function()
+      ret = { require("go.pack." .. name) }
+    end)
   end
+  return unpack(ret)
 end
 
 return M

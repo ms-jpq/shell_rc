@@ -18,8 +18,10 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
   group = lib.group,
   once = true,
   callback = async(function()
-    local lsp_on = require "go.pack.lsps"
-    lsp_on()
+    local lsp_on = lib.pack "lsps"
+    if lsp_on then
+      lsp_on()
+    end
 
     async.scheduled()
 
