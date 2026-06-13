@@ -15,5 +15,5 @@ shopt -u failglob
 for F in "$SRC"/*; do
   NAME="$(basename -- "$F")"
   STEM="${NAME%.*}"
-  ln -v -snf -- "$F" "$DST/$STEM"
+  ln -v -snf --relative -- "$F" "$DST/$STEM"
 done

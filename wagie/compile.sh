@@ -38,4 +38,6 @@ done
 
 ln -snf -- /dev/null "$STUB/.zshenv"
 
+BIN="$OUT/bin-link/bin" "$CONFIG/helix/install/bin-link.sh"
+
 rm -fr -- "$CONFIG/tmux/sessions"
