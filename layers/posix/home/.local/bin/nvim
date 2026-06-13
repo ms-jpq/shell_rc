@@ -3,31 +3,21 @@
 set -o pipefail
 shopt -u failglob
 
-BASE="${0%/*}"
-PATH=":$PATH:"
-PATH="${PATH//:$BASE:/:}"
-PATH="${PATH#:}"
-PATH="${PATH%:}"
+readarray -t -d ':' -- DIRS < <(printf -- '%s' "$PATH")
 
-NVIM='nvim'
+NVIM=''
+SEEN=0
+for D in "${DIRS[@]}"; do
+  if [[ -x "$D/nvim" ]] && ((SEEN++)); then
+    NVIM="$D/nvim"
+    break
+  fi
+done
 
-case "$OSTYPE" in
-linux*)
-  if [[ -x /usr/bin/nvim ]]; then
-    NVIM='/usr/bin/nvim'
-  fi
-  ;;
-darwin*)
-  if [[ -x /opt/homebrew/bin/nvim ]]; then
-    NVIM='/opt/homebrew/bin/nvim'
-  fi
-  ;;
-msys | cygwin) ;;
-*)
+if [[ -z $NVIM ]]; then
   set -v
   exit 1
-  ;;
-esac
+fi
 
 ARGV=("$NVIM")
 

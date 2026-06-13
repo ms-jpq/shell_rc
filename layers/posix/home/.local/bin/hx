@@ -7,21 +7,21 @@ OPT="$HOME/.local/opt/helix"
 
 HX="$OPT/target/release/hx"
 if ! [[ -x $HX ]]; then
-  case "$OSTYPE" in
-  linux*)
-    HX='/usr/bin/hx'
-    ;;
-  darwin*)
-    HX='/opt/homebrew/bin/hx'
-    ;;
-  msys | cygwin)
-    HX='/usr/bin/hx'
-    ;;
-  *)
+  readarray -t -d ':' -- DIRS < <(printf -- '%s' "$PATH")
+
+  HX=''
+  SEEN=0
+  for D in "${DIRS[@]}"; do
+    if [[ -x "$D/hx" ]] && ((SEEN++)); then
+      HX="$D/hx"
+      break
+    fi
+  done
+
+  if [[ -z $HX ]]; then
     set -v
     exit 1
-    ;;
-  esac
+  fi
 fi
 
 export -- HELIX_RUNTIME="$OPT/runtime"
