@@ -53,6 +53,7 @@
 + gping
 + grep
 + gum
++ hammerspoon
 + htop
 + httm
 + hyperfine
