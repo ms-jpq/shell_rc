@@ -2,7 +2,7 @@
 name    = "sh"
 version = "0"
 
-dependencies = ["PyYAML", "s3cmd", "tomli", "tomli-w"]
+dependencies = ["PyYAML", "tomli", "tomli-w"]
 
 [project.optional-dependencies]
 dev = ["mypy", "types-PyYAML", "black", "isort"]
