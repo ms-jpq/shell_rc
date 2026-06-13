@@ -72,3 +72,15 @@ $(VAR)/opt/lua-language-server/bin/lua-language-server: | $(VAR)
 	URI='https://github.com/LuaLS/lua-language-server/releases/latest/download/lua-language-server-$(V_LUALS)-$(OS)-$(LUALS_ARCH).tar.gz'
 	mkdir -v -p -- '$(VAR)/opt/lua-language-server'
 	$(CURL) -- "$$URI" | tar --extract --gzip --file - --directory '$(VAR)/opt/lua-language-server'
+
+
+.PHONY: hammerspoon
+
+$(VAR)/hammerspoon/EmmyLua.spoon/init.lua: | $(VAR)
+	URI='https://github.com/Hammerspoon/Spoons/raw/master/Spoons/EmmyLua.spoon.zip'
+	mkdir -v -p -- '$(VAR)/hammerspoon'
+	$(CURL) -- "$$URI" | bsdtar --extract --file - --directory '$(VAR)/hammerspoon'
+
+hammerspoon: $(VAR)/hammerspoon/EmmyLua.spoon/init.lua
+	LUA='package.path = package.path .. ";$(CURDIR)/var/hammerspoon/?.spoon/init.lua"; hs.loadSpoon("EmmyLua")'
+	hs -a -q -c "$$LUA"

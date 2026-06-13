@@ -1,3 +1,5 @@
+require "hs.ipc"
+
 do
   local function main_screen()
     for _, screen in ipairs(hs.screen.allScreens()) do

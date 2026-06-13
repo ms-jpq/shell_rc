@@ -17,6 +17,7 @@
   "Lua.workspace.ignoreDir": ["var"],
   "Lua.workspace.library": [
     "/usr/share/nvim/runtime/lua",
-    "/opt/homebrew/share/nvim/runtime/lua"
+    "/opt/homebrew/share/nvim/runtime/lua",
+    "var/hammerspoon/EmmyLua.spoon/annotations"
   ]
 }
