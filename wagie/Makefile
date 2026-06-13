@@ -49,6 +49,6 @@ GIT_REPOS := $(shell tr -s -- ' ' '!' <<<'$(GIT_REPOS)')
 $(call META_2D,GIT_REPOS,GIT_TEMPLATE)
 
 sync: var/shell_rc | git
-	make --directory '$<' -- wagie
+	make --directory '$<' --always-make -- wagie
 	cp -a -f -- '$</var/wagie/.' ./
 	'$</wagie/link.sh' .
