@@ -60,7 +60,7 @@ jobs:
           /home/linuxbrew/.linuxbrew/bin/brew install -- clojure/tools/clojure
           eval -- "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           CLJ="$(command -v -- clojure)"
-          sudo -- ln -v -s -- "$CLJ" /usr/local/bin/clojure
+          sudo -- ln -v -sTnfr -- "$CLJ" /usr/local/bin/clojure
           mkdir -p ~/.config/clojure/.cpcache
 
       - run: |-

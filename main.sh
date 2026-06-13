@@ -81,7 +81,7 @@ shell() {
     printf -v sh -- '%q ' "$@"
     if [[ $0 == *macos.sh ]]; then
       # shellcheck disable=SC2016
-      sh='PATH="/opt/homebrew/bin:$PATH"'" $sh"
+      sh='PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/bin:$PATH"'" $sh"
     elif [[ $0 == *win.sh ]] && [[ $sh == bash* ]]; then
       sh='"%PROGRAMFILES%\Git\usr\bin\"'"$sh"
     fi
@@ -100,6 +100,7 @@ printf -- '%s\n' "$ENV"
 case "$ENV_OSTYPE" in
 darwin*)
   OS=darwin
+  export -- PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
   ;;
 linux*)
   OS=ubuntu

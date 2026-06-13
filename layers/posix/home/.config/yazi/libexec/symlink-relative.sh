@@ -24,6 +24,5 @@ for SRC in "$@"; do
     NAME="${STEM}_$((N++))${EXT}"
   done
 
-  REL="$(realpath --no-symlinks --relative-to="$DEST_DIR" -- "$SRC")"
-  ln --symbolic -- "$REL" "$DEST_DIR/$NAME"
+  ln -sTn --relative -- "$SRC" "$DEST_DIR/$NAME"
 done

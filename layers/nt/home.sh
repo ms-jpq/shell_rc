@@ -53,9 +53,9 @@ for FROM in "${!LINKS[@]}"; do
 done
 
 if [[ -f $PS1 ]] && ! [[ -L $PSPROFILE ]]; then
-  ln -v -snf -- "$PS1" "$PSPROFILE"
+  ln -v -sTnfr -- "$PS1" "$PSPROFILE"
 fi
 
 if [[ -d "$CONF/curl" ]] && ! [[ -L $CURL ]]; then
-  ln -v -snf -- "$CONF/curl/.curlrc" "$CURL"
+  ln -v -sTnfr -- "$CONF/curl/.curlrc" "$CURL"
 fi

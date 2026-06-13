@@ -36,7 +36,7 @@ for NAME in "${COPIES[@]}"; do
   "${CP[@]}" "$HOME_LAYER/.local/$NAME" "$LOCAL/$NAME"
 done
 
-ln -snf -- /dev/null "$STUB/.zshenv"
+ln -sTnf -- /dev/null "$STUB/.zshenv"
 
 BIN="$OUT/bin-link/bin" "$CONFIG/helix/install/bin-link.sh"
 

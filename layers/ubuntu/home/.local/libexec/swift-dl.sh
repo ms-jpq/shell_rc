@@ -53,8 +53,8 @@ else
   )
 
   printf -- '%s\0' "${ARGV[@]}" | RECURSION=1 xargs --no-run-if-empty --null --max-args 2 --max-procs 0 -- "$0"
-  ln -snf -- "$TOOL_HOME" "$TOOLS_HOME/current"
+  ln -sTnfr -- "$TOOL_HOME" "$TOOLS_HOME/current"
   mkdir -v -p -- "$LINK_HOME"
   find "$LINK_HOME" -mindepth 1 -maxdepth 1 -delete
-  find "$SDKS_HOME" -mindepth 1 -maxdepth 1 -execdir ln -snf -- "$SDKS_HOME/{}" "$LINK_HOME/{}" ';'
+  find "$SDKS_HOME" -mindepth 1 -maxdepth 1 -execdir ln -sTnfr -- "$SDKS_HOME/{}" "$LINK_HOME/{}" ';'
 fi
