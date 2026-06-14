@@ -175,6 +175,7 @@ for SID in "${!SESSIONS[@]}"; do
   } > "$TMP"
 
   if ((S_OK)); then
+    chmod +x "$TMP"
     mv -f -- "$TMP" "$DST"
   fi
 done

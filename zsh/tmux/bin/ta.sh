@@ -14,7 +14,6 @@ else
 fi
 
 SESSION_SCRIPT='/dev/null'
-
 if [[ -s $PLANNED_SESSION ]]; then
   SESSION_SCRIPT="$PLANNED_SESSION"
 elif [[ -n $SESSION ]]; then
@@ -30,7 +29,7 @@ else
 fi
 
 ARGV=()
-if [[ -f $SESSION_SCRIPT ]]; then
+if [[ -x $SESSION_SCRIPT ]]; then
   ARGV=("$SESSION_SCRIPT")
 fi
 
