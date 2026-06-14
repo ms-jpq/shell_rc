@@ -29,9 +29,9 @@ else
   SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
 fi
 
-ARGV=("$SESSION")
+ARGV=()
 if [[ -f $SESSION_SCRIPT ]]; then
-  ARGV+=("$SESSION_SCRIPT")
+  ARGV=("$SESSION_SCRIPT")
 fi
 
-exec -- "$XDG_CONFIG_HOME/tmux/libexec/switch-to.sh" "${ARGV[@]}"
+exec -- "$XDG_CONFIG_HOME/tmux/libexec/switch-to.sh" "$SESSION" "${ARGV[@]}"
