@@ -10,6 +10,10 @@ for F in "$@"; do
 done
 
 if [[ -v TMUX ]]; then
+  if TMUX="$(tmux showenv -g -- TMUX 2> /dev/null)"; then
+    unset -- TMUX_PANE
+  fi
+
   PANES="$(tmux display-message -p -- '#{window_panes}')"
   if ((PANES == 1)); then
     ARGV=(tmux split-window -h)
