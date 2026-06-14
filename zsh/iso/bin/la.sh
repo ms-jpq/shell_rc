@@ -2,4 +2,13 @@
 
 set -o pipefail
 
-LC_ALL=en_US.UTF-8 exec -- lazygit "$@"
+case "$OSTYPE" in
+darwin*)
+  export -- LC_ALL=en_CA.UTF-8
+  ;;
+*)
+  export -- LC_ALL=en_US.UTF-8
+  ;;
+esac
+
+exec -- lazygit "$@"
