@@ -66,7 +66,7 @@ read -r -d '' -- BODY || :
 
 {
   printf -- '\n'
-  printf -- '%q ' "${ARGV[@]}"
+  printf -- '%s' "${ARGV[*]@Q}"
   printf -- '\n'
 } >&2
 

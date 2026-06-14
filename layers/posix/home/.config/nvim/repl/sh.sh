@@ -8,4 +8,4 @@ SH=(
   "$(< /dev/stdin)"
 )
 
-printf -- '%q ' "${SH[@]}"
+printf -- '%s' "${SH[*]@Q}"

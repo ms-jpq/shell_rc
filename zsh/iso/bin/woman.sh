@@ -19,6 +19,6 @@ if command -v -- open > /dev/null; then
   exec -- open "$TMP"
 else
   TMP="${TMP%/*}"
-  printf -- '%q\n' "$TMP" >&2
+  printf -- '%s\n' "${TMP@Q}" >&2
   exec -- "${0%/*}/srv" -- "$TMP"
 fi

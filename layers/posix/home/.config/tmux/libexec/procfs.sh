@@ -38,7 +38,7 @@ linux*)
 esac
 
 if ((${#ARGV[@]})); then
-  printf -v AV -- '%q ' "${ARGV[@]}"
+  AV="${ARGV[*]@Q}"
 else
   AV="$FALLBACK"
 fi

@@ -65,7 +65,7 @@ read -r -d '' -- SCRIPT
 
 {
   printf -- '\n>> '
-  printf -- '%q ' "${ARGV[@]}"
+  printf -- '%s' "${ARGV[*]@Q}"
   printf -- '\n'
   # shellcheck disable=SC2154
   "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '>'

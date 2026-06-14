@@ -11,7 +11,7 @@ if [[ -t 0 ]]; then
   export -- TXT COMMENT
   printf -- '%q ' curl -- "http://$ADDR":"$PORT"
   printf -- '\n'
-  printf -- '%s%q\n' "body comment: " "$COMMENT"
+  printf -- '%s%s\n' "body comment: " "${COMMENT@Q}"
   exec -- socat TCP-LISTEN:"$PORT,bind=$ADDR",reuseaddr,fork EXEC:"$0" 2>&1
 fi
 

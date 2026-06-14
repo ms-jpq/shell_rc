@@ -53,7 +53,7 @@ CONN=(
   -p $((PORT))
   --
 )
-printf -v RSH -- '%q ' "${CONN[@]}"
+RSH="${CONN[*]@Q}"
 RSY=(
   rsync
   --recursive
@@ -74,11 +74,11 @@ else
 fi
 
 shell() {
-  local sh
+  local -- sh
   if ((LOCAL)); then
     "$@"
   else
-    printf -v sh -- '%q ' "$@"
+    sh="${*@Q}"
     if [[ $0 == *macos.sh ]]; then
       # shellcheck disable=SC2016
       sh='PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/bin:$PATH"'" $sh"
@@ -150,7 +150,7 @@ for FS in "${!FFS[@]}"; do
   fi
 
   SINK="$RDST$ROOT/"
-  printf -- '%q%s%q\n' "$SRC" ' >>> ' "$SINK"
+  printf -- '%s >>> %s\n' "${SRC@Q}" "${SINK@Q}"
   "${EX[@]}" "${RSY[@]}" "$SRC" "$SINK"
 done
 

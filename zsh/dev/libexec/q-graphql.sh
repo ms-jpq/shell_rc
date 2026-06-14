@@ -68,7 +68,7 @@ JSON="$(jq --exit-status --slurp --raw-input --argjson var "$VAR" '{ query: ., v
 
 {
   printf -- '\n'
-  printf -- '%q ' "${ARGV[@]}"
+  printf -- '%s' "${ARGV[*]@Q}"
   printf -- '\n'
   jq --sort-keys <<< "$VAR"
 } >&2

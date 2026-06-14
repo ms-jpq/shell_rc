@@ -13,22 +13,23 @@ RG=(
   # --null
   --
 )
-printf -v CHANGE -- '%q ' "${RG[@]}"
-printf -v START -- '%q ' "${RG[@]}" "$*"
+CHANGE="${RG[*]@Q}"
+_q="$*"
+START="$CHANGE ${_q@Q}"
 
 BAT=(
   bat
   --color always
   --highlight-line
 )
-printf -v PREVIEW -- '%q ' "${BAT[@]}"
+PREVIEW="${BAT[*]@Q}"
 
 EDIT=(nvim -c copen -q)
 
 MULT=()
 if [[ -t 1 ]]; then
   MULT+=(--multi)
-  printf -v OPENER -- '%q ' "${EDIT[@]}"
+  OPENER="${EDIT[*]@Q}"
 else
   OPENER='printf -- %s'
 fi

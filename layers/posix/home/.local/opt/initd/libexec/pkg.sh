@@ -63,7 +63,7 @@ for LINE in "${DESIRED[@]}"; do
     fi
     ;;
   *)
-    printf -- '%s%q\n' '>! ' "$LINE" >&2
+    printf -- '%s%s\n' '>! ' "${LINE@Q}" >&2
     exit 1
     ;;
   esac
@@ -86,7 +86,7 @@ if (("${#RM[@]}")); then
       --id
     )
     for DEL in "${RM[@]}"; do
-      printf -- '%s%q\n' '> --id ' "$DEL" >&2
+      printf -- '%s%s\n' '> --id ' "${DEL@Q}" >&2
       "${WINGET[@]}" "$DEL"
     done
     ;;
@@ -97,7 +97,7 @@ if (("${#RM[@]}")); then
 fi
 
 if (("${#ADD[@]}")); then
-  printf -- '%q\n' "${ADD[@]}" >&2
+  printf -- '%s\n' "${ADD[@]@Q}" >&2
   case "$OSTYPE" in
   darwin*)
     if ! [[ -v CI ]]; then
@@ -125,9 +125,9 @@ if (("${#ADD[@]}")); then
       --id
     )
     for A in "${ADD[@]}"; do
-      printf -- '%s%q\n' '> --id ' "$A" >&2
+      printf -- '%s%s\n' '> --id ' "${A@Q}" >&2
       if ! "${WINGET[@]}" "$A"; then
-        printf -- '%s%q\n' '!!! --id ' "$A" >&2
+        printf -- '%s%s\n' '!!! --id ' "${A@Q}" >&2
         exit 1
       fi
     done

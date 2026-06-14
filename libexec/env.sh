@@ -34,13 +34,13 @@ msys | cygwin)
 esac
 
 tee <<- EOF
-ENV_HOME=$(printf -- '%q' "$HOME")
-ENV_HOSTNAME=$(printf -- '%q' "$HOSTNAME")
-ENV_HOSTTYPE=$(printf -- '%q' "$HOSTTYPE")
-ENV_ID=$(printf -- '%q' "$ID")
-ENV_MEMBYTES=$(printf -- '%q' "$MEMBYTES")
-ENV_NPROC=$(printf -- '%q' "$NPROC")
-ENV_OSTYPE=$(printf -- '%q' "$OSTYPE")
-ENV_VERSION_CODENAME=$(printf -- '%q' "$VERSION_CODENAME")
-ENV_VERSION_ID=$(printf -- '%q' "$VERSION_ID")
+ENV_HOME=${HOME@Q}
+ENV_HOSTNAME=${HOSTNAME@Q}
+ENV_HOSTTYPE=${HOSTTYPE@Q}
+ENV_ID=${ID@Q}
+ENV_MEMBYTES=${MEMBYTES@Q}
+ENV_NPROC=${NPROC@Q}
+ENV_OSTYPE=${OSTYPE@Q}
+ENV_VERSION_CODENAME=${VERSION_CODENAME@Q}
+ENV_VERSION_ID=${VERSION_ID@Q}
 EOF

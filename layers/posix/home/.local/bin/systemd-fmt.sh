@@ -68,7 +68,7 @@ fmt() {
 if [[ ${SYSTEMD_FMT_MODE:-} == 'stream' ]]; then
   FILE="$*"
   TMP="$(mktemp)"
-  printf -- '%q\n' "$FILE" >&2
+  printf -- '%s\n' "${FILE@Q}" >&2
   fmt < "$FILE" > "$TMP"
   mv -f -- "$TMP" "$FILE"
 elif (($#)); then

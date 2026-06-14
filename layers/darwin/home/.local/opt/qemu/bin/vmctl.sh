@@ -68,7 +68,7 @@ PASSWD='root'
 ssh_pp() {
   {
     printf -- '\n%s' '>>> '
-    printf -- '%q ' "${SSH_CMD[@]}"
+    printf -- '%s' "${SSH_CMD[*]@Q}"
     printf -- '<<<\n\n'
   } >&2
 }
@@ -77,7 +77,7 @@ case "$ACTION" in
 '')
   mkdir -v -p -- "$LIB"
   LS=(ls -AFhl --color=auto -- "$LIB")
-  printf -- '%q ' "${LS[@]}" >&2
+  printf -- '%s' "${LS[*]@Q}" >&2
   exec -- "${LS[@]}"
   ;;
 remove)
@@ -172,7 +172,7 @@ ssh)
   ssh_pp
   AV=()
   if (($#)); then
-    printf -v A -- '%q ' "$@"
+    A="${*@Q}"
     AV+=("$A")
   fi
   exec -- "${SSH_CMD[@]}" "${AV[@]}"
@@ -185,7 +185,7 @@ qmp)
   ;;
 *)
   printf -- '%s' '>? '
-  printf -- '%q ' "$0" "${ARGV[@]}"
+  printf -- '%s' "${0@Q} ${ARGV[*]@Q}"
   printf -- '\n'
   exit 2
   ;;

@@ -10,6 +10,6 @@ if ! [[ $SSH_KEY =~ '/' ]]; then
 fi
 
 SSH=(exec ssh -o IdentitiesOnly=yes -i "$SSH_KEY" --)
-SSH_KEY=$(printf -- '%q ' "${SSH[@]}")
+SSH_KEY="${SSH[*]@Q}"
 printf -- '%s\n' "$SSH_KEY" >&2
 GIT_SSH_COMMAND="$SSH_KEY" git "$@"
