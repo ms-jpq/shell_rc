@@ -55,4 +55,5 @@ sync: var/shell_rc var/ai | git
 
 	mkdir -v -p -- '.claude'
 	rsync --archive --keep-dirlinks -- var/ai/opt/claude-code/{AGENTS.md,skills} '.claude/'
+	mv -- .claude/AGENTS.md .claude/CLAUDE.md
 	rm -fr -- '.claude/skills/shitpost'
