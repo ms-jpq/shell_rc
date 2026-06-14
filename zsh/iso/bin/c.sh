@@ -24,10 +24,6 @@ tmux*)
 *) ;;
 esac
 
-if [[ -t 0 ]]; then
-  exit 2
-fi
-
 if [[ -v TMUX_PANE ]]; then
   T=1
 fi

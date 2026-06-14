@@ -13,4 +13,4 @@ tsconfig.tsbuildinfo
 var/
 
 !layers/posix/home/.config/ranger/keymap.conf
-!layers/posix/home/.config/ranger/rc2.conf
+!layers/posix/home/.config/ranger/options.conf
