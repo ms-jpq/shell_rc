@@ -14,10 +14,10 @@
 .exp/
 .git/
 .ignore
+.notes/
 .nvim/
 .phan/
 .terraform/
-.thinking/
 .tmp/
 .venv/
 .worktree/
