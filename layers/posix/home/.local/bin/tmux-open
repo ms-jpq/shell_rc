@@ -10,9 +10,10 @@ for F in "$@"; do
 done
 
 if [[ -v TMUX ]]; then
-  if TMUX="$(tmux showenv -g -- TMUX 2> /dev/null)"; then
+  while OUTER="$(tmux show-environment -g -- TMUX 2> /dev/null)"; do
+    export -- TMUX="${OUTER#TMUX=}"
     unset -- TMUX_PANE
-  fi
+  done
 
   PANES="$(tmux display-message -p -- '#{window_panes}')"
   if ((PANES == 1)); then
