@@ -10,6 +10,11 @@ for F in "$@"; do
 done
 
 if [[ -v TMUX ]]; then
+  FOCUS=0
+  if [[ -v TMUX_PANE ]]; then
+    FOCUS="$(tmux display-message -p -t "$TMUX_PANE" -- '#{&&:#{pane_active},#{window_active}}')"
+  fi
+
   while OUTER="$(tmux show-environment -g -- TMUX 2> /dev/null)"; do
     export -- TMUX="${OUTER#TMUX=}"
     unset -- TMUX_PANE
@@ -20,6 +25,10 @@ if [[ -v TMUX ]]; then
     ARGV=(tmux split-window -h)
   else
     ARGV=(tmux new-window -a)
+  fi
+
+  if ! ((FOCUS)); then
+    ARGV+=(-d)
   fi
 
   # shellcheck disable=SC2154
