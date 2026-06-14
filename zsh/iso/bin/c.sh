@@ -12,7 +12,7 @@ fi
 
 if command -v -- pbcopy > /dev/null; then
   exec -- pbcopy
-elif command -v -- wl-copy > /dev/null; then
+elif [[ -v WAYLAND_DISPLAY ]] && command -v -- wl-copy > /dev/null; then
   exec -- wl-copy
 fi
 
