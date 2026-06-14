@@ -55,8 +55,4 @@ var/shell_rc/var/wagie: var/shell_rc var/ai | git
 
 	cp -a -f -- '$@/.' ./
 	'$@/link.sh' .
-
-	mkdir -v -p -- '.claude'
-	rsync --archive --keep-dirlinks -- var/ai/opt/claude-code/{AGENTS.md,rules,skills} '.claude/'
-	mv -- .claude/AGENTS.md .claude/CLAUDE.md
-	rm -fr -- '.claude/skills/shitpost'
+	var/ai/wagie/compile.sh .
