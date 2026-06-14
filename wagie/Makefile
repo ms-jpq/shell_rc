@@ -54,5 +54,5 @@ sync: var/shell_rc var/ai | git
 	'$</wagie/link.sh' .
 
 	mkdir -v -p -- '.claude'
-	rsync --archive --keep-dirlinks -- 'var/ai/opt/claude-code/skills' '.claude/'
+	rsync --archive --keep-dirlinks -- var/ai/opt/claude-code/{AGENTS.md,skills} '.claude/'
 	rm -fr -- '.claude/skills/shitpost'
