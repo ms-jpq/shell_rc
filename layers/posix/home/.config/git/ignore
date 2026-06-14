@@ -20,7 +20,7 @@
 .terraform/
 .tmp/
 .venv/
-.worktree/
+.worktrees/
 .yardoc/
 __pycache__/
 node_modules/
