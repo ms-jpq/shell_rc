@@ -3,7 +3,7 @@
 set -o pipefail
 
 while (($#)); do
-  NEXT="${2:-""}"
+  NEXT="${2:-}"
   if [[ -n $NEXT ]] && ! [[ $NEXT =~ ^- ]]; then
     CH=' '
   else

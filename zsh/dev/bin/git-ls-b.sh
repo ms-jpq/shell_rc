@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-case "${SCRIPT_MODE:-""}" in
+case "${SCRIPT_MODE:-}" in
 preview)
   readarray -t -d '' -- LINES
   for LINE in "${LINES[@]}"; do

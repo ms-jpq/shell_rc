@@ -127,14 +127,14 @@ for SID in "${!SESSIONS[@]}"; do
         J=0
 
         LAYOUT="${LAYOUTS["$WID"]}"
-        if [[ -n ${ACTIVE["$WID"]:-""} ]]; then
+        if [[ -n ${ACTIVE["$WID"]:-} ]]; then
           W_MARK="$I"
         fi
 
         for PID in "${PS[@]}"; do
           if [[ ${PANES["$PID"]} == "$WID" ]]; then
             WD="${WDS["$PID"]}"
-            ARGV="${ARGVS["$PID"]:-""}"
+            ARGV="${ARGVS["$PID"]:-}"
 
             printf -- '%q ' mkdir -p -- "$WD"
             printf -- '\n'
@@ -146,7 +146,7 @@ for SID in "${!SESSIONS[@]}"; do
             fi
             printf -- '\n'
 
-            if [[ -n ${ACTIVE["$PID"]:-""} ]]; then
+            if [[ -n ${ACTIVE["$PID"]:-} ]]; then
               printf -- '%q ' tmux select-pane -m
               printf -- '\n'
             fi

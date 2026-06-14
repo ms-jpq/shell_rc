@@ -5,8 +5,8 @@ set -o pipefail
 exec >&2
 
 DST="$1"
-SRC="${2:-"$(cat)"}"
-FMT="${FMT:-"$SRC"}"
+SRC="${2:-$(cat)}"
+FMT="${FMT:-$SRC}"
 
 case "$OSTYPE" in
 linux* | darwin*)

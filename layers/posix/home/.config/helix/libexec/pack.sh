@@ -7,7 +7,7 @@ shift -- 1
 
 LIB="$HOME/.cache/helix-rt/nvim/pack"
 
-case "${1:-""}" in
+case "${1:-}" in
 --lazy)
   LIB="$LIB/opt"
   shift -- 1

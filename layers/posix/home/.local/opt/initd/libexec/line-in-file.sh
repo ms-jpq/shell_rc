@@ -4,7 +4,7 @@ set -o pipefail
 
 FILE="$1"
 MATCH="$2"
-LINE="${3:-"$MATCH"}"
+LINE="${3:-$MATCH}"
 
 read -r -d '' -- AWK <<- 'AWK' || true
 BEGIN { SEEN = 0 }

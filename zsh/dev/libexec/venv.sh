@@ -2,9 +2,9 @@
 
 set -o pipefail
 
-VIRTUAL_ENV="${VIRTUAL_ENV:-""}"
+VIRTUAL_ENV="${VIRTUAL_ENV:-}"
 
-export -- DEFAULT_VENV_PATH="${DEFAULT_VENV_PATH:-"${2:-"$PWD/.venv"}"}"
+export -- DEFAULT_VENV_PATH="${DEFAULT_VENV_PATH:-${2:-$PWD/.venv}}"
 
 case "$OSTYPE" in
 msys | cygwin)

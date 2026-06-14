@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-TMUX_PANE="${1:-"$TMUX_PANE"}"
+TMUX_PANE="${1:-$TMUX_PANE}"
 
 STATUS="$(tmux display-message -t "$TMUX_PANE" -p '#{session_active}#{window_active}#{pane_active}')"
 

@@ -44,19 +44,19 @@ add() {
   fi
 }
 
-ACTION="${1:-""}"
+ACTION="${1:-}"
 case "$ACTION" in
 show)
   printf -- '%s' "$PATH"
   printf -- '%s' "$PATH" | awk -v 'RS=:' '!seen[$0]++' >&2
   ;;
 add)
-  P="${2:-"$PWD"}"
+  P="${2:-$PWD}"
   target="$(realpath -- "${P%/}" || true)"
   add "$target"
   ;;
 rm | remove)
-  P="${2:-"$PWD"}"
+  P="${2:-$PWD}"
   target="$(realpath -- "${P%/}" || true)"
   remove "$target" 0
   ;;

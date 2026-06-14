@@ -3,7 +3,7 @@
 set -o pipefail
 
 WORD="${1-"#"}"
-COLS="${FZF_PREVIEW_COLUMNS:-${2:-"$(tput -- cols 2> /dev/null || :)"}}"
+COLS="${FZF_PREVIEW_COLUMNS:-${2:-$(tput -- cols 2> /dev/null || :)}}"
 COLS="${COLS:-80}"
 
 LEN="${#WORD}"

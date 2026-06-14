@@ -35,7 +35,7 @@ FILES=(
   ~/.ssh/!(known_hosts|agent)
 )
 
-case "${1:-""}" in
+case "${1:-}" in
 '' | s3 | ls)
   "${S3[@]}" ls --recursive --human-readable-sizes -- "$BUCKET"
   ;;

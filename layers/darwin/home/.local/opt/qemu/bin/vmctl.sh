@@ -34,12 +34,12 @@ case $# in
   shift -- 1
   ;;
 *)
-  ACTION="${ACTION:-"$2"}"
+  ACTION="${ACTION:-$2}"
   shift -- 2
   ;;
 esac
 
-NAME="${1:-""}"
+NAME="${1:-}"
 if (($#)); then
   shift -- 1
 fi

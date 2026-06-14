@@ -12,6 +12,6 @@ zsh: zsh.ubuntu /usr/local/bin/bat /usr/local/bin/fd
 
 ifneq ($(shell printf -- '%s' "$$SHELL"),/usr/bin/zsh)
 zsh.ubuntu: /usr/bin/zsh
-	USER="$${USER:-"$$(whoami)"}"
+	USER="$${USER:-$$(whoami)}"
 	sudo -- chsh -s '$<' "$$USER"
 endif

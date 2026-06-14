@@ -65,14 +65,14 @@ fmt() {
   done
 }
 
-if [[ ${SYSTEMD_FMT_MODE:-""} == 'stream' ]]; then
+if [[ ${SYSTEMD_FMT_MODE:-} == 'stream' ]]; then
   FILE="$*"
   TMP="$(mktemp)"
   printf -- '%q\n' "$FILE" >&2
   fmt < "$FILE" > "$TMP"
   mv -f -- "$TMP" "$FILE"
 elif (($#)); then
-  readarray -t -- IS <<< "${SYSTEMD_FMT_IGNORE:-""}"
+  readarray -t -- IS <<< "${SYSTEMD_FMT_IGNORE:-}"
 
   declare -A -- SEEN=()
   for I in "${IS[@]}"; do
@@ -86,7 +86,7 @@ elif (($#)); then
   unseen() {
     local F="$*"
     if F="$(realpath -- "$F" 2> /dev/null)"; then
-      if [[ -f $F ]] && [[ -z ${SEEN["$F"]:-""} ]]; then
+      if [[ -f $F ]] && [[ -z ${SEEN["$F"]:-} ]]; then
         SEEN["$F"]=1
         printf -- '%s\0' "$F"
       fi
