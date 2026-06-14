@@ -2,6 +2,13 @@
 
 set -o pipefail
 
+for F in "$@"; do
+  if ! [[ $F =~ ^https?:// ]] && ! [[ -r $F ]]; then
+    printf -- "%q" "Not openable -- $F" >&2
+    exit 2
+  fi
+done
+
 if [[ -v TMUX ]]; then
   PANES="$(tmux display-message -p -- '#{window_panes}')"
   if ((PANES == 1)); then
