@@ -18,7 +18,7 @@ esac
 
 # shellcheck disable=SC2154
 case "$*" in
-*/claude | */notificationd | */asciiquarium)
+*claude* | */notificationd)
   exit
   ;;
 *"$HOME/.local/opt/pipes.sh/pipes.sh"* | *"$XDG_CONFIG_HOME/zsh/bin/pom"* | *"$XDG_CONFIG_HOME/zsh/bin/mq"* | *"$XDG_CONFIG_HOME/zsh/bin/rq"*)
