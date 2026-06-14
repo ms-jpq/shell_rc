@@ -5,12 +5,14 @@ set -o pipefail
 SESSION="$1"
 shift -- 1
 
-if [[ -v TMUX ]]; then
-  if ! tmux has-session -t "=$SESSION" 2> /dev/null; then
-    tmux new-session -d -c "$HOME" -s "$SESSION" -- "$@"
-  fi
-
-  exec -- tmux switch-client -t "$SESSION"
-else
+if [[ -t 0 ]] && ! [[ -v TMUX ]]; then
   exec -- tmux new-session -A -c "$HOME" -s "$SESSION" -- "$@"
+fi
+
+if ! tmux has-session -t "=$SESSION" 2> /dev/null; then
+  tmux new-session -d -c "$HOME" -s "$SESSION" -- "$@"
+fi
+
+if [[ -t 0 ]]; then
+  exec -- tmux switch-client -t "$SESSION"
 fi
