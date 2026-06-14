@@ -6,7 +6,7 @@ SESSION="$1"
 shift -- 1
 
 if [[ -v TMUX ]]; then
-  if ! tmux has-session -t "=$SESSION"; then
+  if ! tmux has-session -t "=$SESSION" 2> /dev/null; then
     tmux new-session -d -c "$HOME" -s "$SESSION" -- "$@"
   fi
 
