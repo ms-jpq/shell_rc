@@ -1,5 +1,7 @@
 -- vim.env.FZF_DEFAULT_OPTS = vim.env.FZF_DEFAULT_OPTS .. " --no-border"
 
+local lib = require "go.lib"
+
 vim.g.fzf_layout = {
   window = {
     width = 0.96,
@@ -7,7 +9,7 @@ vim.g.fzf_layout = {
   },
 }
 
-local preview = vim.fs.joinpath(vim.fs.dirname(vim.fn.stdpath "config"), "zsh", "libexec", "preview.sh")
+local preview = vim.fs.joinpath(lib.HOME, ".local", "libexec", "preview.sh")
 
 local function shelljoin(args)
   return vim.iter(args):map(vim.fn.shellescape):join " "

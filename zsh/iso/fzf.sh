@@ -9,7 +9,7 @@ _zo_fzf_opts=(
   --no-sort
   --keep-right
   --exit-0
-  --preview "$(printf -- '%q' "$XDG_CONFIG_HOME/zsh/libexec/preview.sh") {2..}"
+  --preview "$(printf -- '%q' "$HOME/.local/libexec/preview.sh") {2..}"
 )
 printf -v _ZO_FZF_OPTS -- '%q ' "${_zo_fzf_opts[@]}"
 unset -- _zo_fzf_opts
@@ -50,7 +50,7 @@ printf -v FZF_CTRL_T_COMMAND -- '%q ' "${_fzf_ctrl_t_command[@]}"
 unset -- _fzf_ctrl_t_command
 
 _fzf_preview=(
-  --preview "$(printf -- '%q' "$XDG_CONFIG_HOME/zsh/libexec/preview.sh") {}"
+  --preview "$(printf -- '%q' "$HOME/.local/libexec/preview.sh") {}"
 )
 _fzf_alt_c_opts=(
   --read0
