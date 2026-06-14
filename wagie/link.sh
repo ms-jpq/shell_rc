@@ -40,6 +40,6 @@ for NAME in *; do
   fi
 done
 
-rsync --archive -- "$SRC/config.d/" ~/.config/
-rsync --archive -- "$SRC/local/" ~/.local/
-rsync --archive -- "$SRC/local.d/" ~/.local/
+rsync --archive --keep-dirlinks -- "$SRC/config.d/" ~/.config/
+rsync --archive --keep-dirlinks -- "$SRC/local/" ~/.local/
+rsync --archive --keep-dirlinks -- "$SRC/local.d/" ~/.local/
