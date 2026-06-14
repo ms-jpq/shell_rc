@@ -14,5 +14,5 @@ if ! tmux has-session -t "=$SESSION" 2> /dev/null; then
 fi
 
 if [[ -t 0 ]]; then
-  exec -- tmux switch-client -t "$SESSION"
+  exec -- tmux switch-client -t "=$SESSION"
 fi
