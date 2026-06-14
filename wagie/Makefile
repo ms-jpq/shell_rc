@@ -53,5 +53,6 @@ sync: var/shell_rc var/ai | git
 	cp -a -f -- '$</var/wagie/.' ./
 	'$</wagie/link.sh' .
 
-	mkdir -v -p -- .claude
+	mkdir -v -p -- '.claude'
 	rsync --archive --keep-dirlinks -- 'var/ai/opt/claude-code/skills' '.claude/'
+	rm -fr -- '.claude/skills/shitpost'
