@@ -48,12 +48,15 @@ GIT_REPOS := $(shell tr -s -- ' ' '!' <<<'$(GIT_REPOS)')
 
 $(call META_2D,GIT_REPOS,GIT_TEMPLATE)
 
-sync: var/shell_rc var/ai | git
-	make --directory '$<' --always-make -- wagie
-	cp -a -f -- '$</var/wagie/.' ./
-	'$</wagie/link.sh' .
+sync: var/shell_rc/var/wagie
+var/shell_rc/var/wagie: var/shell_rc var/ai | git
+	rm -fr -- '$@'
+	make --directory '$<' -- '$(@F)'
+
+	cp -a -f -- '$@/.' ./
+	'$@/link.sh' .
 
 	mkdir -v -p -- '.claude'
-	rsync --archive --keep-dirlinks -- var/ai/opt/claude-code/{AGENTS.md,skills} '.claude/'
+	rsync --archive --keep-dirlinks -- var/ai/opt/claude-code/{AGENTS.md,rules,skills} '.claude/'
 	mv -- .claude/AGENTS.md .claude/CLAUDE.md
 	rm -fr -- '.claude/skills/shitpost'
