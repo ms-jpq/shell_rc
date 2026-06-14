@@ -11,10 +11,10 @@
 *.tfstate.*
 *.tfvars
 .DS_Store
-.exp/
-.git/
+.exp
+.git
 .ignore
-.notes/
+.notes
 .nvim/
 .phan/
 .terraform/
