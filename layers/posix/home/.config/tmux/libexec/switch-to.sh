@@ -2,9 +2,8 @@
 
 set -o pipefail
 
-LISTED="$1"
-SESSION="$2"
-shift -- 2
+SESSION="$1"
+shift -- 1
 
 ARGV=()
 if (($#)); then
@@ -12,7 +11,7 @@ if (($#)); then
 fi
 
 if [[ -v TMUX ]]; then
-  if ! ((LISTED)); then
+  if ! tmux has-session -t "=$SESSION" 2> /dev/null; then
     tmux new-session -d -c "$HOME" -s "$SESSION" -- "${ARGV[@]}"
   fi
 

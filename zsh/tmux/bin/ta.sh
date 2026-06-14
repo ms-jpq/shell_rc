@@ -29,15 +29,7 @@ else
   SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
 fi
 
-LISTED=0
-for S in "${SESSIONS[@]}"; do
-  if [[ $S == "$SESSION" ]]; then
-    LISTED=1
-    break
-  fi
-done
-
-ARGV=("$LISTED" "$SESSION")
+ARGV=("$SESSION")
 if [[ -f $SESSION_SCRIPT ]]; then
   ARGV+=("$SESSION_SCRIPT")
 fi
