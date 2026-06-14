@@ -112,6 +112,7 @@ for SID in "${!SESSIONS[@]}"; do
 
   S_OK=0
 
+  mkdir -p -- "${TMP%/*}"
   {
     printf -- '%q ' tmux set-environment -g -h -- "$ENV" 1
     printf -- '\n'

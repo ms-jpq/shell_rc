@@ -25,7 +25,7 @@ elif ((${#SESSIONS[@]})); then
     exit
   fi
 else
-  SESSION='owo'
+  SESSION='me/owo'
   SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
 fi
 
