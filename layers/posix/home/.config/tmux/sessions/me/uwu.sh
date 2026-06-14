@@ -2,7 +2,8 @@
 
 set -o pipefail
 
-tmux set-environment -g -h -- TMUX_NO_SAVE 1
+ENV=TMUX_NO_SAVE
+tmux set-environment -g -h -- "$ENV" 1
 
 tmux new-window -c ~/Downloads
 tmux select-pane -m
@@ -26,4 +27,4 @@ tmux select-pane -t '{marked}'
 tmux select-pane -M
 
 tmux select-window -t :-2
-tmux set-environment -g -h -u -- TMUX_NO_SAVE
+tmux set-environment -g -h -u -- "$ENV"
