@@ -2,6 +2,8 @@
 
 local M = {}
 
+M.HOME = vim.uv.os_homedir() or ""
+
 do
   M.group = vim.api.nvim_create_augroup([[lv_go]], { clear = true })
 end
@@ -69,7 +71,7 @@ M.sandbox = function(workdir, opts)
   end
 
   local oom = M.is_linux and { "choom", "--adjust", "1000", "--" } or {}
-  local exec = vim.fs.joinpath(vim.env.HOME, ".local", "libexec", "sandbox", "libexec", "dispatch.sh")
+  local exec = vim.fs.joinpath(M.HOME, ".local", "libexec", "sandbox", "libexec", "dispatch.sh")
   local net = opts.network and { "--network" } or {}
   return vim.iter({ { "nice", "-n", "19", "--" }, oom, { exec }, net, { "--dir", workdir, "--" } }):flatten():totable()
 end

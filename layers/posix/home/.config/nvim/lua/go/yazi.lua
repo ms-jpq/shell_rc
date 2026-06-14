@@ -50,14 +50,7 @@ local termstart = async.wrap(function(buf, cmd, cb)
   )
 end)
 
-local file_explorer = function(tmp, path)
-  if vim.fn.executable "yazi" == 1 then
-    return { "yazi", "--chooser-file", tmp, "--", path }
-  end
-
-  local dir = vim.fn.isdirectory(path) == 1 and path or vim.fs.dirname(path)
-  return { "ranger", "--choosefile", tmp, "--selectfile", path, "--", dir }
-end
+local yazi_sh = vim.fs.joinpath(lib.HOME, ".local", "libexec", "yazi.sh")
 
 local spawn_yazi = function(buf, path)
   lib.scope(function(defer)
@@ -68,8 +61,7 @@ local spawn_yazi = function(buf, path)
       vim.fs.rm(tmp, { force = true })
     end)
 
-    local cmd = file_explorer(tmp, path)
-    termstart(buf, cmd)
+    termstart(buf, { yazi_sh, "--chooser-file", tmp, "--", path })
 
     if vim.fn.filereadable(tmp) == 1 then
       local selected = vim.fn.readblob(tmp)
