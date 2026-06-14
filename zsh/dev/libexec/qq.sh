@@ -67,15 +67,14 @@ read -r -d '' -- SCRIPT
   printf -- '\n>> '
   printf -- '%s' "${ARGV[*]@Q}"
   printf -- '\n'
-  # shellcheck disable=SC2154
-  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '>'
+  ~/.local/libexec/hr.sh '>'
 } >&2
 
 if [[ -t 1 ]]; then
   "${ARGV[@]}" <<< "$SCRIPT" || true
-  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<' >&2
+  ~/.local/libexec/hr.sh '<' >&2
   exec -- "$0" "$A0" "$@"
 else
   "${ARGV[@]}" <<< "$SCRIPT" | tee -- /dev/stderr
-  "$XDG_CONFIG_HOME/zsh/libexec/hr.sh" '<' >&2
+  ~/.local/libexec/hr.sh '<' >&2
 fi

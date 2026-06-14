@@ -59,8 +59,7 @@ colour() {
 }
 
 fig() {
-  # shellcheck disable=SC2154
-  HR="$("$XDG_CONFIG_HOME/zsh/libexec/hr.sh")"
+  HR="$(~/.local/libexec/hr.sh)"
 
   FIG="$HR$(figlet -c -w "$COLS" -f "$FONT" -- "$*")"
   readarray -t -- L <<< "$FIG"
