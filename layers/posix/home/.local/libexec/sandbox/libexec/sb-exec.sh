@@ -37,7 +37,7 @@ while (($#)); do
     break
     ;;
   -*)
-    set -v
+    set -x
     exit 2
     ;;
   *)

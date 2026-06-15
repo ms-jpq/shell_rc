@@ -66,7 +66,7 @@ JQ
     TMPDIR="$TEMP/helix-rt/var"
     ;;
   *)
-    set -v
+    set -x
     exit 1
     ;;
   esac
@@ -99,7 +99,7 @@ JQ
     )
     ;;
   *)
-    set -v
+    set -x
     exit 1
     ;;
   esac
@@ -118,7 +118,7 @@ JQ
   exit "$CODE"
   ;;
 *)
-  set -v
+  set -x
   exit 1
   ;;
 esac

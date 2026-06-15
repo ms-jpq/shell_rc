@@ -18,7 +18,7 @@ msys | cygwin)
   OS=nt
   ;;
 *)
-  set -v
+  set -x
   exit 2
   ;;
 esac

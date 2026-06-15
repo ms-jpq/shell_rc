@@ -70,7 +70,7 @@ pull)
   done | xargs -r -0 -n 2 -P 0 -- git clone --recurse-submodules --
   ;;
 *)
-  set -v
+  set -x
   exit 1
   ;;
 esac

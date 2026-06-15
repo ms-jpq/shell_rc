@@ -11,8 +11,10 @@ SESSION_SCRIPT='/dev/null'
 if [[ -s $PLANNED_SESSION ]]; then
   SESSION_SCRIPT="$PLANNED_SESSION"
 elif [[ -n $SESSION ]]; then
-  # shellcheck disable=2154
-  SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
+  if [[ $SESSION == me/* ]]; then
+    # shellcheck disable=2154
+    SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
+  fi
 elif [[ -v TMUX ]]; then
   exec -- tmux choose-tree -G -Z -s -NN
 else

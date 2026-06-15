@@ -3,6 +3,6 @@
 set -o pipefail
 
 if [[ -f /.die ]]; then
-  set -v
+  set -x
   exit 1
 fi

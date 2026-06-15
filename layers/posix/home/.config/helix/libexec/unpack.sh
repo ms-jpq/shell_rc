@@ -17,7 +17,7 @@ msys | cygwin)
   T="$(cygpath -- "$SYSTEMROOT/system32/tar.exe")"
   ;;
 *)
-  set -v
+  set -x
   exit 1
   ;;
 esac
@@ -39,7 +39,7 @@ case "$FMT" in
   gzip --decompress --keep --force --stdout -- "$SRC" > "$NAME"
   ;;
 *)
-  set -v
+  set -x
   exit 1
   ;;
 esac
