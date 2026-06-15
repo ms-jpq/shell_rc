@@ -32,7 +32,7 @@ PARSING_REFS && /^[[:space:]]*$/ {
 {
   PARSING_REFS = 0
   for (N in REFS) {
-    gsub("\\[" N "\\]", _LINKIFY("[" N "]", REFS[N]) " ", $0)
+    $0 = _REPLACE($0, "[" N "]", _LINKIFY("[" N "]", REFS[N]) " ")
   }
   print | command
 }
@@ -58,4 +58,13 @@ function _COLOURIZE(LINK)
 function _LINKIFY(TEXT, LINK)
 {
   return (BOLD _COLOURIZE(LINK) (OSC8 LINK ST TEXT OSC8 ST) CLS)
+}
+
+function _REPLACE(REST, FIND, REPL, L_OUT, L_POS)
+{
+  while ((L_POS = index(REST, FIND)) > 0) {
+    L_OUT = L_OUT substr(REST, 1, L_POS - 1) REPL
+    REST = substr(REST, L_POS + length(FIND))
+  }
+  return (L_OUT REST)
 }
