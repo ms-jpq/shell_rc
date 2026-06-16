@@ -15,7 +15,6 @@
 .exp
 .git
 .ignore
-.notes
 .nvim/
 .phan/
 .terraform/
@@ -24,6 +23,7 @@
 .venv/
 .worktrees/
 .yardoc/
+/.notes
 __pycache__/
 node_modules/
 Package.resolved
