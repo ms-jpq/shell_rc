@@ -16,7 +16,7 @@ elif [[ -n $SESSION ]]; then
     SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
   fi
 elif [[ -v TMUX ]]; then
-  exec -- tmux choose-tree -G -Z -s -NN
+  exec -- tmux choose-tree -G -Z -O name -s -NN
 else
   SESSION='me/owo'
   SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
