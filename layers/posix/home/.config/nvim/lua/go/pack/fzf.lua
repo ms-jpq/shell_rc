@@ -110,7 +110,7 @@ do
       source = shelljoin { "git", "status", "--short", "--untracked-files=all" },
       options = opts {
         multi = true,
-        preview = preview .. " {2..}",
+        preview = preview .. " {2..} --diff",
         preview_window = "right:wrap",
       },
       ["sink*"] = sink(function(line)

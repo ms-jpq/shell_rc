@@ -3,6 +3,7 @@
 set -o pipefail
 
 TARGET="$1"
+shift -- 1
 
 export -- PAGER='tee'
 
@@ -16,11 +17,13 @@ if [[ -d $TARGET ]]; then
     --icons
     --oneline
     --color=always
+    "$@"
   )
 else
   ARGV=(
     bat
     --force-colorization
+    "$@"
   )
 fi
 
