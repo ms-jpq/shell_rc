@@ -68,18 +68,11 @@ local no_session = (function()
   end
 end)()
 
-local safe_name = function(key)
-  return (string.gsub(key, "[^%w._-]", function(c)
-    return string.format("%%%02x", string.byte(c))
-  end))
-end
-
 local session_path = function(cwd)
   local argv = vim.fn.argv(-1) --[[@as string[] ]]
-  local name = safe_name(cwd or vim.fn.getcwd())
-  local postfix = table.concat(vim.tbl_map(safe_name, argv), "&")
-  local dir = vim.fs.joinpath(vim.fn.stdpath "cache", "sessions", name)
-  local path = vim.fs.joinpath(dir, postfix .. ".vim")
+  local key = vim.fn.sha256(table.concat({ cwd or vim.fn.getcwd(), unpack(argv) }, "\0"))
+  local dir = vim.fs.joinpath(vim.fn.stdpath "cache", "sessions")
+  local path = vim.fs.joinpath(dir, key .. ".vim")
 
   local norm = vim.fs.normalize(path, { expand_env = false })
   local escaped = vim.fn.fnameescape(norm)
