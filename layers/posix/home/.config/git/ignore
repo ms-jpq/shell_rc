@@ -10,6 +10,7 @@
 *.tfstate
 *.tfstate.*
 *.tfvars
+.*.md
 .DS_Store
 .exp
 .git
@@ -19,6 +20,7 @@
 .phan/
 .terraform/
 .tmp/
+.transcript.json
 .venv/
 .worktrees/
 .yardoc/
