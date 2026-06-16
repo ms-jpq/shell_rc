@@ -31,6 +31,11 @@ if [[ -v TMUX ]]; then
     ARGV+=(-d)
   fi
 
+  if [[ -d $* ]]; then
+    ARGV+=(-c "$*")
+    exec -- "${ARGV[@]}"
+  fi
+
   # shellcheck disable=SC2154
   exec -- "${ARGV[@]}" -- "$EDITOR" "$@"
 else
