@@ -1,10 +1,5 @@
 #!/usr/bin/env -S -- bash
 
-for _sh in ~/.local/lprofile.d/*.sh; do
-  # shellcheck disable=SC1090
-  source -- "$_sh"
-done
-
 if [[ -v BASH_VERSION ]]; then
   _sh='bash'
 else
@@ -53,3 +48,9 @@ if [[ $_sh == zsh ]]; then
 fi
 
 unset -- _sh
+
+
+for _sh in ~/.local/lprofile.d/*.sh; do
+  # shellcheck disable=SC1090
+  source -- "$_sh"
+done
