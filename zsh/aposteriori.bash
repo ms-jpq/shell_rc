@@ -1,5 +1,10 @@
 #!/usr/bin/env -S -- bash
 
+for _sh in ~/.local/lprofile.d/*.bash; do
+  # shellcheck disable=SC1090
+  source -- "$_sh"
+done
+
 IFS=':'
 # shellcheck disable=SC2154
 PATH="${path[*]}"

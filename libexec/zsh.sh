@@ -37,7 +37,7 @@ SH=(./zsh/_*.sh)
 # TODO: this somehow blows up gnu-tar on windows?
 if [[ $OS != 'nt' ]]; then
   BSH+=(./zsh/aposteriori.{bash,sh} "${SH[@]}")
-  ZSH+=(./zsh/aposteriori.{zs,sh} "${SH[@]}")
+  ZSH+=(./zsh/aposteriori.{zsh,sh} "${SH[@]}")
 fi
 
 ZACC=("$(cat -- /dev/null "${ZSH[@]}")")

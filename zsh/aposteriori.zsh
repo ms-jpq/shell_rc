@@ -1,5 +1,10 @@
 #!/usr/bin/env -S -- bash
 
+for _sh in ~/.local/lprofile.d/*.zsh; do
+  # shellcheck disable=SC1090
+  source -- "$_sh"
+done
+
 autoload -Uz -- bashcompinit
 autoload -Uz -- compinit
 
