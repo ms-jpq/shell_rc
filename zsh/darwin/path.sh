@@ -17,6 +17,7 @@ path=(
   '/opt/homebrew/opt/lsof/bin'
   '/opt/homebrew/opt/m4/bin'
   '/opt/homebrew/opt/make/libexec/gnubin'
+  '/opt/homebrew/opt/moreutils/bin'
   '/opt/homebrew/opt/mysql-client/bin'
   '/opt/homebrew/opt/ncurses/bin'
   '/opt/homebrew/opt/openssl/bin'
