@@ -9,7 +9,7 @@ use strict;
 use utf8;
 
 my $dir = dirname(__FILE__);
-my $lib = catfile( $dir, '..', 'lib', 'perlcritic.pl' );
+my $lib = catfile( $dir, '..', '..', 'perlcritic.pl' );
 
 $ENV{PERL5LIB} = catfile( $lib, 'lib', 'perl5' );
-( exec 'perl', catfile( $lib, 'bin', 'perltidy' , '--standard-error-output' ), @ARGV ) || croak $ERRNO;
+( exec 'perl', catfile( $lib, 'bin', 'perltidy' ), '--standard-error-output', '--standard-output', '--indent-columns=2', '--output-line-ending=unix' , @ARGV ) || croak $ERRNO;
