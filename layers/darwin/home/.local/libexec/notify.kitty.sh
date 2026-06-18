@@ -2,14 +2,15 @@
 
 set -o pipefail
 
-SOCK="$1"
-TITLE="$2"
-MESSAGE="$3"
-shift -- 3
+TITLE="$1"
+MESSAGE="$2"
+shift -- 2
+
+SOCK=(/tmp/kitty.*.sock)
 
 ARGV=(
   /opt/homebrew/bin/kitten @
-  --to "unix:$SOCK"
+  --to "unix:${SOCK[*]}"
   --
   kitten notify
   "$@"

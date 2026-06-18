@@ -25,7 +25,7 @@ if [[ -v RECURSION ]]; then
 
   if ((${#SOCK[@]})); then
     ARGV=(
-      ~/.local/libexec/notify.kitty.sh "${SOCK[*]}"
+      ~/.local/libexec/notify.kitty.sh
       "📩 ↘ $FROM" "$SUBJECT"
       --identifier "$ID"
       --icon info
