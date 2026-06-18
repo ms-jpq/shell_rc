@@ -10,7 +10,6 @@ if [[ -f /etc/bash_completion ]]; then
   source -- /etc/bash_completion
 fi
 
-
 for _sh in ~/.local/lprofile.d/*.bash; do
   # shellcheck disable=SC1090
   source -- "$_sh"

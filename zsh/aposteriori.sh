@@ -49,7 +49,6 @@ fi
 
 unset -- _sh
 
-
 for _sh in ~/.local/lprofile.d/*.sh; do
   # shellcheck disable=SC1090
   source -- "$_sh"

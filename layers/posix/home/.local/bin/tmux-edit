@@ -1,0 +1,37 @@
+#!/usr/bin/env -S -- bash -Eeu -o pipefail -O dotglob -O nullglob -O extglob -O failglob -O globstar
+
+set -o pipefail
+
+for F in "$@"; do
+  if ! [[ $F =~ ^https?:// ]] && ! [[ -r $F ]]; then
+    printf -- "%q" "Not openable -- $F" >&2
+    exit 2
+  fi
+done
+
+if [[ -v TMUX ]] || [[ -v TMUX_ROOT ]]; then
+  unset -- TMUX_PANE
+  SOCKET="${TMUX_ROOT:-${TMUX%%,*}}"
+  TM=(tmux -S "$SOCKET")
+
+  PANES="$("${TM[@]}" display-message -p -- '#{window_panes}')"
+  if ((PANES == 1)); then
+    ARGV=("${TM[@]}" split-window -h)
+  else
+    ARGV=("${TM[@]}" new-window -a)
+  fi
+
+  if ! tty 2> /dev/null < /dev/tty > /dev/null; then
+    ARGV+=(-d)
+  fi
+
+  if [[ -d $* ]]; then
+    ARGV+=(-c "$*")
+    exec -- "${ARGV[@]}"
+  fi
+
+  # shellcheck disable=SC2154,SC2086
+  exec -- "${ARGV[@]}" -- $EDITOR "$@"
+else
+  exec -- $EDITOR "$@"
+fi

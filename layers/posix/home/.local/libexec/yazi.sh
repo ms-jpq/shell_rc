@@ -37,6 +37,6 @@ fi
 if [[ -d $TARGET ]]; then
   RANGER+=(-- "$TARGET")
 else
-  RANGER+=(--selectfile "$TARGET" -- "$(dirname -- "$TARGET")")
+  RANGER+=(--selectfile "$TARGET")
 fi
 exec -- "${RANGER[@]}"
