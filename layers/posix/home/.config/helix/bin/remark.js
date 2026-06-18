@@ -21,13 +21,8 @@ const require = createRequire(
   ),
 )
 
-const _import = async (specifier) => {
-  try {
-    return await import(pathToFileURL(require.resolve(specifier)).href)
-  } catch {
-    return import(specifier)
-  }
-}
+const _import = (specifier) =>
+  import(pathToFileURL(require.resolve(specifier)).href)
 
 const [{ remark }, { visit }] = await (async () => {
   try {
