@@ -147,7 +147,7 @@
     "markdown": {
       "formatter": {
         "args": ["--tabsize=2", "--filename", "%{buffer_name}"],
-        "command": "run-prettier"
+        "command": "markdown-fmt"
       },
       "language-servers": ["ltex-ls-plus"]
     },
