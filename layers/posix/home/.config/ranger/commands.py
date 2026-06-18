@@ -5,10 +5,10 @@ from ranger.api.commands import Command  # type: ignore
 
 
 class touch(Command):
-    def tab(self, _):
+    def tab(self, _) -> None:
         return self._tab_directory_content()
 
-    def execute(self):
+    def execute(self) -> None:
         if not (name := self.rest(1)):
             self.fm.notify("touch: missing filename", bad=True)
             return
