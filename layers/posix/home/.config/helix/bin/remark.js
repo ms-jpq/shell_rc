@@ -42,16 +42,16 @@ if (!remark) {
 } else {
   const src = await text(stdin)
 
-  const looseLists = () => (tree) =>
-    visit(tree, "list", (node) => {
-      node.spread = true
-      for (const item of node.children) {
-        item.spread = true
-      }
-    })
-
   const out = await remark()
-    .use(looseLists)
+    .use(
+      () => (tree) =>
+        visit(tree, "list", (node) => {
+          node.spread = true
+          for (const item of node.children) {
+            item.spread = true
+          }
+        }),
+    )
     .data("settings", { bullet: "-", listItemIndent: "one" })
     .process(src)
 
