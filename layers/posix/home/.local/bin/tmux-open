@@ -10,23 +10,20 @@ for F in "$@"; do
 done
 
 if [[ -v TMUX ]]; then
-  FOCUS=0
-  if [[ -v TMUX_PANE ]]; then
-    FOCUS="$(tmux display-message -p -t "$TMUX_PANE" -- '#{&&:#{pane_active},#{window_active}}')"
-  fi
+  # shellcheck disable=SC2154
+  RESOLVED="$("$XDG_CONFIG_HOME/tmux/libexec/which.sh")"
+  read -r -- PANE SOCKET <<< "$RESOLVED"
 
-  while OUTER="$(tmux show-environment -g -- TMUX 2> /dev/null)"; do
-    export -- TMUX="${OUTER#TMUX=}"
-    unset -- TMUX_PANE
-  done
+  TM=(tmux -S "$SOCKET")
 
-  PANES="$(tmux display-message -p -- '#{window_panes}')"
+  PANES="$("${TM[@]}" display-message -p -t "$PANE" -- '#{window_panes}')"
   if ((PANES == 1)); then
-    ARGV=(tmux split-window -h)
+    ARGV=("${TM[@]}" split-window -h -t "$PANE")
   else
-    ARGV=(tmux new-window -a)
+    ARGV=("${TM[@]}" new-window -a -t "$PANE")
   fi
 
+  FOCUS="$("${TM[@]}" display-message -p -t "$PANE" -- '#{&&:#{session_attached},#{&&:#{window_active},#{pane_active}}}')"
   if ! ((FOCUS)); then
     ARGV+=(-d)
   fi
