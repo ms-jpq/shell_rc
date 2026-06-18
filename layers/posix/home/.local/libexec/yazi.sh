@@ -30,15 +30,13 @@ if command -v -- yazi > /dev/null; then
   exec -- "${YAZI[@]}"
 fi
 
-if [[ -d $TARGET ]]; then
-  DIR="$TARGET"
-else
-  DIR="$(dirname -- "$TARGET")"
-fi
-
-RANGER=(ranger --selectfile "$TARGET")
+RANGER=(ranger)
 if [[ -n $CHOOSER ]]; then
   RANGER+=(--choosefile "$CHOOSER")
 fi
-RANGER+=(-- "$DIR")
+if [[ -d $TARGET ]]; then
+  RANGER+=(-- "$TARGET")
+else
+  RANGER+=(--selectfile "$TARGET" -- "$(dirname -- "$TARGET")")
+fi
 exec -- "${RANGER[@]}"
