@@ -52,6 +52,10 @@ end)
 
 local yazi_sh = vim.fs.joinpath(lib.HOME, ".local", "libexec", "yazi.sh")
 
+local chooser_path = function(line)
+  return string.match(line, "^search://[^/]*/(.*)$") or line
+end
+
 local spawn_yazi = function(buf, path)
   lib.scope(function(defer)
     defer(file_exp_die())
@@ -68,7 +72,7 @@ local spawn_yazi = function(buf, path)
       local parsed = unpack(vim.split(selected, "\n", { plain = true, trimempty = true }))
 
       if parsed then
-        local escaped = vim.fn.fnameescape(parsed)
+        local escaped = vim.fn.fnameescape(chooser_path(parsed))
         vim.cmd.edit(escaped)
       end
     end
