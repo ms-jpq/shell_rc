@@ -1,11 +1,12 @@
 from os.path import normpath
 from pathlib import Path
+from typing import Any
 
 from ranger.api.commands import Command  # type: ignore
 
 
-class touch(Command):
-    def tab(self, _) -> None:
+class touch(Command):  # type: ignore[misc, no-any-unimported]
+    def tab(self, _: Any) -> Any:
         return self._tab_directory_content()
 
     def execute(self) -> None:
