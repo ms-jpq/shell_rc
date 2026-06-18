@@ -2,9 +2,10 @@
 
 set -o pipefail
 
-TMUX_PANE="${1:-$TMUX_PANE}"
+TM=(tmux -S "${TMUX_ROOT:-${TMUX%%,*}}")
+PANE="${1:-${TMUX_ROOT_PANE:-$TMUX_PANE}}"
 
-STATUS="$(tmux display-message -t "$TMUX_PANE" -p '#{session_active}#{window_active}#{pane_active}')"
+STATUS="$("${TM[@]}" display-message -t "$PANE" -p '#{session_active}#{window_active}#{pane_active}')"
 
 case "$STATUS" in
 111)
@@ -12,8 +13,8 @@ case "$STATUS" in
   ;;
 110) ;;
 *)
-  tmux set-option -t "$TMUX_PANE" -w window-status-style 'reverse'
+  "${TM[@]}" set-option -t "$PANE" -w window-status-style 'reverse'
   ;;
 esac
 
-tmux set-option -t "$TMUX_PANE" -p window-style 'bg=#f5eeff'
+"${TM[@]}" set-option -t "$PANE" -p window-style 'bg=#f5eeff'
