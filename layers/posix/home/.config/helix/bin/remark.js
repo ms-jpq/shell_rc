@@ -6,6 +6,7 @@ import { homedir } from "node:os"
 import { join } from "node:path"
 import { stdin, stdout } from "node:process"
 import { text } from "node:stream/consumers"
+import { pipeline } from "node:stream/promises"
 import { pathToFileURL } from "node:url"
 
 const require = createRequire(
@@ -28,24 +29,31 @@ const _import = async (specifier) => {
   }
 }
 
-const src = await text(stdin)
+const [{ remark }, { visit }] = await (async () => {
+  try {
+    return await Promise.all([_import("remark"), _import("unist-util-visit")])
+  } catch {
+    return [{}, {}]
+  }
+})()
 
-const [{ remark }, { visit }] = await Promise.all([
-  _import("remark"),
-  _import("unist-util-visit"),
-])
+if (!remark) {
+  await pipeline(stdin, stdout)
+} else {
+  const src = await text(stdin)
 
-const looseLists = () => (tree) =>
-  visit(tree, "list", (node) => {
-    node.spread = true
-    for (const item of node.children) {
-      item.spread = true
-    }
-  })
+  const looseLists = () => (tree) =>
+    visit(tree, "list", (node) => {
+      node.spread = true
+      for (const item of node.children) {
+        item.spread = true
+      }
+    })
 
-const out = await remark()
-  .use(looseLists)
-  .data("settings", { bullet: "-", listItemIndent: "one" })
-  .process(src)
+  const out = await remark()
+    .use(looseLists)
+    .data("settings", { bullet: "-", listItemIndent: "one" })
+    .process(src)
 
-stdout.write(String(out))
+  stdout.write(String(out))
+}
