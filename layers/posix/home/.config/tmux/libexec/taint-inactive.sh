@@ -3,7 +3,7 @@
 set -o pipefail
 
 TM=(tmux -S "${TMUX_ROOT:-${TMUX%%,*}}")
-PANE="${1:-${TMUX_ROOT_PANE:-$TMUX_PANE}}"
+PANE="${1:-$TMUX_PANE}"
 
 STATUS="$("${TM[@]}" display-message -t "$PANE" -p '#{session_active}#{window_active}#{pane_active}')"
 
