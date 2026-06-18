@@ -34,6 +34,10 @@ export -- STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
 source -- <(starship init "$_sh")
 
 if [[ $_sh == zsh ]]; then
+  # https://github.com/starship/starship/issues/7289
+  # shellcheck disable=SC2034
+  ZLE_RPROMPT_INDENT=0
+
   _set_title() {
     if ! [[ -v SSH_TTY ]]; then
       if [[ $PWD == "$HOME" ]]; then
