@@ -173,7 +173,7 @@ local repl = function()
   end
 
   highlight(buf, lo, hi, function()
-    run(text, { send_text, pane_id })
+    run(processed, { send_text, pane_id })
   end)
 end
 
