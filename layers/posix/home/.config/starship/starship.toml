@@ -46,12 +46,13 @@ error_symbol   = '[❯](red)'
 success_symbol = '[❯](green)'
 
 [cmd_duration]
-format   = '[ $duration]($style)'
-min_time = 99
-style    = 'yellow'
+format            = '[ $duration]($style)'
+min_time          = 99
+show_milliseconds = true
+style             = 'yellow'
 
 [status]
 disabled   = false
 format     = "$symbol[$int](red)"
-map_symbol = true
-symbol     = "[󰯈 ](red)"
+map_symbol = false
+symbol     = "[ 󰯈 ](red)"
