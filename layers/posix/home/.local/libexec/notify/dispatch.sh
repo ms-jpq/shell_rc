@@ -41,7 +41,10 @@ fi
 
 SOCK=(/tmp/kitty.*.sock)
 
-if [[ -t 2 ]]; then
+if [[ ! -t 1 && -t 2 ]]; then
+  exec >&2
+fi
+if [[ -t 1 ]]; then
   exec -- "$BASE/osc99.sh" "${ARGS[@]}"
 fi
 
