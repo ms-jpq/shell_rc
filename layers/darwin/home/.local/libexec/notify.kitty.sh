@@ -17,4 +17,4 @@ ARGV=(
   -- "$TITLE" "$MESSAGE"
 )
 
-exec -- "${ARGV[@]}"
+exec -- "${ARGV[@]}" < /dev/null
