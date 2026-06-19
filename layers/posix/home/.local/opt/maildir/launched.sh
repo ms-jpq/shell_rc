@@ -6,8 +6,6 @@ shopt -u failglob
 STATE="$HOME/.local/state/notify-mails"
 
 if [[ -v RECURSION ]]; then
-  SOCK=(/tmp/kitty.*.sock)
-
   MAIL="$1"
   ID="$(b3sum --length 16 -- "$MAIL" | cut -d ' ' -f 1)"
   SID="$STATE/$ID"
@@ -23,17 +21,15 @@ if [[ -v RECURSION ]]; then
   FROM="$(mhdr -d -h from -- "$MAIL")"
   SUBJECT="$(mhdr -d -h subject -- "$MAIL")"
 
-  if ((${#SOCK[@]})); then
-    ARGV=(
-      ~/.local/libexec/notify.kitty.sh
-      "📩 ↘ $FROM" "$SUBJECT"
-      --identifier "$ID"
-      --icon info
-    )
-    "${ARGV[@]}"
-  else
-    ~/.local/libexec/notify.cjs "📩 ↘ $FROM" '' "$SUBJECT" ping
-  fi
+  ARGV=(
+    ~/.local/libexec/notify/dispatch.sh
+    --id "$ID"
+    --icon info
+    --sound ping
+    --
+    "📩 ↘ $FROM" "$SUBJECT"
+  )
+  "${ARGV[@]}"
 
   exit
 fi

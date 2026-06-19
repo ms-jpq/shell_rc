@@ -93,7 +93,7 @@ done
 while true; do
   case "$OSTYPE" in
   darwin*)
-    fortune | tr -- '\n' ' ' | sed -E -e 's/[[:space:]]+/ /g' | ~/.local/libexec/notify.sh '🥫🥫'
+    fortune | tr -- '\n' ' ' | sed -E -e 's/[[:space:]]+/ /g' | ~/.local/libexec/notify/osc99.sh '🥫🥫'
     ;;
   *)
     set -x

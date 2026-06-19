@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
   "Lua.diagnostics.disable": ["await-in-sync"],
-  "Lua.diagnostics.globals": ["hs"],
+  "Lua.diagnostics.globals": ["hs", "_cli"],
   "Lua.diagnostics.neededFileStatus": {
     "global-element": "Any",
     "not-yieldable": "Any"

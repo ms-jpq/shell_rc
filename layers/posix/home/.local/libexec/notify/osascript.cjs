@@ -7,7 +7,7 @@ ObjC.import("stdlib")
 /**
  * @type {string[]}
  */
-const [, , , arg0, ...argv] = ObjC.unwrap(
+const [, , , _arg0, ...argv] = ObjC.unwrap(
   $.NSProcessInfo.processInfo.arguments,
 ).map(ObjC.unwrap)
 
