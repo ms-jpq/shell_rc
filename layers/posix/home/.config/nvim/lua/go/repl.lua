@@ -4,7 +4,7 @@ local lib = require "go.lib"
 local filters = vim.fs.joinpath(vim.fn.stdpath "config", "repl")
 local rand = string.gsub(vim.fn.tempname(), "/", "-")
 local ns = vim.api.nvim_create_namespace(rand)
-local tmux_buf = "nvim-" .. rand
+local send_text = vim.fs.joinpath(vim.fn.stdpath "config", "..", "tmux", "libexec", "send-text.sh")
 
 vim.api.nvim_create_user_command("REPLclear", function()
   vim.b.__tmux_target__ = nil
@@ -15,11 +15,16 @@ local run = function(stdin, args)
   return proc.stdout
 end
 
-local parse_panes = function()
+local tmux = function(stdin, args)
+  local cmd = vim.env.TMUX_ROOT and { "tmux", "-S", vim.env.TMUX_ROOT } or { "tmux" }
+  return run(stdin, vim.list_extend(cmd, args))
+end
+
+local parse_panes = function(pane_id)
   local fmt =
     { "#{pane_id}", "#{window_id}", "#{window_active}", "#{session_name} -> #{window_index} -> #{pane_index}" }
-  local win = run(nil, { "tmux", "display-message", "-p", "-F", "#{window_id}" })
-  local listed = run(nil, { "tmux", "list-panes", "-a", "-F", table.concat(fmt, rand) })
+  local win = tmux(nil, { "display-message", "-t", pane_id, "-p", "-F", "#{window_id}" })
+  local listed = tmux(nil, { "list-panes", "-a", "-F", table.concat(fmt, rand) })
 
   local win_id = vim.fn.trim(win)
   local lines = vim.gsplit(listed, "\n", { plain = true, trimempty = true })
@@ -32,7 +37,7 @@ local pick_pane = function(buf, pane_id)
     return state.__tmux_target__
   end
 
-  local win_id, lines = parse_panes()
+  local win_id, lines = parse_panes(pane_id)
 
   local acc = vim
     .iter(lines)
@@ -99,22 +104,6 @@ local process = function(buf, stdin)
   return run(stdin, { found })
 end
 
-local tmux_send = function(pane_id, text)
-  lib.scope(function(defer)
-    defer(function()
-      run(nil, { "tmux", "delete-buffer", "-b", tmux_buf })
-    end)
-
-    run(text, { "tmux", "load-buffer", "-b", tmux_buf, "--", "-" })
-    run(nil, { "tmux", "paste-buffer", "-r", "-p", "-b", tmux_buf, "-t", pane_id })
-  end)
-end
-
-local eof = function(pane_id)
-  async.sleep(99)
-  run(nil, { "tmux", "send-keys", "-t", pane_id, "--", "Enter" })
-end
-
 local matching = function(buf)
   local re = vim.b[buf].__page_regex__
   return function(line)
@@ -157,7 +146,7 @@ local highlight = function(buf, lo, hi, fn)
 end
 
 local repl = function()
-  local current_pane = vim.env.TMUX_PANE
+  local current_pane = vim.env.TMUX_ROOT_PANE or vim.env.TMUX_PANE
   if not current_pane then
     return
   end
@@ -184,9 +173,8 @@ local repl = function()
   end
 
   highlight(buf, lo, hi, function()
-    tmux_send(pane_id, processed)
+    run(text, { send_text, pane_id })
   end)
-  eof(pane_id)
 end
 
 vim.keymap.set({ "n" }, [[<leader>w]], async(repl))
