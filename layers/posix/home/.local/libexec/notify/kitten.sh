@@ -10,7 +10,7 @@ SOCK=({"$TMPDIR",/tmp}/kitty.*.sock)
 
 ARGV=(
   /opt/homebrew/bin/kitten @
-  --to "unix:${SOCK[*]}"
+  --to "${KITTY_LISTEN_ON:-unix:${SOCK[*]}}"
   --
   kitten notify
   -- "$TITLE" "$MESSAGE"
