@@ -10,15 +10,15 @@ for F in "$@"; do
 done
 
 if [[ -v TMUX ]] || [[ -v TMUX_ROOT ]]; then
-  unset -- TMUX_PANE
-  SOCKET="${TMUX_ROOT:-${TMUX%%,*}}"
-  TM=(tmux -S "$SOCKET")
+  TM=(tmux -S "${TMUX_ROOT:-${TMUX%%,*}}")
+  T=(-t "${TMUX_ROOT_PANE:-${TMUX_PANE:-}}")
 
-  PANES="$("${TM[@]}" display-message -p -- '#{window_panes}')"
+  PANES="$("${TM[@]}" display-message "${T[@]}" -p -- '#{window_panes}')"
   if ((PANES == 1)); then
-    ARGV=("${TM[@]}" split-window -h)
+    ARGV=("${TM[@]}" split-window -h "${T[@]}")
   else
-    ARGV=("${TM[@]}" new-window -a)
+    W="$("${TM[@]}" display-message "${T[@]}" -p -- '#{window_id}')"
+    ARGV=("${TM[@]}" new-window -a -t "$W")
   fi
 
   if ! tty 2> /dev/null < /dev/tty > /dev/null; then

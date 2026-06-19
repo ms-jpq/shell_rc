@@ -24,11 +24,15 @@ const require = createRequire(
 const _import = (specifier) =>
   import(pathToFileURL(require.resolve(specifier)).href)
 
-const [{ remark }, { visit }] = await (async () => {
+const [{ remark }, { default: frontmatter }, { visit }] = await (async () => {
   try {
-    return await Promise.all([_import("remark"), _import("unist-util-visit")])
+    return await Promise.all([
+      _import("remark"),
+      _import("remark-frontmatter"),
+      _import("unist-util-visit"),
+    ])
   } catch {
-    return [{}, {}]
+    return [{}, {}, {}]
   }
 })()
 
@@ -38,6 +42,7 @@ if (!remark) {
   const src = await text(stdin)
 
   const out = await remark()
+    .use(frontmatter, ["yaml", "toml"])
     .use(
       () => (tree) =>
         visit(tree, "list", (node) => {
