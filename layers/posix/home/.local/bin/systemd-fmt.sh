@@ -72,14 +72,12 @@ if [[ ${SYSTEMD_FMT_MODE:-} == 'stream' ]]; then
   fmt < "$FILE" > "$TMP"
   mv -f -- "$TMP" "$FILE"
 elif (($#)); then
-  readarray -t -- IS <<< "${SYSTEMD_FMT_IGNORE:-}"
+  readarray -t -- IS < <(printf -- '%s' "${SYSTEMD_FMT_IGNORE:-}")
 
   declare -A -- SEEN=()
   for I in "${IS[@]}"; do
-    if [[ -n $I ]]; then
-      if I="$(realpath -- "$I" 2> /dev/null)"; then
-        SEEN["$I"]=1
-      fi
+    if I="$(realpath -- "$I" 2> /dev/null)"; then
+      SEEN["$I"]=1
     fi
   done
 

@@ -5,7 +5,7 @@ set -o pipefail
 cd -- "${0%/*}/.."
 
 TXT="$(sed -E -ne '/^[+-]/p' -- /dev/null ./packages/*.txt)"
-readarray -t -- DESIRED <<< "$TXT"
+readarray -t -- DESIRED < <(printf -- '%s' "$TXT")
 
 case "$OSTYPE" in
 darwin*)
@@ -30,24 +30,18 @@ msys | cygwin)
   ;;
 esac
 
-readarray -t -- INSTALLED <<< "$PKGS"
+readarray -t -- INSTALLED < <(printf -- '%s' "$PKGS")
 
 declare -A -- PRESENT=()
 
 for PKG in "${INSTALLED[@]}"; do
-  if [[ -n $PKG ]]; then
-    PRESENT["$PKG"]=1
-  fi
+  PRESENT["$PKG"]=1
 done
 
 ADD=()
 RM=()
 
 for LINE in "${DESIRED[@]}"; do
-  if [[ -z $LINE ]]; then
-    continue
-  fi
-
   ACTION="${LINE%% *}"
   PKG="${LINE#* }"
 
