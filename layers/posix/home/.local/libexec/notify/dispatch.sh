@@ -49,7 +49,7 @@ done
 
 case "$OSTYPE" in
 darwin*)
-  if pgrep -x -- Hammerspoon > /dev/null 2>&1; then
+  if pgrep -x -- Hammerspoon > /dev/null; then
     exec -- "$BASE/hs.lua" "${ARGS[@]}"
   fi
   for _ in {"$TMPDIR",/tmp}/kitty.*.sock; do
