@@ -43,7 +43,8 @@ val arch =
 
 val dir = "kotlin-server-$version"
 
-val uri = "https://download-cdn.jetbrains.com/kotlin-lsp/$version/$dir$arch.$ext"
+val uri =
+    "https://download-cdn.jetbrains.com/language-server/kotlin-server/$version/$dir$arch.$ext"
 
 run.toFile().mkdirs()
 

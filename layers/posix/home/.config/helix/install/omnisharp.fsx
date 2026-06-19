@@ -8,7 +8,10 @@ open System.Runtime.InteropServices
 let run = Environment.GetEnvironmentVariable "RUN"
 let lib = Environment.GetEnvironmentVariable "LIB"
 
-let arch = Runtime.InteropServices.Architecture()
+let arch =
+    match RuntimeInformation.OSArchitecture with
+    | Architecture.Arm64 -> "arm64"
+    | _ -> "x64"
 let win = RuntimeInformation.IsOSPlatform OSPlatform.Windows
 
 match win with
@@ -22,9 +25,9 @@ let uri =
     if RuntimeInformation.IsOSPlatform OSPlatform.OSX then
         sprintf "%s-%s" base_uri "osx-arm64-net6.0.tar.gz"
     elif RuntimeInformation.IsOSPlatform OSPlatform.Linux then
-        sprintf "%s-%s-%A-%s" base_uri "linux-" arch "-net6.0.tar.gz"
+        sprintf "%s-linux-%s-net6.0.tar.gz" base_uri arch
     else
-        sprintf "%s-%s-%A-%s" base_uri "win-" arch "-net6.0.zip"
+        sprintf "%s-win-%s-net6.0.zip" base_uri arch
 
 let pipe arg0 argv (input: 'a) =
     let start =
