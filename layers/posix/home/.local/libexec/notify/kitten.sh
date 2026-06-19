@@ -4,7 +4,6 @@ set -o pipefail
 
 TITLE="$1"
 MESSAGE="$2"
-shift -- 2
 
 SOCK=(/tmp/kitty.*.sock)
 
@@ -13,7 +12,6 @@ ARGV=(
   --to "unix:${SOCK[*]}"
   --
   kitten notify
-  "$@"
   -- "$TITLE" "$MESSAGE"
 )
 

@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+TITLE="$1"
+BODY="${2-}"
+
 T=0
 case "$TERM" in
 tmux*)
@@ -31,7 +34,7 @@ ID=1
   # OSC99 start
   printf -- '\e]99;e=1:i=%s:d=0:p=title;' "$ID"
   # OSC99 title
-  base64 -w 0 <<< "$*"
+  base64 -w 0 <<< "$TITLE"
 
   if ((T)); then
     # TMUX escape `ESC`
@@ -52,7 +55,7 @@ ID=1
   # OSC99 start
   printf -- '\e]99;e=1:i=%s:d=1:p=body;' "$ID"
   # OSC99 body
-  base64 -w 0
+  base64 -w 0 <<< "$BODY"
 
   if ((T)); then
     # TMUX escape `ESC`

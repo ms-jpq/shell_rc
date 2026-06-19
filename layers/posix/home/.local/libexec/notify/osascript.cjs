@@ -17,6 +17,5 @@ const app = (() => {
   return app
 })()
 
-const [withTitle, sub, bod, soundName = null] = argv.length ? argv : [""]
-const [body, subtitle] = bod ? [bod, sub] : [sub ?? "", ""]
-app.displayNotification(body, { withTitle, subtitle, soundName })
+const [withTitle = "", body = "", soundName = ""] = argv
+app.displayNotification(body, { withTitle, soundName: soundName || null })

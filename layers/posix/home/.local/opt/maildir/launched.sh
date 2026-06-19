@@ -23,8 +23,6 @@ if [[ -v RECURSION ]]; then
 
   ARGV=(
     ~/.local/libexec/notify/dispatch.sh
-    --id "$ID"
-    --icon info
     --sound ping
     --
     "📩 ↘ $FROM" "$SUBJECT"

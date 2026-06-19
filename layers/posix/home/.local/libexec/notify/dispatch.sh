@@ -3,27 +3,9 @@
 set -o pipefail
 shopt -u failglob
 
-ID=''
-ICON=''
 SOUND=''
 while (($#)); do
   case "$1" in
-  -i | --id)
-    ID="$2"
-    shift -- 2
-    ;;
-  --id=*)
-    ID="${1#*=}"
-    shift -- 1
-    ;;
-  -I | --icon)
-    ICON="$2"
-    shift -- 2
-    ;;
-  --icon=*)
-    ICON="${1#*=}"
-    shift -- 1
-    ;;
   -s | --sound)
     SOUND="$2"
     shift -- 2
@@ -52,25 +34,33 @@ BODY="${2-}"
 ROOT="$(realpath -- "$0")"
 BASE="${ROOT%/*}"
 
+ARGS=("$TITLE" "$BODY")
+if [[ -n $SOUND ]]; then
+  ARGS+=("$SOUND")
+fi
+
 SOCK=(/tmp/kitty.*.sock)
-if ((${#SOCK[@]})); then
-  ARGV=("$BASE/kitty.sh" "$TITLE" "$BODY")
-  if [[ -n $ID ]]; then
-    ARGV+=(--identifier "$ID")
-  fi
-  if [[ -n $ICON ]]; then
-    ARGV+=(--icon "$ICON")
-  fi
-  exec -- "${ARGV[@]}"
+
+if [[ -t 2 ]]; then
+  exec -- "$BASE/osc99.sh" "${ARGS[@]}"
 fi
 
 case "$OSTYPE" in
 darwin*)
-  ARGV=("$BASE/osascript.cjs" "$TITLE" '' "$BODY")
-  if [[ -n $SOUND ]]; then
-    ARGV+=("$SOUND")
+  if pgrep -x -- Hammerspoon > /dev/null 2>&1; then
+    exec -- "$BASE/hs.lua" "${ARGS[@]}"
+  elif ((${#SOCK[@]})); then
+    exec -- "$BASE/kitten.sh" "${ARGS[@]}"
+  else
+    exec -- "$BASE/osascript.cjs" "${ARGS[@]}"
   fi
-  exec -- "${ARGV[@]}"
+  ;;
+linux*)
+  if ((${#SOCK[@]})); then
+    exec -- "$BASE/kitten.sh" "${ARGS[@]}"
+  fi
+  set -x
+  exit 2
   ;;
 *)
   set -x
