@@ -5,7 +5,7 @@ set -o pipefail
 TITLE="$1"
 MESSAGE="$2"
 
-SOCK=(/tmp/kitty.*.sock)
+SOCK=({"$TMPDIR",/tmp}/kitty.*.sock)
 
 ARGV=(
   /opt/homebrew/bin/kitten @

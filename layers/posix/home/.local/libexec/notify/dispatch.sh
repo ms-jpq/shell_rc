@@ -41,22 +41,21 @@ fi
 
 SOCK=(/tmp/kitty.*.sock)
 
-if [[ ! -t 1 && -t 2 ]]; then
-  exec >&2
-fi
-if [[ -t 1 ]]; then
-  exec -- "$BASE/osc99.sh" "${ARGS[@]}"
-fi
+for FD in 1 2; do
+  if [[ -t $FD ]]; then
+    exec -- "$BASE/osc99.sh" "${ARGS[@]}" >&"$FD"
+  fi
+done
 
 case "$OSTYPE" in
 darwin*)
   if pgrep -x -- Hammerspoon > /dev/null 2>&1; then
     exec -- "$BASE/hs.lua" "${ARGS[@]}"
-  elif ((${#SOCK[@]})); then
-    exec -- "$BASE/kitten.sh" "${ARGS[@]}"
-  else
-    exec -- "$BASE/osascript.cjs" "${ARGS[@]}"
   fi
+  for _ in {"$TMPDIR",/tmp}/kitty.*.sock; do
+    exec -- "$BASE/kitten.sh" "${ARGS[@]}"
+  done
+  exec -- "$BASE/osascript.cjs" "${ARGS[@]}"
   ;;
 linux*)
   if ((${#SOCK[@]})); then
