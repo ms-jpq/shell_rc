@@ -5,38 +5,27 @@ set -o pipefail
 ENV=TMUX_NO_SAVE
 tmux set-environment -g -h -- "$ENV" 1
 
-tmux new-window -c ~/dev.localized/scratch
-tmux set-buffer -- $'claude --continue || claude --name scratch\n'
-tmux paste-buffer -d -p
-tmux split-window -c ~/dev.localized/scratch
-tmux select-pane -m
-tmux set-buffer -- $'nvim\n'
-tmux paste-buffer -d -p
-tmux select-pane -t \{marked\}
-tmux select-pane -M
-tmux select-layout -- even-horizontal
+DIRS=(
+  ~/dev.localized/scratch
+  ~/dev.localized/shell_rc
+  ~/.local/opt/ai
+  ~/.local/opt/lab
+)
 
-tmux new-window -c ~/dev.localized/shell_rc
-tmux set-buffer -- $'claude --continue || claude --name shell_rc\n'
-tmux paste-buffer -d -p
-tmux select-pane -m
-tmux split-window -c ~/dev.localized/shell_rc
-tmux set-buffer -- $'nvim\n'
-tmux paste-buffer -d -p
-tmux select-pane -t \{marked\}
-tmux select-pane -M
-tmux select-layout -- even-horizontal
+for DIR in "${DIRS[@]}"; do
+  NAME="${DIR##*/}"
 
-tmux new-window -c ~/.local/opt/ai
-tmux set-buffer -- $'claude --continue || claude --name ai\n'
-tmux paste-buffer -d -p
-tmux select-pane -m
-tmux split-window -c ~/.local/opt/ai
-tmux set-buffer -- $'nvim\n'
-tmux paste-buffer -d -p
-tmux select-pane -t \{marked\}
-tmux select-pane -M
-tmux select-layout -- even-horizontal
+  tmux new-window -c "$DIR"
+  tmux set-buffer -- "claude --continue || claude --name ${NAME@Q}"$'\n'
+  tmux paste-buffer -d -p
+  tmux select-pane -m
+  tmux split-window -c "$DIR"
+  tmux set-buffer -- $'nvim\n'
+  tmux paste-buffer -d -p
+  tmux select-pane -t '{marked}'
+  tmux select-pane -M
+  tmux select-layout -- even-horizontal
+done
 
-tmux select-window -t :-2
+tmux select-window -t :-$((${#DIRS[@]} - 1))
 tmux set-environment -g -h -u -- "$ENV"
