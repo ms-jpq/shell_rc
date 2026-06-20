@@ -7,9 +7,10 @@
 (allow process-exec)
 (allow process-fork)
 
-(allow process-info* (target same-sandbox))
+(allow process-info*)
 (allow signal)
 (allow mach-priv-task-port (target same-sandbox))
+(allow mach-register)
 (allow system-sched)
 
 (allow ipc-posix-shm)
@@ -70,11 +71,13 @@
   (global-name "com.apple.powermanagement.control")
   (global-name "com.apple.securityd.xpc")
   (global-name "com.apple.SecurityServer")
+  (global-name "com.apple.sysmond")
   (global-name "com.apple.system.logger")
   (global-name "com.apple.system.notification_center")
   (global-name "com.apple.system.opendirectoryd.libinfo")
   (global-name "com.apple.system.opendirectoryd.membership")
   (global-name "com.apple.SystemConfiguration.configd")
+  (global-name "Hammerspoon")
 )
 
 ;; ---- ---- ---- ----
