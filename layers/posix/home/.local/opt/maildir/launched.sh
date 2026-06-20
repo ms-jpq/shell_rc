@@ -25,7 +25,7 @@ if [[ -v RECURSION ]]; then
     ~/.local/libexec/notify/dispatch.sh
     --sound ping
     --
-    "📩 ↘ $FROM" "$SUBJECT"
+    "📮↘ $FROM" "$SUBJECT"
   )
   "${ARGV[@]}"
 
