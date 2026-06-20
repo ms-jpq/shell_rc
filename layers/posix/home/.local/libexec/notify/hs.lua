@@ -11,6 +11,7 @@ local notify = hs.notify.new {
   title = present(title),
   informativeText = present(body),
   soundName = present(sound),
+  withdrawAfter = 0,
 }
 
 ---@diagnostic disable-next-line
