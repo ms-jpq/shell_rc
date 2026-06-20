@@ -7,9 +7,9 @@ tmux set-environment -g -h -- "$ENV" 1
 
 DIRS=(
   ~/dev.localized/scratch
-  ~/dev.localized/shell_rc
   ~/.local/opt/ai
-  ~/.local/opt/lab
+  ~/dev.localized/shell_rc
+  ~/dev.localized/lab
 )
 
 for DIR in "${DIRS[@]}"; do
