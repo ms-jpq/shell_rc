@@ -62,6 +62,7 @@
 (allow mach-lookup
   (global-name "com.apple.audio.systemsoundserver")
   (global-name "com.apple.bsd.dirhelper")
+  (global-name "com.apple.CalendarAgent")
   (global-name "com.apple.coreservices.launchservicesd")
   (global-name "com.apple.distributed_notifications@uv3")
   (global-name "com.apple.fontobjectsserver")
@@ -69,6 +70,7 @@
   (global-name "com.apple.logd")
   (global-name "com.apple.lsd.mapdb")
   (global-name "com.apple.powermanagement.control")
+  (global-name "com.apple.remindd")
   (global-name "com.apple.securityd.xpc")
   (global-name "com.apple.SecurityServer")
   (global-name "com.apple.sysmond")
@@ -77,6 +79,7 @@
   (global-name "com.apple.system.opendirectoryd.libinfo")
   (global-name "com.apple.system.opendirectoryd.membership")
   (global-name "com.apple.SystemConfiguration.configd")
+  (global-name "com.apple.tccd")
   (global-name "Hammerspoon")
 )
 

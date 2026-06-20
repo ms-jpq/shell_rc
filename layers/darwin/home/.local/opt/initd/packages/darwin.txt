@@ -95,6 +95,7 @@
 + pv
 + qemu
 + recode
++ rem
 + ripgrep
 + rlwrap
 + rsync
