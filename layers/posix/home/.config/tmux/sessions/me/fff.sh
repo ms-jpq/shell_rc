@@ -27,11 +27,11 @@ tmux select-pane -t \{marked\}
 tmux select-pane -M
 tmux select-layout -- even-horizontal
 
-tmux new-window -c ~/dev.localized/ai
+tmux new-window -c ~/.local/opt/ai
 tmux set-buffer -- $'claude --continue || claude --name ai\n'
 tmux paste-buffer -d -p
 tmux select-pane -m
-tmux split-window -c ~/dev.localized/ai
+tmux split-window -c ~/.local/opt/ai
 tmux set-buffer -- $'nvim\n'
 tmux paste-buffer -d -p
 tmux select-pane -t \{marked\}
