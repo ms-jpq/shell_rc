@@ -39,21 +39,20 @@ if [[ -n $SOUND ]]; then
   ARGS+=("$SOUND")
 fi
 
-SOCK=(/tmp/kitty.*.sock)
-
-for FD in 1 2; do
-  if [[ -t $FD ]]; then
-    exec -- "$BASE/osc99.sh" "${ARGS[@]}" >&"$FD"
-  fi
-done
+SOCK=({"$TMPDIR",/tmp}/kitty.*.sock)
 
 case "$OSTYPE" in
 darwin*)
   if pgrep -x -- Hammerspoon > /dev/null; then
     exec -- "$BASE/hs.lua" "${ARGS[@]}"
   fi
-  for _ in {"$TMPDIR",/tmp}/kitty.*.sock; do
+  if ((${#SOCK[@]})); then
     exec -- "$BASE/kitten.sh" "${ARGS[@]}"
+  fi
+  for FD in 1 2; do
+    if [[ -t $FD ]]; then
+      exec -- "$BASE/osc99.sh" "${ARGS[@]}" >&"$FD"
+    fi
   done
   exec -- "$BASE/osascript.cjs" "${ARGS[@]}"
   ;;
