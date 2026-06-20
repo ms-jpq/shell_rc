@@ -6,17 +6,19 @@ ENV=TMUX_NO_SAVE
 tmux set-environment -g -h -- "$ENV" 1
 
 DIRS=(
-  ~/dev.localized/scratch
-  ~/.local/opt/ai
-  ~/dev.localized/shell_rc
-  ~/dev.localized/lab
+  ~/dev.localized/scratch ''
+  ~/.local/opt/ai ''
+  ~/dev.localized/shell_rc ''
+  ~/dev.localized/lab 'denv .facts/mcp.env'
 )
 
-for DIR in "${DIRS[@]}"; do
+for ((I = 0; I < ${#DIRS[@]}; I += 2)); do
+  DIR="${DIRS[I]}"
+  PREFIX="${DIRS[I + 1]}"
   NAME="${DIR##*/}"
 
   tmux new-window -c "$DIR"
-  tmux set-buffer -- "claude --continue || claude --name ${NAME@Q}"$'\n'
+  tmux set-buffer -- "${PREFIX:+$PREFIX }claude --continue || ${PREFIX:+$PREFIX }claude --name ${NAME@Q}"$'\n'
   tmux paste-buffer -d -p
   tmux select-pane -m
   tmux split-window -c "$DIR"
@@ -27,5 +29,5 @@ for DIR in "${DIRS[@]}"; do
   tmux select-layout -- even-horizontal
 done
 
-tmux select-window -t :-$((${#DIRS[@]} - 1))
+tmux select-window -t :-$((${#DIRS[@]} / 2 - 1))
 tmux set-environment -g -h -u -- "$ENV"
