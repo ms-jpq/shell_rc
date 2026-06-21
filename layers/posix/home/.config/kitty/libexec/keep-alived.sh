@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+VIM="$(< "${0%/*}/keep-alived.vim")"
+
 cd -- ~/
 
 KITTEN=(
@@ -10,7 +12,7 @@ KITTEN=(
   --instance-group=edit
   -- nvim
   --listen ~/.cache/nvim/quic.sock
-  -c 'autocmd BufWinLeave * ++once quitall'
+  -c "$VIM"
 )
 
 set -x

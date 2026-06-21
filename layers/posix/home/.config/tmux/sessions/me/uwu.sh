@@ -22,6 +22,7 @@ tmux select-pane -M
 tmux new-window -- ~/.local/opt/ai/bin/notificationd
 tmux select-pane -m
 tmux select-pane -t '{marked}'
+tmux split-window -- ~/.config/kitty/libexec/keep-alived.sh
 tmux select-pane -M
 
 tmux select-window -t :-2

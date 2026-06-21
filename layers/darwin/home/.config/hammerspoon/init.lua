@@ -69,6 +69,7 @@ do
 
   local tmpfile = function(text)
     local tmp = string.format("%sedit-%d.md", os.getenv "TMPDIR" or "/tmp/", os.time())
+    local sentinel = tmp .. ".done"
 
     local fw = io.open(tmp, "w")
     if fw then
@@ -77,7 +78,9 @@ do
     end
 
     return tmp,
+      sentinel,
       function()
+        os.remove(sentinel)
         local fr = io.open(tmp, "r")
         local read = fr and fr:read "*a" or ""
         if fr then
@@ -86,6 +89,16 @@ do
         os.remove(tmp)
         return read
       end
+  end
+
+  local function wait_for(path, cb)
+    if hs.fs.attributes(path) then
+      cb()
+      return
+    end
+    hs.timer.doAfter(0.01, function()
+      wait_for(path, cb)
+    end)
   end
 
   local function slurp()
@@ -108,9 +121,11 @@ do
   local function spit(text)
     local prev = hs.pasteboard.getContents()
     hs.pasteboard.setContents(text)
-    hs.eventtap.keyStroke({ "cmd" }, "v", 0)
     hs.timer.doAfter(0.1, function()
-      hs.pasteboard.setContents(prev or "")
+      hs.eventtap.keyStroke({ "cmd" }, "v", 0)
+      hs.timer.doAfter(0.3, function()
+        hs.pasteboard.setContents(prev or "")
+      end)
     end)
   end
 
@@ -123,17 +138,18 @@ do
     end
 
     local pre_text = slurp()
-    local tmp, read = tmpfile(pre_text)
+    local tmp, sentinel, read = tmpfile(pre_text)
     local done = function()
       local post_text = read()
       app:activate()
       spit(post_text)
     end
 
-    local expr = string.format([[execute(["edit %s"])]], tmp)
-
-    run { KITTEN, "quick-access-terminal", "--instance-group=edit" }
-    run({ "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote-expr", expr }, done)
+    wait_for(NVIM_SOCK, function()
+      run { KITTEN, "quick-access-terminal", "--instance-group=edit" }
+      run { "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote", tmp }
+      wait_for(sentinel, done)
+    end)
   end
 
   _G.editHotkey = hs.hotkey.bind({ "cmd", "shift" }, "e", edit_in_kitty)
