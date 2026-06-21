@@ -54,12 +54,13 @@ local fmt = function()
 
   local f = async.future()
   local proc = vim.system(cmd, opts, f.resolve)
-  async.run(function()
-    async.sleep(timeout)
+  local timer = vim.defer_fn(function()
     proc:kill(9)
-  end)
+  end, timeout)
 
   local waited = f.await()
+  timer:stop()
+  timer:close()
   async.scheduled()
 
   if waited.signal ~= 0 then

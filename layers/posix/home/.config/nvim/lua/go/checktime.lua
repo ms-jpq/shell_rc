@@ -13,6 +13,8 @@ vim.opt.backupskip = ""
 
 vim.api.nvim_create_autocmd({ "VimLeavePre" }, { group = lib.group, once = true, command = [[silent! wall! ++p]] })
 
+local alive = lib.generation "checktime"
+
 do
   local cycle = 1888
   local focused = true
@@ -52,7 +54,7 @@ do
   end
 
   async.run(function()
-    while true do
+    while alive() do
       async.sleep(cycle)
 
       if not focused or not vim.startswith(vim.api.nvim_get_mode().mode, "i") then

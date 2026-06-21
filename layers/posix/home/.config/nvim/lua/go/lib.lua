@@ -27,6 +27,15 @@ M.report = function(fn, ...)
   return ok
 end
 
+M.generation = function(name)
+  local key = "__go_gen_" .. name
+  _G[key] = (_G[key] or 0) + 1
+  local mine = _G[key]
+  return function()
+    return _G[key] == mine
+  end
+end
+
 M.scope = function(fn)
   local defers = {}
   local ok, ret = xpcall(fn, debug.traceback, function(defer)

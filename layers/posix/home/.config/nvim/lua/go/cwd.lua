@@ -2,9 +2,10 @@ local async = require "go.async"
 local lib = require "go.lib"
 
 local cwd = vim.fn.getcwd()
+local alive = lib.generation "cwd"
 
 async.run(function()
-  while true do
+  while alive() do
     async.sleep(666)
 
     local ok = lib.report(function()
