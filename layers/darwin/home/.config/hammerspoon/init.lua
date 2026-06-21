@@ -44,7 +44,7 @@ end
 do
   local function main_screen()
     local pid = hs.screen.primaryScreen():id()
-    for _, screen in ipairs(hs.screen.allScreens()) do
+    for _, screen in ipairs(hs.screen.allScreens() or {}) do
       local name = string.lower(screen:name() or "")
       if not string.find(name, "built%-in") then
         if screen:id() ~= pid then
