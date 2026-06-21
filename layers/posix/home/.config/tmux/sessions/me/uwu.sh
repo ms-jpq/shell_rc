@@ -28,3 +28,5 @@ tmux select-pane -M
 
 tmux select-window -t :-2
 tmux set-environment -g -h -u -- "$ENV"
+
+tmux new-window -- ~/.local/libexec/aerospace-route.sh kitty '^me/uwu' 2
