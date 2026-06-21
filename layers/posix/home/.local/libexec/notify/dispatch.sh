@@ -48,13 +48,12 @@ if [[ -n $SOUND ]]; then
   ARGS+=("$SOUND")
 fi
 
-HS_ARGS=("$TITLE" "$BODY" "$SOUND" "$ID")
-
 SOCK=({"$TMPDIR",/tmp}/kitty.*.sock)
 
 case "$OSTYPE" in
 darwin*)
   if hs -c 'return ""' 2> /dev/null; then
+    HS_ARGS=("$TITLE" "$BODY" "$SOUND" "$ID")
     exec -- "$BASE/hammerspoon.lua" "${HS_ARGS[@]}"
   fi
   if ((${#SOCK[@]})); then
