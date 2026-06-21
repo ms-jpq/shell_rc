@@ -4,6 +4,7 @@ set -o pipefail
 shopt -u failglob
 
 SOUND=''
+ID=''
 while (($#)); do
   case "$1" in
   -s | --sound)
@@ -12,6 +13,14 @@ while (($#)); do
     ;;
   --sound=*)
     SOUND="${1#*=}"
+    shift -- 1
+    ;;
+  -i | --id)
+    ID="$2"
+    shift -- 2
+    ;;
+  --id=*)
+    ID="${1#*=}"
     shift -- 1
     ;;
   --)
@@ -39,12 +48,14 @@ if [[ -n $SOUND ]]; then
   ARGS+=("$SOUND")
 fi
 
+HS_ARGS=("$TITLE" "$BODY" "$SOUND" "$ID")
+
 SOCK=({"$TMPDIR",/tmp}/kitty.*.sock)
 
 case "$OSTYPE" in
 darwin*)
   if hs -c 'return ""' 2> /dev/null; then
-    exec -- "$BASE/hammerspoon.lua" "${ARGS[@]}"
+    exec -- "$BASE/hammerspoon.lua" "${HS_ARGS[@]}"
   fi
   if ((${#SOCK[@]})); then
     exec -- "$BASE/kitten.sh" "${ARGS[@]}"
