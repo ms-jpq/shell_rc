@@ -43,7 +43,7 @@ SOCK=({"$TMPDIR",/tmp}/kitty.*.sock)
 
 case "$OSTYPE" in
 darwin*)
-  if pgrep -x -- Hammerspoon > /dev/null; then
+  if hs -c 'return ""' 2 > /dev/null; then
     exec -- "$BASE/hammerspoon.lua" "${ARGS[@]}"
   fi
   if ((${#SOCK[@]})); then
