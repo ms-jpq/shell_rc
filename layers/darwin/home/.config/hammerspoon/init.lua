@@ -39,7 +39,7 @@ do
           fr:close()
         end
         os.remove(tmp)
-        return read
+        return (string.gsub(read, "%s+$", ""))
       end
   end
 
