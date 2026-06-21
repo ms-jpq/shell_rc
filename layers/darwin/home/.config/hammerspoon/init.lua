@@ -1,11 +1,14 @@
 require "hs.ipc"
 
+local HOME = os.getenv "HOME" or ""
+
 local st = function()
   return false
 end
 
-local function run(arg0, args)
-  return hs.task.new(arg0, nil, st, args):start()
+local function run(argv, done)
+  local arg0 = table.remove(argv, 1)
+  return hs.task.new(arg0, done, st, argv):start()
 end
 
 do
@@ -27,11 +30,13 @@ do
     pending = hs.timer.doAfter(2, function()
       local ssid = hs.wifi.currentNetwork()
       if INTERNAL[ssid] then
-        run(VPN, { "--quit" })
-        hs.alert.show("🔓 VPN off — " .. ssid)
+        run({ VPN, "--quit" }, function()
+          hs.alert.show("🔓 VPN off — " .. ssid)
+        end)
       elseif ssid then
-        run(VPN, { "--minimize" })
-        hs.alert.show("🔒 VPN on — " .. ssid)
+        hs.alert.show("🔒 VPN on — " .. ssid, function()
+          run { VPN, "--minimize" }
+        end)
       else
         hs.alert.show "🔒 Wifi off"
       end
@@ -86,9 +91,15 @@ do
   local function slurp()
     local prev = hs.pasteboard.getContents()
     hs.pasteboard.setContents ""
+    local before = hs.pasteboard.changeCount()
     hs.eventtap.keyStroke({ "cmd" }, "a", 0)
     hs.eventtap.keyStroke({ "cmd" }, "c", 0)
-    hs.timer.usleep(150000)
+    for _ = 1, 20 do
+      if hs.pasteboard.changeCount() ~= before then
+        break
+      end
+      hs.timer.usleep(5 * 1000)
+    end
     local text = hs.pasteboard.getContents() or ""
     hs.pasteboard.setContents(prev or "")
     return text
@@ -98,10 +109,12 @@ do
     local prev = hs.pasteboard.getContents()
     hs.pasteboard.setContents(text)
     hs.eventtap.keyStroke({ "cmd" }, "v", 0)
-    hs.timer.doAfter(0.3, function()
+    hs.timer.doAfter(0.1, function()
       hs.pasteboard.setContents(prev or "")
     end)
   end
+
+  local NVIM_SOCK = HOME .. "/.cache/nvim/quic.sock"
 
   local function edit_in_kitty()
     local app = hs.application.frontmostApplication()
@@ -111,30 +124,16 @@ do
 
     local pre_text = slurp()
     local tmp, read = tmpfile(pre_text)
+    local done = function()
+      local post_text = read()
+      app:activate()
+      spit(post_text)
+    end
 
-    hs.task
-      .new(
-        KITTEN,
-        function()
-          local post_text = read()
-          app:activate()
-          hs.timer.doAfter(0.09, function()
-            spit(post_text)
-          end)
-        end,
-        st,
-        {
-          "quick-access-terminal",
-          "--instance-group=edit",
-          "--",
-          "/opt/homebrew/bin/zsh",
-          "-ic",
-          [[nvim -- "$1"]],
-          "-",
-          tmp,
-        }
-      )
-      :start()
+    local expr = string.format([[execute(["edit %s"])]], tmp)
+
+    run { KITTEN, "quick-access-terminal", "--instance-group=edit" }
+    run({ "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote-expr", expr }, done)
   end
 
   _G.editHotkey = hs.hotkey.bind({ "cmd", "shift" }, "e", edit_in_kitty)
