@@ -83,35 +83,33 @@ do
       end
   end
 
-  local function focused()
-    local app = hs.application.frontmostApplication()
-    if not app then
-      return nil, nil
-    end
-    local ax_app = hs.axuielement.applicationElement(app)
-    if not ax_app then
-      return app, nil
-    end
-    return app, ax_app:attributeValue "AXFocusedUIElement"
+  local function slurp()
+    local prev = hs.pasteboard.getContents()
+    hs.pasteboard.setContents ""
+    hs.eventtap.keyStroke({ "cmd" }, "a", 0)
+    hs.eventtap.keyStroke({ "cmd" }, "c", 0)
+    hs.timer.usleep(150000)
+    local text = hs.pasteboard.getContents() or ""
+    hs.pasteboard.setContents(prev or "")
+    return text
   end
 
-  local function slurp(el)
-    return (el and el:attributeValue "AXValue") or ""
-  end
-
-  local function spit(el, text)
-    if el then
-      el:setAttributeValue("AXValue", text)
-    end
+  local function spit(text)
+    local prev = hs.pasteboard.getContents()
+    hs.pasteboard.setContents(text)
+    hs.eventtap.keyStroke({ "cmd" }, "v", 0)
+    hs.timer.doAfter(0.3, function()
+      hs.pasteboard.setContents(prev or "")
+    end)
   end
 
   local function edit_in_kitty()
-    local app, el = focused()
-    if not (app and el) then
+    local app = hs.application.frontmostApplication()
+    if not app then
       return
     end
 
-    local pre_text = slurp(el)
+    local pre_text = slurp()
     local tmp, read = tmpfile(pre_text)
 
     hs.task
@@ -120,7 +118,9 @@ do
         function()
           local post_text = read()
           app:activate()
-          spit(el, post_text)
+          hs.timer.doAfter(0.09, function()
+            spit(post_text)
+          end)
         end,
         st,
         {

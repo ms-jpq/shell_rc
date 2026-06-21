@@ -15,7 +15,7 @@
   "Lua.type.inferParamType": true,
   "Lua.type.inferTableSize": 1000,
   "Lua.workspace.checkThirdParty": false,
-  "Lua.workspace.ignoreDir": ["var"],
+  "Lua.workspace.ignoreDir": ["var", ".exp", ".notes"],
   "Lua.workspace.library": [
     "layers/posix/home/.config/nvim/lua",
     "/opt/homebrew/share/nvim/runtime/lua",
