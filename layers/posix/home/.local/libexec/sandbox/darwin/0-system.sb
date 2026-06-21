@@ -16,6 +16,8 @@
 (allow ipc-posix-shm)
 (allow ipc-posix-sem)
 
+(allow appleevent-send)
+
 ;; ---- ---- ---- ----
 
 (allow pseudo-tty)
