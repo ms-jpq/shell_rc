@@ -121,11 +121,9 @@ do
   local function spit(text)
     local prev = hs.pasteboard.getContents()
     hs.pasteboard.setContents(text)
-    hs.timer.doAfter(0.1, function()
-      hs.eventtap.keyStroke({ "cmd" }, "v", 0)
-      hs.timer.doAfter(0.3, function()
-        hs.pasteboard.setContents(prev or "")
-      end)
+    hs.eventtap.keyStroke({ "cmd" }, "v", 0)
+    hs.timer.doAfter(0.3, function()
+      hs.pasteboard.setContents(prev or "")
     end)
   end
 
@@ -143,7 +141,6 @@ do
       local post_text = read()
       app:activate()
       spit(post_text)
-      hs.alert.show ">>>"
     end
 
     wait_for(NVIM_SOCK, function()

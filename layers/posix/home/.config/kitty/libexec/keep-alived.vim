@@ -1,1 +1,1 @@
-autocmd BufWinLeave * if expand("<afile>") != "" | call writefile([], expand("<afile>") . ".done") | wq! | endif
+autocmd BufWinLeave * if expand("<afile>") != "" | write | call writefile([], expand("<afile>") . ".done") | endif
