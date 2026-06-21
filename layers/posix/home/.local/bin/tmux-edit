@@ -3,7 +3,7 @@
 set -o pipefail
 
 if ! [[ -v TMUX ]] && ! [[ -v TMUX_ROOT ]]; then
-  # shellcheck disable=SC2154,SC2086
+  # shellcheck disable=SC2154
   exec -- $EDITOR "$@"
 fi
 
