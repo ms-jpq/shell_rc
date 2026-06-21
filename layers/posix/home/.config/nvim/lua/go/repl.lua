@@ -6,6 +6,9 @@ local rand = string.gsub(vim.fn.tempname(), "/", "-")
 local ns = vim.api.nvim_create_namespace(rand)
 local send_text = vim.fs.joinpath(vim.fn.stdpath "config", "..", "tmux", "libexec", "send-text.sh")
 
+local current_pane = vim.env.TMUX_ROOT_PANE or vim.env.TMUX_PANE
+local cmd = vim.env.TMUX_ROOT and { "tmux", "-S", vim.env.TMUX_ROOT } or { "tmux" }
+
 vim.api.nvim_create_user_command("REPLclear", function()
   vim.b.__tmux_target__ = nil
 end, {})
@@ -16,7 +19,6 @@ local run = function(stdin, args)
 end
 
 local tmux = function(stdin, args)
-  local cmd = vim.env.TMUX_ROOT and { "tmux", "-S", vim.env.TMUX_ROOT } or { "tmux" }
   return run(stdin, vim.list_extend(cmd, args))
 end
 
@@ -146,7 +148,6 @@ local highlight = function(buf, lo, hi, fn)
 end
 
 local repl = function()
-  local current_pane = vim.env.TMUX_ROOT_PANE or vim.env.TMUX_PANE
   if not current_pane then
     return
   end

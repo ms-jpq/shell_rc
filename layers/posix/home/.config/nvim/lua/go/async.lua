@@ -13,7 +13,8 @@ M.future = function()
     else
       local ok, msg = coroutine.resume(thread, ...)
       if not ok then
-        error(msg, 0)
+        local tb = debug.traceback(thread, msg)
+        error(tb, 0)
       end
     end
   end
