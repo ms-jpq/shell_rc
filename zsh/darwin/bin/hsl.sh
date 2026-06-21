@@ -2,6 +2,31 @@
 
 set -o pipefail
 
+CLEAR=0
+while (($#)); do
+  case "$1" in
+  -c | --clear)
+    CLEAR=1
+    shift -- 1
+    ;;
+  --)
+    shift -- 1
+    break
+    ;;
+  -*)
+    set -x
+    exit 2
+    ;;
+  *)
+    break
+    ;;
+  esac
+done
+
+if ((CLEAR)); then
+  exec -- hs -c 'hs.notify.withdrawAll()'
+fi
+
 read -r -d '' -- LUA <<- 'LUA' || true
 local notifs = hs.notify.deliveredNotifications() or {}
 
