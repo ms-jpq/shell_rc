@@ -7,27 +7,28 @@ local function present(s)
   return s and #s > 0 and s or nil
 end
 
+local tag = present(id) or hs.host.uuid()
+
 local function on_click()
   hs.application.launchOrFocus "kitty"
 end
 
-local notify = hs.notify.new(on_click, {
+do
+  for _, n in pairs(hs.notify.deliveredNotifications() or {}) do
+    if n:getFunctionTag() == tag then
+      n:withdraw()
+    end
+  end
+
+  hs.notify.register(tag, on_click)
+end
+
+local notify = hs.notify.new(tag, {
   title = present(title),
   informativeText = present(body),
   soundName = present(sound),
   withdrawAfter = 0,
 })
-
-do
-  _G.__notifications = _G.__notifications or {}
-  local prev = _G.__notifications[id]
-  if prev then
-    prev:withdraw()
-  end
-  if present(id) then
-    _G.__notifications[id] = notify
-  end
-end
 
 ---@diagnostic disable-next-line
 notify:send()
