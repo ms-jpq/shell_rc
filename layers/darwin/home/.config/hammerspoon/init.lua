@@ -1,6 +1,7 @@
 require "hs.ipc"
 
 local HOME = os.getenv "HOME" or ""
+local KITTEN = "/opt/homebrew/bin/kitten"
 
 local st = function()
   return false
@@ -65,8 +66,12 @@ do
 end
 
 do
-  local KITTEN = "/opt/homebrew/bin/kitten"
+  _G.editHotkey = hs.hotkey.bind({ "cmd", "shift" }, "u", function()
+    run { KITTEN, "quick-access-terminal" }
+  end)
+end
 
+do
   local tmpfile = function(text)
     local tmp = string.format("%sedit-%d.md", os.getenv "TMPDIR" or "/tmp/", os.time())
     local sentinel = tmp .. ".done"
