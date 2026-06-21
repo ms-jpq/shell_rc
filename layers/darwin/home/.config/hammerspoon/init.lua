@@ -143,6 +143,7 @@ do
       local post_text = read()
       app:activate()
       spit(post_text)
+      hs.alert.show ">>>"
     end
 
     wait_for(NVIM_SOCK, function()
