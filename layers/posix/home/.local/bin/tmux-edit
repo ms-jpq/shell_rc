@@ -14,19 +14,21 @@ if [[ -v TMUX ]] || [[ -v TMUX_ROOT ]]; then
     ARGV=("${TM[@]}" new-window -a -t "$W")
   fi
 
+  ARGV+=(-P -F '#{pane_id}')
   if ! tty 2> /dev/null < /dev/tty > /dev/null; then
     ARGV+=(-d)
   fi
 
   if [[ -d $* ]]; then
     ARGV+=(-c "$*")
-    exec -- "${ARGV[@]}"
+    PANE="$("${ARGV[@]}")"
   else
     ARGV+=(-c '#{pane_current_path}')
+    # shellcheck disable=SC2154,SC2086
+    PANE="$("${ARGV[@]}" -- $EDITOR "$@")"
   fi
 
-  # shellcheck disable=SC2154,SC2086
-  exec -- "${ARGV[@]}" -- $EDITOR "$@"
+  exec -- "$HOME/.config/tmux/libexec/taint-inactive.sh" "$PANE"
 else
   exec -- $EDITOR "$@"
 fi
