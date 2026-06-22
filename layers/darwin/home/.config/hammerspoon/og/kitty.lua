@@ -60,7 +60,7 @@ end
 
 local function edit_in_kitty()
   local app = hs.application.frontmostApplication()
-  if not app then
+  if not app or app:name() == "kitty-quick-access" then
     return
   end
 
