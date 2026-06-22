@@ -17,8 +17,8 @@ KITTEN=(
 )
 
 while :; do
-  pkill -f -- 'kitty-quick-access' || :
-  while pgrep -f -- 'kitty-quick-access' > /dev/null; do
+  pkill -f -- '--instance-group=edit' || :
+  while pgrep -f -- '--instance-group=edit' > /dev/null; do
     sleep -- 0.06
   done
   rm -fr -- "$SOCK"
