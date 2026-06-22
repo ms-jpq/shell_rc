@@ -24,8 +24,8 @@ local function on_wifi(_, event)
         hs.alert.show("💤 VPN — " .. ssid)
       end)
     elseif ssid then
-      hs.alert.show("☕️ VPN — " .. ssid, function()
-        lib.run { VPN, "--minimize" }
+      lib.run({ VPN, "--minimize" }, function()
+        hs.alert.show("☕️ VPN — " .. ssid)
       end)
     else
       hs.alert.show "🛫 Wifi"
