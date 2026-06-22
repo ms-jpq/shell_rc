@@ -134,7 +134,7 @@ jobs:
       - run: |-
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
 
-          bash .\win.sh localhost -- all helix JAVA_HOME="$Env:JAVA_HOME_21_X64"
+          bash .\win.sh localhost -- all helix JAVA_HOME="$Env:JAVA_HOME_25_X64"
 
       - run: |-
           $Env:Path = @((Join-Path -Path $Env:LOCALAPPDATA 'Microsoft' 'WinGet' 'Links'), $Env:Path) | Join-String -Separator ([IO.Path]::PathSeparator)
