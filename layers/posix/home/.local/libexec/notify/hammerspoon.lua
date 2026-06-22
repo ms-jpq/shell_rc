@@ -30,5 +30,7 @@ local notify = hs.notify.new(tag, {
   withdrawAfter = 0,
 })
 
----@diagnostic disable-next-line
-notify:send()
+if present(title) or present(body) then
+  ---@diagnostic disable-next-line
+  notify:send()
+end
