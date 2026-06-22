@@ -7,7 +7,12 @@
     "not-yieldable": "Any"
   },
   "Lua.diagnostics.workspaceEvent": "OnChange",
-  "Lua.runtime.path": ["lua/?.lua", "lua/?/init.lua"],
+  "Lua.runtime.path": [
+    "lua/?.lua",
+    "lua/?/init.lua",
+    "hammerspoon/?.lua",
+    "hammerspoon/?/init.lua"
+  ],
   "Lua.runtime.pathStrict": true,
   "Lua.runtime.version": "LuaJIT",
   "Lua.type.castNumberToInteger": false,
