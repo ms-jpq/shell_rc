@@ -7,12 +7,8 @@ vim.opt.complete:append { "Fv:lua.vim.lsp.omnifunc" }
 
 for key, dir in pairs { ["<c-j>"] = 1, ["<c-k>"] = -1 } do
   vim.keymap.set({ "i", "s" }, key, function()
-    if vim.snippet.active { direction = dir } then
-      vim.snippet.jump(dir)
-      return
-    end
-    return key
-  end, { expr = true })
+    vim.snippet.jump(dir)
+  end)
 end
 
 if vim.o.autocomplete then
