@@ -2,10 +2,11 @@ local lib = require "og.lib"
 
 local M = {}
 
+local KITTEN = "/opt/homebrew/bin/kitten"
 local NVIM_SOCK = lib.HOME .. "/.cache/nvim/quic.sock"
 
 local quake = function()
-  lib.run { lib.KITTEN, "quick-access-terminal" }
+  lib.run { KITTEN, "quick-access-terminal" }
 end
 
 local tmpfile = function(text)
@@ -73,7 +74,7 @@ local function edit_in_kitty()
   end
 
   lib.wait_for(NVIM_SOCK, function()
-    lib.run { lib.KITTEN, "quick-access-terminal", "--instance-group=edit" }
+    lib.run { KITTEN, "quick-access-terminal", "--instance-group=edit" }
     lib.run { "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote", tmp }
     lib.wait_for(sentinel, done)
   end)

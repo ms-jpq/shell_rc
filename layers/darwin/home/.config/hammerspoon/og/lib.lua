@@ -2,8 +2,6 @@ local M = {}
 
 M.HOME = os.getenv "HOME" or ""
 
-M.KITTEN = "/opt/homebrew/bin/kitten"
-
 local st = function()
   return false
 end
