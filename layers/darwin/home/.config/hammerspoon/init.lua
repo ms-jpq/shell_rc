@@ -25,14 +25,14 @@ do
       local ssid = hs.wifi.currentNetwork()
       if INTERNAL[ssid] then
         lib.run({ VPN, "--quit" }, function()
-          hs.alert.show("🔓 VPN off — " .. ssid)
+          hs.alert.show("💤 VPN — " .. ssid)
         end)
       elseif ssid then
-        hs.alert.show("🔒 VPN on — " .. ssid, function()
+        hs.alert.show("☕️ VPN — " .. ssid, function()
           lib.run { VPN, "--minimize" }
         end)
       else
-        hs.alert.show "🔒 Wifi off"
+        hs.alert.show "🛫 Wifi"
       end
     end)
   end
