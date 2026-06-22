@@ -5,6 +5,10 @@ set -o pipefail
 TITLE="$1"
 BODY="${2-}"
 
+if [[ -z $TITLE && -z $BODY ]]; then
+  exit 0
+fi
+
 T=0
 case "$TERM" in
 tmux*)

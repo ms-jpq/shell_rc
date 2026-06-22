@@ -6,6 +6,10 @@ shopt -u failglob
 TITLE="$1"
 MESSAGE="$2"
 
+if [[ -z $TITLE && -z $MESSAGE ]]; then
+  exit 0
+fi
+
 SOCK=({"$TMPDIR",/tmp}/kitty.*.sock)
 
 ARGV=(

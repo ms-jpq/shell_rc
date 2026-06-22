@@ -18,4 +18,6 @@ const app = (() => {
 })()
 
 const [withTitle = "", body = "", soundName = ""] = argv
-app.displayNotification(body, { withTitle, soundName: soundName || null })
+if (withTitle || body) {
+  app.displayNotification(body, { withTitle, soundName: soundName || null })
+}
