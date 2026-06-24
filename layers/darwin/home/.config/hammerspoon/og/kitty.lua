@@ -5,8 +5,23 @@ local M = {}
 local KITTEN = "/Applications/kitty.app/Contents/MacOS/kitten"
 local NVIM_SOCK = lib.HOME .. "/.cache/nvim/quic.sock"
 
+local FRACTION = 0.9
+local CELL_W, CELL_H = 8, 16
+
+local cat = function()
+  local frame = hs.screen.mainScreen():frame()
+  local cols = math.floor(frame.w * FRACTION / CELL_W)
+  local rows = math.floor(frame.h * FRACTION / CELL_H)
+  return {
+    KITTEN,
+    "quick-access-terminal",
+    "--override=columns=" .. cols,
+    "--override=lines=" .. rows,
+  }
+end
+
 local quake = function()
-  lib.run { KITTEN, "quick-access-terminal" }
+  lib.run(cat())
 end
 
 local tmpfile = function(text)
@@ -74,7 +89,7 @@ local function edit_in_kitty()
   end
 
   lib.wait_for(NVIM_SOCK, function()
-    lib.run { KITTEN, "quick-access-terminal", "--instance-group=edit" }
+    lib.run(hs.fnutils.concat(cat(), { "--instance-group=edit" }))
     lib.run { "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote", tmp }
     lib.wait_for(sentinel, done)
   end)
