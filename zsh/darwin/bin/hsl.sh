@@ -51,4 +51,5 @@ LUA
 TMP="$(mktemp -t hsl.XXXXXX.md)"
 hs -c "$LUA" > "$TMP"
 
+cd -- ~/
 tmux-edit -c '/\V# >>>' -- "$TMP"
