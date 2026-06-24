@@ -16,9 +16,17 @@ M.wait_for = function(path, cb)
     cb()
     return
   end
-  hs.timer.doAfter(0.01, function()
-    M.wait_for(path, cb)
-  end)
+  local dir = string.match(path, "^(.*)/[^/]+$") or "."
+  ---@type any
+  local watcher = nil
+  watcher = hs.pathwatcher
+    .new(dir, function()
+      if hs.fs.attributes(path) then
+        watcher:stop()
+        cb()
+      end
+    end)
+    :start()
 end
 
 return M
