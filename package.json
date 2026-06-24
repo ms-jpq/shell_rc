@@ -7,7 +7,10 @@
     "@taplo/cli": "*",
     "@types/node": "*",
     "prettier": "*",
-    "typescript": "*"
+    "remark": "*",
+    "remark-frontmatter": "*",
+    "typescript": "*",
+    "unist-util-visit": "*"
   },
   "type": "module"
 }
