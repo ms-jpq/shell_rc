@@ -5,8 +5,9 @@ local M = {}
 local VPN = "/Applications/OpenVPN Connect/OpenVPN Connect.app/Contents/MacOS/OpenVPN Connect"
 
 local INTERNAL = (function()
+  local json = hs.json.read(hs.configdir .. "/home-networks.json") or {}
   local acc = {}
-  for _, ssid in pairs(hs.json.read(hs.configdir .. "/home-networks.json") or {}) do
+  for _, ssid in pairs(json) do
     acc[ssid] = true
   end
   return acc
