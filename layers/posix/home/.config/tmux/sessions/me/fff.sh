@@ -19,7 +19,7 @@ for ((I = 0; I < ${#DIRS[@]}; I += 2)); do
   LAUNCH="${PREFIX:+$PREFIX }claude"
 
   tmux new-window -c "$DIR"
-  tmux set-buffer -- "$LAUNCH --continue || $LAUNCH --name ${NAME@Q}"$'\n'
+  tmux set-buffer -- "$LAUNCH --resume ${NAME@Q} || $LAUNCH --name ${NAME@Q}"$'\n'
   tmux paste-buffer -d -p
   tmux select-pane -m
   tmux split-window -c "$DIR"
