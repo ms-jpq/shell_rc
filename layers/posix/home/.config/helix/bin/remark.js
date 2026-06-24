@@ -4,7 +4,7 @@
 import { createRequire } from "node:module"
 import { homedir } from "node:os"
 import { join } from "node:path"
-import { stdin, stdout } from "node:process"
+import { exit, stdin, stdout } from "node:process"
 import { text } from "node:stream/consumers"
 import { pipeline } from "node:stream/promises"
 import { pathToFileURL } from "node:url"
@@ -59,7 +59,7 @@ const splitParagraph = (para) => {
   for (const [i, child] of para.children.entries()) {
     const prev = para.children[i - 1]
     if (i > 0 && child.type === "strong" && /\n$/.test(prev?.value ?? "")) {
-      const tail = groups.at(-1)?.at(-1)
+      const tail = groups.at(-1).at(-1)
       tail.value = tail.value.replace(/\n+$/, "")
       if (!tail.value) {
         groups.at(-1).pop()
@@ -85,7 +85,9 @@ const xformList = () => (tree) =>
 /** @type {Plugin<[], Root>} */
 const xformParagraph = () => (tree) => {
   visit(tree, "paragraph", (node, index, parent) => {
-    if (parent === undefined || index === undefined) return
+    if (parent === undefined || index === undefined) {
+      return
+    }
     const split = splitParagraph(node)
     if (split.length === 1) {
       return
@@ -97,15 +99,16 @@ const xformParagraph = () => (tree) => {
 
 if (!remark || !frontmatter || !visit) {
   await pipeline(stdin, stdout)
-} else {
-  const src = await text(stdin)
-
-  const out = await remark()
-    .use(frontmatter, ["yaml", "toml"])
-    .use(xformList)
-    .use(xformParagraph)
-    .data("settings", { bullet: "-", listItemIndent: "one" })
-    .process(src)
-
-  stdout.write(out.toString())
+  exit(0)
 }
+
+const src = await text(stdin)
+
+const out = await remark()
+  .use(frontmatter, ["yaml", "toml"])
+  .use(xformList)
+  .use(xformParagraph)
+  .data("settings", { bullet: "-", listItemIndent: "one" })
+  .process(src)
+
+stdout.write(out.toString())
