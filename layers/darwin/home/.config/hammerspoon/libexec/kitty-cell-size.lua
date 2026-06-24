@@ -9,15 +9,39 @@ if not win then
   os.exit(1)
 end
 
-local out, ok = hs.execute(KITTEN .. " @ ls", false)
-if not ok then
-  io.stderr:write "kitten @ ls failed\n"
+local socket_path = (function()
+  for _, dir in ipairs { hs.fs.temporaryDirectory(), "/tmp" } do
+    if hs.fs.attributes(dir, "mode") == "directory" then
+      dir = (string.gsub(dir, "/$", "")) .. "/"
+      for name in hs.fs.dir(dir) do
+        if string.match(name, "^kitty%..*%.sock$") then
+          return dir .. name
+        end
+      end
+    end
+  end
+end)()
+
+local out = (function()
+  local cmd = socket_path and string.format("%s @ --to unix:%s ls", KITTEN, socket_path)
+    or (KITTEN .. " @ ls")
+  local result, ok = hs.execute(cmd, false)
+  if not ok then
+    io.stderr:write("kitten @ ls failed:\n" .. (result or "") .. "\n")
+    os.exit(1)
+  end
+  return result
+end)()
+
+local data = hs.json.decode(out or "")
+if not data then
+  io.stderr:write("could not decode JSON from kitten @ ls. raw output:\n" .. (out or "") .. "\n")
   os.exit(1)
 end
 
-local data = hs.json.decode(out or "") or {}
-local w = (((data[1] or {}).tabs or {})[1] or {}).windows
-w = w and w[1]
+local os_win = table.unpack(data or {})
+local tab = os_win and table.unpack(os_win.tabs or {})
+local w = tab and table.unpack(tab.windows or {})
 if not w or not w.columns or not w.lines then
   io.stderr:write "no window data\n"
   os.exit(1)

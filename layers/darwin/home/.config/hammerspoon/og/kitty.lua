@@ -27,7 +27,7 @@ local quake = function()
 end
 
 local tmpfile = function(text)
-  local tmp = string.format("%sedit-%d.md", os.getenv "TMPDIR" or "/tmp/", os.time())
+  local tmp = string.format("%sedit-%d.md", hs.fs.temporaryDirectory(), os.time())
   local sentinel = tmp .. ".done"
 
   local fw = io.open(tmp, "w")
