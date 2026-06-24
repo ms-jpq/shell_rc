@@ -6,7 +6,9 @@ local KITTEN = "/Applications/kitty.app/Contents/MacOS/kitten"
 local NVIM_SOCK = lib.HOME .. "/.cache/nvim/quic.sock"
 
 local FRACTION = 0.9
-local CELL_W, CELL_H = 8, 16
+local FONT_SIZE = 14
+local CELL_W = FONT_SIZE * 0.645
+local CELL_H = FONT_SIZE * 1.221
 
 local cat = function()
   local frame = hs.screen.mainScreen():frame()

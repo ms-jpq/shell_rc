@@ -10,11 +10,11 @@ if [[ -z $TITLE && -z $MESSAGE ]]; then
   exit 0
 fi
 
-SOCK=({"$TMPDIR",/tmp}/kitty.*.sock)
+SOCK=({"${TMPDIR:-/tmp}",/tmp}/kitty.*.sock)
 
 ARGV=(
   /opt/homebrew/bin/kitten @
-  --to "${KITTY_LISTEN_ON:-unix:${SOCK[*]}}"
+  --to "${KITTY_LISTEN_ON:-unix:${SOCK[0]}}"
   --
   kitten notify
   -- "$TITLE" "$MESSAGE"

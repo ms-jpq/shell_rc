@@ -48,7 +48,7 @@ if [[ -n $SOUND ]]; then
   ARGS+=("$SOUND")
 fi
 
-SOCK=({"$TMPDIR",/tmp}/kitty.*.sock)
+SOCK=({"${TMPDIR:-/tmp}",/tmp}/kitty.*.sock)
 
 case "$OSTYPE" in
 darwin*)
