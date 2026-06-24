@@ -3,10 +3,14 @@ local lib = require "og.lib"
 local M = {}
 
 local VPN = "/Applications/OpenVPN Connect/OpenVPN Connect.app/Contents/MacOS/OpenVPN Connect"
-local INTERNAL = {
-  ["home1"] = true,
-  ["home2"] = true,
-}
+
+local INTERNAL = (function()
+  local acc = {}
+  for _, ssid in pairs(hs.json.read(hs.configdir .. "/home-networks.json") or {}) do
+    acc[ssid] = true
+  end
+  return acc
+end)()
 
 local pending = nil
 local function on_wifi(_, event)
