@@ -23,8 +23,9 @@ local socket_path = (function()
 end)()
 
 local out = (function()
-  local cmd = socket_path and string.format("%s @ --to unix:%s ls", KITTEN, socket_path)
-    or (KITTEN .. " @ ls")
+  local to_sock = socket_path and " --to unix:" .. socket_path .. " " or ""
+  local cmd = KITTEN .. " @ " .. to_sock .. " ls"
+  print(cmd)
   local result, ok = hs.execute(cmd, false)
   if not ok then
     io.stderr:write("kitten @ ls failed:\n" .. (result or "") .. "\n")
