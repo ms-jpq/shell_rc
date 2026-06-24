@@ -3,4 +3,4 @@
 set -o pipefail
 
 # shellcheck disable=SC2154,SC2086
-exec -- "$XDG_CONFIG_HOME/tmux/libexec/open.sh" $EDITOR
+exec -- "$XDG_CONFIG_HOME/tmux/libexec/open.sh" $EDITOR "$@"

@@ -2,7 +2,7 @@ local lib = require "og.lib"
 
 local M = {}
 
-local KITTEN = "/opt/homebrew/bin/kitten"
+local KITTEN = "/Applications/kitty.app/Contents/MacOS/kitten"
 local NVIM_SOCK = lib.HOME .. "/.cache/nvim/quic.sock"
 
 local quake = function()

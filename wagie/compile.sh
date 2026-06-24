@@ -6,6 +6,7 @@ OUT="$1"
 
 SELF="${0%/*}"
 HOME_LAYER=./layers/posix/home
+DARWIN_LAYER=./layers/darwin/home
 CONFIG="$OUT/config"
 LOCAL="$OUT/local"
 STUB="$OUT/layers/posix/home"
@@ -16,6 +17,7 @@ mkdir -p -- "$CONFIG" "$LOCAL" "$STUB"
 CP=(cp -a -f --)
 COPIES=(
   "$HOME_LAYER/.config/." "$CONFIG/"
+  "$DARWIN_LAYER/.config/hammerspoon" "$CONFIG/"
   "$HOME_LAYER/.zshenv" "$OUT/zshenv"
   "$SELF/link.sh" "$OUT/"
   ./libexec/zsh.sh "$OUT/"
