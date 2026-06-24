@@ -90,7 +90,7 @@ local function edit_in_kitty()
     spit(post_text)
   end
 
-  local expr = string.format([[execute("edit %s | norm! G$")]], tmp)
+  local expr = string.format([[execute("edit %s | norm! G$l")]], tmp)
   lib.wait_for(NVIM_SOCK, function()
     lib.run(hs.fnutils.concat(cat(), { "--instance-group=edit" }))
     lib.run { "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote-expr", expr }
