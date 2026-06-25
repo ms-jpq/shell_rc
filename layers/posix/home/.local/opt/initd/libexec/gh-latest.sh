@@ -25,7 +25,7 @@ if ! [[ -f $CACHE ]]; then
     --location
     --no-progress-meter
     --no-location
-    --max-time 600
+    --max-time 60
     --output /dev/null
     --write-out '%{redirect_url}'
   )
