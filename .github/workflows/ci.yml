@@ -37,9 +37,6 @@ jobs:
   ubuntu:
     runs-on: ubuntu-latest
 
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     steps:
       - uses: actions/checkout@v5
 
@@ -97,14 +94,10 @@ jobs:
           ./layers/darwin/home.sh
           mkdir -p ~/.config/clojure/.cpcache
 
-      - env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |-
+      - run: |-
           gmake lint
 
-      - env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |-
+      - run: |-
           PATH="$(brew --prefix)/opt/coreutils/libexec/gnubin:$(brew --prefix)/opt/gnu-getopt/bin:$PATH"
           ./main.sh localhost -- all helix
 
