@@ -5,12 +5,26 @@ local lib = require "go.lib"
 vim.opt.diffexpr = ""
 vim.opt.diffopt:append { "followwrap", "algorithm:patience" }
 
+vim.api.nvim_create_autocmd({ "OptionSet" }, {
+  pattern = "diff",
+  group = lib.group,
+  callback = function()
+    if vim.v.option_new ~= "0" then
+      vim.bo.bufhidden = "wipe"
+    end
+  end,
+})
+
 vim.api.nvim_create_autocmd({ "WinClosed" }, {
   group = lib.group,
   callback = async(function()
     local tab = vim.api.nvim_get_current_tabpage()
 
     async.scheduled()
+
+    if not vim.api.nvim_tabpage_is_valid(tab) then
+      return
+    end
 
     local wins = vim.api.nvim_tabpage_list_wins(tab)
     local diff_wins = vim.tbl_filter(function(win)
@@ -19,20 +33,6 @@ vim.api.nvim_create_autocmd({ "WinClosed" }, {
 
     if #diff_wins == 1 then
       vim.api.nvim_win_close(unpack(diff_wins), true)
-    end
-  end),
-})
-
-vim.api.nvim_create_autocmd({ "BufWinLeave" }, {
-  group = lib.group,
-  callback = async(function(args)
-    if not vim.wo.diff then
-      return
-    end
-
-    async.scheduled()
-    if vim.api.nvim_buf_is_valid(args.buf) and vim.fn.bufwinid(args.buf) == -1 then
-      vim.api.nvim_buf_delete(args.buf, { force = true })
     end
   end),
 })
