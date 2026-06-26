@@ -26,7 +26,7 @@ vim.api.nvim_create_autocmd({ "WinClosed" }, {
 vim.api.nvim_create_autocmd({ "BufWinLeave" }, {
   group = lib.group,
   callback = async(function(args)
-    if not vim.o.diff then
+    if not vim.wo.diff then
       return
     end
 
