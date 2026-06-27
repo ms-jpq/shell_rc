@@ -1,4 +1,4 @@
-from os.path import normpath
+from os.path import altsep, normpath, sep
 from pathlib import Path
 from typing import Any
 
@@ -16,14 +16,16 @@ class touch(Command):  # type: ignore[misc, no-any-unimported]
 
         cwd = Path(self.fm.thisdir.path)
         path = Path(normpath(cwd / Path(name).expanduser()))
-        directory = path.parent
 
-        directory.mkdir(parents=True, exist_ok=True)
-        path.touch()
-        while True:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if str(name).endswith((sep, altsep or sep)):
+            path.mkdir(parents=True, exist_ok=True)
+        else:
+            path.touch()
+
+        for directory in path.parents:
             self.fm.get_directory(str(directory)).load_content(schedule=False)
-            if directory in (cwd, directory.parent):
+            if directory == cwd:
                 break
-            directory = directory.parent
 
         self.fm.select_file(str(path))

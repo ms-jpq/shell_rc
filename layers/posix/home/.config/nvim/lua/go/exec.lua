@@ -2,12 +2,27 @@ local async = require "go.async"
 local lib = require "go.lib"
 local operators = require "go.operators"
 
+local db = vim.fs.joinpath(vim.fn.stdpath "state", "user-trust")
+
 local is_ok = function(buf)
   local path = vim.api.nvim_buf_get_name(buf)
-  if path == "" then
+  local sha = path ~= "" and vim.fs.joinpath(db, vim.fn.sha256(path))
+
+  if not sha or vim.fn.filereadable(sha) == 1 then
     return true
   end
-  return vim.secure.read(path)
+
+  local format = function(x)
+    return x
+  end
+  local choice = async.ui.select({ "oui", "nein" }, { format_item = format })
+  if choice ~= "oui" then
+    return false
+  end
+
+  assert(vim.fn.mkdir(db, "p"))
+  assert(vim.fn.writefile("", sha))
+  return true
 end
 
 local run = function(visual)
