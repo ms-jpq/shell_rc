@@ -11,7 +11,7 @@ class touch(Command):  # type: ignore[misc, no-any-unimported]
 
     def execute(self) -> None:
         if not (name := self.rest(1)):
-            self.fm.notify("touch: missing filename", bad=True)
+            self.fm.notify(f"{touch.__qualname__}: missing filename", bad=True)
             return
 
         cwd = Path(self.fm.thisdir.path)
