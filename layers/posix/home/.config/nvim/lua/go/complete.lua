@@ -7,7 +7,9 @@ vim.opt.complete:append { "Fv:lua.vim.lsp.omnifunc" }
 
 for key, dir in pairs { ["<c-j>"] = 1, ["<c-k>"] = -1 } do
   vim.keymap.set({ "i", "s" }, key, function()
-    vim.snippet.jump(dir)
+    if vim.snippet.active { direction = dir } then
+      vim.snippet.jump(dir)
+    end
   end)
 end
 
