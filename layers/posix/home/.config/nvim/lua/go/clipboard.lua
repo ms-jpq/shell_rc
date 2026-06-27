@@ -109,6 +109,10 @@ end
 vim.paste = (function(paste)
   return function(lines, p)
     local acc = vim.iter(lines):map(undo_quoting):flatten():totable()
+    if vim.fn.pumvisible() == 1 then
+      vim.cmd.stopinsert()
+      vim.cmd.startinsert { bang = true }
+    end
     return paste(acc, p)
   end
 end)(vim.paste)

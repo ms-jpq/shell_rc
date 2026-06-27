@@ -24,7 +24,7 @@ if vim.o.autocomplete then
   end
 
   -- insert movement keys do not enter
-  for _, key in pairs { "<esc>", "<c-c>", "<bs>", "<c-w>", "<c-u>" } do
+  for _, key in pairs { "<esc>", "<c-c>", "<bs>", "<c-w>", "<c-u>", "<c-r>" } do
     vim.keymap.set({ "i" }, key, function()
       return (vim.fn.pumvisible() == 1 and ce or "") .. key
     end, { noremap = true, expr = true })
