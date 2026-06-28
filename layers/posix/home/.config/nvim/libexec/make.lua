@@ -1,6 +1,6 @@
 #!/usr/bin/env -S -- nvim -l
 
-local cfg = vim.fn.stdpath "config"
+local cfg = vim.fs.dirname(vim.fs.dirname(arg[0]))
 local start = vim.fs.joinpath(vim.fn.stdpath "cache", "..", "helix-rt", "nvim", "pack", "start")
 vim.opt.rtp:append {
   cfg,

@@ -1,5 +1,7 @@
 -- https://github.com/luvit/luv/blob/master/docs/docs.md
 
+local libexec = require "go.libexec"
+
 local M = {}
 
 M.HOME = vim.uv.os_homedir() or ""
@@ -55,7 +57,7 @@ end
 
 M.read_json = function(path)
   local json = vim.fn.readblob(path)
-  return vim.json.decode(json)
+  return libexec.json_decode(json)
 end
 
 M.buf_linefeed = function(buf)

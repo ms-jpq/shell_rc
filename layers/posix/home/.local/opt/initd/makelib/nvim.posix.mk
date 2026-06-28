@@ -1,4 +1,4 @@
 .PHONY: nvim
 
 nvim: | $(CONFIG)
-	'$|/nvim/make.lua'
+	'$|/nvim/libexec/make.lua'
