@@ -7,7 +7,7 @@ local data = nil
 
 local fmt_command = function(workdir, buf)
   if data == nil then
-    local loadpath = vim.fs.joinpath(vim.fn.stdpath "config", "apriori", "fmt.json")
+    local loadpath = vim.fs.joinpath(lib.cfg, "apriori", "fmt.json")
     data = lib.read_json(loadpath)
   end
 
@@ -34,7 +34,7 @@ local fmt_command = function(workdir, buf)
     end
   end
 
-  return { "sed", "-E", "-e", [[:l1]], "-e", [[/./,$!d]], "-e", [[/^\n*$/{$d;N;}]], "-e", [[/\n$/bl1]] }
+  return { vim.fs.joinpath(lib.cfg, "libexec", "fmt.sed") }
 end
 
 local fmt = function()

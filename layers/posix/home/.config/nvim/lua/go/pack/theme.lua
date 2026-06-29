@@ -18,5 +18,5 @@ do
   vim.cmd.colorscheme [[iceberg]]
 
   -- theme
-  vim.cmd.source(vim.fs.joinpath(vim.fn.stdpath "config", "plugin", "theme.vim"))
+  vim.cmd.source(vim.fs.joinpath(lib.cfg, "plugin", "theme.vim"))
 end

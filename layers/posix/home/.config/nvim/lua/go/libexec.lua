@@ -1,16 +1,12 @@
 local M = {}
 
 M.filetypes = function()
-  return vim
-    .iter(vim.filetype.inspect().extension)
-    :filter(function(_, filetype)
-      return type(filetype) == "string"
-    end)
-    :fold({}, function(acc, filetype, ext)
-      acc[filetype] = acc[filetype] or {}
-      table.insert(acc[filetype], ext)
-      return acc
-    end)
+  return vim.iter(vim.filetype.inspect().extension):fold({}, function(acc, ext, raw)
+    local ft = type(raw) == "string" and raw or vim.filetype.match { filename = "_." .. ext } or ext
+    acc[ft] = acc[ft] or {}
+    table.insert(acc[ft], ext)
+    return acc
+  end)
 end
 
 M.json_encode = function(data)

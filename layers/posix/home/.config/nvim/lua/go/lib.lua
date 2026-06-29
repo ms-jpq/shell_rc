@@ -5,6 +5,7 @@ local libexec = require "go.libexec"
 local M = {}
 
 M.HOME = vim.uv.os_homedir() or ""
+M.cfg = vim.fn.stdpath "config"
 
 do
   M.group = vim.api.nvim_create_augroup([[lv_go]], { clear = true })

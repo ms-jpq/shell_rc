@@ -2,16 +2,19 @@
 
 set -o pipefail
 
-CFG="${0%/*}/.."
+LIBEXEC="${0%/*}"
+CFG="$LIBEXEC/.."
 APRIORI="$CFG/apriori"
 
 FILEPATH="$1"
 EXT=".${FILEPATH##*.}"
 
 read -r -d '' -- JQ <<- 'JQ' || true
-(.[$ext] // empty) as $ft | ($fmt[0][$ft] // empty) | [.command] + (.args // []) | @sh
+(.[$ext] // empty) as $ft | ($fmt[0][$ft] // empty) | [.command] + (.args // []) | map(gsub("%{buffer_name}"; $fp)) | @sh
 JQ
 
-CMD="$(jq -e --raw-output --arg ext "$EXT" --slurpfile fmt "$APRIORI/fmt.json" -- "$JQ" "$APRIORI/mappings.json")" || exit
-
-eval "$CMD" < "$FILEPATH"
+if CMD="$(jq -e --raw-output --slurpfile fmt "$APRIORI/fmt.json" --arg ext "$EXT" --arg fp "$FILEPATH" -- "$JQ" "$APRIORI/mappings.json")"; then
+  eval "$CMD"
+else
+  exec -- "$LIBEXEC/fmt.sed"
+fi

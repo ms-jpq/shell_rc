@@ -1,5 +1,5 @@
 local lib = require "go.lib"
-local lsp_path = vim.fs.joinpath(vim.fn.stdpath "config", "apriori", "lsp.json")
+local lsp_path = vim.fs.joinpath(lib.cfg, "apriori", "lsp.json")
 
 local build_overrides = function(conf)
   local acc = { detached = false }
