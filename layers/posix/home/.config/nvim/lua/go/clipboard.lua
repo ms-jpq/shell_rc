@@ -111,7 +111,7 @@ vim.paste = (function(paste)
     local acc = vim.iter(lines):map(undo_quoting):flatten():totable()
     if vim.fn.pumvisible() == 1 then
       vim.cmd.stopinsert()
-      vim.cmd.startinsert { bang = true }
+      vim.cmd.startinsert()
     end
     return paste(acc, p)
   end
