@@ -14,7 +14,7 @@ read -r -d '' -- JQ <<- 'JQ' || true
 JQ
 
 if CMD="$(jq -e --raw-output --slurpfile fmt "$APRIORI/fmt.json" --arg ext "$EXT" --arg fp "$FILEPATH" -- "$JQ" "$APRIORI/mappings.json")"; then
-  eval "$CMD"
+  eval -- "$CMD"
 else
   exec -- "$LIBEXEC/fmt.sed"
 fi
