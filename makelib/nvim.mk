@@ -16,8 +16,10 @@ nvim: $(NVIM)/apriori/fmt.json
 $(NVIM)/apriori/fmt.json: $(NVIM)/libexec/language-map.jq $(NVIM)/language-map.json $(HELIX)/languages.json
 	'$<' --slurpfile lmap '$(NVIM)/language-map.json' < '$(HELIX)/languages.json' > '$@'
 
-ifneq ($(shell command -v -- nvim 2> /dev/null || true),)
 nvim: $(NVIM)/apriori/mappings.json
 $(NVIM)/apriori/mappings.json: $(NVIM)/libexec/ft_map.lua
-	'$<' > '$@'
-endif
+	if command -v -- nvim 2> /dev/null; then
+		'$<'
+	else
+		printf -- '%s' '{}'
+	fi  > '$@'
