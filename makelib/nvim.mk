@@ -18,7 +18,7 @@ $(NVIM)/apriori/fmt.json: $(NVIM)/libexec/language-map.jq $(NVIM)/language-map.j
 
 nvim: $(NVIM)/apriori/mappings.json
 $(NVIM)/apriori/mappings.json: $(NVIM)/libexec/ft_map.lua
-	if command -v -- nvim 2> /dev/null; then
+	if command -v -- nvim > /dev/null; then
 		'$<'
 	else
 		printf -- '%s' '{}'
