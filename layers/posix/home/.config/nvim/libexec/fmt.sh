@@ -14,7 +14,12 @@ read -r -d '' -- JQ <<- 'JQ' || true
 JQ
 
 if CMD="$(jq -e --raw-output --slurpfile fmt "$APRIORI/fmt.json" --arg ext "$EXT" --arg fp "$FILEPATH" -- "$JQ" "$APRIORI/mappings.json")"; then
-  eval -- "$CMD"
-else
-  exec -- "$LIBEXEC/fmt.sed"
+  eval -- "ARGV=($CMD)"
+
+  # shellcheck disable=SC2154
+  if ((${#ARGV[@]})) && command -v -- "${ARGV[0]}" > /dev/null; then
+    exec -- "${ARGV[@]}"
+  fi
 fi
+
+exec -- "$LIBEXEC/fmt.sed"
