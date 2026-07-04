@@ -104,11 +104,6 @@
         "command": "run-prettier"
       }
     },
-    "jq": {
-      "formatter": {
-        "command": "jqfmt"
-      }
-    },
     "json": {
       "formatter": {
         "args": ["--tabsize=2"],

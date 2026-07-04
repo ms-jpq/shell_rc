@@ -58,7 +58,6 @@
     "github.com/go-delve/delve/cmd/dlv@latest": [],
     "github.com/grafana/jsonnet-language-server@latest": [],
     "github.com/nametake/golangci-lint-langserver@latest": [],
-    "github.com/noperator/jqfmt/cmd/jqfmt@latest": [],
     "github.com/wader/jq-lsp@latest": [],
     "golang.org/x/tools/cmd/goimports@latest": [],
     "golang.org/x/tools/gopls@latest": []
