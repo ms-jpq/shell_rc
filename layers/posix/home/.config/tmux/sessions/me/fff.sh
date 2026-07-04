@@ -15,11 +15,11 @@ DIRS=(
 for ((I = 0; I < ${#DIRS[@]}; I += 2)); do
   DIR="${DIRS[I]}"
   PREFIX="${DIRS[I + 1]}"
-  NAME="${DIR##*/}"
-  # LAUNCH="${PREFIX:+$PREFIX }ls"
+  # NAME="${DIR##*/}"
+  LAUNCH="${PREFIX:+$PREFIX }ls"
 
   tmux new-window -c "$DIR"
-  tmux set-buffer -- ""$'\n'
+  tmux set-buffer -- "$LAUNCH"$'\n'
   tmux paste-buffer -d -p
   tmux select-pane -m
   tmux split-window -c "$DIR"
