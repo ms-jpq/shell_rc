@@ -3,6 +3,7 @@
 (allow network*)
 
 (allow file-read*
+  (literal "/Library/Preferences/com.apple.networkd.plist")
   (literal "/private/var/run/resolv.conf"))
 
 (allow network-outbound

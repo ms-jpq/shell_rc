@@ -16,7 +16,7 @@ for ((I = 0; I < ${#DIRS[@]}; I += 2)); do
   DIR="${DIRS[I]}"
   PREFIX="${DIRS[I + 1]}"
   # NAME="${DIR##*/}"
-  LAUNCH="${PREFIX:+$PREFIX }ls"
+  LAUNCH="${PREFIX:+$PREFIX }opencode --continue"
 
   tmux new-window -c "$DIR"
   tmux set-buffer -- "$LAUNCH"$'\n'
