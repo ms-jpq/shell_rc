@@ -15,15 +15,15 @@ DIRS=(
 for ((I = 0; I < ${#DIRS[@]}; I += 2)); do
   DIR="${DIRS[I]}"
   PREFIX="${DIRS[I + 1]}"
-  # NAME="${DIR##*/}"
-  LAUNCH="${PREFIX:+$PREFIX }opencode --continue"
+  NAME="${DIR##*/}"
+  LAUNCH="${PREFIX:+$PREFIX }codex resume -- $NAME || codex"
 
   tmux new-window -c "$DIR"
-  tmux set-buffer -- "$LAUNCH"$'\n'
+  tmux set-buffer -- $'nvim\n'
   tmux paste-buffer -d -p
   tmux select-pane -m
   tmux split-window -c "$DIR"
-  tmux set-buffer -- $'nvim\n'
+  tmux set-buffer -- "$LAUNCH"$'\n'
   tmux paste-buffer -d -p
   tmux select-pane -t '{marked}'
   tmux select-pane -M
