@@ -29,6 +29,7 @@
   (subpath (home "Library/Keychains")))
 
 (allow file-read*
+  (literal "/Library/Preferences/com.apple.security.plist")
   (subpath "/Library/Keychains")
   (subpath "/System/Library/Keychains")
   (subpath "/System/Library/Security"))
