@@ -1,4 +1,4 @@
-#!/usr/bin/env -S -- PYTHONSAFEPATH= /opt/homebrew/bin/python3
+#!/usr/bin/env -S -- PYTHONSAFEPATH= python3
 
 from argparse import ArgumentParser, Namespace
 from collections.abc import Generator, Iterator
