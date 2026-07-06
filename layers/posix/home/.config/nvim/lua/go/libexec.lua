@@ -14,7 +14,7 @@ M.json_encode = function(data)
 end
 
 M.json_decode = function(json)
-  return vim.json.decode(json, { luanil = { object = true, array = true } })
+  return vim.json.decode(json)
 end
 
 return M

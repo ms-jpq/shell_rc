@@ -29,32 +29,25 @@ return function()
       vim.notify([[☠️ ]] .. name, vim.log.levels.ERROR)
     else
       table.insert(acc, { merged, conf.extensions or vim.empty_dict() })
-    end
 
-    vim.api.nvim_create_autocmd("FileType", {
-      group = lib.group,
-      pattern = merged.filetypes,
-      once = true,
-      callback = function()
-        local bin = unpack(argv)
-        if bin and vim.fn.executable(bin) == 1 then
-          overrides.cmd = function(dispatchers, config)
-            local workdir = (config or {}).root_dir or vim.fn.getcwd()
-            local cmd = vim.list_extend(lib.sandbox(workdir, conf.sandbox or {}), argv)
+      local bin = unpack(argv)
+      if bin and vim.fn.executable(bin) == 1 then
+        overrides.cmd = function(dispatchers, config)
+          local workdir = (config or {}).root_dir or vim.fn.getcwd()
+          local cmd = vim.list_extend(lib.sandbox(workdir, conf.sandbox or {}), argv)
 
-            return vim.lsp.rpc.start(cmd, dispatchers)
-          end
-          vim.lsp.config(name, overrides)
-          local ok, err = pcall(vim.lsp.enable, name)
-
-          if not ok then
-            vim.schedule(function()
-              vim.notify(name .. ": " .. err, vim.log.levels.WARN)
-            end)
-          end
+          return vim.lsp.rpc.start(cmd, dispatchers)
         end
-      end,
-    })
+        vim.lsp.config(name, overrides)
+        local ok, err = pcall(vim.lsp.enable, name)
+
+        if not ok then
+          vim.schedule(function()
+            vim.notify(name .. ": " .. err, vim.log.levels.WARN)
+          end)
+        end
+      end
+    end
   end
 
   return acc
