@@ -94,10 +94,18 @@ local mk_session = function(kill)
 end
 
 local prune_buffers = function()
+  local cwd = vim.fn.getcwd()
   vim
     .iter(vim.api.nvim_list_bufs())
     :filter(function(buf)
-      return vim.bo[buf].buflisted and vim.fn.filereadable(vim.api.nvim_buf_get_name(buf)) == 0
+      if not vim.bo[buf].buflisted then
+        return false
+      end
+      local name = vim.api.nvim_buf_get_name(buf)
+      if name == "" or vim.fn.filereadable(name) == 0 then
+        return true
+      end
+      return not vim.fs.relpath(cwd, name)
     end)
     :each(function(buf)
       vim.api.nvim_buf_delete(buf, { force = true })
