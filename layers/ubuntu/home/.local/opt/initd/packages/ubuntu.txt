@@ -83,6 +83,7 @@
 + rlwrap
 + rs
 + rsync
++ run-one
 + sad
 + sl
 + socat
