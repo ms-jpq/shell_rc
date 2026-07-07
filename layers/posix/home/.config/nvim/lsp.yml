@@ -34,6 +34,8 @@ lemminx:
     - -Dlemminx.workdir=/var/tmp/lemminx
   extensions:
     .xml: xml
+  sandbox:
+    network: true
 
 # marksman:
 
