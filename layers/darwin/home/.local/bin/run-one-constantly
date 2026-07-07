@@ -2,7 +2,6 @@
 
 set -o pipefail
 
-while true; do
-  "$@" || true
-  sleep -- 1
-done
+"$@" || true
+sleep -- 1
+exec -- "$0" "$@"
