@@ -1,9 +1,15 @@
 [flags]
-enable_cache_memory     = true
-enable_gpu              = true
-network_use_bytes       = true
-process_command         = true
-process_memory_as_value = true
+enable_gpu = true
+
+[processes]
+default_memory_value = true
+process_command      = true
+
+[memory]
+cache_memory = true
+
+[network]
+use_bytes = true
 
 [styles]
 theme = "nord-light"
