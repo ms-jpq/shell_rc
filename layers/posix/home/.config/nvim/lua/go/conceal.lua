@@ -1,12 +1,9 @@
-local norm_cmd = [[nc]]
-
 vim.opt.conceallevel = 2
 
-vim.opt.concealcursor = norm_cmd
+vim.opt.concealcursor = [[nc]]
 
 local toggle = function()
-  local nxt = vim.o.concealcursor == norm_cmd and [[c]] or norm_cmd
-  vim.opt.concealcursor = nxt
+  vim.opt.conceallevel = vim.o.conceallevel == 0 and 2 or 0
 end
 
 vim.keymap.set({ "n" }, [[<leader>Y]], toggle)
