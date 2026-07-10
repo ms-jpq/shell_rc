@@ -1,5 +1,6 @@
 syntax clear ConcealNE
 
+syntax match jsReq "\<require\>" conceal cchar=←
 syntax match jsFrom "\<from\>" conceal cchar=←
 syntax match jsImport "\<import\>" conceal cchar=↓
 
