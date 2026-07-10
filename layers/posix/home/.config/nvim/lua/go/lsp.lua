@@ -45,10 +45,10 @@ do
   vim.api.nvim_create_autocmd({ "LspAttach" }, {
     group = lib.group,
     callback = function(args)
-      if vim.b.__attached__ then
+      if vim.b[args.buf].__attached__ then
         return
       end
-      vim.b.__attached__ = true
+      vim.b[args.buf].__attached__ = true
 
       vim.lsp.completion.enable(true, args.data.client_id, args.buf, {
         convert = function(item)

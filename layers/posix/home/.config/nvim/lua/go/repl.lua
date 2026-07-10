@@ -113,14 +113,14 @@ local matching = function(buf)
   end
 end
 
-local seek = function(match, row, direction)
-  local count = direction < 0 and 0 or vim.api.nvim_buf_line_count(0)
+local seek = function(buf, match, row, direction)
+  local count = direction < 0 and 0 or vim.api.nvim_buf_line_count(buf)
   for i = row, count, direction do
     if i == count then
       return i
     end
 
-    local line = unpack(vim.api.nvim_buf_get_lines(0, i, i + 1, true))
+    local line = unpack(vim.api.nvim_buf_get_lines(buf, i, i + 1, true))
     if match(line) then
       if direction < 0 then
         return i + (direction * -1)
@@ -134,12 +134,18 @@ end
 local highlight = function(buf, lo, hi, fn)
   lib.scope(function(defer)
     async.scheduled()
+    if not vim.api.nvim_buf_is_valid(buf) then
+      return
+    end
+
     defer(function()
-      vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+      if vim.api.nvim_buf_is_valid(buf) then
+        vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+      end
     end)
 
     hi = math.max(0, hi - 1)
-    local line = unpack(vim.api.nvim_buf_get_lines(0, hi, hi + 1, true))
+    local line = unpack(vim.api.nvim_buf_get_lines(buf, hi, hi + 1, true))
     vim.hl.range(buf, ns, "HighlightedyankRegion", { lo, 0 }, { hi, #line }, { inclusive = false })
 
     fn()
@@ -163,8 +169,8 @@ local repl = function()
 
   local match = matching(buf)
   local sep = lib.buf_linefeed(buf)
-  local lo = seek(match, row, -1)
-  local hi = seek(match, row, 1)
+  local lo = seek(buf, match, row, -1)
+  local hi = seek(buf, match, row, 1)
 
   local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
   local text = table.concat(lines, sep)

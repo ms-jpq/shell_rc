@@ -80,10 +80,14 @@ local spawn_yazi = function(buf, path)
 end
 
 local netrw = function(args)
+  local win = vim.api.nvim_get_current_win()
   local name = vim.api.nvim_buf_get_name(args.buf)
   if name ~= "" and vim.fn.isdirectory(name) == 1 then
     async.scheduled()
     if not vim.api.nvim_buf_is_valid(args.buf) then
+      return
+    end
+    if not vim.api.nvim_win_is_valid(win) or vim.api.nvim_win_get_buf(win) ~= args.buf then
       return
     end
 

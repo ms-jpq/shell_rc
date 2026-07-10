@@ -39,7 +39,7 @@ local detect_tabs = function(buf)
   end
 
   if leading_tabs > leading_spaces then
-    vim.bo.expandtab = false
+    vim.bo[buf].expandtab = false
   end
 
   local indent_lvs = {}
@@ -72,9 +72,9 @@ end
 
 vim.api.nvim_create_autocmd({ "BufReadPost" }, {
   group = lib.group,
-  callback = async(function()
-    local buf = vim.api.nvim_get_current_buf()
-    local tabsize = vim.b.__tabsize__ or detect_tabs(buf)
+  callback = async(function(args)
+    local buf = args.buf
+    local tabsize = vim.b[buf].__tabsize__ or detect_tabs(buf)
 
     async.scheduled()
     if vim.api.nvim_buf_is_valid(buf) then

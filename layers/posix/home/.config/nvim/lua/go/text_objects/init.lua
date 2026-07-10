@@ -71,6 +71,14 @@ M.hold_position = function()
   return async(function()
     async.scheduled()
 
+    if
+      not vim.api.nvim_win_is_valid(win)
+      or not vim.api.nvim_buf_is_valid(buf)
+      or vim.api.nvim_win_get_buf(win) ~= buf
+    then
+      return
+    end
+
     local count = vim.api.nvim_buf_line_count(buf)
     row = math.min(row, count)
     local line = unpack(vim.api.nvim_buf_get_lines(buf, row - 1, row, true))
