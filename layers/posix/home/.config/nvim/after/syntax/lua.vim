@@ -1,4 +1,5 @@
 syntax match luaFunc "\<function\>" conceal cchar=ƒ
+
 syntax match luaRet "\<return\>" conceal cchar=→
 
 syntax match luaDo "\<do\>" conceal cchar=⌈
