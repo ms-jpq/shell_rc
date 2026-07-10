@@ -17,7 +17,7 @@ do
   local syn = vim.fs.joinpath(lib.cfg, "after", "syntax")
   local tax = vim.fs.joinpath(syn, "_.vim")
 
-  vim.api.nvim_create_autocmd({ "Syntax" }, {
+  vim.api.nvim_create_autocmd({ "FileType" }, {
     group = lib.group,
     callback = async(function(args)
       if vim.b[args.buf].__conceal__ then
@@ -29,10 +29,16 @@ do
       local path = vim.fs.joinpath(syn, ft .. ".vim")
 
       async.scheduled()
-      vim.cmd.source(tax)
-      if vim.fn.filereadable(path) == 1 then
-        vim.cmd.source(path)
+      if not vim.api.nvim_buf_is_valid(args.buf) then
+        return
       end
+
+      vim.api.nvim_buf_call(args.buf, function()
+        vim.cmd.source(tax)
+        if vim.fn.filereadable(path) == 1 then
+          vim.cmd.source(path)
+        end
+      end)
     end),
   })
 end
