@@ -1,3 +1,5 @@
+syntax match luaReq "\<require\>" conceal cchar=←
+
 syntax match luaFunc "\<function\>" conceal cchar=ƒ
 
 syntax match luaRet "\<return\>" conceal cchar=⏎

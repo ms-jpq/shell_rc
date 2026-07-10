@@ -1,3 +1,5 @@
+syntax match rubyReq "\<require\>" conceal cchar=↓
+
 syntax match rubyDef "\<def\>" conceal cchar=ƒ
 syntax match rubyLambda "\<lambda\>" conceal cchar=λ
 
