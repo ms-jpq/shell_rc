@@ -1,3 +1,3 @@
-syntax match mdUnchecked '[ ]' conceal cchar=◻
-syntax match mdChecked '[x]' conceal cchar=◼
-syntax match mdChecked '[X]' conceal cchar=◼
+syntax match mdQuote "^> " conceal cchar=▎
+syntax match mdBullet "^- " conceal cchar=✱
+syntax match mdBullet "^\* " conceal cchar=✱
