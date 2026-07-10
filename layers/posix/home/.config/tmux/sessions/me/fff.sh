@@ -16,14 +16,15 @@ for ((I = 0; I < ${#DIRS[@]}; I += 2)); do
   DIR="${DIRS[I]}"
   PREFIX="${DIRS[I + 1]}"
   NAME="${DIR##*/}"
-  LAUNCH="${PREFIX:+$PREFIX }codex resume -- $NAME || codex"
+  LAUNCH="${PREFIX:+$PREFIX }"
+  LINE="${LAUNCH}codex resume -- $NAME || ${LAUNCH}codex"
 
   tmux new-window -c "$DIR"
   tmux set-buffer -- $'nvim\n'
   tmux paste-buffer -d -p
   tmux select-pane -m
   tmux split-window -c "$DIR"
-  tmux set-buffer -- "$LAUNCH"$'\n'
+  tmux set-buffer -- "$LINE"$'\n'
   tmux paste-buffer -d -p
   tmux select-pane -t '{marked}'
   tmux select-pane -M
