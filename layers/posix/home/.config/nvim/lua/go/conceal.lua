@@ -1,30 +1,32 @@
+local async = require "go.async"
 local lib = require "go.lib"
 
 vim.opt.conceallevel = 2
-
 vim.opt.concealcursor = [[nc]]
 
-local toggle = function()
-  vim.opt.conceallevel = vim.o.conceallevel == 0 and 2 or 0
+do
+  local toggle = function()
+    vim.opt.conceallevel = vim.o.conceallevel == 0 and 2 or 0
+  end
+
+  vim.keymap.set({ "n" }, [[<leader>Y]], toggle)
+  vim.api.nvim_create_user_command([[ToggleConcealCursor]], toggle, {})
 end
 
-vim.keymap.set({ "n" }, [[<leader>Y]], toggle)
-vim.api.nvim_create_user_command([[ToggleConcealCursor]], toggle, {})
+do
+  local syn = vim.fs.joinpath(lib.cfg, "after", "syntax")
+  local tax = vim.fs.joinpath(syn, "_.vim")
 
-local mappings = {
-  { [[!=]], [[≠]] },
-  { [[<=]], [[≤]] },
-  { [[>=]], [[≥]] },
-  { [[\.\.\.]], [[…]] },
-  { [[->]], [[→]] },
-}
+  vim.api.nvim_create_autocmd({ "Syntax" }, {
+    group = lib.group,
+    callback = async(function(args)
+      local path = vim.fs.joinpath(syn, args.match .. ".vim")
 
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  group = lib.group,
-  callback = function()
-    for _, mapping in pairs(mappings) do
-      local lhs, rhs = unpack(mapping)
-      vim.fn.matchadd([[Conceal]], lhs, nil, -1, { conceal = rhs })
-    end
-  end,
-})
+      async.scheduled()
+      vim.cmd.source(tax)
+      if vim.fn.filereadable(path) == 1 then
+        vim.cmd.source(path)
+      end
+    end),
+  })
+end
