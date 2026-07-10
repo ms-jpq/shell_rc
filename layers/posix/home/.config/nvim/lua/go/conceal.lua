@@ -1,3 +1,5 @@
+local lib = require "go.lib"
+
 vim.opt.conceallevel = 2
 
 vim.opt.concealcursor = [[nc]]
@@ -8,3 +10,21 @@ end
 
 vim.keymap.set({ "n" }, [[<leader>Y]], toggle)
 vim.api.nvim_create_user_command([[ToggleConcealCursor]], toggle, {})
+
+local mappings = {
+  { [[!=]], [[≠]] },
+  { [[<=]], [[≤]] },
+  { [[>=]], [[≥]] },
+  { [[\.\.\.]], [[…]] },
+  { [[->]], [[→]] },
+}
+
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  group = lib.group,
+  callback = function()
+    for _, mapping in pairs(mappings) do
+      local lhs, rhs = unpack(mapping)
+      vim.fn.matchadd([[Conceal]], lhs, nil, -1, { conceal = rhs })
+    end
+  end,
+})
