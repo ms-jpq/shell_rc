@@ -1,1 +1,1 @@
-syntax match javaRet "\<return\>" conceal cchar=↩
+syntax match javaRet "\<return\>" conceal cchar=⏎

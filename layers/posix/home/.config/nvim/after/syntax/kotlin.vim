@@ -1,1 +1,1 @@
-syntax match ktRet "\<return\>" conceal cchar=↩
+syntax match ktRet "\<return\>" conceal cchar=⏎
