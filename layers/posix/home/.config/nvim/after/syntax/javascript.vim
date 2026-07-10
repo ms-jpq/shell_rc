@@ -5,4 +5,4 @@ syntax match jsImport "\<import\>" conceal cchar=↓
 
 syntax match jsFunc "\<function\>" conceal cchar=ƒ
 
-syntax match jsRet "\v\@<!\<return\>" conceal cchar=⏎
+syntax match jsRet "@\@<!\<return\>" conceal cchar=⏎
