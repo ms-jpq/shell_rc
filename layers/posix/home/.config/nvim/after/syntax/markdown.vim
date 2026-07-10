@@ -1,3 +1,3 @@
-syntax match mdQuote "^> " conceal cchar=▎
-syntax match mdDash "^\s*- " conceal cchar=✱
-syntax match mdStar "^\s*\* " conceal cchar=☸
+syntax match mdQuote "^\s*>\ze " conceal cchar=▎
+syntax match mdDash "^\s*-\ze " conceal cchar=✱
+syntax match mdStar "^\s*\*\ze " conceal cchar=☸
