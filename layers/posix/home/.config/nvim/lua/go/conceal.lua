@@ -20,7 +20,13 @@ do
   vim.api.nvim_create_autocmd({ "Syntax" }, {
     group = lib.group,
     callback = async(function(args)
-      local path = vim.fs.joinpath(syn, args.match .. ".vim")
+      if vim.b[args.buf].__conceal__ then
+        return
+      end
+      vim.b[args.buf].__conceal__ = true
+
+      local ft = vim.bo[args.buf].filetype
+      local path = vim.fs.joinpath(syn, ft .. ".vim")
 
       async.scheduled()
       vim.cmd.source(tax)
