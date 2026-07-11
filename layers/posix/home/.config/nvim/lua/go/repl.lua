@@ -6,8 +6,9 @@ local rand = string.gsub(vim.fn.tempname(), "/", "-")
 local ns = vim.api.nvim_create_namespace(rand)
 local send_text = vim.fs.joinpath(lib.cfg, "..", "tmux", "libexec", "send-text.sh")
 
+local socket = vim.env.TMUX_ROOT or string.match(vim.env.TMUX or "", "^[^,]+")
 local current_pane = vim.env.TMUX_ROOT_PANE or vim.env.TMUX_PANE
-local cmd = vim.env.TMUX_ROOT and { "tmux", "-S", vim.env.TMUX_ROOT } or { "tmux" }
+local cmd = { "tmux", "-S", socket }
 
 vim.api.nvim_create_user_command("REPLclear", function()
   vim.b.__tmux_target__ = nil
@@ -19,7 +20,8 @@ local run = function(stdin, args)
 end
 
 local tmux = function(stdin, args)
-  return run(stdin, vim.list_extend(cmd, args))
+  local argv = { unpack(cmd) }
+  return run(stdin, vim.list_extend(argv, args))
 end
 
 local parse_panes = function(pane_id)
@@ -28,7 +30,7 @@ local parse_panes = function(pane_id)
   local win = tmux(nil, { "display-message", "-t", pane_id, "-p", "-F", "#{window_id}" })
   local listed = tmux(nil, { "list-panes", "-a", "-F", table.concat(fmt, rand) })
 
-  local win_id = vim.fn.trim(win)
+  local win_id = string.match(win, "%S+")
   local lines = vim.gsplit(listed, "\n", { plain = true, trimempty = true })
   return win_id, lines
 end
@@ -154,7 +156,7 @@ local highlight = function(buf, lo, hi, fn)
 end
 
 local repl = function()
-  if not current_pane then
+  if not socket or not current_pane then
     return
   end
 
