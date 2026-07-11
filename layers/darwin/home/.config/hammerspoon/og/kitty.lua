@@ -50,11 +50,9 @@ local tmpfile = function(text)
     end
 end
 
-local function slurp()
-  local prev = hs.pasteboard.getContents()
+local function copy_selection()
   hs.pasteboard.setContents ""
   local before = hs.pasteboard.changeCount()
-  hs.eventtap.keyStroke({ "cmd" }, "a", 0)
   hs.eventtap.keyStroke({ "cmd" }, "c", 0)
   for _ = 1, 20 do
     if hs.pasteboard.changeCount() ~= before then
@@ -62,41 +60,75 @@ local function slurp()
     end
     hs.timer.usleep(5 * 1000)
   end
-  local text = hs.pasteboard.getContents() or ""
-  hs.pasteboard.setContents(prev or "")
-  return text
+  return hs.pasteboard.getContents() or ""
+end
+
+local function preserve_pasteboard(fn)
+  local prev = hs.pasteboard.readAllData()
+  local ok, result = pcall(fn)
+  hs.pasteboard.writeAllData(prev)
+  if not ok then
+    error(result)
+  end
+  return result
+end
+
+local function slurp()
+  return preserve_pasteboard(function()
+    local text = copy_selection()
+    if text == "" then
+      hs.eventtap.keyStroke({ "cmd" }, "a", 0)
+      text = copy_selection()
+    end
+    return text
+  end)
 end
 
 local function spit(text)
-  local prev = hs.pasteboard.getContents()
+  local prev = hs.pasteboard.readAllData()
   hs.pasteboard.setContents(text)
   hs.eventtap.keyStroke({ "cmd" }, "v", 0)
   hs.timer.doAfter(0.3, function()
-    hs.pasteboard.setContents(prev or "")
+    hs.pasteboard.writeAllData(prev)
   end)
 end
 
-local function edit_in_kitty()
-  local app = hs.application.frontmostApplication()
-  if not app or app:name() == "kitty-quick-access" then
-    return
-  end
-
-  local pre_text = slurp()
-  local tmp, sentinel, read = tmpfile(pre_text)
-  local done = function()
-    local post_text = read()
-    app:activate()
-    spit(post_text)
-  end
-
-  local expr = string.format([[execute("edit %s | norm! G$l")]], tmp)
-  lib.wait_for(NVIM_SOCK, function()
-    lib.run(hs.fnutils.concat(cat(), { "--instance-group=edit" }))
-    lib.run { "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote-expr", expr }
-    lib.wait_for(sentinel, done)
-  end)
+local show_edit_kitty = function()
+  lib.run(hs.fnutils.concat(cat(), { "--instance-group=edit" }))
 end
+
+local edit_in_kitty = (function(active_edit)
+  return function()
+    if active_edit then
+      show_edit_kitty()
+      return
+    end
+
+    local app = hs.application.frontmostApplication()
+    if not app or app:name() == "kitty-quick-access" then
+      return
+    end
+
+    local pre_text = slurp()
+    local tmp, sentinel, read = tmpfile(pre_text)
+    active_edit = sentinel
+    local done = function()
+      if active_edit == sentinel then
+        active_edit = nil
+      end
+      local post_text = read()
+      app:activate()
+      spit(post_text)
+    end
+
+    local expr = string.format([[execute("edit %s | norm! G$l")]], tmp)
+    lib.wait_for(NVIM_SOCK, function()
+      show_edit_kitty()
+      lib.run { "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote-expr", expr }
+      lib.wait_for(sentinel, done)
+    end)
+  end
+end)(nil)
 
 M.init = function()
   _G.quakeHotkey = hs.hotkey.bind({ "cmd", "shift" }, "u", quake)
