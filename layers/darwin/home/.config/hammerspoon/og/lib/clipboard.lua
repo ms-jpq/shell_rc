@@ -49,12 +49,14 @@ M.slurp = function(done)
   preserve(function(finish)
     M.copy_selection(function(text)
       if text ~= "" then
-        finish(text)
+        finish(true, text)
         return
       end
 
       hs.eventtap.keyStroke({ "cmd" }, "a", 0)
-      M.copy_selection(finish)
+      M.copy_selection(function(all)
+        finish(false, all)
+      end)
     end)
   end, done)
 end

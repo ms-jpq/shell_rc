@@ -39,7 +39,7 @@ local tmpfile = function(text)
 
   return tmp,
     sentinel,
-    function()
+    function(verbatim)
       os.remove(sentinel)
       local fr = io.open(tmp, "r")
       local read = fr and fr:read "*a" or ""
@@ -47,7 +47,7 @@ local tmpfile = function(text)
         fr:close()
       end
       os.remove(tmp)
-      return (string.gsub(read, "%s+$", ""))
+      return verbatim and read or string.gsub(read, "%s+$", "")
     end
 end
 
@@ -64,8 +64,8 @@ local edit_file = function(tmp, sentinel, done)
   end)
 end
 
-local finish_edit = function(app, unlock, read)
-  local post_text = read()
+local finish_edit = function(app, unlock, read, verbatim)
+  local post_text = read(verbatim)
   unlock()
   app:activate()
   clipboard.spit(post_text)
@@ -78,10 +78,10 @@ local edit_in_kitty = lib.lock(function(unlock)
     return
   end
 
-  clipboard.slurp(function(pre_text)
+  clipboard.slurp(function(had_selection, pre_text)
     local tmp, sentinel, read = tmpfile(pre_text)
     edit_file(tmp, sentinel, function()
-      finish_edit(app, unlock, read)
+      finish_edit(app, unlock, read, had_selection)
     end)
   end)
 end, show_edit_kitty)
