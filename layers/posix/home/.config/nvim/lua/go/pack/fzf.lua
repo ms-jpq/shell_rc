@@ -31,7 +31,7 @@ end
 
 local jump = function(entry)
   if type(entry.filename) == "string" then
-    vim.cmd.edit { args = { entry.filename } }
+    vim.cmd.edit { args = { vim.fn.fnameescape(entry.filename) } }
   elseif type(entry.bufnr) == "number" then
     local win = vim.fn.bufwinid(entry.bufnr)
     if win ~= -1 then

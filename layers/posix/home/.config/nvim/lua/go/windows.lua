@@ -115,7 +115,7 @@ do
 
       if not closed then
         local height = vim.o.previewheight
-        vim.cmd.copen(height)
+        lo and vim.cmd.lopen(height) or vim.cmd.copen(height)
       end
     end
   end

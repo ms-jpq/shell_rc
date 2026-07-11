@@ -93,7 +93,7 @@ local patch_lines = function(buf, lines)
 
   for hunk in vim.iter(hunks):rev() do
     local old_start, old_count, new_start, new_count = unpack(hunk)
-    local start = old_start == 0 and 0 or old_start - 1
+    local start = old_count == 0 and old_start or old_start - 1
     local replace = vim.list_slice(lines, new_start, new_start + new_count - 1)
     vim.api.nvim_buf_set_lines(buf, start, start + old_count, false, replace)
   end
@@ -171,6 +171,13 @@ do
     callback = function()
       focused = true
       schedule { check }
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "FocusLost" }, {
+    group = lib.group,
+    callback = function()
+      focused = false
     end,
   })
 

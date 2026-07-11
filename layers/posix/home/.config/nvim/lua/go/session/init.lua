@@ -32,42 +32,28 @@ end
 local detect_stdin = function(cwd)
   local _, mapping = argv_names(cwd)
 
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    local dirty = function()
-      if vim.api.nvim_buf_line_count(buf) > 1 then
-        return true
-      end
-
-      local lines = vim.api.nvim_buf_get_lines(buf, -2, -1, true)
-      return #lines > 0 and #lines[1] > 0
+  return vim.iter(vim.api.nvim_list_bufs()):any(function(buf)
+    local name = vim.api.nvim_buf_get_name(buf)
+    if mapping[name] then
+      return false
     end
 
-    local name = vim.api.nvim_buf_get_name(buf)
-    if not mapping[name] and dirty() then
+    if vim.api.nvim_buf_line_count(buf) > 1 then
       return true
     end
-  end
 
-  return false
+    local lines = vim.api.nvim_buf_get_lines(buf, -2, -1, true)
+    return #lines > 0 and #lines[1] > 0
+  end)
 end
 
-local no_session = (function()
-  local cached = nil
-
-  return function(cwd)
-    if cwd == "" then
-      return true
-    end
-
-    if cached ~= nil then
-      return cached
-    end
-
-    cached = vim.fn.getcwd() == vim.uv.os_homedir() or vim.o.diff or detect_stdin(cwd) or vim.fn.argc(-1) > 0
-
-    return cached
+local no_session = function(cwd)
+  if cwd == "" then
+    return true
   end
-end)()
+
+  return cwd == vim.uv.os_homedir() or vim.o.diff or detect_stdin(cwd) or vim.fn.argc(-1) > 0
+end
 
 local session_path = function(cwd)
   local argv = vim.fn.argv(-1) --[[@as string[] ]]
@@ -79,9 +65,9 @@ local session_path = function(cwd)
   return norm
 end
 
-local mk_session = function(kill)
+local mk_session = function(force)
   local cwd = vim.fn.getcwd()
-  if not kill and no_session(cwd) then
+  if not force and no_session(cwd) then
     return
   end
 
@@ -90,7 +76,6 @@ local mk_session = function(kill)
   vim.fn.mkdir(parent, "p")
   vim.fn.setfperm(parent, [[rwxr-xr-x]])
 
-  scope.prune_buffers(cwd)
   local restore_windows = scope.hide_external_windows(cwd)
   local ok, result = pcall(function()
     vim.cmd.mksession { args = { path }, bang = true }
@@ -124,7 +109,7 @@ vim.api.nvim_create_autocmd({ "QuitPre" }, {
   group = lib.group,
   once = true,
   callback = function()
-    if no_session(nil) then
+    if no_session(vim.fn.getcwd()) then
       return
     end
 
@@ -181,7 +166,7 @@ local move_tabs = function(cwd)
       end)
     else
       vim.api.nvim_win_call(win, function()
-        vim.cmd.edit { args = { name }, mods = { keepalt = true } }
+        vim.cmd.edit { args = { vim.fn.fnameescape(name) }, mods = { keepalt = true } }
       end)
     end
     vim.api.nvim_buf_delete(blank, { force = true })

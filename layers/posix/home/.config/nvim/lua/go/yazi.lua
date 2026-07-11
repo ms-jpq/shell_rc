@@ -65,7 +65,7 @@ local spawn_yazi = function(buf, path)
       local parsed = unpack(vim.split(selected, lib.LF, { plain = true, trimempty = true }))
 
       if parsed then
-        vim.cmd.edit { args = { chooser_path(parsed) }, mods = { keepalt = true } }
+        vim.cmd.edit { args = { vim.fn.fnameescape(chooser_path(parsed)) }, mods = { keepalt = true } }
       end
     end
   end)
