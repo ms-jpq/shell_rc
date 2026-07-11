@@ -8,8 +8,8 @@ do
   end
 
   M.run = function(argv, done)
-    local arg0 = unpack(argv)
-    local args = { unpack(argv, 2) }
+    local arg0 = table.unpack(argv)
+    local args = { table.unpack(argv, 2) }
     return hs.task.new(arg0, done, st, args):start()
   end
 end
