@@ -36,7 +36,7 @@ M.hide_external_windows = function(cwd)
     if not in_cwd(cwd, name) then
       local scratch = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_win_call(win, function()
-        vim.cmd("keepalt buffer " .. scratch)
+        lib.keepalt_buffer(scratch)
       end)
       table.insert(hidden, { win, buf, scratch })
     end
@@ -47,7 +47,7 @@ M.hide_external_windows = function(cwd)
       local win, buf, scratch = unpack(item)
       if vim.api.nvim_win_is_valid(win) and vim.api.nvim_buf_is_valid(buf) then
         vim.api.nvim_win_call(win, function()
-          vim.cmd("keepalt buffer " .. buf)
+          lib.keepalt_buffer(buf)
         end)
       end
       if vim.api.nvim_buf_is_valid(scratch) then

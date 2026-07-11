@@ -137,10 +137,10 @@ local restore = function(cwd)
     return
   end
 
-  local path, escaped = session_path(cwd)
+  local path = session_path(cwd)
   if vim.fn.filereadable(path) == 1 then
     async.scheduled()
-    vim.cmd.source { escaped, mods = { silent = true, emsg_silent = true } }
+    vim.cmd.source { args = { path }, mods = { silent = true, emsg_silent = true } }
     scope.prune_buffers(cwd)
   end
 end
@@ -154,7 +154,7 @@ local move_tabs = function(cwd)
   async.scheduled()
   local wins = {}
   for name in vim.iter(argv):rev() do
-    vim.cmd [[0tabnew]]
+    vim.cmd.tabnew { range = { 0 }, mods = { keepalt = true } }
     local win = vim.api.nvim_get_current_win()
     local blank = vim.api.nvim_win_get_buf(win)
     wins[name] = { win, blank }
@@ -177,7 +177,7 @@ local move_tabs = function(cwd)
     local win, blank = unpack(wins[name])
     if buf then
       vim.api.nvim_win_call(win, function()
-        vim.cmd("keepalt buffer " .. buf)
+        lib.keepalt_buffer(buf)
       end)
     else
       vim.api.nvim_win_call(win, function()

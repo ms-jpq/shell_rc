@@ -113,6 +113,10 @@ M.buf_linefeed = function(buf)
   end
 end
 
+M.keepalt_buffer = function(buf)
+  vim.cmd.buffer { args = { tostring(buf) }, mods = { keepalt = true } }
+end
+
 M.sandbox = function(workdir, opts)
   if M.is_win or false then
     return {}

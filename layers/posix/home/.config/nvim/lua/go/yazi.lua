@@ -26,7 +26,7 @@ end
 
 local termstart = async.wrap(function(buf, cmd, cb)
   local new_buf = vim.api.nvim_create_buf(false, true)
-  vim.cmd.buffer { args = { tostring(new_buf) }, mods = { keepalt = true } }
+  lib.keepalt_buffer(new_buf)
   if buf then
     vim.api.nvim_buf_delete(buf, { force = true })
   end
