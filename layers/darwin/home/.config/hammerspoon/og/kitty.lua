@@ -28,7 +28,7 @@ local quake = function()
 end
 
 local tmpfile = function(text)
-  local tmp = string.format("%sedit-%d.md", hs.fs.temporaryDirectory(), os.time())
+  local tmp = string.format("%sedit-%d-%06d.md", hs.fs.temporaryDirectory(), os.time(), math.random(999999))
   local sentinel = tmp .. ".done"
 
   local fw = io.open(tmp, "w")
@@ -56,7 +56,8 @@ local show_edit_kitty = function()
 end
 
 local edit_file = function(tmp, sentinel, done)
-  local expr = string.format([[execute("edit %s | norm! G$l")]], tmp)
+  local filename = "'" .. string.gsub(tmp, "'", "''") .. "'"
+  local expr = string.format([[execute("edit " . fnameescape(%s) . " | norm! G$l")]], filename)
   lib.wait_for(NVIM_SOCK, function()
     show_edit_kitty()
     lib.run { "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote-expr", expr }
