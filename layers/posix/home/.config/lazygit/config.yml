@@ -11,6 +11,7 @@ os:
   edit: ~/.local/bin/tmux-edit -- {{filename}}
   editAtLine: ~/.local/bin/tmux-edit +{{line}} -- {{filename}}
   openDirInEditor: ~/.local/bin/tmux-edit -- {{dir}}
+  open: ~/.local/bin/tmux-edit -- {{filename}}
   openLink: $BROWSER {{link}}
 
 gui:
