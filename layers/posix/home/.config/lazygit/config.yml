@@ -1,9 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
 ---
 git:
   overrideGpg: true
   pagers:
     - pager: delta --paging=never --24-bit-color=never
 notARepository: quit
+
+os:
+  editInTerminal: false
+  edit: ~/.local/bin/tmux-edit -- {{filename}}
+  editAtLine: ~/.local/bin/tmux-edit +{{line}} -- {{filename}}
+  openDirInEditor: ~/.local/bin/tmux-edit -- {{dir}}
 
 gui:
   scrollHeight: 1
