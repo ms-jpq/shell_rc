@@ -72,7 +72,7 @@ local fmt = function()
   end
 
   if vim.api.nvim_get_current_buf() == buf then
-    local result = vim.split(waited.stdout, "\n", { plain = true })
+    local result = vim.split(waited.stdout, lib.LF, { plain = true })
 
     if result[#result] == "" then
       result[#result] = nil

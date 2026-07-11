@@ -31,7 +31,7 @@ local parse_panes = function(pane_id)
   local listed = tmux(nil, { "list-panes", "-a", "-F", table.concat(fmt, rand) })
 
   local win_id = string.match(win, "%S+")
-  local lines = vim.gsplit(listed, "\n", { plain = true, trimempty = true })
+  local lines = vim.gsplit(listed, lib.LF, { plain = true, trimempty = true })
   return win_id, lines
 end
 

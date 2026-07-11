@@ -1,10 +1,11 @@
+local lib = require "go.lib"
 local to = require "go.text_objects"
 
 do
   Go.op_replace = function(visual_type)
     local row1, col1, row2, col2 = to.operator_marks(0, visual_type)
     local text = string.gsub(vim.fn.getreg(), [[%s+$]], "")
-    local replacement = vim.split(text, "\n", { plain = true })
+    local replacement = vim.split(text, lib.LF, { plain = true })
 
     vim.api.nvim_buf_set_text(0, row1, col1, row2, col2, replacement)
   end
@@ -17,7 +18,7 @@ do
   local replace_line = function()
     local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
     local text = string.gsub(string.gsub(vim.fn.getreg(), [[^%s+]], ""), [[%s+$]], "")
-    local lines = vim.split(text, "\n", { plain = true })
+    local lines = vim.split(text, lib.LF, { plain = true })
 
     vim.api.nvim_buf_set_lines(0, row - 1, row, true, lines)
   end

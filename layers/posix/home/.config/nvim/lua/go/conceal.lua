@@ -39,7 +39,7 @@ do
     group = lib.group,
     callback = async(function(args)
       local buf = args.buf
-      if vim.b[buf].__conceal__ and not args.event == "FileChangedShellPost" then
+      if vim.b[buf].__conceal__ and args.event ~= "FileChangedShellPost" then
         return
       end
 

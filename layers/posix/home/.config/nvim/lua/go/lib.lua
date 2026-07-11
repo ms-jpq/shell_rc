@@ -7,6 +7,7 @@ local M = {}
 
 M.HOME = vim.uv.os_homedir() or ""
 M.cfg = vim.fn.stdpath "config"
+M.LF = "\n"
 
 do
   M.group = vim.api.nvim_create_augroup([[lv_go]], { clear = true })
@@ -102,7 +103,7 @@ M.buf_linefeed = function(buf)
   if ff == "dos" then
     return "\r\n"
   elseif ff == "unix" then
-    return "\n"
+    return M.LF
   else
     if ff == "mac" then
       return "\r"

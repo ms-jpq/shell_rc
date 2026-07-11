@@ -12,10 +12,6 @@ local file_exp_die = function()
     end
   end
 
-  local current = vim.api.nvim_get_current_buf()
-  local cur_name = vim.api.nvim_buf_get_name(current)
-  local alt = vim.fn.getreg "#"
-
   return function()
     vim
       .iter(pairs(bufs))
@@ -25,15 +21,12 @@ local file_exp_die = function()
       :each(function(buf)
         vim.api.nvim_buf_delete(buf, { force = true })
       end)
-
-    local altfile = vim.api.nvim_get_current_buf() == current and alt or cur_name
-    pcall(vim.fn.setreg, "#", altfile)
   end
 end
 
 local termstart = async.wrap(function(buf, cmd, cb)
   local new_buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_win_set_buf(0, new_buf)
+  vim.cmd.buffer { args = { tostring(new_buf) }, mods = { keepalt = true } }
   if buf then
     vim.api.nvim_buf_delete(buf, { force = true })
   end
@@ -69,11 +62,10 @@ local spawn_yazi = function(buf, path)
 
     if vim.fn.filereadable(tmp) == 1 then
       local selected = vim.fn.readblob(tmp)
-      local parsed = unpack(vim.split(selected, "\n", { plain = true, trimempty = true }))
+      local parsed = unpack(vim.split(selected, lib.LF, { plain = true, trimempty = true }))
 
       if parsed then
-        local escaped = vim.fn.fnameescape(chooser_path(parsed))
-        vim.cmd.edit(escaped)
+        vim.cmd.edit { args = { chooser_path(parsed) }, mods = { keepalt = true } }
       end
     end
   end)

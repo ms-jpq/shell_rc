@@ -4,7 +4,7 @@ local to = require "go.text_objects"
 local magic_escape = function(text)
   local e1 = vim.fn.escape(text, [[\]])
   local e2 = string.gsub(e1, "\t", [[\t]])
-  local e3 = string.gsub(e2, "\n", [[\n]])
+  local e3 = string.gsub(e2, lib.LF, [[\n]])
   local e4 = string.gsub(e3, "\r", [[\r]])
   return e4
 end

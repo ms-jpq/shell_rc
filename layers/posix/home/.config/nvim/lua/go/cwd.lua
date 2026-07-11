@@ -11,7 +11,7 @@ async.run(function()
     local ok = lib.report(function()
       if vim.fn.getcwd() == "" then
         vim.fn.mkdir(cwd, "p")
-        vim.cmd.cd(vim.fn.fnameescape(cwd))
+        vim.cmd.cd { args = { cwd } }
       end
     end)
 

@@ -1,5 +1,6 @@
 local async = require "go.async"
 local lib = require "go.lib"
+local scope = require "go.session.scope"
 
 -- limit session restoration info
 vim.opt.sessionoptions:remove { "blank", "buffers", "curdir", "help", "terminal" }
@@ -75,8 +76,7 @@ local session_path = function(cwd)
   local path = vim.fs.joinpath(dir, key .. ".vim")
 
   local norm = vim.fs.normalize(path, { expand_env = false })
-  local escaped = vim.fn.fnameescape(norm)
-  return norm, escaped
+  return norm
 end
 
 local mk_session = function(kill)
@@ -85,35 +85,24 @@ local mk_session = function(kill)
     return
   end
 
-  local path, escaped = session_path(cwd)
+  local path = session_path(cwd)
   local parent = vim.fs.dirname(path)
   vim.fn.mkdir(parent, "p")
   vim.fn.setfperm(parent, [[rwxr-xr-x]])
 
-  vim.cmd.mksession { escaped, bang = true }
-end
-
-local prune_buffers = function()
-  local cwd = vim.fn.getcwd()
-  vim
-    .iter(vim.api.nvim_list_bufs())
-    :filter(function(buf)
-      if not vim.bo[buf].buflisted then
-        return false
-      end
-      local name = vim.api.nvim_buf_get_name(buf)
-      if name == "" or vim.fn.filereadable(name) == 0 then
-        return true
-      end
-      return not vim.fs.relpath(cwd, name)
-    end)
-    :each(function(buf)
-      vim.api.nvim_buf_delete(buf, { force = true })
-    end)
+  scope.prune_buffers(cwd)
+  local restore_windows = scope.hide_external_windows(cwd)
+  local ok, result = pcall(function()
+    vim.cmd.mksession { args = { path }, bang = true }
+    scope.scrub_session(cwd, path)
+  end)
+  restore_windows()
+  if not ok then
+    error(result)
+  end
 end
 
 vim.api.nvim_create_user_command("PS", function()
-  prune_buffers()
   mk_session(true)
 end, {})
 
@@ -139,7 +128,6 @@ vim.api.nvim_create_autocmd({ "QuitPre" }, {
       return
     end
 
-    prune_buffers()
     mk_session()
   end,
 })
@@ -153,6 +141,7 @@ local restore = function(cwd)
   if vim.fn.filereadable(path) == 1 then
     async.scheduled()
     vim.cmd.source { escaped, mods = { silent = true, emsg_silent = true } }
+    scope.prune_buffers(cwd)
   end
 end
 
@@ -187,11 +176,12 @@ local move_tabs = function(cwd)
     local buf = acc[name]
     local win, blank = unpack(wins[name])
     if buf then
-      vim.api.nvim_win_set_buf(win, buf)
-    else
-      local escaped = vim.fn.fnameescape(name)
       vim.api.nvim_win_call(win, function()
-        vim.cmd.edit(escaped)
+        vim.cmd("keepalt buffer " .. buf)
+      end)
+    else
+      vim.api.nvim_win_call(win, function()
+        vim.cmd.edit { args = { name }, mods = { keepalt = true } }
       end)
     end
     vim.api.nvim_buf_delete(blank, { force = true })
