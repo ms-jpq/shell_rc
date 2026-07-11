@@ -35,11 +35,10 @@ M.slurp = function()
 end
 
 M.spit = function(text)
-  local prev = hs.pasteboard.readAllData()
-  hs.pasteboard.setContents(text)
-  hs.eventtap.keyStroke({ "cmd" }, "v", 0)
-  hs.timer.doAfter(0.3, function()
-    hs.pasteboard.writeAllData(prev)
+  M.preserve(function()
+    hs.pasteboard.setContents(text)
+    hs.eventtap.keyStroke({ "cmd" }, "v", 0)
+    hs.timer.usleep(300 * 1000)
   end)
 end
 
