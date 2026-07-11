@@ -1,5 +1,6 @@
 -- https://github.com/luvit/luv/blob/master/docs/docs.md
 
+local async = require "go.async"
 local libexec = require "go.libexec"
 
 local M = {}
@@ -53,6 +54,40 @@ M.scope = function(fn)
     return ret
   else
     error(ret, 0)
+  end
+end
+
+local STATE = {
+  idle = 1,
+  running = 2,
+  pending = 3,
+}
+M.throttle = function(delay, fn)
+  local run = function(args)
+    M.report(fn, unpack(args))
+  end
+
+  local argv = {}
+  local state = STATE.idle
+  return function(...)
+    argv = { ... }
+    if state ~= STATE.idle then
+      state = STATE.pending
+      return
+    end
+
+    state = STATE.running
+    run(argv)
+
+    async.run(function()
+      async.sleep(delay)
+      while state == STATE.pending do
+        state = STATE.running
+        run(argv)
+        async.sleep(delay)
+      end
+      state = STATE.idle
+    end)
   end
 end
 

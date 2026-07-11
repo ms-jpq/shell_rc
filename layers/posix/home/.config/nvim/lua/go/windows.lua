@@ -61,7 +61,9 @@ end
 
 vim.api.nvim_create_autocmd({ "VimResized" }, {
   group = lib.group,
-  command = [[wincmd =]],
+  callback = lib.throttle(100, function()
+    vim.cmd.wincmd "="
+  end),
 })
 
 -- pin quickfix to window

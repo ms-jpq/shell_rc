@@ -124,7 +124,12 @@ vim.api.nvim_create_user_command("KS", function()
   mk_session(true)
 end, {})
 
-vim.api.nvim_create_autocmd({ "VimSuspend", "FocusLost", "CursorHold" }, { group = lib.group, callback = mk_session })
+vim.api.nvim_create_autocmd({ "VimSuspend", "FocusLost", "CursorHold" }, {
+  group = lib.group,
+  callback = lib.throttle(300, function()
+    mk_session()
+  end),
+})
 
 vim.api.nvim_create_autocmd({ "QuitPre" }, {
   group = lib.group,

@@ -3,8 +3,12 @@ local az = "abcdefghijklmnopqrstuvwxyz"
 
 local hl = "IncSearch"
 
-local mark_signs = function()
-  local buf = vim.api.nvim_get_current_buf()
+local mark_signs = function(args)
+  local buf = args.buf
+  if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_buf_is_loaded(buf) then
+    return
+  end
+
   local count = vim.api.nvim_buf_line_count(buf)
 
   local marks = {}
@@ -38,4 +42,7 @@ local mark_signs = function()
   end
 end
 
-vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "CursorHoldI" }, { group = lib.group, callback = mark_signs })
+vim.api.nvim_create_autocmd(
+  { "BufEnter", "CursorHold", "CursorHoldI" },
+  { group = lib.group, callback = lib.throttle(99, mark_signs) }
+)

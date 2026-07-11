@@ -11,19 +11,49 @@ vim.opt.autowriteall = true
 -- noskip backup
 vim.opt.backupskip = ""
 
-vim.api.nvim_create_autocmd({ "VimLeavePre" }, { group = lib.group, once = true, command = [[silent! wall! ++p]] })
+local wall = function()
+  vim.cmd [[silent! wall! ++p]]
+end
+
+vim.api.nvim_create_autocmd({ "VimLeavePre" }, { group = lib.group, once = true, callback = wall })
 
 local alive = lib.generation "checktime"
 
 do
   local cycle = 1888
+  local delay = 300
   local focused = true
+
+  local check = function()
+    vim.cmd.checktime { mods = { silent = true, emsg_silent = true } }
+  end
+
+  local pending = {}
+  local drain = lib.throttle(delay, function()
+    local fns = pending
+    pending = {}
+
+    lib.report(function()
+      for _, fn in pairs { check, wall } do
+        if fns[fn] then
+          fn()
+        end
+      end
+    end)
+  end)
+
+  local schedule = function(...)
+    for _, fn in pairs { ... } do
+      pending[fn] = true
+    end
+    drain()
+  end
 
   vim.api.nvim_create_autocmd({ "FocusGained", "VimResume", "WinEnter" }, {
     group = lib.group,
     callback = function()
       focused = true
-      vim.cmd.checktime { mods = { silent = true, emsg_silent = true } }
+      schedule(check)
     end,
   })
 
@@ -31,34 +61,23 @@ do
     group = lib.group,
     callback = function()
       focused = false
-      if vim.api.nvim_buf_get_name(0) ~= "" then
-        vim.cmd.checktime { count = vim.api.nvim_get_current_buf(), mods = { silent = true, emsg_silent = true } }
-      end
-      vim.cmd [[silent! wall! ++p]]
+      schedule(wall, check)
     end,
   })
 
   vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
     group = lib.group,
     callback = function()
-      vim.cmd [[silent! wall! ++p]]
+      schedule(wall)
     end,
   })
-
-  local sweep = function()
-    for _, b in pairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_buf_is_loaded(b) and vim.bo[b].buftype == "" and vim.api.nvim_buf_get_name(b) ~= "" then
-        vim.cmd.checktime { count = b, mods = { silent = true, emsg_silent = true } }
-      end
-    end
-  end
 
   async.run(function()
     while alive() do
       async.sleep(cycle)
 
       if not focused or not vim.startswith(vim.api.nvim_get_mode().mode, "i") then
-        lib.report(sweep)
+        schedule(check)
       end
     end
   end)
