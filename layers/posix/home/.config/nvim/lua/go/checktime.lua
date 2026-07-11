@@ -30,7 +30,7 @@ vim.api.nvim_create_autocmd({ "VimLeavePre" }, { group = lib.group, once = true,
 local alive = lib.generation "checktime"
 
 do
-  local cycle = 1888
+  local cycle = 999
   local delay = 300
   local focused = true
 
