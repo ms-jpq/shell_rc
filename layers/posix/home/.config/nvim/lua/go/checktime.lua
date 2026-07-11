@@ -7,6 +7,7 @@ vim.opt.confirm = true
 -- auto save file
 vim.opt.autowrite = true
 vim.opt.autowriteall = true
+vim.opt.autoread = true
 
 -- noskip backup
 vim.opt.backupskip = ""
@@ -16,6 +17,15 @@ local wall = function()
 end
 
 vim.api.nvim_create_autocmd({ "VimLeavePre" }, { group = lib.group, once = true, callback = wall })
+
+vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
+  group = lib.group,
+  callback = function()
+    if vim.v.fcs_reason ~= "deleted" then
+      vim.v.fcs_choice = "edit"
+    end
+  end,
+})
 
 local alive = lib.generation "checktime"
 
