@@ -13,29 +13,34 @@ local INTERNAL = (function()
   return acc
 end)()
 
-local pending = nil
-local function on_wifi(_, event)
+local apply_policy = (function(pending)
+  return function()
+    if pending then
+      pending:stop()
+    end
+    pending = hs.timer.doAfter(2, function()
+      local ssid = hs.wifi.currentNetwork()
+      if INTERNAL[ssid] then
+        lib.run({ VPN, "--quit" }, function()
+          hs.alert.show("💤 VPN — " .. ssid)
+        end)
+      elseif ssid then
+        lib.run({ VPN, "--minimize" }, function()
+          hs.alert.show("☕️ VPN — " .. ssid)
+        end)
+      else
+        hs.alert.show "🛫 Wifi"
+      end
+    end)
+  end
+end)(nil)
+
+local on_wifi = function(_, event)
   if event ~= "SSIDChange" then
     return
   end
 
-  if pending then
-    pending:stop()
-  end
-  pending = hs.timer.doAfter(2, function()
-    local ssid = hs.wifi.currentNetwork()
-    if INTERNAL[ssid] then
-      lib.run({ VPN, "--quit" }, function()
-        hs.alert.show("💤 VPN — " .. ssid)
-      end)
-    elseif ssid then
-      lib.run({ VPN, "--minimize" }, function()
-        hs.alert.show("☕️ VPN — " .. ssid)
-      end)
-    else
-      hs.alert.show "🛫 Wifi"
-    end
-  end)
+  apply_policy()
 end
 
 M.init = function()

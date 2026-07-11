@@ -2,13 +2,16 @@ local M = {}
 
 M.HOME = os.getenv "HOME" or ""
 
-local st = function()
-  return false
-end
+do
+  local st = function()
+    return false
+  end
 
-M.run = function(argv, done)
-  local arg0 = table.remove(argv, 1)
-  return hs.task.new(arg0, done, st, argv):start()
+  M.run = function(argv, done)
+    local arg0 = unpack(argv)
+    local args = { unpack(argv, 2) }
+    return hs.task.new(arg0, done, st, args):start()
+  end
 end
 
 M.wait_for = function(path, cb)

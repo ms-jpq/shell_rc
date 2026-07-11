@@ -1,6 +1,6 @@
 local M = {}
 
-local function main_screen()
+local main_screen = function()
   local pid = hs.screen.primaryScreen():id()
   for _, screen in ipairs(hs.screen.allScreens() or {}) do
     local name = string.lower(screen:name() or "")
