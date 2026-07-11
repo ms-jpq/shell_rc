@@ -12,12 +12,6 @@ vim.opt.autoread = true
 -- noskip backup
 vim.opt.backupskip = ""
 
-local wall = function()
-  vim.cmd [[silent! wall! ++p]]
-end
-
-vim.api.nvim_create_autocmd({ "VimLeavePre" }, { group = lib.group, once = true, callback = wall })
-
 vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
   group = lib.group,
   callback = function()
@@ -26,6 +20,12 @@ vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
     end
   end,
 })
+
+local wall = function()
+  vim.cmd [[silent! wall! ++p]]
+end
+
+vim.api.nvim_create_autocmd({ "VimLeavePre" }, { group = lib.group, once = true, callback = wall })
 
 local alive = lib.generation "checktime"
 
