@@ -1,45 +1,70 @@
+local lib = require "og.lib"
+
 local M = {}
 
-M.preserve = function(fn)
-  local prev = hs.pasteboard.readAllData()
-  local ok, result = pcall(fn)
-  hs.pasteboard.writeAllData(prev)
-  if not ok then
-    error(result)
+local poll_copy = nil
+poll_copy = function(before, remaining, done)
+  if hs.pasteboard.changeCount() ~= before then
+    done(hs.pasteboard.getContents() or "")
+    return
   end
-  return result
+  if remaining <= 0 then
+    done ""
+    return
+  end
+
+  hs.timer.doAfter(0.005, function()
+    if poll_copy then
+      poll_copy(before, remaining - 1, done)
+    end
+  end)
 end
 
-M.copy_selection = function()
+local preserve = lib.lock(function(unlock, fn, done)
+  local prev = hs.pasteboard.readAllData()
+  local finish = function(...)
+    hs.pasteboard.writeAllData(prev)
+    unlock()
+    if done then
+      done(...)
+    end
+  end
+
+  local ok, err = pcall(fn, finish)
+  if not ok then
+    hs.pasteboard.writeAllData(prev)
+    unlock()
+    error(err)
+  end
+end)
+
+M.copy_selection = function(done)
   hs.pasteboard.setContents ""
   local before = hs.pasteboard.changeCount()
   hs.eventtap.keyStroke({ "cmd" }, "c", 0)
-  for _ = 1, 20 do
-    if hs.pasteboard.changeCount() ~= before then
-      break
-    end
-    hs.timer.usleep(5 * 1000)
-  end
-  return hs.pasteboard.getContents() or ""
+  poll_copy(before, 20, done)
 end
 
-M.slurp = function()
-  return M.preserve(function()
-    local text = M.copy_selection()
-    if text == "" then
+M.slurp = function(done)
+  preserve(function(finish)
+    M.copy_selection(function(text)
+      if text ~= "" then
+        finish(text)
+        return
+      end
+
       hs.eventtap.keyStroke({ "cmd" }, "a", 0)
-      text = M.copy_selection()
-    end
-    return text
-  end)
+      M.copy_selection(finish)
+    end)
+  end, done)
 end
 
-M.spit = function(text)
-  M.preserve(function()
+M.spit = function(text, done)
+  preserve(function(finish)
     hs.pasteboard.setContents(text)
     hs.eventtap.keyStroke({ "cmd" }, "v", 0)
-    hs.timer.usleep(300 * 1000)
-  end)
+    hs.timer.doAfter(0.3, finish)
+  end, done)
 end
 
 return M

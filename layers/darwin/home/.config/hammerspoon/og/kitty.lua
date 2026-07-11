@@ -55,38 +55,36 @@ local show_edit_kitty = function()
   lib.run(hs.fnutils.concat(cat(), { "--instance-group=edit" }))
 end
 
-local edit_in_kitty = (function(active_edit)
-  return function()
-    if active_edit then
-      show_edit_kitty()
-      return
-    end
+local edit_file = function(tmp, sentinel, done)
+  local expr = string.format([[execute("edit %s | norm! G$l")]], tmp)
+  lib.wait_for(NVIM_SOCK, function()
+    show_edit_kitty()
+    lib.run { "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote-expr", expr }
+    lib.wait_for(sentinel, done)
+  end)
+end
 
-    local app = hs.application.frontmostApplication()
-    if not app or app:name() == "kitty-quick-access" then
-      return
-    end
+local finish_edit = function(app, unlock, read)
+  local post_text = read()
+  unlock()
+  app:activate()
+  clipboard.spit(post_text)
+end
 
-    local pre_text = clipboard.slurp()
-    local tmp, sentinel, read = tmpfile(pre_text)
-    active_edit = sentinel
-    local done = function()
-      if active_edit == sentinel then
-        active_edit = nil
-      end
-      local post_text = read()
-      app:activate()
-      clipboard.spit(post_text)
-    end
-
-    local expr = string.format([[execute("edit %s | norm! G$l")]], tmp)
-    lib.wait_for(NVIM_SOCK, function()
-      show_edit_kitty()
-      lib.run { "/opt/homebrew/bin/nvim", "--server", NVIM_SOCK, "--remote-expr", expr }
-      lib.wait_for(sentinel, done)
-    end)
+local edit_in_kitty = lib.lock(function(unlock)
+  local app = hs.application.frontmostApplication()
+  if not app or app:name() == "kitty-quick-access" then
+    unlock()
+    return
   end
-end)(nil)
+
+  clipboard.slurp(function(pre_text)
+    local tmp, sentinel, read = tmpfile(pre_text)
+    edit_file(tmp, sentinel, function()
+      finish_edit(app, unlock, read)
+    end)
+  end)
+end, show_edit_kitty)
 
 M.init = function()
   _G.quakeHotkey = hs.hotkey.bind({ "cmd", "shift" }, "u", quake)

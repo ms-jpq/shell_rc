@@ -2,6 +2,31 @@ local M = {}
 
 M.HOME = os.getenv "HOME" or ""
 
+M.lock = function(fn, busy)
+  local active = false
+
+  return function(...)
+    if active then
+      if busy then
+        busy(...)
+      end
+      return
+    end
+
+    active = true
+
+    local unlock = function()
+      active = false
+    end
+
+    local ok, err = pcall(fn, unlock, ...)
+    if not ok then
+      unlock()
+      error(err)
+    end
+  end
+end
+
 do
   local st = function()
     return false
