@@ -1,29 +1,6 @@
 local async = require "go.async"
 local lib = require "go.lib"
 
-local file_exp_die = function()
-  local bufs = {}
-  for _, buf in pairs(vim.api.nvim_list_bufs()) do
-    if vim.bo[buf].buflisted then
-      local name = vim.api.nvim_buf_get_name(buf)
-      if vim.fn.filereadable(name) == 1 then
-        bufs[buf] = name
-      end
-    end
-  end
-
-  return function()
-    vim
-      .iter(pairs(bufs))
-      :filter(function(_, name)
-        return vim.fn.filereadable(name) == 0
-      end)
-      :each(function(buf)
-        vim.api.nvim_buf_delete(buf, { force = true })
-      end)
-  end
-end
-
 local termstart = async.wrap(function(buf, cmd, cb)
   local new_buf = vim.api.nvim_create_buf(false, true)
   lib.keepalt_buffer(new_buf)
@@ -51,8 +28,6 @@ end
 
 local spawn_yazi = function(buf, path)
   lib.scope(function(defer)
-    defer(file_exp_die())
-
     local tmp = vim.fn.tempname()
     defer(function()
       vim.fs.rm(tmp, { force = true })

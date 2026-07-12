@@ -46,27 +46,34 @@ do
   vim.opt.statusline = lhs .. " %= " .. rhs
 end
 
-local status_escape = function(s)
-  return string.gsub(s, "%%", "%%%%")
-end
-
-Go.tabline = function()
-  local current = vim.api.nvim_get_current_tabpage()
-
-  local acc = {}
-  for _, tab in pairs(vim.api.nvim_list_tabpages()) do
-    local nr = vim.api.nvim_tabpage_get_number(tab)
-    local win = vim.api.nvim_tabpage_get_win(tab)
-    local buf = vim.api.nvim_win_get_buf(win)
+do
+  local tab_file = function(buf)
     local name = vim.api.nvim_buf_get_name(buf)
-    local label = name == "" and [[No Name]] or vim.fn.fnamemodify(name, [[:t]])
-    local hl = tab == current and "%#TabLineSel#" or "%#TabLine#"
+    local path = vim.fn.pathshorten(vim.fn.fnamemodify(name, [[:~:.]]))
+    local escaped = string.gsub(path, "%%", "%%%%")
 
-    table.insert(acc, string.format("%%%dT%s %d:%s ", nr, hl, nr, status_escape(label)))
+    return escaped == "" and [[∅]] or escaped
   end
 
-  table.insert(acc, "%#TabLineFill#%T")
-  return table.concat(acc)
-end
+  Go.tabline = function()
+    local current = vim.api.nvim_get_current_tabpage()
 
-vim.opt.tabline = [[%!v:lua.Go.tabline()]]
+    local sections = coroutine.wrap(function()
+      for _, tab in pairs(vim.api.nvim_list_tabpages()) do
+        local nr = vim.api.nvim_tabpage_get_number(tab)
+        local win = vim.api.nvim_tabpage_get_win(tab)
+        local buf = vim.api.nvim_win_get_buf(win)
+        local hl = tab == current and "%#TabLineSel#" or "%#TabLine#"
+        local filename = tab_file(buf)
+
+        coroutine.yield("%" .. nr .. "T" .. hl .. nr .. " " .. filename .. " ")
+      end
+
+      coroutine.yield "%#TabLineFill#%T"
+    end)
+
+    return table.concat(vim.iter(sections):totable())
+  end
+
+  vim.opt.tabline = [[%!v:lua.Go.tabline()]]
+end
