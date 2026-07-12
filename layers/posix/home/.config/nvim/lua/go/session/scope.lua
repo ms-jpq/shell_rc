@@ -33,15 +33,22 @@ end
 
 M.prune_session = function(cwd)
   for _, win in pairs(vim.api.nvim_list_wins()) do
-    local buf = vim.api.nvim_win_get_buf(win)
-    local name = vim.api.nvim_buf_get_name(buf)
-    if not in_cwd(cwd, name) and not vim.bo[buf].modified then
-      local tab = vim.api.nvim_win_get_tabpage(win)
-      if #vim.api.nvim_tabpage_list_wins(tab) > 1 then
-        vim.api.nvim_win_close(win, true)
-      else
-        vim.api.nvim_set_current_tabpage(tab)
-        vim.cmd.tabclose()
+    if vim.api.nvim_win_is_valid(win) then
+      local buf = vim.api.nvim_win_get_buf(win)
+      local name = vim.api.nvim_buf_get_name(buf)
+
+      if not in_cwd(cwd, name) and not vim.bo[buf].modified then
+        local tab = vim.api.nvim_win_get_tabpage(win)
+
+        if #vim.api.nvim_tabpage_list_wins(tab) > 1 then
+          vim.api.nvim_win_close(win, true)
+        elseif #vim.api.nvim_list_tabpages() > 1 then
+          vim.api.nvim_set_current_tabpage(tab)
+          vim.cmd.tabclose()
+        else
+          vim.api.nvim_set_current_win(win)
+          vim.cmd.enew { mods = { keepalt = true } }
+        end
       end
     end
   end
