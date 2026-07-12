@@ -2,17 +2,17 @@ local lib = require "go.lib"
 
 local M = {}
 
-M.preview = vim.fs.joinpath(lib.HOME, ".local", "libexec", "preview.sh")
+local preview = vim.fs.joinpath(lib.HOME, ".local", "libexec", "preview.sh")
 
-M.shelljoin = function(args)
+local shelljoin = function(args)
   return vim.iter(args):map(vim.fn.shellescape):join " "
 end
 
-M.run = function(name, spec)
+local run = function(name, spec)
   vim.fn["fzf#run"](vim.fn["fzf#wrap"](name, spec, true))
 end
 
-M.opts = function(map)
+local opts = function(map)
   return vim.iter(map):fold({}, function(list, flag, value)
     table.insert(list, "--" .. string.gsub(flag, "_", "-"))
     if value ~= true then
@@ -22,7 +22,7 @@ M.opts = function(map)
   end)
 end
 
-M.jump = function(entry)
+local jump = function(entry)
   if type(entry.filename) == "string" then
     vim.cmd.edit { vim.fn.fnameescape(entry.filename) }
   elseif type(entry.bufnr) == "number" then
@@ -39,12 +39,12 @@ M.jump = function(entry)
   end
 end
 
-M.sink = function(parse)
+local sink = function(parse)
   return function(lines)
     local entries = vim.iter(lines):map(parse):totable()
 
     if #entries == 1 then
-      M.jump(entries[1])
+      jump(entries[1])
     elseif #entries > 1 then
       vim.fn.setqflist(entries)
       vim.cmd.copen()
@@ -61,17 +61,17 @@ M.buffers = function()
     end)
     :totable()
 
-  M.run("buffers", {
+  run("buffers", {
     source = items,
-    options = M.opts {
+    options = opts {
       multi = true,
       delimiter = "\t",
       with_nth = "2..",
       nth = "2..",
-      preview = M.preview .. " {2..}",
+      preview = preview .. " {2..}",
       preview_window = "right:wrap",
     },
-    ["sink*"] = M.sink(function(line)
+    ["sink*"] = sink(function(line)
       local bufnr = tonumber(string.match(line, "^(%d+)\t"))
 
       if type(bufnr) == "number" then
@@ -82,32 +82,32 @@ M.buffers = function()
 end
 
 do
-  local file_opts = M.opts { preview = M.preview .. " {}", preview_window = "right:wrap" }
-  local file_sink = M.sink(function(line)
+  local file_opts = opts { preview = preview .. " {}", preview_window = "right:wrap" }
+  local file_sink = sink(function(line)
     return { filename = line }
   end)
 
   M.files = function()
-    M.run("files", {
-      source = M.shelljoin { "fd", "--hidden", "--no-ignore-parent", "--type=f", "--" },
+    run("files", {
+      source = shelljoin { "fd", "--hidden", "--no-ignore-parent", "--type=f", "--" },
       options = file_opts,
       ["sink*"] = file_sink,
     })
   end
 
   M.git_files = function()
-    M.run("gfiles", { source = "git ls-files", options = file_opts, ["sink*"] = file_sink })
+    run("gfiles", { source = "git ls-files", options = file_opts, ["sink*"] = file_sink })
   end
 
   M.git_status = function()
-    M.run("gstatus", {
-      source = M.shelljoin { "git", "status", "--short", "--untracked-files=all" },
-      options = M.opts {
+    run("gstatus", {
+      source = shelljoin { "git", "status", "--short", "--untracked-files=all" },
+      options = opts {
         multi = true,
-        preview = M.preview .. " {2..}",
+        preview = preview .. " {2..}",
         preview_window = "right:wrap",
       },
-      ["sink*"] = M.sink(function(line)
+      ["sink*"] = sink(function(line)
         local path = string.sub(line, 4)
         local arrow = string.find(path, " %-> ")
         if arrow then
@@ -148,10 +148,10 @@ M.marks = function(list, want)
     return
   end
 
-  M.run("marks", {
+  run("marks", {
     source = items,
-    options = M.opts { multi = true, no_sort = true },
-    ["sink*"] = M.sink(function(line)
+    options = opts { multi = true, no_sort = true },
+    ["sink*"] = sink(function(line)
       return by_letter[string.match(line, "^(%S)")]
     end),
   })
@@ -166,9 +166,9 @@ M.blines_search = function(buf, query)
     end)
     :totable()
 
-  M.run("blines", {
+  run("blines", {
     source = items,
-    options = M.opts {
+    options = opts {
       ansi = true,
       multi = true,
       delimiter = "\t",
@@ -176,7 +176,7 @@ M.blines_search = function(buf, query)
       nth = "2..",
       query = query or "",
     },
-    ["sink*"] = M.sink(function(line)
+    ["sink*"] = sink(function(line)
       local lnum, text = string.match(line, "^(%d+)\t(.*)")
       if type(lnum) == "string" then
         return { bufnr = buf, lnum = tonumber(lnum), col = 1, text = text }
@@ -186,7 +186,7 @@ M.blines_search = function(buf, query)
 end
 
 do
-  local rg_args = M.shelljoin {
+  local rg_args = shelljoin {
     "rg",
     "--fixed-strings",
     "--with-filename",
@@ -217,19 +217,19 @@ do
       end
     end
 
-    M.run("rg", {
+    run("rg", {
       source = source,
-      options = M.opts {
+      options = opts {
         ansi = true,
         multi = true,
         disabled = true,
         delimiter = ":",
         bind = "change:reload:" .. reload .. " || true",
         query = query or "",
-        preview = M.shelljoin { "bat", "--force-colorization", "--highlight-line", "{2}", "--", "{1}" },
+        preview = shelljoin { "bat", "--force-colorization", "--highlight-line", "{2}", "--", "{1}" },
         preview_window = "right:wrap:~3:+{2}+3/3",
       },
-      ["sink*"] = M.sink(function(line)
+      ["sink*"] = sink(function(line)
         local file, lnum, col, text = string.match(line, "^(.-):(%d+):(%d+):(.*)")
         if type(file) == "string" then
           return { filename = file, lnum = tonumber(lnum), col = tonumber(col), text = text }
@@ -237,19 +237,6 @@ do
       end),
     })
   end
-end
-
-M.current_buffer_search = function()
-  local buf = vim.api.nvim_get_current_buf()
-  local absname = vim.api.nvim_buf_get_name(buf)
-
-  if vim.fn.filereadable(absname) ~= 0 then
-    local name = vim.fn.fnamemodify(absname, [[:~:.]])
-    M.rg_search(nil, { name })
-    return
-  end
-
-  M.blines_search(buf)
 end
 
 return M

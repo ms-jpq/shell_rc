@@ -2,14 +2,14 @@
 
 set -o pipefail
 
-file="$HOME/.ssh/$1"
+FILE="$1"
 shift -- 1
 
-argv=()
-if [[ $file == '-' ]]; then
-  argv=("$@")
+ARGV=()
+if [[ $1 == '-' ]]; then
+  ARGV=("$@")
 else
-  argv=(-o IdentitiesOnly=yes -i "$file" "$@")
+  ARGV=(-o IdentitiesOnly=yes -i "$HOME/.ssh/$FILE" "$@")
 fi
 
-exec -- ssh "${argv[@]}"
+exec -- ssh "${ARGV[@]}"
