@@ -29,7 +29,7 @@ do
     local count = vim.api.nvim_buf_line_count(0)
 
     if up then
-      if row1 <= 1 then
+      if row1 <= 0 then
         vim.cmd [[norm! gv]]
       else
         vim.cmd.move { tostring(row1 - 1), range = { row1 + 1, row2 + 1 } }

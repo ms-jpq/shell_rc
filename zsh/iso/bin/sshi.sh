@@ -6,7 +6,7 @@ FILE="$1"
 shift -- 1
 
 ARGV=()
-if [[ $1 == '-' ]]; then
+if [[ $FILE == '-' ]]; then
   ARGV=("$@")
 else
   ARGV=(-o IdentitiesOnly=yes -i "$HOME/.ssh/$FILE" "$@")
