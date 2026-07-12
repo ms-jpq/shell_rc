@@ -94,6 +94,21 @@ local reload = function(buf)
   return true
 end
 
+local delete_or_recheck = function(buf)
+  local name = vim.api.nvim_buf_get_name(buf)
+  async.sleep(66)
+
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return
+  end
+
+  if name ~= "" and vim.uv.fs_stat(name) then
+    vim.cmd.checktime { args = { tostring(buf) }, mods = { silent = true, emsg_silent = true } }
+  else
+    vim.api.nvim_buf_delete(buf, { force = true })
+  end
+end
+
 vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
   group = lib.group,
   callback = async(function(args)
@@ -105,10 +120,7 @@ vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
       end
     elseif vim.v.fcs_reason == "deleted" then
       vim.v.fcs_choice = ""
-      async.scheduled()
-      if vim.api.nvim_buf_is_valid(args.buf) then
-        vim.api.nvim_buf_delete(args.buf, { force = true })
-      end
+      delete_or_recheck(args.buf)
     else
       vim.v.fcs_choice = ""
     end
