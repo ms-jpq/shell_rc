@@ -15,6 +15,7 @@ git:
   overrideGpg: true
   pagers:
     - pager: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+    - pager: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}" --side-by-side
     - externalDiffCommand: difft --syntax-highlight=on --color=always
 
 worktree:
