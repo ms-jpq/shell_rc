@@ -2,7 +2,7 @@
 ignoreWhitespace = "change"
 
 [blame]
-# coloring = "highlightRecent"
+coloring = "highlightRecent"
 
 [branch]
 autoSetupMerge  = "always"
