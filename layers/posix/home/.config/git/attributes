@@ -5,6 +5,7 @@
 *.cpp   diff=cpp
 *.crt   diff=cert
 *.cs    diff=csharp
+*.csr   diff=csr
 *.css   diff=css
 *.deb   diff=dpkg
 *.el    diff=lisp

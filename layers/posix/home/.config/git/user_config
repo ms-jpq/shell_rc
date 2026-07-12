@@ -55,6 +55,9 @@ wsErrorHighlight = "all"
 [diff.cert]
 textconv = "openssl x509 -noout -text -in"
 
+[diff.csr]
+textconv = "openssl req -noout -text -in"
+
 [diff.dpkg]
 textconv = "dpkg --info --"
 
