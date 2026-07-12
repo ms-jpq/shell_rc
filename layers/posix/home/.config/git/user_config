@@ -72,7 +72,7 @@ cachetextconv = true
 textconv      = "sh -c 'exec pdftotext -layout -nopgbrk -- \"$1\" -' --"
 
 [diff.plist]
-textconv = "plutil -convert json -o - --"
+textconv = "plutil -p --"
 
 [difftool]
 prompt        = false
