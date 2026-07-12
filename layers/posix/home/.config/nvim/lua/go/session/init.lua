@@ -7,6 +7,7 @@ vim.opt.sessionoptions:remove { "blank", "buffers", "curdir", "help", "terminal"
 vim.opt.sessionoptions:append { "skiprtp" }
 
 local session_dir = vim.fs.joinpath(vim.fn.stdpath "cache", "sessions")
+local startup_cwd = vim.fn.getcwd()
 
 -- scratch buffer
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
@@ -31,32 +32,39 @@ local argv_names = function(cwd)
   return acc, mapping
 end
 
-local is_stdin = (function()
-  local cwd = vim.fn.getcwd()
-  local _, mapping = argv_names(cwd)
+local no_session = (function()
+  local ret = nil
 
-  return vim.iter(vim.api.nvim_list_bufs()):any(function(buf)
-    local name = vim.api.nvim_buf_get_name(buf)
-    if mapping[name] then
-      return false
+  return function()
+    if ret ~= nil then
+      return ret
     end
 
-    if vim.api.nvim_buf_line_count(buf) > 1 then
-      return true
+    local cwd = startup_cwd
+    if cwd == "" then
+      ret = true
+      return ret
     end
 
-    local lines = vim.api.nvim_buf_get_lines(buf, -2, -1, true)
-    return #lines > 0 and #lines[1] > 0
-  end)
-end)()
+    local _, mapping = argv_names(cwd)
+    local stdin = vim.iter(vim.api.nvim_list_bufs()):any(function(buf)
+      local name = vim.api.nvim_buf_get_name(buf)
+      if mapping[name] then
+        return false
+      end
 
-local no_session = function(cwd)
-  if cwd == "" then
-    return true
+      if vim.api.nvim_buf_line_count(buf) > 1 then
+        return true
+      end
+
+      local lines = vim.api.nvim_buf_get_lines(buf, -2, -1, true)
+      return #lines > 0 and #lines[1] > 0
+    end)
+
+    ret = cwd == vim.uv.os_homedir() or vim.o.diff or stdin or vim.fn.argc(-1) > 0
+    return ret
   end
-
-  return cwd == vim.uv.os_homedir() or vim.o.diff or is_stdin or vim.fn.argc(-1) > 0
-end
+end)()
 
 local session_path = function(cwd)
   local key = vim.fn.sha256(cwd)
@@ -68,12 +76,11 @@ end
 
 do
   local mk_session = function(force)
-    local cwd = vim.fn.getcwd()
-    if not force and no_session(cwd) then
+    if not force and no_session() then
       return
     end
 
-    local path = session_path(cwd)
+    local path = session_path(startup_cwd)
     local parent = vim.fs.dirname(path)
     vim.fn.mkdir(parent, "p")
     vim.fn.setfperm(parent, [[rwxr-xr-x]])
@@ -103,7 +110,7 @@ do
     group = lib.group,
     once = true,
     callback = function()
-      if no_session(vim.fn.getcwd()) then
+      if no_session() then
         return
       end
 
@@ -113,16 +120,16 @@ do
 end
 
 do
-  local restore = function(cwd)
-    if no_session(cwd) then
+  local restore = function()
+    if no_session() then
       return
     end
 
-    local path = session_path(cwd)
+    local path = session_path(startup_cwd)
     if vim.fn.filereadable(path) == 1 then
       async.scheduled()
       vim.cmd.source { args = { path }, mods = { silent = true, emsg_silent = true } }
-      scope.prune_session(cwd)
+      scope.prune_session(startup_cwd)
     end
   end
 
@@ -145,9 +152,8 @@ do
     group = lib.group,
     once = true,
     callback = async(function()
-      local cwd = vim.fn.getcwd()
-      restore(cwd)
-      move_tabs(cwd)
+      restore()
+      move_tabs(startup_cwd)
     end),
   })
 end
