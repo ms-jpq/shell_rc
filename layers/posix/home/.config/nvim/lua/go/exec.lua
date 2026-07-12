@@ -21,7 +21,7 @@ local is_ok = function(buf)
   end
 
   assert(vim.fn.mkdir(db, "p"))
-  assert(vim.fn.writefile("", sha))
+  assert(vim.fn.writefile({}, sha))
   return true
 end
 

@@ -67,9 +67,8 @@ end
 
 local finish_edit = function(app, unlock, read, verbatim)
   local post_text = read(verbatim)
-  unlock()
   app:activate()
-  clipboard.spit(post_text)
+  clipboard.spit(post_text, unlock)
 end
 
 local edit_in_kitty = lib.lock(function(unlock)
