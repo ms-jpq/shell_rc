@@ -2,8 +2,12 @@ local lib = require "go.lib"
 
 local M = {}
 
+local is_file_name = function(name)
+  return name ~= "" and not string.match(name, [[^%w[%w+.-]*://]])
+end
+
 local in_cwd = function(cwd, name)
-  if name == "" or string.match(name, [[^%w[%w+.-]*://]]) then
+  if not is_file_name(name) then
     return false
   end
 
@@ -13,65 +17,36 @@ local in_cwd = function(cwd, name)
 end
 
 M.prune_buffers = function(cwd)
-  cwd = cwd or vim.fn.getcwd()
   vim
     .iter(vim.api.nvim_list_bufs())
     :filter(function(buf)
-      if not vim.bo[buf].buflisted or vim.bo[buf].modified then
+      if vim.bo[buf].modified then
         return false
       end
       local name = vim.api.nvim_buf_get_name(buf)
-      return not in_cwd(cwd, name)
+      return is_file_name(name) and not in_cwd(cwd, name)
     end)
     :each(function(buf)
       vim.api.nvim_buf_delete(buf, { force = true })
     end)
 end
 
-M.hide_external_windows = function(cwd)
-  local hidden = {}
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
+M.prune_session = function(cwd)
+  for _, win in pairs(vim.api.nvim_list_wins()) do
     local buf = vim.api.nvim_win_get_buf(win)
     local name = vim.api.nvim_buf_get_name(buf)
-    if not in_cwd(cwd, name) then
-      local scratch = vim.api.nvim_create_buf(false, true)
-      vim.api.nvim_win_call(win, function()
-        lib.keepalt_buffer(scratch)
-      end)
-      table.insert(hidden, { win, buf, scratch })
-    end
-  end
-
-  return function()
-    for _, item in ipairs(hidden) do
-      local win, buf, scratch = unpack(item)
-      if vim.api.nvim_win_is_valid(win) and vim.api.nvim_buf_is_valid(buf) then
-        vim.api.nvim_win_call(win, function()
-          lib.keepalt_buffer(buf)
-        end)
-      end
-      if vim.api.nvim_buf_is_valid(scratch) then
-        vim.api.nvim_buf_delete(scratch, { force = true })
+    if not in_cwd(cwd, name) and not vim.bo[buf].modified then
+      local tab = vim.api.nvim_win_get_tabpage(win)
+      if #vim.api.nvim_tabpage_list_wins(tab) > 1 then
+        vim.api.nvim_win_close(win, true)
+      else
+        vim.api.nvim_set_current_tabpage(tab)
+        vim.cmd.tabclose()
       end
     end
   end
-end
 
-M.scrub_session = function(cwd, path)
-  local acc = {}
-  for _, line in ipairs(vim.fn.readfile(path)) do
-    local name = string.match(line, [[^balt%s+(.+)$]])
-    if name then
-      name = string.gsub(name, [[\(.)]], [[%1]])
-      if in_cwd(cwd, name) then
-        table.insert(acc, line)
-      end
-    else
-      table.insert(acc, line)
-    end
-  end
-
-  vim.fn.writefile(acc, path)
+  M.prune_buffers(cwd)
 end
 
 return M

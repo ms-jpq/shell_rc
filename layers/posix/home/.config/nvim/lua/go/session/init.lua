@@ -6,6 +6,8 @@ local scope = require "go.session.scope"
 vim.opt.sessionoptions:remove { "blank", "buffers", "curdir", "help", "terminal" }
 vim.opt.sessionoptions:append { "skiprtp" }
 
+local session_dir = vim.fs.joinpath(vim.fn.stdpath "cache", "sessions")
+
 -- scratch buffer
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
   group = lib.group,
@@ -57,9 +59,8 @@ end
 
 local session_path = function(cwd)
   local argv = vim.fn.argv(-1) --[[@as string[] ]]
-  local key = vim.fn.sha256(table.concat({ cwd or vim.fn.getcwd(), unpack(argv) }, "\0"))
-  local dir = vim.fs.joinpath(vim.fn.stdpath "cache", "sessions")
-  local path = vim.fs.joinpath(dir, key .. ".vim")
+  local key = vim.fn.sha256(table.concat({ cwd, unpack(argv) }, "\0"))
+  local path = vim.fs.joinpath(session_dir, key .. ".vim")
 
   local norm = vim.fs.normalize(path, { expand_env = false })
   return norm
@@ -76,15 +77,7 @@ local mk_session = function(force)
   vim.fn.mkdir(parent, "p")
   vim.fn.setfperm(parent, [[rwxr-xr-x]])
 
-  local restore_windows = scope.hide_external_windows(cwd)
-  local ok, result = pcall(function()
-    vim.cmd.mksession { args = { path }, bang = true }
-    scope.scrub_session(cwd, path)
-  end)
-  restore_windows()
-  if not ok then
-    error(result)
-  end
+  vim.cmd.mksession { args = { path }, bang = true }
 end
 
 vim.api.nvim_create_user_command("PS", function()
@@ -126,53 +119,23 @@ local restore = function(cwd)
   if vim.fn.filereadable(path) == 1 then
     async.scheduled()
     vim.cmd.source { args = { path }, mods = { silent = true, emsg_silent = true } }
-    scope.prune_buffers(cwd)
+    scope.prune_session(cwd)
   end
 end
 
 local move_tabs = function(cwd)
-  local argv, mapping = argv_names(cwd)
-  if #argv == 0 or vim.wo.diff then
+  local argv = argv_names(cwd)
+  if #argv < 2 or vim.wo.diff then
     return
   end
 
   async.scheduled()
-  local wins = {}
-  for name in vim.iter(argv):rev() do
-    vim.cmd.tabnew { range = { 0 }, mods = { keepalt = true } }
-    local win = vim.api.nvim_get_current_win()
-    local blank = vim.api.nvim_win_get_buf(win)
-    wins[name] = { win, blank }
+  for i = 2, #argv do
+    local name = argv[i]
+    vim.cmd.tabnew { args = { vim.fn.fnameescape(name) }, mods = { keepalt = true } }
   end
 
-  local acc = {}
-  for tab in vim.iter(vim.api.nvim_list_tabpages()):skip(#argv) do
-    for _, win in pairs(vim.api.nvim_tabpage_list_wins(tab)) do
-      local buf = vim.api.nvim_win_get_buf(win)
-      local name = vim.api.nvim_buf_get_name(buf)
-      if mapping[name] then
-        acc[name] = buf
-        vim.api.nvim_win_close(win, true)
-      end
-    end
-  end
-
-  for name in pairs(mapping) do
-    local buf = acc[name]
-    local win, blank = unpack(wins[name])
-    if buf then
-      vim.api.nvim_win_call(win, function()
-        lib.keepalt_buffer(buf)
-      end)
-    else
-      vim.api.nvim_win_call(win, function()
-        vim.cmd.edit { args = { vim.fn.fnameescape(name) }, mods = { keepalt = true } }
-      end)
-    end
-    vim.api.nvim_buf_delete(blank, { force = true })
-  end
-
-  vim.cmd [[tabfirst]]
+  vim.cmd.tabfirst()
 end
 
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
