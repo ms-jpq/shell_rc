@@ -24,6 +24,10 @@ M.operator_marks = function(buf, visual_type)
   local row1, col1 = unpack(vim.api.nvim_buf_get_mark(buf, mark1))
   local row2, col2 = unpack(vim.api.nvim_buf_get_mark(buf, mark2))
 
+  if row1 > row2 or (row1 == row2 and col1 > col2) then
+    row1, col1, row2, col2 = row2, col2, row1, col1
+  end
+
   local last_line = unpack(vim.api.nvim_buf_get_lines(buf, row2 - 1, row2, true))
   col2 = math.min(#last_line - 1, col2)
 
