@@ -27,8 +27,10 @@ do
 
   local enable = function(buf)
     local ft = vim.bo[buf].filetype
-    if ft ~= "" and vim.bo[buf].syntax ~= syntax_name(ft) then
-      vim.bo[buf].syntax = syntax_name(ft)
+    local name = syntax_name(ft)
+
+    if ft ~= "" and vim.bo[buf].syntax ~= name then
+      vim.bo[buf].syntax = name
     end
   end
 
