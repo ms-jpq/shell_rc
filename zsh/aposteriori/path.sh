@@ -3,14 +3,14 @@
 path=("$HOME/.local/lbin" "$HOME/.local/bin" "${path[@]}")
 
 if ((SHLVL > 1)); then
-  declare -A -- seen
-  pacc=()
-  for p in "${path[@]}"; do
-    if [[ -z ${seen["$p"]} ]]; then
-      seen["$p"]=1
-      pacc+=("$p")
+  declare -A -- _seen
+  _pacc=()
+  for _p in "${path[@]}"; do
+    if [[ -z ${_seen["$_p"]} ]]; then
+      _seen["$_p"]=1
+      _pacc+=("$_p")
     fi
   done
-  path=("${pacc[@]}")
-  unset -- seen pacc
+  path=("${_pacc[@]}")
+  unset -- _seen _pacc _p
 fi

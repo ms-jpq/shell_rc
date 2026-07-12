@@ -12,12 +12,6 @@ if ! [[ -v TMUX_SAVE_LOCK ]]; then
   TMUX_SAVE_LOCK=1 exec -- ~/.local/libexec/flock.sh "$0" "$0" "$@"
 fi
 
-if ! [[ -v UNDER_THE_DOG ]]; then
-  if UNDER_THE_DOG=1 exec -- "$0" "$@"; then
-    :
-  fi
-fi
-
 PROCFS="${0%/*}/procfs.sh"
 
 # shellcheck disable=SC2154

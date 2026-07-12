@@ -15,7 +15,7 @@ execute)
   for LINE in "${LINES[@]}"; do
     SHA="${LINE%% *}"
     ARGV=(git restore --source "$SHA~" -- "$*")
-    printf -- '%q\ ' "${ARGV[@]}"
+    printf -- '%q ' "${ARGV[@]}"
     "${ARGV[@]}"
     break
   done
