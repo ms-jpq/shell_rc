@@ -139,7 +139,6 @@ local alive = lib.generation "checktime"
 do
   local cycle = 99
   local delay = 99
-  local focused = true
 
   local check = function()
     vim.cmd.checktime { mods = { silent = true, emsg_silent = true } }
@@ -169,15 +168,7 @@ do
   vim.api.nvim_create_autocmd({ "FocusGained", "VimResume", "WinEnter" }, {
     group = lib.group,
     callback = function()
-      focused = true
       schedule { check }
-    end,
-  })
-
-  vim.api.nvim_create_autocmd({ "FocusLost" }, {
-    group = lib.group,
-    callback = function()
-      focused = false
     end,
   })
 
@@ -191,10 +182,7 @@ do
   async.run(function()
     while alive() do
       async.sleep(cycle)
-
-      if not focused or not vim.startswith(vim.api.nvim_get_mode().mode, "i") then
-        schedule { check, wall }
-      end
+      schedule { check, wall }
     end
   end)
 end
