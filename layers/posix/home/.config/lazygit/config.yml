@@ -17,6 +17,7 @@ os:
 
 gui:
   scrollHeight: 1
+  nerdFontsVersion: "3"
   theme:
     activeBorderColor:
       - blue
