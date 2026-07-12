@@ -70,7 +70,7 @@ textconv = "gpg --show-keys --"
 
 [diff.pdf]
 cachetextconv = true
-textconv      = "pdftotext -q -nopgbrk -- - -"
+textconv      = "sh -c 'exec pdftotext -layout -nopgbrk -- \"$1\" -' --"
 
 [difftool]
 prompt        = false
