@@ -34,9 +34,13 @@ case "$FMT" in
 *.zip | *.vsix | *.sit)
   "${TAR[@]}"
   ;;
-*.gz | *.xz)
+*.gz)
   NAME="$DST/$(basename -- "$SRC")"
   gzip --decompress --keep --force --stdout -- "$SRC" > "$NAME"
+  ;;
+*.xz)
+  NAME="$DST/$(basename -- "$SRC")"
+  xz --decompress --keep --force --stdout -- "$SRC" > "$NAME"
   ;;
 *)
   set -x

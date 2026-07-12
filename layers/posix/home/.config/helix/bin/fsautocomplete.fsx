@@ -22,4 +22,6 @@ cmd.Environment.Add("DOTNET_ROOT", dotnet)
 
 do
     use proc = Process.Start cmd
+
+    proc.WaitForExit()
     Environment.ExitCode <- proc.ExitCode

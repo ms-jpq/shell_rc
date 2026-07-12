@@ -8,4 +8,4 @@ REMOTE="$(git remote)"
 git config --worktree --replace-all -- "remote.$REMOTE.fetch" "+refs/pull/*:refs/remotes/$REMOTE/pull/*"
 git config --worktree --add -- "remote.$REMOTE.fetch" "+refs/heads/*:refs/remotes/$REMOTE/*"
 git fetch
-git switch --track -- "$REMOTE/pr/$PR"
+git switch --track -- "$REMOTE/pull/$PR"
