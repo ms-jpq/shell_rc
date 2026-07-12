@@ -9,15 +9,27 @@ vim.opt.sessionoptions:append { "skiprtp" }
 local session_dir = vim.fs.joinpath(vim.fn.stdpath "cache", "sessions")
 local startup_cwd = vim.fn.getcwd()
 
--- scratch buffer
-vim.api.nvim_create_autocmd({ "BufEnter" }, {
-  group = lib.group,
-  callback = function(args)
-    if vim.api.nvim_buf_get_name(args.buf) == "" and vim.bo[args.buf].buftype == "" then
-      vim.bo[args.buf].buftype = "nofile"
+do
+  -- scratch buffer
+  vim.api.nvim_create_autocmd({ "BufEnter" }, {
+    group = lib.group,
+    callback = function(args)
+      if vim.api.nvim_buf_get_name(args.buf) == "" and vim.bo[args.buf].buftype == "" then
+        vim.bo[args.buf].buftype = "nofile"
+      end
+    end,
+  })
+
+  vim.api.nvim_create_user_command("PS", function()
+    scope.prune_session()
+  end, {})
+
+  vim.api.nvim_create_user_command("KS", function()
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
+      vim.api.nvim_buf_delete(buf, { force = true })
     end
-  end,
-})
+  end, {})
+end
 
 local argv_names = function(cwd)
   local argv = vim.fn.argv(-1) --[[@as string[] ]]
@@ -74,86 +86,81 @@ local session_path = function(cwd)
   return norm
 end
 
-do
-  local mk_session = function(force)
-    if not force and no_session() then
-      return
-    end
+local session_ready = false
 
-    local path = session_path(startup_cwd)
-    local parent = vim.fs.dirname(path)
-    vim.fn.mkdir(parent, "p")
-    vim.fn.setfperm(parent, [[rwxr-xr-x]])
-
-    vim.cmd.mksession { path, bang = true }
+local mk_session = function()
+  if not session_ready or no_session() then
+    return
   end
 
-  vim.api.nvim_create_user_command("PS", function()
-    mk_session(true)
-  end, {})
+  local path = session_path(startup_cwd)
+  local parent = vim.fs.dirname(path)
+  vim.fn.mkdir(parent, "p")
+  vim.fn.setfperm(parent, [[rwxr-xr-x]])
 
-  vim.api.nvim_create_user_command("KS", function()
-    for _, buf in pairs(vim.api.nvim_list_bufs()) do
-      vim.api.nvim_buf_delete(buf, { force = true })
-    end
-    mk_session(true)
-  end, {})
-
-  vim.api.nvim_create_autocmd({ "VimSuspend", "FocusLost", "CursorHold" }, {
-    group = lib.group,
-    callback = lib.throttle(300, function()
-      mk_session()
-    end),
-  })
-
-  vim.api.nvim_create_autocmd({ "QuitPre" }, {
-    group = lib.group,
-    once = true,
-    callback = function()
-      if no_session() then
-        return
-      end
-
-      mk_session()
-    end,
-  })
+  vim.cmd.mksession { path, bang = true }
 end
 
-do
-  local restore = function()
-    if no_session() then
-      return
-    end
-
-    local path = session_path(startup_cwd)
-    if vim.fn.filereadable(path) == 1 then
-      async.scheduled()
-      vim.cmd.source { path, mods = { silent = true, emsg_silent = true } }
-      scope.prune_session(startup_cwd)
-    end
+local restore = function()
+  if no_session() then
+    return
   end
 
-  local move_tabs = function(cwd)
-    local argv = argv_names(cwd)
-    if #argv < 2 or vim.wo.diff then
-      return
-    end
-
+  local path = session_path(startup_cwd)
+  if vim.fn.filereadable(path) == 1 then
     async.scheduled()
-    for i = 2, #argv do
-      local name = argv[i]
-      vim.cmd.tabnew { vim.fn.fnameescape(name), mods = { keepalt = true } }
-    end
+    vim.cmd.source { path, mods = { silent = true, emsg_silent = true } }
+    scope.prune_session(startup_cwd)
+  end
+end
 
-    vim.cmd.tabfirst()
+local move_tabs = function(cwd)
+  local argv = argv_names(cwd)
+  if #argv < 2 or vim.wo.diff then
+    return
   end
 
-  vim.api.nvim_create_autocmd({ "VimEnter" }, {
-    group = lib.group,
-    once = true,
-    callback = async(function()
-      restore()
-      move_tabs(startup_cwd)
-    end),
-  })
+  async.scheduled()
+  for i = 2, #argv do
+    local name = argv[i]
+    vim.cmd.tabnew { vim.fn.fnameescape(name), mods = { keepalt = true } }
+  end
+
+  vim.cmd.tabfirst()
 end
+
+vim.api.nvim_create_autocmd({
+  "BufEnter",
+  "BufFilePost",
+  "BufWinEnter",
+  "BufWinLeave",
+  "TabClosed",
+  "TabNew",
+  "VimResized",
+  "WinClosed",
+  "WinNew",
+}, {
+  group = lib.group,
+  callback = lib.throttle(300, function()
+    mk_session()
+  end),
+})
+
+vim.api.nvim_create_autocmd({ "QuitPre" }, {
+  group = lib.group,
+  once = true,
+  callback = function()
+    session_ready = true
+    mk_session()
+  end,
+})
+
+vim.api.nvim_create_autocmd({ "VimEnter" }, {
+  group = lib.group,
+  once = true,
+  callback = async(function()
+    restore()
+    move_tabs(startup_cwd)
+    session_ready = true
+  end),
+})
