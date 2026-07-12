@@ -19,6 +19,10 @@ filterSubmodules = true
 [column]
 ui = "auto"
 
+[commit]
+cleanup = "scissors"
+verbose = true
+
 [core]
 autocrlf = "input"
 pager    = "delta"
@@ -40,6 +44,7 @@ colorMoved       = "dimmed-zebra"
 colorMovedWS     = "ignore-space-change"
 dirstat          = "files,cumulative"
 guitool          = "gui"
+interHunkContext = 2
 mnemonicPrefix   = true
 renameLimit      = 999999999
 renames          = "copies"
@@ -64,10 +69,11 @@ prompt        = false
 trustExitCode = true
 
 [fetch]
-all       = true
-parallel  = 0
-prune     = true
-pruneTags = true
+all                  = true
+negotiationAlgorithm = "skipping"
+parallel             = 0
+prune                = true
+pruneTags            = true
 # TODO: this segfaults git on ubuntu 24
 # writeCommitGraph  = true
 
@@ -87,17 +93,18 @@ autoCorrect = "prompt"
 defaultBranch = "main"
 
 [interactive]
-singleKey = true
+diffFilter = "delta --color-only"
+singleKey  = true
 
 [log]
 abbrevCommit = true
 date         = "format-local:%y-%m-%d %H:%M"
+decorate     = "short"
 
 [maintenance]
 strategy = "incremental"
 
 [merge]
-autoStash        = true
 autostash        = true
 conflictStyle    = "zdiff3"
 directoryRenames = true
@@ -118,17 +125,25 @@ recurseSubmodules  = "check"
 useForceIfIncludes = true
 
 [rebase]
-autoSquash = true
-autoStash  = true
-stat       = true
-updateRefs = true
+autoSquash           = true
+autoStash            = true
+missingCommitsCheck  = "warn"
+rescheduleFailedExec = true
+stat                 = true
+updateRefs           = true
 
 [rerere]
 autoUpdate = true
 enabled    = true
 
 [status]
+renames          = "copies"
+showStash        = true
 submoduleSummary = true
+
+[stash]
+showIncludeUntracked = true
+showPatch            = true
 
 [submodule]
 fetchJobs = 0
