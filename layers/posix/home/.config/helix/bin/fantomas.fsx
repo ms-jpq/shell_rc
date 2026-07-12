@@ -31,6 +31,7 @@ try
     use proc = Process.Start cmd
     proc.StandardOutput.ReadToEnd() |> ignore
     proc.WaitForExit()
+
     Environment.ExitCode <- proc.ExitCode
 
     File.ReadAllText buf |> Console.Write

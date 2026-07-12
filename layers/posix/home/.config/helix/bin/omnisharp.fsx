@@ -23,4 +23,6 @@ cmd.Environment.Add("OMNISHARPHOME", Path.GetTempPath())
 
 do
     use proc = Process.Start cmd
+    proc.WaitForExit()
+
     Environment.ExitCode <- proc.ExitCode

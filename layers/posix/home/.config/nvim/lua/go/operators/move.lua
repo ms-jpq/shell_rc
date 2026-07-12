@@ -25,12 +25,11 @@ end
 
 do
   Go.op_visual_move = function(up)
-    local row = unpack(vim.api.nvim_win_get_cursor(0))
     local row1, col1, row2, col2 = to.operator_marks(0, nil)
     local count = vim.api.nvim_buf_line_count(0)
 
     if up then
-      if row <= 1 then
+      if row1 <= 1 then
         vim.cmd [[norm! gv]]
       else
         vim.cmd.move { tostring(row1 - 1), range = { row1 + 1, row2 + 1 } }
