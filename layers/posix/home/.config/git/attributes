@@ -37,5 +37,8 @@
 *.rs    diff=rust
 *.sh    diff=bash
 *.tex   diff=tex
+*.tif   diff=exif
+*.tiff  diff=exif
+*.webp  diff=exif
 *.xhtml diff=html
 *.zsh   diff=bash
