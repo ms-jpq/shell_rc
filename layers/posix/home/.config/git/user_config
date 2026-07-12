@@ -25,9 +25,6 @@ pager    = "delta"
 safecrlf = true
 symlinks = true
 
-[core.whitespace]
-tabwidth = 2
-
 [delta]
 hyperlinks     = true
 light          = true
