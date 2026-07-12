@@ -61,7 +61,7 @@ jshell)
 esac
 
 ARGV+=("$@")
-read -r -d '' -- SCRIPT
+read -r -d '' -- SCRIPT || true
 
 {
   printf -- '\n>> '
