@@ -100,7 +100,7 @@ end
 
 local process = function(buf, stdin)
   local prefix = vim.fs.joinpath(filters, vim.bo[buf].filetype)
-  local found = unpack(vim.api.nvim_get_runtime_file(prefix .. ".*", true))
+  local found = unpack(vim.fn.glob(prefix .. ".*", false, true))
   if not found then
     found = vim.fs.joinpath(filters, "_.awk")
   end

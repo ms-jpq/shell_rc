@@ -99,13 +99,14 @@ def _mtime(mail: EmailMessage) -> float:
 def _decode(name: str) -> Iterator[str]:
     with suppress(HeaderParseError):
         for lhs, rhs in decode_header(name):
-            if isinstance(lhs, bytes) and isinstance(rhs, str):
-                with suppress(UnicodeDecodeError):
-                    yield lhs.decode(rhs)
-            elif isinstance(lhs, str):
-                yield lhs
-            else:
-                assert False, (lhs, rhs)
+            match (lhs, rhs):
+                case (bytes(), str()):
+                    with suppress(UnicodeDecodeError):
+                        yield lhs.decode(rhs)
+                case (str(), _):
+                    yield lhs
+                case _:
+                    assert False, (lhs, rhs)
 
 
 def _standardize(addr: str) -> str | None:
