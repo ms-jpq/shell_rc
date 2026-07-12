@@ -32,6 +32,7 @@
 *.pl    diff=perl
 *.plist diff=plist
 *.png   diff=exif
+*.pub   diff=sshpub
 *.py    diff=python
 *.rake  diff=ruby
 *.rb    diff=ruby
