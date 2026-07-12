@@ -35,6 +35,9 @@ vim.opt.guicursor = ""
 -- completion menu transparency
 vim.opt.pumblend = 5
 
+-- float win transparency
+vim.opt.winblend = 5
+
 vim.api.nvim_create_autocmd({ "TextYankPost" }, {
   group = lib.group,
   callback = function()
