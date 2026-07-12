@@ -1,10 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
 ---
-git:
-  overrideGpg: true
-  pagers:
-    - pager: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
-    - externalDiffCommand: difft --syntax-highlight=on --color=always
 notARepository: quit
 
 os:
@@ -15,9 +10,25 @@ os:
   open: ~/.local/bin/tmux-edit -- {{filename}}
   openLink: $BROWSER {{link}}
 
+git:
+  ignoreWhitespaceInDiffView: true
+  overrideGpg: true
+  pagers:
+    - pager: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+    - externalDiffCommand: difft --syntax-highlight=on --color=always
+
+worktree:
+  defaultPath: .worktrees
+
 gui:
-  scrollHeight: 1
+  expandFocusedSidePanel: true
   nerdFontsVersion: "3"
+  scrollHeight: 1
+  shortTimeFormat: 15:04
+  showRootItemInFileTree: false
+  tabWidth: 2
+  timeFormat: 2006-01-02
+
   theme:
     activeBorderColor:
       - blue
