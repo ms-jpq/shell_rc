@@ -29,6 +29,7 @@
 *.pem   diff=cert
 *.php   diff=php
 *.pl    diff=perl
+*.plist diff=plist
 *.png   diff=exif
 *.py    diff=python
 *.rake  diff=ruby

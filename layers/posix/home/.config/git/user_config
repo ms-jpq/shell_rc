@@ -53,8 +53,7 @@ tool             = "nvimdiff"
 wsErrorHighlight = "all"
 
 [diff.cert]
-cachetextconv = true
-textconv      = "openssl x509 -noout -text -in"
+textconv = "openssl x509 -noout -text -in"
 
 [diff.dpkg]
 textconv = "dpkg --info --"
@@ -71,6 +70,9 @@ textconv = "gpg --show-keys --"
 [diff.pdf]
 cachetextconv = true
 textconv      = "sh -c 'exec pdftotext -layout -nopgbrk -- \"$1\" -' --"
+
+[diff.plist]
+textconv = "plutil -convert json -o - --"
 
 [difftool]
 prompt        = false
