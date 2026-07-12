@@ -131,56 +131,37 @@ local wall = function()
   vim.cmd [[silent! wall! ++p]]
 end
 
-vim.api.nvim_create_autocmd({ "VimLeavePre" }, { group = lib.group, once = true, callback = wall })
+do
+  vim.api.nvim_create_autocmd({ "FocusLost", "VimSuspend" }, { group = lib.group, callback = wall })
+  vim.api.nvim_create_autocmd({ "VimLeavePre" }, { group = lib.group, once = true, callback = wall })
+end
 
 do
   local alive = lib.generation "checktime"
-  local cycle = 299
-  local delay = 99
+  local interval = 199
+  local sweep_every = math.floor(5000 / interval)
 
-  local check = function()
-    vim.cmd.checktime { mods = { silent = true, emsg_silent = true } }
+  local check = function(buf)
+    local args = buf and { tostring(buf) } or {}
+    args.mods = { silent = true, emsg_silent = true }
+    vim.cmd.checktime(args)
   end
-
-  local pending = {}
-  local drain = lib.throttle(delay, function()
-    local fns = pending
-    pending = {}
-
-    lib.report(function()
-      for _, fn in ipairs { check, wall } do
-        if fns[fn] then
-          fn()
-        end
-      end
-    end)
-  end)
-
-  local schedule = function(actions)
-    for _, fn in pairs(actions) do
-      pending[fn] = true
-    end
-    drain()
-  end
-
-  vim.api.nvim_create_autocmd({ "FocusGained", "VimResume", "WinEnter" }, {
-    group = lib.group,
-    callback = function()
-      schedule { check }
-    end,
-  })
-
-  vim.api.nvim_create_autocmd({ "FocusLost", "CursorHold", "CursorHoldI" }, {
-    group = lib.group,
-    callback = function()
-      schedule { check, wall }
-    end,
-  })
 
   async.run(function()
+    local ticks = 0
     while alive() do
-      async.sleep(cycle)
-      schedule { check, wall }
+      async.sleep(interval)
+      ticks = ticks + 1
+
+      lib.report(function()
+        if ticks % sweep_every == 0 then
+          check()
+        else
+          check(vim.api.nvim_get_current_buf())
+        end
+
+        wall()
+      end)
     end
   end)
 end
