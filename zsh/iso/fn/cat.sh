@@ -3,5 +3,5 @@
 if command -v -- bat > /dev/null; then
   bat "$@"
 else
-  cat "$@"
+  command -- cat "$@"
 fi
