@@ -31,7 +31,8 @@ local argv_names = function(cwd)
   return acc, mapping
 end
 
-local detect_stdin = function(cwd)
+local is_stdin = (function()
+  local cwd = vim.fn.getcwd()
   local _, mapping = argv_names(cwd)
 
   return vim.iter(vim.api.nvim_list_bufs()):any(function(buf)
@@ -47,14 +48,14 @@ local detect_stdin = function(cwd)
     local lines = vim.api.nvim_buf_get_lines(buf, -2, -1, true)
     return #lines > 0 and #lines[1] > 0
   end)
-end
+end)()
 
 local no_session = function(cwd)
   if cwd == "" then
     return true
   end
 
-  return cwd == vim.uv.os_homedir() or vim.o.diff or detect_stdin(cwd) or vim.fn.argc(-1) > 0
+  return cwd == vim.uv.os_homedir() or vim.o.diff or is_stdin or vim.fn.argc(-1) > 0
 end
 
 local session_path = function(cwd)
@@ -65,84 +66,88 @@ local session_path = function(cwd)
   return norm
 end
 
-local mk_session = function(force)
-  local cwd = vim.fn.getcwd()
-  if not force and no_session(cwd) then
-    return
-  end
-
-  local path = session_path(cwd)
-  local parent = vim.fs.dirname(path)
-  vim.fn.mkdir(parent, "p")
-  vim.fn.setfperm(parent, [[rwxr-xr-x]])
-
-  vim.cmd.mksession { args = { path }, bang = true }
-end
-
-vim.api.nvim_create_user_command("PS", function()
-  mk_session(true)
-end, {})
-
-vim.api.nvim_create_user_command("KS", function()
-  for _, buf in pairs(vim.api.nvim_list_bufs()) do
-    vim.api.nvim_buf_delete(buf, { force = true })
-  end
-  mk_session(true)
-end, {})
-
-vim.api.nvim_create_autocmd({ "VimSuspend", "FocusLost", "CursorHold" }, {
-  group = lib.group,
-  callback = lib.throttle(300, function()
-    mk_session()
-  end),
-})
-
-vim.api.nvim_create_autocmd({ "QuitPre" }, {
-  group = lib.group,
-  once = true,
-  callback = function()
-    if no_session(vim.fn.getcwd()) then
+do
+  local mk_session = function(force)
+    local cwd = vim.fn.getcwd()
+    if not force and no_session(cwd) then
       return
     end
 
-    mk_session()
-  end,
-})
+    local path = session_path(cwd)
+    local parent = vim.fs.dirname(path)
+    vim.fn.mkdir(parent, "p")
+    vim.fn.setfperm(parent, [[rwxr-xr-x]])
 
-local restore = function(cwd)
-  if no_session(cwd) then
-    return
+    vim.cmd.mksession { args = { path }, bang = true }
   end
 
-  local path = session_path(cwd)
-  if vim.fn.filereadable(path) == 1 then
+  vim.api.nvim_create_user_command("PS", function()
+    mk_session(true)
+  end, {})
+
+  vim.api.nvim_create_user_command("KS", function()
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
+      vim.api.nvim_buf_delete(buf, { force = true })
+    end
+    mk_session(true)
+  end, {})
+
+  vim.api.nvim_create_autocmd({ "VimSuspend", "FocusLost", "CursorHold" }, {
+    group = lib.group,
+    callback = lib.throttle(300, function()
+      mk_session()
+    end),
+  })
+
+  vim.api.nvim_create_autocmd({ "QuitPre" }, {
+    group = lib.group,
+    once = true,
+    callback = function()
+      if no_session(vim.fn.getcwd()) then
+        return
+      end
+
+      mk_session()
+    end,
+  })
+end
+
+do
+  local restore = function(cwd)
+    if no_session(cwd) then
+      return
+    end
+
+    local path = session_path(cwd)
+    if vim.fn.filereadable(path) == 1 then
+      async.scheduled()
+      vim.cmd.source { args = { path }, mods = { silent = true, emsg_silent = true } }
+      scope.prune_session(cwd)
+    end
+  end
+
+  local move_tabs = function(cwd)
+    local argv = argv_names(cwd)
+    if #argv < 2 or vim.wo.diff then
+      return
+    end
+
     async.scheduled()
-    vim.cmd.source { args = { path }, mods = { silent = true, emsg_silent = true } }
-    scope.prune_session(cwd)
+    for i = 2, #argv do
+      local name = argv[i]
+      vim.cmd.tabnew { args = { vim.fn.fnameescape(name) }, mods = { keepalt = true } }
+    end
+
+    vim.cmd.tabfirst()
   end
+
+  vim.api.nvim_create_autocmd({ "VimEnter" }, {
+    group = lib.group,
+    once = true,
+    callback = async(function()
+      local cwd = vim.fn.getcwd()
+      restore(cwd)
+      move_tabs(cwd)
+    end),
+  })
 end
-
-local move_tabs = function(cwd)
-  local argv = argv_names(cwd)
-  if #argv < 2 or vim.wo.diff then
-    return
-  end
-
-  async.scheduled()
-  for i = 2, #argv do
-    local name = argv[i]
-    vim.cmd.tabnew { args = { vim.fn.fnameescape(name) }, mods = { keepalt = true } }
-  end
-
-  vim.cmd.tabfirst()
-end
-
-vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  group = lib.group,
-  once = true,
-  callback = async(function()
-    local cwd = vim.fn.getcwd()
-    restore(cwd)
-    move_tabs(cwd)
-  end),
-})
