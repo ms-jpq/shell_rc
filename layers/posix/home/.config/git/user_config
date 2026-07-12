@@ -52,6 +52,10 @@ submodule        = "log"
 tool             = "nvimdiff"
 wsErrorHighlight = "all"
 
+[diff.cert]
+cachetextconv = true
+textconv      = "openssl x509 -noout -text -in"
+
 [diff.dpkg]
 textconv = "dpkg --info --"
 
@@ -63,6 +67,10 @@ textconv = "gpg --list-packets --"
 
 [diff.gpgkey]
 textconv = "gpg --show-keys --"
+
+[diff.pdf]
+cachetextconv = true
+textconv      = "pdftotext -q -nopgbrk -- - -"
 
 [difftool]
 prompt        = false
