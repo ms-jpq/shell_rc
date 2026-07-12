@@ -3,7 +3,8 @@
 git:
   overrideGpg: true
   pagers:
-    - pager: delta --paging=never --24-bit-color=never
+    - pager: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+    - externalDiffCommand: difft --syntax-highlight=on --color=always
 notARepository: quit
 
 os:
