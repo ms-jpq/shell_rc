@@ -33,14 +33,14 @@ do
       if row <= 1 then
         vim.cmd [[norm! gv]]
       else
-        vim.cmd.move { range = { row1 + 1, row2 + 1 }, args = { tostring(row1 - 1) } }
+        vim.cmd.move { tostring(row1 - 1), range = { row1 + 1, row2 + 1 } }
         to.set_visual_selection("v", row1, col1, row2, col2, true)
       end
     else
       if row2 + 1 >= count then
         vim.cmd [[norm! gv]]
       else
-        vim.cmd.move { range = { row1 + 1, row2 + 1 }, args = { tostring(row2 + 2) } }
+        vim.cmd.move { tostring(row2 + 2), range = { row1 + 1, row2 + 1 } }
         to.set_visual_selection("v", row1 + 2, col1, row2 + 2, col2, true)
       end
     end

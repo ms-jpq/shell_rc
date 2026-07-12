@@ -103,7 +103,7 @@ local delete_or_recheck = function(buf)
   end
 
   if name ~= "" and vim.uv.fs_stat(name) then
-    vim.cmd.checktime { args = { tostring(buf) }, mods = { silent = true, emsg_silent = true } }
+    vim.cmd.checktime { tostring(buf), mods = { silent = true, emsg_silent = true } }
   else
     vim.api.nvim_buf_delete(buf, { force = true })
   end

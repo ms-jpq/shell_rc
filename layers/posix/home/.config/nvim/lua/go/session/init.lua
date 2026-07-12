@@ -85,7 +85,7 @@ do
     vim.fn.mkdir(parent, "p")
     vim.fn.setfperm(parent, [[rwxr-xr-x]])
 
-    vim.cmd.mksession { args = { path }, bang = true }
+    vim.cmd.mksession { path, bang = true }
   end
 
   vim.api.nvim_create_user_command("PS", function()
@@ -128,7 +128,7 @@ do
     local path = session_path(startup_cwd)
     if vim.fn.filereadable(path) == 1 then
       async.scheduled()
-      vim.cmd.source { args = { path }, mods = { silent = true, emsg_silent = true } }
+      vim.cmd.source { path, mods = { silent = true, emsg_silent = true } }
       scope.prune_session(startup_cwd)
     end
   end
@@ -142,7 +142,7 @@ do
     async.scheduled()
     for i = 2, #argv do
       local name = argv[i]
-      vim.cmd.tabnew { args = { vim.fn.fnameescape(name) }, mods = { keepalt = true } }
+      vim.cmd.tabnew { vim.fn.fnameescape(name), mods = { keepalt = true } }
     end
 
     vim.cmd.tabfirst()

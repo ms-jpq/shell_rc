@@ -114,7 +114,7 @@ M.buf_linefeed = function(buf)
 end
 
 M.keepalt_buffer = function(buf)
-  vim.cmd.buffer { args = { tostring(buf) }, mods = { keepalt = true } }
+  vim.cmd.buffer { tostring(buf), mods = { keepalt = true } }
 end
 
 M.sandbox = function(workdir, opts)

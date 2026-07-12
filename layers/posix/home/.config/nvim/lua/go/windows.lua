@@ -131,8 +131,8 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
   group = lib.group,
   pattern = { "*.txt" },
   callback = function()
-    if vim.bo.filetype == "help" then
-      vim.cmd.wincmd "T"
+    if vim.bo.filetype == "help" and #vim.api.nvim_list_wins() > 1 then
+      vim.cmd.wincmd { "T" }
     end
   end,
 })
