@@ -1,3 +1,4 @@
+local fzf = require "go.pack.fzf.lib"
 local lib = require "go.lib"
 local to = require "go.text_objects"
 
@@ -55,18 +56,24 @@ do
 end
 
 do
-  local searcher = function(name)
+  local searcher = function(kind)
     return function(visual_type)
       local text = selected_text(visual_type)
       local escaped = magic_escape(text)
       vim.fn.setreg("/", [[\V]] .. escaped)
       vim.opt.hlsearch = true
-      vim.cmd[name] { text ~= "" and text or nil, bang = true }
+
+      if kind == "blines" then
+        local buf = vim.api.nvim_get_current_buf()
+        fzf.blines_search(buf, text)
+      else
+        fzf.rg_search(text)
+      end
     end
   end
 
-  Go.op_blines = searcher [[BL]]
-  Go.op_rg = searcher [[RG]]
+  Go.op_blines = searcher "blines"
+  Go.op_rg = searcher "rg"
 
   for key, val in pairs { op_blines = "gF", op_rg = "gf" } do
     vim.keymap.set({ "n" }, val, [[<cmd>set opfunc=v:lua.Go.]] .. key .. [[<cr>g@]], { nowait = true, noremap = true })
