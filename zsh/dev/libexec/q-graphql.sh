@@ -63,7 +63,7 @@ ARGV=(
   "${CURL[@]}"
 )
 
-read -r -d '' -- QUERY
+read -r -d '' -- QUERY || true
 JSON="$(jq --exit-status --slurp --raw-input --argjson var "$VAR" '{ query: ., variables: $var }' <<< "$QUERY")"
 
 {
