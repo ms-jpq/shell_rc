@@ -58,8 +58,7 @@ local no_session = function(cwd)
 end
 
 local session_path = function(cwd)
-  local argv = vim.fn.argv(-1) --[[@as string[] ]]
-  local key = vim.fn.sha256(table.concat({ cwd, unpack(argv) }, "\0"))
+  local key = vim.fn.sha256(cwd)
   local path = vim.fs.joinpath(session_dir, key .. ".vim")
 
   local norm = vim.fs.normalize(path, { expand_env = false })
