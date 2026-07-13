@@ -17,7 +17,7 @@ for ((I = 0; I < ${#DIRS[@]}; I += 2)); do
   PREFIX="${DIRS[I + 1]}"
   NAME="${DIR##*/}"
   LAUNCH="${PREFIX:+$PREFIX }"
-  LINE="${LAUNCH}codex resume -- $NAME || ${LAUNCH}codex"
+  LINE="${LAUNCH}codex resume $NAME"
 
   tmux new-window -c "$DIR"
   tmux set-buffer -- $'nvim\n'
