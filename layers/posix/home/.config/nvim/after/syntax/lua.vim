@@ -1,7 +1,7 @@
-syntax match luaReq "\<require\>" conceal cchar=←
+syntax match luaReq '\<require\ze\s*[(''"[]' conceal cchar=←
 
-syntax match luaDo "\<then\>" conceal cchar=⌈
-syntax match luaDo "\.\@<!\<do\>" conceal cchar=⌈
-syntax match luaEnd "\.\@<!\<end\>" conceal cchar=⌋
+syntax match luaDo "\s\zs\<then\>$" conceal cchar=⌈
+syntax match luaDo "\s\zs\<do\>$" conceal cchar=⌈
+syntax match luaEnd "^\s*\zs\<end\>" conceal cchar=⌋
 
 syntax match luaCommentEdge '^\s*\zs--' conceal cchar=│
