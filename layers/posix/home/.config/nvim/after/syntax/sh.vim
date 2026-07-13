@@ -1,5 +1,3 @@
-syntax match shRet "\<return\>" conceal cchar=⏎
-
 syntax match shDo "\<do\>" conceal cchar=⌈
 syntax match shIn "\<in\>" conceal cchar=⌈
 syntax match shThen "\<then\>" conceal cchar=⌈

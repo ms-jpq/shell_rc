@@ -28,14 +28,6 @@ end)
 
 vim.keymap.set({ "n" }, [[<leader>/]], function()
   local buf = vim.api.nvim_get_current_buf()
-  local absname = vim.api.nvim_buf_get_name(buf)
-
-  if vim.fn.filereadable(absname) ~= 0 then
-    local name = vim.fn.fnamemodify(absname, [[:~:.]])
-    fzf.rg_search(nil, { name })
-    return
-  end
-
   fzf.blines_search(buf)
 end)
 

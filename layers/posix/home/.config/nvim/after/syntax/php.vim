@@ -5,7 +5,5 @@ syntax match phpReq "\<require\>" conceal cchar=↓
 
 syntax match phpFunc "\<function\>" conceal cchar=ƒ
 
-syntax match phpRet "@\@<!\<return\>" conceal cchar=⏎
-
 syntax match phpCommentEdge '^\s*\zs#' containedin=phpComment conceal cchar=┃
 syntax match phpCommentEdgeSlash '^\s*\zs//' containedin=phpComment conceal cchar=┃

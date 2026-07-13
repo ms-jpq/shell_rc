@@ -67,7 +67,6 @@ M.buffers = function()
       multi = true,
       delimiter = "\t",
       with_nth = "2..",
-      nth = "2..",
       preview = preview .. " {2..}",
       preview_window = "right:wrap",
     },
@@ -166,16 +165,25 @@ M.blines_search = function(buf, query)
     end)
     :totable()
 
+  local spec = {
+    ansi = true,
+    multi = true,
+    delimiter = "\t",
+    with_nth = "2..",
+    query = query or "",
+  }
+
+  do
+    local bufname = vim.api.nvim_buf_get_name(buf)
+    if bufname ~= "" and vim.fn.filereadable(bufname) == 1 then
+      spec.preview = shelljoin { "bat", "--force-colorization", "--highlight-line", "{1}", "--", bufname }
+      spec.preview_window = "right:75%:wrap:~3:+{1}+3/3"
+    end
+  end
+
   run("blines", {
     source = items,
-    options = opts {
-      ansi = true,
-      multi = true,
-      delimiter = "\t",
-      with_nth = "2..",
-      nth = "2..",
-      query = query or "",
-    },
+    options = opts(spec),
     ["sink*"] = sink(function(line)
       local lnum, text = string.match(line, "^(%d+)\t(.*)")
       if type(lnum) == "string" then
