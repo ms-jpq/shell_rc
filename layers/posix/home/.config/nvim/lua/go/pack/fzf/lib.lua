@@ -8,8 +8,8 @@ local shelljoin = function(args)
   return vim.iter(args):map(vim.fn.shellescape):join " "
 end
 
-local run = function(name, spec)
-  vim.fn["fzf#run"](vim.fn["fzf#wrap"](name, spec, true))
+local bat = function(line, file)
+  return shelljoin { "bat", "--force-colorization", "--highlight-line", line, "--", file }
 end
 
 local opts = function(map)
@@ -50,6 +50,10 @@ local sink = function(parse)
       vim.cmd.copen()
     end
   end
+end
+
+local run = function(name, spec)
+  vim.fn["fzf#run"](vim.fn["fzf#wrap"](name, spec, true))
 end
 
 M.buffers = function()
@@ -176,7 +180,7 @@ M.blines_search = function(buf, query)
   do
     local bufname = vim.api.nvim_buf_get_name(buf)
     if bufname ~= "" and vim.fn.filereadable(bufname) == 1 then
-      spec.preview = shelljoin { "bat", "--force-colorization", "--highlight-line", "{1}", "--", bufname }
+      spec.preview = bat("{1}", bufname)
       spec.preview_window = "right:75%:wrap:~3:+{1}+3/3"
     end
   end
@@ -206,24 +210,22 @@ do
     "--",
   }
 
-  local rg_reload = function(files)
-    local file_args = vim.iter(files or {}):map(vim.fn.shellescape):join " "
-    if file_args ~= "" then
-      return rg_args .. " {q} " .. file_args
-    end
-    return rg_args .. " {q}"
+  local rg_command = function(query, files)
+    local args = coroutine.wrap(function()
+      coroutine.yield(rg_args)
+      coroutine.yield(query)
+
+      local file_args = shelljoin(files or {})
+      if file_args ~= "" then
+        coroutine.yield(file_args)
+      end
+    end)
+
+    return vim.iter(args):join " "
   end
 
   M.rg_search = function(query, files)
-    local reload = rg_reload(files)
-    local source = "true"
-    if query and query ~= "" then
-      local file_args = vim.iter(files or {}):map(vim.fn.shellescape):join " "
-      source = rg_args .. " " .. vim.fn.shellescape(query)
-      if file_args ~= "" then
-        source = source .. " " .. file_args
-      end
-    end
+    local source = query and query ~= "" and rg_command(vim.fn.shellescape(query), files) or "true"
 
     run("rg", {
       source = source,
@@ -232,9 +234,9 @@ do
         multi = true,
         disabled = true,
         delimiter = ":",
-        bind = "change:reload:" .. reload .. " || true",
+        bind = "change:reload:" .. rg_command("{q}", files) .. " || true",
         query = query or "",
-        preview = shelljoin { "bat", "--force-colorization", "--highlight-line", "{2}", "--", "{1}" },
+        preview = bat("{2}", "{1}"),
         preview_window = "right:wrap:~3:+{2}+3/3",
       },
       ["sink*"] = sink(function(line)
