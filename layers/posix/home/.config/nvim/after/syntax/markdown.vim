@@ -1,6 +1,7 @@
 syntax match mdQuote "^\s*\zs>\ze " conceal cchar=▎
-syntax match mdDash "^\s*\zs-\ze " conceal cchar=✱
-syntax match mdStar "^\s*\zs\*\ze " conceal cchar=☸
+syntax match mdDash "^\s*\zs-\ze " conceal cchar=*
+syntax match mdPlus "^\s*\zs+\ze " conceal cchar=◆
+syntax match mdStar "^\s*\zs\*\ze " conceal cchar=✱
 
 syntax match mdHrDash "-" contained conceal cchar=╌
 syntax match mdHrLine "^\s*-\{3,}\s*$" contains=mdHrDash
