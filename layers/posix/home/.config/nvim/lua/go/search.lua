@@ -32,14 +32,21 @@ vim.keymap.set({ "n" }, "#", "#N")
 vim.keymap.set({ "n" }, "g*", "g*N")
 vim.keymap.set({ "n" }, "g#", "g#N")
 
--- use no magic
-vim.api.nvim_create_autocmd({ "CmdlineEnter" }, {
-  group = lib.group,
-  pattern = { "/", [[\?]] },
-  callback = function()
-    vim.fn.setcmdline [[\V]]
-  end,
-})
+do
+  -- use no magic
+  vim.api.nvim_create_autocmd({ "CmdlineEnter" }, {
+    group = lib.group,
+    pattern = { "/", [[\?]] },
+    callback = function()
+      vim.fn.setcmdline [[\V]]
+    end,
+  })
+
+  vim.keymap.set({ "c" }, "/", function()
+    local ty = vim.fn.getcmdtype()
+    return ({ ["/"] = [[\/]], ["?"] = [[\/]] })[ty] or "/"
+  end, { expr = true, noremap = true })
+end
 
 do
   -- local function with_redraw(wrapped)
