@@ -15,7 +15,6 @@ end
 do
   local prefix = "__go_conceal__"
   local syn = vim.fs.joinpath(lib.cfg, "after", "syntax")
-  local tax = vim.fs.joinpath(syn, "_.vim")
 
   local syntax_name = function(ft)
     return prefix .. ft
@@ -50,7 +49,6 @@ do
 
           local path = vim.fs.joinpath(syn, ft .. ".vim")
 
-          vim.cmd.source(tax)
           if vim.fn.filereadable(path) == 1 then
             vim.cmd.source(path)
           end
