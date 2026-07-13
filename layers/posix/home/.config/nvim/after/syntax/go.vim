@@ -1,8 +1,8 @@
-syntax match goImport "\<import\>" conceal cchar=↓
+syntax match goImport '^\s*\zs\<import\>' conceal cchar=↓
 
-syntax match goCommentEdge '^\s*\zs//' containedin=goComment conceal cchar=│
+syntax match goCommentEdge '^\s*\zs//' conceal cchar=│
 
-syntax match goBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' containedin=goComment conceal cchar=│
+syntax match goBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
 
-syntax match goBlockCommentOpen '^\s*\zs\/\*' containedin=goComment conceal cchar=┌
-syntax match goBlockCommentClose '^\s*\zs\*\/' containedin=goComment conceal cchar=└
+syntax match goBlockCommentOpen '^\s*\zs\/\*' conceal cchar=┌
+syntax match goBlockCommentClose '^\s*\zs\*\/' conceal cchar=└

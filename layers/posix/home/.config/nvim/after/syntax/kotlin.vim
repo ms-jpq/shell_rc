@@ -1,8 +1,8 @@
-syntax match ktImport "\<import\>" conceal cchar=↓
+syntax match ktImport '^\s*\zs\<import\>' conceal cchar=↓
 
-syntax match ktCommentEdge '^\s*\zs//' containedin=ktLineComment conceal cchar=│
+syntax match ktCommentEdge '^\s*\zs//' conceal cchar=│
 
-syntax match ktBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' containedin=ktComment conceal cchar=│
+syntax match ktBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
 
-syntax match ktBlockCommentOpen '^\s*\zs\/\*' containedin=ktComment conceal cchar=┌
-syntax match ktBlockCommentClose '^\s*\zs\*\/' containedin=ktComment conceal cchar=└
+syntax match ktBlockCommentOpen '^\s*\zs\/\*' conceal cchar=┌
+syntax match ktBlockCommentClose '^\s*\zs\*\/' conceal cchar=└

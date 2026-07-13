@@ -1,3 +1,3 @@
-syntax match nimImport "\<import\>" conceal cchar=↓
+syntax match nimImport '^\s*\zs\<import\>' conceal cchar=↓
 
-syntax match nimCommentEdge '^\s*\zs#' containedin=nimLineComment conceal cchar=│
+syntax match nimCommentEdge '^\s*\zs#' conceal cchar=│

@@ -1,3 +1,3 @@
-syntax match hsImport "\<import\>" conceal cchar=↓
+syntax match hsImport '^\s*\zs\<import\>' conceal cchar=↓
 
-syntax match hsCommentEdge '^\s*\zs--' containedin=hsLineComment conceal cchar=│
+syntax match hsCommentEdge '^\s*\zs--' conceal cchar=│
