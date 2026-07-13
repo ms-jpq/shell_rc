@@ -56,14 +56,14 @@ local relocate_row = function(row, hunks)
 end
 
 local restore_cursor_location = function(buf, positions, hunks)
+  local count = vim.api.nvim_buf_line_count(buf)
   for _, spec in pairs(positions) do
     if vim.api.nvim_win_is_valid(spec.win) then
-      local count = vim.api.nvim_buf_line_count(buf)
       local row = math.max(1, math.min(relocate_row(spec.row, hunks), count))
       local col = spec.col
       local line = unpack(vim.api.nvim_buf_get_lines(buf, row - 1, row, true))
 
-      col = math.min(col, math.max(#line - 1, 0))
+      col = math.min(col, #line)
       vim.api.nvim_win_set_cursor(spec.win, { row, col })
     end
   end
