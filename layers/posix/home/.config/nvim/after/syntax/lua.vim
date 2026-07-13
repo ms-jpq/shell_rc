@@ -1,7 +1,5 @@
 syntax match luaReq "\<require\>" conceal cchar=←
 
-syntax match luaFunc "\<function\>" conceal cchar=𝐟
-
 syntax match luaDo "\<then\>" conceal cchar=⌈
 syntax match luaDo "\.\@<!\<do\>" conceal cchar=⌈
 syntax match luaEnd "\.\@<!\<end\>" conceal cchar=⌋
