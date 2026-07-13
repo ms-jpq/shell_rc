@@ -1,11 +1,12 @@
 local lib = require "go.lib"
 
-vim.opt.conceallevel = 2
+local conceal = 2
+vim.opt.conceallevel = conceal
 vim.opt.concealcursor = [[nc]]
 
 do
   local toggle = function()
-    vim.opt.conceallevel = vim.o.conceallevel == 0 and 2 or 0
+    vim.opt.conceallevel = vim.o.conceallevel == 0 and conceal or 0
   end
 
   vim.keymap.set({ "n" }, [[<leader>Y]], toggle)

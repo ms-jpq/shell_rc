@@ -3,7 +3,7 @@ syntax clear ConcealNE
 syntax match phpReq "\<include\>" conceal cchar=↓
 syntax match phpReq "\<require\>" conceal cchar=↓
 
-syntax match phpFunc "\<function\>" conceal cchar=ƒ
+syntax match phpFunc "\<function\>" conceal cchar=𝐟
 
 syntax match phpCommentEdge '^\s*\zs#' containedin=phpComment conceal cchar=┃
 syntax match phpCommentEdgeSlash '^\s*\zs//' containedin=phpComment conceal cchar=┃
