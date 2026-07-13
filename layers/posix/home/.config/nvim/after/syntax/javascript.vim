@@ -7,3 +7,5 @@ syntax match jsImport "\<import\>" conceal cchar=↓
 syntax match jsFunc "\<function\>" conceal cchar=ƒ
 
 syntax match jsRet "@\@<!\<return\>" conceal cchar=⏎
+
+syntax match jsCommentEdge '^\s*\zs//' containedin=javaScriptLineComment conceal cchar=┃

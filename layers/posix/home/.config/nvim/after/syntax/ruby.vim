@@ -7,3 +7,5 @@ syntax match rubyRet "\<return\>" conceal cchar=⏎
 
 syntax match rubyDo "\.\@<!\<do\>" conceal cchar=⌈
 syntax match rubyEnd "\.\@<!\<end\>" conceal cchar=⌋
+
+syntax match rubyCommentEdge '^\s*\zs#' containedin=rubyComment conceal cchar=┃
