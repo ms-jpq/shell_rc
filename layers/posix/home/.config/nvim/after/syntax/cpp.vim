@@ -1,3 +1,5 @@
+syntax match cppInclude '^\s*\zs#include\>' conceal cchar=↓
+
 syntax match cppCommentEdge '^\s*\zs//' conceal cchar=│
 
 syntax match cppBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
