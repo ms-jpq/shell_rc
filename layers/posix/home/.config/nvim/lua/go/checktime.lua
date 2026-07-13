@@ -20,12 +20,8 @@ local buffer_marks = function(buf)
     for _, win in pairs(vim.api.nvim_list_wins()) do
       if vim.api.nvim_win_get_buf(win) == buf then
         local row, col = unpack(vim.api.nvim_win_get_cursor(win))
-        coroutine.yield {
-          win = win,
-          row = row,
-          col = col,
-          mark = vim.api.nvim_buf_set_extmark(buf, reload_ns, row - 1, col, {}),
-        }
+        local mark = vim.api.nvim_buf_set_extmark(buf, reload_ns, row - 1, col, { right_gravity = false })
+        coroutine.yield { win = win, row = row, col = col, mark = mark }
       end
     end
   end)
@@ -39,6 +35,9 @@ local restore_cursor_location = function(buf, marks)
 
       if not row or row < 0 then
         row, col = spec.row - 1, spec.col
+      end
+      if col == 0 then
+        col = spec.col
       end
       row = math.min(row, count - 1)
 
