@@ -42,10 +42,13 @@ do
     end,
   })
 
-  vim.keymap.set({ "c" }, "/", function()
-    local ty = vim.fn.getcmdtype()
-    return ({ ["/"] = [[\/]], ["?"] = [[\/]] })[ty] or "/"
-  end, { expr = true, noremap = true })
+  for _, key in pairs { [[\]], [[/]] } do
+    vim.keymap.set({ "c" }, key, function()
+      local ty = vim.fn.getcmdtype()
+      local prefix = ({ ["/"] = true, ["?"] = true })[ty]
+      return prefix and [[\]] .. key or key
+    end, { expr = true, noremap = true })
+  end
 end
 
 do
