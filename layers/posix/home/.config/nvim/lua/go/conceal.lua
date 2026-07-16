@@ -37,11 +37,6 @@ do
   vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
     group = lib.group,
     callback = async(function(args)
-      async.scheduled()
-      if not vim.api.nvim_buf_is_valid(args.buf) then
-        return
-      end
-
       local bo = vim.bo[args.buf]
       local ft = bo.filetype
       local syntax = prefix .. ft
