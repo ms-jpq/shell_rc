@@ -1,4 +1,4 @@
-syntax clear ConcealNE
+silent! syntax clear ConcealNE
 
 syntax match jsFrom "\.\@<!\<from\>" conceal cchar=←
 syntax match jsReq "\<require\ze\s*(" conceal cchar=←

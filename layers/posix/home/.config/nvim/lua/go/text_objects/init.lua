@@ -70,7 +70,7 @@ end
 M.hold_position = function()
   local win = vim.api.nvim_get_current_win()
   local buf = vim.api.nvim_win_get_buf(win)
-  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local view = vim.fn.winsaveview()
 
   return async(function()
     async.scheduled()
@@ -83,11 +83,9 @@ M.hold_position = function()
       return
     end
 
-    local count = vim.api.nvim_buf_line_count(buf)
-    row = math.min(row, count)
-    local line = unpack(vim.api.nvim_buf_get_lines(buf, row - 1, row, true))
-
-    vim.api.nvim_win_set_cursor(win, { row, math.min(col, #line) })
+    vim.api.nvim_win_call(win, function()
+      vim.fn.winrestview(view)
+    end)
   end)
 end
 
