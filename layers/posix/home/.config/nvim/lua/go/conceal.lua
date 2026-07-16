@@ -34,7 +34,7 @@ do
     end,
   })
 
-  vim.api.nvim_create_autocmd({ "BufReadPost", "BufWinEnter", "FileType" }, {
+  vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
     group = lib.group,
     callback = async(function(args)
       async.scheduled()
