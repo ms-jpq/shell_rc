@@ -19,19 +19,6 @@ vim.cmd.syntax "manual"
 do
   local prefix = "cole_"
 
-  local enable = function(buf)
-    async.scheduled()
-    if not vim.api.nvim_buf_is_valid(buf) then
-      return
-    end
-
-    local ft = vim.bo[buf].filetype
-    local syntax = prefix .. ft
-    if ft ~= "" and vim.bo[buf].syntax ~= syntax then
-      vim.bo[buf].syntax = syntax
-    end
-  end
-
   vim.api.nvim_create_autocmd({ "Syntax" }, {
     group = lib.group,
     pattern = prefix .. "*",
@@ -47,21 +34,19 @@ do
     end,
   })
 
-  vim.api.nvim_create_autocmd({ "BufReadPost", "FileChangedShellPost", "FileType" }, {
+  vim.api.nvim_create_autocmd({ "BufReadPost", "BufWinEnter", "FileType" }, {
     group = lib.group,
     callback = async(function(args)
-      enable(args.buf)
-    end),
-  })
+      async.scheduled()
+      if not vim.api.nvim_buf_is_valid(args.buf) then
+        return
+      end
 
-  vim.api.nvim_create_autocmd({ "VimEnter" }, {
-    group = lib.group,
-    once = true,
-    callback = async(function()
-      for _, buf in pairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_loaded(buf) then
-          enable(buf)
-        end
+      local bo = vim.bo[args.buf]
+      local ft = bo.filetype
+      local syntax = prefix .. ft
+      if ft ~= "" and bo.syntax ~= syntax then
+        bo.syntax = syntax
       end
     end),
   })
