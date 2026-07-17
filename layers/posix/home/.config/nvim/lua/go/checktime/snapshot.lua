@@ -37,6 +37,10 @@ M.read = function(name)
     return nil
   end
 
+  if lines[#lines] == "" then
+    table.remove(lines)
+  end
+
   return lines
 end
 

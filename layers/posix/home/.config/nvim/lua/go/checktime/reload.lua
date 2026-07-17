@@ -37,14 +37,16 @@ local patch_lines = function(buf, lines)
   local changes = hunks.changes(before, lines)
   ---@cast changes integer[][]
 
-  for index, diff_hunk in vim.iter(changes):rev():enumerate() do
-    if index == 1 then
-      vim.cmd.normal { args = { vim.keycode "i<C-g>u<Esc>" }, bang = true }
-    else
-      vim.cmd.undojoin()
+  vim.api.nvim_buf_call(buf, function()
+    for index, diff_hunk in vim.iter(changes):rev():enumerate() do
+      if index == 1 then
+        vim.cmd.normal { args = { vim.keycode "i<C-g>u<Esc>" }, bang = true }
+      else
+        vim.cmd.undojoin()
+      end
+      vim.api.nvim_buf_set_lines(buf, diff_hunk.start, diff_hunk.finish, true, diff_hunk.lines)
     end
-    vim.api.nvim_buf_set_lines(buf, diff_hunk.start, diff_hunk.finish, true, diff_hunk.lines)
-  end
+  end)
 
   return changes
 end
