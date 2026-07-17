@@ -68,9 +68,9 @@ local apply = function(buf, remote)
 end
 
 M.apply = function(buf, name)
-  local remote, reason = snapshot.read(name)
+  local remote = snapshot.read(name)
   if not remote then
-    return nil, reason == "changing"
+    return nil
   end
   return apply(buf, remote), false
 end
