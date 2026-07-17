@@ -18,8 +18,8 @@ local hold_positions = function(buf)
 
     for win, view in pairs(views) do
       if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
-        view.lnum = lib.clamp(1, hunks.relocate(view.lnum, changes), count)
-        view.topline = lib.clamp(1, hunks.relocate(view.topline, changes), count)
+        view.lnum = lib.clamp(1, hunks.transform(changes, view.lnum), count)
+        view.topline = lib.clamp(1, hunks.transform(changes, view.topline), count)
 
         local line = unpack(vim.api.nvim_buf_get_lines(buf, view.lnum - 1, view.lnum, true))
         view.col = math.min(view.col, #line)
@@ -34,7 +34,7 @@ end
 
 local patch_lines = function(buf, lines)
   local before = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local changes = hunks.changes(before, lines)
+  local changes = hunks.diff(before, lines)
   ---@cast changes integer[][]
 
   vim.api.nvim_buf_call(buf, function()
@@ -54,7 +54,7 @@ end
 local apply = function(buf, remote)
   local local_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local base = snapshot.get(buf) or local_lines
-  local lines = hunks.merge(base, local_lines, remote)
+  local lines = hunks.three_way(base, local_lines, remote)
 
   local restore = hold_positions(buf)
   local changes = patch_lines(buf, lines)

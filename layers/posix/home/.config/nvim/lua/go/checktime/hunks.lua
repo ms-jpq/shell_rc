@@ -12,7 +12,7 @@ local slice = function(lines, start, finish)
   return vim.list_slice(lines, start + 1, finish)
 end
 
-M.relocate = function(row, hunks)
+M.transform = function(hunks, row)
   row = row - 1
   local shift = 0
 
@@ -38,7 +38,7 @@ local text = function(lines)
   return #lines == 0 and "" or table.concat(lines, lib.LF) .. lib.LF
 end
 
-M.changes = function(before, after)
+M.diff = function(before, after)
   return vim
     .iter(vim.text.diff(text(before), text(after), { result_type = "indices" }))
     :map(function(hunk)
@@ -64,95 +64,77 @@ local overlaps = function(change, start, finish)
   return change.start < finish and start < change.finish
 end
 
-local apply_changes = function(base, changes, start, finish)
-  local merged = slice(base, start, finish)
+M.apply = function(base, patches)
+  local lines = slice(base, 0, #base)
 
-  for change in vim.iter(changes):rev() do
-    local index = change.start - start
-
-    for _ = change.start, change.finish - 1 do
-      table.remove(merged, index + 1)
+  for patch in vim.iter(patches):rev() do
+    for _ = patch.start, patch.finish - 1 do
+      table.remove(lines, patch.start + 1)
     end
-    for line = #change.lines, 1, -1 do
-      table.insert(merged, index + 1, change.lines[line])
+    for index = #patch.lines, 1, -1 do
+      table.insert(lines, patch.start + 1, patch.lines[index])
     end
   end
 
-  return merged
+  return lines
 end
 
-local next_group = function(local_changes, remote_changes, local_i, remote_i)
-  local local_change = local_changes[local_i]
-  local remote_change = remote_changes[remote_i]
+local next_group = function(local_patches, remote_patches, local_i, remote_i)
+  local local_patch = local_patches[local_i]
+  local remote_patch = remote_patches[remote_i]
   local start =
-    math.min(local_change and local_change.start or math.huge, remote_change and remote_change.start or math.huge)
-  local group = { start = start, finish = start, local_changes = {}, remote_changes = {} }
+    math.min(local_patch and local_patch.start or math.huge, remote_patch and remote_patch.start or math.huge)
+  local group = { start = start, finish = start, local_patches = {}, remote_patches = {} }
 
-  local add = function(change, group_changes)
-    group.finish = math.max(group.finish, change.finish)
-    table.insert(group_changes, change)
+  local add = function(patch, patches)
+    group.finish = math.max(group.finish, patch.finish)
+    table.insert(patches, patch)
   end
 
-  local take = function(changes, index, group_changes)
-    local change = changes[index]
-    if change and overlaps(change, group.start, group.finish) then
-      add(change, group_changes)
+  local take = function(patches, index, group_patches)
+    local patch = patches[index]
+    if patch and overlaps(patch, group.start, group.finish) then
+      add(patch, group_patches)
       return index + 1
     end
     return index
   end
 
-  if local_change and local_change.start == start then
-    add(local_change, group.local_changes)
+  if local_patch and local_patch.start == start then
+    add(local_patch, group.local_patches)
     local_i = local_i + 1
   else
-    add(remote_change, group.remote_changes)
+    add(remote_patch, group.remote_patches)
     remote_i = remote_i + 1
   end
 
   while true do
     local before_local, before_remote = local_i, remote_i
-    local_i = take(local_changes, local_i, group.local_changes)
-    remote_i = take(remote_changes, remote_i, group.remote_changes)
+    local_i = take(local_patches, local_i, group.local_patches)
+    remote_i = take(remote_patches, remote_i, group.remote_patches)
     if local_i == before_local and remote_i == before_remote then
       return group, local_i, remote_i
     end
   end
 end
 
-local resolve_group = function(base, group)
-  if #group.local_changes == 0 then
-    return apply_changes(base, group.remote_changes, group.start, group.finish), false
-  elseif #group.remote_changes == 0 then
-    return apply_changes(base, group.local_changes, group.start, group.finish), false
+M.merge = function(local_patches, remote_patches)
+  local local_i, remote_i = 1, 1
+  local patches = {}
+
+  while local_patches[local_i] or remote_patches[remote_i] do
+    local group
+    group, local_i, remote_i = next_group(local_patches, remote_patches, local_i, remote_i)
+    vim.list_extend(patches, #group.remote_patches > 0 and group.remote_patches or group.local_patches)
   end
 
-  local local_lines = apply_changes(base, group.local_changes, group.start, group.finish)
-  local remote_lines = apply_changes(base, group.remote_changes, group.start, group.finish)
-  local same = vim.deep_equal(local_lines, remote_lines)
-  return same and local_lines or remote_lines, not same
+  return patches
 end
 
-M.merge = function(base, local_lines, remote_lines)
-  local local_changes = M.changes(base, local_lines)
-  local remote_changes = M.changes(base, remote_lines)
-  local local_i, remote_i = 1, 1
-  local row = 0
-  local merged = {}
-  local conflicted = false
-
-  while local_changes[local_i] or remote_changes[remote_i] do
-    local group
-    group, local_i, remote_i = next_group(local_changes, remote_changes, local_i, remote_i)
-    vim.list_extend(merged, slice(base, row, group.start))
-    local lines, conflict = resolve_group(base, group)
-    vim.list_extend(merged, lines)
-    conflicted = conflicted or conflict
-    row = group.finish
-  end
-
-  vim.list_extend(merged, slice(base, row, #base))
-  return merged, conflicted
+M.three_way = function(base, local_lines, remote_lines)
+  local local_patches = M.diff(base, local_lines)
+  local remote_patches = M.diff(base, remote_lines)
+  return M.apply(base, M.merge(local_patches, remote_patches))
 end
 
 return M
