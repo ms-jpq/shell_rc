@@ -80,8 +80,7 @@ M.apply = function(base, patches)
 end
 
 local next_group = function(local_patches, remote_patches, local_i, remote_i)
-  local local_patch = local_patches[local_i]
-  local remote_patch = remote_patches[remote_i]
+  local local_patch, remote_patch = local_patches[local_i], remote_patches[remote_i]
   local start =
     math.min(local_patch and local_patch.start or math.huge, remote_patch and remote_patch.start or math.huge)
   local group = { start = start, finish = start, local_patches = {}, remote_patches = {} }
@@ -125,7 +124,7 @@ M.merge = function(local_patches, remote_patches)
   while local_patches[local_i] or remote_patches[remote_i] do
     local group
     group, local_i, remote_i = next_group(local_patches, remote_patches, local_i, remote_i)
-    vim.list_extend(patches, #group.remote_patches > 0 and group.remote_patches or group.local_patches)
+    vim.list_extend(patches, #group.local_patches > 0 and group.local_patches or group.remote_patches)
   end
 
   return patches
