@@ -74,7 +74,7 @@ M.apply = function(buf, name)
   if not remote then
     return nil
   end
-  return apply(buf, remote), false
+  return apply(buf, remote)
 end
 
 M.buf_write_pre = function(buf, name)

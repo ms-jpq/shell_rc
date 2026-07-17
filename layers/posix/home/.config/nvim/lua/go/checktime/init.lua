@@ -42,8 +42,7 @@ do
 
     for buf, name in pairs(changes) do
       if vim.api.nvim_buf_is_valid(buf) then
-        local _, retry = reload.apply(buf, name)
-        if retry then
+        if reload.apply(buf, name) then
           queued[buf] = name
         end
       end
