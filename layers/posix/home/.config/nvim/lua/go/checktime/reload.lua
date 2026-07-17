@@ -212,24 +212,20 @@ local merge_value = function(base, local_value, remote_value)
   end
 end
 
-local preserve = function(name, state)
+local preserve = function(buf, name, state)
   if vim.fn.mkdir(RECOVERY_DIR, "p") == 0 and vim.fn.isdirectory(RECOVERY_DIR) == 0 then
     return nil
   end
 
-  local lines = vim.deepcopy(state.lines)
-  if state.fileformat == "dos" then
-    for index, line in pairs(lines) do
-      lines[index] = line .. "\r"
-    end
-  end
+  local linefeed = lib.buf_linefeed(buf)
+  local contents = table.concat(state.lines, linefeed)
   if state.endofline then
-    table.insert(lines, "")
+    contents = contents .. linefeed
   end
 
   local path =
     vim.fs.joinpath(RECOVERY_DIR, vim.fn.sha256(name) .. "-" .. vim.fn.sha256(tostring(vim.uv.hrtime())) .. ".txt")
-  local ok, ret = pcall(vim.fn.writefile, lines, path, "b")
+  local ok, ret = pcall(vim.fn.writefile, contents, path)
   return ok and ret == 0 and path or nil
 end
 
@@ -263,7 +259,7 @@ local apply = function(buf, name, remote)
   local endofline, endofline_conflict = merge_value(base.endofline, local_state.endofline, remote.endofline)
   local fileformat, fileformat_conflict = merge_value(base.fileformat, local_state.fileformat, remote.fileformat)
   if line_conflict or endofline_conflict or fileformat_conflict then
-    local path = preserve(name, local_state)
+    local path = preserve(buf, name, local_state)
     if not path then
       vim.notify("checktime: could not preserve local conflict", vim.log.levels.ERROR)
       return

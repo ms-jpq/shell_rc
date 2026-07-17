@@ -1,6 +1,5 @@
 local async = require "go.async"
 local lib = require "go.lib"
-local loop = require "go.checktime.loop"
 local reload = require "go.checktime.reload"
 local snapshot = require "go.checktime.snapshot"
 
@@ -16,16 +15,36 @@ vim.opt.autoread = false
 vim.opt.backup = true
 vim.opt.backupskip = ""
 
-local check = function(buf)
-  local args = buf and { tostring(buf) } or {}
-  args.mods = { silent = true, emsg_silent = true }
-  vim.cmd.checktime(args)
+local check_visible = function()
+  local checked = {}
+
+  for _, win in pairs(vim.api.nvim_list_wins()) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    if not checked[buf] then
+      checked[buf] = true
+      vim.cmd.checktime { tostring(buf), mods = { silent = true, emsg_silent = true } }
+    end
+  end
 end
 
 do
   local alive = lib.generation "checktime"
-  local interval = 199
-  local state = loop.new(interval)
+  local check_interval = 99
+  local queued = {}
+  local reload_changes = lib.throttle(300, function()
+    if not alive() then
+      return
+    end
+
+    local changes = queued
+    queued = {}
+
+    for buf, name in pairs(changes) do
+      if vim.api.nvim_buf_is_valid(buf) then
+        reload.apply(buf, name)
+      end
+    end
+  end)
 
   vim.api.nvim_create_autocmd("BufReadPost", {
     group = lib.group,
@@ -61,29 +80,22 @@ do
 
   async.run(function()
     while alive() do
-      async.sleep(interval)
-      check()
+      async.sleep(check_interval)
+      if alive() then
+        check_visible()
+      end
     end
   end)
 
   vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
     group = lib.group,
-    callback = async(function(args)
+    callback = function(args)
       vim.v.fcs_choice = ""
       if args.file == "" then
         return
       end
-      state.queue_change(args.buf, args.file)
-    end),
+      queued[args.buf] = args.file
+      reload_changes()
+    end,
   })
-
-  async.run(function()
-    for q in state.iter(alive) do
-      for buf, spec in pairs(q) do
-        if vim.api.nvim_buf_is_valid(buf) then
-          reload.apply(buf, spec.name)
-        end
-      end
-    end
-  end)
 end
