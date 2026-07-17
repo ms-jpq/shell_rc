@@ -1,7 +1,6 @@
 local M = {}
 
 local MAX_BYTES = 2 * 1024 * 1024
-local BASE = "__checktime_base"
 
 M.buffer = function(buf)
   return {
@@ -12,11 +11,11 @@ M.buffer = function(buf)
 end
 
 M.base = function(buf)
-  return vim.b[buf][BASE]
+  return vim.b[buf].__checktime_base__
 end
 
 M.save = function(buf)
-  vim.b[buf][BASE] = M.buffer(buf)
+  vim.b[buf].__checktime_base__ = M.buffer(buf)
 end
 
 M.read = function(name)

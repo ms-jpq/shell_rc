@@ -11,9 +11,7 @@ vim.opt.autowrite = false
 vim.opt.autowriteall = false
 vim.opt.autoread = false
 
--- noskip backup
-vim.opt.backup = true
-vim.opt.backupskip = ""
+vim.opt.backup = false
 
 local check_visible = function()
   local checked = {}
@@ -46,23 +44,21 @@ do
     end
   end)
 
-  vim.api.nvim_create_autocmd("BufReadPost", {
-    group = lib.group,
-    callback = function(args)
-      snapshot.save(args.buf)
-    end,
-  })
-
-  vim.api.nvim_create_autocmd("BufWritePre", {
+  vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     group = lib.group,
     callback = function(args)
       local name = vim.api.nvim_buf_get_name(args.buf)
       if name == "" then
         return
       end
-      if not reload.prepare_write(args.buf, name) then
-        error("checktime: refusing to write without a current file snapshot", 0)
-      end
+      reload.prepare_write(args.buf, name)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "BufReadPost" }, {
+    group = lib.group,
+    callback = function(args)
+      snapshot.save(args.buf)
     end,
   })
 
@@ -78,15 +74,6 @@ do
     end,
   })
 
-  async.run(function()
-    while alive() do
-      async.sleep(check_interval)
-      if alive() then
-        check_visible()
-      end
-    end
-  end)
-
   vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
     group = lib.group,
     callback = function(args)
@@ -98,4 +85,13 @@ do
       reload_changes()
     end,
   })
+
+  async.run(function()
+    while alive() do
+      async.sleep(check_interval)
+      if alive() then
+        check_visible()
+      end
+    end
+  end)
 end

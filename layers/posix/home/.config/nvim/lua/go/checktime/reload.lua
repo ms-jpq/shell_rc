@@ -261,10 +261,10 @@ local apply = function(buf, name, remote)
   if line_conflict or endofline_conflict or fileformat_conflict then
     local path = preserve(buf, name, local_state)
     if not path then
-      vim.notify("checktime: could not preserve local conflict", vim.log.levels.ERROR)
+      vim.notify("recovery failed", vim.log.levels.ERROR)
       return
     end
-    vim.notify("checktime: preserved local conflict at " .. path, vim.log.levels.WARN)
+    vim.notify("saved " .. path, vim.log.levels.WARN)
   end
 
   local restore = hold_positions(buf)
@@ -293,22 +293,23 @@ end
 
 M.prepare_write = function(buf, name)
   if not vim.uv.fs_stat(name) then
-    return snapshot.base(buf) == nil
+    if snapshot.base(buf) == nil then
+      return true
+    end
+    error("write cancelled", 0)
   end
 
   for _ = 1, MAX_WRITE_RETRIES do
     local remote = snapshot.read(name)
-    if not remote or apply(buf, name, remote) == nil then
-      return false
-    end
-
-    local current = snapshot.read(name)
-    if current and vim.deep_equal(remote, current) then
-      return true
+    if remote and apply(buf, name, remote) ~= nil then
+      local current = snapshot.read(name)
+      if current and vim.deep_equal(remote, current) then
+        return true
+      end
     end
   end
 
-  return false
+  error("write cancelled", 0)
 end
 
 return M
