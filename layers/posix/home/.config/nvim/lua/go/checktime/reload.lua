@@ -91,7 +91,7 @@ end
 
 local apply = function(buf, name, remote)
   local local_state = snapshot.buffer(buf)
-  local base = snapshot.base(buf) or local_state
+  local base = snapshot.get(buf) or local_state
   local lines, line_conflict = hunks.merge(base.lines, local_state.lines, remote.lines)
   local endofline, endofline_conflict = merge_value(base.endofline, local_state.endofline, remote.endofline)
   local fileformat, fileformat_conflict = merge_value(base.fileformat, local_state.fileformat, remote.fileformat)
@@ -114,7 +114,7 @@ local apply = function(buf, name, remote)
     or vim.bo[buf].fileformat ~= remote.fileformat
 
   if not vim.bo[buf].modified then
-    snapshot.save(buf)
+    snapshot.set(buf)
   end
 
   return vim.bo[buf].modified
@@ -128,9 +128,9 @@ M.apply = function(buf, name)
   return apply(buf, name, remote), false
 end
 
-M.prepare_write = function(buf, name)
+M.buf_write_pre = function(buf, name)
   if not vim.uv.fs_stat(name) then
-    return snapshot.base(buf) == nil
+    return snapshot.get(buf) == nil
   end
 
   for _ = 1, MAX_WRITE_RETRIES do

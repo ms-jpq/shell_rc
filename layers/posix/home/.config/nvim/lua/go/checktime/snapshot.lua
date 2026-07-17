@@ -22,11 +22,11 @@ M.buffer = function(buf)
   }
 end
 
-M.base = function(buf)
+M.get = function(buf)
   return vim.b[buf].__checktime_base__
 end
 
-M.save = function(buf)
+M.set = function(buf)
   vim.b[buf].__checktime_base__ = M.buffer(buf)
 end
 

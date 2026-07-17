@@ -60,16 +60,14 @@ do
       if name == "" then
         return
       end
-      if not reload.prepare_write(args.buf, name) then
-        error("write cancelled", 0)
-      end
+      reload.buf_write_pre(args.buf, name)
     end,
   })
 
   vim.api.nvim_create_autocmd({ "BufReadPost" }, {
     group = lib.group,
     callback = function(args)
-      snapshot.save(args.buf)
+      snapshot.set(args.buf)
     end,
   })
 
@@ -80,7 +78,7 @@ do
       if name ~= "" then
         reload.apply(args.buf, name)
       else
-        snapshot.save(args.buf)
+        snapshot.set(args.buf)
       end
     end,
   })
