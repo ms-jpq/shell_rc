@@ -7,14 +7,12 @@ local snapshot = require "go.checktime.snapshot"
 vim.opt.confirm = true
 
 -- auto save file
-vim.opt.autowrite = true
 vim.opt.autowriteall = true
 vim.opt.autoread = false
 
 -- no backup
 vim.opt.backup = false
 vim.opt.writebackup = false
-vim.opt.backupdir = ""
 
 local check_visible = function()
   local checked = {}
@@ -32,6 +30,7 @@ do
   local alive = lib.generation "checktime"
   local check_interval = 99
   local queued = {}
+
   local reload_changes = nil
   reload_changes = lib.throttle(check_interval, function()
     if not alive() then
@@ -78,7 +77,7 @@ do
     end,
   })
 
-  vim.api.nvim_create_autocmd("BufWritePost", {
+  vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     callback = function(args)
       local name = vim.api.nvim_buf_get_name(args.buf)
