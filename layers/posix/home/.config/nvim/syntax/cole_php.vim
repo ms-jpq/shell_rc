@@ -1,5 +1,3 @@
-silent! syntax clear ConcealNE
-
 syntax match phpReq '^\s*\zs\<include\>' conceal cchar=↓
 syntax match phpReq '^\s*\zs\<require\>' conceal cchar=↓
 
