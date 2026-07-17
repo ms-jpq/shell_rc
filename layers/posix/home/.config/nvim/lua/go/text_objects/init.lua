@@ -70,7 +70,7 @@ end
 M.hold_position = function()
   local win = vim.api.nvim_get_current_win()
   local buf = vim.api.nvim_win_get_buf(win)
-  local view = vim.fn.winsaveview()
+  local view = vim.api.nvim_win_call(win, vim.fn.winsaveview)
 
   return async(function()
     async.scheduled()
