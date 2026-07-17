@@ -1,9 +1,8 @@
 local hunks = require "go.checktime.hunks"
+local lib = require "go.lib"
 local snapshot = require "go.checktime.snapshot"
 
 local M = {}
-
-local MAX_WRITE_RETRIES = 3
 
 local hold_positions = function(buf)
   buf = buf == 0 and vim.api.nvim_get_current_buf() or buf
@@ -16,14 +15,11 @@ local hold_positions = function(buf)
 
   return function(changes)
     local count = vim.api.nvim_buf_line_count(buf)
-    local clamp = function(row)
-      return math.max(1, math.min(hunks.relocate(row, changes), count))
-    end
 
     for win, view in pairs(views) do
       if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
-        view.lnum = clamp(view.lnum)
-        view.topline = clamp(view.topline)
+        view.lnum = lib.clamp(1, hunks.relocate(view.lnum, changes), count)
+        view.topline = lib.clamp(1, hunks.relocate(view.topline, changes), count)
 
         local line = unpack(vim.api.nvim_buf_get_lines(buf, view.lnum - 1, view.lnum, true))
         view.col = math.min(view.col, #line)
@@ -41,12 +37,10 @@ local patch_lines = function(buf, lines)
   local changes = hunks.changes(before, lines)
   ---@cast changes integer[][]
 
-  if #changes > 0 then
-    vim.api.nvim_feedkeys(vim.keycode "i<C-g>u<Esc>", "nx", false)
-  end
-
   for index, diff_hunk in vim.iter(changes):rev():enumerate() do
-    if index > 1 then
+    if index == 1 then
+      vim.cmd.normal { args = { vim.keycode "i<C-g>u<Esc>" }, bang = true }
+    else
       vim.cmd.undojoin()
     end
     vim.api.nvim_buf_set_lines(buf, diff_hunk.start, diff_hunk.finish, true, diff_hunk.lines)
@@ -82,20 +76,9 @@ M.apply = function(buf, name)
 end
 
 M.buf_write_pre = function(buf, name)
-  if not vim.uv.fs_stat(name) then
-    return
-  end
-
-  for _ = 1, MAX_WRITE_RETRIES do
-    local remote = snapshot.read(name)
-    if not remote or apply(buf, remote) == nil then
-      return
-    end
-
-    local current = snapshot.read(name)
-    if current and vim.deep_equal(remote, current) then
-      return
-    end
+  local remote = snapshot.read(name)
+  if remote then
+    apply(buf, remote)
   end
 end
 

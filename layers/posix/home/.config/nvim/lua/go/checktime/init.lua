@@ -12,6 +12,8 @@ vim.opt.autowriteall = true
 vim.opt.autoread = false
 
 -- no backup
+vim.opt.backup = false
+vim.opt.writebackup = false
 vim.opt.backupdir = ""
 
 local check_visible = function()
@@ -53,6 +55,11 @@ do
     end
   end)
 
+  vim.api.nvim_create_autocmd({ "VimLeavePre", "FocusLost" }, {
+    group = lib.group,
+    command = [[silent! wall! ++p]],
+  })
+
   vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     group = lib.group,
     callback = function(args)
@@ -87,10 +94,11 @@ do
     group = lib.group,
     callback = function(args)
       vim.v.fcs_choice = ""
-      if args.file == "" then
+      local name = vim.api.nvim_buf_get_name(args.buf)
+      if name == "" then
         return
       end
-      queued[args.buf] = args.file
+      queued[args.buf] = name
       reload_changes()
     end,
   })

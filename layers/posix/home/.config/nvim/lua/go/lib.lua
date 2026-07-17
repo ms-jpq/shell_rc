@@ -9,6 +9,10 @@ M.HOME = vim.uv.os_homedir() or ""
 M.cfg = vim.fn.stdpath "config"
 M.LF = "\n"
 
+M.clamp = function(lo, self, hi)
+  return math.max(lo, math.min(self, hi))
+end
+
 do
   M.group = vim.api.nvim_create_augroup([[lv_go]], { clear = true })
 end

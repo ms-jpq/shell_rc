@@ -1,3 +1,5 @@
+local lib = require "go.lib"
+
 -- quit
 vim.keymap.set({ "n", "x" }, "Q", [[<nop>]])
 vim.keymap.set({ "n", "x" }, "QQ", [[<cmd>quitall!<cr>]])
@@ -89,7 +91,7 @@ end
 for key, val in pairs { ["<c-u>"] = "<up>", ["<c-d>"] = "<down>" } do
   vim.keymap.set({ "n", "x" }, key, function()
     local rel = math.floor(vim.fn.winheight(0) / 4)
-    return math.max(5, math.min(rel, 9)) .. "g" .. val .. "zz"
+    return lib.clamp(5, rel, 9) .. "g" .. val .. "zz"
   end, { expr = true, noremap = true })
 end
 
