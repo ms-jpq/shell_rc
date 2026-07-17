@@ -50,7 +50,7 @@ local patch_lines = function(buf, lines)
 end
 
 local apply = function(buf, remote)
-  local local_lines = snapshot.buffer(buf)
+  local local_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local base = snapshot.get(buf) or local_lines
   local lines = hunks.merge(base, local_lines, remote)
 
