@@ -7,8 +7,8 @@ local snapshot = require "go.checktime.snapshot"
 vim.opt.confirm = true
 
 -- auto save file
-vim.opt.autowrite = false
-vim.opt.autowriteall = false
+vim.opt.autowrite = true
+vim.opt.autowriteall = true
 vim.opt.autoread = false
 
 -- no backup
