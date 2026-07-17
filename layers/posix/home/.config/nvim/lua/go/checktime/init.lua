@@ -11,7 +11,8 @@ vim.opt.autowrite = false
 vim.opt.autowriteall = false
 vim.opt.autoread = false
 
-vim.opt.backup = false
+-- no backup
+vim.opt.backupdir = ""
 
 local check_visible = function()
   local checked = {}
