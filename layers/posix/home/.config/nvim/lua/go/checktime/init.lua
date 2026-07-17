@@ -60,7 +60,7 @@ do
             acc[buf] = name
           elseif reason == "conflict" or reason == "changed" then
             needs_wall = true
-            reload(buf, name)
+            reload.apply(buf, name)
           end
         end
       end

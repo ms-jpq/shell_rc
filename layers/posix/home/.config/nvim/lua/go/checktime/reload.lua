@@ -1,17 +1,8 @@
 local lib = require "go.lib"
 
-local MAX_RELOAD_BYTES = 2 * 1024 * 1024
+local M = {}
 
-local window_views = function(buf)
-  return coroutine.wrap(function()
-    for _, win in pairs(vim.api.nvim_list_wins()) do
-      if vim.api.nvim_win_get_buf(win) == buf then
-        local view = vim.api.nvim_win_call(win, vim.fn.winsaveview)
-        coroutine.yield { win = win, view = view }
-      end
-    end
-  end)
-end
+local MAX_RELOAD_BYTES = 2 * 1024 * 1024
 
 local hunk_span = function(hunk)
   local old_start, old_count, new_start, new_count = unpack(hunk)
@@ -43,21 +34,32 @@ local relocate_row = function(row, hunks)
   return row + shift
 end
 
-local restore_window_views = function(buf, views, hunks)
-  local count = vim.api.nvim_buf_line_count(buf)
-  for _, spec in pairs(views) do
-    local win = spec.win
-    if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
-      local view = vim.deepcopy(spec.view)
-      view.lnum = math.max(1, math.min(relocate_row(view.lnum, hunks), count))
-      view.topline = math.max(1, math.min(relocate_row(view.topline, hunks), count))
+local hold_positions = function(buf)
+  local views = vim
+    .iter(vim.api.nvim_list_wins())
+    :filter(function(win)
+      return vim.api.nvim_win_get_buf(win) == buf
+    end)
+    :map(function(win)
+      local view = vim.api.nvim_win_call(win, vim.fn.winsaveview)
+      return win, view
+    end)
+    :totable()
 
-      local line = unpack(vim.api.nvim_buf_get_lines(buf, view.lnum - 1, view.lnum, true))
-      view.col = math.min(view.col, #line)
+  return function(hunks)
+    local count = vim.api.nvim_buf_line_count(buf)
+    for win, view in pairs(views) do
+      if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
+        view.lnum = math.max(1, math.min(relocate_row(view.lnum, hunks), count))
+        view.topline = math.max(1, math.min(relocate_row(view.topline, hunks), count))
 
-      vim.api.nvim_win_call(win, function()
-        vim.fn.winrestview(view)
-      end)
+        local line = unpack(vim.api.nvim_buf_get_lines(buf, view.lnum - 1, view.lnum, true))
+        view.col = math.min(view.col, #line)
+
+        vim.api.nvim_win_call(win, function()
+          vim.fn.winrestview(view)
+        end)
+      end
     end
   end
 end
@@ -88,14 +90,16 @@ local patch_lines = function(buf, lines)
   return hunks
 end
 
-return function(buf, name)
+M.apply = function(buf, name)
   local lines = read(name)
   if not lines then
     return
   end
 
-  local views = vim.iter(window_views(buf)):totable()
+  local restore = hold_positions(buf)
   local hunks = patch_lines(buf, lines)
-  restore_window_views(buf, views, hunks)
+  restore(hunks)
   vim.bo[buf].modified = false
 end
+
+return M

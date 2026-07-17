@@ -10,7 +10,7 @@ M.new = function(timeout)
 
   local wake = function()
     if waiting then
-      waiting.resolve()
+      vim.schedule(waiting.resolve)
       waiting = nil
     end
   end
