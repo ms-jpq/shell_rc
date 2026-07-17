@@ -31,8 +31,7 @@ do
   local check_interval = 99
   local queued = {}
 
-  local reload_changes = nil
-  reload_changes = lib.throttle(check_interval, function()
+  local reload_changes = lib.throttle(check_interval, function()
     if not alive() then
       return
     end
@@ -42,14 +41,8 @@ do
 
     for buf, name in pairs(changes) do
       if vim.api.nvim_buf_is_valid(buf) then
-        if reload.apply(buf, name) then
-          queued[buf] = name
-        end
+        reload.apply(buf, name)
       end
-    end
-
-    if not vim.tbl_isempty(queued) then
-      reload_changes()
     end
   end)
 

@@ -51,7 +51,7 @@ local patch_lines = function(buf, lines)
   return changes
 end
 
-local apply = function(buf, remote)
+local reconcile = function(buf, remote)
   local local_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local base = snapshot.get(buf) or local_lines
   local lines = hunks.three_way(base, local_lines, remote)
@@ -74,14 +74,9 @@ M.apply = function(buf, name)
   if not remote then
     return nil
   end
-  return apply(buf, remote)
+  return reconcile(buf, remote)
 end
 
-M.buf_write_pre = function(buf, name)
-  local remote = snapshot.read(name)
-  if remote then
-    apply(buf, remote)
-  end
-end
+M.buf_write_pre = M.apply
 
 return M
