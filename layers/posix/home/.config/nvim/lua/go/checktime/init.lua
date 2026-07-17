@@ -53,6 +53,11 @@ do
     end
   end)
 
+  local sync_visible = function()
+    check_visible()
+    vim.cmd [[silent! wall! ++p]]
+  end
+
   vim.api.nvim_create_autocmd({ "VimLeavePre", "FocusLost" }, {
     group = lib.group,
     command = [[silent! wall! ++p]],
@@ -105,7 +110,7 @@ do
     while alive() do
       async.sleep(check_interval)
       if alive() then
-        check_visible()
+        sync_visible()
       end
     end
   end)
