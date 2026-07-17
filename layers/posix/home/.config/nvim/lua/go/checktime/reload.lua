@@ -35,7 +35,6 @@ end
 local patch_lines = function(buf, lines)
   local before = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local changes = hunks.diff(before, lines)
-  ---@cast changes integer[][]
 
   vim.api.nvim_buf_call(buf, function()
     for index, diff_hunk in vim.iter(changes):rev():enumerate() do

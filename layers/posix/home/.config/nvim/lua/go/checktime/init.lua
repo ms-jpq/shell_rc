@@ -80,8 +80,6 @@ do
       local name = vim.api.nvim_buf_get_name(args.buf)
       if name ~= "" then
         reload.apply(args.buf, name)
-      else
-        snapshot.set(args.buf)
       end
     end,
   })
