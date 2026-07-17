@@ -29,7 +29,8 @@ do
   local alive = lib.generation "checktime"
   local check_interval = 99
   local queued = {}
-  local reload_changes = lib.throttle(300, function()
+  local reload_changes = nil
+  reload_changes = lib.throttle(check_interval, function()
     if not alive() then
       return
     end
@@ -39,8 +40,15 @@ do
 
     for buf, name in pairs(changes) do
       if vim.api.nvim_buf_is_valid(buf) then
-        reload.apply(buf, name)
+        local _, retry = reload.apply(buf, name)
+        if retry then
+          queued[buf] = name
+        end
       end
+    end
+
+    if not vim.tbl_isempty(queued) then
+      reload_changes()
     end
   end)
 
@@ -51,7 +59,9 @@ do
       if name == "" then
         return
       end
-      reload.prepare_write(args.buf, name)
+      if not reload.prepare_write(args.buf, name) then
+        error("write cancelled", 0)
+      end
     end,
   })
 
