@@ -142,6 +142,7 @@ vim.api.nvim_create_autocmd({
 }, {
   group = lib.group,
   callback = lib.throttle(300, function()
+    async.scheduled()
     mk_session()
   end),
 })

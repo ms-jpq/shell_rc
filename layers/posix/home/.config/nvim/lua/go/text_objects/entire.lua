@@ -1,6 +1,7 @@
+local async = require "go.async"
 local to = require "go.text_objects"
 
-Go.op_entire = function(hold_pos)
+Go.op_entire = async(function(hold_pos)
   local restore = to.hold_position()
 
   local count = vim.api.nvim_buf_line_count(0)
@@ -8,9 +9,10 @@ Go.op_entire = function(hold_pos)
 
   to.set_visual_selection("V", 1, 0, count, #last_line)
   if hold_pos then
+    async.scheduled()
     restore()
   end
-end
+end)
 
 local cmd = function(hold)
   return [[<cmd>lua Go.op_entire(]] .. tostring(hold) .. [[)<cr>]]

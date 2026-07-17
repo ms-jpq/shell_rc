@@ -64,8 +64,10 @@ local STATE = {
   pending = 3,
 }
 M.throttle = function(delay, fn)
+  local wrapped = async(fn)
+
   local run = function(args)
-    M.report(fn, unpack(args))
+    M.report(wrapped, unpack(args))
   end
 
   local argv = {}

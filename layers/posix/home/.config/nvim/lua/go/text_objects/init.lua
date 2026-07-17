@@ -1,5 +1,3 @@
-local async = require "go.async"
-
 local M = {}
 
 do
@@ -72,9 +70,7 @@ M.hold_position = function()
   local buf = vim.api.nvim_win_get_buf(win)
   local view = vim.api.nvim_win_call(win, vim.fn.winsaveview)
 
-  return async(function()
-    async.scheduled()
-
+  return function()
     if
       not vim.api.nvim_win_is_valid(win)
       or not vim.api.nvim_buf_is_valid(buf)
@@ -86,7 +82,7 @@ M.hold_position = function()
     vim.api.nvim_win_call(win, function()
       vim.fn.winrestview(view)
     end)
-  end)
+  end
 end
 
 return M

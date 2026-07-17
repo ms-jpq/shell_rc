@@ -1,3 +1,4 @@
+local async = require "go.async"
 local to = require "go.text_objects"
 
 local iter_around_lines = function(is_inside, tabsize, row, init_indent, direction)
@@ -28,7 +29,7 @@ local iter_around_lines = function(is_inside, tabsize, row, init_indent, directi
   end
 end
 
-Go.op_indent = function(hold_pos, is_inside)
+Go.op_indent = async(function(hold_pos, is_inside)
   local tabsize = vim.bo.tabstop
   local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
   row = row - 1
@@ -54,9 +55,10 @@ Go.op_indent = function(hold_pos, is_inside)
   to.set_visual_selection("v", lo + 1, 0, hi + 1, #last, false)
 
   if hold_pos then
+    async.scheduled()
     restore()
   end
-end
+end)
 
 local cmd = function(hold, inside)
   return [[<cmd>lua Go.op_indent(]] .. tostring(hold) .. "," .. tostring(inside) .. [[)<cr>]]
