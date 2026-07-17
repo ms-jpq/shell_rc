@@ -59,8 +59,7 @@ do
           if reason == "deleted" then
             acc[buf] = name
           elseif reason == "conflict" or reason == "changed" then
-            needs_wall = true
-            reload.apply(buf, name)
+            needs_wall = reload.apply(buf, name) or needs_wall
           end
         end
       end

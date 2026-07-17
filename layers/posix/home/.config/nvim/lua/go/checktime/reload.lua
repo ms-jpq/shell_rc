@@ -44,7 +44,10 @@ local hold_positions = function(buf)
       local view = vim.api.nvim_win_call(win, vim.fn.winsaveview)
       return win, view
     end)
-    :totable()
+    :fold({}, function(acc, win, view)
+      acc[win] = view
+      return acc
+    end)
 
   return function(hunks)
     local count = vim.api.nvim_buf_line_count(buf)
@@ -100,6 +103,8 @@ M.apply = function(buf, name)
   local hunks = patch_lines(buf, lines)
   restore(hunks)
   vim.bo[buf].modified = false
+
+  return true
 end
 
 return M
