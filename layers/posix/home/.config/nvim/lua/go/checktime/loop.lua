@@ -4,38 +4,35 @@ local M = {}
 
 M.new = function(timeout)
   local queued, waiting = {}, nil
-  local needs_wall = false
 
   local state = {}
 
-  local wake = function()
-    if waiting then
-      vim.schedule(waiting.resolve)
+  local wake = function(waiting_for)
+    if waiting_for and waiting == waiting_for then
       waiting = nil
+      vim.schedule(waiting_for.resolve)
     end
   end
 
   local wait = function()
-    waiting = async.future()
-    vim.defer_fn(wake, timeout)
-    waiting.await()
+    local f = async.future()
+    waiting = f
+    vim.defer_fn(function()
+      wake(f)
+    end, timeout)
+    f.await()
   end
 
   local drain = function()
-    local q, wall = queued, needs_wall
-    queued, needs_wall = {}, false
+    local q = queued
+    queued = {}
 
-    return q, wall
+    return q
   end
 
-  state.queue_change = function(buf, name, reason)
-    queued[buf] = { name = name, reason = reason }
-    wake()
-  end
-
-  state.queue_wall = function()
-    needs_wall = true
-    wake()
+  state.queue_change = function(buf, name)
+    queued[buf] = { name = name }
+    wake(waiting)
   end
 
   state.iter = function(alive)
@@ -44,7 +41,7 @@ M.new = function(timeout)
         return nil
       end
 
-      if vim.tbl_isempty(queued) and not needs_wall then
+      if vim.tbl_isempty(queued) then
         wait()
       end
 
