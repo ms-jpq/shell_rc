@@ -130,22 +130,20 @@ end
 
 M.buf_write_pre = function(buf, name)
   if not vim.uv.fs_stat(name) then
-    return snapshot.get(buf) == nil
+    return
   end
 
   for _ = 1, MAX_WRITE_RETRIES do
     local remote = snapshot.read(name)
     if not remote or apply(buf, name, remote) == nil then
-      return false
+      return
     end
 
     local current = snapshot.read(name)
     if current and vim.deep_equal(remote, current) then
-      return true
+      return
     end
   end
-
-  return false
 end
 
 return M
