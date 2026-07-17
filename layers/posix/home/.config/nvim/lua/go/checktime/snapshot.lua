@@ -15,11 +15,7 @@ local same_version = function(before, after)
 end
 
 M.buffer = function(buf)
-  return {
-    lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true),
-    endofline = vim.bo[buf].endofline,
-    fileformat = vim.bo[buf].fileformat,
-  }
+  return vim.api.nvim_buf_get_lines(buf, 0, -1, true)
 end
 
 M.get = function(buf)
@@ -57,7 +53,7 @@ M.read = function(name)
     end
   end
 
-  return { lines = lines, endofline = endofline, fileformat = fileformat }
+  return lines
 end
 
 return M

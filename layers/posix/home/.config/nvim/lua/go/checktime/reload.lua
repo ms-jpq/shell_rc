@@ -1,11 +1,9 @@
 local hunks = require "go.checktime.hunks"
-local lib = require "go.lib"
 local snapshot = require "go.checktime.snapshot"
 
 local M = {}
 
 local MAX_WRITE_RETRIES = 3
-local RECOVERY_DIR = vim.fs.joinpath(vim.fn.stdpath "state", "checktime")
 
 local hold_positions = function(buf)
   buf = buf == 0 and vim.api.nvim_get_current_buf() or buf
@@ -38,38 +36,6 @@ local hold_positions = function(buf)
   end
 end
 
----@generic T
----@param base T
----@param local_value T
----@param remote_value T
----@return T, boolean
-local merge_value = function(base, local_value, remote_value)
-  if remote_value == base or local_value == remote_value then
-    return local_value, false
-  elseif local_value == base then
-    return remote_value, false
-  else
-    return remote_value, true
-  end
-end
-
-local preserve = function(buf, name, state)
-  if vim.fn.mkdir(RECOVERY_DIR, "p") == 0 and vim.fn.isdirectory(RECOVERY_DIR) == 0 then
-    return nil
-  end
-
-  local linefeed = lib.buf_linefeed(buf)
-  local contents = table.concat(state.lines, linefeed)
-  if state.endofline then
-    contents = contents .. linefeed
-  end
-
-  local path =
-    vim.fs.joinpath(RECOVERY_DIR, vim.fn.sha256(name) .. "-" .. vim.fn.sha256(tostring(vim.uv.hrtime())) .. ".txt")
-  local ok, ret = pcall(vim.fn.writefile, contents, path)
-  return ok and ret == 0 and path or nil
-end
-
 local patch_lines = function(buf, lines)
   local before = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local changes = hunks.changes(before, lines)
@@ -89,35 +55,22 @@ local patch_lines = function(buf, lines)
   return changes
 end
 
-local apply = function(buf, name, remote)
-  local local_state = snapshot.buffer(buf)
-  local base = snapshot.get(buf) or local_state
-  local lines, line_conflict = hunks.merge(base.lines, local_state.lines, remote.lines)
-  local endofline, endofline_conflict = merge_value(base.endofline, local_state.endofline, remote.endofline)
-  local fileformat, fileformat_conflict = merge_value(base.fileformat, local_state.fileformat, remote.fileformat)
-  if line_conflict or endofline_conflict or fileformat_conflict then
-    local path = preserve(buf, name, local_state)
-    if not path then
-      vim.notify("recovery failed", vim.log.levels.ERROR)
-      return
-    end
-    vim.notify("saved " .. path, vim.log.levels.WARN)
-  end
+local apply = function(buf, remote)
+  local local_lines = snapshot.buffer(buf)
+  local base = snapshot.get(buf) or local_lines
+  local lines = hunks.merge(base, local_lines, remote)
 
   local restore = hold_positions(buf)
   local changes = patch_lines(buf, lines)
   restore(changes)
-  vim.bo[buf].endofline = endofline
-  vim.bo[buf].fileformat = fileformat
-  vim.bo[buf].modified = not vim.deep_equal(lines, remote.lines)
-    or vim.bo[buf].endofline ~= remote.endofline
-    or vim.bo[buf].fileformat ~= remote.fileformat
+  local modified = not vim.deep_equal(lines, remote)
+  vim.bo[buf].modified = modified
 
-  if not vim.bo[buf].modified then
+  if not modified then
     snapshot.set(buf)
   end
 
-  return vim.bo[buf].modified
+  return modified
 end
 
 M.apply = function(buf, name)
@@ -125,7 +78,7 @@ M.apply = function(buf, name)
   if not remote then
     return nil, reason == "changing"
   end
-  return apply(buf, name, remote), false
+  return apply(buf, remote), false
 end
 
 M.buf_write_pre = function(buf, name)
@@ -135,7 +88,7 @@ M.buf_write_pre = function(buf, name)
 
   for _ = 1, MAX_WRITE_RETRIES do
     local remote = snapshot.read(name)
-    if not remote or apply(buf, name, remote) == nil then
+    if not remote or apply(buf, remote) == nil then
       return
     end
 
