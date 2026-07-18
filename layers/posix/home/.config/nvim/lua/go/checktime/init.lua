@@ -29,22 +29,6 @@ end
 do
   local alive = lib.generation "checktime"
   local check_interval = 99
-  local queued = {}
-
-  local reload_changes = lib.throttle(check_interval, function()
-    if not alive() then
-      return
-    end
-
-    local changes = queued
-    queued = {}
-
-    for buf, name in pairs(changes) do
-      if vim.api.nvim_buf_is_valid(buf) then
-        reload.apply(buf, name)
-      end
-    end
-  end)
 
   local sync_visible = function()
     check_visible()
@@ -63,14 +47,17 @@ do
       if name == "" then
         return
       end
-      reload.buf_write_pre(args.buf, name)
+      if not reload.apply(args.buf, name) then
+        error("checktime: " .. name, 0)
+      end
     end,
   })
 
   vim.api.nvim_create_autocmd({ "BufReadPost" }, {
     group = lib.group,
     callback = function(args)
-      snapshot.set(args.buf)
+      local lines = vim.api.nvim_buf_get_lines(args.buf, 0, -1, true)
+      snapshot.set(args.buf, lines)
     end,
   })
 
@@ -87,13 +74,8 @@ do
   vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
     group = lib.group,
     callback = function(args)
-      vim.v.fcs_choice = ""
       local name = vim.api.nvim_buf_get_name(args.buf)
-      if name == "" then
-        return
-      end
-      queued[args.buf] = name
-      reload_changes()
+      vim.v.fcs_choice = name ~= "" and reload.apply(args.buf, name) and "" or "ask"
     end,
   })
 

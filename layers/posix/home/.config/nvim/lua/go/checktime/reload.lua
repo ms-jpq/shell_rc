@@ -5,7 +5,6 @@ local snapshot = require "go.checktime.snapshot"
 local M = {}
 
 local hold_positions = function(buf)
-  buf = buf == 0 and vim.api.nvim_get_current_buf() or buf
   local views = vim.iter(vim.api.nvim_list_wins()):fold({}, function(acc, win)
     if vim.api.nvim_win_get_buf(win) == buf then
       acc[win] = vim.api.nvim_win_call(win, vim.fn.winsaveview)
@@ -50,32 +49,35 @@ local patch_lines = function(buf, lines)
   return changes
 end
 
+local active_cursor_row = function(buf)
+  local win = vim.api.nvim_get_current_win()
+  if vim.api.nvim_win_get_buf(win) ~= buf then
+    return nil
+  end
+
+  return unpack(vim.api.nvim_win_get_cursor(win))
+end
+
 local reconcile = function(buf, remote)
   local local_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local base = snapshot.get(buf) or local_lines
-  local lines = hunks.three_way(base, local_lines, remote)
 
   local restore = hold_positions(buf)
+  local lines = hunks.three_way(base, local_lines, remote, active_cursor_row(buf))
   local changes = patch_lines(buf, lines)
   restore(changes)
   local modified = not vim.deep_equal(lines, remote)
   vim.bo[buf].modified = modified
-
-  if not modified then
-    snapshot.set(buf)
-  end
-
-  return modified
+  snapshot.set(buf, remote)
+  return true
 end
 
 M.apply = function(buf, name)
   local remote = snapshot.read(name)
   if not remote then
-    return nil
+    return false
   end
   return reconcile(buf, remote)
 end
-
-M.buf_write_pre = M.apply
 
 return M

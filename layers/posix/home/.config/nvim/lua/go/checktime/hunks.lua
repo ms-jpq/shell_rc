@@ -38,6 +38,24 @@ local text = function(lines)
   return #lines == 0 and "" or table.concat(lines, lib.LF) .. lib.LF
 end
 
+local atomic = function(patch)
+  local old_count = patch.finish - patch.start
+  local count = math.max(old_count, #patch.lines)
+  local patches = {}
+
+  for index = 0, count - 1 do
+    local start = patch.start + math.min(index, old_count)
+    table.insert(patches, {
+      start = start,
+      finish = start + (index < old_count and 1 or 0),
+      lines = index < #patch.lines and { patch.lines[index + 1] } or {},
+      slot = index < old_count and nil or index - old_count,
+    })
+  end
+
+  return patches
+end
+
 M.diff = function(before, after)
   return vim
     .iter(vim.text.diff(text(before), text(after), { result_type = "indices" }))
@@ -50,21 +68,23 @@ M.diff = function(before, after)
         lines = slice(after, new_start - 1, new_start + new_count - 1),
       }
     end)
+    :map(atomic)
+    :flatten()
     :totable()
 end
 
-local overlaps = function(change, start, finish)
-  if change.start == change.finish and start == finish then
-    return change.start == start
-  elseif change.start == change.finish then
-    return start < change.start and change.start < finish
-  elseif start == finish then
-    return change.start < start and start < change.finish
+local overlaps = function(left, right)
+  if left.start == left.finish and right.start == right.finish then
+    return left.start == right.start and left.slot == right.slot
+  elseif left.start == left.finish then
+    return right.start < left.start and left.start < right.finish
+  elseif right.start == right.finish then
+    return left.start < right.start and right.start < left.finish
   end
-  return change.start < finish and start < change.finish
+  return left.start < right.finish and right.start < left.finish
 end
 
-M.apply = function(base, patches)
+local apply = function(base, patches)
   local lines = slice(base, 0, #base)
 
   for patch in vim.iter(patches):rev() do
@@ -81,25 +101,25 @@ end
 
 local next_group = function(local_patches, remote_patches, local_i, remote_i)
   local local_patch, remote_patch = local_patches[local_i], remote_patches[remote_i]
-  local start =
-    math.min(local_patch and local_patch.start or math.huge, remote_patch and remote_patch.start or math.huge)
-  local group = { start = start, finish = start, local_patches = {}, remote_patches = {} }
+  local group = { patches = {}, local_patches = {}, remote_patches = {} }
 
   local add = function(patch, patches)
-    group.finish = math.max(group.finish, patch.finish)
+    table.insert(group.patches, patch)
     table.insert(patches, patch)
   end
 
   local take = function(patches, index, group_patches)
     local patch = patches[index]
-    if patch and overlaps(patch, group.start, group.finish) then
+    if patch and vim.iter(group.patches):any(function(other)
+      return overlaps(patch, other)
+    end) then
       add(patch, group_patches)
       return index + 1
     end
     return index
   end
 
-  if local_patch and local_patch.start == start then
+  if local_patch and (not remote_patch or local_patch.start <= remote_patch.start) then
     add(local_patch, group.local_patches)
     local_i = local_i + 1
   else
@@ -117,23 +137,45 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   end
 end
 
-M.merge = function(local_patches, remote_patches)
+local merge = function(local_patches, remote_patches, protected)
   local local_i, remote_i = 1, 1
   local patches = {}
 
   while local_patches[local_i] or remote_patches[remote_i] do
     local group
     group, local_i, remote_i = next_group(local_patches, remote_patches, local_i, remote_i)
-    vim.list_extend(patches, #group.local_patches > 0 and group.local_patches or group.remote_patches)
+    local local_wins = #group.remote_patches == 0
+      or vim.iter(group.local_patches):any(function(patch)
+        return protected[patch]
+      end)
+    vim.list_extend(patches, local_wins and group.local_patches or group.remote_patches)
   end
 
   return patches
 end
 
-M.three_way = function(base, local_lines, remote_lines)
+local protect_cursor_line = function(patches, row)
+  local protected = {}
+  local shift = 0
+
+  for _, patch in ipairs(patches) do
+    local first = patch.start + shift + 1
+    local last = first + #patch.lines
+    if row and first <= row and row < last then
+      protected[patch] = true
+    end
+    shift = shift + #patch.lines - (patch.finish - patch.start)
+  end
+
+  return protected
+end
+
+M.three_way = function(base, local_lines, remote_lines, cursor_row)
   local local_patches = M.diff(base, local_lines)
   local remote_patches = M.diff(base, remote_lines)
-  return M.apply(base, M.merge(local_patches, remote_patches))
+  local protected = protect_cursor_line(local_patches, cursor_row)
+  local merged = merge(local_patches, remote_patches, protected)
+  return apply(base, merged)
 end
 
 return M

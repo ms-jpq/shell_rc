@@ -18,8 +18,8 @@ M.get = function(buf)
   return vim.b[buf].__checktime_base__
 end
 
-M.set = function(buf)
-  vim.b[buf].__checktime_base__ = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+M.set = function(buf, lines)
+  vim.b[buf].__checktime_base__ = lines
 end
 
 M.read = function(name)
