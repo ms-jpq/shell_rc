@@ -121,14 +121,11 @@ M.start = function()
     end,
   })
 
-  if vim.v.vim_did_enter == 1 then
-    watch_loaded()
-  else
-    vim.api.nvim_create_autocmd({ "VimEnter" }, {
-      group = lib.group,
-      callback = watch_loaded,
-    })
-  end
+  vim.api.nvim_create_autocmd({ "VimEnter" }, {
+    group = lib.group,
+    once = true,
+    callback = watch_loaded,
+  })
 
   watcher.take = function()
     for buf in pairs(polling) do
