@@ -97,8 +97,6 @@ M.start = function()
     if not directory then
       return
     end
-    remember(buf)
-
     local dir_watcher = start_uv_watcher(directory)
     if not dir_watcher then
       polling[buf] = true
@@ -112,6 +110,7 @@ M.start = function()
   local watch_loaded = function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) then
+        remember(buf)
         watch(buf)
       end
     end
@@ -143,6 +142,7 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost" }, {
     group = lib.group,
     callback = function(args)
+      remember(args.buf)
       watch(args.buf)
     end,
   })
@@ -150,8 +150,9 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = lib.group,
     pattern = "modifiable",
-    callback = function(args)
-      watch(args.buf)
+    callback = function()
+      local buf = vim.api.nvim_get_current_buf()
+      watch(buf)
     end,
   })
 

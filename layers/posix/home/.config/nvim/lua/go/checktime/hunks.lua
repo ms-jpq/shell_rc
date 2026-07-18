@@ -150,11 +150,25 @@ local protect_cursor_line = function(patches, row)
   return protected
 end
 
+local sort = function(patches)
+  table.sort(patches, function(left, right)
+    if left.start ~= right.start then
+      return left.start < right.start
+    end
+    local left_insert, right_insert = left.start == left.finish, right.start == right.finish
+    if left_insert ~= right_insert then
+      return left_insert
+    end
+    return (left.slot or 0) < (right.slot or 0)
+  end)
+end
+
 M.merge = function(base, local_lines, remote_lines, cursor_row)
   local local_patches = diff(base, local_lines)
   local remote_patches = diff(base, remote_lines)
   local protected = protect_cursor_line(local_patches, cursor_row)
   local merged = merge(local_patches, remote_patches, protected)
+  sort(merged)
   return apply(base, merged)
 end
 
