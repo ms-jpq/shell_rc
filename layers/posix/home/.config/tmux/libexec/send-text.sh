@@ -4,7 +4,7 @@ set -o pipefail
 
 PANE="$1"
 BUF="send-text-$$-$RANDOM"
-TM=(tmux -S "${TMUX_ROOT:-${TMUX%%,*}}")
+TM=(tmux -S "${__TMUX_ROOT_SOCKET__:-${TMUX%%,*}}")
 
 "${TM[@]}" load-buffer -b "$BUF" -- -
 

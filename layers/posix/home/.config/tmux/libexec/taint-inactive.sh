@@ -2,8 +2,8 @@
 
 set -o pipefail
 
-PANE="${1:-${TMUX_ROOT_PANE:-$TMUX_PANE}}"
-TM=(tmux -S "${2:-${TMUX_ROOT:-${TMUX%%,*}}}")
+PANE="${1:-${__TMUX_ROOT_PANE__:-$TMUX_PANE}}"
+TM=(tmux -S "${2:-${__TMUX_ROOT_SOCKET__:-${TMUX%%,*}}}")
 
 STATUS="$("${TM[@]}" display-message -t "$PANE" -p '#{session_active}#{window_active}#{pane_active}')"
 

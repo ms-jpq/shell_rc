@@ -6,8 +6,8 @@ local rand = string.gsub(vim.fn.tempname(), "/", "-")
 local ns = vim.api.nvim_create_namespace(rand)
 local send_text = vim.fs.joinpath(lib.cfg, "..", "tmux", "libexec", "send-text.sh")
 
-local socket = vim.env.TMUX_ROOT or string.match(vim.env.TMUX or "", "^[^,]+")
-local current_pane = vim.env.TMUX_ROOT_PANE or vim.env.TMUX_PANE
+local socket = vim.env.__TMUX_ROOT_SOCKET__ or string.match(vim.env.TMUX or "", "^[^,]+")
+local current_pane = vim.env.__TMUX_ROOT_PANE__ or vim.env.TMUX_PANE
 local cmd = { "tmux", "-S", socket }
 
 vim.api.nvim_create_user_command("REPLclear", function()

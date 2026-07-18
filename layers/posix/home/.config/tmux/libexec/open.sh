@@ -2,12 +2,12 @@
 
 set -o pipefail
 
-if ! [[ -v TMUX ]] && ! [[ -v TMUX_ROOT ]]; then
+if ! [[ -v TMUX ]] && ! [[ -v __TMUX_ROOT_SOCKET__ ]]; then
   exec -- "$@"
 fi
 
-TM=(tmux -S "${TMUX_ROOT:-${TMUX%%,*}}")
-T=(-t "${TMUX_ROOT_PANE:-${TMUX_PANE:-}}")
+TM=(tmux -S "${__TMUX_ROOT_SOCKET__:-${TMUX%%,*}}")
+T=(-t "${__TMUX_ROOT_PANE__:-${TMUX_PANE:-}}")
 
 PANES="$("${TM[@]}" display-message "${T[@]}" -p -- '#{window_panes}')"
 if ((PANES == 1)); then
