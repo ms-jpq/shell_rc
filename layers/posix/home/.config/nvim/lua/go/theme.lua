@@ -26,6 +26,7 @@ vim.opt.fillchars = [[eob: ]]
 vim.opt.laststatus = 3
 
 -- keep wrapped text indent
+vim.opt.linebreak = true
 vim.opt.breakindent = true
 vim.opt.showbreak = "↳"
 
