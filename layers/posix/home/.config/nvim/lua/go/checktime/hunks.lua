@@ -78,10 +78,6 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   local local_patch, remote_patch = local_patches[local_i], remote_patches[remote_i]
   local group = { local_patches = {}, remote_patches = {} }
 
-  local add = function(patch, patches)
-    table.insert(patches, patch)
-  end
-
   local overlaps_group = function(patch)
     return vim.iter(group.local_patches):any(function(other)
       return overlaps(patch, other)
@@ -93,17 +89,17 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   local take = function(patches, index, group_patches)
     local patch = patches[index]
     if patch and overlaps_group(patch) then
-      add(patch, group_patches)
+      table.insert(group_patches, patch)
       return index + 1
     end
     return index
   end
 
   if local_patch and (not remote_patch or local_patch.start <= remote_patch.start) then
-    add(local_patch, group.local_patches)
+    table.insert(group.local_patches, local_patch)
     local_i = local_i + 1
   else
-    add(remote_patch, group.remote_patches)
+    table.insert(group.remote_patches, remote_patch)
     remote_i = remote_i + 1
   end
 
@@ -117,7 +113,36 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   end
 end
 
-local merge = function(local_patches, remote_patches, protected)
+local shared_prefix = function(before_cursor, patches)
+  if before_cursor == "" then
+    return false
+  end
+
+  for _, patch in pairs(patches) do
+    for _, remote in pairs(patch.lines) do
+      if vim.startswith(remote, before_cursor) then
+        return true
+      end
+    end
+  end
+  return false
+end
+
+local append = function(local_patches, remote_patches)
+  local start, lines = 0, {}
+  for _, patch in pairs(local_patches) do
+    start = math.max(start, patch.finish)
+  end
+  for _, patch in pairs(remote_patches) do
+    vim.list_extend(lines, patch.lines)
+  end
+  if #lines == 0 then
+    return {}
+  end
+  return { { start = start, finish = start, lines = lines } }
+end
+
+local merge = function(local_patches, remote_patches, protected, before_cursor)
   local local_i, remote_i = 1, 1
   local patches = {}
 
@@ -129,6 +154,14 @@ local merge = function(local_patches, remote_patches, protected)
         return protected[patch]
       end)
     vim.list_extend(patches, local_wins and group.local_patches or group.remote_patches)
+    if
+      local_wins
+      and before_cursor
+      and #group.remote_patches > 0
+      and not shared_prefix(before_cursor, group.remote_patches)
+    then
+      vim.list_extend(patches, append(group.local_patches, group.remote_patches))
+    end
   end
 
   return patches
@@ -163,11 +196,13 @@ local sort = function(patches)
   end)
 end
 
-M.merge = function(base, local_lines, remote_lines, cursor_row)
+M.merge = function(base, local_lines, remote_lines, pos)
+  local row, col = unpack(pos)
   local local_patches = diff(base, local_lines)
   local remote_patches = diff(base, remote_lines)
-  local protected = protect_cursor_line(local_patches, cursor_row)
-  local merged = merge(local_patches, remote_patches, protected)
+  local protected = protect_cursor_line(local_patches, row)
+  local before_cursor = row and string.sub(local_lines[row], 1, col) or nil
+  local merged = merge(local_patches, remote_patches, protected, before_cursor)
   sort(merged)
   return apply(base, merged)
 end

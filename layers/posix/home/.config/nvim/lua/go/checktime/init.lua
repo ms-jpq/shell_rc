@@ -35,8 +35,8 @@ do
     local base = vim.b[buf][snapshot.BASE] or local_lines
 
     local win = vim.api.nvim_get_current_win()
-    local cursor_row = vim.api.nvim_win_get_buf(win) == buf and unpack(vim.api.nvim_win_get_cursor(win)) or nil
-    local lines = hunks.merge(base, local_lines, remote, cursor_row)
+    local pos = vim.api.nvim_win_get_buf(win) == buf and vim.api.nvim_win_get_cursor(win) or {}
+    local lines = hunks.merge(base, local_lines, remote, pos)
 
     hunks.replace(buf, lines)
 
