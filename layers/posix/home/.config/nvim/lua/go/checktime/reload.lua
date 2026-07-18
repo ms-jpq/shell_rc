@@ -33,12 +33,13 @@ end
 
 local patch_lines = function(buf, lines)
   local before = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local changes = hunks.diff(before, lines)
+  local deltas = hunks.diff(before, lines)
+  local len = #deltas
 
   vim.api.nvim_buf_call(buf, function()
-    for index, diff_hunk in vim.iter(changes):rev():enumerate() do
-      if index == 1 then
-        vim.cmd.normal { args = { vim.keycode "i<C-g>u<Esc>" }, bang = true }
+    for index, diff_hunk in vim.iter(deltas):rev():enumerate() do
+      if index == len then
+        vim.cmd [[let &undolevels=&undolevels]]
       else
         vim.cmd.undojoin()
       end
@@ -46,7 +47,7 @@ local patch_lines = function(buf, lines)
     end
   end)
 
-  return changes
+  return deltas
 end
 
 local active_cursor_row = function(buf)
@@ -66,15 +67,8 @@ M.reconcile = function(buf, remote)
   local lines = hunks.three_way(base, local_lines, remote, active_cursor_row(buf))
   local changes = patch_lines(buf, lines)
   restore(changes)
-  local modified = not vim.deep_equal(lines, remote)
-  vim.bo[buf].modified = modified
+  vim.bo[buf].modified = not vim.deep_equal(lines, remote)
   snapshot.set(buf, remote)
-  return true
-end
-
-M.from_file = function(buf, name)
-  local remote = snapshot.read(name)
-  return remote and M.reconcile(buf, remote) or false
 end
 
 return M

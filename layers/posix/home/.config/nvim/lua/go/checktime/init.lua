@@ -14,26 +14,22 @@ vim.opt.autoread = false
 vim.opt.backup = false
 vim.opt.writebackup = false
 
-local check_visible = function()
-  local checked = {}
+local remember = function(buf)
+  snapshot.set(buf, vim.api.nvim_buf_get_lines(buf, 0, -1, true))
+end
 
-  for _, win in pairs(vim.api.nvim_list_wins()) do
-    local buf = vim.api.nvim_win_get_buf(win)
-    if not checked[buf] then
-      checked[buf] = true
-      vim.cmd.checktime { tostring(buf), mods = { silent = true, emsg_silent = true } }
-    end
+for _, buf in pairs(vim.api.nvim_list_bufs()) do
+  if vim.api.nvim_buf_is_loaded(buf) then
+    remember(buf)
   end
 end
 
 do
   local alive = lib.generation "checktime"
   local check_interval = 99
-  local queued = {}
-  local scheduled = false
+  local blocked, queued = {}, {}
 
   local drain = function()
-    scheduled = false
     local changes = queued
     queued = {}
 
@@ -44,24 +40,34 @@ do
     end
   end
 
-  local enqueue = function(buf, remote)
-    queued[buf] = remote
-    if not scheduled then
-      scheduled = true
-      vim.schedule(drain)
-    end
-  end
-
-  local sync_visible = function()
-    check_visible()
-    if not next(queued) then
+  local sync = function()
+    vim.cmd.checktime { mods = { silent = true, emsg_silent = true } }
+    drain()
+    if not next(blocked) then
       vim.cmd [[silent! wall! ++p]]
     end
   end
 
   vim.api.nvim_create_autocmd({ "VimLeavePre", "FocusLost" }, {
     group = lib.group,
-    command = [[silent! wall! ++p]],
+    callback = sync,
+  })
+
+  vim.api.nvim_create_autocmd({ "BufWipeout" }, {
+    group = lib.group,
+    callback = function(args)
+      blocked[args.buf] = nil
+      queued[args.buf] = nil
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+    group = lib.group,
+    callback = function(args)
+      queued[args.buf] = nil
+      blocked[args.buf] = nil
+      remember(args.buf)
+    end,
   })
 
   vim.api.nvim_create_autocmd({ "BufWritePre" }, {
@@ -72,7 +78,8 @@ do
         return
       end
       queued[args.buf] = nil
-      if not reload.from_file(args.buf, name) then
+      if not vim.uv.fs_stat(name) then
+        blocked[args.buf] = true
         error("checktime: " .. name, 0)
       end
     end,
@@ -81,19 +88,7 @@ do
   vim.api.nvim_create_autocmd({ "BufReadPost" }, {
     group = lib.group,
     callback = function(args)
-      local lines = vim.api.nvim_buf_get_lines(args.buf, 0, -1, true)
-      snapshot.set(args.buf, lines)
-    end,
-  })
-
-  vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-    group = lib.group,
-    callback = function(args)
-      local name = vim.api.nvim_buf_get_name(args.buf)
-      if name ~= "" then
-        queued[args.buf] = nil
-        reload.from_file(args.buf, name)
-      end
+      remember(args.buf)
     end,
   })
 
@@ -104,7 +99,10 @@ do
       local remote = name ~= "" and snapshot.read(name)
       vim.v.fcs_choice = remote and "" or "ask"
       if remote then
-        enqueue(args.buf, remote)
+        blocked[args.buf] = nil
+        queued[args.buf] = remote
+      else
+        blocked[args.buf] = true
       end
     end,
   })
@@ -113,7 +111,7 @@ do
     while alive() do
       async.sleep(check_interval)
       if alive() then
-        sync_visible()
+        sync()
       end
     end
   end)
