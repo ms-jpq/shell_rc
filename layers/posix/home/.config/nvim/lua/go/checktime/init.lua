@@ -2,6 +2,7 @@ local async = require "go.async"
 local lib = require "go.lib"
 local reload = require "go.checktime.reload"
 local snapshot = require "go.checktime.snapshot"
+local watch = require "go.checktime.watch"
 
 -- failable options instead ask for intervention
 vim.opt.confirm = true
@@ -18,16 +19,25 @@ local remember = function(buf)
   snapshot.set(buf, vim.api.nvim_buf_get_lines(buf, 0, -1, true))
 end
 
-for _, buf in pairs(vim.api.nvim_list_bufs()) do
-  if vim.api.nvim_buf_is_loaded(buf) then
-    remember(buf)
-  end
-end
-
 do
   local alive = lib.generation "checktime"
   local check_interval = 99
   local blocked, queued = {}, {}
+  local watcher = watch.start()
+
+  local check = function(all)
+    if all then
+      local _ = watcher.take()
+      vim.cmd.checktime { mods = { silent = true, emsg_silent = true } }
+      return
+    end
+
+    for buf in pairs(watcher.take()) do
+      if vim.api.nvim_buf_is_valid(buf) then
+        vim.cmd.checktime { tostring(buf), mods = { silent = true, emsg_silent = true } }
+      end
+    end
+  end
 
   local drain = function()
     local changes = queued
@@ -40,17 +50,25 @@ do
     end
   end
 
-  local sync = function()
-    vim.cmd.checktime { mods = { silent = true, emsg_silent = true } }
+  local sync = function(all)
+    check(all)
     drain()
     if not next(blocked) then
       vim.cmd [[silent! wall! ++p]]
     end
   end
 
+  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) then
+      remember(buf)
+    end
+  end
+
   vim.api.nvim_create_autocmd({ "VimLeavePre", "FocusLost" }, {
     group = lib.group,
-    callback = sync,
+    callback = function()
+      sync(true)
+    end,
   })
 
   vim.api.nvim_create_autocmd({ "BufWipeout" }, {
