@@ -1,1 +1,1 @@
-vim.opt_local.formatoptions:append "r"
+vim.opt_local.formatoptions:append "ro"
