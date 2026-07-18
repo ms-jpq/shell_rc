@@ -32,12 +32,12 @@ uv_watcher.new = function(directory, changed)
   watcher.remove = function(buf)
     bufs[buf] = nil
     if next(bufs) then
-      return true
+      return false
     end
 
     handle:stop()
     handle:close()
-    return false
+    return true
   end
 
   return watcher
@@ -49,7 +49,7 @@ M.start = function()
   local dirty, polling = {}, {}
   local dir_watchers = {}
 
-  watcher.remember = function(buf, lines)
+  local remember = function(buf, lines)
     vim.b[buf][snapshot.BASE] = lines or vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   end
 
@@ -63,7 +63,7 @@ M.start = function()
       return
     end
 
-    if not dir_watcher.remove(buf) then
+    if dir_watcher.remove(buf) then
       dir_watchers[dir_watcher.directory] = nil
     end
   end
@@ -88,12 +88,16 @@ M.start = function()
   local watch = function(buf)
     unwatch(buf)
 
+    if not vim.bo[buf].modifiable then
+      return
+    end
+
     local name = vim.api.nvim_buf_get_name(buf)
     local directory = name ~= "" and vim.fs.dirname(name)
     if not directory then
       return
     end
-    watcher.remember(buf)
+    remember(buf)
 
     local dir_watcher = start_uv_watcher(directory)
     if not dir_watcher then
@@ -118,6 +122,12 @@ M.start = function()
       dirty[buf] = true
     end
 
+    for buf in pairs(dirty) do
+      if not vim.api.nvim_buf_is_valid(buf) or not vim.bo[buf].modifiable then
+        unwatch(buf)
+      end
+    end
+
     local changes = dirty
     dirty = {}
     return changes
@@ -130,8 +140,16 @@ M.start = function()
     end,
   })
 
-  vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost", "BufWritePost" }, {
+  vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost" }, {
     group = lib.group,
+    callback = function(args)
+      watch(args.buf)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "OptionSet" }, {
+    group = lib.group,
+    pattern = "modifiable",
     callback = function(args)
       watch(args.buf)
     end,
@@ -140,7 +158,7 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     callback = function(args)
-      watcher.remember(args.buf)
+      remember(args.buf)
     end,
   })
 

@@ -39,18 +39,22 @@ do
     vim.bo[buf].modified = not vim.deep_equal(lines, remote)
   end
 
+  local loop = function(buf)
+    if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable then
+      local name = vim.api.nvim_buf_get_name(buf)
+      local remote = name ~= "" and snapshot.read(buf)
+      if remote then
+        reconcile(buf, remote)
+      end
+    end
+  end
+
   async.run(function()
     while alive() do
       async.sleep(check_interval)
       if alive() then
         for buf in pairs(watcher.take()) do
-          if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-            local name = vim.api.nvim_buf_get_name(buf)
-            local remote = name ~= "" and snapshot.read(buf)
-            if remote then
-              reconcile(buf, remote)
-            end
-          end
+          lib.report(loop, buf)
         end
         vim.cmd [[silent! wall! ++p]]
       end
