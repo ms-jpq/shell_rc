@@ -113,27 +113,19 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   end
 end
 
-local shared_prefix = function(before_cursor, patches)
-  if before_cursor == "" then
-    return false
-  end
-
-  for _, patch in pairs(patches) do
-    for _, remote in pairs(patch.lines) do
-      if vim.startswith(remote, before_cursor) then
-        return true
-      end
-    end
-  end
-  return false
-end
-
-local append = function(local_patches, remote_patches)
+local append_remote = function(local_patches, remote_patches, before_cursor)
   local start, lines = 0, {}
   for _, patch in pairs(local_patches) do
     start = math.max(start, patch.finish)
   end
   for _, patch in pairs(remote_patches) do
+    if before_cursor ~= "" then
+      for _, remote in pairs(patch.lines) do
+        if vim.startswith(remote, before_cursor) then
+          return {}
+        end
+      end
+    end
     vim.list_extend(lines, patch.lines)
   end
   if #lines == 0 then
@@ -154,13 +146,8 @@ local merge = function(local_patches, remote_patches, protected, before_cursor)
         return protected[patch]
       end)
     vim.list_extend(patches, local_wins and group.local_patches or group.remote_patches)
-    if
-      local_wins
-      and before_cursor
-      and #group.remote_patches > 0
-      and not shared_prefix(before_cursor, group.remote_patches)
-    then
-      vim.list_extend(patches, append(group.local_patches, group.remote_patches))
+    if local_wins and #group.remote_patches > 0 then
+      vim.list_extend(patches, append_remote(group.local_patches, group.remote_patches, before_cursor))
     end
   end
 
