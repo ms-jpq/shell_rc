@@ -100,8 +100,8 @@ M.new = function()
     if watcher == nil then
       local bufs = {}
       local changed = function(filename)
-        for buf, path in pairs(bufs) do
-          if not filename or vim.fs.basename(path) == filename then
+        for buf, p in pairs(bufs) do
+          if not filename or vim.fs.basename(p) == filename then
             dirty[buf] = true
           end
         end
