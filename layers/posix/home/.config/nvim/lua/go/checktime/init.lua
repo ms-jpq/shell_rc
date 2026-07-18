@@ -15,51 +15,48 @@ vim.opt.autoread = false
 vim.opt.backup = false
 vim.opt.writebackup = false
 
-local remember = function(buf)
-  snapshot.set(buf, vim.api.nvim_buf_get_lines(buf, 0, -1, true))
-end
+vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
+  group = lib.group,
+  command = [[silent! wall! ++p]],
+})
 
 do
   local alive = lib.generation "checktime"
   local check_interval = 99
   local watcher = watch.start()
 
-  local blocked, queued = {}, {}
+  local blocked = {}
   local clear = function(buf)
     blocked[buf] = nil
-    queued[buf] = nil
   end
 
-  local check = function(all)
-    if all then
-      local _ = watcher.take()
-      vim.cmd.checktime { mods = { silent = true, emsg_silent = true } }
-      return
-    end
+  local remember = function(buf)
+    snapshot.set(buf, vim.api.nvim_buf_get_lines(buf, 0, -1, true))
+  end
 
+  local reconcile = function()
     for buf in pairs(watcher.take()) do
-      if vim.api.nvim_buf_is_valid(buf) then
-        vim.cmd.checktime { tostring(buf), mods = { silent = true, emsg_silent = true } }
+      if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+        local name = vim.api.nvim_buf_get_name(buf)
+        local remote = name ~= "" and snapshot.read(name)
+        if remote then
+          clear(buf)
+          reload.reconcile(buf, remote)
+        else
+          blocked[buf] = true
+        end
       end
     end
   end
 
-  local drain = function()
-    local changes = queued
-    queued = {}
-
-    for buf, remote in pairs(changes) do
-      if vim.api.nvim_buf_is_valid(buf) then
-        reload.reconcile(buf, remote)
-      end
-    end
+  local write = function()
+    vim.cmd [[wall! ++p]]
   end
 
-  local sync = function(all)
-    check(all)
-    drain()
+  local sync = function()
+    reconcile()
     if not next(blocked) then
-      vim.cmd [[silent! wall! ++p]]
+      write()
     end
   end
 
@@ -68,13 +65,6 @@ do
       remember(buf)
     end
   end
-
-  vim.api.nvim_create_autocmd({ "VimLeavePre", "FocusLost" }, {
-    group = lib.group,
-    callback = function()
-      sync(true)
-    end,
-  })
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
@@ -98,7 +88,6 @@ do
       if name == "" then
         return
       end
-      queued[args.buf] = nil
       if not vim.uv.fs_stat(name) then
         blocked[args.buf] = true
         error("checktime: " .. name, 0)
@@ -110,21 +99,6 @@ do
     group = lib.group,
     callback = function(args)
       remember(args.buf)
-    end,
-  })
-
-  vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
-    group = lib.group,
-    callback = function(args)
-      local name = vim.api.nvim_buf_get_name(args.buf)
-      local remote = name ~= "" and snapshot.read(name)
-      vim.v.fcs_choice = remote and "" or "ask"
-      if remote then
-        clear(args.buf)
-        queued[args.buf] = remote
-      else
-        blocked[args.buf] = true
-      end
     end,
   })
 
