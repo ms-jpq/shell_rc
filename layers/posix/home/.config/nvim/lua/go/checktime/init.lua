@@ -22,8 +22,13 @@ end
 do
   local alive = lib.generation "checktime"
   local check_interval = 99
-  local blocked, queued = {}, {}
   local watcher = watch.start()
+
+  local blocked, queued = {}, {}
+  local clear = function(buf)
+    blocked[buf] = nil
+    queued[buf] = nil
+  end
 
   local check = function(all)
     if all then
@@ -71,19 +76,17 @@ do
     end,
   })
 
-  vim.api.nvim_create_autocmd({ "BufWipeout" }, {
+  vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
     callback = function(args)
-      blocked[args.buf] = nil
-      queued[args.buf] = nil
+      clear(args.buf)
     end,
   })
 
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     callback = function(args)
-      queued[args.buf] = nil
-      blocked[args.buf] = nil
+      clear(args.buf)
       remember(args.buf)
     end,
   })
@@ -117,7 +120,7 @@ do
       local remote = name ~= "" and snapshot.read(name)
       vim.v.fcs_choice = remote and "" or "ask"
       if remote then
-        blocked[args.buf] = nil
+        clear(args.buf)
         queued[args.buf] = remote
       else
         blocked[args.buf] = true
