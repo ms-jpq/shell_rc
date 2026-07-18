@@ -49,6 +49,13 @@ do
     end
   end
 
+  vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
+    group = lib.group,
+    callback = function()
+      vim.v.fcs_choice = ""
+    end,
+  })
+
   async.run(function()
     while alive() do
       async.sleep(check_interval)
