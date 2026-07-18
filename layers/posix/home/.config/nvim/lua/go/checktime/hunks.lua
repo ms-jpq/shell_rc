@@ -3,42 +3,14 @@ local lib = require "go.lib"
 local M = {}
 
 local slice = function(lines, start, finish)
-  if start == finish then
-    return {}
-  end
-
-  ---@cast start integer
-  ---@cast finish integer
-  return vim.list_slice(lines, start + 1, finish)
-end
-
-M.transform = function(hunks, row)
-  row = row - 1
-  local shift = 0
-
-  for _, hunk in ipairs(hunks) do
-    local old_count = hunk.finish - hunk.start
-    local new_count = #hunk.lines
-
-    if row < hunk.start then
-      break
-    elseif old_count == 0 then
-      shift = shift + new_count
-    elseif row >= hunk.finish then
-      shift = shift + new_count - old_count
-    else
-      return hunk.start + shift + math.min(row - hunk.start, math.max(new_count - 1, 0)) + 1
-    end
-  end
-
-  return row + shift + 1
+  return { unpack(lines, start + 1, finish) }
 end
 
 local text = function(lines)
   return #lines == 0 and "" or table.concat(lines, lib.LF) .. lib.LF
 end
 
-local atomic = function(patch)
+local split = function(patch)
   local old_count = patch.finish - patch.start
   local count = math.max(old_count, #patch.lines)
   local patches = {}
@@ -56,7 +28,7 @@ local atomic = function(patch)
   return patches
 end
 
-M.diff = function(before, after)
+local diff = function(before, after)
   return vim
     .iter(vim.text.diff(text(before), text(after), { result_type = "indices" }))
     :map(function(hunk)
@@ -68,7 +40,7 @@ M.diff = function(before, after)
         lines = slice(after, new_start - 1, new_start + new_count - 1),
       }
     end)
-    :map(atomic)
+    :map(split)
     :flatten()
     :totable()
 end
@@ -101,18 +73,23 @@ end
 
 local next_group = function(local_patches, remote_patches, local_i, remote_i)
   local local_patch, remote_patch = local_patches[local_i], remote_patches[remote_i]
-  local group = { patches = {}, local_patches = {}, remote_patches = {} }
+  local group = { local_patches = {}, remote_patches = {} }
 
   local add = function(patch, patches)
-    table.insert(group.patches, patch)
     table.insert(patches, patch)
+  end
+
+  local overlaps_group = function(patch)
+    return vim.iter(group.local_patches):any(function(other)
+      return overlaps(patch, other)
+    end) or vim.iter(group.remote_patches):any(function(other)
+      return overlaps(patch, other)
+    end)
   end
 
   local take = function(patches, index, group_patches)
     local patch = patches[index]
-    if patch and vim.iter(group.patches):any(function(other)
-      return overlaps(patch, other)
-    end) then
+    if patch and overlaps_group(patch) then
       add(patch, group_patches)
       return index + 1
     end
@@ -170,12 +147,28 @@ local protect_cursor_line = function(patches, row)
   return protected
 end
 
-M.three_way = function(base, local_lines, remote_lines, cursor_row)
-  local local_patches = M.diff(base, local_lines)
-  local remote_patches = M.diff(base, remote_lines)
+M.merge = function(base, local_lines, remote_lines, cursor_row)
+  local local_patches = diff(base, local_lines)
+  local remote_patches = diff(base, remote_lines)
   local protected = protect_cursor_line(local_patches, cursor_row)
   local merged = merge(local_patches, remote_patches, protected)
   return apply(base, merged)
+end
+
+M.replace = function(buf, lines)
+  local before = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+  local patches = diff(before, lines)
+
+  vim.api.nvim_buf_call(buf, function()
+    for index, patch in vim.iter(patches):rev():enumerate() do
+      if index == #patches then
+        vim.cmd [[let &undolevels=&undolevels]]
+      else
+        vim.cmd.undojoin()
+      end
+      vim.api.nvim_buf_set_lines(buf, patch.start, patch.finish, true, patch.lines)
+    end
+  end)
 end
 
 return M

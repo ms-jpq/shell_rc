@@ -1,6 +1,6 @@
 local async = require "go.async"
+local hunks = require "go.checktime.hunks"
 local lib = require "go.lib"
-local reload = require "go.checktime.reload"
 local snapshot = require "go.checktime.snapshot"
 local watch = require "go.checktime.watch"
 
@@ -25,24 +25,34 @@ do
   local check_interval = 99
   local watcher = watch.start()
 
-  local reconcile = function()
-    for buf in pairs(watcher.take()) do
-      if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-        local name = vim.api.nvim_buf_get_name(buf)
-        local remote = name ~= "" and snapshot.read(name)
-        if remote then
-          reload.reconcile(buf, remote)
-        end
-      end
-    end
-    vim.cmd [[silent! wall! ++p]]
+  local reconcile = function(buf, remote)
+    local local_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+    local base = vim.b[buf][snapshot.BASE] or local_lines
+
+    local win = vim.api.nvim_get_current_win()
+    local cursor_row = vim.api.nvim_win_get_buf(win) == buf and unpack(vim.api.nvim_win_get_cursor(win)) or nil
+    local lines = hunks.merge(base, local_lines, remote, cursor_row)
+
+    hunks.replace(buf, lines)
+
+    vim.b[buf][snapshot.BASE] = remote
+    vim.bo[buf].modified = not vim.deep_equal(lines, remote)
   end
 
   async.run(function()
     while alive() do
       async.sleep(check_interval)
       if alive() then
-        reconcile()
+        for buf in pairs(watcher.take()) do
+          if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+            local name = vim.api.nvim_buf_get_name(buf)
+            local remote = name ~= "" and snapshot.read(name)
+            if remote then
+              reconcile(buf, remote)
+            end
+          end
+        end
+        vim.cmd [[silent! wall! ++p]]
       end
     end
   end)
