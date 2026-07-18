@@ -14,29 +14,25 @@ do
   lib.pack "theme"
 end
 
-vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  group = lib.group,
-  once = true,
-  callback = async(function()
-    local lsp_on = lib.pack "lsps"
-    if lsp_on then
-      lsp_on()
-    end
+lib.vim_enter(function()
+  local lsp_on = lib.pack "lsps"
+  if lsp_on then
+    lsp_on()
+  end
 
-    async.scheduled()
+  async.scheduled()
 
-    lib.pack "coq-nvim"
-    local globbed = vim.fn.globpath(opt, "*/plugin/*.{lua,vim}", true, true)
-    for _, file in pairs(globbed) do
-      vim.cmd.source(file)
-    end
+  lib.pack "coq-nvim"
+  local globbed = vim.fn.globpath(opt, "*/plugin/*.{lua,vim}", true, true)
+  for _, file in pairs(globbed) do
+    vim.cmd.source(file)
+  end
 
-    lib.pack "easyalign"
-    lib.pack "fzf"
-    lib.pack "gitsigns"
-    lib.pack "illuminate"
-    lib.pack "leap"
-    lib.pack "treesitter"
-    -- lib.report(require, "go.pack.coq-3p")
-  end),
-})
+  lib.pack "easyalign"
+  lib.pack "fzf"
+  lib.pack "gitsigns"
+  lib.pack "illuminate"
+  lib.pack "leap"
+  lib.pack "treesitter"
+  -- lib.report(require, "go.pack.coq-3p")
+end)

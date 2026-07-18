@@ -66,14 +66,10 @@ local netrw = function(args)
 end
 
 -- replace directory buffers with yazi
-vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  group = lib.group,
-  once = true,
-  callback = async(function()
-    async.scheduled()
-    vim.api.nvim_create_autocmd({ "BufEnter" }, { group = lib.group, callback = async(netrw) })
-  end),
-})
+lib.vim_enter(function()
+  async.scheduled()
+  vim.api.nvim_create_autocmd({ "BufEnter" }, { group = lib.group, callback = async(netrw) })
+end)
 
 vim.keymap.set(
   { "n" },

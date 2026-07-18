@@ -3,16 +3,12 @@ local lib = require "go.lib"
 vim.opt.tagfunc = "v:lua.vim.lsp.tagfunc"
 vim.opt.formatexpr = "v:lua.vim.lsp.formatexpr()"
 
-vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  group = lib.group,
-  once = true,
-  callback = function()
-    vim.lsp.inlay_hint.enable(true)
-    vim.lsp.inline_completion.enable(true)
-    vim.lsp.linked_editing_range.enable(true)
-    vim.lsp.semantic_tokens.enable(true)
-  end,
-})
+lib.vim_enter(function()
+  vim.lsp.inlay_hint.enable(true)
+  vim.lsp.inline_completion.enable(true)
+  vim.lsp.linked_editing_range.enable(true)
+  vim.lsp.semantic_tokens.enable(true)
+end)
 
 do
   local kind_hl = {

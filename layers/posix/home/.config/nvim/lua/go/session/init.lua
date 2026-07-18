@@ -156,12 +156,8 @@ vim.api.nvim_create_autocmd({ "QuitPre" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  group = lib.group,
-  once = true,
-  callback = async(function()
-    restore()
-    move_tabs(startup_cwd)
-    session_ready = true
-  end),
-})
+lib.vim_enter(function()
+  restore()
+  move_tabs(startup_cwd)
+  session_ready = true
+end)
