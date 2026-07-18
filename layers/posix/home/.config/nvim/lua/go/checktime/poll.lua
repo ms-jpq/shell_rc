@@ -11,8 +11,8 @@ d_watcher.new = function(path, changed)
     return nil
   end
 
-  local ok = handle:start(path, {}, function()
-    changed()
+  local ok = handle:start(path, {}, function(_, filename)
+    changed(filename)
   end)
   if not ok then
     handle:close()
@@ -76,9 +76,11 @@ M.new = function()
 
     if watcher == nil then
       local bufs = {}
-      local changed = function()
-        for buf in pairs(bufs) do
-          dirty[buf] = true
+      local changed = function(filename)
+        for buf, path in pairs(bufs) do
+          if not filename or vim.fs.basename(path) == filename then
+            dirty[buf] = true
+          end
         end
       end
       watcher = d_watcher.new(directory_key, changed)
@@ -97,9 +99,11 @@ M.new = function()
     watcher = entries[path]
     if watcher == nil then
       local bufs = {}
-      local changed = function()
-        for buf in pairs(bufs) do
-          dirty[buf] = true
+      local changed = function(filename)
+        for buf, path in pairs(bufs) do
+          if not filename or vim.fs.basename(path) == filename then
+            dirty[buf] = true
+          end
         end
       end
       watcher = f_watcher.new(path, changed)
@@ -120,7 +124,7 @@ M.new = function()
       return
     end
 
-    watcher.bufs[buf] = true
+    watcher.bufs[buf] = path
     watchers[buf] = watcher
   end
 
