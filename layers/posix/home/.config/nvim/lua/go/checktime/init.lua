@@ -29,10 +29,34 @@ end
 do
   local alive = lib.generation "checktime"
   local check_interval = 99
+  local queued = {}
+  local scheduled = false
+
+  local drain = function()
+    scheduled = false
+    local changes = queued
+    queued = {}
+
+    for buf, remote in pairs(changes) do
+      if vim.api.nvim_buf_is_valid(buf) then
+        reload.reconcile(buf, remote)
+      end
+    end
+  end
+
+  local enqueue = function(buf, remote)
+    queued[buf] = remote
+    if not scheduled then
+      scheduled = true
+      vim.schedule(drain)
+    end
+  end
 
   local sync_visible = function()
     check_visible()
-    vim.cmd [[silent! wall! ++p]]
+    if not next(queued) then
+      vim.cmd [[silent! wall! ++p]]
+    end
   end
 
   vim.api.nvim_create_autocmd({ "VimLeavePre", "FocusLost" }, {
@@ -47,7 +71,8 @@ do
       if name == "" then
         return
       end
-      if not reload.apply(args.buf, name) then
+      queued[args.buf] = nil
+      if not reload.from_file(args.buf, name) then
         error("checktime: " .. name, 0)
       end
     end,
@@ -66,7 +91,8 @@ do
     callback = function(args)
       local name = vim.api.nvim_buf_get_name(args.buf)
       if name ~= "" then
-        reload.apply(args.buf, name)
+        queued[args.buf] = nil
+        reload.from_file(args.buf, name)
       end
     end,
   })
@@ -75,7 +101,11 @@ do
     group = lib.group,
     callback = function(args)
       local name = vim.api.nvim_buf_get_name(args.buf)
-      vim.v.fcs_choice = name ~= "" and reload.apply(args.buf, name) and "" or "ask"
+      local remote = name ~= "" and snapshot.read(name)
+      vim.v.fcs_choice = remote and "" or "ask"
+      if remote then
+        enqueue(args.buf, remote)
+      end
     end,
   })
 

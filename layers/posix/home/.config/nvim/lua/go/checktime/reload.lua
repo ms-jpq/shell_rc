@@ -58,7 +58,7 @@ local active_cursor_row = function(buf)
   return unpack(vim.api.nvim_win_get_cursor(win))
 end
 
-local reconcile = function(buf, remote)
+M.reconcile = function(buf, remote)
   local local_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local base = snapshot.get(buf) or local_lines
 
@@ -72,12 +72,9 @@ local reconcile = function(buf, remote)
   return true
 end
 
-M.apply = function(buf, name)
+M.from_file = function(buf, name)
   local remote = snapshot.read(name)
-  if not remote then
-    return false
-  end
-  return reconcile(buf, remote)
+  return remote and M.reconcile(buf, remote) or false
 end
 
 return M
