@@ -16,7 +16,8 @@ local same_version = function(before, after)
     and before.ctime.nsec == after.ctime.nsec
 end
 
-M.read = function(name)
+M.read = function(buf)
+  local name = vim.api.nvim_buf_get_name(buf)
   local before = vim.uv.fs_stat(name)
   if not before then
     return nil
@@ -24,11 +25,21 @@ M.read = function(name)
     return nil
   end
 
-  local ok, lines = pcall(vim.fn.readfile, name, "b")
+  local ok, lines = pcall(vim.fn.readfile, name)
   if not ok then
     return nil
   elseif not same_version(before, vim.uv.fs_stat(name)) then
     return nil
+  end
+
+  local encoding = vim.bo[buf].fileencoding
+  if encoding ~= "" and encoding ~= vim.o.encoding then
+    lines = vim
+      .iter(lines)
+      :map(function(line)
+        return vim.fn.iconv(line, encoding, vim.o.encoding)
+      end)
+      :totable()
   end
 
   if lines[#lines] == "" then

@@ -46,7 +46,7 @@ do
         for buf in pairs(watcher.take()) do
           if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
             local name = vim.api.nvim_buf_get_name(buf)
-            local remote = name ~= "" and snapshot.read(name)
+            local remote = name ~= "" and snapshot.read(buf)
             if remote then
               reconcile(buf, remote)
             end
