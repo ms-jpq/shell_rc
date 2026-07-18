@@ -99,7 +99,15 @@ M.start = function()
     dir_watchers[buf] = dir_watcher
   end
 
-  vim.api.nvim_create_autocmd({ "BufWipeout" }, {
+  local watch_loaded = function()
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_loaded(buf) then
+        watch(buf)
+      end
+    end
+  end
+
+  vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
     callback = function(args)
       unwatch(args.buf)
@@ -113,16 +121,14 @@ M.start = function()
     end,
   })
 
-  vim.api.nvim_create_autocmd({ "VimEnter" }, {
-    group = lib.group,
-    callback = function()
-      for _, buf in pairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_loaded(buf) then
-          watch(buf)
-        end
-      end
-    end,
-  })
+  if vim.v.vim_did_enter == 1 then
+    watch_loaded()
+  else
+    vim.api.nvim_create_autocmd({ "VimEnter" }, {
+      group = lib.group,
+      callback = watch_loaded,
+    })
+  end
 
   watcher.take = function()
     for buf in pairs(polling) do
