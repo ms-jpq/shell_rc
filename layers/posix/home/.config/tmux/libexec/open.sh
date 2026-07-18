@@ -6,7 +6,8 @@ if ! [[ -v TMUX ]] && ! [[ -v __TMUX_ROOT_SOCKET__ ]]; then
   exec -- "$@"
 fi
 
-TM=(tmux -S "${__TMUX_ROOT_SOCKET__:-${TMUX%%,*}}")
+SOCKET="${__TMUX_ROOT_SOCKET__:-${TMUX%%,*}}"
+TM=(tmux -S "$SOCKET")
 T=(-t "${__TMUX_ROOT_PANE__:-${TMUX_PANE:-}}")
 
 PANES="$("${TM[@]}" display-message "${T[@]}" -p -- '#{window_panes}')"
@@ -30,4 +31,4 @@ else
   PANE="$("${ARGV[@]}" -- "$@")"
 fi
 
-exec -- "$HOME/.config/tmux/libexec/taint-inactive.sh" "$PANE"
+exec -- "$HOME/.config/tmux/libexec/taint-inactive.sh" "$PANE" "$SOCKET"
