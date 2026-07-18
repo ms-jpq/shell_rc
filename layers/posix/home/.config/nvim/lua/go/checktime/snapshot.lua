@@ -42,10 +42,6 @@ M.read = function(buf)
       :totable()
   end
 
-  if lines[#lines] == "" then
-    table.remove(lines)
-  end
-
   return lines
 end
 

@@ -3,7 +3,10 @@ local lib = require "go.lib"
 local M = {}
 
 local slice = function(lines, start, finish)
-  return { unpack(lines, start + 1, finish) }
+  if start == finish then
+    return {}
+  end
+  return vim.list_slice(lines, start + 1, finish)
 end
 
 local text = function(lines)

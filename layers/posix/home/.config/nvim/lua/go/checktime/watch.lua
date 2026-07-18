@@ -130,7 +130,7 @@ M.start = function()
     end,
   })
 
-  vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost" }, {
+  vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost", "BufWritePost" }, {
     group = lib.group,
     callback = function(args)
       watch(args.buf)
