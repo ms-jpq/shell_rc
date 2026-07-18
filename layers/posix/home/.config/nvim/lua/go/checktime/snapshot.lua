@@ -1,5 +1,7 @@
 local M = {}
 
+M.BASE = "__checktime_base__"
+
 local MAX_BYTES = 2 * 1024 * 1024
 
 local same_version = function(before, after)
@@ -12,14 +14,6 @@ local same_version = function(before, after)
     and before.mtime.nsec == after.mtime.nsec
     and before.ctime.sec == after.ctime.sec
     and before.ctime.nsec == after.ctime.nsec
-end
-
-M.get = function(buf)
-  return vim.b[buf].__checktime_base__
-end
-
-M.set = function(buf, lines)
-  vim.b[buf].__checktime_base__ = lines
 end
 
 M.read = function(name)

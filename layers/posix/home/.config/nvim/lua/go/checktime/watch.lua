@@ -1,4 +1,5 @@
 local lib = require "go.lib"
+local snapshot = require "go.checktime.snapshot"
 
 local M = {}
 
@@ -48,6 +49,10 @@ M.start = function()
   local dirty, polling = {}, {}
   local dir_watchers = {}
 
+  watcher.remember = function(buf, lines)
+    vim.b[buf][snapshot.BASE] = lines or vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+  end
+
   local unwatch = function(buf)
     dirty[buf] = nil
     polling[buf] = nil
@@ -88,6 +93,7 @@ M.start = function()
     if not directory then
       return
     end
+    watcher.remember(buf)
 
     local dir_watcher = start_uv_watcher(directory)
     if not dir_watcher then
@@ -107,6 +113,16 @@ M.start = function()
     end
   end
 
+  watcher.take = function()
+    for buf in pairs(polling) do
+      dirty[buf] = true
+    end
+
+    local changes = dirty
+    dirty = {}
+    return changes
+  end
+
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
     callback = function(args)
@@ -121,21 +137,18 @@ M.start = function()
     end,
   })
 
+  vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+    group = lib.group,
+    callback = function(args)
+      watcher.remember(args.buf)
+    end,
+  })
+
   vim.api.nvim_create_autocmd({ "VimEnter" }, {
     group = lib.group,
     once = true,
     callback = watch_loaded,
   })
-
-  watcher.take = function()
-    for buf in pairs(polling) do
-      dirty[buf] = true
-    end
-
-    local changes = dirty
-    dirty = {}
-    return changes
-  end
 
   return watcher
 end

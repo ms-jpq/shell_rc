@@ -61,14 +61,14 @@ end
 
 M.reconcile = function(buf, remote)
   local local_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local base = snapshot.get(buf) or local_lines
+  local base = vim.b[buf][snapshot.BASE] or local_lines
 
   local restore = hold_positions(buf)
   local lines = hunks.three_way(base, local_lines, remote, active_cursor_row(buf))
   local changes = patch_lines(buf, lines)
   restore(changes)
   vim.bo[buf].modified = not vim.deep_equal(lines, remote)
-  snapshot.set(buf, remote)
+  vim.b[buf][snapshot.BASE] = remote
 end
 
 return M
