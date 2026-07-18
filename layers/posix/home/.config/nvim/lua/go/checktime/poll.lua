@@ -128,6 +128,12 @@ M.new = function()
     watchers[buf] = watcher
   end
 
+  w.dirty_all = function()
+    for buf in pairs(watchers) do
+      dirty[buf] = true
+    end
+  end
+
   w.take = function()
     local changes = dirty
     dirty = {}

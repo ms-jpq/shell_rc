@@ -25,6 +25,11 @@ do
   local check_interval = 99
   local watcher = watch.start()
 
+  vim.api.nvim_create_autocmd({ "FocusGained" }, {
+    group = lib.group,
+    callback = watcher.dirty_all,
+  })
+
   local reconcile = function(buf, remote)
     local local_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
     local base = vim.b[buf][snapshot.BASE] or local_lines

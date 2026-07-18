@@ -5,8 +5,9 @@ local snapshot = require "go.checktime.snapshot"
 local M = {}
 
 M.start = function()
-  local watcher = {}
   local files = poll.new()
+
+  local watcher = { dirty_all = files.dirty_all }
 
   local remember = function(buf, lines)
     vim.b[buf][snapshot.BASE] = lines or vim.api.nvim_buf_get_lines(buf, 0, -1, true)
