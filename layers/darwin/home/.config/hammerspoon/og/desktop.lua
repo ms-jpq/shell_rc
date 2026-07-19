@@ -13,13 +13,15 @@ end
 
 local new_desktop = function(screen)
   return hs.webview
-    .new(screen:fullFrame(), { privateBrowsing = true })
-    :windowStyle({})
-    :shadow(false)
-    :behaviorAsLabels({ "canJoinAllSpaces", "stationary" })
+    .new(screen:fullFrame(), {
+      allowsAirPlay = false,
+      privateBrowsing = true,
+    })
+    :behaviorAsLabels({ "stationary", "canJoinAllSpaces" })
     :url(URL .. "?reload=" .. hs.timer.secondsSinceEpoch())
-    :show()
+    :transparent(true)
     :sendToBack()
+    :show()
 end
 
 local maintain_desktops = function()
