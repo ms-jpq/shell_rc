@@ -208,7 +208,7 @@ M.merge = function(base, local_lines, remote_lines, pos)
   return apply(base, merged)
 end
 
-M.replace = function(buf, lines)
+M.replace = function(buf, lines, mark)
   local before = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local patches = diff(before, lines)
 
@@ -220,6 +220,9 @@ M.replace = function(buf, lines)
         vim.cmd.undojoin()
       end
       vim.api.nvim_buf_set_lines(buf, patch.start, patch.finish, true, patch.lines)
+      if #patch.lines > 0 then
+        mark(patch.start, patch.start + #patch.lines)
+      end
     end
   end)
 end

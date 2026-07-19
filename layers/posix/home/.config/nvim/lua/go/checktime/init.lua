@@ -22,13 +22,21 @@ vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
 
 do
   local alive = lib.generation "checktime"
-  local check_interval = 99
+  local check_interval, flash_span = 99, 888
+  local ns = vim.api.nvim_create_namespace "go.checktime"
   local watcher = watch.start()
 
   vim.api.nvim_create_autocmd({ "FocusGained" }, {
     group = lib.group,
     callback = watcher.dirty_all,
   })
+
+  local flash = function(buf, lines)
+    vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+    hunks.replace(buf, lines, function(start, finish)
+      vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish, 0 }, { timeout = flash_span })
+    end)
+  end
 
   local reconcile = function(buf, remote)
     local local_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
@@ -38,7 +46,9 @@ do
     local pos = vim.api.nvim_win_get_buf(win) == buf and vim.api.nvim_win_get_cursor(win) or {}
     local lines = hunks.merge(base, local_lines, remote, pos)
 
-    hunks.replace(buf, lines)
+    if not vim.deep_equal(lines, local_lines) then
+      flash(buf, lines)
+    end
 
     vim.b[buf][snapshot.BASE] = remote
     vim.bo[buf].modified = not vim.deep_equal(lines, remote)

@@ -134,25 +134,16 @@ local seek = function(buf, match, row, direction)
 end
 
 local highlight = function(buf, lo, hi, fn)
-  lib.scope(function(defer)
-    async.scheduled()
-    if not vim.api.nvim_buf_is_valid(buf) then
-      return
-    end
+  async.scheduled()
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return
+  end
 
-    defer(function()
-      if vim.api.nvim_buf_is_valid(buf) then
-        vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-      end
-    end)
-
-    hi = math.max(0, hi - 1)
-    local line = unpack(vim.api.nvim_buf_get_lines(buf, hi, hi + 1, true))
-    vim.hl.range(buf, ns, "HighlightedyankRegion", { lo, 0 }, { hi, #line }, { inclusive = false })
-
-    fn()
-    async.sleep(66)
-  end)
+  hi = math.max(0, hi - 1)
+  local line = unpack(vim.api.nvim_buf_get_lines(buf, hi, hi + 1, true))
+  vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+  vim.hl.range(buf, ns, "HighlightedyankRegion", { lo, 0 }, { hi, #line }, { inclusive = false, timeout = 66 })
+  fn()
 end
 
 local repl = function()
