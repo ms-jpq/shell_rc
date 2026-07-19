@@ -2,5 +2,5 @@
 
 set -o pipefail
 
-COLUMNS=${COLUMNS:-"$(tput cols)"}
+COLUMNS=${COLUMNS:-"$(stty size < /dev/tty | cut -d ' ' -f 2)"}
 exec -- catimg -w $((COLUMNS * 2 - 2)) -

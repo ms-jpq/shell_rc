@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-COLUMNS=${COLUMNS:-"$(tput cols)"}
+COLUMNS=${COLUMNS:-"$(stty size < /dev/tty | cut -d ' ' -f 2)"}
 
 if [[ -v AERC_MIME_TYPE ]]; then
   MAX=128
