@@ -121,7 +121,7 @@ local append_remote = function(local_patches, remote_patches, before_cursor)
   for _, patch in ipairs(remote_patches) do
     if before_cursor ~= "" then
       for _, remote in ipairs(patch.lines) do
-        if vim.startswith(remote, before_cursor) then
+        if vim.startswith(remote, before_cursor) or (remote ~= "" and vim.startswith(before_cursor, remote)) then
           return {}
         end
       end
