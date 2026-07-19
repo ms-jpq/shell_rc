@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8" />
+<style>
+  html,
+  body,
+  iframe {
+    border: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+  }
+</style>
+<iframe
+  id="video"
+  allow="autoplay; encrypted-media; picture-in-picture"
+  allowfullscreen
+  referrerpolicy="strict-origin-when-cross-origin"
+>
+</iframe>
+<script>
+  fetch("videos.json", { cache: "no-store" })
+    .then((response) => response.json())
+    .then((videos) => {
+      const video = videos[Math.floor(Math.random() * videos.length)]
+      if (!video) {
+        return
+      }
+
+      const url = new URL(video)
+      const playlist =
+        url.hostname === "youtu.be"
+          ? url.pathname.slice(1)
+          : url.searchParams.get("v") ||
+            url.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/)?.[1]
+
+      if (playlist) {
+        const params = new URLSearchParams({
+          autoplay: "1",
+          loop: "1",
+          mute: "1",
+          playlist,
+          playsinline: "1",
+          rel: "0",
+        })
+        document.querySelector("#video").src =
+          `https://www.youtube.com/embed/?${params}`
+      }
+    })
+</script>

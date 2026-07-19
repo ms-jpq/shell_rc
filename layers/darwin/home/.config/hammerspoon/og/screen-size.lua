@@ -14,7 +14,7 @@ local main_screen = function()
 end
 
 M.init = function()
-  _G.screenWatcher = hs.screen.watcher.new(main_screen):start()
+  _G.screen_watcher = hs.screen.watcher.new(main_screen):start()
   main_screen()
 end
 

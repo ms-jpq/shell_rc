@@ -15,7 +15,7 @@ local tick = function()
 end
 
 M.init = function()
-  _G.brightnessTimer = hs.timer.doEvery(1, tick):start()
+  _G.brightness_timer = hs.timer.doEvery(1, tick):start()
 end
 
 return M

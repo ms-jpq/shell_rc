@@ -44,7 +44,7 @@ local on_wifi = function(_, event)
 end
 
 M.init = function()
-  _G.wifiWatcher = hs.wifi.watcher.new(on_wifi):start()
+  _G.wifi_watcher = hs.wifi.watcher.new(on_wifi):start()
 end
 
 return M

@@ -87,8 +87,8 @@ local edit_in_kitty = lib.lock(function(unlock)
 end, show_edit_kitty)
 
 M.init = function()
-  _G.quakeHotkey = hs.hotkey.bind({ "cmd", "shift" }, "u", quake)
-  _G.editHotkey = hs.hotkey.bind({ "cmd", "shift" }, "e", edit_in_kitty)
+  _G.quake_hotkey = hs.hotkey.bind({ "cmd", "shift" }, "u", quake)
+  _G.edit_hotkey = hs.hotkey.bind({ "cmd", "shift" }, "e", edit_in_kitty)
 end
 
 return M
