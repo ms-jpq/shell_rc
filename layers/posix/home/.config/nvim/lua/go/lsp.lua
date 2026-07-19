@@ -1,9 +1,10 @@
+local autocmd = require "go.autocmd"
 local lib = require "go.lib"
 
 vim.opt.tagfunc = "v:lua.vim.lsp.tagfunc"
 vim.opt.formatexpr = "v:lua.vim.lsp.formatexpr()"
 
-lib.vim_enter(function()
+autocmd.vim_enter(function()
   vim.lsp.inlay_hint.enable(true)
   vim.lsp.inline_completion.enable(true)
   vim.lsp.linked_editing_range.enable(true)

@@ -1,4 +1,5 @@
 local async = require "go.async"
+local autocmd = require "go.autocmd"
 local lib = require "go.lib"
 local scope = require "go.session.scope"
 
@@ -156,7 +157,7 @@ vim.api.nvim_create_autocmd({ "QuitPre" }, {
   end,
 })
 
-lib.vim_enter(function()
+autocmd.vim_enter(function()
   restore()
   move_tabs(startup_cwd)
   session_ready = true

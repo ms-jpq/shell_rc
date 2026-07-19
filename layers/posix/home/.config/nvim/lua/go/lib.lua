@@ -17,19 +17,6 @@ do
   M.group = vim.api.nvim_create_augroup([[lv_go]], { clear = true })
 end
 
-M.vim_enter = function(fn)
-  local callback = async(fn)
-  if vim.v.vim_did_enter == 1 then
-    callback()
-  else
-    vim.api.nvim_create_autocmd({ "VimEnter" }, {
-      group = M.group,
-      once = true,
-      callback = callback,
-    })
-  end
-end
-
 M.is_win = vim.fn.has [[win64]] == 1
   or vim.fn.has [[win64unix]] == 1
   or vim.fn.has [[win32]] == 1

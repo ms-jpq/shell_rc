@@ -15,8 +15,5 @@ do
 end
 
 do
-  vim.cmd.colorscheme [[iceberg]]
-
-  -- theme
-  vim.cmd.source(vim.fs.joinpath(lib.cfg, "plugin", "theme.vim"))
+  vim.cmd.colorscheme [[icefrog]]
 end

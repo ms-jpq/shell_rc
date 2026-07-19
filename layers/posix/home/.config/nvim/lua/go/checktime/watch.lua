@@ -1,3 +1,4 @@
+local autocmd = require "go.autocmd"
 local lib = require "go.lib"
 local poll = require "go.checktime.poll"
 local snapshot = require "go.checktime.snapshot"
@@ -81,7 +82,7 @@ M.start = function()
     end,
   })
 
-  lib.vim_enter(function()
+  autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) then
         remember(buf)

@@ -1,7 +1,8 @@
 local async = require "go.async"
+local autocmd = require "go.autocmd"
 local lib = require "go.lib"
 
-lib.vim_enter(function()
+autocmd.vim_enter(function()
   async.scheduled()
   vim.api.nvim_create_autocmd({ "TermOpen" }, { group = lib.group, command = [[startinsert]] })
 end)

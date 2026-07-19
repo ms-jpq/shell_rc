@@ -1,4 +1,5 @@
 local async = require "go.async"
+local autocmd = require "go.autocmd"
 local lib = require "go.lib"
 
 local termstart = async.wrap(function(buf, cmd, cb)
@@ -58,15 +59,15 @@ local netrw = function(args)
       return
     end
 
-    vim.opt.cursorline = false
-    vim.opt.cursorcolumn = false
+    vim.wo[win].cursorline = false
+    vim.wo[win].cursorcolumn = false
     spawn_yazi(args.buf, name)
-    vim.opt.cursorline = true
+    vim.wo[win].cursorline = true
   end
 end
 
 -- replace directory buffers with yazi
-lib.vim_enter(function()
+autocmd.vim_enter(function()
   async.scheduled()
   vim.api.nvim_create_autocmd({ "BufEnter" }, { group = lib.group, callback = async(netrw) })
 end)

@@ -1,16 +1,11 @@
+local autocmd = require "go.autocmd"
+
 vim.bo.commentstring = [[*> %s]]
 vim.b.noindent = true
 
-do
-  local group = vim.api.nvim_create_augroup([[lv_cobol]], { clear = true })
-
-  local colorcolumn = function()
-    vim.wo.colorcolumn = vim.bo.filetype == "cobol" and "7" or ""
-  end
-
-  vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-    group = group,
-    callback = colorcolumn,
-  })
-  colorcolumn()
-end
+local enter = autocmd.buf_win({ buffer = 0 }, function()
+  vim.wo.colorcolumn = "7"
+end, function()
+  vim.wo.colorcolumn = ""
+end)
+enter()

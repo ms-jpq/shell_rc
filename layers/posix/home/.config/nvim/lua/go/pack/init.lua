@@ -1,4 +1,5 @@
 local async = require "go.async"
+local autocmd = require "go.autocmd"
 local lib = require "go.lib"
 local base = vim.fs.joinpath(vim.uv.os_homedir(), ".cache", "helix-rt", "nvim")
 local packed = vim.fs.joinpath(base, "pack")
@@ -14,7 +15,7 @@ do
   lib.pack "theme"
 end
 
-lib.vim_enter(function()
+autocmd.vim_enter(function()
   local lsp_on = lib.pack "lsps"
   if lsp_on then
     lsp_on()
