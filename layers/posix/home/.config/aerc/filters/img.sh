@@ -2,5 +2,5 @@
 
 set -o pipefail
 
-C="$COLUMNS"
-exec -- catimg -w $((C * 2 - 2)) -
+COLUMNS=${COLUMNS:-"$(tput cols)"}
+exec -- catimg -w $((COLUMNS * 2 - 2)) -

@@ -2,6 +2,7 @@
 
 set -o pipefail
 
+COLUMNS=${COLUMNS:-"$(tput cols)"}
 MAX=128
 
 C="$COLUMNS"

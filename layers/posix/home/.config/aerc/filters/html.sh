@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+COLUMNS=${COLUMNS:-"$(tput cols)"}
+
 if [[ -v AERC_MIME_TYPE ]]; then
   MAX=128
 
