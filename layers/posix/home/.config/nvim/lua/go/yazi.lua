@@ -47,31 +47,6 @@ local spawn_yazi = function(buf, path)
   end)
 end
 
-local netrw = function(args)
-  local win = vim.api.nvim_get_current_win()
-  local name = vim.api.nvim_buf_get_name(args.buf)
-  if name ~= "" and vim.fn.isdirectory(name) == 1 then
-    async.scheduled()
-    if not vim.api.nvim_buf_is_valid(args.buf) then
-      return
-    end
-    if not vim.api.nvim_win_is_valid(win) or vim.api.nvim_win_get_buf(win) ~= args.buf then
-      return
-    end
-
-    vim.wo[win].cursorline = false
-    vim.wo[win].cursorcolumn = false
-    spawn_yazi(args.buf, name)
-    vim.wo[win].cursorline = true
-  end
-end
-
--- replace directory buffers with yazi
-autocmd.vim_enter(function()
-  async.scheduled()
-  vim.api.nvim_create_autocmd({ "BufEnter" }, { group = lib.group, callback = async(netrw) })
-end)
-
 vim.keymap.set(
   { "n" },
   [[<c-t>]],
@@ -92,3 +67,43 @@ vim.keymap.set(
     spawn_yazi(nil, path)
   end)
 )
+
+do
+  local netrw = function(args)
+    local win = vim.fn.bufwinid(args.buf)
+    if win == -1 then
+      return
+    end
+
+    local name = vim.api.nvim_buf_get_name(args.buf)
+    if name ~= "" and vim.fn.isdirectory(name) == 1 then
+      async.scheduled()
+      if not vim.api.nvim_buf_is_valid(args.buf) then
+        return
+      end
+      if not vim.api.nvim_win_is_valid(win) or vim.api.nvim_win_get_buf(win) ~= args.buf then
+        return
+      end
+
+      vim.wo[win].cursorline = false
+      vim.wo[win].cursorcolumn = false
+      vim.api.nvim_win_call(
+        win,
+        async(function()
+          spawn_yazi(args.buf, name)
+        end)
+      )
+      vim.wo[win].cursorline = true
+    end
+  end
+
+  -- replace directory buffers with yazi
+  autocmd.vim_enter(function()
+    async.scheduled()
+    vim.api.nvim_create_autocmd({ "BufEnter" }, { group = lib.group, callback = async(netrw) })
+
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
+      netrw { buf = buf }
+    end
+  end)
+end
