@@ -11,9 +11,7 @@
   }
 </style>
 <iframe
-  id="video"
-  allow="autoplay; encrypted-media; picture-in-picture"
-  allowfullscreen
+  allow="autoplay; encrypted-media"
   referrerpolicy="strict-origin-when-cross-origin"
 >
 </iframe>
@@ -38,7 +36,6 @@
           autoplay: 1,
           controls: 0,
           disablekb: 1,
-          enablejsapi: 1,
           fs: 0,
           iv_load_policy: 3,
           loop: 1,
@@ -46,7 +43,7 @@
           playlist,
           rel: 0,
         })
-        document.querySelector("#video").src =
+        document.querySelector("iframe").src =
           `https://www.youtube.com/embed/?${params}`
       }
     })

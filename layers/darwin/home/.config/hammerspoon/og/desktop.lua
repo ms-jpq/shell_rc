@@ -15,6 +15,7 @@ local new_desktop = function(screen)
   return hs.webview
     .new(screen:fullFrame(), {
       allowsAirPlay = false,
+      javaScriptCanOpenWindowsAutomatically = false,
       privateBrowsing = true,
     })
     :behaviorAsLabels({ "stationary", "canJoinAllSpaces" })
