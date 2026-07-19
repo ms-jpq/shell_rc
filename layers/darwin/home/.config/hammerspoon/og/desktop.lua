@@ -5,7 +5,7 @@ local M = {}
 local ROOT = hs.configdir .. "/og/desktop"
 local PORT = 42069
 local URL = "http://localhost:" .. PORT .. "/"
-local MAINTENANCE_INTERVAL = 5
+local MAINTENANCE_INTERVAL = 6
 
 local start_server = function()
   return hsminweb.new(ROOT):bonjour(false):interface("localhost"):port(PORT):allowDirectory(false):start()
