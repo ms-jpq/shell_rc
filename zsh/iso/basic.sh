@@ -4,7 +4,6 @@ _less=(
   --QUIET
   --RAW-CONTROL-CHARS
   --follow-name
-  --hilite-target
   --ignore-case
   --incsearch
   --mouse
