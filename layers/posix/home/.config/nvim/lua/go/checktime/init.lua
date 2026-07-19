@@ -34,7 +34,7 @@ do
   local flash = function(buf, lines)
     vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
     hunks.replace(buf, lines, function(start, finish)
-      vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish, 0 }, { timeout = flash_span })
+      vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = flash_span })
     end)
   end
 
