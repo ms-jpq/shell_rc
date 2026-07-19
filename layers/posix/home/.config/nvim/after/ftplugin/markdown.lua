@@ -13,24 +13,17 @@ do
 end
 
 do
-  local windows = {}
+  local match_var = "__blockquote_match__"
 
   local enter = autocmd.buf_win({ buffer = 0 }, function()
-    local win = vim.api.nvim_get_current_win()
-    local match = windows[win]
-
-    if match then
-      vim.fn.matchdelete(match, win)
+    if not vim.w[match_var] then
+      vim.w[match_var] = vim.fn.matchadd("@markup", [[^\s*>\%(\s*|\)\@!.*$]])
     end
-    windows[win] = vim.fn.matchadd("markdownBlockquote", [[^\s*>\%(\s*|\)\@!.*$]])
   end, function()
-    local win = vim.api.nvim_get_current_win()
-    local match = windows[win]
-
-    if match then
-      vim.fn.matchdelete(match, win)
+    if vim.w[match_var] then
+      vim.fn.matchdelete(vim.w[match_var])
+      vim.w[match_var] = nil
     end
-    windows[win] = nil
   end)
 
   enter()
