@@ -18,14 +18,14 @@ end
 
 M.buf_win = function(opts, enter, leave)
   vim.api.nvim_create_autocmd(
-    { "BufWinEnter" },
+    { "BufWinEnter", "WinEnter" },
     vim.tbl_extend("force", { group = lib.group }, opts, { callback = enter })
   )
   vim.api.nvim_create_autocmd(
-    { "BufWinLeave" },
+    { "BufLeave" },
     vim.tbl_extend("force", { group = lib.group }, opts, { callback = leave })
   )
-  return enter
+  return enter, leave
 end
 
 return M
