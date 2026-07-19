@@ -17,7 +17,7 @@ do
 
   local enter = autocmd.buf_win({ buffer = 0 }, function()
     if not vim.w[match_var] then
-      vim.w[match_var] = vim.fn.matchadd("@markup", [[^\s*>\%(\s*|\)\@!.*$]])
+      vim.w[match_var] = vim.fn.matchadd("@markup", [[^\s*>\%(\s*|\)\@![^\n]*$]])
     end
   end, function()
     if vim.w[match_var] then
