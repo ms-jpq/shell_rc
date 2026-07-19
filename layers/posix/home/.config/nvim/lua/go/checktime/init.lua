@@ -22,7 +22,7 @@ vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
 
 do
   local alive = lib.generation "checktime"
-  local check_interval, flash_span = 99, 888
+  local check_interval, flash_span = 99, 1688
   local ns = vim.api.nvim_create_namespace "go.checktime"
   local watcher = watch.start()
 
