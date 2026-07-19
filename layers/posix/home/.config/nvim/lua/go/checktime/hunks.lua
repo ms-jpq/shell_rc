@@ -115,12 +115,12 @@ end
 
 local append_remote = function(local_patches, remote_patches, before_cursor)
   local start, lines = 0, {}
-  for _, patch in pairs(local_patches) do
+  for _, patch in ipairs(local_patches) do
     start = math.max(start, patch.finish)
   end
-  for _, patch in pairs(remote_patches) do
+  for _, patch in ipairs(remote_patches) do
     if before_cursor ~= "" then
-      for _, remote in pairs(patch.lines) do
+      for _, remote in ipairs(patch.lines) do
         if vim.startswith(remote, before_cursor) then
           return {}
         end
@@ -134,40 +134,54 @@ local append_remote = function(local_patches, remote_patches, before_cursor)
   return { { start = start, finish = start, lines = lines } }
 end
 
-local merge = function(local_patches, remote_patches, protected, before_cursor)
+local groups = function(local_patches, remote_patches)
   local local_i, remote_i = 1, 1
-  local patches = {}
+  local groups = {}
 
   while local_patches[local_i] or remote_patches[remote_i] do
     local group
     group, local_i, remote_i = next_group(local_patches, remote_patches, local_i, remote_i)
-    local local_wins = #group.remote_patches == 0
-      or vim.iter(group.local_patches):any(function(patch)
-        return protected[patch]
-      end)
-    vim.list_extend(patches, local_wins and group.local_patches or group.remote_patches)
-    if local_wins and #group.remote_patches > 0 then
-      vim.list_extend(patches, append_remote(group.local_patches, group.remote_patches, before_cursor))
-    end
+    table.insert(groups, group)
   end
 
-  return patches
+  return groups
 end
 
-local protect_cursor_line = function(patches, row)
+local protect_cursor_line = function(groups, local_lines, row, col)
+  if not row then
+    return {}
+  end
+
   local protected = {}
   local shift = 0
+  local before_cursor = string.sub(local_lines[row], 1, col)
 
-  for _, patch in ipairs(patches) do
-    local first = patch.start + shift + 1
-    local last = first + #patch.lines
-    if row and first <= row and row < last then
-      protected[patch] = true
+  for _, group in ipairs(groups) do
+    for _, patch in ipairs(group.local_patches) do
+      local first = patch.start + shift + 1
+      local last = first + #patch.lines
+      if first <= row and row < last then
+        local patches = vim.list_extend({}, group.local_patches)
+        vim.list_extend(patches, append_remote(group.local_patches, group.remote_patches, before_cursor))
+        protected[group] = patches
+        return protected
+      end
+      shift = shift + #patch.lines - (patch.finish - patch.start)
     end
-    shift = shift + #patch.lines - (patch.finish - patch.start)
   end
 
   return protected
+end
+
+local merge = function(groups, protected)
+  local patches = {}
+
+  for _, group in ipairs(groups) do
+    local normal = #group.remote_patches == 0 and group.local_patches or group.remote_patches
+    vim.list_extend(patches, protected[group] or normal)
+  end
+
+  return patches
 end
 
 local sort = function(patches)
@@ -187,9 +201,9 @@ M.merge = function(base, local_lines, remote_lines, pos)
   local row, col = unpack(pos)
   local local_patches = diff(base, local_lines)
   local remote_patches = diff(base, remote_lines)
-  local protected = protect_cursor_line(local_patches, row)
-  local before_cursor = row and string.sub(local_lines[row], 1, col) or nil
-  local merged = merge(local_patches, remote_patches, protected, before_cursor)
+  local grouped = groups(local_patches, remote_patches)
+  local protected = protect_cursor_line(grouped, local_lines, row, col)
+  local merged = merge(grouped, protected)
   sort(merged)
   return apply(base, merged)
 end
