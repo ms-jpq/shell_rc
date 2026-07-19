@@ -2,6 +2,8 @@ local lib = require "go.lib"
 
 local M = {}
 
+M.DIRTY = "__checktime_dirty__"
+
 local d_watcher = {}
 d_watcher.new = function(path, changed)
   local watcher = { path = path }
@@ -52,10 +54,16 @@ end
 
 M.new = function()
   local w = {}
-  local dirty, entries, watchers = {}, {}, {}
+  local entries, watchers = {}, {}
+
+  local mark = function(buf, value)
+    if vim.api.nvim_buf_is_valid(buf) then
+      vim.b[buf][M.DIRTY] = value
+    end
+  end
 
   w.unwatch = function(buf)
-    dirty[buf] = nil
+    mark(buf, nil)
     local watcher = watchers[buf]
     watchers[buf] = nil
     if not watcher then
@@ -76,13 +84,13 @@ M.new = function()
 
     if watcher == nil then
       local bufs = {}
-      local changed = function(filename)
+      local changed = vim.schedule_wrap(function(filename)
         for buf, p in pairs(bufs) do
           if not filename or vim.fs.basename(p) == filename then
-            dirty[buf] = true
+            mark(buf, true)
           end
         end
-      end
+      end)
       watcher = d_watcher.new(directory_key, changed)
       if watcher then
         watcher.bufs = bufs
@@ -99,13 +107,13 @@ M.new = function()
     watcher = entries[path]
     if watcher == nil then
       local bufs = {}
-      local changed = function(filename)
+      local changed = vim.schedule_wrap(function(filename)
         for buf, p in pairs(bufs) do
           if not filename or vim.fs.basename(p) == filename then
-            dirty[buf] = true
+            mark(buf, true)
           end
         end
-      end
+      end)
       watcher = f_watcher.new(path, changed)
       if watcher then
         watcher.bufs = bufs
@@ -121,22 +129,28 @@ M.new = function()
 
     local watcher = start_watcher(path)
     if not watcher then
-      return
+      return false
     end
 
     watcher.bufs[buf] = path
     watchers[buf] = watcher
+    return true
   end
 
   w.dirty_all = function()
     for buf in pairs(watchers) do
-      dirty[buf] = true
+      mark(buf, true)
     end
   end
 
   w.take = function()
-    local changes = dirty
-    dirty = {}
+    local changes = {}
+    for buf in pairs(watchers) do
+      if vim.api.nvim_buf_is_valid(buf) and vim.b[buf][M.DIRTY] then
+        mark(buf, nil)
+        changes[buf] = true
+      end
+    end
     return changes
   end
 

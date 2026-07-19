@@ -6,6 +6,7 @@ local M = {}
 
 M.start = function()
   local files = poll.new()
+  local retry = {}
 
   local watcher = { dirty_all = files.dirty_all }
 
@@ -14,6 +15,7 @@ M.start = function()
   end
 
   local watch = function(buf)
+    retry[buf] = nil
     files.unwatch(buf)
 
     if not vim.bo[buf].modifiable then
@@ -24,15 +26,23 @@ M.start = function()
     if name == "" then
       return
     end
-    files.watch(buf, name)
+    if not files.watch(buf, name) then
+      retry[buf] = true
+    end
   end
 
   watcher.take = function()
-    local changes = {}
-    for buf in pairs(files.take()) do
+    local changes = files.take()
+    for buf in pairs(retry) do
+      changes[buf] = true
+    end
+    for buf in pairs(changes) do
       if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modifiable then
-        changes[buf] = true
+        if retry[buf] then
+          watch(buf)
+        end
       else
+        retry[buf] = nil
         files.unwatch(buf)
       end
     end
@@ -42,6 +52,7 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
     callback = function(args)
+      retry[args.buf] = nil
       files.unwatch(args.buf)
     end,
   })
