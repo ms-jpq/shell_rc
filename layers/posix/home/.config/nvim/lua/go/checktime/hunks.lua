@@ -113,19 +113,28 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   end
 end
 
+local overlaps_cursor_prefix = function(patches, before_cursor)
+  if before_cursor == "" then
+    return false
+  end
+
+  return vim.iter(patches):any(function(patch)
+    return vim.iter(patch.lines):any(function(line)
+      return vim.startswith(line, before_cursor) or (line ~= "" and vim.startswith(before_cursor, line))
+    end)
+  end)
+end
+
 local append_remote = function(local_patches, remote_patches, before_cursor)
+  if overlaps_cursor_prefix(remote_patches, before_cursor) then
+    return {}
+  end
+
   local start, lines = 0, {}
   for _, patch in ipairs(local_patches) do
     start = math.max(start, patch.finish)
   end
   for _, patch in ipairs(remote_patches) do
-    if before_cursor ~= "" then
-      for _, remote in ipairs(patch.lines) do
-        if vim.startswith(remote, before_cursor) or (remote ~= "" and vim.startswith(before_cursor, remote)) then
-          return {}
-        end
-      end
-    end
     vim.list_extend(lines, patch.lines)
   end
   if #lines == 0 then
