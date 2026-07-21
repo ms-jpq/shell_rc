@@ -1,7 +1,6 @@
 runtime colors/iceberg.vim
 let g:colors_name = 'icefrog'
 
-highlight! ConcealNone           guifg=NONE    guibg=NONE ctermfg=NONE ctermbg=NONE
 highlight! CursorLine            guibg=#eae0f1 ctermbg=253
 highlight! EndOfBuffer           guibg=NONE    ctermbg=NONE
 highlight! HighlightedyankRegion cterm=reverse gui=reverse
