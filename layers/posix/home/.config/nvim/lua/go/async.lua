@@ -68,6 +68,13 @@ end
 M.scheduled = M.wrap(vim.schedule)
 M.system = M.wrap(vim.system)
 
+M.uv = {
+  fs_close = M.wrap(vim.uv.fs_close),
+  fs_open = M.wrap(vim.uv.fs_open),
+  fs_stat = M.wrap(vim.uv.fs_stat),
+  fs_unlink = M.wrap(vim.uv.fs_unlink),
+}
+
 M.fn = {
   jobstart = M.wrap(function(cmd, opts, on_exit)
     opts = opts or {}

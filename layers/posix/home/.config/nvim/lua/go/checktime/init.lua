@@ -1,6 +1,7 @@
 local async = require "go.async"
 local hunks = require "go.checktime.hunks"
 local lib = require "go.lib"
+local lock = require "go.checktime.lock"
 local snapshot = require "go.checktime.snapshot"
 local watch = require "go.checktime.watch"
 
@@ -28,7 +29,9 @@ do
 
   vim.api.nvim_create_autocmd({ "FocusGained" }, {
     group = lib.group,
-    callback = watcher.dirty_all,
+    callback = function()
+      watcher.dirty()
+    end,
   })
 
   local flash = function(buf, lines)
@@ -55,19 +58,27 @@ do
   end
 
   local tick = function()
-    if not alive() then
-      return
-    end
     for buf in pairs(watcher.take()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable then
         local name = vim.api.nvim_buf_get_name(buf)
-        local remote = name ~= "" and snapshot.read(buf)
-        if remote then
+        local locked = lock.guard(name, function()
+          local remote = snapshot.read(buf)
+          if not remote then
+            return
+          end
+
           reconcile(buf, remote)
+          if vim.bo[buf].modified then
+            vim.api.nvim_buf_call(buf, function()
+              vim.cmd [[silent! write! ++p]]
+            end)
+          end
+        end)
+        if not locked then
+          watcher.dirty(buf)
         end
       end
     end
-    vim.cmd [[silent! wall! ++p]]
   end
 
   vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
@@ -78,8 +89,11 @@ do
   })
 
   async.run(function()
-    while alive() do
+    while true do
       async.sleep(check_interval)
+      if not alive() then
+        return
+      end
       lib.report(tick)
     end
   end)

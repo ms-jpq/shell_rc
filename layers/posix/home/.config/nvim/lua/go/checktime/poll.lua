@@ -137,9 +137,12 @@ M.new = function()
     return true
   end
 
-  w.dirty_all = function()
-    for buf in pairs(watchers) do
-      mark(buf, true)
+  w.dirty = function(buf)
+    if buf then
+      return mark(buf, true)
+    end
+    for b in pairs(watchers) do
+      mark(b, true)
     end
   end
 

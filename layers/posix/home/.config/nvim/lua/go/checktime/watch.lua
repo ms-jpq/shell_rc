@@ -9,7 +9,7 @@ M.start = function()
   local files = poll.new()
   local retry = {}
 
-  local watcher = { dirty_all = files.dirty_all }
+  local watcher = { dirty = files.dirty }
 
   local remember = function(buf, lines)
     vim.b[buf][snapshot.BASE] = lines or vim.api.nvim_buf_get_lines(buf, 0, -1, true)
@@ -72,6 +72,13 @@ M.start = function()
     callback = function()
       local buf = vim.api.nvim_get_current_buf()
       watch(buf)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+    group = lib.group,
+    callback = function(args)
+      files.dirty(args.buf)
     end,
   })
 
