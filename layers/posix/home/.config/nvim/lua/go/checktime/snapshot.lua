@@ -1,6 +1,7 @@
 local M = {}
 
 M.BASE = "__checktime_base__"
+M.RETRY = {}
 
 local MAX_BYTES = 2 * 1024 * 1024
 
@@ -27,9 +28,9 @@ M.read = function(buf)
 
   local ok, lines = pcall(vim.fn.readfile, name)
   if not ok then
-    return nil
+    return M.RETRY
   elseif not same_version(before, vim.uv.fs_stat(name)) then
-    return nil
+    return M.RETRY
   end
 
   local encoding = vim.bo[buf].fileencoding

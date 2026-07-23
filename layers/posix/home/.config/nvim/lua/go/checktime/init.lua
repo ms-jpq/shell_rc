@@ -63,11 +63,13 @@ do
         local name = vim.api.nvim_buf_get_name(buf)
         local locked = lock.guard(name, function()
           local remote = snapshot.read(buf)
-          if not remote then
+          if remote == snapshot.RETRY then
+            watcher.dirty(buf)
             return
+          elseif remote then
+            reconcile(buf, remote)
           end
 
-          reconcile(buf, remote)
           if vim.bo[buf].modified then
             vim.api.nvim_buf_call(buf, function()
               vim.cmd [[silent! write! ++p]]
