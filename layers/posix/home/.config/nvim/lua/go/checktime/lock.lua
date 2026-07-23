@@ -4,6 +4,7 @@ local lib = require "go.lib"
 local M = {}
 
 local cache = vim.fs.joinpath(vim.fn.stdpath "cache", "checktime")
+local NANOSECONDS_PER_MILLISECOND = 1000 * 1000
 local MAX_WAIT = 750
 local MAX_DELAY, MAX_JITTER = 96, 24
 local STALE_AFTER = 3
@@ -20,7 +21,7 @@ local backoff = function()
   return function()
     attempts = attempts + 1
     local delay = math.min(MAX_DELAY - MAX_JITTER, 8 * 2 ^ math.min(attempts, 4))
-    local jitter = math.floor((vim.uv.hrtime() / 1000000) % (MAX_JITTER + 1))
+    local jitter = math.floor((vim.uv.hrtime() / NANOSECONDS_PER_MILLISECOND) % (MAX_JITTER + 1))
     return delay + jitter
   end
 end
@@ -54,7 +55,7 @@ M.guard = function(path, fn)
       break
     end
 
-    if vim.uv.hrtime() - t0 + span * 1000000 >= MAX_WAIT * 1000000 then
+    if vim.uv.hrtime() - t0 + span * NANOSECONDS_PER_MILLISECOND >= MAX_WAIT * NANOSECONDS_PER_MILLISECOND then
       break
     end
     async.sleep(span)
