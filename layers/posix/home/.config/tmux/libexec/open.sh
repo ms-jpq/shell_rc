@@ -11,6 +11,7 @@ TM=(tmux -S "$SOCKET")
 T=(-t "${__TMUX_ROOT_PANE__:-${TMUX_PANE:-}}")
 
 PANES="$("${TM[@]}" display-message "${T[@]}" -p -- '#{window_panes}')"
+ZOOMED="$("${TM[@]}" display-message "${T[@]}" -p -- '#{window_zoomed_flag}')"
 if ((PANES == 1)); then
   ARGV=("${TM[@]}" split-window -h "${T[@]}")
 else
@@ -19,7 +20,7 @@ else
 fi
 
 ARGV+=(-P -F '#{pane_id}')
-if ! tty 2> /dev/null < /dev/tty > /dev/null; then
+if ((ZOOMED)) || ! tty 2> /dev/null < /dev/tty > /dev/null; then
   ARGV+=(-d)
 fi
 

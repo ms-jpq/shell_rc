@@ -2,16 +2,29 @@ local lib = require "go.lib"
 
 local M = {}
 
-local slice = function(lines, start, finish)
-  if start == finish then
-    return {}
-  end
-  return vim.list_slice(lines, start + 1, finish)
-end
-
-local text = function(lines)
-  return #lines == 0 and "" or table.concat(lines, lib.LF) .. lib.LF
-end
+local MERGE = {
+  ROW = {
+    atomic = true,
+    local_wins = false,
+    encode = function(value)
+      return value
+    end,
+    decode = function(value)
+      return value
+    end,
+  },
+  CHAR = {
+    atomic = false,
+    local_wins = true,
+    encode = function(lines)
+      return vim.fn.split(table.concat(lines, lib.LF), [[\zs]])
+    end,
+    decode = function(chars)
+      local text = table.concat(chars)
+      return text == "" and {} or vim.split(text, lib.LF, { plain = true })
+    end,
+  },
+}
 
 local split = function(patch)
   local old_count = patch.finish - patch.start
@@ -31,6 +44,14 @@ local split = function(patch)
   return patches
 end
 
+local slice = function(lines, start, finish)
+  return vim.list_slice(lines, math.floor(start + 1), math.floor(finish))
+end
+
+local text = function(lines)
+  return #lines == 0 and "" or table.concat(lines, lib.LF) .. lib.LF
+end
+
 local diff = function(before, after)
   return vim
     .iter(vim.text.diff(text(before), text(after), { result_type = "indices" }))
@@ -43,9 +64,15 @@ local diff = function(before, after)
         lines = slice(after, new_start - 1, new_start + new_count - 1),
       }
     end)
-    :map(split)
-    :flatten()
     :totable()
+end
+
+local diff_patches = function(codec, before, after)
+  local changes = diff(before, after)
+  if codec.atomic then
+    return vim.iter(changes):map(split):flatten():totable()
+  end
+  return changes
 end
 
 local overlaps = function(left, right)
@@ -113,81 +140,32 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   end
 end
 
-local overlaps_cursor_prefix = function(patches, before_cursor)
-  if before_cursor == "" then
-    return false
-  end
-
-  return vim.iter(patches):any(function(patch)
-    return vim.iter(patch.lines):any(function(line)
-      return vim.startswith(line, before_cursor) or (line ~= "" and vim.startswith(before_cursor, line))
-    end)
-  end)
-end
-
-local append_remote = function(local_patches, remote_patches, before_cursor)
-  if overlaps_cursor_prefix(remote_patches, before_cursor) then
-    return {}
-  end
-
-  local start, lines = 0, {}
-  for _, patch in ipairs(local_patches) do
-    start = math.max(start, patch.finish)
-  end
-  for _, patch in ipairs(remote_patches) do
-    vim.list_extend(lines, patch.lines)
-  end
-  if #lines == 0 then
-    return {}
-  end
-  return { { start = start, finish = start, lines = lines } }
-end
-
 local groups = function(local_patches, remote_patches)
   local local_i, remote_i = 1, 1
-  local groups = {}
+  local grouped = {}
 
   while local_patches[local_i] or remote_patches[remote_i] do
     local group
     group, local_i, remote_i = next_group(local_patches, remote_patches, local_i, remote_i)
-    table.insert(groups, group)
+    table.insert(grouped, group)
   end
 
-  return groups
+  return grouped
 end
 
-local protect_cursor_line = function(groups, local_lines, row, col)
-  if not row then
-    return {}
-  end
-
-  local protected = {}
-  local shift = 0
-  local before_cursor = string.sub(local_lines[row], 1, col)
-
-  for _, group in ipairs(groups) do
-    for _, patch in ipairs(group.local_patches) do
-      local first = patch.start + shift + 1
-      local last = first + #patch.lines
-      if first <= row and row < last then
-        local patches = vim.list_extend({}, group.local_patches)
-        vim.list_extend(patches, append_remote(group.local_patches, group.remote_patches, before_cursor))
-        protected[group] = patches
-        return protected
-      end
-      shift = shift + #patch.lines - (patch.finish - patch.start)
-    end
-  end
-
-  return protected
+local diff_groups = function(codec, base, local_lines, remote_lines)
+  return groups(diff_patches(codec, base, local_lines), diff_patches(codec, base, remote_lines))
 end
 
-local merge = function(groups, protected)
+local resolve = function(grouped, local_wins)
   local patches = {}
 
-  for _, group in ipairs(groups) do
-    local normal = #group.remote_patches == 0 and group.local_patches or group.remote_patches
-    vim.list_extend(patches, protected[group] or normal)
+  for _, group in ipairs(grouped) do
+    local selected = group.remote_patches
+    if #selected == 0 or (local_wins and #group.local_patches > 0) then
+      selected = group.local_patches
+    end
+    vim.list_extend(patches, selected)
   end
 
   return patches
@@ -206,20 +184,101 @@ local sort = function(patches)
   end)
 end
 
+local reconcile = function(codec, base, local_lines, remote_lines)
+  local patches = resolve(diff_groups(codec, base, local_lines, remote_lines), codec.local_wins)
+  sort(patches)
+  return apply(base, patches)
+end
+
+local bounds = function(group)
+  local start, finish = math.huge, 0
+  for _, patches in pairs { group.local_patches, group.remote_patches } do
+    for _, patch in ipairs(patches) do
+      start = math.min(start, patch.start)
+      finish = math.max(finish, patch.finish)
+    end
+  end
+  return start, finish
+end
+
+local relative = function(patches, start)
+  return vim
+    .iter(patches)
+    :map(function(patch)
+      return {
+        start = patch.start - start,
+        finish = patch.finish - start,
+        lines = patch.lines,
+        slot = patch.slot,
+      }
+    end)
+    :totable()
+end
+
+local char_merge = function(base, group)
+  local start, finish = bounds(group)
+  local before = slice(base, start, finish)
+  local local_lines = apply(before, relative(group.local_patches, start))
+  local remote_lines = apply(before, relative(group.remote_patches, start))
+  local codec = MERGE.CHAR
+  local merged = reconcile(codec, codec.encode(before), codec.encode(local_lines), codec.encode(remote_lines))
+  return { { start = start, finish = finish, lines = codec.decode(merged) } }
+end
+
+local plan = function(grouped, local_lines, row)
+  local configs = {}
+  for _, group in ipairs(grouped) do
+    table.insert(configs, { type = MERGE.ROW, group = group })
+  end
+
+  if not row then
+    return configs
+  end
+
+  local shift = 0
+  for _, config in ipairs(configs) do
+    local group = config.group
+    for _, patch in ipairs(group.local_patches) do
+      local first = patch.start + shift + 1
+      local last = first + #patch.lines
+      if first <= row and row < last then
+        config.type = MERGE.CHAR
+        return configs
+      end
+      shift = shift + #patch.lines - (patch.finish - patch.start)
+    end
+  end
+
+  return configs
+end
+
+local compile = function(base, configs)
+  local patches = {}
+
+  for _, config in ipairs(configs) do
+    if config.type == MERGE.ROW then
+      vim.list_extend(patches, resolve({ config.group }, config.type.local_wins))
+    elseif config.type == MERGE.CHAR then
+      vim.list_extend(patches, char_merge(base, config.group))
+    else
+      error "unknown merge type"
+    end
+  end
+
+  return patches
+end
+
 M.merge = function(base, local_lines, remote_lines, pos)
-  local row, col = unpack(pos)
-  local local_patches = diff(base, local_lines)
-  local remote_patches = diff(base, remote_lines)
-  local grouped = groups(local_patches, remote_patches)
-  local protected = protect_cursor_line(grouped, local_lines, row, col)
-  local merged = merge(grouped, protected)
+  local row = unpack(pos)
+  local grouped = diff_groups(MERGE.ROW, base, local_lines, remote_lines)
+  local merged = compile(base, plan(grouped, local_lines, row))
   sort(merged)
   return apply(base, merged)
 end
 
 M.replace = function(buf, lines, mark)
   local before = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local patches = diff(before, lines)
+  local patches = diff_patches(MERGE.ROW, before, lines)
 
   vim.api.nvim_buf_call(buf, function()
     for index, patch in vim.iter(patches):rev():enumerate() do

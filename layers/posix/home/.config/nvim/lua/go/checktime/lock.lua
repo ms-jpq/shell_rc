@@ -12,15 +12,10 @@ local milliseconds = function()
   return vim.uv.hrtime() / NANOSECONDS_PER_MILLISECOND
 end
 
-local EPOCH_OFFSET = vim.uv.gettimeofday() * MILLISECONDS_PER_SECOND - milliseconds()
-
-local now = function()
-  return EPOCH_OFFSET + milliseconds()
-end
-
-local modified = function(stat)
-  return stat.mtime.sec * MILLISECONDS_PER_SECOND + stat.mtime.nsec / NANOSECONDS_PER_MILLISECOND
-end
+local EPOCH_OFFSET = (function()
+  local seconds, microseconds = vim.uv.gettimeofday()
+  return seconds * MILLISECONDS_PER_SECOND + microseconds / MILLISECONDS_PER_SECOND - milliseconds()
+end)()
 
 local deadline = function()
   local t0 = milliseconds()
@@ -49,7 +44,9 @@ local acquire = function(lock)
   local _, fd = async.uv.fs_open(lock, "wx", tonumber("600", 8))
   if not fd then
     local _, stat = async.uv.fs_stat(lock)
-    if stat and now() - modified(stat) > LEASE then
+    local now = EPOCH_OFFSET + milliseconds()
+    local modified = stat and (stat.mtime.sec * MILLISECONDS_PER_SECOND + stat.mtime.nsec / NANOSECONDS_PER_MILLISECOND)
+    if modified and now - modified > LEASE then
       async.uv.fs_unlink(lock)
     end
     return nil
@@ -62,24 +59,27 @@ local acquire = function(lock)
 end
 
 M.guard = function(path, fn)
-  local elapsed = deadline()
-  local lock = signal(path)
+  vim.fn.mkdir(cache, "p")
+  return lib.scope(function(defer)
+    defer(async.scheduled)
+    local elapsed = deadline()
+    local lock = signal(path)
 
-  for span in backoff() do
-    local unlock = acquire(lock)
-    if unlock then
-      async.scheduled()
-      lib.report(fn)
-      unlock()
-      async.scheduled()
-      return true
-    end
+    for span in backoff() do
+      local unlock = acquire(lock)
+      if unlock then
+        async.scheduled()
+        lib.report(fn)
+        unlock()
+        return true
+      end
 
-    if elapsed(span) then
-      return false
+      if elapsed(span) then
+        return false
+      end
+      async.sleep(span)
     end
-    async.sleep(span)
-  end
+  end)
 end
 
 return M
