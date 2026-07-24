@@ -147,7 +147,7 @@ local row_groups = function(linefeed, base, local_lines, remote_lines)
   return groups(row_hunks(linefeed, base, local_lines), row_hunks(linefeed, base, remote_lines))
 end
 
-local select = function(group, local_wins)
+local pick = function(group, local_wins)
   if #group.remote_patches == 0 or (local_wins and #group.local_patches > 0) then
     return group.local_patches
   end
@@ -158,7 +158,7 @@ local resolve = function(grouped, local_wins)
   local patches = {}
 
   for _, group in ipairs(grouped) do
-    vim.list_extend(patches, select(group, local_wins))
+    vim.list_extend(patches, pick(group, local_wins))
   end
 
   return patches
@@ -253,7 +253,7 @@ local merge_hunks = function(linefeed, base, grouped, row)
       row = nil
       table.insert(merged, cursor_hunk(linefeed, base, group))
     else
-      vim.list_extend(merged, select(group, false))
+      vim.list_extend(merged, pick(group, false))
     end
   end
 
