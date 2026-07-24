@@ -16,12 +16,12 @@ local MERGE = {
   CHAR = {
     atomic = false,
     local_wins = true,
-    encode = function(lines)
-      return vim.fn.split(table.concat(lines, lib.LF), [[\zs]])
+    encode = function(lines, linefeed)
+      return vim.fn.split(table.concat(lines, linefeed), [[\zs]])
     end,
-    decode = function(chars)
+    decode = function(chars, linefeed)
       local text = table.concat(chars)
-      return text == "" and {} or vim.split(text, lib.LF, { plain = true })
+      return text == "" and {} or vim.split(text, linefeed, { plain = true })
     end,
   },
 }
@@ -48,13 +48,13 @@ local slice = function(lines, start, finish)
   return vim.list_slice(lines, math.floor(start + 1), math.floor(finish))
 end
 
-local text = function(lines)
-  return #lines == 0 and "" or table.concat(lines, lib.LF) .. lib.LF
+local text = function(lines, linefeed)
+  return #lines == 0 and "" or table.concat(lines, linefeed) .. linefeed
 end
 
-local diff = function(before, after)
+local diff = function(before, after, linefeed)
   return vim
-    .iter(vim.text.diff(text(before), text(after), { result_type = "indices" }))
+    .iter(vim.text.diff(text(before, linefeed), text(after, linefeed), { result_type = "indices" }))
     :map(function(hunk)
       local old_start, old_count, new_start, new_count = unpack(hunk)
       local start = old_start - (old_count == 0 and 0 or 1)
@@ -67,8 +67,8 @@ local diff = function(before, after)
     :totable()
 end
 
-local diff_patches = function(codec, before, after)
-  local changes = diff(before, after)
+local diff_patches = function(codec, before, after, linefeed)
+  local changes = diff(before, after, linefeed)
   if codec.atomic then
     return vim.iter(changes):map(split):flatten():totable()
   end
@@ -153,8 +153,8 @@ local groups = function(local_patches, remote_patches)
   return grouped
 end
 
-local diff_groups = function(codec, base, local_lines, remote_lines)
-  return groups(diff_patches(codec, base, local_lines), diff_patches(codec, base, remote_lines))
+local diff_groups = function(codec, base, local_lines, remote_lines, linefeed)
+  return groups(diff_patches(codec, base, local_lines, linefeed), diff_patches(codec, base, remote_lines, linefeed))
 end
 
 local resolve = function(grouped, local_wins)
@@ -184,8 +184,8 @@ local sort = function(patches)
   end)
 end
 
-local reconcile = function(codec, base, local_lines, remote_lines)
-  local patches = resolve(diff_groups(codec, base, local_lines, remote_lines), codec.local_wins)
+local reconcile = function(codec, base, local_lines, remote_lines, linefeed)
+  local patches = resolve(diff_groups(codec, base, local_lines, remote_lines, linefeed), codec.local_wins)
   sort(patches)
   return apply(base, patches)
 end
@@ -215,17 +215,23 @@ local relative = function(patches, start)
     :totable()
 end
 
-local char_merge = function(base, group)
+local char_merge = function(base, group, linefeed)
   local start, finish = bounds(group)
   local before = slice(base, start, finish)
   local local_lines = apply(before, relative(group.local_patches, start))
   local remote_lines = apply(before, relative(group.remote_patches, start))
   local codec = MERGE.CHAR
-  local merged = reconcile(codec, codec.encode(before), codec.encode(local_lines), codec.encode(remote_lines))
-  return { { start = start, finish = finish, lines = codec.decode(merged) } }
+  local merged = reconcile(
+    codec,
+    codec.encode(before, linefeed),
+    codec.encode(local_lines, linefeed),
+    codec.encode(remote_lines, linefeed),
+    linefeed
+  )
+  return { { start = start, finish = finish, lines = codec.decode(merged, linefeed) } }
 end
 
-local plan = function(grouped, local_lines, row)
+local plan = function(grouped, row)
   local configs = {}
   for _, group in ipairs(grouped) do
     table.insert(configs, { type = MERGE.ROW, group = group })
@@ -252,14 +258,14 @@ local plan = function(grouped, local_lines, row)
   return configs
 end
 
-local compile = function(base, configs)
+local compile = function(base, configs, linefeed)
   local patches = {}
 
   for _, config in ipairs(configs) do
     if config.type == MERGE.ROW then
       vim.list_extend(patches, resolve({ config.group }, config.type.local_wins))
     elseif config.type == MERGE.CHAR then
-      vim.list_extend(patches, char_merge(base, config.group))
+      vim.list_extend(patches, char_merge(base, config.group, linefeed))
     else
       error "unknown merge type"
     end
@@ -268,17 +274,18 @@ local compile = function(base, configs)
   return patches
 end
 
-M.merge = function(base, local_lines, remote_lines, pos)
+M.merge = function(base, local_lines, remote_lines, pos, eol)
   local row = unpack(pos)
-  local grouped = diff_groups(MERGE.ROW, base, local_lines, remote_lines)
-  local merged = compile(base, plan(grouped, local_lines, row))
+  eol = eol or lib.LF
+  local grouped = diff_groups(MERGE.ROW, base, local_lines, remote_lines, eol)
+  local merged = compile(base, plan(grouped, row), eol)
   sort(merged)
   return apply(base, merged)
 end
 
 M.replace = function(buf, lines, mark)
   local before = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local patches = diff_patches(MERGE.ROW, before, lines)
+  local patches = diff_patches(MERGE.ROW, before, lines, lib.buf_linefeed(buf))
 
   vim.api.nvim_buf_call(buf, function()
     for index, patch in vim.iter(patches):rev():enumerate() do
