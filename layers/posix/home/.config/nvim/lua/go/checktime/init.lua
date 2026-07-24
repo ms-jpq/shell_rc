@@ -47,7 +47,7 @@ do
 
     local win = vim.api.nvim_get_current_win()
     local pos = vim.api.nvim_win_get_buf(win) == buf and vim.api.nvim_win_get_cursor(win) or {}
-    local lines = hunks.merge(base, local_lines, remote, pos, lib.buf_linefeed(buf))
+    local lines = hunks.merge(lib.buf_linefeed(buf), base, local_lines, remote, pos)
 
     if not vim.deep_equal(lines, local_lines) then
       flash(buf, lines)
