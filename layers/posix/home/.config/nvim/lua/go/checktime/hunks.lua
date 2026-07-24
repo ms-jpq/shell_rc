@@ -11,17 +11,17 @@ local text_lines = function(linefeed, characters)
   return text == "" and {} or vim.split(text, linefeed, { plain = true })
 end
 
-local split = function(patch)
-  local old_count = patch.finish - patch.start
-  local count = math.max(old_count, #patch.lines)
+local split = function(hunk)
+  local old_count = hunk.finish - hunk.start
+  local count = math.max(old_count, #hunk.lines)
   local patches = {}
 
   for index = 0, count - 1 do
-    local start = patch.start + math.min(index, old_count)
+    local start = hunk.start + math.min(index, old_count)
     table.insert(patches, {
       start = start,
       finish = start + (index < old_count and 1 or 0),
-      lines = index < #patch.lines and { patch.lines[index + 1] } or {},
+      lines = index < #hunk.lines and { hunk.lines[index + 1] } or {},
       slot = index < old_count and nil or index - old_count,
     })
   end
@@ -78,12 +78,12 @@ end
 local patch = function(base, patches)
   local lines = slice(base, 0, #base)
 
-  for patch in vim.iter(patches):rev() do
-    for _ = patch.start, patch.finish - 1 do
-      table.remove(lines, patch.start + 1)
+  for hunk in vim.iter(patches):rev() do
+    for _ = hunk.start, hunk.finish - 1 do
+      table.remove(lines, hunk.start + 1)
     end
-    for index = #patch.lines, 1, -1 do
-      table.insert(lines, patch.start + 1, patch.lines[index])
+    for index = #hunk.lines, 1, -1 do
+      table.insert(lines, hunk.start + 1, hunk.lines[index])
     end
   end
 
@@ -94,18 +94,18 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   local local_patch, remote_patch = local_patches[local_i], remote_patches[remote_i]
   local group = { local_patches = {}, remote_patches = {} }
 
-  local overlaps_group = function(patch)
+  local overlaps_group = function(hunk)
     return vim.iter(group.local_patches):any(function(other)
-      return overlaps(patch, other)
+      return overlaps(hunk, other)
     end) or vim.iter(group.remote_patches):any(function(other)
-      return overlaps(patch, other)
+      return overlaps(hunk, other)
     end)
   end
 
   local take = function(patches, index, group_patches)
-    local patch = patches[index]
-    if patch and overlaps_group(patch) then
-      table.insert(group_patches, patch)
+    local hunk = patches[index]
+    if hunk and overlaps_group(hunk) then
+      table.insert(group_patches, hunk)
       return true, index + 1
     end
     return false, index
@@ -180,9 +180,9 @@ end
 local bounds = function(group)
   local start, finish = math.huge, 0
   for _, patches in pairs { group.local_patches, group.remote_patches } do
-    for _, patch in ipairs(patches) do
-      start = math.min(start, patch.start)
-      finish = math.max(finish, patch.finish)
+    for _, hunk in ipairs(patches) do
+      start = math.min(start, hunk.start)
+      finish = math.max(finish, hunk.finish)
     end
   end
   return start, finish
@@ -191,12 +191,12 @@ end
 local relative = function(patches, start)
   return vim
     .iter(patches)
-    :map(function(patch)
+    :map(function(hunk)
       return {
-        start = patch.start - start,
-        finish = patch.finish - start,
-        lines = patch.lines,
-        slot = patch.slot,
+        start = hunk.start - start,
+        finish = hunk.finish - start,
+        lines = hunk.lines,
+        slot = hunk.slot,
       }
     end)
     :totable()
@@ -204,16 +204,23 @@ end
 
 local at_row = function(group, row, shift)
   if row then
-    for _, patch in ipairs(group.local_patches) do
-      local first = patch.start + shift + 1
-      local last = first + #patch.lines
+    for _, hunk in ipairs(group.local_patches) do
+      local first = hunk.start + shift + 1
+      local last = first + #hunk.lines
       if first <= row and row < last then
         return true, shift
       end
-      shift = shift + #patch.lines - (patch.finish - patch.start)
+      shift = shift + #hunk.lines - (hunk.finish - hunk.start)
     end
   end
   return false, shift
+end
+
+local touches = function(hunk, local_hunks)
+  return hunk.finish > hunk.start
+    and vim.iter(local_hunks):any(function(other)
+      return other.start == other.finish and (hunk.start == other.start or hunk.finish == other.start)
+    end)
 end
 
 local cursor_hunk = function(linefeed, base, group)
@@ -222,12 +229,14 @@ local cursor_hunk = function(linefeed, base, group)
   local local_lines = patch(before, relative(group.local_patches, start))
   local remote_lines = patch(before, relative(group.remote_patches, start))
   local characters = chars(linefeed, before)
-  local local_characters = chars(linefeed, local_lines)
-  local remote_characters = chars(linefeed, remote_lines)
-  local character_patches = resolve(
-    groups(diff_hunks(linefeed, characters, local_characters), diff_hunks(linefeed, characters, remote_characters)),
-    true
-  )
+  local local_hunks = diff_hunks(linefeed, characters, chars(linefeed, local_lines))
+  local remote_hunks = vim
+    .iter(diff_hunks(linefeed, characters, chars(linefeed, remote_lines)))
+    :filter(function(hunk)
+      return not touches(hunk, local_hunks)
+    end)
+    :totable()
+  local character_patches = resolve(groups(local_hunks, remote_hunks), true)
   sort(character_patches)
   local merged = patch(characters, character_patches)
   return { start = start, finish = finish, lines = text_lines(linefeed, merged) }
@@ -238,9 +247,9 @@ local merge_hunks = function(linefeed, base, grouped, row)
   local shift = 0
 
   for _, group in ipairs(grouped) do
-    local at_cursor = nil
-    at_cursor, shift = at_row(group, row, shift)
-    if at_cursor then
+    local cursor_touched
+    cursor_touched, shift = at_row(group, row, shift)
+    if cursor_touched then
       row = nil
       table.insert(merged, cursor_hunk(linefeed, base, group))
     else
@@ -265,15 +274,15 @@ M.replace = function(buf, lines, mark)
   local patches = row_hunks(lib.buf_linefeed(buf), before, lines)
 
   vim.api.nvim_buf_call(buf, function()
-    for index, patch in vim.iter(patches):rev():enumerate() do
+    for index, hunk in vim.iter(patches):rev():enumerate() do
       if index == #patches then
         vim.cmd [[let &undolevels=&undolevels]]
       else
         vim.cmd.undojoin()
       end
-      vim.api.nvim_buf_set_lines(buf, patch.start, patch.finish, true, patch.lines)
-      if #patch.lines > 0 then
-        mark(patch.start, patch.start + #patch.lines)
+      vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, hunk.lines)
+      if #hunk.lines > 0 then
+        mark(hunk.start, hunk.start + #hunk.lines)
       end
     end
   end)
