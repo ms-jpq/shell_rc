@@ -2,13 +2,33 @@ local lib = require "go.lib"
 
 local M = {}
 
-local chars = function(linefeed, lines)
-  return vim.fn.split(table.concat(lines, linefeed), [[\zs]])
+local records = function(linefeed, text)
+  if text == "" then
+    return {}
+  end
+
+  local parts = vim.split(text, linefeed, { plain = true })
+  local records = {}
+  for index = 1, #parts - 1 do
+    table.insert(records, parts[index] .. linefeed)
+  end
+  if text:sub(-#linefeed) ~= linefeed then
+    table.insert(records, parts[#parts])
+  end
+  return records
 end
 
-local text_lines = function(linefeed, characters)
-  local text = table.concat(characters)
-  return text == "" and {} or vim.split(text, linefeed, { plain = true })
+local chars = function(pieces)
+  return vim.fn.split(table.concat(pieces), [[\zs]])
+end
+
+local buffer_lines = function(linefeed, text)
+  return vim
+    .iter(records(linefeed, text))
+    :map(function(record)
+      return record:sub(-#linefeed) == linefeed and record:sub(1, -#linefeed - 1) or record
+    end)
+    :totable()
 end
 
 local split = function(hunk)
@@ -33,13 +53,9 @@ local slice = function(lines, start, finish)
   return vim.list_slice(lines, math.floor(start + 1), math.floor(finish))
 end
 
-local text = function(linefeed, lines)
-  return #lines == 0 and "" or table.concat(lines, linefeed) .. linefeed
-end
-
-local diff = function(linefeed, before, after)
+local diff = function(separator, before, after)
   return vim
-    .iter(vim.text.diff(text(linefeed, before), text(linefeed, after), { result_type = "indices" }))
+    .iter(vim.text.diff(table.concat(before, separator), table.concat(after, separator), { result_type = "indices" }))
     :map(function(hunk)
       local old_start, old_count, new_start, new_count = unpack(hunk)
       local start = old_start - (old_count == 0 and 0 or 1)
@@ -52,8 +68,8 @@ local diff = function(linefeed, before, after)
     :totable()
 end
 
-local diff_hunks = function(linefeed, before, after, atomic)
-  local changes = diff(linefeed, before, after)
+local diff_hunks = function(separator, before, after, atomic)
+  local changes = diff(separator, before, after)
   if atomic then
     return vim.iter(changes):map(split):flatten():totable()
   end
@@ -61,7 +77,7 @@ local diff_hunks = function(linefeed, before, after, atomic)
 end
 
 local row_hunks = function(linefeed, before, after)
-  return diff_hunks(linefeed, before, after, true)
+  return diff_hunks("", before, after, true)
 end
 
 local overlaps = function(left, right)
@@ -228,10 +244,10 @@ local cursor_hunk = function(linefeed, base, group)
   local before = slice(base, start, finish)
   local local_lines = patch(before, relative(group.local_patches, start))
   local remote_lines = patch(before, relative(group.remote_patches, start))
-  local characters = chars(linefeed, before)
-  local local_hunks = diff_hunks(linefeed, characters, chars(linefeed, local_lines))
+  local characters = chars(before)
+  local local_hunks = diff_hunks(linefeed, characters, chars(local_lines))
   local remote_hunks = vim
-    .iter(diff_hunks(linefeed, characters, chars(linefeed, remote_lines)))
+    .iter(diff_hunks(linefeed, characters, chars(remote_lines)))
     :filter(function(hunk)
       return not touches(hunk, local_hunks)
     end)
@@ -239,7 +255,7 @@ local cursor_hunk = function(linefeed, base, group)
   local character_patches = resolve(groups(local_hunks, remote_hunks), true)
   sort(character_patches)
   local merged = patch(characters, character_patches)
-  return { start = start, finish = finish, lines = text_lines(linefeed, merged) }
+  return { start = start, finish = finish, lines = records(linefeed, table.concat(merged)) }
 end
 
 local merge_hunks = function(linefeed, base, grouped, row)
@@ -260,18 +276,26 @@ local merge_hunks = function(linefeed, base, grouped, row)
   return merged
 end
 
-M.merge = function(eol, base, local_lines, remote_lines, pos)
+M.merge = function(eol, base, local_text, remote_text, pos)
   eol = eol or lib.LF
   local row = unpack(pos)
-  local grouped = row_groups(eol, base, local_lines, remote_lines)
-  local patches = merge_hunks(eol, base, grouped, row)
+  local base_lines = records(eol, base)
+  local local_lines = records(eol, local_text)
+  local remote_lines = records(eol, remote_text)
+  local grouped = row_groups(eol, base_lines, local_lines, remote_lines)
+  local patches = merge_hunks(eol, base_lines, grouped, row)
   sort(patches)
-  return patch(base, patches)
+  return table.concat(patch(base_lines, patches))
 end
 
-M.replace = function(buf, lines, mark)
-  local before = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local patches = row_hunks(lib.buf_linefeed(buf), before, lines)
+M.replace = function(buf, text, mark)
+  local linefeed = lib.buf_linefeed(buf)
+  local before_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+  local before = table.concat(before_lines, linefeed)
+  if vim.bo[buf].endofline then
+    before = before .. linefeed
+  end
+  local patches = row_hunks(linefeed, records(linefeed, before), records(linefeed, text))
 
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(patches):rev():enumerate() do
@@ -280,9 +304,10 @@ M.replace = function(buf, lines, mark)
       else
         vim.cmd.undojoin()
       end
-      vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, hunk.lines)
-      if #hunk.lines > 0 then
-        mark(hunk.start, hunk.start + #hunk.lines)
+      local lines = buffer_lines(linefeed, table.concat(hunk.lines))
+      vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
+      if #lines > 0 then
+        mark(hunk.start, hunk.start + #lines)
       end
     end
   end)

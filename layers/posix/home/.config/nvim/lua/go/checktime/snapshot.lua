@@ -1,3 +1,5 @@
+local lib = require "go.lib"
+
 local M = {}
 
 M.BASE = "__checktime_base__"
@@ -17,6 +19,13 @@ local same_version = function(before, after)
     and before.ctime.nsec == after.ctime.nsec
 end
 
+M.buffer = function(buf)
+  local linefeed = lib.buf_linefeed(buf)
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+  local text = table.concat(lines, linefeed)
+  return vim.bo[buf].endofline and text .. linefeed or text
+end
+
 M.read = function(buf)
   local name = vim.api.nvim_buf_get_name(buf)
   local before = vim.uv.fs_stat(name)
@@ -26,24 +35,24 @@ M.read = function(buf)
     return nil
   end
 
-  local ok, lines = pcall(vim.fn.readfile, name)
+  local ok, text = pcall(vim.fn.readblob, name)
   if not ok then
-    return M.RETRY
-  elseif not same_version(before, vim.uv.fs_stat(name)) then
     return M.RETRY
   end
 
   local encoding = vim.bo[buf].fileencoding
   if encoding ~= "" and encoding ~= vim.o.encoding then
-    lines = vim
-      .iter(lines)
-      :map(function(line)
-        return vim.fn.iconv(line, encoding, vim.o.encoding)
-      end)
-      :totable()
+    text = vim.fn.iconv(text, encoding, vim.o.encoding)
+  end
+  if vim.bo[buf].bomb then
+    text = string.gsub(text, "^\239\187\191", "")
   end
 
-  return lines
+  if not same_version(before, vim.uv.fs_stat(name)) then
+    return M.RETRY
+  end
+
+  return text
 end
 
 return M

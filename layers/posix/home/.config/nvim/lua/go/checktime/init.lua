@@ -34,27 +34,27 @@ do
     end,
   })
 
-  local flash = function(buf, lines)
+  local flash = function(buf, text)
     vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-    hunks.replace(buf, lines, function(start, finish)
+    hunks.replace(buf, text, function(start, finish)
       vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = flash_span })
     end)
   end
 
   local reconcile = function(buf, remote)
-    local local_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-    local base = vim.b[buf][snapshot.BASE] or local_lines
+    local local_text = snapshot.buffer(buf)
+    local base = vim.b[buf][snapshot.BASE] or local_text
 
     local win = vim.api.nvim_get_current_win()
     local pos = vim.api.nvim_win_get_buf(win) == buf and vim.api.nvim_win_get_cursor(win) or {}
-    local lines = hunks.merge(lib.buf_linefeed(buf), base, local_lines, remote, pos)
+    local text = hunks.merge(lib.buf_linefeed(buf), base, local_text, remote, pos)
 
-    if not vim.deep_equal(lines, local_lines) then
-      flash(buf, lines)
+    if text ~= local_text then
+      flash(buf, text)
     end
 
     vim.b[buf][snapshot.BASE] = remote
-    vim.bo[buf].modified = not vim.deep_equal(lines, remote)
+    vim.bo[buf].modified = text ~= remote
   end
 
   local tick = function()
