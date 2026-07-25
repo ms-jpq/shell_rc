@@ -22,7 +22,7 @@ vim.opt.copyindent = true
 vim.opt.shiftwidth = 0
 
 local set_tabsize = function(tabsize, setter)
-  for _, key in pairs { "tabstop", "softtabstop" } do
+  for _, key in pairs { "tabstop" } do
     setter[key] = tabsize
   end
 end

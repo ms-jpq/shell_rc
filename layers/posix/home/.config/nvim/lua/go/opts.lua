@@ -40,8 +40,8 @@ vim.opt.mousemodel = "popup_setpos"
 vim.opt.mousetime = 250
 
 -- scroll activation margin
-vim.opt.scrolloff = 0
-vim.opt.sidescrolloff = 10
+vim.opt.scrolloff = 8
+vim.opt.sidescrolloff = 16
 vim.opt.smoothscroll = true
 
 -- browser-like jumplist; restore view on navigation
