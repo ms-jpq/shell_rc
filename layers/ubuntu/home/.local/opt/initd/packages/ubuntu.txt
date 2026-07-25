@@ -1,6 +1,5 @@
 # + catimg
 # + libaa-bin
-# + vhs
 # + yank
 + 7zip-standalone
 + aerc
@@ -34,10 +33,8 @@
 + git
 + git-delta
 + gitui
-+ glow
 + gping
 + grep
-+ gum
 + htop
 + hyperfine
 + iftop

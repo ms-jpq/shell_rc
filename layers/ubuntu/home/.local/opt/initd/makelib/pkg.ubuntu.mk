@@ -15,15 +15,6 @@ pkg.posix: /etc/apt/sources.list.d/ms-jpq.list
 	deb https://raw.githubusercontent.com/ms-jpq/deb/refs/heads/deb/ /
 	EOF
 
-/etc/apt/trusted.gpg.d/charm.gpg:
-	$(CURL) -- 'https://repo.charm.sh/apt/gpg.key' | sudo -- gpg --batch --dearmor --yes --output '$@'
-
-pkg.posix: /etc/apt/sources.list.d/charm.list
-/etc/apt/sources.list.d/charm.list: /etc/apt/trusted.gpg.d/charm.gpg
-	sudo -- tee -- '$@' <<-'EOF'
-	deb https://repo.charm.sh/apt/ * *
-	EOF
-
 /etc/apt/trusted.gpg.d/gcp.gpg:
 	$(CURL) -- 'https://packages.cloud.google.com/apt/doc/apt-key.gpg' | sudo -- gpg --batch --dearmor --yes --output '$@'
 
