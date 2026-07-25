@@ -1,3 +1,6 @@
+syntax match swiftShebangHash '\%1l^#\ze!' conceal cchar=⌘
+syntax match swiftShebangBang '\%1l\(^#\)\@<=!/usr/bin/env\ze\%(\s\|$\)' conceal cchar=‼
+
 syntax match swiftImport '^\s*\zs\<import\>' conceal cchar=↓
 
 syntax match swiftCommentEdge '^\s*\zs//' conceal cchar=│

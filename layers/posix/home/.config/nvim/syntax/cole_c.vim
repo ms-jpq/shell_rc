@@ -1,3 +1,6 @@
+syntax match cShebangHash '\%1l^#\ze!' conceal cchar=⌘
+syntax match cShebangBang '\%1l\(^#\)\@<=!/usr/bin/env\ze\%(\s\|$\)' conceal cchar=‼
+
 syntax match cInclude '^\s*\zs#include\>' conceal cchar=↓
 
 syntax match cCommentEdge '^\s*\zs//' conceal cchar=│

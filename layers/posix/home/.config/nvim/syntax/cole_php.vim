@@ -1,7 +1,10 @@
+syntax match phpShebangHash '\%1l^#\ze!' conceal cchar=⌘
+syntax match phpShebangBang '\%1l\(^#\)\@<=!/usr/bin/env\ze\%(\s\|$\)' conceal cchar=‼
+
 syntax match phpReq '^\s*\zs\<include\>' conceal cchar=↓
 syntax match phpReq '^\s*\zs\<require\>' conceal cchar=↓
 
-syntax match phpCommentEdge '^\s*\zs#' conceal cchar=│
+syntax match phpCommentEdge '^\s*\zs#\ze!\@!' conceal cchar=│
 syntax match phpCommentEdgeSlash '^\s*\zs//' conceal cchar=│
 
 syntax match phpBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
