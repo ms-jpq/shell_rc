@@ -15,8 +15,14 @@ vim.opt.expandtab = true
 -- smart indentation level
 vim.opt.smarttab = true
 
+-- copy local indent
+vim.opt.copyindent = true
+
+-- columns to shift
+vim.opt.shiftwidth = 0
+
 local set_tabsize = function(tabsize, setter)
-  for _, key in pairs { "tabstop", "softtabstop", "shiftwidth" } do
+  for _, key in pairs { "tabstop", "softtabstop" } do
     setter[key] = tabsize
   end
 end
