@@ -17,7 +17,7 @@ do
 
   local matches = {
     ["@markup"] = [[^\s*>\%(\s*|\)\@![^\n]*$]],
-    ["@comment.todo"] = [[^\s*>\s*|\s*>>>[^\n]*$]],
+    ["@comment.todo"] = [[^\s*>[ \t]\+|[ \t]*\zs>>>[^\n]*$]],
   }
 
   local enter = autocmd.buf_win({ buffer = 0 }, function()
