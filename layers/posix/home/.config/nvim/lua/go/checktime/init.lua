@@ -2,6 +2,7 @@ local async = require "go.async"
 local hunks = require "go.checktime.hunks"
 local lib = require "go.lib"
 local lock = require "go.checktime.lock"
+local poll = require "go.checktime.poll"
 local snapshot = require "go.checktime.snapshot"
 local watch = require "go.checktime.watch"
 
@@ -30,7 +31,7 @@ do
   vim.api.nvim_create_autocmd({ "FocusGained" }, {
     group = lib.group,
     callback = function()
-      watcher.dirty()
+      watcher.dirty(poll.REMOTE)
     end,
   })
 
@@ -58,16 +59,18 @@ do
   end
 
   local tick = function()
-    for buf in pairs(watcher.take()) do
+    for buf, changes in pairs(watcher.take()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable then
         local name = vim.api.nvim_buf_get_name(buf)
         local locked = lock.guard(name, function()
-          local remote = snapshot.read(buf)
-          if remote == snapshot.RETRY then
-            watcher.dirty(buf)
-            return
-          elseif remote then
-            reconcile(buf, remote)
+          if changes[poll.REMOTE] then
+            local remote = snapshot.read(buf)
+            if remote == snapshot.RETRY then
+              watcher.dirty(poll.REMOTE, buf)
+              return
+            elseif remote then
+              reconcile(buf, remote)
+            end
           end
 
           if vim.bo[buf].modified then
@@ -77,7 +80,12 @@ do
           end
         end)
         if not locked then
-          watcher.dirty(buf)
+          if changes[poll.LOCAL] then
+            watcher.dirty(poll.LOCAL, buf)
+          end
+          if changes[poll.REMOTE] then
+            watcher.dirty(poll.REMOTE, buf)
+          end
         end
       end
     end

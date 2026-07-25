@@ -3,6 +3,7 @@ local lib = require "go.lib"
 local M = {}
 
 M.DIRTY = "__checktime_dirty__"
+M.REMOTE, M.LOCAL = "remote", "local"
 
 local d_watcher = {}
 d_watcher.new = function(path, changed)
@@ -56,14 +57,18 @@ M.new = function()
   local w = {}
   local entries, watchers = {}, {}
 
-  local mark = function(buf, value)
+  local mark = function(kind, buf)
     if vim.api.nvim_buf_is_valid(buf) then
-      vim.b[buf][M.DIRTY] = value
+      if kind then
+        vim.b[buf][M.DIRTY] = vim.tbl_extend("force", vim.b[buf][M.DIRTY] or {}, { [kind] = true })
+      else
+        vim.b[buf][M.DIRTY] = nil
+      end
     end
   end
 
   w.unwatch = function(buf)
-    mark(buf, nil)
+    mark(nil, buf)
     local watcher = watchers[buf]
     watchers[buf] = nil
     if not watcher then
@@ -87,7 +92,7 @@ M.new = function()
       local changed = vim.schedule_wrap(function(filename)
         for buf, p in pairs(bufs) do
           if not filename or vim.fs.basename(p) == filename then
-            mark(buf, true)
+            mark(M.REMOTE, buf)
           end
         end
       end)
@@ -110,7 +115,7 @@ M.new = function()
       local changed = vim.schedule_wrap(function(filename)
         for buf, p in pairs(bufs) do
           if not filename or vim.fs.basename(p) == filename then
-            mark(buf, true)
+            mark(M.REMOTE, buf)
           end
         end
       end)
@@ -137,21 +142,22 @@ M.new = function()
     return true
   end
 
-  w.dirty = function(buf)
+  w.dirty = function(kind, buf)
     if buf then
-      return mark(buf, true)
+      return mark(kind, buf)
     end
     for b in pairs(watchers) do
-      mark(b, true)
+      mark(kind, b)
     end
   end
 
   w.take = function()
     local changes = {}
     for buf in pairs(watchers) do
-      if vim.api.nvim_buf_is_valid(buf) and vim.b[buf][M.DIRTY] then
-        mark(buf, nil)
-        changes[buf] = true
+      local dirty = vim.b[buf][M.DIRTY]
+      if vim.api.nvim_buf_is_valid(buf) and dirty then
+        mark(nil, buf)
+        changes[buf] = dirty
       end
     end
     return changes

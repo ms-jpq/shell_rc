@@ -35,7 +35,7 @@ M.start = function()
   watcher.take = function()
     local changes = files.take()
     for buf in pairs(retry) do
-      changes[buf] = true
+      changes[buf] = { [poll.REMOTE] = true }
     end
     for buf in pairs(changes) do
       if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modifiable then
@@ -78,7 +78,7 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
     group = lib.group,
     callback = function(args)
-      files.dirty(args.buf)
+      files.dirty(poll.LOCAL, args.buf)
     end,
   })
 
