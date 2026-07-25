@@ -39,6 +39,9 @@ vim.opt.mousemodel = "popup_setpos"
 -- doubleclick time
 vim.opt.mousetime = 250
 
+-- scroll bound windows scroll horizontally as well
+vim.opt.scrollopt:append { "hor" }
+
 -- scroll activation margin
 vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 16
