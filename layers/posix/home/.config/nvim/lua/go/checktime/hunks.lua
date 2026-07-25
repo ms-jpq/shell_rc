@@ -76,7 +76,7 @@ local diff_hunks = function(separator, before, after, atomic)
   return changes
 end
 
-local row_hunks = function(linefeed, before, after)
+local row_hunks = function(before, after)
   return diff_hunks("", before, after, true)
 end
 
@@ -159,8 +159,8 @@ local groups = function(local_patches, remote_patches)
   return grouped
 end
 
-local row_groups = function(linefeed, base, local_lines, remote_lines)
-  return groups(row_hunks(linefeed, base, local_lines), row_hunks(linefeed, base, remote_lines))
+local row_groups = function(base, local_lines, remote_lines)
+  return groups(row_hunks(base, local_lines), row_hunks(base, remote_lines))
 end
 
 local pick = function(group, local_wins)
@@ -218,7 +218,8 @@ local relative = function(patches, start)
     :totable()
 end
 
-local at_row = function(group, row, shift)
+local at_row = function(pos, group, shift)
+  local row = pos and unpack(pos)
   if row then
     for _, hunk in ipairs(group.local_patches) do
       local first = hunk.start + shift + 1
@@ -232,14 +233,24 @@ local at_row = function(group, row, shift)
   return false, shift
 end
 
-local touches = function(hunk, local_hunks)
-  return hunk.finish > hunk.start
-    and vim.iter(local_hunks):any(function(other)
-      return other.start == other.finish and (hunk.start == other.start or hunk.finish == other.start)
-    end)
+local at_base_row = function(pos, group, shift)
+  local row = pos and unpack(pos)
+  local start, finish = bounds(group)
+  return row and start + shift < row and row <= finish + shift
 end
 
-local cursor_hunk = function(linefeed, base, group)
+local touches = function(pos, local_hunks, hunk)
+  local _, col = unpack(pos)
+  return hunk.finish > hunk.start
+    and (
+      hunk.finish == col
+      or vim.iter(local_hunks):any(function(other)
+        return other.start == other.finish and (hunk.start == other.start or hunk.finish == other.start)
+      end)
+    )
+end
+
+local cursor_hunk = function(linefeed, base, pos, group)
   local start, finish = bounds(group)
   local before = slice(base, start, finish)
   local local_lines = patch(before, relative(group.local_patches, start))
@@ -249,7 +260,7 @@ local cursor_hunk = function(linefeed, base, group)
   local remote_hunks = vim
     .iter(diff_hunks(linefeed, characters, chars(remote_lines)))
     :filter(function(hunk)
-      return not touches(hunk, local_hunks)
+      return not touches(pos, local_hunks, hunk)
     end)
     :totable()
   local character_patches = resolve(groups(local_hunks, remote_hunks), true)
@@ -258,16 +269,17 @@ local cursor_hunk = function(linefeed, base, group)
   return { start = start, finish = finish, lines = records(linefeed, table.concat(merged)) }
 end
 
-local merge_hunks = function(linefeed, base, grouped, row)
+local merge_hunks = function(linefeed, base, pos, grouped)
   local merged = {}
   local shift = 0
 
   for _, group in ipairs(grouped) do
     local cursor_touched
-    cursor_touched, shift = at_row(group, row, shift)
+    cursor_touched, shift = at_row(pos, group, shift)
+    cursor_touched = cursor_touched or at_base_row(pos, group, shift)
     if cursor_touched then
-      row = nil
-      table.insert(merged, cursor_hunk(linefeed, base, group))
+      table.insert(merged, cursor_hunk(linefeed, base, pos, group))
+      pos = nil
     else
       vim.list_extend(merged, pick(group, false))
     end
@@ -278,24 +290,50 @@ end
 
 M.merge = function(eol, base, local_text, remote_text, pos)
   eol = eol or lib.LF
-  local row = unpack(pos)
   local base_lines = records(eol, base)
   local local_lines = records(eol, local_text)
   local remote_lines = records(eol, remote_text)
-  local grouped = row_groups(eol, base_lines, local_lines, remote_lines)
-  local patches = merge_hunks(eol, base_lines, grouped, row)
+  local grouped = row_groups(base_lines, local_lines, remote_lines)
+  local patches = merge_hunks(eol, base_lines, pos, grouped)
   sort(patches)
   return table.concat(patch(base_lines, patches))
 end
 
+local window_views = function(buf)
+  local views = vim
+    .iter(vim.api.nvim_list_wins())
+    :filter(function(win)
+      return vim.api.nvim_win_get_buf(win) == buf
+    end)
+    :fold({}, function(views, win)
+      views[win] = {
+        row = (unpack(vim.api.nvim_win_get_cursor(win))),
+        topline = vim.api.nvim_win_call(win, function()
+          return vim.fn.winsaveview().topline
+        end),
+      }
+      return views
+    end)
+
+  return function()
+    for win, view in pairs(views) do
+      local row = unpack(vim.api.nvim_win_get_cursor(win))
+      vim.api.nvim_win_call(win, function()
+        vim.fn.winrestview { topline = view.topline + row - view.row }
+      end)
+    end
+  end
+end
+
 M.replace = function(buf, text, mark)
   local linefeed = lib.buf_linefeed(buf)
+  local restore = window_views(buf)
   local before_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local before = table.concat(before_lines, linefeed)
   if vim.bo[buf].endofline then
     before = before .. linefeed
   end
-  local patches = row_hunks(linefeed, records(linefeed, before), records(linefeed, text))
+  local patches = row_hunks(records(linefeed, before), records(linefeed, text))
 
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(patches):rev():enumerate() do
@@ -304,6 +342,7 @@ M.replace = function(buf, text, mark)
       else
         vim.cmd.undojoin()
       end
+
       local lines = buffer_lines(linefeed, table.concat(hunk.lines))
       vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
       if #lines > 0 then
@@ -311,6 +350,7 @@ M.replace = function(buf, text, mark)
       end
     end
   end)
+  restore()
 end
 
 return M
