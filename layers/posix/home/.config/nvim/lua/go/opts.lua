@@ -19,9 +19,6 @@ vim.opt.report = 0
 -- no swap files
 vim.opt.swapfile = false
 
--- wrap
-vim.opt.wrap = true
-
 -- no hex or binary parsing
 vim.opt.nrformats = ""
 
