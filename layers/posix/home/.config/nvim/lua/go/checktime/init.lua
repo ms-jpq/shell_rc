@@ -43,19 +43,21 @@ do
   end
 
   local reconcile = function(buf, remote)
-    local local_text = snapshot.buffer(buf)
+    local linefeed = lib.buf_linefeed(buf)
+    local local_text = snapshot.buffer(buf, linefeed)
     local base = vim.b[buf][snapshot.BASE] or local_text
 
     local win = vim.api.nvim_get_current_win()
     local pos = vim.api.nvim_win_get_buf(win) == buf and vim.api.nvim_win_get_cursor(win) or {}
-    local text = hunks.merge(lib.buf_linefeed(buf), base, local_text, remote, pos)
+    local text = hunks.merge(linefeed, base, local_text, remote, pos)
+    local eol_fixed = snapshot.with_eol(buf, linefeed, text)
 
-    if text ~= local_text then
-      flash(buf, text)
+    if eol_fixed ~= local_text then
+      flash(buf, eol_fixed)
     end
 
     vim.b[buf][snapshot.BASE] = remote
-    vim.bo[buf].modified = text ~= remote
+    vim.bo[buf].modified = eol_fixed ~= remote
   end
 
   local tick = function()

@@ -19,11 +19,22 @@ local same_version = function(before, after)
     and before.ctime.nsec == after.ctime.nsec
 end
 
-M.buffer = function(buf)
-  local linefeed = lib.buf_linefeed(buf)
+M.buffer = function(buf, linefeed)
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local text = table.concat(lines, linefeed)
   return vim.bo[buf].endofline and text .. linefeed or text
+end
+
+M.with_eol = function(buf, linefeed, text)
+  local ending = string.sub(text, -#linefeed) == linefeed
+
+  if vim.bo[buf].endofline then
+    return ending and text or text .. linefeed
+  elseif ending then
+    return string.sub(text, 1, -#linefeed - 1)
+  else
+    return text
+  end
 end
 
 M.read = function(buf)

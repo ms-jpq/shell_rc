@@ -4,6 +4,10 @@ local M = {}
 
 local preview = vim.fs.joinpath(lib.HOME, ".local", "libexec", "preview.sh")
 
+local fnameshort = function(path)
+  return vim.fn.fnamemodify(path, [[:~:.]])
+end
+
 local shelljoin = function(args)
   return vim.iter(args):map(vim.fn.shellescape):join " "
 end
@@ -60,7 +64,7 @@ M.buffers = function()
   local items = vim
     .iter(vim.fn.getbufinfo { buflisted = 1 })
     :map(function(b)
-      local name = b.name ~= "" and vim.fn.fnamemodify(b.name, [[:~:.]]) or "[No Name]"
+      local name = b.name ~= "" and fnameshort(b.name) or "[No Name]"
       return b.bufnr .. "\t" .. name
     end)
     :totable()
@@ -140,7 +144,7 @@ M.marks = function(list, want)
         entry.bufnr = bufnr
         entry.text = string.gsub(line, "^%s+", "")
       elseif m.file and m.file ~= "" then
-        entry.filename = vim.fn.fnamemodify(m.file, [[:~:.]])
+        entry.filename = fnameshort(m.file)
         entry.text = entry.filename
       end
       by_letter[letter] = entry

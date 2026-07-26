@@ -99,15 +99,16 @@ local repl = function()
 
   local buf = vim.api.nvim_get_current_buf()
   local filename = vim.api.nvim_buf_get_name(buf)
-  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local name = vim.fn.fnamemodify(filename, [[:~:.]])
   local count = vim.api.nvim_buf_line_count(buf)
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 
   local pane_id = pick_pane(buf, current_pane)
   if not pane_id then
     return
   end
 
-  local argv = { exec, filename, tostring(row), tostring(col + 1), tostring(count), pane_id }
+  local argv = { exec, filename, tostring(count), tostring(row), tostring(col + 1), pane_id, name }
   local proc = async.system(argv)
 
   async.scheduled()

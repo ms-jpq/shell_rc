@@ -12,7 +12,8 @@ M.start = function()
   local watcher = { dirty = files.dirty }
 
   local remember = function(buf, lines)
-    vim.b[buf][snapshot.BASE] = lines or snapshot.buffer(buf)
+    local lf = lib.buf_linefeed(buf)
+    vim.b[buf][snapshot.BASE] = lines or snapshot.buffer(buf, lf)
   end
 
   local watch = function(buf)
