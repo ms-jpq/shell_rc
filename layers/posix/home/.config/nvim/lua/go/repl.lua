@@ -99,7 +99,7 @@ local repl = function()
 
   local buf = vim.api.nvim_get_current_buf()
   local filename = vim.api.nvim_buf_get_name(buf)
-  local name = vim.fn.fnamemodify(filename, [[:~:.]])
+  local name = vim.fn.fnamemodify(filename, [[:~]])
   local count = vim.api.nvim_buf_line_count(buf)
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 
