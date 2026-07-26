@@ -8,6 +8,7 @@ ROW="$3"
 COL="$4"
 PANE="$5"
 DISPLAY="$6"
+
 WINDOW=6
 
 read -r -d '' AWK << 'AWK' || true
