@@ -1,7 +1,7 @@
 local async = require "go.async"
 local lib = require "go.lib"
 
-local filters = vim.fs.joinpath(lib.cfg, "repl")
+local exec = vim.fs.joinpath(lib.cfg, "libexec", "repl.sh")
 local rand = string.gsub(vim.fn.tempname(), "/", "-")
 
 local socket = vim.env.__TMUX_ROOT_SOCKET__ or string.match(vim.env.TMUX or "", "^[^,]+")
@@ -92,33 +92,27 @@ local pick_pane = function(buf, pane_id)
   return p_id
 end
 
-local arg0 = function(filetype)
-  local bin = vim.fs.joinpath(filters, filetype .. ".sh")
-  return vim.fn.executable(bin) == 1 and bin or vim.fs.joinpath(filters, "_.sh")
-end
-
 local repl = function()
   if not socket or not current_pane then
     return
   end
 
   local buf = vim.api.nvim_get_current_buf()
-  local filename, filetype = vim.api.nvim_buf_get_name(buf), vim.bo[buf].filetype
+  local filename = vim.api.nvim_buf_get_name(buf)
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local count = vim.api.nvim_buf_line_count(buf)
 
   local pane_id = pick_pane(buf, current_pane)
   if not pane_id then
     return
   end
 
-  local argv = { arg0(filetype), filename, tostring(row), tostring(col + 1), pane_id }
+  local argv = { exec, filename, tostring(row), tostring(col + 1), tostring(count), pane_id }
   local proc = async.system(argv)
 
-  if proc.code ~= 0 then
-    async.scheduled()
-    local msg = proc.stderr .. proc.stdout
-    vim.notify(msg, vim.log.levels.ERROR)
-  end
+  async.scheduled()
+  vim.notify(proc.stdout, vim.log.levels.INFO)
+  vim.notify(proc.stderr, vim.log.levels.ERROR)
 end
 
 vim.keymap.set({ "n" }, [[<leader>w]], async(repl))
