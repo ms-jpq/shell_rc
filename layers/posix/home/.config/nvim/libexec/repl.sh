@@ -7,16 +7,29 @@ ROW="$2"
 COL="$3"
 COUNT="$4"
 PANE="$5"
+WINDOW=6
 
-awk -v file="$FILE" -v row="$ROW" -v col="$COL" -v count="$COUNT" -f /dev/stdin "$FILE" << 'AWK' | ~/.config/tmux/libexec/send-text.sh "$PANE"
+awk -v FILE="$FILE" -v ROW="$ROW" -v COL="$COL" -v COUNT="$COUNT" -v WINDOW="$WINDOW" -f /dev/stdin "$FILE" << 'AWK' | ~/.config/tmux/libexec/send-text.sh "$PANE"
 BEGIN {
-  width = length(count)
-  printf ">>> %s:%d:%d\n", file, row, col
+  WIDTH = length(COUNT)
+  LO = ROW - WINDOW
+  HI = ROW + WINDOW
+  LO = LO < 1 ? 1 : LO
+  HI = HI > COUNT ? COUNT : HI
+  printf "REPL> %s:%d:%d\n", FILE, ROW, COL
+}
+
+NR < LO {
+  next
+}
+
+NR > HI {
+  exit
 }
 
 {
-  marker = NR == row ? "->" : "  "
-  printf "%s %*d | %s\n", marker, width, NR, $0
+  MARKER = NR == ROW ? "->" : "  "
+  printf "%s %*d | %s\n", MARKER, WIDTH, NR, $0
 }
 AWK
 
