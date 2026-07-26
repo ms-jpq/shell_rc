@@ -2,11 +2,6 @@
 
 set -o pipefail
 
-OPTS='f:'
-LONG_OPTS='font:'
-GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
-eval -- set -- "$GO"
-
 while (($#)); do
   case "$1" in
   -f | --font)
@@ -14,15 +9,16 @@ while (($#)); do
     shift -- 2
     ;;
   --)
-    TTL="$2"
-    shift -- 2
+    shift -- 1
     break
     ;;
   *)
-    exit 1
+    break
     ;;
   esac
 done
+
+TTL="$1"
 
 NOW="${EPOCHREALTIME%%.*}"
 END=$((TTL * 60 + NOW))

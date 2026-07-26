@@ -3,8 +3,6 @@ local lib = require "go.lib"
 
 local filters = vim.fs.joinpath(lib.cfg, "repl")
 local rand = string.gsub(vim.fn.tempname(), "/", "-")
-local ns = vim.api.nvim_create_namespace(rand)
-local send_text = vim.fs.joinpath(lib.cfg, "..", "tmux", "libexec", "send-text.sh")
 
 local socket = vim.env.__TMUX_ROOT_SOCKET__ or string.match(vim.env.TMUX or "", "^[^,]+")
 local current_pane = vim.env.__TMUX_ROOT_PANE__ or vim.env.TMUX_PANE
@@ -14,14 +12,10 @@ vim.api.nvim_create_user_command("REPLclear", function()
   vim.b.__tmux_target__ = nil
 end, {})
 
-local run = function(stdin, args)
-  local proc = async.system(args, { stdin = stdin })
-  return proc.stdout
-end
-
 local tmux = function(stdin, args)
-  local argv = { unpack(cmd) }
-  return run(stdin, vim.list_extend(argv, args))
+  local argv = vim.list_extend({ unpack(cmd) }, args)
+  local proc = async.system(argv, { stdin = stdin })
+  return proc.stdout
 end
 
 local parse_panes = function(pane_id)
@@ -98,52 +92,9 @@ local pick_pane = function(buf, pane_id)
   return p_id
 end
 
-local process = function(buf, stdin)
-  local prefix = vim.fs.joinpath(filters, vim.bo[buf].filetype)
-  local found = unpack(vim.fn.glob(prefix .. ".*", false, true))
-  if not found then
-    found = vim.fs.joinpath(filters, "_.awk")
-  end
-
-  return run(stdin, { found })
-end
-
-local matching = function(buf)
-  local re = vim.b[buf].__page_regex__
-  return function(line)
-    return re and vim.fn.match(line, re) ~= -1
-  end
-end
-
-local seek = function(buf, match, row, direction)
-  local count = direction < 0 and 0 or vim.api.nvim_buf_line_count(buf)
-  for i = row, count, direction do
-    if i == count then
-      return i
-    end
-
-    local line = unpack(vim.api.nvim_buf_get_lines(buf, i, i + 1, true))
-    if match(line) then
-      if direction < 0 then
-        return i + (direction * -1)
-      end
-      return i
-    end
-  end
-  return row
-end
-
-local highlight = function(buf, lo, hi, fn)
-  async.scheduled()
-  if not vim.api.nvim_buf_is_valid(buf) then
-    return
-  end
-
-  hi = math.max(0, hi - 1)
-  local line = unpack(vim.api.nvim_buf_get_lines(buf, hi, hi + 1, true))
-  vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-  vim.hl.range(buf, ns, "HighlightedyankRegion", { lo, 0 }, { hi, #line }, { inclusive = false, timeout = 66 })
-  fn()
+local arg0 = function(filetype)
+  local bin = vim.fs.joinpath(filters, filetype .. ".sh")
+  return vim.fn.executable(bin) == 1 and bin or vim.fs.joinpath(filters, "_.sh")
 end
 
 local repl = function()
@@ -152,29 +103,22 @@ local repl = function()
   end
 
   local buf = vim.api.nvim_get_current_buf()
-  local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
-  row = row - 1
+  local filename, filetype = vim.api.nvim_buf_get_name(buf), vim.bo[buf].filetype
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 
   local pane_id = pick_pane(buf, current_pane)
   if not pane_id then
     return
   end
 
-  local match = matching(buf)
-  local sep = lib.buf_linefeed(buf)
-  local lo = seek(buf, match, row, -1)
-  local hi = seek(buf, match, row, 1)
+  local argv = { arg0(filetype), filename, tostring(row), tostring(col + 1), pane_id }
+  local proc = async.system(argv)
 
-  local lines = vim.api.nvim_buf_get_lines(buf, lo, hi, true)
-  local text = table.concat(lines, sep)
-  local processed = process(buf, text)
-  if processed == "" then
-    return
+  if proc.code ~= 0 then
+    async.scheduled()
+    local msg = proc.stderr .. proc.stdout
+    vim.notify(msg, vim.log.levels.ERROR)
   end
-
-  highlight(buf, lo, hi, function()
-    run(processed, { send_text, pane_id })
-  end)
 end
 
 vim.keymap.set({ "n" }, [[<leader>w]], async(repl))
