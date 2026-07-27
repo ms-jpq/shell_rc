@@ -83,12 +83,12 @@ while true; do
     fig "$TIME"
     sleep -- 1
   else
-    fig "00:00"
     break
   fi
 done
 
 while true; do
+  fig "EOF"
   case "$OSTYPE" in
   darwin*)
     MESSAGE="$(fortune | tr -- '\n' ' ' | sed -E -e 's/[[:space:]]+/ /g')"
