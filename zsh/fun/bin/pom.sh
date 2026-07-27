@@ -18,10 +18,11 @@ while (($#)); do
   esac
 done
 
-TTL="$1"
+TTL_M="$1"
+TTL_S="${2:-0}"
 
 NOW="${EPOCHREALTIME%%.*}"
-END=$((TTL * 60 + NOW))
+END=$((TTL_M * 60 + TTL_S + NOW))
 
 # Legible fonts
 _=(
@@ -75,13 +76,14 @@ fig() {
 while true; do
   NOW="${EPOCHREALTIME%%.*}"
   if ((NOW <= END)); then
-    TIME="$(date --utc --date="@$((END - NOW))" -- '+%H:%M:%S')"
+    REMAINING=$((END - NOW))
+    TIME="$(printf -- '%02d:%02d' "$((REMAINING / 60))" "$((REMAINING % 60))")"
     LINES="$(tput -- lines)"
     COLS="$(tput -- cols)"
     fig "$TIME"
     sleep -- 1
   else
-    fig "00:00:00"
+    fig "00:00"
     break
   fi
 done
@@ -90,7 +92,7 @@ while true; do
   case "$OSTYPE" in
   darwin*)
     MESSAGE="$(fortune | tr -- '\n' ' ' | sed -E -e 's/[[:space:]]+/ /g')"
-    ~/.local/libexec/notify/osc99.sh '🥫🥫' "$MESSAGE"
+    ~/.local/libexec/notify/osc99.sh '⮕⮕⮕' "$MESSAGE"
     ;;
   *)
     set -x
