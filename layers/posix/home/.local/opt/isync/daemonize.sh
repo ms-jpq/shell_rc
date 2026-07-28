@@ -3,15 +3,13 @@
 set -o pipefail
 
 LAUNCH_AGENTS=~/Library/LaunchAgents
-export -- CHANNEL WATCH_PATHS
+export -- CHANNEL
 
 for MDIR in ~/.local/share/maildir/*/; do
   CHANNEL="${MDIR%%/}"
   CHANNEL="${CHANNEL##*/}"
-  WATCH="$(find "$MDIR" -type d -name new | sed -E 's#(.*)#<string>\1</string>#')"
-  WATCH_PATHS=$'-->\n'"$WATCH"$'\n<!--'
 
-  mkdir -v -p -- ~/.local/state/isync/mbsync."$CHANNEL".{watch,queue}
+  mkdir -v -p -- ~/.local/state/isync/mbsync."$CHANNEL".queue
 
   DST1="$LAUNCH_AGENTS"/mbsync."$CHANNEL".plist
   DST2="$LAUNCH_AGENTS"/mnotify."$CHANNEL".plist

@@ -51,6 +51,11 @@ def _auth(authn: str, user: str, now: int) -> bytes:
             assert False
 
 
+def _require_ok(status: str, data: object) -> None:
+    if status != "OK":
+        raise IMAP4.error(repr((status, data)))
+
+
 @contextmanager
 def _imap(host: str, authn: str, user: str) -> Generator[IMAP4]:
     now = int(monotonic() / _MINUTE)
@@ -61,8 +66,8 @@ def _imap(host: str, authn: str, user: str) -> Generator[IMAP4]:
     try:
         match authn:
             case "oauth":
-                ok, _ = m.authenticate("XOAUTH2", lambda _: auth)
-                assert ok == "OK", ok
+                status, data = m.authenticate("XOAUTH2", lambda _: auth)
+                _require_ok(status, data=data)
             case "plain":
                 m.login(user, password=auth.decode())
 
@@ -74,8 +79,8 @@ def _imap(host: str, authn: str, user: str) -> Generator[IMAP4]:
 
 
 def _mailboxes(m: IMAP4) -> Iterator[str]:
-    ok, data = m.list()
-    assert ok == "OK", ok
+    status, data = m.list()
+    _require_ok(status, data=data)
     sep = b' "/" '
     for row in data:
         assert isinstance(row, bytes), row
@@ -86,9 +91,10 @@ def _mailboxes(m: IMAP4) -> Iterator[str]:
 
 def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
     with _imap(host, authn=authn, user=user) as m:
-        ok, _ = m.select(mailbox, readonly=True)
-        assert ok == "OK", ok
+        status, data = m.select(mailbox, readonly=True)
+        _require_ok(status, data=data)
 
+        yield None
         with m.idle(duration=_IDLE) as idler:
             for typ, data in idler:
                 getLogger().info("%s", f"{mailbox} -> {typ} {data!r}")
@@ -98,14 +104,8 @@ def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
 
 
 def _trigger(channel: str) -> None:
-    trigger = (
-        Path.home()
-        / ".local"
-        / "state"
-        / "isync"
-        / f"mbsync.{channel}.watch"
-        / "trigger"
-    )
+    queue = Path.home() / ".local" / "state" / "isync" / f"mbsync.{channel}.queue"
+    trigger = queue / "trigger"
     trigger.touch()
     getLogger().info("%s", f">> {trigger}")
 
@@ -123,7 +123,7 @@ def _idle(
             getLogger().info("%s", e)
         except IMAP4.abort as e:
             getLogger().warning("%s", e)
-        except IMAP4.error as e:
+        except Exception as e:
             getLogger().exception("%s", e)
         finally:
             if daemonize:

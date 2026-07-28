@@ -3,4 +3,4 @@
 set -o pipefail
 
 # shellcheck disable=SC2154
-exec -- touch -- ~/.local/state/isync/mbsync."$AERC_ACCOUNT".watch/trigger
+exec -- touch -- ~/.local/state/isync/mbsync."$AERC_ACCOUNT".queue/trigger

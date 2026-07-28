@@ -25,10 +25,6 @@
     <integer>6</integer>
     <key>StartInterval</key>
     <integer>300</integer>
-    <key>WatchPaths</key>
-    <array>
-      <string>${HOME}/.local/state/isync/mbsync.${CHANNEL}.watch</string>
-    </array>
     <key>QueueDirectories</key>
     <array>
       <string>${HOME}/.local/state/isync/mbsync.${CHANNEL}.queue</string>
