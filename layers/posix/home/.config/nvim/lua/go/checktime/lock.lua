@@ -6,7 +6,7 @@ local M = {}
 local cache = vim.fs.joinpath(vim.fn.stdpath "cache", "checktime")
 local NANOSECONDS_PER_MILLISECOND, MILLISECONDS_PER_SECOND = 1000 * 1000, 1000
 local MAX_WAIT, MAX_DELAY, MAX_JITTER = 750, 96, 24
-local LEASE = 288
+local LEASE = 3 * 1000
 
 local milliseconds = function()
   return vim.uv.hrtime() / NANOSECONDS_PER_MILLISECOND

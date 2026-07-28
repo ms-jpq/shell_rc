@@ -1,38 +1,11 @@
-local lib = require "go.lib"
-
 local M = {}
 
 M.DIRTY = "__checktime_dirty__"
 M.REMOTE, M.LOCAL = "remote", "local"
 
-local d_watcher = {}
-d_watcher.new = function(path, changed)
-  local watcher = { path = path }
-
-  local handle = vim.uv.new_fs_event()
-  if not handle then
-    return nil
-  end
-
-  local ok = handle:start(path, {}, function(_, filename)
-    changed(filename)
-  end)
-  if not ok then
-    handle:close()
-    return nil
-  end
-
-  watcher.close = function()
-    handle:stop()
-    handle:close()
-  end
-
-  return watcher
-end
-
-local f_watcher = {}
-f_watcher.new = function(path, changed)
-  local watcher = { path = path }
+local poller = {}
+poller.new = function(path, changed)
+  local p = { path = path, bufs = {} }
 
   local handle = vim.uv.new_fs_poll()
   if not handle then
@@ -45,12 +18,12 @@ f_watcher.new = function(path, changed)
     return nil
   end
 
-  watcher.close = function()
+  p.close = function()
     handle:stop()
     handle:close()
   end
 
-  return watcher
+  return p
 end
 
 M.new = function()
@@ -83,43 +56,15 @@ M.new = function()
   end
 
   local start_watcher = function(path)
-    local directory = vim.fs.dirname(path)
-    local directory_key = directory .. lib.os.sep
-    local watcher = entries[directory_key]
-
+    local watcher = entries[path]
     if watcher == nil then
       local bufs = {}
-      local changed = vim.schedule_wrap(function(filename)
-        for buf, p in pairs(bufs) do
-          if not filename or vim.fs.basename(p) == filename then
-            mark(M.REMOTE, buf)
-          end
+      local changed = vim.schedule_wrap(function()
+        for buf in pairs(bufs) do
+          mark(M.REMOTE, buf)
         end
       end)
-      watcher = d_watcher.new(directory_key, changed)
-      if watcher then
-        watcher.bufs = bufs
-        entries[directory_key] = watcher
-      else
-        entries[directory_key] = false
-      end
-    end
-
-    if watcher then
-      return watcher
-    end
-
-    watcher = entries[path]
-    if watcher == nil then
-      local bufs = {}
-      local changed = vim.schedule_wrap(function(filename)
-        for buf, p in pairs(bufs) do
-          if not filename or vim.fs.basename(p) == filename then
-            mark(M.REMOTE, buf)
-          end
-        end
-      end)
-      watcher = f_watcher.new(path, changed)
+      watcher = poller.new(path, changed)
       if watcher then
         watcher.bufs = bufs
         entries[path] = watcher
