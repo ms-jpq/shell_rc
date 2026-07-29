@@ -96,8 +96,8 @@ def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
 
         yield None
         with m.idle(duration=_IDLE) as idler:
-            for typ, data in idler:
-                getLogger().info("%s", f"{mailbox} -> {typ} {data!r}")
+            for typ, event in idler:
+                getLogger().info("%s", f"{mailbox} -> {typ} {event!r}")
                 if typ == "BYE":
                     return
                 yield None
