@@ -267,7 +267,6 @@
       }
     },
     "lemminx": {
-      "args": ["-Dlemminx.workdir=/var/tmp/lemminx"],
       "command": "lemminx"
     },
     "lua-language-server": {

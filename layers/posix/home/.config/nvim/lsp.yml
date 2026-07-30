@@ -29,9 +29,6 @@ typos_lsp:
 # harper_ls:
 
 lemminx:
-  cmd:
-    - lemminx
-    - -Dlemminx.workdir=/var/tmp/lemminx
   extensions:
     .xml: xml
   sandbox:

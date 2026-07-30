@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 void main(String[] args) throws Exception {
   final var tabsize = Integer.parseInt(args[0]);
-  final var java = Path.of(System.getProperty("java.home")).resolve("bin").resolve("java");
+  final var java = ProcessHandle.current().info().command().orElseThrow();
   final var jar =
       Path.of(System.getProperty("user.home"))
           .resolve(".cache")
@@ -17,7 +17,7 @@ void main(String[] args) throws Exception {
 
   final var argv =
       Stream.of(
-              Stream.of(java.toString(), "-jar", jar.toString()),
+              Stream.of(java, "-jar", jar.toString()),
               Stream.of(args).skip(1),
               tabsize == 4 ? Stream.of("--kotlinlang-style") : Stream.of())
           .flatMap(s -> s)
