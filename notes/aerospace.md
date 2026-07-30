@@ -22,7 +22,7 @@ run       = 'move-node-to-workspace 1'
 
 [[on-window-detected]]
 if.app-id = 'org.mozilla.firefox'
-run       = 'move-node-to-workspace 3'
+run       = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'org.whispersystems.signal-desktop'

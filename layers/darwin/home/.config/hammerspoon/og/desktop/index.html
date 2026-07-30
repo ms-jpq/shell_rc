@@ -1,63 +1,68 @@
 <!doctype html>
-<meta charset="utf-8" />
-<style>
-  html,
-  body,
-  iframe {
-    border: 0;
-    margin: 0;
-    height: 100%;
-    width: 100%;
-  }
-
-  html,
-  body {
-    overflow: hidden;
-  }
-</style>
-<iframe
-  allow="autoplay; encrypted-media"
-  referrerpolicy="strict-origin-when-cross-origin"
-  scrolling="no"
->
-</iframe>
-<script>
-  ;(async () => {
-    const response = await fetch("videos.json", { cache: "no-store" })
-    const videos = await response.json()
-
-    const parsed = videos
-      .map((video) => {
-        const url = new URL(video)
-        return (
-          url.searchParams.get("v") ??
-          url.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/)?.[1]
-        )
-      })
-      .filter(Boolean)
-
-    const playlist = (() => {
-      const shuffled = []
-      for (const id of parsed.values()) {
-        const position = Math.floor(Math.random() * (shuffled.length + 1))
-        shuffled.splice(position, 0, id)
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html,
+      body,
+      iframe {
+        border: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
       }
-      return shuffled.join(",")
-    })()
 
-    const params = new URLSearchParams({
-      autoplay: 1,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      iv_load_policy: 3,
-      loop: 1,
-      mute: 1,
-      playlist,
-      rel: 0,
-    })
+      html,
+      body {
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe
+      allow="autoplay; encrypted-media"
+      referrerpolicy="strict-origin-when-cross-origin"
+    >
+    </iframe>
+    <script>
+      ;(async () => {
+        const response = await fetch("videos.json", { cache: "no-store" })
+        const videos = await response.json()
 
-    document.querySelector("iframe").src =
-      `https://www.youtube.com/embed/?${params}`
-  })()
-</script>
+        const parsed = videos
+          .map((video) => {
+            const url = new URL(video)
+            return (
+              url.searchParams.get("v") ??
+              url.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/)?.[1]
+            )
+          })
+          .filter(Boolean)
+
+        const playlist = (() => {
+          const shuffled = []
+          for (const id of parsed.values()) {
+            const position = Math.floor(Math.random() * (shuffled.length + 1))
+            shuffled.splice(position, 0, id)
+          }
+          return shuffled.join(",")
+        })()
+
+        const params = new URLSearchParams({
+          autoplay: 1,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          iv_load_policy: 3,
+          loop: 1,
+          mute: 1,
+          playlist,
+          rel: 0,
+        })
+
+        document.querySelector("iframe").src =
+          `https://www.youtube.com/embed/?${params}`
+      })()
+    </script>
+  </body>
+</html>
