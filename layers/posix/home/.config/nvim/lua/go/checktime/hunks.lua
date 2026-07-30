@@ -252,6 +252,7 @@ end
 
 local cursor_hunk = function(linefeed, base, pos, group)
   local start, finish = bounds(group)
+  local source = group.local_patches[1] or group.remote_patches[1]
   local before = slice(base, start, finish)
   local local_lines = patch(before, relative(group.local_patches, start))
   local remote_lines = patch(before, relative(group.remote_patches, start))
@@ -266,7 +267,12 @@ local cursor_hunk = function(linefeed, base, pos, group)
   local character_patches = resolve(groups(local_hunks, remote_hunks), true)
   sort(character_patches)
   local merged = patch(characters, character_patches)
-  return { start = start, finish = finish, lines = records(linefeed, table.concat(merged)) }
+  return {
+    start = start,
+    finish = finish,
+    lines = records(linefeed, table.concat(merged)),
+    slot = start == finish and source.slot or nil,
+  }
 end
 
 local merge_hunks = function(linefeed, base, pos, grouped)
