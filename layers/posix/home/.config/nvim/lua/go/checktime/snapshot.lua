@@ -45,7 +45,9 @@ end
 ---@return string
 M.row_text = function(current, text)
   local linefeed = current.linefeed
-  if current.endofline or current.final_empty then
+  if current.final_empty and not current.endofline then
+    return text .. linefeed
+  elseif current.endofline then
     return string.sub(text, -#linefeed) == linefeed and text or text .. linefeed
   else
     return text
@@ -59,12 +61,14 @@ M.buffer_text = function(current, text)
   local linefeed = current.linefeed
   local ending = string.sub(text, -#linefeed) == linefeed
 
-  if current.endofline then
+  if text == linefeed then
+    return ""
+  elseif current.endofline then
     return ending and text or text .. linefeed
-  elseif current.final_empty or not ending then
-    return text
-  else
+  elseif ending then
     return string.sub(text, 1, -#linefeed - 1)
+  else
+    return text
   end
 end
 

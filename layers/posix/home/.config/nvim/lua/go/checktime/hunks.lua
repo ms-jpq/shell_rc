@@ -34,13 +34,17 @@ local chars = function(pieces)
   return vim.fn.split(table.concat(pieces), [[\zs]])
 end
 
-local buffer_lines = function(linefeed, text)
-  return vim
+local buffer_lines = function(linefeed, text, final_empty)
+  local lines = vim
     .iter(records(linefeed, text))
     :map(function(record)
       return string.sub(record, -#linefeed) == linefeed and string.sub(record, 1, -#linefeed - 1) or record
     end)
     :totable()
+  if final_empty and string.sub(text, -#linefeed) == linefeed then
+    table.insert(lines, "")
+  end
+  return lines
 end
 
 local split = function(hunk)
@@ -297,7 +301,7 @@ local merge_hunks = function(linefeed, base, pos, grouped)
     cursor_touched = cursor_touched or at_base_row(pos, group, shift)
     if cursor_touched then
       table.insert(merged, cursor_hunk(linefeed, base, pos, group))
-      pos = nil
+      pos = {}
     else
       vim.list_extend(merged, pick(group, false))
     end
@@ -370,7 +374,7 @@ M.replace = function(buf, text, mark)
         vim.cmd.undojoin()
       end
 
-      local lines = buffer_lines(linefeed, table.concat(hunk.lines))
+      local lines = buffer_lines(linefeed, table.concat(hunk.lines), not vim.bo[buf].endofline)
       vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
       if #lines > 0 then
         mark(hunk.start, hunk.start + #lines)

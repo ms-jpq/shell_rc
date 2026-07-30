@@ -30,9 +30,10 @@ M.REMOTE, M.LOCAL = "remote", "local"
 local poller = {}
 
 ---@param path string
+---@param bufs table<integer, true>
 ---@param changed fun()
 ---@return ChecktimePoller?
-poller.new = function(path, changed)
+poller.new = function(path, bufs, changed)
   local handle = vim.uv.new_fs_poll()
   if not handle then
     return nil
@@ -45,7 +46,7 @@ poller.new = function(path, changed)
   end
 
   ---@diagnostic disable-next-line: missing-fields
-  local p = { path = path, bufs = {} } ---@type ChecktimePoller
+  local p = { path = path, bufs = bufs } ---@type ChecktimePoller
   p.close = function()
     handle:stop()
     handle:close()
@@ -64,24 +65,27 @@ M.new = function()
   ---@type table<integer, ChecktimeTracked>
   local tracked = {}
 
-  ---@param kind? ChecktimeChange
   ---@param buf integer
-  local mark = function(kind, buf)
+  local clear = function(buf)
     local state = tracked[buf]
-    if not state then
-      return
+    if state then
+      state.dirty = nil
     end
-    if kind then
+  end
+
+  ---@param kind ChecktimeChange
+  ---@param buf integer
+  local dirty = function(kind, buf)
+    local state = tracked[buf]
+    if state then
       state.dirty = state.dirty or {}
       state.dirty[kind] = true
-    else
-      state.dirty = nil
     end
   end
 
   ---@param buf integer
   local detach = function(buf)
-    mark(nil, buf)
+    clear(buf)
     local state = tracked[buf]
     local watcher = state and state.watcher
     if state then
@@ -108,12 +112,11 @@ M.new = function()
       local bufs = {}
       local changed = vim.schedule_wrap(function()
         for buf in pairs(bufs) do
-          mark(M.REMOTE, buf)
+          dirty(M.REMOTE, buf)
         end
       end)
-      watcher = poller.new(path, changed)
+      watcher = poller.new(path, bufs, changed)
       if watcher then
-        watcher.bufs = bufs
         entries[path] = watcher
       end
     end
@@ -168,11 +171,11 @@ M.new = function()
   ---@param buf? integer
   w.dirty = function(kind, buf)
     if buf then
-      return mark(kind, buf)
+      return dirty(kind, buf)
     end
     for b, state in pairs(tracked) do
       if state.watcher then
-        mark(kind, b)
+        dirty(kind, b)
       end
     end
   end
@@ -183,11 +186,11 @@ M.new = function()
     for buf, state in pairs(tracked) do
       if state.retry and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modifiable then
         attach(buf, state.retry)
-        mark(M.REMOTE, buf)
+        dirty(M.REMOTE, buf)
       end
       if (state.watcher or state.retry) and state.dirty then
         local dirty = state.dirty
-        mark(nil, buf)
+        clear(buf)
         changes[buf] = { base = state.base, dirty = dirty }
       end
     end

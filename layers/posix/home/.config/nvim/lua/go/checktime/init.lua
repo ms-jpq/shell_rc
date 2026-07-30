@@ -71,11 +71,10 @@ do
 
   local tick = function()
     for buf, update in pairs(watcher.take()) do
-      local changes = update.dirty
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable then
         local name = vim.api.nvim_buf_get_name(buf)
         local locked = lock.guard(name, function()
-          if changes[poll.REMOTE] then
+          if update.dirty[poll.REMOTE] then
             local remote = snapshot.read(buf)
             if remote == snapshot.RETRY then
               watcher.dirty(poll.REMOTE, buf)
@@ -92,10 +91,10 @@ do
           end
         end)
         if not locked then
-          if changes[poll.LOCAL] then
+          if update.dirty[poll.LOCAL] then
             watcher.dirty(poll.LOCAL, buf)
           end
-          if changes[poll.REMOTE] then
+          if update.dirty[poll.REMOTE] then
             watcher.dirty(poll.REMOTE, buf)
           end
         end

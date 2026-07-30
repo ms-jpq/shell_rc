@@ -24,11 +24,8 @@ M.start = function()
   ---@param base? string
   local watch = function(buf, base)
     local name = vim.api.nvim_buf_get_name(buf)
-    if vim.bo[buf].modifiable and name ~= "" then
-      files.watch(buf, name, base)
-    else
-      files.watch(buf, nil, base)
-    end
+    local path = vim.bo[buf].modifiable and name ~= "" and name or nil
+    files.watch(buf, path, base)
   end
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
