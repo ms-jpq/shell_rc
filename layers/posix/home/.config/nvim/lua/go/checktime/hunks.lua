@@ -2,6 +2,18 @@ local lib = require "go.lib"
 
 local M = {}
 
+---@alias ChecktimePosition integer[]
+
+---@class ChecktimeHunk
+---@field start integer
+---@field finish integer
+---@field lines string[]
+---@field slot? integer
+
+---@class ChecktimeHunkGroup
+---@field local_patches ChecktimeHunk[]
+---@field remote_patches ChecktimeHunk[]
+
 local records = function(linefeed, text)
   if text == "" then
     return {}
@@ -26,7 +38,7 @@ local buffer_lines = function(linefeed, text)
   return vim
     .iter(records(linefeed, text))
     :map(function(record)
-      return record:sub(-#linefeed) == linefeed and record:sub(1, -#linefeed - 1) or record
+      return string.sub(record, -#linefeed) == linefeed and string.sub(record, 1, -#linefeed - 1) or record
     end)
     :totable()
 end
@@ -219,7 +231,7 @@ local relative = function(patches, start)
 end
 
 local at_row = function(pos, group, shift)
-  local row = pos and unpack(pos)
+  local row = unpack(pos)
   if row then
     for _, hunk in ipairs(group.local_patches) do
       local first = hunk.start + shift + 1
@@ -234,7 +246,7 @@ local at_row = function(pos, group, shift)
 end
 
 local at_base_row = function(pos, group, shift)
-  local row = pos and unpack(pos)
+  local row = unpack(pos)
   local start, finish = bounds(group)
   return row and start + shift < row and row <= finish + shift
 end
@@ -294,6 +306,12 @@ local merge_hunks = function(linefeed, base, pos, grouped)
   return merged
 end
 
+---@param eol string?
+---@param base string
+---@param local_text string
+---@param remote_text string
+---@param pos ChecktimePosition
+---@return string
 M.merge = function(eol, base, local_text, remote_text, pos)
   eol = eol or lib.LF
   local base_lines = records(eol, base)
@@ -331,6 +349,9 @@ local window_views = function(buf)
   end
 end
 
+---@param buf integer
+---@param text string
+---@param mark fun(start: integer, finish: integer)
 M.replace = function(buf, text, mark)
   local linefeed = lib.buf_linefeed(buf)
   local restore = window_views(buf)

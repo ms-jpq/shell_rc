@@ -3,6 +3,8 @@ local lib = require "go.lib"
 
 local M = {}
 
+---@alias ChecktimeUnlock fun()
+
 local cache = vim.fs.joinpath(vim.fn.stdpath "cache", "checktime")
 local NANOSECONDS_PER_MILLISECOND, MILLISECONDS_PER_SECOND = 1000 * 1000, 1000
 local MAX_WAIT, MAX_DELAY, MAX_JITTER = 750, 96, 24
@@ -58,6 +60,9 @@ local acquire = function(lock)
   end
 end
 
+---@param path string
+---@param fn fun()
+---@return boolean
 M.guard = function(path, fn)
   vim.fn.mkdir(cache, "p")
   return lib.scope(function(defer)

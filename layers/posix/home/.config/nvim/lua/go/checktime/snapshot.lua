@@ -2,7 +2,13 @@ local lib = require "go.lib"
 
 local M = {}
 
-M.BASE = "__checktime_base__"
+---@class ChecktimeCurrent
+---@field linefeed string
+---@field text string
+---@field endofline boolean
+---@field final_empty boolean
+
+---@class ChecktimeRetry
 M.RETRY = {}
 
 local MAX_BYTES = 2 * 1024 * 1024
@@ -19,6 +25,8 @@ local same_version = function(before, after)
     and before.ctime.nsec == after.ctime.nsec
 end
 
+---@param buf integer
+---@return ChecktimeCurrent
 M.current = function(buf)
   local endofline = vim.bo[buf].endofline
   local linefeed = lib.buf_linefeed(buf)
@@ -32,6 +40,9 @@ M.current = function(buf)
   }
 end
 
+---@param current ChecktimeCurrent
+---@param text string
+---@return string
 M.row_text = function(current, text)
   local linefeed = current.linefeed
   if current.endofline or current.final_empty then
@@ -41,6 +52,9 @@ M.row_text = function(current, text)
   end
 end
 
+---@param current ChecktimeCurrent
+---@param text string
+---@return string
 M.buffer_text = function(current, text)
   local linefeed = current.linefeed
   local ending = string.sub(text, -#linefeed) == linefeed
@@ -54,6 +68,8 @@ M.buffer_text = function(current, text)
   end
 end
 
+---@param buf integer
+---@return string|ChecktimeRetry|nil
 M.read = function(buf)
   local name = vim.api.nvim_buf_get_name(buf)
   local before = vim.uv.fs_stat(name)

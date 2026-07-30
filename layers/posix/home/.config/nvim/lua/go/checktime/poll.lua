@@ -1,12 +1,38 @@
 local M = {}
 
-M.DIRTY = "__checktime_dirty__"
+---@alias ChecktimeChange "remote"|"local"
+---@alias ChecktimeDirty table<ChecktimeChange, true>
+
+---@class ChecktimePoller
+---@field path string
+---@field bufs table<integer, true>
+---@field close fun()
+
+---@class ChecktimeTracked
+---@field base string
+---@field dirty? ChecktimeDirty
+---@field retry? string
+---@field watcher? ChecktimePoller
+
+---@class ChecktimeUpdate
+---@field base string
+---@field dirty ChecktimeDirty
+
+---@class ChecktimePoll
+---@field remember fun(buf: integer, base: string)
+---@field forget fun(buf: integer)
+---@field watch fun(buf: integer, path?: string, base?: string)
+---@field dirty fun(kind: ChecktimeChange, buf?: integer)
+---@field take fun(): table<integer, ChecktimeUpdate>
+
 M.REMOTE, M.LOCAL = "remote", "local"
 
 local poller = {}
-poller.new = function(path, changed)
-  local p = { path = path, bufs = {} }
 
+---@param path string
+---@param changed fun()
+---@return ChecktimePoller?
+poller.new = function(path, changed)
   local handle = vim.uv.new_fs_poll()
   if not handle then
     return nil
@@ -18,6 +44,8 @@ poller.new = function(path, changed)
     return nil
   end
 
+  ---@diagnostic disable-next-line: missing-fields
+  local p = { path = path, bufs = {} } ---@type ChecktimePoller
   p.close = function()
     handle:stop()
     handle:close()
@@ -26,36 +54,55 @@ poller.new = function(path, changed)
   return p
 end
 
+---@return ChecktimePoll
 M.new = function()
-  local w = {}
-  local entries, watchers = {}, {}
+  ---@diagnostic disable-next-line: missing-fields
+  local w = {} ---@type ChecktimePoll
 
+  ---@type table<string, ChecktimePoller>
+  local entries = {}
+  ---@type table<integer, ChecktimeTracked>
+  local tracked = {}
+
+  ---@param kind? ChecktimeChange
+  ---@param buf integer
   local mark = function(kind, buf)
-    if vim.api.nvim_buf_is_valid(buf) then
-      if kind then
-        vim.b[buf][M.DIRTY] = vim.tbl_extend("force", vim.b[buf][M.DIRTY] or {}, { [kind] = true })
-      else
-        vim.b[buf][M.DIRTY] = nil
-      end
+    local state = tracked[buf]
+    if not state then
+      return
+    end
+    if kind then
+      state.dirty = state.dirty or {}
+      state.dirty[kind] = true
+    else
+      state.dirty = nil
     end
   end
 
-  w.unwatch = function(buf)
+  ---@param buf integer
+  local detach = function(buf)
     mark(nil, buf)
-    local watcher = watchers[buf]
-    watchers[buf] = nil
+    local state = tracked[buf]
+    local watcher = state and state.watcher
+    if state then
+      state.retry = nil
+    end
     if not watcher then
       return
     end
 
     watcher.bufs[buf] = nil
+    state.watcher = nil
     if not next(watcher.bufs) then
       watcher.close()
       entries[watcher.path] = nil
     end
   end
 
+  ---@param path string
+  ---@return ChecktimePoller?
   local start_watcher = function(path)
+    ---@type ChecktimePoller?
     local watcher = entries[path]
     if watcher == nil then
       local bufs = {}
@@ -74,35 +121,74 @@ M.new = function()
     return watcher
   end
 
-  w.watch = function(buf, path)
-    w.unwatch(buf)
-
+  ---@param buf integer
+  ---@param path string
+  local attach = function(buf, path)
+    local state = assert(tracked[buf])
+    state.retry = path
     local watcher = start_watcher(path)
-    if not watcher then
-      return false
+    if watcher then
+      watcher.bufs[buf] = true
+      state.watcher = watcher
+      state.retry = nil
     end
-
-    watcher.bufs[buf] = path
-    watchers[buf] = watcher
-    return true
   end
 
+  ---@param buf integer
+  ---@param base string
+  w.remember = function(buf, base)
+    local state = tracked[buf]
+    if state then
+      state.base = base
+    else
+      tracked[buf] = { base = base }
+    end
+  end
+
+  ---@param buf integer
+  w.forget = function(buf)
+    detach(buf)
+    tracked[buf] = nil
+  end
+
+  ---@param buf integer
+  ---@param path? string
+  ---@param base? string
+  w.watch = function(buf, path, base)
+    if base then
+      w.remember(buf, base)
+    end
+    detach(buf)
+    if path then
+      attach(buf, path)
+    end
+  end
+
+  ---@param kind ChecktimeChange
+  ---@param buf? integer
   w.dirty = function(kind, buf)
     if buf then
       return mark(kind, buf)
     end
-    for b in pairs(watchers) do
-      mark(kind, b)
+    for b, state in pairs(tracked) do
+      if state.watcher then
+        mark(kind, b)
+      end
     end
   end
 
+  ---@return table<integer, ChecktimeUpdate>
   w.take = function()
     local changes = {}
-    for buf in pairs(watchers) do
-      local dirty = vim.b[buf][M.DIRTY]
-      if vim.api.nvim_buf_is_valid(buf) and dirty then
+    for buf, state in pairs(tracked) do
+      if state.retry and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modifiable then
+        attach(buf, state.retry)
+        mark(M.REMOTE, buf)
+      end
+      if (state.watcher or state.retry) and state.dirty then
+        local dirty = state.dirty
         mark(nil, buf)
-        changes[buf] = dirty
+        changes[buf] = { base = state.base, dirty = dirty }
       end
     end
     return changes

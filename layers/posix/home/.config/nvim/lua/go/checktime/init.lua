@@ -35,6 +35,8 @@ do
     end,
   })
 
+  ---@param buf integer
+  ---@param text string
   local flash = function(buf, text)
     vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
     hunks.replace(buf, text, function(start, finish)
@@ -42,9 +44,11 @@ do
     end)
   end
 
-  local reconcile = function(buf, remote)
+  ---@param buf integer
+  ---@param base string
+  ---@param remote string
+  local reconcile = function(buf, base, remote)
     local current = snapshot.current(buf)
-    local base = vim.b[buf][snapshot.BASE] or current.text
 
     local win = vim.api.nvim_get_current_win()
     local pos = vim.api.nvim_win_get_buf(win) == buf and vim.api.nvim_win_get_cursor(win) or {}
@@ -61,12 +65,13 @@ do
       flash(buf, eol_fixed)
     end
 
-    vim.b[buf][snapshot.BASE] = remote
+    watcher.remember(buf, remote)
     vim.bo[buf].modified = eol_fixed ~= remote
   end
 
   local tick = function()
-    for buf, changes in pairs(watcher.take()) do
+    for buf, update in pairs(watcher.take()) do
+      local changes = update.dirty
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable then
         local name = vim.api.nvim_buf_get_name(buf)
         local locked = lock.guard(name, function()
@@ -75,8 +80,8 @@ do
             if remote == snapshot.RETRY then
               watcher.dirty(poll.REMOTE, buf)
               return
-            elseif remote then
-              reconcile(buf, remote)
+            elseif type(remote) == "string" then
+              reconcile(buf, update.base, remote)
             end
           end
 

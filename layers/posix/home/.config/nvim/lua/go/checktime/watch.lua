@@ -5,64 +5,43 @@ local snapshot = require "go.checktime.snapshot"
 
 local M = {}
 
+---@class ChecktimeWatch
+---@field dirty fun(kind: ChecktimeChange, buf?: integer)
+---@field remember fun(buf: integer, base: string)
+---@field take fun(): table<integer, ChecktimeUpdate>
+
+---@return ChecktimeWatch
 M.start = function()
   local files = poll.new()
-  local retry = {}
 
-  local watcher = { dirty = files.dirty }
+  ---@diagnostic disable-next-line: missing-fields
+  local watcher = {} ---@type ChecktimeWatch
+  watcher.dirty = files.dirty
+  watcher.remember = files.remember
+  watcher.take = files.take
 
-  local remember = function(buf, lines)
-    vim.b[buf][snapshot.BASE] = lines or snapshot.current(buf).text
-  end
-
-  local watch = function(buf)
-    retry[buf] = nil
-    files.unwatch(buf)
-
-    if not vim.bo[buf].modifiable then
-      return
-    end
-
+  ---@param buf integer
+  ---@param base? string
+  local watch = function(buf, base)
     local name = vim.api.nvim_buf_get_name(buf)
-    if name == "" then
-      return
+    if vim.bo[buf].modifiable and name ~= "" then
+      files.watch(buf, name, base)
+    else
+      files.watch(buf, nil, base)
     end
-    if not files.watch(buf, name) then
-      retry[buf] = true
-    end
-  end
-
-  watcher.take = function()
-    local changes = files.take()
-    for buf in pairs(retry) do
-      changes[buf] = { [poll.REMOTE] = true }
-    end
-    for buf in pairs(changes) do
-      if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modifiable then
-        if retry[buf] then
-          watch(buf)
-        end
-      else
-        retry[buf] = nil
-        files.unwatch(buf)
-      end
-    end
-    return changes
   end
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
     callback = function(args)
-      retry[args.buf] = nil
-      files.unwatch(args.buf)
+      files.forget(args.buf)
     end,
   })
 
   vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufFilePost" }, {
     group = lib.group,
     callback = function(args)
-      remember(args.buf)
-      watch(args.buf)
+      watch(args.buf, snapshot.current(args.buf).text)
     end,
   })
 
@@ -85,15 +64,14 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     callback = function(args)
-      remember(args.buf)
+      files.remember(args.buf, snapshot.current(args.buf).text)
     end,
   })
 
   autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) then
-        remember(buf)
-        watch(buf)
+        watch(buf, snapshot.current(buf).text)
       end
     end
   end)
