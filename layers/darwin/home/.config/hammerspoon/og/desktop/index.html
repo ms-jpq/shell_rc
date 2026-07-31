@@ -8,8 +8,7 @@
     />
     <style>
       html,
-      body,
-      iframe {
+      body {
         border: 0;
         margin: 0;
         height: 100%;
@@ -20,7 +19,19 @@
       body {
         overflow: hidden;
       }
+
+      iframe {
+        aspect-ratio: 16 / 9;
+        border: 0;
+        height: auto;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: max(100vw, calc(100vh * 16 / 9));
+      }
     </style>
+    <title></title>
   </head>
   <body>
     <iframe
