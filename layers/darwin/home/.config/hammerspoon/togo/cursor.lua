@@ -3,7 +3,19 @@ local M = {}
 local RADIUS, SIZE = 60, 64
 local ANGLE_DECAY = 0.18
 
-local IMAGE = hs.configdir .. "/togo/desktop/cursor.png"
+local IMAGE_EXTENSIONS = { gif = true, jpeg = true, jpg = true, png = true }
+
+local img_src = function()
+  local desktop = hs.configdir .. "/togo/desktop/"
+  local paths = {}
+  for name in hs.fs.dir(desktop) do
+    local extension = string.match(name, "%.([^.]+)$")
+    if extension and IMAGE_EXTENSIONS[string.lower(extension)] then
+      table.insert(paths, desktop .. name)
+    end
+  end
+  return paths[math.random(#paths)]
+end
 
 local clamp = function(lo, value, hi)
   return math.max(lo, math.min(value, hi))
@@ -50,12 +62,16 @@ local new_direction = function()
 end
 
 local new_view = function()
-  local image = assert(hs.image.imageFromPath(IMAGE))
+  local image = assert(hs.image.imageFromPath(img_src()))
   return hs
     .canvas
     .new({ x = 0, y = 0, w = SIZE, h = SIZE })
     ---@diagnostic disable-next-line: undefined-field
-    :appendElements({ type = "image", image = image })
+    :appendElements({
+      type = "image",
+      image = image,
+      imageAnimates = true,
+    })
     :behaviorAsLabels({ "canJoinAllSpaces", "stationary" })
     :clickActivating(false)
     :level("cursor")
