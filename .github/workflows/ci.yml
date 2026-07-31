@@ -57,6 +57,7 @@ jobs:
           sudo -- apt purge --yes -- firefox
 
       - run: |-
+          /home/linuxbrew/.linuxbrew/bin/brew update
           /home/linuxbrew/.linuxbrew/bin/brew install -- clojure/tools/clojure
           eval -- "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           CLJ="$(command -v -- clojure)"

@@ -12,12 +12,14 @@ local start_server = function()
 end
 
 local new_view = function(screen)
-  return hs.webview
+  return hs
+    .webview
     .new(screen:fullFrame(), {
       allowsAirPlay = false,
       javaScriptCanOpenWindowsAutomatically = false,
       privateBrowsing = true,
     })
+    ---@diagnostic disable-next-line: undefined-field
     :behaviorAsLabels({ "stationary", "canJoinAllSpaces" })
     :url(URL .. "?reload=" .. hs.timer.secondsSinceEpoch())
     :transparent(true)
@@ -33,6 +35,7 @@ local new_desktop = function()
   local maintain = function()
     local present = {}
 
+    ---@diagnostic disable-next-line: param-type-mismatch
     for _, screen in ipairs(hs.screen.allScreens()) do
       local id = screen:id()
       present[id] = true

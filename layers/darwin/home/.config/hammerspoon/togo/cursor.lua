@@ -1,6 +1,6 @@
 local M = {}
 
-local RADIUS, SIZE = 48, 64
+local RADIUS, SIZE = 60, 64
 local ANGLE_DECAY = 0.18
 
 local IMAGE = hs.configdir .. "/togo/desktop/cursor.png"
@@ -21,6 +21,7 @@ local polar = function(point, frame)
   local x = (frame.x + frame.w / 2 - point.x) / (frame.w / 2)
   local y = (frame.y + frame.h / 2 - point.y) / (frame.h / 2)
   local radius = math.min(1, math.sqrt(x * x + y * y))
+  ---@diagnostic disable-next-line: redundant-parameter
   return math.atan(y, x), radius
 end
 
@@ -50,8 +51,10 @@ end
 
 local new_view = function()
   local image = assert(hs.image.imageFromPath(IMAGE))
-  return hs.canvas
+  return hs
+    .canvas
     .new({ x = 0, y = 0, w = SIZE, h = SIZE })
+    ---@diagnostic disable-next-line: undefined-field
     :appendElements({ type = "image", image = image })
     :behaviorAsLabels({ "canJoinAllSpaces", "stationary" })
     :clickActivating(false)
