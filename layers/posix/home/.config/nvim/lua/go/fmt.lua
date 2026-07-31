@@ -1,5 +1,6 @@
 local async = require "goto.async"
 local lib = require "goto.lib"
+local proc = require "go.proc"
 
 local timeout = 8888
 
@@ -7,7 +8,7 @@ local data = nil
 
 local fmt_command = function(workdir, buf)
   if data == nil then
-    local loadpath = vim.fs.joinpath(lib.cfg, "apriori", "fmt.json")
+    local loadpath = vim.fs.joinpath(proc.cfg, "apriori", "fmt.json")
     data = lib.read_json(loadpath)
   end
 
@@ -19,7 +20,7 @@ local fmt_command = function(workdir, buf)
     if vim.fn.executable(spec.command) == 1 then
       local mapped = vim
         .iter({
-          lib.sandbox(workdir, {}),
+          proc.sandbox(workdir, {}),
           { spec.command },
           spec.args == vim.NIL and {} or spec.args,
         })
@@ -34,7 +35,7 @@ local fmt_command = function(workdir, buf)
     end
   end
 
-  return { vim.fs.joinpath(lib.cfg, "libexec", "fmt.sed") }
+  return { vim.fs.joinpath(proc.cfg, "libexec", "fmt.sed") }
 end
 
 local fmt = function()

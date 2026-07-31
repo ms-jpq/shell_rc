@@ -5,8 +5,6 @@ local libexec = require "goto.libexec"
 
 local M = {}
 
-M.HOME = vim.uv.os_homedir() or ""
-M.cfg = vim.fn.stdpath "config"
 M.LF = "\n"
 
 M.clamp = function(lo, self, hi)
@@ -62,39 +60,41 @@ M.scope = function(fn)
   end
 end
 
-local STATE = {
-  idle = 1,
-  running = 2,
-  pending = 3,
-}
-M.throttle = function(delay, fn)
-  local wrapped = async(fn)
+do
+  local STATE = {
+    idle = 1,
+    running = 2,
+    pending = 3,
+  }
+  M.throttle = function(delay, fn)
+    local wrapped = async(fn)
 
-  local run = function(args)
-    M.report(wrapped, unpack(args))
-  end
-
-  local argv = {}
-  local state = STATE.idle
-  return function(...)
-    argv = { ... }
-    if state ~= STATE.idle then
-      state = STATE.pending
-      return
+    local run = function(args)
+      M.report(wrapped, unpack(args))
     end
 
-    state = STATE.running
-    run(argv)
-
-    async.run(function()
-      async.sleep(delay)
-      while state == STATE.pending do
-        state = STATE.running
-        run(argv)
-        async.sleep(delay)
+    local argv = {}
+    local state = STATE.idle
+    return function(...)
+      argv = { ... }
+      if state ~= STATE.idle then
+        state = STATE.pending
+        return
       end
-      state = STATE.idle
-    end)
+
+      state = STATE.running
+      run(argv)
+
+      async.run(function()
+        async.sleep(delay)
+        while state == STATE.pending do
+          state = STATE.running
+          run(argv)
+          async.sleep(delay)
+        end
+        state = STATE.idle
+      end)
+    end
   end
 end
 
@@ -110,38 +110,15 @@ M.buf_linefeed = function(buf)
     return "\r\n"
   elseif ff == "unix" then
     return M.LF
+  elseif ff == "mac" then
+    return "\r"
   else
-    if ff == "mac" then
-      return "\r"
-    else
-      assert(false, ff)
-    end
+    assert(false, ff)
   end
 end
 
 M.keepalt_buffer = function(buf)
   vim.cmd.buffer { tostring(buf), mods = { keepalt = true } }
-end
-
-M.sandbox = function(workdir, opts)
-  if M.is_win or false then
-    return {}
-  end
-
-  local oom = M.is_linux and { "choom", "--adjust", "1000", "--" } or {}
-  local exec = vim.fs.joinpath(M.HOME, ".local", "libexec", "sandbox", "libexec", "dispatch.sh")
-  local net = opts.network and { "--network" } or {}
-  return vim.iter({ { "nice", "-n", "19", "--" }, oom, { exec }, net, { "--dir", workdir, "--" } }):flatten():totable()
-end
-
-M.pack = function(name)
-  local ret = {}
-  if _G.Go.pack[name] ~= false then
-    M.report(function()
-      ret = { require("go.pack." .. name) }
-    end)
-  end
-  return unpack(ret)
 end
 
 return M

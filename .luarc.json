@@ -23,6 +23,7 @@
   "Lua.workspace.ignoreDir": ["var", ".exp", ".notes"],
   "Lua.workspace.library": [
     "layers/posix/home/.config/nvim/lua",
+    "layers/posix/home/.config/nvim/pack/local/start/goto/lua",
     "/opt/homebrew/share/nvim/runtime/lua",
     "/usr/share/nvim/runtime/lua",
     "var/hammerspoon/EmmyLua.spoon/annotations"

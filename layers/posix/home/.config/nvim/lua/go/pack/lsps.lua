@@ -1,5 +1,6 @@
 local lib = require "goto.lib"
-local lsp_path = vim.fs.joinpath(lib.cfg, "apriori", "lsp.json")
+local proc = require "go.proc"
+local lsp_path = vim.fs.joinpath(proc.cfg, "apriori", "lsp.json")
 
 local build_overrides = function(conf)
   local acc = { detached = false }
@@ -34,7 +35,7 @@ return function()
       if bin and vim.fn.executable(bin) == 1 then
         overrides.cmd = function(dispatchers, config)
           local workdir = (config or {}).root_dir or vim.fn.getcwd()
-          local cmd = vim.list_extend(lib.sandbox(workdir, conf.sandbox or {}), argv)
+          local cmd = vim.list_extend(proc.sandbox(workdir, conf.sandbox or {}), argv)
 
           return vim.lsp.rpc.start(cmd, dispatchers)
         end
