@@ -1,8 +1,8 @@
 local M = {}
 
-local SIZE = 64
-local RADIUS = 48
+local RADIUS, SIZE = 48, 64
 local ANGLE_DECAY = 0.18
+
 local IMAGE = hs.configdir .. "/togo/desktop/cursor.png"
 
 local clamp = function(lo, value, hi)
@@ -11,6 +11,41 @@ end
 
 local angle_difference = function(from, to)
   return (to - from + math.pi) % (2 * math.pi) - math.pi
+end
+
+local smoothstep = function(value)
+  return value * value * (3 - 2 * value)
+end
+
+local polar = function(point, frame)
+  local x = (frame.x + frame.w / 2 - point.x) / (frame.w / 2)
+  local y = (frame.y + frame.h / 2 - point.y) / (frame.h / 2)
+  local radius = math.min(1, math.sqrt(x * x + y * y))
+  return math.atan(y, x), radius
+end
+
+local new_direction = function()
+  local displayed, target = nil, nil
+  local time = hs.timer.secondsSinceEpoch()
+
+  return function(point, frame)
+    local bearing, radius = polar(point, frame)
+    local gain = smoothstep(radius)
+    local now = hs.timer.secondsSinceEpoch()
+
+    if not displayed then
+      displayed = bearing
+      target = bearing
+    else
+      local elapsed = now - time
+      local decay = math.exp(-elapsed / ANGLE_DECAY)
+      local blend = (1 - decay) * gain
+      target = target + angle_difference(target, bearing)
+      displayed = displayed + (target - displayed) * blend
+    end
+    time = now
+    return { x = math.cos(displayed), y = math.sin(displayed) }
+  end
 end
 
 local new_view = function()
@@ -25,30 +60,9 @@ local new_view = function()
 end
 
 local new_cursor = function()
-  local angle
-  local previous
-  local target
   local tap
   local view = new_view()
-
-  local direction = function(point, frame)
-    local x = (frame.x + frame.w / 2 - point.x) / (frame.w / 2)
-    local y = (frame.y + frame.h / 2 - point.y) / (frame.h / 2)
-    local now = hs.timer.secondsSinceEpoch()
-    local next = math.atan(y, x)
-
-    if not angle then
-      angle = next
-      target = next
-    else
-      local elapsed = now - previous
-      local decay = math.exp(-elapsed / ANGLE_DECAY)
-      target = target + angle_difference(target, next)
-      angle = angle + (target - angle) * (1 - decay)
-    end
-    previous = now
-    return { x = math.cos(angle), y = math.sin(angle) }
-  end
+  local direction = new_direction()
 
   local position = function()
     local point = hs.mouse.absolutePosition()

@@ -11,7 +11,7 @@ local start_server = function()
   return hsminweb.new(ROOT):bonjour(false):interface("localhost"):port(PORT):allowDirectory(false):start()
 end
 
-local new_desktop = function(screen)
+local new_view = function(screen)
   return hs.webview
     .new(screen:fullFrame(), {
       allowsAirPlay = false,
@@ -25,43 +25,70 @@ local new_desktop = function(screen)
     :show()
 end
 
-local maintain_desktops = function()
-  local views = _G.desktop_views
-  local present = {}
+local new_desktop = function()
+  local server = start_server()
+  local timer
+  local views = {}
 
-  for _, screen in ipairs(hs.screen.allScreens()) do
-    local id = screen:id()
-    present[id] = true
-    if views[id] then
-      views[id]:frame(screen:fullFrame()):show():sendToBack()
-    else
-      views[id] = new_desktop(screen)
+  local maintain = function()
+    local present = {}
+
+    for _, screen in ipairs(hs.screen.allScreens()) do
+      local id = screen:id()
+      present[id] = true
+      if views[id] then
+        views[id]:frame(screen:fullFrame()):show():sendToBack()
+      else
+        views[id] = new_view(screen)
+      end
+    end
+
+    for id, view in pairs(views) do
+      if not present[id] then
+        view:delete()
+        views[id] = nil
+      end
     end
   end
 
-  for id, view in pairs(views) do
-    if not present[id] then
+  local start = function()
+    maintain()
+    timer = hs.timer.doEvery(MAINTENANCE_INTERVAL, maintain):start()
+  end
+
+  local stop = function()
+    timer:stop()
+    for _, view in pairs(views) do
       view:delete()
-      views[id] = nil
     end
+    server:stop()
   end
-end
 
-local clear_desktops = function()
-  for _, view in pairs(_G.desktop_views or {}) do
-    view:delete()
-  end
-  _G.desktop_views = {}
+  return { start = start, stop = stop }
 end
 
 M.init = function()
-  _G.desktop_server = _G.desktop_server or start_server()
-
-  clear_desktops()
-  maintain_desktops()
-  if not _G.desktop_maintenance then
-    _G.desktop_maintenance = hs.timer.doEvery(MAINTENANCE_INTERVAL, maintain_desktops):start()
+  local previous = _G.togo_desktop
+  if previous then
+    previous.stop()
+  else
+    if _G.desktop_maintenance then
+      _G.desktop_maintenance:stop()
+    end
+    if _G.desktop_views then
+      for _, view in pairs(_G.desktop_views) do
+        view:delete()
+      end
+    end
+    if _G.desktop_server then
+      _G.desktop_server:stop()
+    end
   end
+
+  local desktop = new_desktop()
+  _G.togo_desktop = desktop
+  _G.desktop_maintenance, _G.desktop_server, _G.desktop_views = nil, nil, nil
+  desktop.start()
 end
 
 return M
