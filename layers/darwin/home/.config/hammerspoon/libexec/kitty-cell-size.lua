@@ -52,7 +52,19 @@ local frame = win:frame()
 local cell_w = frame.w / w.columns
 local cell_h = frame.h / w.lines
 
-print(string.format("frame:    %dx%d", frame.w, frame.h))
-print(string.format("grid:     %dx%d", w.columns, w.lines))
-print(string.format("cell:     %.3f x %.3f", cell_w, cell_h))
-print(string.format("ratios:   w=%.3f  h=%.3f  (divide by FONT_SIZE for kitty.lua constants)", cell_w, cell_h))
+print(
+  string.format(
+    [[frame:    %dx%d
+grid:     %dx%d
+cell:     %.3f x %.3f
+ratios:   w=%.3f  h=%.3f  (divide by FONT_SIZE for kitty.lua constants)]],
+    frame.w,
+    frame.h,
+    w.columns,
+    w.lines,
+    cell_w,
+    cell_h,
+    cell_w,
+    cell_h
+  )
+)
