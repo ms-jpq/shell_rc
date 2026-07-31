@@ -3,7 +3,7 @@ local M = {}
 local SIZE = 64
 local RADIUS = 48
 local ANGLE_DECAY = 0.18
-local SVG = hs.configdir .. "/togo/cursor.svg"
+local IMAGE = hs.configdir .. "/togo/desktop/cursor.png"
 
 local clamp = function(lo, value, hi)
   return math.max(lo, math.min(value, hi))
@@ -14,7 +14,7 @@ local angle_difference = function(from, to)
 end
 
 local new_view = function()
-  local image = assert(hs.image.imageFromPath(SVG))
+  local image = assert(hs.image.imageFromPath(IMAGE))
   return hs.canvas
     .new({ x = 0, y = 0, w = SIZE, h = SIZE })
     :appendElements({ type = "image", image = image })
