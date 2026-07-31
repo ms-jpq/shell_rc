@@ -40,7 +40,7 @@ require "go.windows"
 require "go.yazi"
 
 --
-require "goto"
+require "go.to"
 
 --
 require "go.pack"

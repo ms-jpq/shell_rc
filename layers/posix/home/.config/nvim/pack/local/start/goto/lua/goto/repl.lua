@@ -1,4 +1,5 @@
 local async = require "goto.async"
+local cmds = require "goto.commands"
 local lib = require "goto.lib"
 
 local exec = assert(unpack(vim.api.nvim_get_runtime_file("libexec/repl.sh", false)))
@@ -7,10 +8,6 @@ local rand = string.gsub(vim.fn.tempname(), "/", "-")
 local socket = vim.env.__TMUX_ROOT_SOCKET__ or string.match(vim.env.TMUX or "", "^[^,]+")
 local current_pane = vim.env.__TMUX_ROOT_PANE__ or vim.env.TMUX_PANE
 local cmd = { "tmux", "-S", socket }
-
-vim.api.nvim_create_user_command("REPLclear", function()
-  vim.b.__tmux_target__ = nil
-end, {})
 
 local tmux = function(stdin, args)
   local argv = vim.list_extend({ unpack(cmd) }, args)
@@ -116,4 +113,8 @@ local repl = function()
   vim.notify(proc.stderr, vim.log.levels.ERROR)
 end
 
-vim.keymap.set({ "n" }, [[<leader>w]], async(repl))
+local clear = function()
+  vim.b.__tmux_target__ = nil
+end
+
+cmds.register { repl = async(repl), ["repl-clear"] = clear }

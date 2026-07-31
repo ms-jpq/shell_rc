@@ -1,4 +1,5 @@
 local async = require "goto.async"
+local cmds = require "goto.commands"
 local lib = require "goto.lib"
 
 do
@@ -10,8 +11,7 @@ do
     vim.opt.conceallevel = vim.o.conceallevel == 0 and conceal or 0
   end
 
-  vim.keymap.set({ "n" }, [[<leader>Y]], toggle)
-  vim.api.nvim_create_user_command([[ToggleConcealCursor]], toggle, {})
+  cmds.register { ["toggle-conceal"] = toggle }
 end
 
 vim.cmd.syntax "manual"
