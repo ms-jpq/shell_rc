@@ -117,9 +117,12 @@ local new_cursor = function()
     tap = hs.eventtap
       .new({
         hs.eventtap.event.types.keyDown,
+        hs.eventtap.event.types.leftMouseDown,
         hs.eventtap.event.types.leftMouseDragged,
         hs.eventtap.event.types.mouseMoved,
+        hs.eventtap.event.types.otherMouseDown,
         hs.eventtap.event.types.otherMouseDragged,
+        hs.eventtap.event.types.rightMouseDown,
         hs.eventtap.event.types.rightMouseDragged,
       }, react)
       :start()
