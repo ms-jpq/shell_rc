@@ -1,6 +1,6 @@
 local M = {}
 
-local RADIUS, SIZE = 60, 64
+local RADIUS, SIZE = 40, 40
 local ANGLE_DECAY = 0.18
 
 local IMAGE_EXTENSIONS = { gif = true, jpeg = true, jpg = true, png = true }
@@ -62,7 +62,8 @@ local new_direction = function()
 end
 
 local new_view = function()
-  local image = assert(hs.image.imageFromPath(img_src()))
+  local src = img_src()
+  local image = hs.image.imageFromPath(src)
   return hs
     .canvas
     .new({ x = 0, y = 0, w = SIZE, h = SIZE })
@@ -79,7 +80,7 @@ local new_view = function()
 end
 
 local new_cursor = function()
-  local tap
+  local tap = nil
   local view = new_view()
   local direction = new_direction()
 
