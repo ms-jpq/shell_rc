@@ -4,39 +4,37 @@ M.future = function()
   local thread = coroutine.running()
   assert(thread, "future: must be called inside running coroutine")
 
-  local f = {}
+  local fut = {}
   local resolved = nil
 
-  f.resolve = function(...)
+  fut.resolve = function(...)
     if coroutine.status(thread) == "running" then
       resolved = { ... }
     else
-      local ok, msg = coroutine.resume(thread, ...)
+      local ok, err = coroutine.resume(thread, ...)
       if not ok then
-        local tb = debug.traceback(thread, msg)
-        error(tb, 0)
+        error(debug.traceback(thread, err), 0)
       end
     end
   end
 
-  f.await = function()
+  fut.await = function()
     if resolved then
       return unpack(resolved)
     end
     return coroutine.yield()
   end
 
-  return f
+  return fut
 end
 
 M.wrap = function(fn)
   return function(...)
-    local f = M.future()
+    local fut = M.future()
     local argv = { ... }
-    table.insert(argv, f.resolve)
-
+    table.insert(argv, fut.resolve)
     fn(unpack(argv))
-    return f.await()
+    return fut.await()
   end
 end
 
@@ -47,10 +45,9 @@ local lift = function(fn)
       fn(unpack(argv))
     end)
 
-    local ok, ret = coroutine.resume(thread)
+    local ok, err = coroutine.resume(thread)
     if not ok then
-      local tb = debug.traceback(thread, ret)
-      error(tb, 0)
+      error(debug.traceback(thread, err), 0)
     end
   end
 end
@@ -60,9 +57,9 @@ M.run = function(fn)
 end
 
 M.sleep = function(milliseconds)
-  local f = M.future()
-  vim.defer_fn(f.resolve, milliseconds)
-  return f.await()
+  local fut = M.future()
+  vim.defer_fn(fut.resolve, milliseconds)
+  return fut.await()
 end
 
 M.scheduled = M.wrap(vim.schedule)

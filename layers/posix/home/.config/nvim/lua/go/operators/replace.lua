@@ -1,4 +1,4 @@
-local lib = require "go.lib"
+local lib = require "goto.lib"
 local to = require "go.text_objects"
 
 do

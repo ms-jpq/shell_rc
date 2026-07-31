@@ -1,5 +1,5 @@
 local fzf = require "go.pack.fzf.lib"
-local lib = require "go.lib"
+local lib = require "goto.lib"
 local to = require "go.text_objects"
 
 local magic_escape = function(text)

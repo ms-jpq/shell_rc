@@ -1,4 +1,4 @@
-local autocmd = require "go.autocmd"
+local autocmd = require "goto.autocmd"
 
 vim.bo.commentstring = [[*> %s]]
 vim.b.noindent = true

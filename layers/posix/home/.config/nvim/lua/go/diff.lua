@@ -1,5 +1,5 @@
-local async = require "go.async"
-local lib = require "go.lib"
+local async = require "goto.async"
+local lib = require "goto.lib"
 
 -- vimdiff options
 vim.opt.diffexpr = ""

@@ -1,7 +1,7 @@
-local autocmd = require "go.autocmd"
-local lib = require "go.lib"
-local poll = require "go.checktime.poll"
-local snapshot = require "go.checktime.snapshot"
+local autocmd = require "goto.autocmd"
+local lib = require "goto.lib"
+local poll = require "goto.checktime.poll"
+local snapshot = require "goto.checktime.snapshot"
 
 local M = {}
 

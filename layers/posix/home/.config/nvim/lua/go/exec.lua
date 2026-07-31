@@ -1,5 +1,5 @@
-local async = require "go.async"
-local lib = require "go.lib"
+local async = require "goto.async"
+local lib = require "goto.lib"
 local operators = require "go.operators"
 
 local db = vim.fs.joinpath(vim.fn.stdpath "state", "user-trust")

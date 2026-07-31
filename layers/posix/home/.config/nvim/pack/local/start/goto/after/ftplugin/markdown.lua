@@ -1,4 +1,4 @@
-local autocmd = require "go.autocmd"
+local autocmd = require "goto.autocmd"
 
 vim.opt_local.formatoptions:append "ro"
 

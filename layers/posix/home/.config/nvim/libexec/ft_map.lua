@@ -1,9 +1,10 @@
 #!/usr/bin/env -S -- nvim -l
 
 local cfg = vim.fs.dirname(vim.fs.dirname(arg[0]))
-vim.opt.rtp:append { cfg }
+local package = vim.fs.joinpath(cfg, "pack", "local", "start", "goto")
+vim.opt.rtp:append { cfg, package }
 
-local libexec = require "go.libexec"
+local libexec = require "goto.libexec"
 local filetypes = libexec.filetypes()
 
 local mapping = {}

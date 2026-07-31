@@ -1,13 +1,15 @@
 #!/usr/bin/env -S -- nvim -l
 
 local cfg = vim.fs.dirname(vim.fs.dirname(arg[0]))
+local package = vim.fs.joinpath(cfg, "pack", "local", "start", "goto")
 vim.opt.rtp:append {
   cfg,
+  package,
   vim.fs.joinpath(vim.fn.stdpath "cache", "..", "helix-rt", "nvim", "pack", "start", "nvim-lspconfig"),
 }
 
 require "lspconfig"
-local libexec = require "go.libexec"
+local libexec = require "goto.libexec"
 local lsp_on = require "go.pack.lsps"
 
 local filetypes = libexec.filetypes()

@@ -1,4 +1,4 @@
-local async = require "go.async"
+local async = require "goto.async"
 local to = require "go.text_objects"
 
 Go.op_entire = async(function(hold_pos)

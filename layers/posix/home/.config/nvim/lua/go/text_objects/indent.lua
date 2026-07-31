@@ -1,4 +1,4 @@
-local async = require "go.async"
+local async = require "goto.async"
 local to = require "go.text_objects"
 
 local iter_around_lines = function(is_inside, tabsize, row, init_indent, direction)

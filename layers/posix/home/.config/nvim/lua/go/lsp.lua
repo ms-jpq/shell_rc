@@ -1,5 +1,5 @@
-local autocmd = require "go.autocmd"
-local lib = require "go.lib"
+local autocmd = require "goto.autocmd"
+local lib = require "goto.lib"
 
 vim.opt.tagfunc = "v:lua.vim.lsp.tagfunc"
 vim.opt.formatexpr = "v:lua.vim.lsp.formatexpr()"

@@ -1,5 +1,5 @@
-local async = require "go.async"
-local lib = require "go.lib"
+local async = require "goto.async"
+local lib = require "goto.lib"
 
 -- fix stale treesitter commentstring cache
 vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {

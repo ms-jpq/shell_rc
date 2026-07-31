@@ -1,6 +1,6 @@
-local async = require "go.async"
-local autocmd = require "go.autocmd"
-local lib = require "go.lib"
+local async = require "goto.async"
+local autocmd = require "goto.autocmd"
+local lib = require "goto.lib"
 
 local termstart = async.wrap(function(buf, cmd, cb)
   local new_buf = vim.api.nvim_create_buf(false, true)

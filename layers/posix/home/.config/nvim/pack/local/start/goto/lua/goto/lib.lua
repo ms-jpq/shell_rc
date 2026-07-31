@@ -1,7 +1,7 @@
 -- https://github.com/luvit/luv/blob/master/docs/docs.md
 
-local async = require "go.async"
-local libexec = require "go.libexec"
+local async = require "goto.async"
+local libexec = require "goto.libexec"
 
 local M = {}
 
@@ -14,7 +14,7 @@ M.clamp = function(lo, self, hi)
 end
 
 do
-  M.group = vim.api.nvim_create_augroup([[lv_go]], { clear = true })
+  M.group = vim.api.nvim_create_augroup([[lv_goto]], { clear = true })
 end
 
 M.is_win = vim.fn.has [[win64]] == 1
@@ -37,7 +37,7 @@ M.report = function(fn, ...)
 end
 
 M.generation = function(name)
-  local key = "__go_gen_" .. name
+  local key = "__goto_gen_" .. name
   _G[key] = (_G[key] or 0) + 1
   local mine = _G[key]
   return function()

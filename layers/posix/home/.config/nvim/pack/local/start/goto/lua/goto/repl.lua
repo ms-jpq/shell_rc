@@ -1,7 +1,7 @@
-local async = require "go.async"
-local lib = require "go.lib"
+local async = require "goto.async"
+local lib = require "goto.lib"
 
-local exec = vim.fs.joinpath(lib.cfg, "libexec", "repl.sh")
+local exec = assert(unpack(vim.api.nvim_get_runtime_file("libexec/repl.sh", false)))
 local rand = string.gsub(vim.fn.tempname(), "/", "-")
 
 local socket = vim.env.__TMUX_ROOT_SOCKET__ or string.match(vim.env.TMUX or "", "^[^,]+")

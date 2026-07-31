@@ -5,10 +5,8 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 require "go.bookmark"
-require "go.checktime"
 require "go.clipboard"
 require "go.complete"
-require "go.conceal"
 require "go.cursor"
 require "go.cwd"
 require "go.diagnostics"
@@ -27,7 +25,6 @@ require "go.operators.sort"
 require "go.opts"
 require "go.paths"
 require "go.plugins"
-require "go.repl"
 require "go.search"
 require "go.terminal"
 require "go.text_objects.entire"
@@ -41,6 +38,9 @@ require "go.unstable"
 require "go.whitespace"
 require "go.windows"
 require "go.yazi"
+
+--
+require "goto"
 
 --
 require "go.pack"

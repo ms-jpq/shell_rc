@@ -1,10 +1,10 @@
-local async = require "go.async"
-local hunks = require "go.checktime.hunks"
-local lib = require "go.lib"
-local lock = require "go.checktime.lock"
-local poll = require "go.checktime.poll"
-local snapshot = require "go.checktime.snapshot"
-local watch = require "go.checktime.watch"
+local async = require "goto.async"
+local hunks = require "goto.checktime.hunks"
+local lib = require "goto.lib"
+local lock = require "goto.checktime.lock"
+local poll = require "goto.checktime.poll"
+local snapshot = require "goto.checktime.snapshot"
+local watch = require "goto.checktime.watch"
 
 -- no backup
 vim.opt.backup = false
@@ -25,7 +25,7 @@ vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
 do
   local alive = lib.generation "checktime"
   local check_interval, flash_span = 99, 1688
-  local ns = vim.api.nvim_create_namespace "go.checktime"
+  local ns = vim.api.nvim_create_namespace "goto.checktime"
   local watcher = watch.start()
 
   vim.api.nvim_create_autocmd({ "FocusGained" }, {
