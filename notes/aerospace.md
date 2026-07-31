@@ -5,6 +5,18 @@ start-at-login = true
 after-startup-command = ['layout tiles']
 ```
 
+# Spacing
+
+```toml
+[gaps]
+inner.horizontal = 6
+inner.vertical   = 6
+outer.bottom     = 6
+outer.left       = 6
+outer.right      = 6
+outer.top        = 6
+```
+
 # ID mapping
 
 ```bash
@@ -49,14 +61,10 @@ if.app-name-regex-substring = '^mpv$'
 run                         = 'move-node-to-workspace 10'
 ```
 
-# Spacing
+# Multi Monitor
 
 ```toml
-[gaps]
-inner.horizontal = 6
-inner.vertical   = 6
-outer.bottom     = 6
-outer.left       = 6
-outer.right      = 6
-outer.top        = 6
+[workspace-to-monitor-force-assignment]
+1 = 'main'
+2 = 'main'
 ```
