@@ -8,8 +8,19 @@ local M = {}
 ---@field endofline boolean
 ---@field final_empty boolean
 
----@class ChecktimeRetry
-M.RETRY = {}
+---@alias ChecktimeState "string"|"blob"|"retry"|"none"
+
+---@class ChecktimeStates
+---@field STR ChecktimeState
+---@field BLOB ChecktimeState
+---@field RETRY ChecktimeState
+---@field NONE ChecktimeState
+M.STATES = {
+  STR = "string",
+  BLOB = "blob",
+  RETRY = "retry",
+  NONE = "none",
+}
 
 local MAX_BYTES = 2 * 1024 * 1024
 
@@ -73,19 +84,21 @@ M.buffer_text = function(current, text)
 end
 
 ---@param buf integer
----@return string|ChecktimeRetry|nil
+---@return ChecktimeState, string?
 M.read = function(buf)
   local name = vim.api.nvim_buf_get_name(buf)
   local before = vim.uv.fs_stat(name)
-  if not before then
-    return nil
-  elseif before.size > MAX_BYTES then
-    return nil
+  if not before or before.size > MAX_BYTES then
+    return M.STATES.NONE, nil
   end
 
   local ok, text = pcall(vim.fn.readblob, name)
   if not ok then
-    return M.RETRY
+    return M.STATES.RETRY, nil
+  end
+
+  if type(text) ~= "string" then
+    return M.STATES.BLOB, nil
   end
 
   local encoding = vim.bo[buf].fileencoding
@@ -97,10 +110,10 @@ M.read = function(buf)
   end
 
   if not same_version(before, vim.uv.fs_stat(name)) then
-    return M.RETRY
+    return M.STATES.RETRY, nil
   end
 
-  return text
+  return M.STATES.STR, text
 end
 
 return M

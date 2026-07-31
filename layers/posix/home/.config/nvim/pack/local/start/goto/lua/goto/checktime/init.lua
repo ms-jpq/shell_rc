@@ -75,11 +75,15 @@ do
         local name = vim.api.nvim_buf_get_name(buf)
         local locked = lock.guard(name, function()
           if update.dirty[poll.REMOTE] then
-            local remote = snapshot.read(buf)
-            if remote == snapshot.RETRY then
+            local state, remote = snapshot.read(buf)
+            if state == snapshot.STATES.RETRY then
               watcher.dirty(poll.REMOTE, buf)
               return
-            elseif type(remote) == "string" then
+            elseif state == snapshot.STATES.BLOB then
+              vim.api.nvim_buf_call(buf, function()
+                vim.cmd [[silent! edit]]
+              end)
+            elseif state == snapshot.STATES.STR and remote then
               reconcile(buf, update.base, remote)
             end
           end
