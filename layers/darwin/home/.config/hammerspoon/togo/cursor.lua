@@ -130,7 +130,9 @@ local new_cursor = function()
   end
 
   local stop = function()
-    tap:stop()
+    if tap then
+      tap:stop()
+    end
     view:delete()
   end
 
