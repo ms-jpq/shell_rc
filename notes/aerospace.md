@@ -67,4 +67,5 @@ run                         = 'move-node-to-workspace 10'
 [workspace-to-monitor-force-assignment]
 1 = 'main'
 2 = 'main'
+3 = ['secondary', 'main']
 ```
