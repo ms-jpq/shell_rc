@@ -96,18 +96,32 @@ local new_cursor = function()
   end
 
   local move = function()
+    view:show()
     view:topLeft(position())
     return false
+  end
+
+  local hide = function()
+    view:hide()
+    return false
+  end
+
+  local react = function(event)
+    if event:getType() == hs.eventtap.event.types.keyDown then
+      return hide()
+    end
+    return move()
   end
 
   local start = function()
     tap = hs.eventtap
       .new({
-        hs.eventtap.event.types.mouseMoved,
+        hs.eventtap.event.types.keyDown,
         hs.eventtap.event.types.leftMouseDragged,
-        hs.eventtap.event.types.rightMouseDragged,
+        hs.eventtap.event.types.mouseMoved,
         hs.eventtap.event.types.otherMouseDragged,
-      }, move)
+        hs.eventtap.event.types.rightMouseDragged,
+      }, react)
       :start()
     move()
   end
