@@ -6,7 +6,7 @@
 .mypy_cache/
 .venv/
 layers/darwin/home/.config/hammerspoon/home-networks.json
-layers/darwin/home/.config/hammerspoon/og/desktop/videos.json
+layers/darwin/home/.config/hammerspoon/togo/desktop/videos.json
 layers/posix/home/.config/helix/languages.toml
 layers/posix/home/.config/nvim/apriori/*
 layers/posix/home/.config/ranger/*.conf

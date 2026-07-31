@@ -2,7 +2,7 @@ local hsminweb = require "hs.httpserver.hsminweb"
 
 local M = {}
 
-local ROOT = hs.configdir .. "/og/desktop"
+local ROOT = hs.configdir .. "/togo/desktop"
 local PORT = 42069
 local URL = "http://localhost:" .. PORT .. "/"
 local MAINTENANCE_INTERVAL = 6

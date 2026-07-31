@@ -1,4 +1,4 @@
-local lib = require "og.lib"
+local lib = require "togo.lib"
 
 local M = {}
 

@@ -1,9 +1,9 @@
 require "hs.ipc"
 
-require("og.desktop").init()
-require("og.kitty").init()
-require("og.screen-brightness").init()
-require("og.screen-size").init()
-require("og.vpn").init()
+require("togo.desktop").init()
+require("togo.kitty").init()
+require("togo.screen-brightness").init()
+require("togo.screen-size").init()
+require("togo.vpn").init()
 
 hs.alert.show ">>> hs <<<"

@@ -1,5 +1,5 @@
-local clipboard = require "og.lib.clipboard"
-local lib = require "og.lib"
+local clipboard = require "togo.lib.clipboard"
+local lib = require "togo.lib"
 
 local M = {}
 
