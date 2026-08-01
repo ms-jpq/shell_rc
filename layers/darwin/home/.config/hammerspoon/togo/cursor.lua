@@ -7,6 +7,16 @@ local FRAME_INTERVAL = 1 / 60
 
 local IMAGE_EXTENSIONS = { gif = true, jpeg = true, jpg = true, png = true }
 
+---@class CursorPoint
+---@field x number
+---@field y number
+
+---@class CursorFrame: CursorPoint
+---@field w number
+---@field h number
+
+---@class CursorVector: CursorPoint
+
 local img_src = function()
   local desktop = hs.configdir .. "/togo/desktop/"
   local paths = {}
@@ -31,6 +41,10 @@ local smoothstep = function(value)
   return value * value * (3 - 2 * value)
 end
 
+---@param point CursorPoint
+---@param frame CursorFrame
+---@return number bearing
+---@return number radius
 local polar = function(point, frame)
   local x = (frame.x + frame.w / 2 - point.x) / (frame.w / 2)
   local y = (frame.y + frame.h / 2 - point.y) / (frame.h / 2)
@@ -43,6 +57,9 @@ local new_direction = function()
   local displayed, target, gain, screen_id = nil, nil, 0, nil
   local time = hs.timer.secondsSinceEpoch()
 
+  ---@param point CursorPoint
+  ---@param frame CursorFrame
+  ---@param id integer
   local aim = function(point, frame, id)
     local bearing, radius = polar(point, frame)
 
@@ -56,6 +73,7 @@ local new_direction = function()
     end
   end
 
+  ---@return CursorVector
   local vector = function()
     local now = hs.timer.secondsSinceEpoch()
     local elapsed = math.min(now - time, FRAME_INTERVAL)
@@ -86,11 +104,16 @@ local new_view = function()
 end
 
 local new_cursor = function()
-  local dirty, point, frame = false, nil, nil
+  local dirty = false
+  ---@type CursorPoint
+  local point = { x = 0, y = 0 }
+  ---@type CursorFrame
+  local frame = { x = 0, y = 0, w = 0, h = 0 }
   local tap, timer = nil, nil
   local view = new_view()
   local direction = new_direction()
 
+  ---@param vector CursorVector
   local position = function(vector)
     local offset = RADIUS + SIZE / 2
     return {
@@ -128,6 +151,8 @@ local new_cursor = function()
     local current = assert(hs.mouse.getCurrentScreen())
     point = hs.mouse.absolutePosition()
     frame = current:fullFrame()
+    ---@cast point CursorPoint
+    ---@cast frame CursorFrame
     direction.aim(point, frame, current:id())
     dirty = true
     if timer then
