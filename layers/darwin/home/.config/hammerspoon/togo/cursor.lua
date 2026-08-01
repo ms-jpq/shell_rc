@@ -1,7 +1,9 @@
 local M = {}
 
 local RADIUS, SIZE = 40, 40
+local EDGE_PADDING = 8
 local ANGLE_DECAY = 0.18
+local FRAME_INTERVAL = 1 / 60
 
 local IMAGE_EXTENSIONS = { gif = true, jpeg = true, jpg = true, png = true }
 
@@ -38,32 +40,37 @@ local polar = function(point, frame)
 end
 
 local new_direction = function()
-  local displayed, target = nil, nil
+  local displayed, target, gain, screen_id = nil, nil, 0, nil
   local time = hs.timer.secondsSinceEpoch()
 
-  return function(point, frame)
+  local aim = function(point, frame, id)
     local bearing, radius = polar(point, frame)
-    local gain = smoothstep(radius)
-    local now = hs.timer.secondsSinceEpoch()
 
-    if not displayed then
+    gain = smoothstep(radius)
+    if screen_id ~= id then
       displayed = bearing
       target = bearing
+      screen_id = id
     else
-      local elapsed = now - time
-      local decay = math.exp(-elapsed / ANGLE_DECAY)
-      local blend = (1 - decay) * gain
       target = target + angle_difference(target, bearing)
-      displayed = displayed + (target - displayed) * blend
     end
+  end
+
+  local vector = function()
+    local now = hs.timer.secondsSinceEpoch()
+    local elapsed = math.min(now - time, FRAME_INTERVAL)
+    local decay = math.exp(-elapsed / ANGLE_DECAY)
+    local blend = (1 - decay) * gain
+    displayed = displayed + (target - displayed) * blend
     time = now
     return { x = math.cos(displayed), y = math.sin(displayed) }
   end
+
+  return { aim = aim, vector = vector }
 end
 
 local new_view = function()
-  local src = img_src()
-  local image = hs.image.imageFromPath(src)
+  local image = hs.image.imageFromPath(img_src())
   return hs
     .canvas
     .new({ x = 0, y = 0, w = SIZE, h = SIZE })
@@ -75,33 +82,64 @@ local new_view = function()
     })
     :behaviorAsLabels({ "canJoinAllSpaces", "stationary" })
     :clickActivating(false)
-    :level("cursor")
-    :show()
+    :level "cursor"
 end
 
 local new_cursor = function()
-  local tap = nil
+  local dirty, point, frame = false, nil, nil
+  local tap, timer = nil, nil
   local view = new_view()
   local direction = new_direction()
 
-  local position = function()
-    local point = hs.mouse.absolutePosition()
-    local frame = assert(hs.mouse.getCurrentScreen()):fullFrame()
+  local position = function(vector)
     local offset = RADIUS + SIZE / 2
-    local vector = direction(point, frame)
     return {
-      x = clamp(frame.x, point.x + vector.x * offset - SIZE / 2, frame.x + frame.w - SIZE),
-      y = clamp(frame.y, point.y + vector.y * offset - SIZE / 2, frame.y + frame.h - SIZE),
+      x = clamp(
+        frame.x + EDGE_PADDING,
+        point.x + vector.x * offset - SIZE / 2,
+        frame.x + frame.w - SIZE - EDGE_PADDING
+      ),
+      y = clamp(
+        frame.y + EDGE_PADDING,
+        point.y + vector.y * offset - SIZE / 2,
+        frame.y + frame.h - SIZE - EDGE_PADDING
+      ),
     }
   end
 
-  local move = function()
+  local cancel = function()
+    dirty = false
+    if timer then
+      timer:stop()
+      timer = nil
+    end
+  end
+
+  local render = function()
+    if not dirty then
+      return cancel()
+    end
+    dirty = false
     view:show()
-    view:topLeft(position())
+    view:topLeft(position(direction.vector()))
+  end
+
+  local move = function()
+    local current = assert(hs.mouse.getCurrentScreen())
+    point = hs.mouse.absolutePosition()
+    frame = current:fullFrame()
+    direction.aim(point, frame, current:id())
+    dirty = true
+    if timer then
+      return false
+    end
+    render()
+    timer = hs.timer.doEvery(FRAME_INTERVAL, render)
     return false
   end
 
   local hide = function()
+    cancel()
     view:hide()
     return false
   end
@@ -133,6 +171,7 @@ local new_cursor = function()
     if tap then
       tap:stop()
     end
+    cancel()
     view:delete()
   end
 
