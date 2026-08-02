@@ -49,6 +49,10 @@ if.app-id = 'com.apple.Safari'
 run       = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
+if.app-id = 'com.microsoft.rdc.macos'
+run       = 'move-node-to-workspace 6'
+
+[[on-window-detected]]
 if.app-id = 'us.zoom.xos'
 run       = 'move-node-to-workspace 7'
 
