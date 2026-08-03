@@ -98,7 +98,9 @@ const { error, status, signal } = spawnSync(arg0, execArgs, {
   stdio: "inherit",
 })
 
-if (error) {
+if (error?.code === "ENOENT") {
+  await pipeline(stdin, stdout)
+} else if (error) {
   throw error
 } else if (signal) {
   throw signal
