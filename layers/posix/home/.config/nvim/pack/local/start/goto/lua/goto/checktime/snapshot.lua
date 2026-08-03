@@ -8,16 +8,16 @@ local M = {}
 ---@field endofline boolean
 ---@field final_empty boolean
 
----@alias ChecktimeState "string"|"blob"|"retry"|"none"
+---@alias ChecktimeState "reconcile"|"opaque"|"retry"|"none"
 
 ---@class ChecktimeStates
----@field STR ChecktimeState
----@field BLOB ChecktimeState
+---@field RECONCILE ChecktimeState
+---@field OPAQUE ChecktimeState
 ---@field RETRY ChecktimeState
 ---@field NONE ChecktimeState
 M.STATES = {
-  STR = "string",
-  BLOB = "blob",
+  RECONCILE = "reconcile",
+  OPAQUE = "opaque",
   RETRY = "retry",
   NONE = "none",
 }
@@ -88,8 +88,10 @@ end
 M.read = function(buf)
   local name = vim.api.nvim_buf_get_name(buf)
   local before = vim.uv.fs_stat(name)
-  if not before or before.size > MAX_BYTES then
+  if not before then
     return M.STATES.NONE, nil
+  elseif before.size > MAX_BYTES or (not vim.bo[buf].modified and #vim.fn.win_findbuf(buf) == 0) then
+    return M.STATES.OPAQUE, nil
   end
 
   local ok, text = pcall(vim.fn.readblob, name)
@@ -98,7 +100,7 @@ M.read = function(buf)
   end
 
   if type(text) ~= "string" then
-    return M.STATES.BLOB, nil
+    return M.STATES.OPAQUE, nil
   end
 
   local encoding = vim.bo[buf].fileencoding
@@ -113,7 +115,7 @@ M.read = function(buf)
     return M.STATES.RETRY, nil
   end
 
-  return M.STATES.STR, text
+  return M.STATES.RECONCILE, text
 end
 
 return M

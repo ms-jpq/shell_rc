@@ -79,11 +79,11 @@ do
             if state == snapshot.STATES.RETRY then
               watcher.dirty(poll.REMOTE, buf)
               return
-            elseif state == snapshot.STATES.BLOB then
+            elseif state == snapshot.STATES.OPAQUE then
               vim.api.nvim_buf_call(buf, function()
                 vim.cmd [[silent! edit]]
               end)
-            elseif state == snapshot.STATES.STR and remote then
+            elseif state == snapshot.STATES.RECONCILE and remote then
               reconcile(buf, update.base, remote)
             end
           end
