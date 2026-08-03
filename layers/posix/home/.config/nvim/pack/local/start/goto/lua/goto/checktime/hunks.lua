@@ -249,24 +249,14 @@ local at_row = function(pos, group, shift)
   return false, shift
 end
 
-local at_base_row = function(pos, group, shift)
-  local row = unpack(pos)
-  local start, finish = bounds(group)
-  return row and start + shift < row and row <= finish + shift
-end
-
-local touches = function(pos, local_hunks, hunk)
-  local _, col = unpack(pos)
+local touches = function(local_hunks, hunk)
   return hunk.finish > hunk.start
-    and (
-      hunk.finish == col
-      or vim.iter(local_hunks):any(function(other)
-        return other.start == other.finish and (hunk.start == other.start or hunk.finish == other.start)
-      end)
-    )
+    and vim.iter(local_hunks):any(function(other)
+      return other.start == other.finish and (hunk.start == other.start or hunk.finish == other.start)
+    end)
 end
 
-local cursor_hunk = function(linefeed, base, pos, group)
+local cursor_hunk = function(linefeed, base, group)
   local start, finish = bounds(group)
   local source = group.local_patches[1] or group.remote_patches[1]
   local before = slice(base, start, finish)
@@ -277,7 +267,7 @@ local cursor_hunk = function(linefeed, base, pos, group)
   local remote_hunks = vim
     .iter(diff_hunks(linefeed, characters, chars(remote_lines)))
     :filter(function(hunk)
-      return not touches(pos, local_hunks, hunk)
+      return not touches(local_hunks, hunk)
     end)
     :totable()
   local character_patches = resolve(groups(local_hunks, remote_hunks), true)
@@ -298,9 +288,8 @@ local merge_hunks = function(linefeed, base, pos, grouped)
   for _, group in ipairs(grouped) do
     local cursor_touched
     cursor_touched, shift = at_row(pos, group, shift)
-    cursor_touched = cursor_touched or at_base_row(pos, group, shift)
     if cursor_touched then
-      table.insert(merged, cursor_hunk(linefeed, base, pos, group))
+      table.insert(merged, cursor_hunk(linefeed, base, group))
       pos = {}
     else
       vim.list_extend(merged, pick(group, false))
