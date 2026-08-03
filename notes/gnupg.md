@@ -12,7 +12,7 @@
 
 - https://www.gnupg.org/faq/gnupg-faq.html
 
-- https://www.reddit.com/r/GnuPG/comments/vjas2e/proper_key_management/
+- https://www.reddit.com/r/GnuPG/comments/vjas2e/proper\_key\_management/
 
 ## Primary Key
 
@@ -84,6 +84,8 @@ SSH: `./layers/posix/home/.config/ssh/9-include.conf`
 ## GIT
 
 ```bash
+gpg --list-keys
+
 # The without `!`, WILL USE PRIMARY KEY
 git config --global -- user.signingkey '<subkey>'!
 ```
