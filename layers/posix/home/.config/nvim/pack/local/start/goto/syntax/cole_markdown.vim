@@ -1,9 +1,9 @@
-syntax match mdQuote        "\(^\s*\|[>|]\s\+\)\@<=>\ze\%(\s\|$\)" conceal cchar=┃
-syntax match mdMachineQuote "\(>\s*\)\@<=|\ze\%(\s\|$\)"           conceal cchar=┇
+syntax match mdQuote        "\(^\s*\|[>|]\s\+\)\@<=>\ze\%(\s\||\%(\s\|$\)\)" conceal cchar=┃
+syntax match mdMachineQuote "\(>\s*\)\@<=|\ze\%(\s\|$\)"                     conceal cchar=┇
 
-syntax match mdDash         "^\s*\zs-\ze\%( \|$\)"     conceal cchar=*
-syntax match mdPlus         "^\s*\zs+\ze\%( \|$\)"     conceal cchar=◆
-syntax match mdStar         "^\s*\zs\*\ze\%( \|$\)"    conceal cchar=✱
+syntax match mdDash "^\s*\zs-\ze\%( \|$\)"  conceal cchar=*
+syntax match mdPlus "^\s*\zs+\ze\%( \|$\)"  conceal cchar=◆
+syntax match mdStar "^\s*\zs\*\ze\%( \|$\)" conceal cchar=✱
 
 syntax match mdHrDash "-" contained conceal cchar=━
 syntax match mdHrLine "^\s*-\{3,}\s*$" contains=mdHrDash
