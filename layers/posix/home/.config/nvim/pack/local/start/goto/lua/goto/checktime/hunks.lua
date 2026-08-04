@@ -327,10 +327,9 @@ M.replace = function(buf, text, mark)
   if vim.bo[buf].endofline then
     before = before .. linefeed
   end
-  local after_lines = buffer_lines(linefeed, text, false)
   local changes = diff("", records(linefeed, before), records(linefeed, text))
   local patches = row_patches(changes)
-  local restore = view.capture(buf, before_lines, after_lines, changes)
+  local restore = view.capture(buf)
 
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(patches):rev():enumerate() do
