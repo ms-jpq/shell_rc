@@ -2,8 +2,6 @@ local lib = require "goto.lib"
 
 local M = {}
 
----@alias ChecktimePosition integer[]
-
 ---@class ChecktimeHunk
 ---@field start integer
 ---@field finish integer
@@ -238,19 +236,18 @@ local relative = function(patches, start)
     :totable()
 end
 
-local at_row = function(pos, group, shift)
-  local row = unpack(pos)
-  if row then
-    for _, hunk in ipairs(group.local_patches) do
-      local first = hunk.start + shift + 1
-      local last = first + #hunk.lines
-      if first <= row and row < last then
-        return true, shift
-      end
-      shift = shift + #hunk.lines - (hunk.finish - hunk.start)
-    end
+local span = function(base, text)
+  local start = 1
+  while start <= #base and base[start] == text[start] do
+    start = start + 1
   end
-  return false, shift
+
+  local finish = #base
+  while finish >= start and base[finish] == text[#text - (#base - finish)] do
+    finish = finish - 1
+  end
+
+  return { start = start - 1, finish = finish, slot = 0 }
 end
 
 local touches = function(local_hunks, hunk)
@@ -260,16 +257,28 @@ local touches = function(local_hunks, hunk)
     end)
 end
 
-local cursor_hunk = function(linefeed, base, group)
+local character_hunk = function(linefeed, base, group)
   local start, finish = bounds(group)
   local source = group.local_patches[1] or group.remote_patches[1]
   local before = slice(base, start, finish)
   local local_lines = patch(before, relative(group.local_patches, start))
   local remote_lines = patch(before, relative(group.remote_patches, start))
   local characters = chars(before)
-  local local_hunks = diff_hunks(linefeed, characters, chars(local_lines))
+  local local_characters = chars(local_lines)
+  local remote_characters = chars(remote_lines)
+
+  if overlaps(span(characters, local_characters), span(characters, remote_characters)) then
+    return {
+      start = start,
+      finish = finish,
+      lines = local_lines,
+      slot = start == finish and source.slot or nil,
+    }
+  end
+
+  local local_hunks = diff_hunks(linefeed, characters, local_characters)
   local remote_hunks = vim
-    .iter(diff_hunks(linefeed, characters, chars(remote_lines)))
+    .iter(diff_hunks(linefeed, characters, remote_characters))
     :filter(function(hunk)
       return not touches(local_hunks, hunk)
     end)
@@ -285,16 +294,12 @@ local cursor_hunk = function(linefeed, base, group)
   }
 end
 
-local merge_hunks = function(linefeed, base, pos, grouped)
+local merge_hunks = function(linefeed, base, grouped)
   local merged = {}
-  local shift = 0
 
   for _, group in ipairs(grouped) do
-    local cursor_touched
-    cursor_touched, shift = at_row(pos, group, shift)
-    if cursor_touched then
-      table.insert(merged, cursor_hunk(linefeed, base, group))
-      pos = {}
+    if #group.local_patches > 0 and #group.remote_patches > 0 then
+      table.insert(merged, character_hunk(linefeed, base, group))
     else
       vim.list_extend(merged, pick(group, false))
     end
@@ -307,15 +312,14 @@ end
 ---@param base string
 ---@param local_text string
 ---@param remote_text string
----@param pos ChecktimePosition
 ---@return string
-M.merge = function(eol, base, local_text, remote_text, pos)
+M.merge = function(eol, base, local_text, remote_text)
   eol = eol or lib.LF
   local base_lines = records(eol, base)
   local local_lines = records(eol, local_text)
   local remote_lines = records(eol, remote_text)
   local grouped = row_groups(base_lines, local_lines, remote_lines)
-  local patches = merge_hunks(eol, base_lines, pos, grouped)
+  local patches = merge_hunks(eol, base_lines, grouped)
   sort(patches)
   return table.concat(patch(base_lines, patches))
 end

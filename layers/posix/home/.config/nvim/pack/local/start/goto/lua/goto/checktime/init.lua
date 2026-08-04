@@ -50,15 +50,8 @@ do
   local reconcile = function(buf, base, remote)
     local current = snapshot.current(buf)
 
-    local win = vim.api.nvim_get_current_win()
-    local pos = vim.api.nvim_win_get_buf(win) == buf and vim.api.nvim_win_get_cursor(win) or {}
-    local text = hunks.merge(
-      current.linefeed,
-      snapshot.row_text(current, base),
-      current.text,
-      snapshot.row_text(current, remote),
-      pos
-    )
+    local text =
+      hunks.merge(current.linefeed, snapshot.row_text(current, base), current.text, snapshot.row_text(current, remote))
     local eol_fixed = snapshot.buffer_text(current, text)
 
     if eol_fixed ~= current.text then
