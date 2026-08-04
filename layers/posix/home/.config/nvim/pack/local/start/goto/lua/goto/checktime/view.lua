@@ -44,11 +44,11 @@ end
 local token_at = function(line, col)
   local index = 1
   while true do
-    local start, finish = line:find("[%w_]+", index)
+    local start, finish = string.find(line, "[%w_]+", index)
     if not start then
       return
     elseif start <= col + 1 and col + 1 <= finish then
-      return line:sub(start, finish), start - 1
+      return string.sub(line, start, finish), start - 1
     end
     index = finish + 1
   end
@@ -59,11 +59,11 @@ local token_positions = function(lines)
   for row, line in ipairs(lines) do
     local start = 1
     while true do
-      local first, finish = line:find("[%w_]+", start)
+      local first, finish = string.find(line, "[%w_]+", start)
       if not first then
         break
       end
-      add_position(index, line:sub(first, finish), { row = row, col = first - 1 })
+      add_position(index, string.sub(line, first, finish), { row = row, col = first - 1 })
       start = finish + 1
     end
   end
@@ -84,14 +84,36 @@ local nearest = function(positions, row)
   return nearest
 end
 
+local locator = function(after)
+  local lines = line_positions(after)
+  local tokens
+
+  return function(line, col, fallback)
+    local positions = lines[line]
+    local offset
+    if not positions then
+      local token, start = token_at(line, col)
+      if token then
+        tokens = tokens or token_positions(after)
+        positions = tokens[token]
+        offset = positions and col - start or nil
+      end
+    end
+    local target = nearest(positions, fallback)
+    return {
+      row = target.row,
+      col = offset and target.col + offset or nil,
+    }
+  end
+end
+
 ---@param buf integer
 ---@param before string[]
 ---@param after string[]
 ---@param patches ChecktimeHunk[]
 ---@return fun()
 M.capture = function(buf, before, after, patches)
-  local lines = line_positions(after)
-  local tokens
+  local locate = locator(after)
   local views = vim
     .iter(vim.api.nvim_list_wins())
     :filter(function(win)
@@ -99,21 +121,10 @@ M.capture = function(buf, before, after, patches)
     end)
     :fold({}, function(views, win)
       local row, col = unpack(vim.api.nvim_win_get_cursor(win))
-      local positions = lines[before[row]]
-      local offset
-      if not positions then
-        tokens = tokens or token_positions(after)
-        local token, start = token_at(before[row], col)
-        if token then
-          positions = tokens[token]
-          offset = positions and col - start or nil
-        end
-      end
-      local target = nearest(positions, translate(patches, row))
+      local target = locate(before[row], col, translate(patches, row))
       views[win] = {
         row = row,
-        target = target.row,
-        col = offset and target.col + offset or nil,
+        target = target,
         topline = vim.api.nvim_win_call(win, function()
           return vim.fn.winsaveview().topline
         end),
@@ -124,10 +135,10 @@ M.capture = function(buf, before, after, patches)
   return function()
     for win, view in pairs(views) do
       local _, col = unpack(vim.api.nvim_win_get_cursor(win))
-      local row = math.min(view.target, vim.api.nvim_buf_line_count(buf))
+      local row = math.min(view.target.row, vim.api.nvim_buf_line_count(buf))
       local line = vim.api.nvim_buf_get_lines(buf, row - 1, row, true)[1]
       vim.api.nvim_win_call(win, function()
-        vim.api.nvim_win_set_cursor(win, { row, math.min(view.col or col, #line) })
+        vim.api.nvim_win_set_cursor(win, { row, math.min(view.target.col or col, #line) })
         vim.fn.winrestview { topline = view.topline + row - view.row }
       end)
     end

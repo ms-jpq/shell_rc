@@ -23,7 +23,7 @@ local records = function(linefeed, text)
   for index = 1, #parts - 1 do
     table.insert(records, parts[index] .. linefeed)
   end
-  if text:sub(-#linefeed) ~= linefeed then
+  if string.sub(text, -#linefeed) ~= linefeed then
     table.insert(records, parts[#parts])
   end
   return records
