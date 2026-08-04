@@ -2,9 +2,9 @@ require("nvim-treesitter").setup {}
 
 vim.opt.indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
 
-require("treesitter-context").setup {
-  multiline_threshold = 1,
-}
+-- require("treesitter-context").setup {
+--   multiline_threshold = 1,
+-- }
 
 require("nvim-treesitter-textobjects").setup {
   select = {

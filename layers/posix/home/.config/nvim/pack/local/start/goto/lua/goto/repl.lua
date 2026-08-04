@@ -68,9 +68,9 @@ local pick_pane = function(buf, pane_id)
     local active, this, _, _, _, info = unpack(item)
     local postfix = (function()
       if this then
-        return "✱"
+        return "▣"
       elseif active then
-        return "◉"
+        return "⛶"
       else
         return nil
       end
