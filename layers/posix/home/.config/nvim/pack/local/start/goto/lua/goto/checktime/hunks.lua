@@ -84,10 +84,14 @@ local diff = function(separator, before, after)
     :totable()
 end
 
+local row_patches = function(changes)
+  return vim.iter(changes):map(split):flatten():totable()
+end
+
 local diff_hunks = function(separator, before, after, atomic)
   local changes = diff(separator, before, after)
   if atomic then
-    return vim.iter(changes):map(split):flatten():totable()
+    return row_patches(changes)
   end
   return changes
 end
@@ -316,7 +320,27 @@ M.merge = function(eol, base, local_text, remote_text, pos)
   return table.concat(patch(base_lines, patches))
 end
 
-local window_views = function(buf)
+local transform = function(patches, row)
+  row = row - 1
+  local shift = 0
+
+  for _, hunk in ipairs(patches) do
+    local old_count = hunk.finish - hunk.start
+    if row < hunk.start then
+      break
+    elseif old_count == 0 then
+      shift = shift + #hunk.lines
+    elseif row >= hunk.finish then
+      shift = shift + #hunk.lines - old_count
+    else
+      return row + shift + 1
+    end
+  end
+
+  return row + shift + 1
+end
+
+local window_views = function(buf, patches)
   local views = vim
     .iter(vim.api.nvim_list_wins())
     :filter(function(win)
@@ -334,8 +358,11 @@ local window_views = function(buf)
 
   return function()
     for win, view in pairs(views) do
-      local row = unpack(vim.api.nvim_win_get_cursor(win))
+      local row, col = unpack(vim.api.nvim_win_get_cursor(win))
+      row = transform(patches, view.row)
+      local line = vim.api.nvim_buf_get_lines(buf, row - 1, row, true)[1]
       vim.api.nvim_win_call(win, function()
+        vim.api.nvim_win_set_cursor(win, { row, math.min(col, #line) })
         vim.fn.winrestview { topline = view.topline + row - view.row }
       end)
     end
@@ -347,13 +374,14 @@ end
 ---@param mark fun(start: integer, finish: integer)
 M.replace = function(buf, text, mark)
   local linefeed = lib.buf_linefeed(buf)
-  local restore = window_views(buf)
   local before_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local before = table.concat(before_lines, linefeed)
   if vim.bo[buf].endofline then
     before = before .. linefeed
   end
-  local patches = row_hunks(records(linefeed, before), records(linefeed, text))
+  local changes = diff("", records(linefeed, before), records(linefeed, text))
+  local patches = row_patches(changes)
+  local restore = window_views(buf, changes)
 
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(patches):rev():enumerate() do
