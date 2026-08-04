@@ -1,8 +1,5 @@
 ;; extends
 
-((block_quote) @comment
-  (#lua-match? @comment "^>%s*|"))
-
 (pipe_table_header "|" @markup.table.separator
   (#set! conceal "│"))
 

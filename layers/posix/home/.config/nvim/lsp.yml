@@ -191,6 +191,9 @@ cssls:
 # tailwindcss:
 
 svelte:
+  cmd:
+    - svelteserver
+    - --stdio
 
 graphql:
 

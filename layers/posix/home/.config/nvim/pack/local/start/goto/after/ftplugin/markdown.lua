@@ -14,22 +14,25 @@ end
 
 do
   local match_var = "__blockquote_match__"
-
   local matches = {
-    ["@markup"] = [[^\s*>\%(\s*|\)\@![^\n]*$]],
-    ["@comment.todo"] = [[^\s*>[ \t]\+|[ \t]*\zs>>>[^\n]*$]],
+    { "@comment", [[^\s*>[ \t]*\zs|[^\n]*$]] },
+    { "@comment.todo", [[^\s*>[ \t]*|[ \t]*\zs>>>[^\n]*$]] },
   }
 
   local enter = autocmd.buf_win({ buffer = 0 }, function()
-    local ms = vim.w[match_var] or {}
-    vim.w[match_var] = ms
-
-    for group, pattern in pairs(matches) do
-      table.insert(ms, vim.fn.matchadd(group, pattern))
+    if not vim.w[match_var] then
+      local acc = {}
+      for priority, match in ipairs(matches) do
+        local group, pattern = unpack(match)
+        table.insert(acc, vim.fn.matchadd(group, pattern, priority))
+      end
+      vim.w[match_var] = acc
     end
   end, function()
-    for _, id in pairs(vim.w[match_var] or {}) do
-      vim.fn.matchdelete(id)
+    if vim.w[match_var] then
+      for _, id in ipairs(vim.w[match_var]) do
+        vim.fn.matchdelete(id)
+      end
     end
     vim.w[match_var] = nil
   end)
