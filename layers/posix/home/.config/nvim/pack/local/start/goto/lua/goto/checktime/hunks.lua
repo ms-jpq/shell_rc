@@ -33,6 +33,16 @@ local chars = function(pieces)
   return vim.fn.split(table.concat(pieces), [[\zs]])
 end
 
+local offsets = function(characters)
+  local offsets = { [0] = 0 }
+  local offset = 0
+  for index, character in ipairs(characters) do
+    offset = offset + #character
+    offsets[index] = offset
+  end
+  return offsets
+end
+
 local buffer_lines = function(linefeed, text, final_empty)
   local lines = vim
     .iter(records(linefeed, text))
@@ -44,6 +54,19 @@ local buffer_lines = function(linefeed, text, final_empty)
     table.insert(lines, "")
   end
   return lines
+end
+
+local cursor_rows = function(buf)
+  return vim
+    .iter(vim.api.nvim_list_wins())
+    :filter(function(win)
+      return vim.api.nvim_win_get_buf(win) == buf
+    end)
+    :fold({}, function(rows, win)
+      local row = unpack(vim.api.nvim_win_get_cursor(win))
+      rows[row - 1] = true
+      return rows
+    end)
 end
 
 local split = function(hunk)
@@ -243,6 +266,26 @@ local span = function(base, text)
   return { start = start - 1, finish = finish, slot = 0 }
 end
 
+local replace_cursor_line = function(buf, linefeed, hunk)
+  local before = unpack(vim.api.nvim_buf_get_lines(buf, hunk.start, hunk.finish, true))
+  local after = unpack(buffer_lines(linefeed, table.concat(hunk.lines), false))
+  local before_characters = chars { before }
+  local after_characters = chars { after }
+  local changed = span(before_characters, after_characters)
+  local suffix = #before_characters - changed.finish
+  local replacement = slice(after_characters, changed.start, #after_characters - suffix)
+  local bytes = offsets(before_characters)
+
+  vim.api.nvim_buf_set_text(
+    buf,
+    hunk.start,
+    bytes[changed.start],
+    hunk.start,
+    bytes[changed.finish],
+    #replacement == 0 and {} or { table.concat(replacement) }
+  )
+end
+
 local touches = function(local_hunks, hunk)
   return hunk.finish > hunk.start
     and vim.iter(local_hunks):any(function(other)
@@ -322,6 +365,7 @@ end
 M.replace = function(buf, text, mark)
   local current = snapshot.current(buf)
   local patches = row_hunks(records(current.linefeed, current.text), records(current.linefeed, text))
+  local rows = cursor_rows(buf)
   local restore = view.capture(buf)
 
   vim.api.nvim_buf_call(buf, function()
@@ -333,7 +377,11 @@ M.replace = function(buf, text, mark)
       end
 
       local lines = buffer_lines(current.linefeed, table.concat(hunk.lines), not current.endofline)
-      vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
+      if rows[hunk.start] and hunk.finish == hunk.start + 1 and #lines == 1 then
+        replace_cursor_line(buf, current.linefeed, hunk)
+      else
+        vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
+      end
       if #lines > 0 then
         mark(hunk.start, hunk.start + #lines)
       end
