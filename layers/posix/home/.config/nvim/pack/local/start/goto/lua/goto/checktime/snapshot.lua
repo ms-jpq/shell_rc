@@ -51,6 +51,12 @@ M.current = function(buf)
   }
 end
 
+---@param buf integer
+---@return string?
+M.base = function(buf)
+  return vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf)) and M.current(buf).text or nil
+end
+
 ---@param current ChecktimeCurrent
 ---@param text string
 ---@return string
@@ -116,6 +122,14 @@ M.read = function(buf)
   end
 
   return M.STATES.RECONCILE, text
+end
+
+---@param buf integer
+---@param base string?
+---@return boolean
+M.matches = function(buf, base)
+  local state, text = M.read(buf)
+  return state == M.STATES.RECONCILE and text == base or state == M.STATES.NONE and base == nil
 end
 
 return M

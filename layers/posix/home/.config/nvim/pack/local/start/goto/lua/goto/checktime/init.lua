@@ -45,13 +45,18 @@ do
   end
 
   ---@param buf integer
-  ---@param base string
+  ---@param base string?
   ---@param remote string
+  ---@return string
   local reconcile = function(buf, base, remote)
     local current = snapshot.current(buf)
 
-    local text =
-      hunks.merge(current.linefeed, snapshot.row_text(current, base), current.text, snapshot.row_text(current, remote))
+    local text = hunks.merge(
+      current.linefeed,
+      snapshot.row_text(current, base or ""),
+      current.text,
+      snapshot.row_text(current, remote)
+    )
     local eol_fixed = snapshot.buffer_text(current, text)
 
     if eol_fixed ~= current.text then
@@ -60,6 +65,20 @@ do
 
     watcher.remember(buf, remote)
     vim.bo[buf].modified = eol_fixed ~= remote
+    return remote
+  end
+
+  ---@param buf integer
+  ---@param base string?
+  local write = function(buf, base)
+    if not snapshot.matches(buf, base) then
+      watcher.dirty(poll.REMOTE, buf)
+      return
+    end
+
+    vim.api.nvim_buf_call(buf, function()
+      vim.cmd [[silent! write! ++p]]
+    end)
   end
 
   local tick = function()
@@ -67,6 +86,7 @@ do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable then
         local name = vim.api.nvim_buf_get_name(buf)
         local locked = lock.guard(name, function()
+          local base = update.base
           if update.dirty[poll.REMOTE] then
             local state, remote = snapshot.read(buf)
             if state == snapshot.STATES.RETRY then
@@ -77,14 +97,12 @@ do
                 vim.cmd [[silent! edit]]
               end)
             elseif state == snapshot.STATES.RECONCILE and remote then
-              reconcile(buf, update.base, remote)
+              base = reconcile(buf, base, remote)
             end
           end
 
           if vim.bo[buf].modified then
-            vim.api.nvim_buf_call(buf, function()
-              vim.cmd [[silent! write! ++p]]
-            end)
+            write(buf, base)
           end
         end)
         if not locked then

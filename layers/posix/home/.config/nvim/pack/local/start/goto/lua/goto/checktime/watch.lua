@@ -7,7 +7,7 @@ local M = {}
 
 ---@class ChecktimeWatch
 ---@field dirty fun(kind: ChecktimeChange, buf?: integer)
----@field remember fun(buf: integer, base: string)
+---@field remember fun(buf: integer, base?: string)
 ---@field take fun(): table<integer, ChecktimeUpdate>
 
 ---@return ChecktimeWatch
@@ -21,11 +21,10 @@ M.start = function()
   watcher.take = files.take
 
   ---@param buf integer
-  ---@param base? string
-  local watch = function(buf, base)
+  local watch = function(buf)
     local name = vim.api.nvim_buf_get_name(buf)
     local path = vim.bo[buf].modifiable and name ~= "" and name or nil
-    files.watch(buf, path, base)
+    files.watch(buf, path)
   end
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
@@ -38,7 +37,8 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufFilePost" }, {
     group = lib.group,
     callback = function(args)
-      watch(args.buf, snapshot.current(args.buf).text)
+      files.remember(args.buf, snapshot.base(args.buf))
+      watch(args.buf)
     end,
   })
 
@@ -61,14 +61,15 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     callback = function(args)
-      files.remember(args.buf, snapshot.current(args.buf).text)
+      files.remember(args.buf, snapshot.base(args.buf))
     end,
   })
 
   autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) then
-        watch(buf, snapshot.current(buf).text)
+        files.remember(buf, snapshot.base(buf))
+        watch(buf)
       end
     end
   end)

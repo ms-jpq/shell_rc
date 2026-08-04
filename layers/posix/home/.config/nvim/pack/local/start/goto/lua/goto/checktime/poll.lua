@@ -9,19 +9,19 @@ local M = {}
 ---@field close fun()
 
 ---@class ChecktimeTracked
----@field base string
+---@field base? string
 ---@field dirty? ChecktimeDirty
 ---@field retry? string
 ---@field watcher? ChecktimePoller
 
 ---@class ChecktimeUpdate
----@field base string
+---@field base? string
 ---@field dirty ChecktimeDirty
 
 ---@class ChecktimePoll
----@field remember fun(buf: integer, base: string)
+---@field remember fun(buf: integer, base?: string)
 ---@field forget fun(buf: integer)
----@field watch fun(buf: integer, path?: string, base?: string)
+---@field watch fun(buf: integer, path?: string)
 ---@field dirty fun(kind: ChecktimeChange, buf?: integer)
 ---@field take fun(): table<integer, ChecktimeUpdate>
 
@@ -138,7 +138,7 @@ M.new = function()
   end
 
   ---@param buf integer
-  ---@param base string
+  ---@param base string?
   w.remember = function(buf, base)
     local state = tracked[buf]
     if state then
@@ -156,11 +156,7 @@ M.new = function()
 
   ---@param buf integer
   ---@param path? string
-  ---@param base? string
-  w.watch = function(buf, path, base)
-    if base then
-      w.remember(buf, base)
-    end
+  w.watch = function(buf, path)
     detach(buf)
     if path then
       attach(buf, path)
