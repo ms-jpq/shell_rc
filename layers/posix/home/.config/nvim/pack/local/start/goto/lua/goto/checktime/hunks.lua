@@ -363,7 +363,7 @@ local window_views = function(buf, patches)
   return function()
     for win, view in pairs(views) do
       local row, col = unpack(vim.api.nvim_win_get_cursor(win))
-      row = transform(patches, view.row)
+      row = math.min(transform(patches, view.row), vim.api.nvim_buf_line_count(buf))
       local line = vim.api.nvim_buf_get_lines(buf, row - 1, row, true)[1]
       vim.api.nvim_win_call(win, function()
         vim.api.nvim_win_set_cursor(win, { row, math.min(col, #line) })
