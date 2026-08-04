@@ -9,7 +9,7 @@ highlight! Normal                guibg=NONE    ctermbg=NONE
 highlight! NormalNC              guibg=NONE    ctermbg=NONE
 highlight! SignColumn            guibg=NONE    ctermbg=NONE
 highlight! VertSplit             guibg=NONE    ctermbg=NONE
-highlight! link                  @markup.quote Identifier
+highlight! link                  @markup.quote Statement
 highlight! link                  Conceal       Comment
 highlight! link                  CursorColumn  CursorLine
 highlight! link                  MatchParen    Search
