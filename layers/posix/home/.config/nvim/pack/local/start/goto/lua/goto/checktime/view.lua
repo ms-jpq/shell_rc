@@ -24,7 +24,7 @@ local translate = function(patches, row)
   return row + shift + 1
 end
 
-local insert = function(index, text, position)
+local add_position = function(index, text, position)
   local positions = index[text]
   if positions then
     table.insert(positions, position)
@@ -36,7 +36,7 @@ end
 local line_positions = function(lines)
   local index = {}
   for row, line in ipairs(lines) do
-    insert(index, line, { row = row })
+    add_position(index, line, { row = row })
   end
   return index
 end
@@ -63,7 +63,7 @@ local token_positions = function(lines)
       if not first then
         break
       end
-      insert(index, line:sub(first, finish), { row = row, col = first - 1 })
+      add_position(index, line:sub(first, finish), { row = row, col = first - 1 })
       start = finish + 1
     end
   end

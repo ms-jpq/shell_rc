@@ -87,16 +87,8 @@ local row_patches = function(changes)
   return vim.iter(changes):map(split):flatten():totable()
 end
 
-local diff_hunks = function(separator, before, after, atomic)
-  local changes = diff(separator, before, after)
-  if atomic then
-    return row_patches(changes)
-  end
-  return changes
-end
-
 local row_hunks = function(before, after)
-  return diff_hunks("", before, after, true)
+  return row_patches(diff("", before, after))
 end
 
 local overlaps = function(left, right)
@@ -277,9 +269,9 @@ local character_hunk = function(linefeed, base, group)
     }
   end
 
-  local local_hunks = diff_hunks(linefeed, characters, local_characters)
+  local local_hunks = diff(linefeed, characters, local_characters)
   local remote_hunks = vim
-    .iter(diff_hunks(linefeed, characters, remote_characters))
+    .iter(diff(linefeed, characters, remote_characters))
     :filter(function(hunk)
       return not touches(local_hunks, hunk)
     end)
