@@ -1,4 +1,4 @@
-local lib = require "goto.lib"
+local snapshot = require "goto.checktime.snapshot"
 local view = require "goto.checktime.view"
 
 local M = {}
@@ -301,13 +301,12 @@ local merge_hunks = function(linefeed, base, grouped)
   return merged
 end
 
----@param eol string?
+---@param eol string
 ---@param base string
 ---@param local_text string
 ---@param remote_text string
 ---@return string
 M.merge = function(eol, base, local_text, remote_text)
-  eol = eol or lib.LF
   local base_lines = records(eol, base)
   local local_lines = records(eol, local_text)
   local remote_lines = records(eol, remote_text)
@@ -321,14 +320,8 @@ end
 ---@param text string
 ---@param mark fun(start: integer, finish: integer)
 M.replace = function(buf, text, mark)
-  local linefeed = lib.buf_linefeed(buf)
-  local before_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local before = table.concat(before_lines, linefeed)
-  if vim.bo[buf].endofline then
-    before = before .. linefeed
-  end
-  local changes = diff("", records(linefeed, before), records(linefeed, text))
-  local patches = row_patches(changes)
+  local current = snapshot.current(buf)
+  local patches = row_hunks(records(current.linefeed, current.text), records(current.linefeed, text))
   local restore = view.capture(buf)
 
   vim.api.nvim_buf_call(buf, function()
@@ -339,7 +332,7 @@ M.replace = function(buf, text, mark)
         vim.cmd.undojoin()
       end
 
-      local lines = buffer_lines(linefeed, table.concat(hunk.lines), not vim.bo[buf].endofline)
+      local lines = buffer_lines(current.linefeed, table.concat(hunk.lines), not current.endofline)
       vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
       if #lines > 0 then
         mark(hunk.start, hunk.start + #lines)
