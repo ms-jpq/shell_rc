@@ -1,4 +1,5 @@
 local lib = require "goto.lib"
+local view = require "goto.checktime.view"
 
 local M = {}
 
@@ -324,85 +325,6 @@ M.merge = function(eol, base, local_text, remote_text)
   return table.concat(patch(base_lines, patches))
 end
 
-local transform = function(patches, row)
-  row = row - 1
-  local shift = 0
-
-  for _, hunk in ipairs(patches) do
-    local old_count = hunk.finish - hunk.start
-    if row < hunk.start then
-      break
-    elseif old_count == 0 then
-      shift = shift + #hunk.lines
-    elseif row >= hunk.finish then
-      shift = shift + #hunk.lines - old_count
-    else
-      return row + shift + 1
-    end
-  end
-
-  return row + shift + 1
-end
-
-local line_rows = function(lines)
-  local rows = {}
-  for row, line in ipairs(lines) do
-    local positions = rows[line]
-    if positions then
-      table.insert(positions, row)
-    else
-      rows[line] = { row }
-    end
-  end
-  return rows
-end
-
-local closest = function(rows, row)
-  if not rows then
-    return row
-  end
-
-  local closest = rows[1]
-  for _, candidate in ipairs(rows) do
-    if math.abs(candidate - row) < math.abs(closest - row) then
-      closest = candidate
-    end
-  end
-  return closest
-end
-
-local window_views = function(buf, before, after, patches)
-  local destination = line_rows(after)
-  local views = vim
-    .iter(vim.api.nvim_list_wins())
-    :filter(function(win)
-      return vim.api.nvim_win_get_buf(win) == buf
-    end)
-    :fold({}, function(views, win)
-      local row = (unpack(vim.api.nvim_win_get_cursor(win)))
-      views[win] = {
-        row = row,
-        target = closest(destination[before[row]], transform(patches, row)),
-        topline = vim.api.nvim_win_call(win, function()
-          return vim.fn.winsaveview().topline
-        end),
-      }
-      return views
-    end)
-
-  return function()
-    for win, view in pairs(views) do
-      local row, col = unpack(vim.api.nvim_win_get_cursor(win))
-      row = math.min(view.target, vim.api.nvim_buf_line_count(buf))
-      local line = vim.api.nvim_buf_get_lines(buf, row - 1, row, true)[1]
-      vim.api.nvim_win_call(win, function()
-        vim.api.nvim_win_set_cursor(win, { row, math.min(col, #line) })
-        vim.fn.winrestview { topline = view.topline + row - view.row }
-      end)
-    end
-  end
-end
-
 ---@param buf integer
 ---@param text string
 ---@param mark fun(start: integer, finish: integer)
@@ -416,7 +338,7 @@ M.replace = function(buf, text, mark)
   local after_lines = buffer_lines(linefeed, text, false)
   local changes = diff("", records(linefeed, before), records(linefeed, text))
   local patches = row_patches(changes)
-  local restore = window_views(buf, before_lines, after_lines, changes)
+  local restore = view.capture(buf, before_lines, after_lines, changes)
 
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(patches):rev():enumerate() do
