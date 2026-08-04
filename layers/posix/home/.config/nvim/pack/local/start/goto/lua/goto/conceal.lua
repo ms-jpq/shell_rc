@@ -29,8 +29,8 @@ do
 
       local ft = string.sub(args.match, #prefix + 1)
 
-      vim.cmd.runtime { vim.fs.joinpath("syntax", args.match .. ".vim"), bang = true }
       vim.cmd.runtime { vim.fs.joinpath("syntax", ft .. ".vim"), bang = true }
+      vim.cmd.runtime { vim.fs.joinpath("syntax", args.match .. ".vim"), bang = true }
     end,
   })
 
