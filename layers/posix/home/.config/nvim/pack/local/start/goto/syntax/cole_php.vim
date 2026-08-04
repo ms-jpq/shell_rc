@@ -1,5 +1,5 @@
-syntax match phpShebangHash '\%1l^#\ze!' conceal cchar=⌘
-syntax match phpShebangBang '\%1l\(^#\)\@<=!/usr/bin/env\ze\%(\s\|$\)' conceal cchar=‼
+syntax match phpShebangHash '\%1l^#\ze!' conceal cchar=‼
+syntax match phpShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 
 syntax match phpReq '^\s*\zs\<include\>' conceal cchar=↓
 syntax match phpReq '^\s*\zs\<require\>' conceal cchar=↓

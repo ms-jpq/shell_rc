@@ -1,5 +1,5 @@
-syntax match ktShebangHash '\%1l^#\ze!' conceal cchar=⌘
-syntax match ktShebangBang '\%1l\(^#\)\@<=!/usr/bin/env\ze\%(\s\|$\)' conceal cchar=‼
+syntax match ktShebangHash '\%1l^#\ze!' conceal cchar=‼
+syntax match ktShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 
 syntax match ktImport '^\s*\zs\<import\>' conceal cchar=↓
 

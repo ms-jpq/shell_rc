@@ -1,5 +1,5 @@
-syntax match shShebangHash '\%1l^#\ze!' conceal cchar=⌘
-syntax match shShebangBang '\%1l\(^#\)\@<=!/usr/bin/env\ze\%(\s\|$\)' conceal cchar=‼
+syntax match shShebangHash '\%1l^#\ze!' conceal cchar=‼
+syntax match shShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 
 syntax match shDo "\(^\s*\|;\s*\)\zs\<do\>" conceal cchar=⌈
 syntax match shIn "case\s\+\S\+\s\+\zs\<in\>" conceal cchar=⌈

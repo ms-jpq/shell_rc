@@ -1,5 +1,5 @@
-syntax match pyShebangHash '\%1l^#\ze!' conceal cchar=⌘
-syntax match pyShebangBang '\%1l\(^#\)\@<=!/usr/bin/env\ze\%(\s\|$\)' conceal cchar=‼
+syntax match pyShebangHash '\%1l^#\ze!' conceal cchar=‼
+syntax match pyShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 
 syntax match pyImport '^\s*\zs\<import\>' conceal cchar=↓
 syntax match pyFromImport '\(from\s\+\S\+\s\+\)\@<=\<import\>' conceal cchar=↓

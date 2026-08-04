@@ -1,5 +1,5 @@
-syntax match rustShebangHash '\%1l^#\ze!' conceal cchar=⌘
-syntax match rustShebangBang '\%1l\(^#\)\@<=!/usr/bin/env\ze\%(\s\|$\)' conceal cchar=‼
+syntax match rustShebangHash '\%1l^#\ze!' conceal cchar=‼
+syntax match rustShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 
 syntax match rustUse '^\s*\zs\<use\>' conceal cchar=↓
 

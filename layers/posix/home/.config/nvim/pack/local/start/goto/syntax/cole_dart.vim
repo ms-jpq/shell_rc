@@ -1,5 +1,5 @@
-syntax match dartShebangHash '\%1l^#\ze!' conceal cchar=⌘
-syntax match dartShebangBang '\%1l\(^#\)\@<=!/usr/bin/env\ze\%(\s\|$\)' conceal cchar=‼
+syntax match dartShebangHash '\%1l^#\ze!' conceal cchar=‼
+syntax match dartShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 
 syntax match dartImport '^\s*\zs\<import\>' conceal cchar=↓
 

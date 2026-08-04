@@ -1,5 +1,5 @@
-syntax match luaShebangHash '\%1l^#\ze!' conceal cchar=⌘
-syntax match luaShebangBang '\%1l\(^#\)\@<=!/usr/bin/env\ze\%(\s\|$\)' conceal cchar=‼
+syntax match luaShebangHash '\%1l^#\ze!' conceal cchar=‼
+syntax match luaShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 
 syntax match luaReq '\<require\ze\s*[(''"[]' conceal cchar=←
 
