@@ -28,12 +28,13 @@ M.capture = function(buf)
       local line_count = vim.api.nvim_buf_line_count(buf)
       for win, view in pairs(views) do
         local mark = vim.api.nvim_buf_get_extmark_by_id(buf, ns, view.id, {})
+        vim.api.nvim_buf_del_extmark(buf, ns, view.id)
+
         local r, c = unpack(mark)
         local row = math.min((r or line_count - 1) + 1, line_count)
         local line = unpack(vim.api.nvim_buf_get_lines(buf, row - 1, row, true))
         local col = math.min(c or #line, #line)
 
-        vim.api.nvim_buf_del_extmark(buf, ns, view.id)
         vim.api.nvim_win_call(win, function()
           vim.fn.winrestview { lnum = row, col = col, curswant = view.curswant }
         end)
