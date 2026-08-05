@@ -1,4 +1,3 @@
-local snapshot = require "goto.checktime.snapshot"
 local view = require "goto.checktime.view"
 
 local M = {}
@@ -43,30 +42,13 @@ local offsets = function(characters)
   return offsets
 end
 
-local buffer_lines = function(linefeed, text, final_empty)
-  local lines = vim
+local buffer_lines = function(linefeed, text)
+  return vim
     .iter(records(linefeed, text))
     :map(function(record)
       return string.sub(record, -#linefeed) == linefeed and string.sub(record, 1, -#linefeed - 1) or record
     end)
     :totable()
-  if final_empty and string.sub(text, -#linefeed) == linefeed then
-    table.insert(lines, "")
-  end
-  return lines
-end
-
-local cursor_rows = function(buf)
-  return vim
-    .iter(vim.api.nvim_list_wins())
-    :filter(function(win)
-      return vim.api.nvim_win_get_buf(win) == buf
-    end)
-    :fold({}, function(rows, win)
-      local row = unpack(vim.api.nvim_win_get_cursor(win))
-      rows[row - 1] = true
-      return rows
-    end)
 end
 
 local split = function(hunk)
@@ -268,7 +250,7 @@ end
 
 local replace_cursor_line = function(buf, linefeed, hunk)
   local before = unpack(vim.api.nvim_buf_get_lines(buf, hunk.start, hunk.finish, true))
-  local after = unpack(buffer_lines(linefeed, table.concat(hunk.lines), false))
+  local after = unpack(buffer_lines(linefeed, table.concat(hunk.lines)))
   local before_characters = chars { before }
   local after_characters = chars { after }
   local changed = span(before_characters, after_characters)
@@ -360,13 +342,12 @@ M.merge = function(eol, base, local_text, remote_text)
 end
 
 ---@param buf integer
+---@param current ChecktimeCurrent
 ---@param text string
 ---@param mark fun(start: integer, finish: integer)
-M.replace = function(buf, text, mark)
-  local current = snapshot.current(buf)
+M.replace = function(buf, current, text, mark)
   local patches = row_hunks(records(current.linefeed, current.text), records(current.linefeed, text))
-  local rows = cursor_rows(buf)
-  local restore = view.capture(buf)
+  local restore, rows = view.capture(buf)
 
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(patches):rev():enumerate() do
@@ -376,7 +357,7 @@ M.replace = function(buf, text, mark)
         vim.cmd.undojoin()
       end
 
-      local lines = buffer_lines(current.linefeed, table.concat(hunk.lines), not current.endofline)
+      local lines = buffer_lines(current.linefeed, table.concat(hunk.lines))
       if rows[hunk.start] and hunk.finish == hunk.start + 1 and #lines == 1 then
         replace_cursor_line(buf, current.linefeed, hunk)
       else
@@ -384,6 +365,16 @@ M.replace = function(buf, text, mark)
       end
       if #lines > 0 then
         mark(hunk.start, hunk.start + #lines)
+      end
+    end
+
+    if not current.endofline then
+      local count = vim.api.nvim_buf_line_count(buf)
+      local last = unpack(vim.api.nvim_buf_get_lines(buf, count - 1, count, true))
+      local ending = string.sub(text, -#current.linefeed) == current.linefeed
+      if ending ~= (count > 1 and last == "") then
+        vim.cmd.undojoin()
+        vim.api.nvim_buf_set_lines(buf, ending and -1 or -2, -1, true, ending and { "" } or {})
       end
     end
   end)

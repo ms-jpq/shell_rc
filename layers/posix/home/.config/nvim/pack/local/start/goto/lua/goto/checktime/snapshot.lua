@@ -52,9 +52,10 @@ M.current = function(buf)
 end
 
 ---@param buf integer
----@return string?
+---@return string?, uv.fs_stat.result?
 M.base = function(buf)
-  return vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf)) and M.current(buf).text or nil
+  local stat = vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf))
+  return stat and M.current(buf).text or nil, stat
 end
 
 ---@param current ChecktimeCurrent
@@ -89,24 +90,31 @@ M.buffer_text = function(current, text)
   end
 end
 
+---@param current ChecktimeCurrent
+---@param text string
+---@return string
+M.fit = function(current, text)
+  return M.buffer_text(current, M.row_text(current, text))
+end
+
 ---@param buf integer
----@return ChecktimeState, string?
+---@return ChecktimeState, string?, uv.fs_stat.result?
 M.read = function(buf)
   local name = vim.api.nvim_buf_get_name(buf)
   local before = vim.uv.fs_stat(name)
   if not before then
-    return M.STATES.NONE, nil
+    return M.STATES.NONE, nil, nil
   elseif before.size > MAX_BYTES or (not vim.bo[buf].modified and #vim.fn.win_findbuf(buf) == 0) then
-    return M.STATES.OPAQUE, nil
+    return M.STATES.OPAQUE, nil, nil
   end
 
   local ok, text = pcall(vim.fn.readblob, name)
   if not ok then
-    return M.STATES.RETRY, nil
+    return M.STATES.RETRY, nil, nil
   end
 
   if type(text) ~= "string" then
-    return M.STATES.OPAQUE, nil
+    return M.STATES.OPAQUE, nil, nil
   end
 
   local encoding = vim.bo[buf].fileencoding
@@ -118,18 +126,18 @@ M.read = function(buf)
   end
 
   if not same_version(before, vim.uv.fs_stat(name)) then
-    return M.STATES.RETRY, nil
+    return M.STATES.RETRY, nil, nil
   end
 
-  return M.STATES.RECONCILE, text
+  return M.STATES.RECONCILE, text, before
 end
 
 ---@param buf integer
----@param base string?
+---@param version uv.fs_stat.result?
 ---@return boolean
-M.matches = function(buf, base)
-  local state, text = M.read(buf)
-  return state == M.STATES.RECONCILE and text == base or state == M.STATES.NONE and base == nil
+M.unchanged = function(buf, version)
+  local current = vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf))
+  return version and same_version(version, current) or not current
 end
 
 return M

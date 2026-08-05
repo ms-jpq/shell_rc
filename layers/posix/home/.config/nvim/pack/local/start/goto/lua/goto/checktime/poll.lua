@@ -10,16 +10,18 @@ local M = {}
 
 ---@class ChecktimeTracked
 ---@field base? string
+---@field version? uv.fs_stat.result
 ---@field dirty? ChecktimeDirty
 ---@field retry? string
 ---@field watcher? ChecktimePoller
 
 ---@class ChecktimeUpdate
 ---@field base? string
+---@field version? uv.fs_stat.result
 ---@field dirty ChecktimeDirty
 
 ---@class ChecktimePoll
----@field remember fun(buf: integer, base?: string)
+---@field remember fun(buf: integer, base?: string, version?: uv.fs_stat.result)
 ---@field forget fun(buf: integer)
 ---@field watch fun(buf: integer, path?: string)
 ---@field dirty fun(kind: ChecktimeChange, buf?: integer)
@@ -139,12 +141,14 @@ M.new = function()
 
   ---@param buf integer
   ---@param base string?
-  w.remember = function(buf, base)
+  ---@param version uv.fs_stat.result?
+  w.remember = function(buf, base, version)
     local state = tracked[buf]
     if state then
       state.base = base
+      state.version = version
     else
-      tracked[buf] = { base = base }
+      tracked[buf] = { base = base, version = version }
     end
   end
 
@@ -187,7 +191,7 @@ M.new = function()
       if (state.watcher or state.retry) and state.dirty then
         local dirty = state.dirty
         clear(buf)
-        changes[buf] = { base = state.base, dirty = dirty }
+        changes[buf] = { base = state.base, version = state.version, dirty = dirty }
       end
     end
     return changes

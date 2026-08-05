@@ -7,7 +7,7 @@ local M = {}
 
 ---@class ChecktimeWatch
 ---@field dirty fun(kind: ChecktimeChange, buf?: integer)
----@field remember fun(buf: integer, base?: string)
+---@field remember fun(buf: integer, base?: string, version?: uv.fs_stat.result)
 ---@field take fun(): table<integer, ChecktimeUpdate>
 
 ---@return ChecktimeWatch
@@ -19,6 +19,12 @@ M.start = function()
   watcher.dirty = files.dirty
   watcher.remember = files.remember
   watcher.take = files.take
+
+  ---@param buf integer
+  local remember = function(buf)
+    local base, version = snapshot.base(buf)
+    files.remember(buf, base, version)
+  end
 
   ---@param buf integer
   local watch = function(buf)
@@ -37,7 +43,7 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufFilePost" }, {
     group = lib.group,
     callback = function(args)
-      files.remember(args.buf, snapshot.base(args.buf))
+      remember(args.buf)
       watch(args.buf)
     end,
   })
@@ -61,14 +67,14 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     callback = function(args)
-      files.remember(args.buf, snapshot.base(args.buf))
+      remember(args.buf)
     end,
   })
 
   autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) then
-        files.remember(buf, snapshot.base(buf))
+        remember(buf)
         watch(buf)
       end
     end

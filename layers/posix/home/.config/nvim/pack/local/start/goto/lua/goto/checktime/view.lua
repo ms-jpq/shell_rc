@@ -2,8 +2,9 @@ local M = {}
 local ns = vim.api.nvim_create_namespace "goto.checktime.view"
 
 ---@param buf integer
----@return fun()
+---@return fun(), table<integer, true>
 M.capture = function(buf)
+  local rows = {}
   local views = vim
     .iter(vim.api.nvim_list_wins())
     :filter(function(win)
@@ -11,6 +12,7 @@ M.capture = function(buf)
     end)
     :fold({}, function(views, win)
       local row, col = unpack(vim.api.nvim_win_get_cursor(win))
+      rows[row - 1] = true
       views[win] = vim.api.nvim_buf_set_extmark(buf, ns, row - 1, col, { right_gravity = true })
       return views
     end)
@@ -27,7 +29,8 @@ M.capture = function(buf)
         vim.api.nvim_win_set_cursor(win, { row, math.min(mark[2] or #line, #line) })
       end)
     end
-  end
+  end,
+    rows
 end
 
 return M
