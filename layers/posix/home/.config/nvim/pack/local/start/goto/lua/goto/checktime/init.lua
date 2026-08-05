@@ -33,10 +33,13 @@ do
           local resolution = resolve.gather(buf, inbox.latest(buf, batch))
           return executor.run(buf, plan.compute(resolution))
         end)
-        if outcome and outcome.kind == execute.OUTCOMES.COMPLETE then
+        outcome = outcome or { kind = execute.OUTCOMES.DEFERRED }
+        if outcome.kind == execute.OUTCOMES.COMPLETE then
           inbox.finish(buf)
-        elseif vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+        elseif outcome.kind == execute.OUTCOMES.DEFERRED and vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
           inbox.restore(buf, batch)
+        elseif outcome.kind ~= execute.OUTCOMES.DEFERRED then
+          assert(false, vim.inspect(outcome))
         end
       end
     end

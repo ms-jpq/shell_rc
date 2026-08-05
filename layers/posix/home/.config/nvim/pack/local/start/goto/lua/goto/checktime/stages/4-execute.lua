@@ -26,6 +26,7 @@ M.OUTCOMES = {
 ---@class ChecktimeExecuteIO
 ---@field apply fun(buf: integer, instruction: ChecktimeReconcile)
 ---@field discard fun(buf: integer)
+---@field remember fun(buf: integer, base?: string, version?: uv.fs_stat.result)
 ---@field reload fun(buf: integer): boolean
 ---@field unchanged fun(buf: integer, version: uv.fs_stat.result?): boolean
 ---@field write fun(buf: integer): boolean
@@ -54,13 +55,17 @@ M.new = function(io)
       return { kind = written and M.OUTCOMES.COMPLETE or M.OUTCOMES.DEFERRED }
     elseif instruction.action == plan.ACTIONS.RECONCILE then
       if instruction.save and not io.unchanged(buf, instruction.version) then
+        io.remember(buf, instruction.base, instruction.version)
         return { kind = M.OUTCOMES.DEFERRED }
       end
       io.apply(buf, instruction)
+      io.remember(buf, instruction.base, instruction.version)
       local written = not instruction.save or io.write(buf)
       return { kind = written and M.OUTCOMES.COMPLETE or M.OUTCOMES.DEFERRED }
+    elseif instruction.action == plan.ACTIONS.NOOP then
+      return { kind = M.OUTCOMES.COMPLETE }
     end
-    return { kind = M.OUTCOMES.COMPLETE }
+    assert(false, vim.inspect(instruction))
   end
 
   return { run = run }
@@ -115,13 +120,13 @@ M.start = function(args)
       end)
       finish()
     end
-    args.remember(buf, instruction.base, instruction.version)
     vim.bo[buf].modified = instruction.modified
   end
 
   return M.new {
     apply = apply,
     discard = args.discard,
+    remember = args.remember,
     reload = reload,
     unchanged = snapshot.unchanged,
     write = write,

@@ -36,13 +36,16 @@ M.KINDS = {
 ---@param batch ChecktimeBatch
 ---@return ChecktimeResolution
 M.gather = function(buf, batch)
-  if batch.events.remote then
-    local state, version, remote = snapshot.read(buf)
-    if state == snapshot.STATES.RETRY then
-      return { kind = M.KINDS.RETRY }
-    elseif state == snapshot.STATES.OPAQUE then
-      return { kind = M.KINDS.OPAQUE }
-    end
+  if not batch.events.remote then
+    return { kind = M.KINDS.LOCAL, input = batch.input, modified = vim.bo[buf].modified, version = batch.version }
+  end
+
+  local state, version, remote = snapshot.read(buf)
+  if state == snapshot.STATES.RETRY then
+    return { kind = M.KINDS.RETRY }
+  elseif state == snapshot.STATES.OPAQUE then
+    return { kind = M.KINDS.OPAQUE }
+  elseif state == snapshot.STATES.RECONCILE or state == snapshot.STATES.NONE then
     return {
       kind = M.KINDS.TEXT,
       base = batch.base,
@@ -52,7 +55,8 @@ M.gather = function(buf, batch)
       current = snapshot.current(buf),
     }
   end
-  return { kind = M.KINDS.LOCAL, input = batch.input, modified = vim.bo[buf].modified, version = batch.version }
+  ---@diagnostic disable-next-line: return-type-mismatch
+  return assert(false, vim.inspect(state))
 end
 
 return M

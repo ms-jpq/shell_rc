@@ -23,6 +23,7 @@ local M = {}
 ---@field input? ChecktimeInput
 ---@field rewrite? ChecktimeRewrite
 ---@field writing? boolean
+---@field initializing? boolean
 ---@field retry? string
 ---@field watcher? ChecktimePoller
 
@@ -226,7 +227,7 @@ M.start = function()
         mark(M.REMOTE, buf)
       end
       local batch_events = state.events
-      if (state.watcher or state.retry) and batch_events then
+      if not state.initializing and not state.writing and (state.watcher or state.retry) and batch_events then
         state.events = nil
         batches[buf] = {
           base = state.base,
@@ -241,32 +242,46 @@ M.start = function()
   end
 
   ---@param args ChecktimeEventArgs
-  local record = function(args)
+  ---@param seed? string
+  local record = function(args, seed)
     local buf = args.buf
     local tracked_state = state_for(buf)
     local writing = tracked_state.writing
-    tracked_state.writing = nil
+    local base = seed or (writing and snapshot.current(buf).text or nil)
     if not writing then
       mailbox.discard(buf)
     end
-    local state, version, base = snapshot.read(buf)
+    local state, version, remote = snapshot.read(buf)
+    tracked_state.initializing = nil
+    tracked_state.writing = nil
     if not vim.api.nvim_buf_is_valid(buf) then
       return
     end
     if state == snapshot.STATES.RETRY then
       mark(M.REMOTE, buf)
       return
+    elseif state == snapshot.STATES.RECONCILE then
+      mailbox.remember(buf, base or remote, version)
+    elseif state == snapshot.STATES.OPAQUE or state == snapshot.STATES.NONE then
+      mailbox.remember(buf, base, version)
+    else
+      assert(false, vim.inspect(state))
     end
-    mailbox.remember(buf, state == snapshot.STATES.RECONCILE and base or nil, version)
+    if writing then
+      mark(M.REMOTE, buf)
+    end
   end
 
   ---@param args ChecktimeEventArgs
   local track = function(args)
     local buf = args.buf
-    mailbox.remember(buf, snapshot.current(buf).text)
+    local tracked_state = state_for(buf)
+    local seed = snapshot.current(buf).text
+    tracked_state.initializing = true
+    mailbox.remember(buf, seed)
     watch(buf)
     mark(M.REMOTE, buf)
-    record(args)
+    record(args, seed)
   end
 
   ---@param buf integer

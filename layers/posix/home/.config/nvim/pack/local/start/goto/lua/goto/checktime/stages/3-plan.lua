@@ -44,10 +44,14 @@ M.compute = function(resolution)
     return { action = M.ACTIONS.RETRY }
   elseif resolution.kind == resolve.KINDS.OPAQUE then
     return { action = M.ACTIONS.RELOAD }
-  end
-
-  local publish = not resolution.input or resolution.input.closing
-  if resolution.kind == resolve.KINDS.TEXT then
+  elseif resolution.kind == resolve.KINDS.LOCAL then
+    local publish = not resolution.input or resolution.input.closing
+    if resolution.modified and publish then
+      return { action = M.ACTIONS.WRITE, version = resolution.version }
+    end
+    return { action = M.ACTIONS.NOOP }
+  elseif resolution.kind == resolve.KINDS.TEXT then
+    local publish = not resolution.input or resolution.input.closing
     local current, remote = resolution.current, resolution.remote
     local base = resolution.base or ""
     local merged = hunks.merge(
@@ -67,10 +71,9 @@ M.compute = function(resolution)
       modified = modified,
       save = modified and publish,
     }
-  elseif resolution.modified and publish then
-    return { action = M.ACTIONS.WRITE, version = resolution.version }
   end
-  return { action = M.ACTIONS.NOOP }
+  ---@diagnostic disable-next-line: return-type-mismatch
+  return assert(false, vim.inspect(resolution))
 end
 
 return M
