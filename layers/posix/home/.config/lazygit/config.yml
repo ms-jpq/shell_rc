@@ -13,9 +13,9 @@ os:
 git:
   ignoreWhitespaceInDiffView: true
   overrideGpg: true
-  pagers:
-    - pager: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
-    - pager: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}" --side-by-side
+  diffRenderers:
+    - command: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+    - command: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}" --side-by-side
 
 worktree:
   defaultPath: .worktrees
