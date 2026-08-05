@@ -3,6 +3,10 @@ local lib = require "goto.lib"
 
 local M = {}
 
+local insert_mode = function(mode)
+  return string.find(mode, "^[iR]") ~= nil
+end
+
 M.vim_enter = function(fn)
   local callback = async(fn)
   if vim.v.vim_did_enter == 1 then
@@ -25,6 +29,31 @@ M.buf_win = function(opts, enter, leave)
     { "BufLeave" },
     vim.tbl_extend("force", { group = lib.group }, opts, { callback = leave })
   )
+  return enter, leave
+end
+
+M.insert_leave = function(opts, leave)
+  vim.api.nvim_create_autocmd(
+    { "ModeChanged" },
+    vim.tbl_extend("force", { group = lib.group }, opts, {
+      callback = function(args)
+        local old = vim.fn.get(vim.v.event, "old_mode", "")
+        local new = vim.fn.get(vim.v.event, "new_mode", "")
+        if insert_mode(old) and not insert_mode(new) then
+          leave(args)
+        end
+      end,
+    })
+  )
+  return leave
+end
+
+M.insert_mode = function(opts, enter, leave)
+  vim.api.nvim_create_autocmd(
+    { "InsertEnter" },
+    vim.tbl_extend("force", { group = lib.group }, opts, { callback = enter })
+  )
+  M.insert_leave(opts, leave)
   return enter, leave
 end
 

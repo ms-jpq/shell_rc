@@ -54,11 +54,17 @@ do
         end,
       })
 
-      vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-        group = lib.group,
-        buffer = args.buf,
-        command = [[silent! lua vim.lsp.codelens.refresh()]],
-      })
+      do
+        local refresh = function()
+          vim.cmd [[silent! lua vim.lsp.codelens.refresh()]]
+        end
+        vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold" }, {
+          group = lib.group,
+          buffer = args.buf,
+          callback = refresh,
+        })
+        autocmd.insert_leave({ buffer = args.buf }, refresh)
+      end
 
       vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
         group = lib.group,

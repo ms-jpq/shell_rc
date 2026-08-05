@@ -315,16 +315,13 @@ M.start = function()
     end,
   })
 
-  vim.api.nvim_create_autocmd({ "InsertLeave" }, {
-    group = lib.group,
-    callback = function(args)
-      local state = state_for(args.buf)
-      if state.input then
-        state.input.closing = true
-      end
-      mark(M.LOCAL, args.buf)
-    end,
-  })
+  autocmd.insert_leave({}, function(args)
+    local state = state_for(args.buf)
+    if state.input then
+      state.input.closing = true
+    end
+    mark(M.LOCAL, args.buf)
+  end)
 
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
