@@ -92,6 +92,22 @@ local row_patches = function(changes)
   return vim.iter(changes):map(split):flatten():totable()
 end
 
+local character_patches = function(changes)
+  return vim
+    .iter(changes)
+    :map(function(hunk)
+      return hunk.finish - hunk.start == #hunk.lines and split(hunk) or { hunk }
+    end)
+    :flatten()
+    :totable()
+end
+
+local has_variable = function(patches)
+  return vim.iter(patches):any(function(patch)
+    return patch.finish - patch.start ~= #patch.lines
+  end)
+end
+
 local row_hunks = function(before, after, after_records)
   return row_patches(diff(before, after, after_records))
 end
@@ -179,18 +195,26 @@ local row_groups = function(base, local_text, remote_text, base_lines, local_lin
   return groups(row_hunks(base, local_text, local_lines), row_hunks(base, remote_text, remote_lines))
 end
 
-local pick = function(group, local_wins)
-  if #group.remote_patches == 0 or (local_wins and #group.local_patches > 0) then
+local pick = function(group)
+  if #group.remote_patches == 0 then
     return group.local_patches
   end
   return group.remote_patches
 end
 
-local resolve = function(grouped, local_wins)
+local resolve = function(grouped)
   local patches = {}
 
   for _, group in ipairs(grouped) do
-    vim.list_extend(patches, pick(group, local_wins))
+    for _, remote in ipairs(group.remote_patches) do
+      local conflict = vim.iter(group.local_patches):any(function(local_patch)
+        return overlaps(local_patch, remote)
+      end)
+      if not conflict then
+        table.insert(patches, remote)
+      end
+    end
+    vim.list_extend(patches, group.local_patches)
   end
 
   return patches
@@ -285,7 +309,20 @@ local character_hunk = function(linefeed, base, group)
   local local_characters = chars(local_lines)
   local remote_characters = chars(remote_lines)
 
-  if overlaps(span(characters, local_characters), span(characters, remote_characters)) then
+  local character_text = table.concat(characters, linefeed)
+  local local_character_text = table.concat(local_characters, linefeed)
+  local remote_character_text = table.concat(remote_characters, linefeed)
+  local local_hunks = character_patches(diff(character_text, local_character_text, local_characters))
+  local remote_hunks = vim
+    .iter(character_patches(diff(character_text, remote_character_text, remote_characters)))
+    :filter(function(hunk)
+      return not touches(local_hunks, hunk)
+    end)
+    :totable()
+  if
+    overlaps(span(characters, local_characters), span(characters, remote_characters))
+    and (has_variable(local_hunks) or has_variable(remote_hunks))
+  then
     return {
       start = start,
       finish = finish,
@@ -293,20 +330,9 @@ local character_hunk = function(linefeed, base, group)
       slot = start == finish and source.slot or nil,
     }
   end
-
-  local character_text = table.concat(characters, linefeed)
-  local local_character_text = table.concat(local_characters, linefeed)
-  local remote_character_text = table.concat(remote_characters, linefeed)
-  local local_hunks = diff(character_text, local_character_text, local_characters)
-  local remote_hunks = vim
-    .iter(diff(character_text, remote_character_text, remote_characters))
-    :filter(function(hunk)
-      return not touches(local_hunks, hunk)
-    end)
-    :totable()
-  local character_patches = resolve(groups(local_hunks, remote_hunks), true)
-  sort(character_patches)
-  local merged = patch(characters, character_patches)
+  local patches = resolve(groups(local_hunks, remote_hunks))
+  sort(patches)
+  local merged = patch(characters, patches)
   return {
     start = start,
     finish = finish,
@@ -322,7 +348,7 @@ local merge_hunks = function(linefeed, base, grouped)
     if #group.local_patches > 0 and #group.remote_patches > 0 then
       table.insert(merged, character_hunk(linefeed, base, group))
     else
-      vim.list_extend(merged, pick(group, false))
+      vim.list_extend(merged, pick(group))
     end
   end
 

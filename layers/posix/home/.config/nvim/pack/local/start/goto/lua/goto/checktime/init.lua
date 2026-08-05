@@ -1,4 +1,5 @@
 local async = require "goto.async"
+local controller = require "goto.checktime.controller"
 local hunks = require "goto.checktime.hunks"
 local lib = require "goto.lib"
 local lock = require "goto.checktime.lock"
@@ -71,53 +72,63 @@ do
   end
 
   ---@param buf integer
-  ---@param version uv.fs_stat.result?
-  local write = function(buf, version)
-    if not snapshot.unchanged(buf, version) then
-      watcher.dirty(poll.REMOTE, buf)
-      return
-    end
-
-    vim.api.nvim_buf_call(buf, function()
-      vim.cmd [[silent! write! ++p]]
+  ---@return boolean
+  local write = function(buf)
+    local ok = pcall(vim.api.nvim_buf_call, buf, function()
+      vim.cmd [[write! ++p]]
     end)
+    return ok and not vim.bo[buf].modified
+  end
+
+  local sync = controller.new {
+    read = function(buf)
+      return snapshot.read(buf)
+    end,
+    reconcile = reconcile,
+    reload = function(buf)
+      return pcall(vim.api.nvim_buf_call, buf, function()
+        vim.cmd [[edit]]
+      end)
+    end,
+    modified = function(buf)
+      return vim.bo[buf].modified
+    end,
+    unchanged = function(buf, version)
+      return snapshot.unchanged(buf, version)
+    end,
+    write = write,
+  }
+
+  ---@param buf integer
+  ---@param update ChecktimeUpdate
+  local requeue = function(buf, update)
+    for kind in pairs(update.dirty) do
+      watcher.dirty(kind, buf)
+    end
   end
 
   local tick = function()
     for buf, update in pairs(watcher.take()) do
-      if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable then
+      if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+        if not vim.bo[buf].modifiable then
+          requeue(buf, update)
+          goto continue
+        end
         local name = vim.api.nvim_buf_get_name(buf)
+        local completed = false
         local locked = lock.guard(name, function()
-          local base, version = update.base, update.version
-          if update.dirty[poll.REMOTE] then
-            local state, remote_version, remote = snapshot.read(buf)
-            if state == snapshot.STATES.RETRY then
-              watcher.dirty(poll.REMOTE, buf)
-              return
-            elseif state == snapshot.STATES.OPAQUE then
-              vim.api.nvim_buf_call(buf, function()
-                vim.cmd [[silent! edit]]
-              end)
-            elseif state == snapshot.STATES.NONE then
-              base, version = reconcile(buf, base, "", nil)
-            elseif state == snapshot.STATES.RECONCILE and remote then
-              base, version = reconcile(buf, base, remote, assert(remote_version))
-            end
+          if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_buf_is_loaded(buf) then
+            return
           end
-
-          if vim.bo[buf].modified then
-            write(buf, version)
+          if vim.bo[buf].modifiable then
+            completed = sync.step(buf, update)
           end
         end)
-        if not locked then
-          if update.dirty[poll.LOCAL] then
-            watcher.dirty(poll.LOCAL, buf)
-          end
-          if update.dirty[poll.REMOTE] then
-            watcher.dirty(poll.REMOTE, buf)
-          end
+        if (not locked or not completed) and vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+          requeue(buf, update)
         end
       end
+      ::continue::
     end
   end
 

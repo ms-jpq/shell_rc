@@ -74,9 +74,9 @@ M.guard = function(path, fn)
       local unlock = acquire(lock)
       if unlock then
         async.scheduled()
-        lib.report(fn)
+        local completed = lib.report(fn)
         unlock()
-        return true
+        return completed
       end
 
       if elapsed(span) then

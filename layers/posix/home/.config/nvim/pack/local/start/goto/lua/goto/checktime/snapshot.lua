@@ -23,6 +23,7 @@ M.STATES = {
 }
 
 local MAX_BYTES = 2 * 1024 * 1024
+local BOM = "\239\187\191"
 
 local same_version = function(before, after)
   return before
@@ -112,10 +113,22 @@ M.read = function(buf)
 
   local encoding = vim.bo[buf].fileencoding
   if encoding ~= "" and encoding ~= vim.o.encoding then
-    text = vim.fn.iconv(text, encoding, vim.o.encoding)
+    local ok, converted = pcall(vim.fn.iconv, text, encoding, vim.o.encoding)
+    if not ok or (text ~= "" and converted == "") then
+      return M.STATES.OPAQUE, nil, nil
+    end
+    text = converted
   end
-  if vim.bo[buf].bomb then
-    text = string.gsub(text, "^\239\187\191", "")
+  local has_bom = string.sub(text, 1, #BOM) == BOM
+  if has_bom ~= vim.bo[buf].bomb then
+    return M.STATES.OPAQUE, nil, nil
+  elseif has_bom then
+    text = string.sub(text, #BOM + 1)
+  end
+
+  local remainder = string.gsub(text, lib.buf_linefeed(buf), "")
+  if string.find(remainder, "[\r\n]") then
+    return M.STATES.OPAQUE, nil, nil
   end
 
   if not same_version(before, vim.uv.fs_stat(name)) then
