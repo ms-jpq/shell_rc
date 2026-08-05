@@ -73,16 +73,16 @@ local slice = function(lines, start, finish)
   return vim.list_slice(lines, math.floor(start + 1), math.floor(finish))
 end
 
-local diff = function(separator, before, after)
+local diff = function(before, after, after_records)
   return vim
-    .iter(vim.text.diff(table.concat(before, separator), table.concat(after, separator), { result_type = "indices" }))
+    .iter(vim.text.diff(before, after, { result_type = "indices" }))
     :map(function(hunk)
       local old_start, old_count, new_start, new_count = unpack(hunk)
       local start = old_start - (old_count == 0 and 0 or 1)
       return {
         start = start,
         finish = start + old_count,
-        lines = slice(after, new_start - 1, new_start + new_count - 1),
+        lines = slice(after_records, new_start - 1, new_start + new_count - 1),
       }
     end)
     :totable()
@@ -92,8 +92,8 @@ local row_patches = function(changes)
   return vim.iter(changes):map(split):flatten():totable()
 end
 
-local row_hunks = function(before, after)
-  return row_patches(diff("", before, after))
+local row_hunks = function(before, after, after_records)
+  return row_patches(diff(before, after, after_records))
 end
 
 local overlaps = function(left, right)
@@ -175,8 +175,8 @@ local groups = function(local_patches, remote_patches)
   return grouped
 end
 
-local row_groups = function(base, local_lines, remote_lines)
-  return groups(row_hunks(base, local_lines), row_hunks(base, remote_lines))
+local row_groups = function(base, local_text, remote_text, base_lines, local_lines, remote_lines)
+  return groups(row_hunks(base, local_text, local_lines), row_hunks(base, remote_text, remote_lines))
 end
 
 local pick = function(group, local_wins)
@@ -294,9 +294,12 @@ local character_hunk = function(linefeed, base, group)
     }
   end
 
-  local local_hunks = diff(linefeed, characters, local_characters)
+  local character_text = table.concat(characters, linefeed)
+  local local_character_text = table.concat(local_characters, linefeed)
+  local remote_character_text = table.concat(remote_characters, linefeed)
+  local local_hunks = diff(character_text, local_character_text, local_characters)
   local remote_hunks = vim
-    .iter(diff(linefeed, characters, remote_characters))
+    .iter(diff(character_text, remote_character_text, remote_characters))
     :filter(function(hunk)
       return not touches(local_hunks, hunk)
     end)
@@ -332,10 +335,16 @@ end
 ---@param remote_text string
 ---@return string
 M.merge = function(eol, base, local_text, remote_text)
+  if local_text == base then
+    return remote_text
+  elseif remote_text == base then
+    return local_text
+  end
+
   local base_lines = records(eol, base)
   local local_lines = records(eol, local_text)
   local remote_lines = records(eol, remote_text)
-  local grouped = row_groups(base_lines, local_lines, remote_lines)
+  local grouped = row_groups(base, local_text, remote_text, base_lines, local_lines, remote_lines)
   local patches = merge_hunks(eol, base_lines, grouped)
   sort(patches)
   return table.concat(patch(base_lines, patches))
@@ -346,7 +355,7 @@ end
 ---@param text string
 ---@param mark fun(start: integer, finish: integer)
 M.replace = function(buf, current, text, mark)
-  local patches = row_hunks(records(current.linefeed, current.text), records(current.linefeed, text))
+  local patches = row_hunks(current.text, text, records(current.linefeed, text))
   local restore, rows = view.capture(buf)
 
   vim.api.nvim_buf_call(buf, function()
