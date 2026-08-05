@@ -219,7 +219,7 @@ M.start = function()
     callback = track,
   })
 
-  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "TextChangedP" }, {
     group = lib.group,
     callback = function(args)
       mark(M.LOCAL, args.buf)
