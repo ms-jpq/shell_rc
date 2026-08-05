@@ -118,7 +118,7 @@ M.start = function()
     end
   end
 
-  local remember = function(buf, base, version)
+  mailbox.remember = function(buf, base, version)
     local state = state_for(buf)
     state.base, state.version = base, version
   end
@@ -132,8 +132,6 @@ M.start = function()
       end
     end
   end
-
-  mailbox.remember = remember
 
   mailbox.latest = function(buf, events)
     local pending = tracked[buf] and tracked[buf].events or {}
@@ -176,11 +174,11 @@ M.start = function()
     local buf = args.buf
     local state, version, base = snapshot.read(buf)
     if state == snapshot.STATES.RECONCILE then
-      remember(buf, base, version)
+      mailbox.remember(buf, base, version)
     elseif state == snapshot.STATES.RETRY then
       mark(M.REMOTE, buf)
     else
-      remember(buf)
+      mailbox.remember(buf, nil, version)
     end
   end
 
@@ -195,7 +193,7 @@ M.start = function()
     command = [[silent! wall! ++p]],
   })
 
-  vim.api.nvim_create_autocmd("FileChangedShell", {
+  vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
     group = lib.group,
     callback = function()
       vim.v.fcs_choice = ""
@@ -214,7 +212,7 @@ M.start = function()
     end,
   })
 
-  vim.api.nvim_create_autocmd("BufWritePost", {
+  vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     callback = record,
   })
@@ -227,7 +225,7 @@ M.start = function()
     end,
   })
 
-  vim.api.nvim_create_autocmd("FocusGained", {
+  vim.api.nvim_create_autocmd({ "FocusGained" }, {
     group = lib.group,
     callback = function()
       for buf, state in pairs(tracked) do
@@ -238,11 +236,11 @@ M.start = function()
     end,
   })
 
-  vim.api.nvim_create_autocmd("OptionSet", {
+  vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = lib.group,
     pattern = "modifiable",
     callback = function(args)
-      local buf = args.buf
+      local buf = vim.api.nvim_get_current_buf()
       watch(buf)
       if vim.bo[args.buf].modifiable then
         mark(M.REMOTE, buf)

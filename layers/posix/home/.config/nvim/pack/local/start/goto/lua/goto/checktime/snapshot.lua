@@ -99,7 +99,7 @@ M.read = function(buf)
   if not before then
     return M.STATES.NONE, nil, nil
   elseif before.size > MAX_BYTES or (not vim.bo[buf].modified and #vim.fn.win_findbuf(buf) == 0) then
-    return M.STATES.OPAQUE, nil, nil
+    return M.STATES.OPAQUE, before, nil
   end
 
   local ok, text = pcall(vim.fn.readblob, name)
