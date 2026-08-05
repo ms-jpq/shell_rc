@@ -78,16 +78,14 @@ M.new = function()
   ---@param kind ChecktimeChange
   ---@param buf integer
   local dirty = function(kind, buf)
-    local state = tracked[buf]
-    if state then
-      state.dirty = state.dirty or {}
-      state.dirty[kind] = true
-    end
+    local state = tracked[buf] or {}
+    tracked[buf] = state
+    state.dirty = state.dirty or {}
+    state.dirty[kind] = true
   end
 
   ---@param buf integer
   local detach = function(buf)
-    clear(buf)
     local state = tracked[buf]
     local watcher = state and state.watcher
     if state then
@@ -129,7 +127,8 @@ M.new = function()
   ---@param buf integer
   ---@param path string
   local attach = function(buf, path)
-    local state = assert(tracked[buf])
+    local state = tracked[buf] or {}
+    tracked[buf] = state
     state.retry = path
     local watcher = start_watcher(path)
     if watcher then

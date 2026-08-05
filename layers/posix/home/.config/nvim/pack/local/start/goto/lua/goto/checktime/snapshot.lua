@@ -51,13 +51,6 @@ M.current = function(buf)
   }
 end
 
----@param buf integer
----@return string?, uv.fs_stat.result?
-M.base = function(buf)
-  local stat = vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf))
-  return stat and M.current(buf).text or nil, stat
-end
-
 ---@param current ChecktimeCurrent
 ---@param text string
 ---@return string

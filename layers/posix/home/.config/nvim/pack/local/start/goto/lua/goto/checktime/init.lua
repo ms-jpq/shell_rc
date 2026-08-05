@@ -48,8 +48,8 @@ do
   ---@param buf integer
   ---@param base string?
   ---@param remote string
-  ---@param version uv.fs_stat.result
-  ---@return string, uv.fs_stat.result
+  ---@param version uv.fs_stat.result?
+  ---@return string, uv.fs_stat.result?
   local reconcile = function(buf, base, remote, version)
     local current = snapshot.current(buf)
 
@@ -98,6 +98,8 @@ do
               vim.api.nvim_buf_call(buf, function()
                 vim.cmd [[silent! edit]]
               end)
+            elseif state == snapshot.STATES.NONE then
+              base, version = reconcile(buf, base, "", nil)
             elseif state == snapshot.STATES.RECONCILE and remote then
               base, version = reconcile(buf, base, remote, assert(remote_version))
             end

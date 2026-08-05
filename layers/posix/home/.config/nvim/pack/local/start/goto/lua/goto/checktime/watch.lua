@@ -22,8 +22,14 @@ M.start = function()
 
   ---@param buf integer
   local remember = function(buf)
-    local base, version = snapshot.base(buf)
-    files.remember(buf, base, version)
+    local state, version, base = snapshot.read(buf)
+    if state == snapshot.STATES.RECONCILE then
+      files.remember(buf, base, version)
+    elseif state == snapshot.STATES.RETRY then
+      files.dirty(poll.REMOTE, buf)
+    else
+      files.remember(buf)
+    end
   end
 
   ---@param buf integer
@@ -51,9 +57,12 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = lib.group,
     pattern = "modifiable",
-    callback = function()
-      local buf = vim.api.nvim_get_current_buf()
+    callback = function(args)
+      local buf = args.buf
       watch(buf)
+      if vim.bo[buf].modifiable then
+        files.dirty(poll.REMOTE, buf)
+      end
     end,
   })
 
