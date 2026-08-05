@@ -1,8 +1,8 @@
 local hunks = require "goto.checktime.hunks"
-local plan = require "goto.checktime.stages.3-plan"
 local snapshot = require "goto.checktime.snapshot"
 
 local M = {}
+local FLASH_SPAN = 1688
 
 ---@class ChecktimeExecutor
 ---@field run fun(buf: integer, instruction: ChecktimeInstruction): boolean
@@ -24,17 +24,17 @@ local M = {}
 ---@return ChecktimeExecutor
 M.new = function(io)
   local run = function(buf, instruction)
-    if instruction.action == plan.ACTIONS.RETRY then
+    if instruction.action == "retry" then
       return false
-    elseif instruction.action == plan.ACTIONS.RELOAD then
+    elseif instruction.action == "reload" then
       local reloaded = io.reload(buf)
       if reloaded then
         io.discard(buf)
       end
       return reloaded
-    elseif instruction.action == plan.ACTIONS.WRITE then
-      return (instruction.force or io.unchanged(buf, instruction.version)) and io.write(buf)
-    elseif instruction.action == plan.ACTIONS.RECONCILE then
+    elseif instruction.action == "write" then
+      return io.unchanged(buf, instruction.version) and io.write(buf)
+    elseif instruction.action == "reconcile" then
       io.apply(buf, instruction)
       return not instruction.save or io.unchanged(buf, instruction.version) and io.write(buf)
     end
@@ -48,7 +48,6 @@ end
 ---@return ChecktimeExecutor
 M.start = function(args)
   local ns = vim.api.nvim_create_namespace "goto.checktime"
-  local flash_span = 1688
 
   ---@param buf integer
   ---@return boolean
@@ -81,7 +80,7 @@ M.start = function(args)
       local finish = args.rewrite(buf)
       vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
       hunks.replace(buf, current, text, function(start, finish)
-        vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = flash_span })
+        vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
       end)
       finish()
     end

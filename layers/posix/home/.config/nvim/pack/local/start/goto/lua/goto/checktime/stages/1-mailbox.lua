@@ -10,7 +10,7 @@ local M = {}
 
 ---@class ChecktimeInput
 ---@field base? string
----@field closing? boolean
+---@field closing boolean
 
 ---@class ChecktimeRewrite
 ---@field before integer
@@ -78,6 +78,17 @@ M.start = function()
       order = observed
     end
     state.events[kind] = math.max(previous, order)
+  end
+
+  ---@param buf integer
+  ---@param before integer
+  ---@return integer
+  local sample = function(buf, before)
+    local changedtick = vim.api.nvim_buf_get_changedtick(buf)
+    if changedtick ~= before then
+      mark(M.LOCAL, buf)
+    end
+    return changedtick
   end
 
   ---@param buf integer
@@ -179,10 +190,7 @@ M.start = function()
   end
 
   mailbox.latest = function(buf, batch)
-    local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-    if changedtick ~= batch.changedtick then
-      mark(M.LOCAL, buf)
-    end
+    local changedtick = sample(buf, batch.changedtick)
     local state = tracked[buf]
     local pending = state and state.events or {}
     local local_order = math.max(batch.events[M.LOCAL] or 0, pending[M.LOCAL] or 0)
@@ -204,9 +212,7 @@ M.start = function()
   end
 
   mailbox.restore = function(buf, batch)
-    if vim.api.nvim_buf_get_changedtick(buf) ~= batch.changedtick then
-      mark(M.LOCAL, buf)
-    end
+    sample(buf, batch.changedtick)
     for kind, order in pairs(batch.events) do
       mark(kind, buf, order)
     end
@@ -244,13 +250,11 @@ M.start = function()
       mailbox.discard(buf)
     end
     local state, version, base = snapshot.read(buf)
-    if state == snapshot.STATES.RECONCILE then
-      mailbox.remember(buf, base, version)
-    elseif state == snapshot.STATES.RETRY then
+    if state == snapshot.STATES.RETRY then
       mark(M.REMOTE, buf)
-    else
-      mailbox.remember(buf, nil, version)
+      return
     end
+    mailbox.remember(buf, state == snapshot.STATES.RECONCILE and base or nil, version)
   end
 
   ---@param args ChecktimeEventArgs
@@ -303,11 +307,9 @@ M.start = function()
     callback = function(args)
       if changed(args.buf) then
         local state = state_for(args.buf)
-        if state.input then
-          state.input.closing = nil
-        else
-          state.input = { base = state.base }
-        end
+        local input = state.input or { base = state.base, closing = false }
+        input.closing = false
+        state.input = input
         mark(M.LOCAL, args.buf)
       end
     end,
@@ -352,7 +354,7 @@ M.start = function()
     group = lib.group,
     pattern = "modifiable",
     callback = function(args)
-      local buf = vim.api.nvim_get_current_buf()
+      local buf = args.buf
       watch(buf)
       if vim.bo[args.buf].modifiable then
         mark(M.REMOTE, buf)
