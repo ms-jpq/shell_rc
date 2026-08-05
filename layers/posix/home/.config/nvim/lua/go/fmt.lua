@@ -51,8 +51,8 @@ local fmt = function()
   local cwd = vim.fn.getcwd()
 
   local cmd = fmt_command(cwd, buf)
-  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local opts = { cwd = cwd, stdin = lines, text = true }
+  local stdin = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+  local opts = { cwd = cwd, stdin = stdin, text = true }
 
   vim.notify([[⏳...]], vim.log.levels.INFO)
 
@@ -75,12 +75,23 @@ local fmt = function()
     return
   end
 
-  if vim.api.nvim_get_current_buf() == buf and vim.api.nvim_buf_get_changedtick(buf) == changedtick then
-    local current = snapshot.current(buf)
-    local formatted = snapshot.fit(current, waited.stdout)
-    hunks.replace(buf, current, formatted, function() end)
-    vim.notify([[✅...]], vim.log.levels.INFO, {})
+  if not vim.api.nvim_buf_is_valid(buf) or not vim.bo[buf].modifiable then
+    return
   end
+
+  if vim.api.nvim_buf_get_changedtick(buf) ~= changedtick then
+    vim.notify([[🖐️...]], vim.log.levels.WARN)
+    return
+  end
+
+  local current = snapshot.current(buf)
+  local lines = vim.split(waited.stdout, lib.LF, { plain = true })
+  if lines[#lines] == "" then
+    lines[#lines] = nil
+  end
+  local formatted = snapshot.fit(current, table.concat(lines, current.linefeed))
+  hunks.replace(buf, current, formatted, function() end)
+  vim.notify([[✅...]], vim.log.levels.INFO)
 end
 
 Go.run_fmt = function()
