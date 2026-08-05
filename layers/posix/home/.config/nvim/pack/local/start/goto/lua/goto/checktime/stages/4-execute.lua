@@ -80,12 +80,13 @@ M.start = function(args)
       args.writing(buf, false)
     else
       local name = vim.api.nvim_buf_get_name(buf)
+      local text = snapshot.current(buf).text
       local _, version = async.uv.fs_stat(name)
       async.scheduled()
       if not vim.api.nvim_buf_is_valid(buf) then
         return false
       end
-      args.remember(buf, snapshot.current(buf).text, version)
+      args.remember(buf, text, version)
     end
     return complete
   end
