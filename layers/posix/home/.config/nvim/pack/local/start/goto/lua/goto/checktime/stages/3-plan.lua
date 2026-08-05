@@ -1,7 +1,17 @@
 local hunks = require "goto.checktime.hunks"
+local resolve = require "goto.checktime.stages.2-resolve"
 local snapshot = require "goto.checktime.snapshot"
 
 local M = {}
+
+---@class ChecktimeActions
+M.ACTIONS = {
+  NOOP = "noop",
+  RECONCILE = "reconcile",
+  RELOAD = "reload",
+  RETRY = "retry",
+  WRITE = "write",
+}
 
 ---@class ChecktimeNoop
 ---@field action "noop"
@@ -27,20 +37,17 @@ local M = {}
 
 ---@alias ChecktimeInstruction ChecktimeNoop|ChecktimeReconcile|ChecktimeReload|ChecktimeRetry|ChecktimeWrite
 
----@param facts ChecktimeFacts
+---@param resolution ChecktimeResolution
 ---@return ChecktimeInstruction
-M.compute = function(facts)
-  local read = facts.read
-  if read then
-    if read.state == snapshot.STATES.RETRY then
-      return { action = "retry" }
-    elseif read.state == snapshot.STATES.OPAQUE then
-      return { action = "reload" }
-    end
-
-    local current, remote = read.current, read.remote
-    local input = facts.batch.input
-    local base = input and input.base or facts.batch.base or ""
+M.compute = function(resolution)
+  if resolution.kind == resolve.KINDS.RETRY then
+    return { action = M.ACTIONS.RETRY }
+  elseif resolution.kind == resolve.KINDS.OPAQUE then
+    return { action = M.ACTIONS.RELOAD }
+  elseif resolution.kind == resolve.KINDS.TEXT then
+    local current, remote = resolution.current, resolution.remote
+    local input = resolution.input
+    local base = input and input.base or resolution.base or ""
     local merged = hunks.merge(
       current.linefeed,
       snapshot.row_text(current, base),
@@ -50,18 +57,18 @@ M.compute = function(facts)
     local text = snapshot.buffer_text(current, merged)
     local modified = text ~= snapshot.fit(current, remote)
     return {
-      action = "reconcile",
+      action = M.ACTIONS.RECONCILE,
       current = current,
       text = text,
       base = remote,
-      version = read.version,
+      version = resolution.version,
       modified = modified,
       save = modified and (not input or input.closing == true),
     }
-  elseif facts.modified then
-    return { action = "write", version = facts.batch.version }
+  elseif resolution.modified then
+    return { action = M.ACTIONS.WRITE, version = resolution.version }
   end
-  return { action = "noop" }
+  return { action = M.ACTIONS.NOOP }
 end
 
 return M

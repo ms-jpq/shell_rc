@@ -1,3 +1,4 @@
+local async = require "goto.async"
 local autocmd = require "goto.autocmd"
 local lib = require "goto.lib"
 local poll = require "goto.checktime.poll"
@@ -243,24 +244,29 @@ M.start = function()
   ---@param args ChecktimeEventArgs
   local record = function(args)
     local buf = args.buf
-    local tracked = state_for(buf)
-    local writing = tracked.writing
-    tracked.writing = nil
+    local tracked_state = state_for(buf)
+    local writing = tracked_state.writing
+    tracked_state.writing = nil
     if not writing then
       mailbox.discard(buf)
     end
     local state, version, base = snapshot.read(buf)
+    if not vim.api.nvim_buf_is_valid(buf) then
+      return false
+    end
     if state == snapshot.STATES.RETRY then
       mark(M.REMOTE, buf)
-      return
+      return true
     end
     mailbox.remember(buf, state == snapshot.STATES.RECONCILE and base or nil, version)
+    return true
   end
 
   ---@param args ChecktimeEventArgs
   local track = function(args)
-    record(args)
-    watch(args.buf)
+    if record(args) then
+      watch(args.buf)
+    end
   end
 
   ---@param buf integer
@@ -290,7 +296,7 @@ M.start = function()
 
   vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufFilePost" }, {
     group = lib.group,
-    callback = track,
+    callback = async(track),
   })
 
   vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedP" }, {
@@ -325,7 +331,7 @@ M.start = function()
 
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
-    callback = record,
+    callback = async(record),
   })
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {

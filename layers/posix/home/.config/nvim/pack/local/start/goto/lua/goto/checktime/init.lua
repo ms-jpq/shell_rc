@@ -26,14 +26,14 @@ do
   local tick = function()
     for buf, batch in pairs(inbox.take()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-        local complete = lock.guard(vim.api.nvim_buf_get_name(buf), function()
+        local outcome = lock.guard(vim.api.nvim_buf_get_name(buf), function()
           if not (vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable) then
-            return false
+            return { kind = execute.OUTCOMES.DEFERRED }
           end
-          local facts = resolve.gather(buf, inbox.latest(buf, batch))
-          return executor.run(buf, plan.compute(facts))
+          local resolution = resolve.gather(buf, inbox.latest(buf, batch))
+          return executor.run(buf, plan.compute(resolution))
         end)
-        if complete then
+        if outcome and outcome.kind == execute.OUTCOMES.COMPLETE then
           inbox.finish(buf)
         elseif vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
           inbox.restore(buf, batch)

@@ -1,3 +1,4 @@
+local async = require "goto.async"
 local lib = require "goto.lib"
 
 local M = {}
@@ -95,7 +96,11 @@ end
 ---@return ChecktimeState, uv.fs_stat.result?, string?
 M.read = function(buf)
   local name = vim.api.nvim_buf_get_name(buf)
-  local before = vim.uv.fs_stat(name)
+  local _, before = async.uv.fs_stat(name)
+  async.scheduled()
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return M.STATES.RETRY, nil, nil
+  end
   if not before then
     return M.STATES.NONE, nil, nil
   elseif before.size > MAX_BYTES or (not vim.bo[buf].modified and #vim.fn.win_findbuf(buf) == 0) then
@@ -131,7 +136,9 @@ M.read = function(buf)
     return M.STATES.OPAQUE, nil, nil
   end
 
-  if not same_version(before, vim.uv.fs_stat(name)) then
+  local _, after = async.uv.fs_stat(name)
+  async.scheduled()
+  if not vim.api.nvim_buf_is_valid(buf) or not same_version(before, after) then
     return M.STATES.RETRY, nil, nil
   end
 
@@ -142,8 +149,13 @@ end
 ---@param version uv.fs_stat.result?
 ---@return boolean
 M.unchanged = function(buf, version)
-  local current = vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf))
-  return version and same_version(version, current) or not current
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return false
+  end
+  local name = vim.api.nvim_buf_get_name(buf)
+  local _, current = async.uv.fs_stat(name)
+  async.scheduled()
+  return vim.api.nvim_buf_is_valid(buf) and (version and same_version(version, current) or not current)
 end
 
 return M

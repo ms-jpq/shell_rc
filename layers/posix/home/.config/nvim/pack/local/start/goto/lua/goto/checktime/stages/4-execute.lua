@@ -1,11 +1,27 @@
+local async = require "goto.async"
 local hunks = require "goto.checktime.hunks"
+local plan = require "goto.checktime.stages.3-plan"
 local snapshot = require "goto.checktime.snapshot"
 
 local M = {}
 local FLASH_SPAN = 1688
 
 ---@class ChecktimeExecutor
----@field run fun(buf: integer, instruction: ChecktimeInstruction): boolean
+---@field run fun(buf: integer, instruction: ChecktimeInstruction): ChecktimeOutcome
+
+---@class ChecktimeOutcomes
+M.OUTCOMES = {
+  COMPLETE = "complete",
+  DEFERRED = "deferred",
+}
+
+---@class ChecktimeComplete
+---@field kind "complete"
+
+---@class ChecktimeDeferred
+---@field kind "deferred"
+
+---@alias ChecktimeOutcome ChecktimeComplete|ChecktimeDeferred
 
 ---@class ChecktimeExecuteIO
 ---@field apply fun(buf: integer, instruction: ChecktimeReconcile)
@@ -24,21 +40,24 @@ local FLASH_SPAN = 1688
 ---@return ChecktimeExecutor
 M.new = function(io)
   local run = function(buf, instruction)
-    if instruction.action == "retry" then
-      return false
-    elseif instruction.action == "reload" then
+    if instruction.action == plan.ACTIONS.RETRY then
+      return { kind = M.OUTCOMES.DEFERRED }
+    elseif instruction.action == plan.ACTIONS.RELOAD then
       local reloaded = io.reload(buf)
       if reloaded then
         io.discard(buf)
+        return { kind = M.OUTCOMES.COMPLETE }
       end
-      return reloaded
-    elseif instruction.action == "write" then
-      return io.unchanged(buf, instruction.version) and io.write(buf)
-    elseif instruction.action == "reconcile" then
+      return { kind = M.OUTCOMES.DEFERRED }
+    elseif instruction.action == plan.ACTIONS.WRITE then
+      local written = io.unchanged(buf, instruction.version) and io.write(buf)
+      return { kind = written and M.OUTCOMES.COMPLETE or M.OUTCOMES.DEFERRED }
+    elseif instruction.action == plan.ACTIONS.RECONCILE then
       io.apply(buf, instruction)
-      return not instruction.save or io.unchanged(buf, instruction.version) and io.write(buf)
+      local written = not instruction.save or io.unchanged(buf, instruction.version) and io.write(buf)
+      return { kind = written and M.OUTCOMES.COMPLETE or M.OUTCOMES.DEFERRED }
     end
-    return true
+    return { kind = M.OUTCOMES.COMPLETE }
   end
 
   return { run = run }
@@ -59,6 +78,14 @@ M.start = function(args)
     local complete = ok and not vim.bo[buf].modified
     if not complete then
       args.writing(buf, false)
+    else
+      local name = vim.api.nvim_buf_get_name(buf)
+      local _, version = async.uv.fs_stat(name)
+      async.scheduled()
+      if not vim.api.nvim_buf_is_valid(buf) then
+        return false
+      end
+      args.remember(buf, snapshot.current(buf).text, version)
     end
     return complete
   end

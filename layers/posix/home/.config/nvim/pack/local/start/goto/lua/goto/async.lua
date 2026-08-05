@@ -68,6 +68,7 @@ M.system = M.wrap(vim.system)
 M.uv = {
   fs_close = M.wrap(vim.uv.fs_close),
   fs_open = M.wrap(vim.uv.fs_open),
+  fs_realpath = M.wrap(vim.uv.fs_realpath),
   fs_stat = M.wrap(vim.uv.fs_stat),
   fs_unlink = M.wrap(vim.uv.fs_unlink),
 }

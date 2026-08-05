@@ -27,7 +27,8 @@ local deadline = function()
 end
 
 local signal = function(path)
-  local realpath = vim.uv.fs_realpath(path)
+  local _, realpath = async.uv.fs_realpath(path)
+  async.scheduled()
   realpath = realpath or path
   return vim.fs.joinpath(cache, vim.fn.sha256(realpath) .. ".lock")
 end
@@ -60,9 +61,10 @@ local acquire = function(lock)
   end
 end
 
+---@generic T
 ---@param path string
----@param fn fun(): boolean?
----@return boolean
+---@param fn fun(): T
+---@return T?
 M.guard = function(path, fn)
   vim.fn.mkdir(cache, "p")
   return lib.scope(function(defer)
@@ -76,14 +78,20 @@ M.guard = function(path, fn)
         async.scheduled()
         local completed
         local reported = lib.report(function()
-          completed = fn()
+          lib.scope(function(d)
+            d(async.scheduled)
+            completed = fn()
+          end)
         end)
         unlock()
-        return reported and completed ~= false
+        if reported then
+          return completed
+        end
+        return nil
       end
 
       if elapsed(span) then
-        return false
+        return nil
       end
       async.sleep(span)
     end
