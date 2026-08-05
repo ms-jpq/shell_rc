@@ -47,25 +47,20 @@ M.ACTIONS = {
 ---@param facts ChecktimeFacts
 ---@return ChecktimeInstruction
 M.compute = function(facts)
-  if facts.events.remote then
+  if facts.batch.events.remote then
     if facts.state == snapshot.STATES.RETRY then
       return { action = M.ACTIONS.RETRY }
     elseif facts.state == snapshot.STATES.OPAQUE then
-      if facts.inserting and facts.modified then
-        return { action = M.ACTIONS.NOOP }
-      end
-      local local_order, remote_order = facts.events["local"] or 0, facts.events.remote
-      if local_order > remote_order then
-        return { action = M.ACTIONS.WRITE, force = true }
-      end
       return { action = M.ACTIONS.RELOAD }
     end
 
     local current = assert(facts.current)
     local remote = facts.remote or ""
+    local input = facts.batch.input
+    local base = input and input.base or facts.batch.base or ""
     local merged = hunks.merge(
       current.linefeed,
-      snapshot.row_text(current, facts.batch.base or ""),
+      snapshot.row_text(current, base),
       snapshot.row_text(current, current.text),
       snapshot.row_text(current, remote)
     )
@@ -78,9 +73,9 @@ M.compute = function(facts)
       base = remote,
       version = facts.version,
       modified = modified,
-      save = modified and not facts.inserting,
+      save = modified and (not input or input.closing == true),
     }
-  elseif facts.modified and not facts.inserting then
+  elseif facts.modified then
     return { action = M.ACTIONS.WRITE, version = facts.batch.version }
   end
   return { action = M.ACTIONS.NOOP }

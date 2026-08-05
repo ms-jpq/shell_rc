@@ -16,7 +16,12 @@ do
   local alive = lib.generation "checktime"
   local interval = 99
   local inbox = mailbox.start()
-  local executor = execute.start(inbox.remember)
+  local executor = execute.start {
+    discard = inbox.discard,
+    remember = inbox.remember,
+    rewrite = inbox.rewrite,
+    writing = inbox.writing,
+  }
 
   local tick = function()
     for buf, batch in pairs(inbox.take()) do
@@ -28,7 +33,9 @@ do
           local facts = resolve.gather(buf, inbox.latest(buf, batch))
           return executor.run(buf, plan.compute(facts))
         end)
-        if not complete and vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+        if complete then
+          inbox.finish(buf)
+        elseif vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
           inbox.restore(buf, batch)
         end
       end

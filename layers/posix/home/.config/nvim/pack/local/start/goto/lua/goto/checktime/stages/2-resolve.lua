@@ -4,9 +4,7 @@ local M = {}
 
 ---@class ChecktimeFacts
 ---@field batch ChecktimeBatch
----@field events ChecktimeEvents
 ---@field modified boolean
----@field inserting boolean
 ---@field state? ChecktimeState
 ---@field version? uv.fs_stat.result
 ---@field remote? string
@@ -18,9 +16,7 @@ local M = {}
 M.gather = function(buf, batch)
   local facts = {
     batch = batch,
-    events = batch.events,
     modified = vim.bo[buf].modified,
-    inserting = batch.inserting,
   } ---@type ChecktimeFacts
 
   if batch.events.remote then

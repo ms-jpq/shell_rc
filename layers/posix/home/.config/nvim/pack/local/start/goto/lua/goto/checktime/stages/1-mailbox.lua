@@ -8,11 +8,21 @@ local M = {}
 ---@alias ChecktimeEvent "remote"|"local"
 ---@alias ChecktimeEvents table<ChecktimeEvent, integer>
 
+---@class ChecktimeInput
+---@field base? string
+---@field closing? boolean
+
+---@class ChecktimeRewrite
+---@field before integer
+---@field after? integer
+
 ---@class ChecktimeTracked
 ---@field base? string
 ---@field version? uv.fs_stat.result
 ---@field events? ChecktimeEvents
----@field inserting? boolean
+---@field input? ChecktimeInput
+---@field rewrite? ChecktimeRewrite
+---@field writing? boolean
 ---@field retry? string
 ---@field watcher? ChecktimePoller
 
@@ -21,16 +31,20 @@ local M = {}
 ---@field version? uv.fs_stat.result
 ---@field events ChecktimeEvents
 ---@field changedtick integer
----@field inserting boolean
+---@field input? ChecktimeInput
 
 ---@class ChecktimeEventArgs
 ---@field buf integer
 
 ---@class ChecktimeMailbox
+---@field rewrite fun(buf: integer): fun()
+---@field discard fun(buf: integer)
+---@field finish fun(buf: integer)
 ---@field remember fun(buf: integer, base?: string, version?: uv.fs_stat.result)
 ---@field latest fun(buf: integer, batch: ChecktimeBatch): ChecktimeBatch
 ---@field restore fun(buf: integer, batch: ChecktimeBatch)
 ---@field take fun(): table<integer, ChecktimeBatch>
+---@field writing fun(buf: integer, value: boolean)
 
 M.REMOTE, M.LOCAL = "remote", "local"
 
@@ -127,6 +141,33 @@ M.start = function()
     state.base, state.version = base, version
   end
 
+  mailbox.writing = function(buf, value)
+    state_for(buf).writing = value
+  end
+
+  mailbox.rewrite = function(buf)
+    local rewrite = { before = vim.api.nvim_buf_get_changedtick(buf) } ---@type ChecktimeRewrite
+    state_for(buf).rewrite = rewrite
+    return function()
+      rewrite.after = vim.api.nvim_buf_get_changedtick(buf)
+    end
+  end
+
+  mailbox.discard = function(buf)
+    local state = state_for(buf)
+    state.rewrite, state.input = nil, nil
+  end
+
+  mailbox.finish = function(buf)
+    local state = state_for(buf)
+    if state.input and state.input.closing then
+      state.input = nil
+      if vim.bo[buf].modified then
+        mark(M.LOCAL, buf)
+      end
+    end
+  end
+
   local watch = function(buf)
     detach(buf)
     if vim.bo[buf].modifiable then
@@ -158,7 +199,7 @@ M.start = function()
       version = batch.version,
       events = events,
       changedtick = changedtick,
-      inserting = state and state.inserting or false,
+      input = state and state.input or nil,
     }
   end
 
@@ -186,7 +227,7 @@ M.start = function()
           version = state.version,
           events = batch_events,
           changedtick = vim.api.nvim_buf_get_changedtick(buf),
-          inserting = state.inserting or false,
+          input = state.input,
         }
       end
     end
@@ -196,7 +237,12 @@ M.start = function()
   ---@param args ChecktimeEventArgs
   local record = function(args)
     local buf = args.buf
-    state_for(buf).inserting = false
+    local tracked = state_for(buf)
+    local writing = tracked.writing
+    tracked.writing = nil
+    if not writing then
+      mailbox.discard(buf)
+    end
     local state, version, base = snapshot.read(buf)
     if state == snapshot.STATES.RECONCILE then
       mailbox.remember(buf, base, version)
@@ -211,6 +257,19 @@ M.start = function()
   local track = function(args)
     record(args)
     watch(args.buf)
+  end
+
+  ---@param buf integer
+  ---@return boolean
+  local changed = function(buf)
+    local state = state_for(buf)
+    local rewrite = state.rewrite
+    local changedtick = vim.api.nvim_buf_get_changedtick(buf)
+    state.rewrite = nil
+    if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
+      return false
+    end
+    return true
   end
 
   vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
@@ -233,22 +292,34 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedP" }, {
     group = lib.group,
     callback = function(args)
-      mark(M.LOCAL, args.buf)
+      if changed(args.buf) then
+        mark(M.LOCAL, args.buf)
+      end
     end,
   })
 
   vim.api.nvim_create_autocmd({ "TextChangedI" }, {
     group = lib.group,
     callback = function(args)
-      state_for(args.buf).inserting = true
-      mark(M.LOCAL, args.buf)
+      if changed(args.buf) then
+        local state = state_for(args.buf)
+        if state.input then
+          state.input.closing = nil
+        else
+          state.input = { base = state.base }
+        end
+        mark(M.LOCAL, args.buf)
+      end
     end,
   })
 
   vim.api.nvim_create_autocmd({ "InsertLeave" }, {
     group = lib.group,
     callback = function(args)
-      state_for(args.buf).inserting = false
+      local state = state_for(args.buf)
+      if state.input then
+        state.input.closing = true
+      end
       mark(M.LOCAL, args.buf)
     end,
   })
@@ -293,6 +364,7 @@ M.start = function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) then
         track { buf = buf }
+        mark(M.REMOTE, buf)
       end
     end
   end)
