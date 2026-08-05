@@ -44,10 +44,12 @@ M.compute = function(resolution)
     return { action = M.ACTIONS.RETRY }
   elseif resolution.kind == resolve.KINDS.OPAQUE then
     return { action = M.ACTIONS.RELOAD }
-  elseif resolution.kind == resolve.KINDS.TEXT then
+  end
+
+  local publish = not resolution.input or resolution.input.closing
+  if resolution.kind == resolve.KINDS.TEXT then
     local current, remote = resolution.current, resolution.remote
-    local input = resolution.input
-    local base = input and input.base or resolution.base or ""
+    local base = resolution.base or ""
     local merged = hunks.merge(
       current.linefeed,
       snapshot.row_text(current, base),
@@ -63,9 +65,9 @@ M.compute = function(resolution)
       base = remote,
       version = resolution.version,
       modified = modified,
-      save = modified and (not input or input.closing == true),
+      save = modified and publish,
     }
-  elseif resolution.modified then
+  elseif resolution.modified and publish then
     return { action = M.ACTIONS.WRITE, version = resolution.version }
   end
   return { action = M.ACTIONS.NOOP }

@@ -10,7 +10,6 @@ local M = {}
 ---@alias ChecktimeEvents table<ChecktimeEvent, integer>
 
 ---@class ChecktimeInput
----@field base? string
 ---@field closing boolean
 
 ---@class ChecktimeRewrite
@@ -252,21 +251,22 @@ M.start = function()
     end
     local state, version, base = snapshot.read(buf)
     if not vim.api.nvim_buf_is_valid(buf) then
-      return false
+      return
     end
     if state == snapshot.STATES.RETRY then
       mark(M.REMOTE, buf)
-      return true
+      return
     end
     mailbox.remember(buf, state == snapshot.STATES.RECONCILE and base or nil, version)
-    return true
   end
 
   ---@param args ChecktimeEventArgs
   local track = function(args)
-    if record(args) then
-      watch(args.buf)
-    end
+    local buf = args.buf
+    mailbox.remember(buf, snapshot.current(buf).text)
+    watch(buf)
+    mark(M.REMOTE, buf)
+    record(args)
   end
 
   ---@param buf integer
@@ -313,7 +313,7 @@ M.start = function()
     callback = function(args)
       if changed(args.buf) then
         local state = state_for(args.buf)
-        local input = state.input or { base = state.base, closing = false }
+        local input = state.input or { closing = false }
         input.closing = false
         state.input = input
         mark(M.LOCAL, args.buf)
@@ -369,7 +369,6 @@ M.start = function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) then
         track { buf = buf }
-        mark(M.REMOTE, buf)
       end
     end
   end)

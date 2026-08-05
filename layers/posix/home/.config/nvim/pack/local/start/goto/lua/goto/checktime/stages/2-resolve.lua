@@ -26,6 +26,7 @@ M.KINDS = {
 
 ---@class ChecktimeResolutionLocal
 ---@field kind "local"
+---@field input? ChecktimeInput
 ---@field modified boolean
 ---@field version? uv.fs_stat.result
 
@@ -51,7 +52,7 @@ M.gather = function(buf, batch)
       current = snapshot.current(buf),
     }
   end
-  return { kind = M.KINDS.LOCAL, modified = vim.bo[buf].modified, version = batch.version }
+  return { kind = M.KINDS.LOCAL, input = batch.input, modified = vim.bo[buf].modified, version = batch.version }
 end
 
 return M
