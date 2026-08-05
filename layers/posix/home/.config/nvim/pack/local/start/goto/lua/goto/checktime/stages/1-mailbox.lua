@@ -354,7 +354,7 @@ M.start = function()
     group = lib.group,
     pattern = "modifiable",
     callback = function(args)
-      local buf = args.buf
+      local buf = vim.api.nvim_get_current_buf()
       watch(buf)
       if vim.bo[args.buf].modifiable then
         mark(M.REMOTE, buf)
