@@ -260,13 +260,14 @@ end
 
 local span = function(base, text)
   local start = 1
-  while start <= #base and base[start] == text[start] do
+  while start <= #base and start <= #text and base[start] == text[start] do
     start = start + 1
   end
 
-  local finish = #base
-  while finish >= start and base[finish] == text[#text - (#base - finish)] do
+  local finish, text_finish = #base, #text
+  while finish >= start and text_finish >= start and base[finish] == text[text_finish] do
     finish = finish - 1
+    text_finish = text_finish - 1
   end
 
   return { start = start - 1, finish = finish, slot = 0 }
@@ -382,7 +383,7 @@ end
 ---@param mark fun(start: integer, finish: integer)
 M.replace = function(buf, current, text, mark)
   local patches = row_hunks(current.text, text, records(current.linefeed, text))
-  local restore, rows = view.capture(buf)
+  local rows, restore = view.capture(buf)
 
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(patches):rev():enumerate() do

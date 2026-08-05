@@ -2,7 +2,7 @@ local M = {}
 local ns = vim.api.nvim_create_namespace "goto.checktime.view"
 
 ---@param buf integer
----@return fun(), table<integer, true>
+---@return table<integer, true>, fun()
 M.capture = function(buf)
   local rows = {}
 
@@ -23,21 +23,22 @@ M.capture = function(buf)
       return views
     end)
 
-  return function()
-    local line_count = vim.api.nvim_buf_line_count(buf)
-    for win, view in pairs(views) do
-      local mark = vim.api.nvim_buf_get_extmark_by_id(buf, ns, view.id, {})
-      local row = math.min((mark[1] or line_count - 1) + 1, line_count)
-      local line = unpack(vim.api.nvim_buf_get_lines(buf, row - 1, row, true))
+  return rows,
+    function()
+      local line_count = vim.api.nvim_buf_line_count(buf)
+      for win, view in pairs(views) do
+        local mark = vim.api.nvim_buf_get_extmark_by_id(buf, ns, view.id, {})
+        local r, c = unpack(mark)
+        local row = math.min((r or line_count - 1) + 1, line_count)
+        local line = unpack(vim.api.nvim_buf_get_lines(buf, row - 1, row, true))
+        local col = math.min(c or #line, #line)
 
-      vim.api.nvim_buf_del_extmark(buf, ns, view.id)
-      vim.api.nvim_win_call(win, function()
-        vim.api.nvim_win_set_cursor(win, { row, math.min(mark[2] or #line, #line) })
-        vim.fn.winrestview { curswant = view.curswant }
-      end)
+        vim.api.nvim_buf_del_extmark(buf, ns, view.id)
+        vim.api.nvim_win_call(win, function()
+          vim.fn.winrestview { lnum = row, col = col, curswant = view.curswant }
+        end)
+      end
     end
-  end,
-    rows
 end
 
 return M

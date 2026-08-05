@@ -1,6 +1,8 @@
 local async = require "goto.async"
+local hunks = require "goto.checktime.hunks"
 local lib = require "goto.lib"
 local proc = require "go.proc"
+local snapshot = require "goto.checktime.snapshot"
 
 local timeout = 8888
 
@@ -44,6 +46,7 @@ local fmt = function()
   end
 
   local buf = vim.api.nvim_get_current_buf()
+  local changedtick = vim.api.nvim_buf_get_changedtick(buf)
   -- local name = vim.api.nvim_buf_get_name(buf)
   local cwd = vim.fn.getcwd()
 
@@ -72,13 +75,10 @@ local fmt = function()
     return
   end
 
-  if vim.api.nvim_get_current_buf() == buf then
-    local result = vim.split(waited.stdout, lib.LF, { plain = true })
-
-    if result[#result] == "" then
-      result[#result] = nil
-    end
-    vim.api.nvim_buf_set_lines(buf, 0, -1, true, result)
+  if vim.api.nvim_get_current_buf() == buf and vim.api.nvim_buf_get_changedtick(buf) == changedtick then
+    local current = snapshot.current(buf)
+    local formatted = snapshot.fit(current, waited.stdout)
+    hunks.replace(buf, current, formatted, function() end)
     vim.notify([[✅...]], vim.log.levels.INFO, {})
   end
 end
