@@ -19,13 +19,14 @@ local M = {}
 ---@field base? string
 ---@field version? uv.fs_stat.result
 ---@field events ChecktimeEvents
+---@field changedtick integer
 
 ---@class ChecktimeEventArgs
 ---@field buf integer
 
 ---@class ChecktimeMailbox
 ---@field remember fun(buf: integer, base?: string, version?: uv.fs_stat.result)
----@field latest fun(buf: integer, events: ChecktimeEvents): ChecktimeEvents
+---@field latest fun(buf: integer, batch: ChecktimeBatch): ChecktimeBatch
 ---@field restore fun(buf: integer, batch: ChecktimeBatch)
 ---@field take fun(): table<integer, ChecktimeBatch>
 
@@ -53,13 +54,14 @@ M.start = function()
   local mark = function(kind, buf, order)
     local state = state_for(buf)
     state.events = state.events or {}
+    local previous = state.events[kind] or 0
     if order then
       observed = math.max(observed, order)
     else
       observed = observed + 1
       order = observed
     end
-    state.events[kind] = math.max(state.events[kind] or 0, order)
+    state.events[kind] = math.max(previous, order)
   end
 
   ---@param buf integer
@@ -133,21 +135,28 @@ M.start = function()
     end
   end
 
-  mailbox.latest = function(buf, events)
+  mailbox.latest = function(buf, batch)
+    local changedtick = vim.api.nvim_buf_get_changedtick(buf)
+    if changedtick ~= batch.changedtick then
+      mark(M.LOCAL, buf)
+    end
     local pending = tracked[buf] and tracked[buf].events or {}
-    local local_order = math.max(events[M.LOCAL] or 0, pending[M.LOCAL] or 0)
-    local remote_order = math.max(events[M.REMOTE] or 0, pending[M.REMOTE] or 0)
-    local latest = {} ---@type ChecktimeEvents
+    local local_order = math.max(batch.events[M.LOCAL] or 0, pending[M.LOCAL] or 0)
+    local remote_order = math.max(batch.events[M.REMOTE] or 0, pending[M.REMOTE] or 0)
+    local events = {} ---@type ChecktimeEvents
     if local_order > 0 then
-      latest[M.LOCAL] = local_order
+      events[M.LOCAL] = local_order
     end
     if remote_order > 0 then
-      latest[M.REMOTE] = remote_order
+      events[M.REMOTE] = remote_order
     end
-    return latest
+    return { base = batch.base, version = batch.version, events = events, changedtick = changedtick }
   end
 
   mailbox.restore = function(buf, batch)
+    if vim.api.nvim_buf_get_changedtick(buf) ~= batch.changedtick then
+      mark(M.LOCAL, buf)
+    end
     for kind, order in pairs(batch.events) do
       mark(kind, buf, order)
     end
@@ -163,7 +172,12 @@ M.start = function()
       local batch_events = state.events
       if (state.watcher or state.retry) and batch_events then
         state.events = nil
-        batches[buf] = { base = state.base, version = state.version, events = batch_events }
+        batches[buf] = {
+          base = state.base,
+          version = state.version,
+          events = batch_events,
+          changedtick = vim.api.nvim_buf_get_changedtick(buf),
+        }
       end
     end
     return batches

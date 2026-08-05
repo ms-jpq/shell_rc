@@ -25,7 +25,7 @@ do
           if not (vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable) then
             return false
           end
-          local facts = resolve.gather(buf, batch, inbox.latest(buf, batch.events))
+          local facts = resolve.gather(buf, inbox.latest(buf, batch))
           return executor.run(buf, plan.compute(facts))
         end)
         if not complete and vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then

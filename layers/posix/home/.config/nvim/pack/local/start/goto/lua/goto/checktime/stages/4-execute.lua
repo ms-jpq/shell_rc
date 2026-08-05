@@ -10,6 +10,7 @@ local M = {}
 ---@class ChecktimeExecuteIO
 ---@field apply fun(buf: integer, instruction: ChecktimeInstruction)
 ---@field reload fun(buf: integer): boolean
+---@field same fun(buf: integer, changedtick: integer?): boolean
 ---@field unchanged fun(buf: integer, version: uv.fs_stat.result?): boolean
 ---@field write fun(buf: integer): boolean
 
@@ -20,10 +21,15 @@ M.new = function(io)
     if instruction.action == plan.ACTIONS.RETRY then
       return false
     elseif instruction.action == plan.ACTIONS.RELOAD then
-      return io.reload(buf)
+      return io.same(buf, instruction.changedtick) and io.reload(buf)
     elseif instruction.action == plan.ACTIONS.WRITE then
-      return (instruction.force or io.unchanged(buf, instruction.version)) and io.write(buf)
+      return io.same(buf, instruction.changedtick)
+        and (instruction.force or io.unchanged(buf, instruction.version))
+        and io.write(buf)
     elseif instruction.action == plan.ACTIONS.RECONCILE then
+      if not io.same(buf, instruction.changedtick) then
+        return false
+      end
       io.apply(buf, instruction)
       return not instruction.save or io.unchanged(buf, instruction.version) and io.write(buf)
     end
@@ -71,7 +77,15 @@ M.start = function(remember)
     vim.bo[buf].modified = instruction.modified
   end
 
-  return M.new { apply = apply, reload = reload, unchanged = snapshot.unchanged, write = write }
+  return M.new {
+    apply = apply,
+    reload = reload,
+    same = function(buf, changedtick)
+      return vim.api.nvim_buf_get_changedtick(buf) == changedtick
+    end,
+    unchanged = snapshot.unchanged,
+    write = write,
+  }
 end
 
 return M

@@ -28,16 +28,23 @@ M.ACTIONS = {
 ---@field modified? boolean
 ---@field save? boolean
 ---@field force? boolean
+---@field changedtick? integer
 
 ---@param facts ChecktimeFacts
 ---@return ChecktimeInstruction
 M.compute = function(facts)
-  if facts.events.remote then
+  if facts.stale then
+    return { action = M.ACTIONS.RETRY }
+  elseif facts.events.remote then
     if facts.state == snapshot.STATES.RETRY then
       return { action = M.ACTIONS.RETRY }
     elseif facts.state == snapshot.STATES.OPAQUE then
       local local_order, remote_order = facts.events["local"] or 0, facts.events.remote
-      return { action = local_order > remote_order and M.ACTIONS.WRITE or M.ACTIONS.RELOAD, force = true }
+      return {
+        action = local_order > remote_order and M.ACTIONS.WRITE or M.ACTIONS.RELOAD,
+        force = true,
+        changedtick = facts.changedtick,
+      }
     end
 
     local current = assert(facts.current)
@@ -58,9 +65,10 @@ M.compute = function(facts)
       version = facts.version,
       modified = modified,
       save = modified,
+      changedtick = facts.changedtick,
     }
   elseif facts.modified then
-    return { action = M.ACTIONS.WRITE, version = facts.batch.version }
+    return { action = M.ACTIONS.WRITE, version = facts.batch.version, changedtick = facts.changedtick }
   end
   return { action = M.ACTIONS.NOOP }
 end

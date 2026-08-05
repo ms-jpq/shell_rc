@@ -7,6 +7,7 @@ local M = {}
 ---@field text string
 ---@field endofline boolean
 ---@field final_empty boolean
+---@field changedtick integer
 
 ---@alias ChecktimeState "reconcile"|"opaque"|"retry"|"none"
 
@@ -49,6 +50,7 @@ M.current = function(buf)
     text = endofline and text .. linefeed or text,
     endofline = endofline,
     final_empty = lines[#lines] == "",
+    changedtick = vim.api.nvim_buf_get_changedtick(buf),
   }
 end
 
