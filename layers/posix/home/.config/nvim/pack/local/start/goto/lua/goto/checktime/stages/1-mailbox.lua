@@ -12,6 +12,7 @@ local M = {}
 ---@field base? string
 ---@field version? uv.fs_stat.result
 ---@field events? ChecktimeEvents
+---@field inserting? boolean
 ---@field retry? string
 ---@field watcher? ChecktimePoller
 
@@ -20,6 +21,7 @@ local M = {}
 ---@field version? uv.fs_stat.result
 ---@field events ChecktimeEvents
 ---@field changedtick integer
+---@field inserting boolean
 
 ---@class ChecktimeEventArgs
 ---@field buf integer
@@ -140,7 +142,8 @@ M.start = function()
     if changedtick ~= batch.changedtick then
       mark(M.LOCAL, buf)
     end
-    local pending = tracked[buf] and tracked[buf].events or {}
+    local state = tracked[buf]
+    local pending = state and state.events or {}
     local local_order = math.max(batch.events[M.LOCAL] or 0, pending[M.LOCAL] or 0)
     local remote_order = math.max(batch.events[M.REMOTE] or 0, pending[M.REMOTE] or 0)
     local events = {} ---@type ChecktimeEvents
@@ -150,7 +153,13 @@ M.start = function()
     if remote_order > 0 then
       events[M.REMOTE] = remote_order
     end
-    return { base = batch.base, version = batch.version, events = events, changedtick = changedtick }
+    return {
+      base = batch.base,
+      version = batch.version,
+      events = events,
+      changedtick = changedtick,
+      inserting = state and state.inserting or false,
+    }
   end
 
   mailbox.restore = function(buf, batch)
@@ -177,6 +186,7 @@ M.start = function()
           version = state.version,
           events = batch_events,
           changedtick = vim.api.nvim_buf_get_changedtick(buf),
+          inserting = state.inserting or false,
         }
       end
     end
@@ -186,6 +196,7 @@ M.start = function()
   ---@param args ChecktimeEventArgs
   local record = function(args)
     local buf = args.buf
+    state_for(buf).inserting = false
     local state, version, base = snapshot.read(buf)
     if state == snapshot.STATES.RECONCILE then
       mailbox.remember(buf, base, version)
@@ -219,9 +230,25 @@ M.start = function()
     callback = track,
   })
 
-  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "TextChangedP" }, {
+  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedP" }, {
     group = lib.group,
     callback = function(args)
+      mark(M.LOCAL, args.buf)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "TextChangedI" }, {
+    group = lib.group,
+    callback = function(args)
+      state_for(args.buf).inserting = true
+      mark(M.LOCAL, args.buf)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "InsertLeave" }, {
+    group = lib.group,
+    callback = function(args)
+      state_for(args.buf).inserting = false
       mark(M.LOCAL, args.buf)
     end,
   })

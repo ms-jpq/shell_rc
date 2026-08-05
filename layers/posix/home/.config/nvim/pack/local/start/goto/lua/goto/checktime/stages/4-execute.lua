@@ -8,9 +8,8 @@ local M = {}
 ---@field run fun(buf: integer, instruction: ChecktimeInstruction): boolean
 
 ---@class ChecktimeExecuteIO
----@field apply fun(buf: integer, instruction: ChecktimeInstruction)
+---@field apply fun(buf: integer, instruction: ChecktimeReconcile)
 ---@field reload fun(buf: integer): boolean
----@field same fun(buf: integer, changedtick: integer?): boolean
 ---@field unchanged fun(buf: integer, version: uv.fs_stat.result?): boolean
 ---@field write fun(buf: integer): boolean
 
@@ -21,15 +20,10 @@ M.new = function(io)
     if instruction.action == plan.ACTIONS.RETRY then
       return false
     elseif instruction.action == plan.ACTIONS.RELOAD then
-      return io.same(buf, instruction.changedtick) and io.reload(buf)
+      return io.reload(buf)
     elseif instruction.action == plan.ACTIONS.WRITE then
-      return io.same(buf, instruction.changedtick)
-        and (instruction.force or io.unchanged(buf, instruction.version))
-        and io.write(buf)
+      return (instruction.force or io.unchanged(buf, instruction.version)) and io.write(buf)
     elseif instruction.action == plan.ACTIONS.RECONCILE then
-      if not io.same(buf, instruction.changedtick) then
-        return false
-      end
       io.apply(buf, instruction)
       return not instruction.save or io.unchanged(buf, instruction.version) and io.write(buf)
     end
@@ -64,7 +58,7 @@ M.start = function(remember)
   end
 
   ---@param buf integer
-  ---@param instruction ChecktimeInstruction
+  ---@param instruction ChecktimeReconcile
   local apply = function(buf, instruction)
     local current, text = assert(instruction.current), assert(instruction.text)
     if text ~= current.text then
@@ -80,9 +74,6 @@ M.start = function(remember)
   return M.new {
     apply = apply,
     reload = reload,
-    same = function(buf, changedtick)
-      return vim.api.nvim_buf_get_changedtick(buf) == changedtick
-    end,
     unchanged = snapshot.unchanged,
     write = write,
   }

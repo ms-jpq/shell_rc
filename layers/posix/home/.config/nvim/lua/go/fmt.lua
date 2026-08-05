@@ -1,8 +1,6 @@
 local async = require "goto.async"
-local hunks = require "goto.checktime.hunks"
 local lib = require "goto.lib"
 local proc = require "go.proc"
-local snapshot = require "goto.checktime.snapshot"
 
 local timeout = 8888
 
@@ -84,13 +82,11 @@ local fmt = function()
     return
   end
 
-  local current = snapshot.current(buf)
   local lines = vim.split(waited.stdout, lib.LF, { plain = true })
   if lines[#lines] == "" then
     lines[#lines] = nil
   end
-  local formatted = snapshot.fit(current, table.concat(lines, current.linefeed))
-  hunks.replace(buf, current, formatted, function() end)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
   vim.notify([[✅...]], vim.log.levels.INFO)
 end
 
