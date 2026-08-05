@@ -90,7 +90,7 @@ do
         local locked = lock.guard(name, function()
           local base, version = update.base, update.version
           if update.dirty[poll.REMOTE] then
-            local state, remote, remote_version = snapshot.read(buf)
+            local state, remote_version, remote = snapshot.read(buf)
             if state == snapshot.STATES.RETRY then
               watcher.dirty(poll.REMOTE, buf)
               return

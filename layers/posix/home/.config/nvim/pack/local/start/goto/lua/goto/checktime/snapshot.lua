@@ -98,7 +98,7 @@ M.fit = function(current, text)
 end
 
 ---@param buf integer
----@return ChecktimeState, string?, uv.fs_stat.result?
+---@return ChecktimeState, uv.fs_stat.result?, string?
 M.read = function(buf)
   local name = vim.api.nvim_buf_get_name(buf)
   local before = vim.uv.fs_stat(name)
@@ -129,7 +129,7 @@ M.read = function(buf)
     return M.STATES.RETRY, nil, nil
   end
 
-  return M.STATES.RECONCILE, text, before
+  return M.STATES.RECONCILE, before, text
 end
 
 ---@param buf integer
