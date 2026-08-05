@@ -61,7 +61,7 @@ local acquire = function(lock)
 end
 
 ---@param path string
----@param fn fun()
+---@param fn fun(): boolean?
 ---@return boolean
 M.guard = function(path, fn)
   vim.fn.mkdir(cache, "p")
@@ -74,9 +74,12 @@ M.guard = function(path, fn)
       local unlock = acquire(lock)
       if unlock then
         async.scheduled()
-        local completed = lib.report(fn)
+        local completed
+        local reported = lib.report(function()
+          completed = fn()
+        end)
         unlock()
-        return completed
+        return reported and completed ~= false
       end
 
       if elapsed(span) then
