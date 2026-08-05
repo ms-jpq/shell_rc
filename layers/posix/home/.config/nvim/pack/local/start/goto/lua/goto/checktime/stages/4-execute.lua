@@ -53,8 +53,11 @@ M.new = function(io)
       local written = io.unchanged(buf, instruction.version) and io.write(buf)
       return { kind = written and M.OUTCOMES.COMPLETE or M.OUTCOMES.DEFERRED }
     elseif instruction.action == plan.ACTIONS.RECONCILE then
+      if instruction.save and not io.unchanged(buf, instruction.version) then
+        return { kind = M.OUTCOMES.DEFERRED }
+      end
       io.apply(buf, instruction)
-      local written = not instruction.save or io.unchanged(buf, instruction.version) and io.write(buf)
+      local written = not instruction.save or io.write(buf)
       return { kind = written and M.OUTCOMES.COMPLETE or M.OUTCOMES.DEFERRED }
     end
     return { kind = M.OUTCOMES.COMPLETE }
