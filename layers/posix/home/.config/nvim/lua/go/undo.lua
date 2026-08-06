@@ -1,5 +1,6 @@
 -- persistent undo
 vim.opt.undofile = true
+vim.opt.undolevels = 60
 
 do
   vim.cmd.packadd [[nvim.undotree]]
