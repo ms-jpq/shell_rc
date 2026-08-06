@@ -1,10 +1,12 @@
 local async = require "goto.async"
 local hunks = require "goto.checktime.hunks"
+local mailbox = require "goto.checktime.stages.1-mailbox"
 local plan = require "goto.checktime.stages.3-plan"
 local snapshot = require "goto.checktime.snapshot"
 
 local M = {}
 local FLASH_SPAN = 1688
+local EVENTS = mailbox.EVENTS
 
 ---@class ChecktimeExecutor
 ---@field run fun(buf: integer, instruction: ChecktimeInstruction): ChecktimeOutcome
@@ -25,47 +27,54 @@ M.OUTCOMES = {
 
 ---@class ChecktimeExecuteIO
 ---@field apply fun(buf: integer, instruction: ChecktimeReconcile)
----@field discard fun(buf: integer)
----@field remember fun(buf: integer, base?: string, version?: uv.fs_stat.result)
+---@field dispatch fun(event: ChecktimeMailboxEvent)
 ---@field reload fun(buf: integer): boolean
 ---@field unchanged fun(buf: integer, version: uv.fs_stat.result?): boolean
 ---@field write fun(buf: integer): boolean
 
 ---@class ChecktimeExecuteArgs
----@field remember fun(buf: integer, base?: string, version?: uv.fs_stat.result)
----@field writing fun(buf: integer, value: boolean)
----@field discard fun(buf: integer)
----@field rewrite fun(buf: integer): fun()
+---@field dispatch fun(event: ChecktimeMailboxEvent)
 
 ---@param io ChecktimeExecuteIO
 ---@return ChecktimeExecutor
 M.new = function(io)
+  ---@param buf integer
+  ---@param instruction ChecktimeInstruction
+  ---@return ChecktimeOutcome
   local run = function(buf, instruction)
     if instruction.action == plan.ACTIONS.RETRY then
       return { kind = M.OUTCOMES.DEFERRED }
     elseif instruction.action == plan.ACTIONS.RELOAD then
       local reloaded = io.reload(buf)
       if reloaded then
-        io.discard(buf)
+        io.dispatch { kind = EVENTS.DISCARD, buf = buf }
         return { kind = M.OUTCOMES.COMPLETE }
       end
       return { kind = M.OUTCOMES.DEFERRED }
     elseif instruction.action == plan.ACTIONS.WRITE then
+      ---@cast instruction ChecktimeWrite
       local written = io.unchanged(buf, instruction.version) and io.write(buf)
-      return { kind = written and M.OUTCOMES.COMPLETE or M.OUTCOMES.DEFERRED }
+      if written then
+        return { kind = M.OUTCOMES.COMPLETE }
+      end
+      return { kind = M.OUTCOMES.DEFERRED }
     elseif instruction.action == plan.ACTIONS.RECONCILE then
+      ---@cast instruction ChecktimeReconcile
       if instruction.save and not io.unchanged(buf, instruction.version) then
-        io.remember(buf, instruction.base, instruction.version)
+        io.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = instruction.base, version = instruction.version }
         return { kind = M.OUTCOMES.DEFERRED }
       end
       io.apply(buf, instruction)
-      io.remember(buf, instruction.base, instruction.version)
+      io.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = instruction.base, version = instruction.version }
       local written = not instruction.save or io.write(buf)
-      return { kind = written and M.OUTCOMES.COMPLETE or M.OUTCOMES.DEFERRED }
+      if written then
+        return { kind = M.OUTCOMES.COMPLETE }
+      end
+      return { kind = M.OUTCOMES.DEFERRED }
     elseif instruction.action == plan.ACTIONS.NOOP then
       return { kind = M.OUTCOMES.COMPLETE }
     else
-      assert(false, vim.inspect(instruction))
+      error(vim.inspect(instruction))
     end
   end
 
@@ -80,13 +89,13 @@ M.start = function(args)
   ---@param buf integer
   ---@return boolean
   local write = function(buf)
-    args.writing(buf, true)
+    args.dispatch { kind = EVENTS.WRITING, buf = buf, value = true }
     local ok = pcall(vim.api.nvim_buf_call, buf, function()
       vim.cmd [[silent! write! ++p]]
     end)
     local complete = ok and not vim.bo[buf].modified
     if not complete then
-      args.writing(buf, false)
+      args.dispatch { kind = EVENTS.WRITING, buf = buf, value = false }
     else
       local name = vim.api.nvim_buf_get_name(buf)
       local text = snapshot.current(buf).text
@@ -95,7 +104,7 @@ M.start = function(args)
       if not vim.api.nvim_buf_is_valid(buf) then
         return false
       end
-      args.remember(buf, text, version)
+      args.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = text, version = version }
     end
     return complete
   end
@@ -114,20 +123,22 @@ M.start = function(args)
   local apply = function(buf, instruction)
     local current, text = assert(instruction.current), assert(instruction.text)
     if text ~= current.text then
-      local finish = args.rewrite(buf)
+      local rewrite = { before = vim.api.nvim_buf_get_changedtick(buf) } ---@type ChecktimeRewrite
+      args.dispatch { kind = EVENTS.REWRITE, buf = buf, rewrite = rewrite, done = false }
       vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+      ---@param start integer
+      ---@param finish integer
       hunks.replace(buf, current, text, function(start, finish)
         vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
       end)
-      finish()
+      args.dispatch { kind = EVENTS.REWRITE, buf = buf, rewrite = rewrite, done = true }
     end
     vim.bo[buf].modified = instruction.modified
   end
 
   return M.new {
     apply = apply,
-    discard = args.discard,
-    remember = args.remember,
+    dispatch = args.dispatch,
     reload = reload,
     unchanged = snapshot.unchanged,
     write = write,

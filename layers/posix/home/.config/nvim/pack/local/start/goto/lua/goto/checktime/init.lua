@@ -16,11 +16,10 @@ do
   local alive = lib.generation "checktime"
   local interval = 99
   local inbox = mailbox.start()
+  local dispatch = inbox.dispatch
+  local EVENTS = mailbox.EVENTS
   local executor = execute.start {
-    discard = inbox.discard,
-    remember = inbox.remember,
-    rewrite = inbox.rewrite,
-    writing = inbox.writing,
+    dispatch = dispatch,
   }
 
   local tick = function()
@@ -30,15 +29,18 @@ do
           if not (vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable) then
             return { kind = execute.OUTCOMES.DEFERRED }
           end
-          local resolution = resolve.gather(buf, inbox.latest(buf, batch))
+          dispatch { kind = EVENTS.SAMPLE, buf = buf, changedtick = batch.changedtick }
+          local latest = inbox.latest(buf, batch)
+          local resolution = resolve.gather(buf, latest)
           return executor.run(buf, plan.compute(resolution))
         end)
         outcome = outcome or { kind = execute.OUTCOMES.DEFERRED }
         if outcome.kind == execute.OUTCOMES.COMPLETE then
-          inbox.finish(buf)
+          dispatch { kind = EVENTS.FINISH, buf = buf }
         elseif outcome.kind == execute.OUTCOMES.DEFERRED then
           if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-            inbox.restore(buf, batch)
+            dispatch { kind = EVENTS.SAMPLE, buf = buf, changedtick = batch.changedtick }
+            dispatch { kind = EVENTS.RESTORE, buf = buf, batch = batch }
           end
         else
           assert(false, vim.inspect(outcome))

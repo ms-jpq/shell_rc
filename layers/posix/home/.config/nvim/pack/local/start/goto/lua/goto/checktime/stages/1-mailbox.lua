@@ -6,6 +6,9 @@ local snapshot = require "goto.checktime.snapshot"
 
 local M = {}
 
+---@generic T: table
+---@param value T
+---@return T
 local clone = function(value)
   local copied = {}
   for key, item in pairs(value) do
@@ -16,10 +19,6 @@ end
 
 ---@alias ChecktimeChange "remote"|"local"
 ---@alias ChecktimeEvents table<ChecktimeChange, integer>
----@alias ChecktimeMailboxEventKind "change"|"command"|"detach"|"observe"|"refresh"
----@alias ChecktimeMailboxCommandKind "discard"|"finish"|"latest"|"remember"|"restore"|"rewrite"|"rewrite-done"|"take"|"writing"
----@alias ChecktimeInputPhase "active"|"closing"
-
 ---@class ChecktimeInput
 ---@field closing boolean
 
@@ -50,61 +49,92 @@ end
 ---@field changedtick integer
 ---@field input? ChecktimeInput
 
----@class ChecktimeMailboxEvent
----@field kind ChecktimeMailboxEventKind
+---@class ChecktimeObserve
+---@field kind "observe"
 ---@field buf integer
----@field command? ChecktimeMailboxCommandKind
----@field input? ChecktimeInputPhase
+---@field base string
+---@field track boolean
+
+---@class ChecktimeDirtyLocal
+---@field kind "dirty"
+---@field buf integer
+---@field change "local"
+---@field insert? boolean
+
+---@class ChecktimeDirtyRemote
+---@field kind "dirty"
+---@field buf integer
+---@field change "remote"
+---@field watch boolean
+
+---@class ChecktimeDetach
+---@field kind "detach"
+---@field buf integer
+
+---@class ChecktimeDiscard
+---@field kind "discard"
+---@field buf integer
+
+---@class ChecktimeFinish
+---@field kind "finish"
+---@field buf integer
+
+---@class ChecktimeRemember
+---@field kind "remember"
+---@field buf integer
 ---@field base? string
----@field batch? ChecktimeBatch
----@field rewrite? ChecktimeRewrite
----@field value? boolean
 ---@field version? uv.fs_stat.result
----@field track? boolean
----@field watch? boolean
+
+---@class ChecktimeRestore
+---@field kind "restore"
+---@field buf integer
+---@field batch ChecktimeBatch
+
+---@class ChecktimeRewriteEvent
+---@field kind "rewrite"
+---@field buf integer
+---@field rewrite ChecktimeRewrite
+---@field done boolean
+
+---@class ChecktimeWriting
+---@field kind "writing"
+---@field buf integer
+---@field value boolean
+
+---@class ChecktimeSample
+---@field kind "sample"
+---@field buf integer
+---@field changedtick integer
+
+---@alias ChecktimeMailboxEvent ChecktimeObserve|ChecktimeDirtyLocal|ChecktimeDirtyRemote|ChecktimeDetach|ChecktimeDiscard|ChecktimeFinish|ChecktimeRemember|ChecktimeRestore|ChecktimeRewriteEvent|ChecktimeSample|ChecktimeWriting
+
+---@class ChecktimeAutocmdArgs
+---@field buf integer
 
 ---@class ChecktimeMailbox
----@field rewrite fun(buf: integer): fun()
----@field discard fun(buf: integer)
----@field finish fun(buf: integer)
----@field remember fun(buf: integer, base?: string, version?: uv.fs_stat.result)
+---@field dispatch fun(event: ChecktimeMailboxEvent)
 ---@field latest fun(buf: integer, batch: ChecktimeBatch): ChecktimeBatch
----@field restore fun(buf: integer, batch: ChecktimeBatch)
 ---@field take fun(): table<integer, ChecktimeBatch>
----@field writing fun(buf: integer, value: boolean)
 
 ---@class ChecktimeMailboxEvents
-local EVENTS = {
-  CHANGE = "change",
-  COMMAND = "command",
+M.EVENTS = {
   DETACH = "detach",
-  OBSERVE = "observe",
-  REFRESH = "refresh",
-}
-
----@class ChecktimeMailboxCommands
-local COMMANDS = {
+  DIRTY = "dirty",
   DISCARD = "discard",
   FINISH = "finish",
-  LATEST = "latest",
+  OBSERVE = "observe",
   REMEMBER = "remember",
   RESTORE = "restore",
   REWRITE = "rewrite",
-  REWRITE_DONE = "rewrite-done",
-  TAKE = "take",
+  SAMPLE = "sample",
   WRITING = "writing",
-}
-
----@class ChecktimeInputPhases
-local INPUTS = {
-  ACTIVE = "active",
-  CLOSING = "closing",
 }
 
 M.REMOTE, M.LOCAL = "remote", "local"
 
 ---@return ChecktimeMailbox
 M.start = function()
+  local EVENTS = M.EVENTS
   ---@type ChecktimeMailboxState
   local state = {
     entries = {},
@@ -114,6 +144,9 @@ M.start = function()
   ---@diagnostic disable-next-line: missing-fields
   local mb = {} ---@type ChecktimeMailbox
 
+  ---@param buf integer
+  ---@param fn fun(tracked: ChecktimeTracked): ChecktimeTracked
+  ---@return ChecktimeTracked
   local update = function(buf, fn)
     local tracked = clone(state.tracked)
     tracked[buf] = fn(clone(tracked[buf] or {}))
@@ -142,8 +175,8 @@ M.start = function()
     end)
   end
 
-  local dispatch
-
+  ---@param buf integer
+  ---@param path string
   local watch = function(buf, path)
     local tracked = state.tracked[buf]
     if tracked and tracked.path == path and not tracked.retry then
@@ -179,13 +212,13 @@ M.start = function()
       if not watcher then
         watcher = poll.start(
           path,
-          vim.schedule_wrap(function()
+          vim.schedule_wrap(async(function()
             for current, next in pairs(state.tracked) do
               if next.path == path then
-                dispatch { kind = EVENTS.REFRESH, buf = current }
+                mb.dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = current, watch = false }
               end
             end
-          end)
+          end))
         )
         if watcher then
           local entries = clone(state.entries)
@@ -202,7 +235,8 @@ M.start = function()
     end
   end
 
-  dispatch = function(event)
+  ---@param event ChecktimeMailboxEvent
+  mb.dispatch = function(event)
     if event.kind == EVENTS.OBSERVE then
       local tracked = state.tracked[event.buf] or {}
       local writing = tracked.writing
@@ -243,34 +277,19 @@ M.start = function()
       elseif read == snapshot.STATES.RETRY then
         mark(M.REMOTE, event.buf)
       elseif read == snapshot.STATES.RECONCILE then
-        update(event.buf, function(next)
-          next.base, next.version = base, version
-          return next
-        end)
-        if writing then
-          mark(M.REMOTE, event.buf)
-        end
+        mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = base, version = version }
       elseif read == snapshot.STATES.OPAQUE then
-        update(event.buf, function(next)
-          next.base, next.version = base, version
-          return next
-        end)
-        if writing then
-          mark(M.REMOTE, event.buf)
-        end
+        mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = base, version = version }
       elseif read == snapshot.STATES.NONE then
-        update(event.buf, function(next)
-          next.base, next.version = base, version
-          return next
-        end)
-        if writing then
-          mark(M.REMOTE, event.buf)
-        end
+        mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = base, version = version }
       else
-        return assert(false, vim.inspect(read))
+        error(vim.inspect(read))
       end
-    elseif event.kind == EVENTS.CHANGE then
-      if event.input == INPUTS.CLOSING then
+      if read ~= snapshot.STATES.RETRY and writing then
+        mark(M.REMOTE, event.buf)
+      end
+    elseif event.kind == EVENTS.DIRTY and event.change == M.LOCAL then
+      if event.insert == false then
         update(event.buf, function(tracked)
           if tracked.input then
             tracked.input = { closing = true }
@@ -287,144 +306,79 @@ M.start = function()
         end)
         if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
           return
-        elseif event.input == INPUTS.ACTIVE then
+        elseif event.insert then
           update(event.buf, function(tracked)
             tracked.input = { closing = false }
             return tracked
           end)
-        elseif event.input then
-          return assert(false, vim.inspect(event))
         end
         mark(M.LOCAL, event.buf)
       end
-    elseif event.kind == EVENTS.REFRESH then
+    elseif event.kind == EVENTS.DIRTY and event.change == M.REMOTE then
       if event.watch then
         watch(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
       end
       if not event.watch or vim.bo[event.buf].modifiable then
         mark(M.REMOTE, event.buf)
       end
+    elseif event.kind == EVENTS.DIRTY then
+      error(vim.inspect(event))
     elseif event.kind == EVENTS.DETACH then
       watch(event.buf, "")
       local tracked = clone(state.tracked)
       tracked[event.buf] = nil
       state = { entries = state.entries, observed = state.observed, tracked = tracked }
-    elseif event.kind == EVENTS.COMMAND then
-      local command = assert(event.command)
-      if command == COMMANDS.DISCARD then
-        update(event.buf, function(tracked)
-          tracked.rewrite, tracked.input = nil, nil
-          return tracked
+    elseif event.kind == EVENTS.DISCARD then
+      update(event.buf, function(tracked)
+        tracked.rewrite, tracked.input = nil, nil
+        return tracked
+      end)
+    elseif event.kind == EVENTS.FINISH then
+      local tracked = state.tracked[event.buf]
+      if tracked and tracked.input and tracked.input.closing then
+        update(event.buf, function(next)
+          next.input = nil
+          return next
         end)
-      elseif command == COMMANDS.FINISH then
-        local tracked = state.tracked[event.buf]
-        if tracked and tracked.input and tracked.input.closing then
-          update(event.buf, function(next)
-            next.input = nil
-            return next
-          end)
-          if vim.bo[event.buf].modified then
-            mark(M.LOCAL, event.buf)
-          end
-        end
-      elseif command == COMMANDS.LATEST then
-        local batch = assert(event.batch)
-        local changedtick = vim.api.nvim_buf_get_changedtick(event.buf)
-        if changedtick ~= batch.changedtick then
+        if vim.bo[event.buf].modified then
           mark(M.LOCAL, event.buf)
         end
-        local tracked = state.tracked[event.buf]
-        local pending = tracked and tracked.events or {}
-        local local_order = math.max(batch.events[M.LOCAL] or 0, pending[M.LOCAL] or 0)
-        local remote_order = math.max(batch.events[M.REMOTE] or 0, pending[M.REMOTE] or 0)
-        local events = {} ---@type ChecktimeEvents
-        if local_order > 0 then
-          events[M.LOCAL] = local_order
-        end
-        if remote_order > 0 then
-          events[M.REMOTE] = remote_order
-        end
-        return {
-          base = batch.base,
-          version = batch.version,
-          events = events,
-          changedtick = changedtick,
-          input = tracked and tracked.input or nil,
-        }
-      elseif command == COMMANDS.REMEMBER then
-        update(event.buf, function(tracked)
-          tracked.base, tracked.version = event.base, event.version
-          return tracked
-        end)
-      elseif command == COMMANDS.RESTORE then
-        local batch = assert(event.batch)
-        if vim.api.nvim_buf_get_changedtick(event.buf) ~= batch.changedtick then
-          mark(M.LOCAL, event.buf)
-        end
-        for kind, order in pairs(batch.events) do
-          mark(kind, event.buf, order)
-        end
-      elseif command == COMMANDS.REWRITE then
-        local rewrite = { before = vim.api.nvim_buf_get_changedtick(event.buf) } ---@type ChecktimeRewrite
-        update(event.buf, function(tracked)
-          tracked.rewrite = rewrite
-          return tracked
-        end)
-        return function()
-          dispatch { kind = EVENTS.COMMAND, command = COMMANDS.REWRITE_DONE, buf = event.buf, rewrite = rewrite }
-        end
-      elseif command == COMMANDS.REWRITE_DONE then
-        local rewrite = assert(event.rewrite)
-        update(event.buf, function(tracked)
-          if tracked.rewrite == rewrite then
-            local completed = clone(rewrite)
-            completed.after = vim.api.nvim_buf_get_changedtick(event.buf)
-            tracked.rewrite = completed
-          end
-          return tracked
-        end)
-      elseif command == COMMANDS.TAKE then
-        for buf, tracked in pairs(state.tracked) do
-          if tracked.retry and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modifiable then
-            dispatch { kind = EVENTS.REFRESH, buf = buf, watch = true }
-          end
-        end
-        local previous = state
-        local tracked = clone(previous.tracked)
-        local batches = {} ---@type table<integer, ChecktimeBatch>
-        for buf, item in pairs(previous.tracked) do
-          if not item.observing and not item.writing and (item.path or item.retry) and item.events then
-            local next = clone(item)
-            next.events = nil
-            tracked[buf] = next
-            batches[buf] = {
-              base = item.base,
-              version = item.version,
-              events = item.events,
-              changedtick = vim.api.nvim_buf_get_changedtick(buf),
-              input = item.input,
-            }
-          end
-        end
-        state = { entries = previous.entries, observed = previous.observed, tracked = tracked }
-        return batches
-      elseif command == COMMANDS.WRITING then
-        assert(event.value ~= nil)
-        update(event.buf, function(tracked)
-          tracked.writing = event.value
-          return tracked
-        end)
-      else
-        return assert(false, vim.inspect(event))
       end
+    elseif event.kind == EVENTS.REMEMBER then
+      update(event.buf, function(tracked)
+        tracked.base, tracked.version = event.base, event.version
+        return tracked
+      end)
+    elseif event.kind == EVENTS.RESTORE then
+      local batch = assert(event.batch)
+      for kind, order in pairs(batch.events) do
+        mark(kind, event.buf, order)
+      end
+    elseif event.kind == EVENTS.REWRITE then
+      local rewrite = event.rewrite
+      update(event.buf, function(tracked)
+        if event.done and tracked.rewrite == rewrite then
+          local completed = clone(rewrite)
+          completed.after = vim.api.nvim_buf_get_changedtick(event.buf)
+          tracked.rewrite = completed
+        elseif not event.done then
+          tracked.rewrite = rewrite
+        end
+        return tracked
+      end)
+    elseif event.kind == EVENTS.SAMPLE then
+      if vim.api.nvim_buf_get_changedtick(event.buf) ~= event.changedtick then
+        mark(M.LOCAL, event.buf)
+      end
+    elseif event.kind == EVENTS.WRITING then
+      update(event.buf, function(tracked)
+        tracked.writing = event.value
+        return tracked
+      end)
     else
-      return assert(false, vim.inspect(event))
+      error(vim.inspect(event))
     end
   end
-
-  local emit = async(function(event)
-    return dispatch(event)
-  end)
 
   vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
     group = lib.group,
@@ -433,107 +387,137 @@ M.start = function()
 
   vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
     group = lib.group,
-    callback = function()
+    callback = async(function()
       vim.v.fcs_choice = ""
-    end,
+    end),
   })
 
   vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufFilePost" }, {
     group = lib.group,
-    callback = function(args)
-      emit { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text, track = true }
-    end,
+    ---@param args ChecktimeAutocmdArgs
+    callback = async(function(args)
+      mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text, track = true }
+    end),
   })
 
   vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedP" }, {
     group = lib.group,
-    callback = function(args)
-      emit { kind = EVENTS.CHANGE, buf = args.buf }
-    end,
+    ---@param args ChecktimeAutocmdArgs
+    callback = async(function(args)
+      mb.dispatch { kind = EVENTS.DIRTY, change = M.LOCAL, buf = args.buf }
+    end),
   })
 
   vim.api.nvim_create_autocmd({ "TextChangedI" }, {
     group = lib.group,
-    callback = function(args)
-      emit { kind = EVENTS.CHANGE, buf = args.buf, input = INPUTS.ACTIVE }
-    end,
+    ---@param args ChecktimeAutocmdArgs
+    callback = async(function(args)
+      mb.dispatch { kind = EVENTS.DIRTY, change = M.LOCAL, buf = args.buf, insert = true }
+    end),
   })
 
-  autocmd.insert_leave({}, function(args)
-    emit { kind = EVENTS.CHANGE, buf = args.buf, input = INPUTS.CLOSING }
-  end)
+  autocmd.insert_leave(
+    {},
+    async(function(args)
+      mb.dispatch { kind = EVENTS.DIRTY, change = M.LOCAL, buf = args.buf, insert = false }
+    end)
+  )
 
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
-    callback = function(args)
-      emit { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text }
-    end,
+    ---@param args ChecktimeAutocmdArgs
+    callback = async(function(args)
+      mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text, track = false }
+    end),
   })
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
-    callback = function(args)
-      emit { kind = EVENTS.DETACH, buf = args.buf }
-    end,
+    ---@param args ChecktimeAutocmdArgs
+    callback = async(function(args)
+      mb.dispatch { kind = EVENTS.DETACH, buf = args.buf }
+    end),
   })
 
   vim.api.nvim_create_autocmd({ "FocusGained" }, {
     group = lib.group,
-    callback = function()
+    callback = async(function()
       for buf, tracked in pairs(state.tracked) do
         if tracked.path then
-          emit { kind = EVENTS.REFRESH, buf = buf }
+          mb.dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = buf, watch = false }
         end
       end
-    end,
+    end),
   })
 
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = lib.group,
     pattern = "modifiable",
-    callback = function()
-      emit { kind = EVENTS.REFRESH, buf = vim.api.nvim_get_current_buf(), watch = true }
-    end,
+    callback = async(function()
+      mb.dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = vim.api.nvim_get_current_buf(), watch = true }
+    end),
   })
 
-  autocmd.vim_enter(function()
+  autocmd.vim_enter(async(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) then
-        emit { kind = EVENTS.OBSERVE, buf = buf, base = snapshot.current(buf).text, track = true }
+        mb.dispatch { kind = EVENTS.OBSERVE, buf = buf, base = snapshot.current(buf).text, track = true }
       end
     end
-  end)
+  end))
 
-  mb.discard = function(buf)
-    dispatch { kind = EVENTS.COMMAND, command = COMMANDS.DISCARD, buf = buf }
-  end
-  mb.finish = function(buf)
-    dispatch { kind = EVENTS.COMMAND, command = COMMANDS.FINISH, buf = buf }
-  end
+  ---@param buf integer
+  ---@param batch ChecktimeBatch
+  ---@return ChecktimeBatch
   mb.latest = function(buf, batch)
-    local result = dispatch { kind = EVENTS.COMMAND, command = COMMANDS.LATEST, buf = buf, batch = batch }
-    ---@cast result ChecktimeBatch
-    return result
+    local tracked = state.tracked[buf]
+    local pending = tracked and tracked.events or {}
+    local local_order = math.max(batch.events[M.LOCAL] or 0, pending[M.LOCAL] or 0)
+    local remote_order = math.max(batch.events[M.REMOTE] or 0, pending[M.REMOTE] or 0)
+    local events = {} ---@type ChecktimeEvents
+    if local_order > 0 then
+      events[M.LOCAL] = local_order
+    end
+    if remote_order > 0 then
+      events[M.REMOTE] = remote_order
+    end
+    return {
+      base = batch.base,
+      version = batch.version,
+      events = events,
+      changedtick = vim.api.nvim_buf_get_changedtick(buf),
+      input = tracked and tracked.input or nil,
+    }
   end
-  mb.remember = function(buf, base, version)
-    dispatch { kind = EVENTS.COMMAND, command = COMMANDS.REMEMBER, buf = buf, base = base, version = version }
-  end
-  mb.restore = function(buf, batch)
-    dispatch { kind = EVENTS.COMMAND, command = COMMANDS.RESTORE, buf = buf, batch = batch }
-  end
-  mb.rewrite = function(buf)
-    local result = dispatch { kind = EVENTS.COMMAND, command = COMMANDS.REWRITE, buf = buf }
-    ---@cast result fun()
-    return result
-  end
+
+  ---@return table<integer, ChecktimeBatch>
   mb.take = function()
-    local result = dispatch { kind = EVENTS.COMMAND, command = COMMANDS.TAKE, buf = 0 }
-    ---@cast result table<integer, ChecktimeBatch>
-    return result
+    for buf, tracked in pairs(state.tracked) do
+      if tracked.retry and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modifiable then
+        mb.dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = buf, watch = true }
+      end
+    end
+    local previous = state
+    local tracked = clone(previous.tracked)
+    local batches = {} ---@type table<integer, ChecktimeBatch>
+    for buf, item in pairs(previous.tracked) do
+      if not item.observing and not item.writing and (item.path or item.retry) and item.events then
+        local next = clone(item)
+        next.events = nil
+        tracked[buf] = next
+        batches[buf] = {
+          base = item.base,
+          version = item.version,
+          events = item.events,
+          changedtick = vim.api.nvim_buf_get_changedtick(buf),
+          input = item.input,
+        }
+      end
+    end
+    state = { entries = previous.entries, observed = previous.observed, tracked = tracked }
+    return batches
   end
-  mb.writing = function(buf, value)
-    dispatch { kind = EVENTS.COMMAND, command = COMMANDS.WRITING, buf = buf, value = value }
-  end
+
   return mb
 end
 
