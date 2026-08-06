@@ -8,6 +8,8 @@ local M = {}
 local FLASH_SPAN = 1688
 local EVENTS = mailbox.EVENTS
 
+local ns = vim.api.nvim_create_namespace "goto.checktime"
+
 ---@class ChecktimeExecutor
 ---@field run fun(buf: integer, instruction: ChecktimeInstruction): ChecktimeOutcome
 
@@ -25,67 +27,12 @@ M.OUTCOMES = {
 
 ---@alias ChecktimeOutcome ChecktimeComplete|ChecktimeDeferred
 
----@class ChecktimeExecuteIO
----@field apply fun(buf: integer, instruction: ChecktimeReconcile)
----@field dispatch fun(event: ChecktimeMailboxEvent)
----@field reload fun(buf: integer): boolean
----@field unchanged fun(buf: integer, version: uv.fs_stat.result?): boolean
----@field write fun(buf: integer): boolean
-
 ---@class ChecktimeExecuteArgs
 ---@field dispatch fun(event: ChecktimeMailboxEvent)
-
----@param io ChecktimeExecuteIO
----@return ChecktimeExecutor
-M.new = function(io)
-  ---@param buf integer
-  ---@param instruction ChecktimeInstruction
-  ---@return ChecktimeOutcome
-  local run = function(buf, instruction)
-    if instruction.action == plan.ACTIONS.RETRY then
-      return { kind = M.OUTCOMES.DEFERRED }
-    elseif instruction.action == plan.ACTIONS.RELOAD then
-      local reloaded = io.reload(buf)
-      if reloaded then
-        io.dispatch { kind = EVENTS.DISCARD, buf = buf }
-        return { kind = M.OUTCOMES.COMPLETE }
-      end
-      return { kind = M.OUTCOMES.DEFERRED }
-    elseif instruction.action == plan.ACTIONS.WRITE then
-      ---@cast instruction ChecktimeWrite
-      local written = io.unchanged(buf, instruction.version) and io.write(buf)
-      if written then
-        return { kind = M.OUTCOMES.COMPLETE }
-      end
-      return { kind = M.OUTCOMES.DEFERRED }
-    elseif instruction.action == plan.ACTIONS.RECONCILE then
-      ---@cast instruction ChecktimeReconcile
-      if instruction.save and not io.unchanged(buf, instruction.version) then
-        io.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = instruction.base, version = instruction.version }
-        return { kind = M.OUTCOMES.DEFERRED }
-      end
-      io.apply(buf, instruction)
-      io.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = instruction.base, version = instruction.version }
-      local written = not instruction.save or io.write(buf)
-      if written then
-        return { kind = M.OUTCOMES.COMPLETE }
-      end
-      return { kind = M.OUTCOMES.DEFERRED }
-    elseif instruction.action == plan.ACTIONS.NOOP then
-      return { kind = M.OUTCOMES.COMPLETE }
-    else
-      error(vim.inspect(instruction))
-    end
-  end
-
-  return { run = run }
-end
 
 ---@param args ChecktimeExecuteArgs
 ---@return ChecktimeExecutor
 M.start = function(args)
-  local ns = vim.api.nvim_create_namespace "goto.checktime"
-
   ---@param buf integer
   ---@return boolean
   local write = function(buf)
@@ -136,13 +83,47 @@ M.start = function(args)
     vim.bo[buf].modified = instruction.modified
   end
 
-  return M.new {
-    apply = apply,
-    dispatch = args.dispatch,
-    reload = reload,
-    unchanged = snapshot.unchanged,
-    write = write,
-  }
+  ---@param buf integer
+  ---@param instruction ChecktimeInstruction
+  ---@return ChecktimeOutcome
+  local run = function(buf, instruction)
+    if instruction.action == plan.ACTIONS.RETRY then
+      return { kind = M.OUTCOMES.DEFERRED }
+    elseif instruction.action == plan.ACTIONS.RELOAD then
+      local reloaded = reload(buf)
+      if reloaded then
+        args.dispatch { kind = EVENTS.DISCARD, buf = buf }
+        return { kind = M.OUTCOMES.COMPLETE }
+      end
+      return { kind = M.OUTCOMES.DEFERRED }
+    elseif instruction.action == plan.ACTIONS.WRITE then
+      ---@cast instruction ChecktimeWrite
+      local written = snapshot.unchanged(buf, instruction.version) and write(buf)
+      if written then
+        return { kind = M.OUTCOMES.COMPLETE }
+      end
+      return { kind = M.OUTCOMES.DEFERRED }
+    elseif instruction.action == plan.ACTIONS.RECONCILE then
+      ---@cast instruction ChecktimeReconcile
+      if instruction.save and not snapshot.unchanged(buf, instruction.version) then
+        args.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = instruction.base, version = instruction.version }
+        return { kind = M.OUTCOMES.DEFERRED }
+      end
+      apply(buf, instruction)
+      args.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = instruction.base, version = instruction.version }
+      local written = not instruction.save or write(buf)
+      if written then
+        return { kind = M.OUTCOMES.COMPLETE }
+      end
+      return { kind = M.OUTCOMES.DEFERRED }
+    elseif instruction.action == plan.ACTIONS.NOOP then
+      return { kind = M.OUTCOMES.COMPLETE }
+    else
+      error(vim.inspect(instruction))
+    end
+  end
+
+  return { run = run }
 end
 
 return M

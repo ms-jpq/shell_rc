@@ -130,7 +130,7 @@ M.EVENTS = {
   WRITING = "writing",
 }
 
-M.REMOTE, M.LOCAL = "remote", "local"
+local REMOTE, LOCAL = "remote", "local"
 
 ---@return ChecktimeMailbox
 M.start = function()
@@ -166,13 +166,13 @@ M.start = function()
       observed = observed + 1
       current = observed
     end
-    state = { entries = state.entries, observed = observed, tracked = state.tracked }
-    update(buf, function(tracked)
-      local events = clone(tracked.events or {})
-      events[kind] = math.max(events[kind] or 0, current)
-      tracked.events = events
-      return tracked
-    end)
+    local tracked = clone(state.tracked)
+    local item = clone(tracked[buf] or {})
+    local events = clone(item.events or {})
+    events[kind] = math.max(events[kind] or 0, current)
+    item.events = events
+    tracked[buf] = item
+    state = { entries = state.entries, observed = observed, tracked = tracked }
   end
 
   ---@param buf integer
@@ -215,7 +215,7 @@ M.start = function()
           vim.schedule_wrap(async(function()
             for current, next in pairs(state.tracked) do
               if next.path == path then
-                mb.dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = current, watch = false }
+                mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = current, watch = false }
               end
             end
           end))
@@ -253,7 +253,7 @@ M.start = function()
         return next
       end)
       if event.track then
-        mark(M.REMOTE, event.buf)
+        mark(REMOTE, event.buf)
       end
       if not writing then
         update(event.buf, function(next)
@@ -275,54 +275,52 @@ M.start = function()
       if not vim.api.nvim_buf_is_valid(event.buf) then
         return
       elseif read == snapshot.STATES.RETRY then
-        mark(M.REMOTE, event.buf)
-      elseif read == snapshot.STATES.RECONCILE then
-        mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = base, version = version }
-      elseif read == snapshot.STATES.OPAQUE then
-        mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = base, version = version }
-      elseif read == snapshot.STATES.NONE then
+        mark(REMOTE, event.buf)
+      elseif read == snapshot.STATES.RECONCILE or read == snapshot.STATES.OPAQUE or read == snapshot.STATES.NONE then
         mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = base, version = version }
       else
         error(vim.inspect(read))
       end
       if read ~= snapshot.STATES.RETRY and writing then
-        mark(M.REMOTE, event.buf)
-      end
-    elseif event.kind == EVENTS.DIRTY and event.change == M.LOCAL then
-      if event.insert == false then
-        update(event.buf, function(tracked)
-          if tracked.input then
-            tracked.input = { closing = true }
-          end
-          return tracked
-        end)
-        mark(M.LOCAL, event.buf)
-      else
-        local rewrite = state.tracked[event.buf] and state.tracked[event.buf].rewrite
-        local changedtick = vim.api.nvim_buf_get_changedtick(event.buf)
-        update(event.buf, function(tracked)
-          tracked.rewrite = nil
-          return tracked
-        end)
-        if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
-          return
-        elseif event.insert then
-          update(event.buf, function(tracked)
-            tracked.input = { closing = false }
-            return tracked
-          end)
-        end
-        mark(M.LOCAL, event.buf)
-      end
-    elseif event.kind == EVENTS.DIRTY and event.change == M.REMOTE then
-      if event.watch then
-        watch(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
-      end
-      if not event.watch or vim.bo[event.buf].modifiable then
-        mark(M.REMOTE, event.buf)
+        mark(REMOTE, event.buf)
       end
     elseif event.kind == EVENTS.DIRTY then
-      error(vim.inspect(event))
+      if event.change == LOCAL then
+        if event.insert == false then
+          update(event.buf, function(tracked)
+            if tracked.input then
+              tracked.input = { closing = true }
+            end
+            return tracked
+          end)
+          mark(LOCAL, event.buf)
+        else
+          local rewrite = state.tracked[event.buf] and state.tracked[event.buf].rewrite
+          local changedtick = vim.api.nvim_buf_get_changedtick(event.buf)
+          update(event.buf, function(tracked)
+            tracked.rewrite = nil
+            return tracked
+          end)
+          if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
+            return
+          elseif event.insert then
+            update(event.buf, function(tracked)
+              tracked.input = { closing = false }
+              return tracked
+            end)
+          end
+          mark(LOCAL, event.buf)
+        end
+      elseif event.change == REMOTE then
+        if event.watch then
+          watch(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
+        end
+        if not event.watch or vim.bo[event.buf].modifiable then
+          mark(REMOTE, event.buf)
+        end
+      else
+        error(vim.inspect(event))
+      end
     elseif event.kind == EVENTS.DETACH then
       watch(event.buf, "")
       local tracked = clone(state.tracked)
@@ -341,7 +339,7 @@ M.start = function()
           return next
         end)
         if vim.bo[event.buf].modified then
-          mark(M.LOCAL, event.buf)
+          mark(LOCAL, event.buf)
         end
       end
     elseif event.kind == EVENTS.REMEMBER then
@@ -368,7 +366,7 @@ M.start = function()
       end)
     elseif event.kind == EVENTS.SAMPLE then
       if vim.api.nvim_buf_get_changedtick(event.buf) ~= event.changedtick then
-        mark(M.LOCAL, event.buf)
+        mark(LOCAL, event.buf)
       end
     elseif event.kind == EVENTS.WRITING then
       update(event.buf, function(tracked)
