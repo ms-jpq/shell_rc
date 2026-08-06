@@ -2,6 +2,14 @@ local snapshot = require "goto.checktime.snapshot"
 
 local M = {}
 
+---@class ChecktimeResolutionKinds
+M.KINDS = {
+  LOCAL = "local",
+  OPAQUE = "opaque",
+  RETRY = "retry",
+  TEXT = "text",
+}
+
 local text = function(buf, batch, version, remote)
   return {
     kind = M.KINDS.TEXT,
@@ -12,14 +20,6 @@ local text = function(buf, batch, version, remote)
     current = snapshot.current(buf),
   }
 end
-
----@class ChecktimeResolutionKinds
-M.KINDS = {
-  LOCAL = "local",
-  OPAQUE = "opaque",
-  RETRY = "retry",
-  TEXT = "text",
-}
 
 ---@class ChecktimeResolutionRetry
 ---@field kind "retry"

@@ -2,14 +2,12 @@ local M = {}
 
 ---@class ChecktimePoller
 ---@field path string
----@field bufs table<integer, true>
 ---@field close fun()
 
 ---@param path string
----@param bufs table<integer, true>
 ---@param changed fun()
 ---@return ChecktimePoller?
-M.start = function(path, bufs, changed)
+M.start = function(path, changed)
   local handle = vim.uv.new_fs_poll()
   if not handle then
     return nil
@@ -20,7 +18,7 @@ M.start = function(path, bufs, changed)
   end
 
   ---@diagnostic disable-next-line: missing-fields
-  local watcher = { path = path, bufs = bufs } ---@type ChecktimePoller
+  local watcher = { path = path } ---@type ChecktimePoller
   watcher.close = function()
     handle:stop()
     handle:close()
