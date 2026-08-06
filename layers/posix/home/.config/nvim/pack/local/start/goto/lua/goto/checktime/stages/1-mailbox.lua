@@ -240,28 +240,25 @@ M.start = function()
     if event.kind == EVENTS.OBSERVE then
       local tracked = state.tracked[event.buf] or {}
       local writing = tracked.writing
-      local base = assert(event.base)
-      if event.track then
-        update(event.buf, function(next)
-          next.base, next.version = base, nil
-          return next
-        end)
-        watch(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
-      end
+      local base = event.base
       update(event.buf, function(next)
+        if event.track then
+          next.base, next.version = base, nil
+        end
         next.observing = (next.observing or 0) + 1
+        if not writing then
+          next.rewrite, next.input = nil, nil
+        end
         return next
       end)
       if event.track then
+        watch(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
         mark(REMOTE, event.buf)
       end
-      if not writing then
-        update(event.buf, function(next)
-          next.rewrite, next.input = nil, nil
-          return next
-        end)
-      end
       local read, version = snapshot.read(event.buf)
+      if not state.tracked[event.buf] then
+        return
+      end
       update(event.buf, function(next)
         assert(next.observing)
         if next.observing == 1 then
@@ -355,12 +352,12 @@ M.start = function()
     elseif event.kind == EVENTS.REWRITE then
       local rewrite = event.rewrite
       update(event.buf, function(tracked)
-        if event.done and tracked.rewrite == rewrite then
+        if not event.done then
+          tracked.rewrite = rewrite
+        elseif tracked.rewrite == rewrite then
           local completed = clone(rewrite)
           completed.after = vim.api.nvim_buf_get_changedtick(event.buf)
           tracked.rewrite = completed
-        elseif not event.done then
-          tracked.rewrite = rewrite
         end
         return tracked
       end)
@@ -402,7 +399,7 @@ M.start = function()
     group = lib.group,
     ---@param args ChecktimeAutocmdArgs
     callback = async(function(args)
-      mb.dispatch { kind = EVENTS.DIRTY, change = M.LOCAL, buf = args.buf }
+      mb.dispatch { kind = EVENTS.DIRTY, change = LOCAL, buf = args.buf }
     end),
   })
 
@@ -410,14 +407,14 @@ M.start = function()
     group = lib.group,
     ---@param args ChecktimeAutocmdArgs
     callback = async(function(args)
-      mb.dispatch { kind = EVENTS.DIRTY, change = M.LOCAL, buf = args.buf, insert = true }
+      mb.dispatch { kind = EVENTS.DIRTY, change = LOCAL, buf = args.buf, insert = true }
     end),
   })
 
   autocmd.insert_leave(
     {},
     async(function(args)
-      mb.dispatch { kind = EVENTS.DIRTY, change = M.LOCAL, buf = args.buf, insert = false }
+      mb.dispatch { kind = EVENTS.DIRTY, change = LOCAL, buf = args.buf, insert = false }
     end)
   )
 
@@ -442,7 +439,7 @@ M.start = function()
     callback = async(function()
       for buf, tracked in pairs(state.tracked) do
         if tracked.path then
-          mb.dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = buf, watch = false }
+          mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = buf, watch = false }
         end
       end
     end),
@@ -452,7 +449,7 @@ M.start = function()
     group = lib.group,
     pattern = "modifiable",
     callback = async(function()
-      mb.dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = vim.api.nvim_get_current_buf(), watch = true }
+      mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = vim.api.nvim_get_current_buf(), watch = true }
     end),
   })
 
@@ -470,14 +467,14 @@ M.start = function()
   mb.latest = function(buf, batch)
     local tracked = state.tracked[buf]
     local pending = tracked and tracked.events or {}
-    local local_order = math.max(batch.events[M.LOCAL] or 0, pending[M.LOCAL] or 0)
-    local remote_order = math.max(batch.events[M.REMOTE] or 0, pending[M.REMOTE] or 0)
+    local local_order = math.max(batch.events[LOCAL] or 0, pending[LOCAL] or 0)
+    local remote_order = math.max(batch.events[REMOTE] or 0, pending[REMOTE] or 0)
     local events = {} ---@type ChecktimeEvents
     if local_order > 0 then
-      events[M.LOCAL] = local_order
+      events[LOCAL] = local_order
     end
     if remote_order > 0 then
-      events[M.REMOTE] = remote_order
+      events[REMOTE] = remote_order
     end
     return {
       base = batch.base,
@@ -492,7 +489,7 @@ M.start = function()
   mb.take = function()
     for buf, tracked in pairs(state.tracked) do
       if tracked.retry and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modifiable then
-        mb.dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = buf, watch = true }
+        mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = buf, watch = true }
       end
     end
     local previous = state
