@@ -75,8 +75,8 @@ end
 
 ---@class ChecktimeMailbox
 ---@field commit fun(change: ChecktimeCommit)
----@field latest fun(buf: integer, batch: ChecktimeBatch): ChecktimeBatch
----@field take fun(): table<integer, ChecktimeBatch>
+---@field latest fun(buf: integer, changedtick: integer): ChecktimeBatch?
+---@field take fun(): table<integer, integer>
 
 local EVENTS = {
   COMMIT = "commit",
@@ -281,48 +281,36 @@ M.start = function()
   }
 
   ---@param buf integer
-  ---@param batch ChecktimeBatch
-  ---@return ChecktimeBatch
-  mb.latest = function(buf, batch)
+  ---@param before integer
+  ---@return ChecktimeBatch?
+  mb.latest = function(buf, before)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-    if changedtick ~= batch.changedtick then
+    if changedtick ~= before then
       mark(LOCAL, buf)
     end
     local tracked = vim.b[buf][TRACKED]
-    local pending = tracked and tracked.events or {}
-    local local_order = math.max(batch.events[LOCAL] or 0, pending[LOCAL] or 0)
-    local remote_order = math.max(batch.events[REMOTE] or 0, pending[REMOTE] or 0)
-    local events = {} ---@type ChecktimeEvents
-    if local_order > 0 then
-      events[LOCAL] = local_order
-    end
-    if remote_order > 0 then
-      events[REMOTE] = remote_order
+    if not tracked or not tracked.events then
+      return nil
     end
     return {
-      accepted = batch.accepted,
-      version = batch.version,
-      events = events,
+      accepted = tracked.accepted,
+      version = tracked.version,
+      events = tracked.events,
       changedtick = changedtick,
     }
   end
 
-  ---@return table<integer, ChecktimeBatch>
+  ---@return table<integer, integer>
   mb.take = function()
     watches.retry()
-    local batches = {} ---@type table<integer, ChecktimeBatch>
+    local ready = {} ---@type table<integer, integer>
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       local item = vim.b[buf][TRACKED]
       if item and not item.observing and not vim.b[buf][WRITING] and watches.has(buf) and item.events then
-        batches[buf] = {
-          accepted = item.accepted,
-          version = item.version,
-          events = item.events,
-          changedtick = vim.api.nvim_buf_get_changedtick(buf),
-        }
+        ready[buf] = vim.api.nvim_buf_get_changedtick(buf)
       end
     end
-    return batches
+    return ready
   end
 
   ---@param change ChecktimeCommit

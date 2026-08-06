@@ -18,7 +18,7 @@ do
   local executor = execute.start(inbox.commit)
 
   local tick = function()
-    for buf, captured in pairs(inbox.take()) do
+    for buf, changedtick in pairs(inbox.take()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
         lock.guard(vim.api.nvim_buf_get_name(buf), function()
           if
@@ -29,7 +29,10 @@ do
             return
           end
 
-          local batch = inbox.latest(buf, captured)
+          local batch = inbox.latest(buf, changedtick)
+          if not batch then
+            return
+          end
           local instruction = resolve.plan(buf, batch)
           executor.run(buf, batch, instruction)
         end)
