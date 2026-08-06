@@ -43,6 +43,16 @@ M.ACTIONS = {
 ---@class ChecktimeResolver
 ---@field plan fun(buf: integer, batch: ChecktimeBatch): ChecktimeInstruction
 
+---@param batch ChecktimeBatch
+---@param grace_ms integer
+---@return boolean
+local within_grace = function(batch, grace_ms)
+  local local_change = batch.events["local"]
+  return local_change ~= nil
+    and batch.events.remote ~= nil
+    and vim.uv.hrtime() - local_change.monotonic_ts < grace_ms * lib.NANOSECONDS_PER_MILLISECOND
+end
+
 ---@param spec ChecktimeResolveConfig
 ---@return ChecktimeResolver
 M.start = function(spec)
@@ -53,15 +63,6 @@ M.start = function(spec)
   ---@param batch ChecktimeBatch
   ---@return ChecktimeInstruction
   resolver.plan = function(buf, batch)
-    local local_change = batch.events["local"]
-    if
-      local_change
-      and batch.events.remote
-      and vim.uv.hrtime() - local_change.monotonic_ts < spec.grace_ms * lib.NANOSECONDS_PER_MILLISECOND
-    then
-      return { action = M.ACTIONS.RETRY }
-    end
-
     if not batch.events.remote then
       if vim.bo[buf].modified then
         return { action = M.ACTIONS.WRITE, version = batch.version }
@@ -76,17 +77,19 @@ M.start = function(spec)
     elseif state == snapshotter.STATES.OPAQUE then
       return { action = M.ACTIONS.RELOAD }
     elseif state == snapshotter.STATES.RECONCILE or state == snapshotter.STATES.NONE then
-      local input = snapshotter.input(buf)
-      local current = snapshotter.current(buf)
+      local input, current = snapshotter.input(buf), snapshotter.current(buf)
       local accepted = remote or ""
-      local merged = hunks.merge(
-        current.linefeed,
-        snapshotter.row_text(current, batch.accepted or input or ""),
-        snapshotter.row_text(current, current.text),
-        snapshotter.row_text(current, accepted)
-      )
+      local base = snapshotter.row_text(current, batch.accepted or input or "")
+      local remote_text = snapshotter.row_text(current, accepted)
+
+      if within_grace(batch, spec.grace_ms) and base ~= remote_text then
+        return { action = M.ACTIONS.RETRY }
+      end
+
+      local merged = hunks.merge(current.linefeed, base, snapshotter.row_text(current, current.text), remote_text)
       local text = snapshotter.buffer_text(current, merged)
       local modified = text ~= snapshotter.fit(current, accepted)
+
       return {
         action = M.ACTIONS.RECONCILE,
         current = current,
