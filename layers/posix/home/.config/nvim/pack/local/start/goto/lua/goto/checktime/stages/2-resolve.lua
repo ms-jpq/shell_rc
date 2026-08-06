@@ -29,6 +29,7 @@ end
 ---@class ChecktimeResolutionText
 ---@field kind "text"
 ---@field base? string
+---@field input? string
 ---@field version? uv.fs_stat.result
 ---@field remote string
 ---@field current ChecktimeCurrent
@@ -54,9 +55,13 @@ M.gather = function(buf, batch)
   elseif state == snapshot.STATES.OPAQUE then
     return { kind = M.KINDS.OPAQUE }
   elseif state == snapshot.STATES.RECONCILE then
-    return text(buf, batch, version, remote)
+    local resolution = text(buf, batch, version, remote)
+    resolution.input = snapshot.input(buf)
+    return resolution
   elseif state == snapshot.STATES.NONE then
-    return text(buf, batch, version, remote)
+    local resolution = text(buf, batch, version, remote)
+    resolution.input = snapshot.input(buf)
+    return resolution
   else
     ---@diagnostic disable-next-line: return-type-mismatch
     return assert(false, vim.inspect(state))

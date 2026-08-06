@@ -1,7 +1,10 @@
 local async = require "goto.async"
+local lib = require "goto.lib"
 local poll = require "goto.checktime.watcher.poller"
 
 local M = {}
+
+local WATCH = "__checktime_watcher__"
 
 ---@class ChecktimeWatcherArgs
 ---@field changed fun(buf: integer)
@@ -12,85 +15,87 @@ local M = {}
 ---@field retry fun()
 ---@field update fun(buf: integer, path: string)
 
+---@class ChecktimeWatch
+---@field path string
+---@field poller? ChecktimePoller
+
 ---@param args ChecktimeWatcherArgs
 ---@return ChecktimeWatcher
 M.start = function(args)
-  local attachments = {} ---@type table<integer, string>
-  local entries = {} ---@type table<string, ChecktimePoller>
   ---@diagnostic disable-next-line: missing-fields
   local watcher = {} ---@type ChecktimeWatcher
 
+  ---@param buf integer
   ---@param path string
-  local close = function(path)
-    for _, attached in pairs(attachments) do
-      if attached == path then
-        return
-      end
-    end
-    local entry = entries[path]
-    if entry then
-      entry.close()
-      entries[path] = nil
-    end
-  end
-
-  ---@param path string
-  local start = function(path)
-    if entries[path] then
-      return
-    end
+  local start = function(buf, path)
     local entry = poll.start(
       path,
       vim.schedule_wrap(async(function()
-        for buf, attached in pairs(attachments) do
-          if attached == path then
+        if vim.api.nvim_buf_is_valid(buf) then
+          local current = vim.b[buf][WATCH]
+          if current and current.path == path then
             args.changed(buf)
           end
         end
       end))
     )
-    if entry then
-      entries[path] = entry
+    vim.b[buf][WATCH] = { path = path, poller = entry }
+  end
+
+  ---@param buf integer
+  local reap = function(buf)
+    local current = vim.b[buf][WATCH]
+    if current and current.poller then
+      current.poller.close()
     end
+    vim.b[buf][WATCH] = nil
   end
 
   ---@param buf integer
   ---@return boolean
   watcher.has = function(buf)
-    return attachments[buf] ~= nil
+    return vim.api.nvim_buf_is_valid(buf) and vim.b[buf][WATCH] ~= nil
   end
 
   watcher.refresh = function()
-    for buf in pairs(attachments) do
-      args.changed(buf)
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
+      if vim.b[buf][WATCH] then
+        args.changed(buf)
+      end
     end
   end
 
   watcher.retry = function()
-    for _, path in pairs(attachments) do
-      start(path)
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
+      local current = vim.b[buf][WATCH]
+      if current and not current.poller then
+        start(buf, current.path)
+      end
     end
   end
 
   ---@param buf integer
   ---@param path string
   watcher.update = function(buf, path)
-    local previous = attachments[buf]
-    if previous == path then
-      if path ~= "" then
-        start(path)
+    local previous = vim.b[buf][WATCH]
+    if previous and previous.path == path then
+      if not previous.poller then
+        start(buf, path)
       end
       return
     end
-    attachments[buf] = nil
-    if previous then
-      close(previous)
-    end
+    reap(buf)
     if path ~= "" then
-      attachments[buf] = path
-      start(path)
+      start(buf, path)
     end
   end
+
+  vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
+    group = lib.group,
+    callback = function(event)
+      reap(event.buf)
+    end,
+  })
 
   return watcher
 end

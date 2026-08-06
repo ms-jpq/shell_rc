@@ -5,6 +5,7 @@ local lock = require "goto.checktime.lock"
 local mailbox = require "goto.checktime.stages.1-mailbox"
 local plan = require "goto.checktime.stages.3-plan"
 local resolve = require "goto.checktime.stages.2-resolve"
+local snapshot = require "goto.checktime.snapshot"
 
 vim.opt.backup = false
 vim.opt.writebackup = false
@@ -18,6 +19,9 @@ do
   local inbox = mailbox.start()
   local dispatch = inbox.dispatch
   local EVENTS = mailbox.EVENTS
+  snapshot.start(function(buf)
+    dispatch { kind = EVENTS.DIRTY, change = "remote", buf = buf, watch = false }
+  end)
   local executor = execute.start {
     dispatch = dispatch,
   }

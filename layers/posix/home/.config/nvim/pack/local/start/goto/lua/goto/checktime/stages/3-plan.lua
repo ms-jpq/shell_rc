@@ -51,7 +51,7 @@ M.compute = function(resolution)
     return { action = M.ACTIONS.NOOP }
   elseif resolution.kind == resolve.KINDS.TEXT then
     local current, remote = resolution.current, resolution.remote
-    local base = resolution.base or ""
+    local base = resolution.input or resolution.base or ""
     local merged = hunks.merge(
       current.linefeed,
       snapshot.row_text(current, base),
@@ -67,7 +67,7 @@ M.compute = function(resolution)
       base = remote,
       version = resolution.version,
       modified = modified,
-      save = modified,
+      save = modified and not resolution.input,
     }
   else
     ---@diagnostic disable-next-line: return-type-mismatch

@@ -32,10 +32,7 @@ end
 ---@field writing? boolean
 ---@field observing? integer
 ---@field epoch? integer
-
----@class ChecktimeMailboxState
----@field observed integer
----@field tracked table<integer, ChecktimeTracked>
+---@field observed? integer
 
 ---@class ChecktimeBatch
 ---@field base? string
@@ -59,10 +56,6 @@ end
 ---@field buf integer
 ---@field change "remote"
 ---@field watch boolean
-
----@class ChecktimeDetach
----@field kind "detach"
----@field buf integer
 
 ---@class ChecktimeDiscard
 ---@field kind "discard"
@@ -95,7 +88,7 @@ end
 ---@field buf integer
 ---@field changedtick integer
 
----@alias ChecktimeMailboxEvent ChecktimeObserve|ChecktimeDirtyLocal|ChecktimeDirtyRemote|ChecktimeDetach|ChecktimeDiscard|ChecktimeRemember|ChecktimeRestore|ChecktimeRewriteEvent|ChecktimeSample|ChecktimeWriting
+---@alias ChecktimeMailboxEvent ChecktimeObserve|ChecktimeDirtyLocal|ChecktimeDirtyRemote|ChecktimeDiscard|ChecktimeRemember|ChecktimeRestore|ChecktimeRewriteEvent|ChecktimeSample|ChecktimeWriting
 
 ---@class ChecktimeAutocmdArgs
 ---@field buf integer
@@ -107,7 +100,6 @@ end
 
 ---@class ChecktimeMailboxEvents
 M.EVENTS = {
-  DETACH = "detach",
   DIRTY = "dirty",
   DISCARD = "discard",
   OBSERVE = "observe",
@@ -119,15 +111,11 @@ M.EVENTS = {
 }
 
 local REMOTE, LOCAL = "remote", "local"
+local TRACKED = "__checktime_mailbox__"
 
 ---@return ChecktimeMailbox
 M.start = function()
   local EVENTS = M.EVENTS
-  ---@type ChecktimeMailboxState
-  local state = {
-    observed = 0,
-    tracked = {},
-  }
   ---@diagnostic disable-next-line: missing-fields
   local mb = {} ---@type ChecktimeMailbox
 
@@ -135,31 +123,29 @@ M.start = function()
   ---@param fn fun(tracked: ChecktimeTracked): ChecktimeTracked
   ---@return ChecktimeTracked
   local update = function(buf, fn)
-    local tracked = clone(state.tracked)
-    tracked[buf] = fn(clone(tracked[buf] or {}))
-    state = { observed = state.observed, tracked = tracked }
-    return tracked[buf]
+    local tracked = fn(clone(vim.b[buf][TRACKED] or {}))
+    vim.b[buf][TRACKED] = tracked
+    return tracked
   end
 
   ---@param kind ChecktimeChange
   ---@param buf integer
   ---@param order? integer
   local mark = function(kind, buf, order)
-    local observed = state.observed
-    local current = order
-    if current then
-      observed = math.max(observed, current)
-    else
-      observed = observed + 1
-      current = observed
-    end
-    local tracked = clone(state.tracked)
-    local item = clone(tracked[buf] or {})
-    local events = clone(item.events or {})
-    events[kind] = math.max(events[kind] or 0, current)
-    item.events = events
-    tracked[buf] = item
-    state = { observed = observed, tracked = tracked }
+    update(buf, function(tracked)
+      local observed = tracked.observed or 0
+      local current = order
+      if current then
+        observed = math.max(observed, current)
+      else
+        observed = observed + 1
+        current = observed
+      end
+      local events = clone(tracked.events or {})
+      events[kind] = math.max(events[kind] or 0, current)
+      tracked.events, tracked.observed = events, observed
+      return tracked
+    end)
   end
 
   local watches = watcher.start {
@@ -170,13 +156,17 @@ M.start = function()
 
   ---@param event ChecktimeMailboxEvent
   mb.dispatch = function(event)
+    if not vim.api.nvim_buf_is_valid(event.buf) then
+      return
+    end
     if event.kind == EVENTS.OBSERVE then
-      local tracked = state.tracked[event.buf] or {}
-      local epoch = event.track and state.observed + 1 or tracked.epoch
+      local tracked = vim.b[event.buf][TRACKED] or {}
+      local epoch = event.track and (tracked.observed or 0) + 1 or tracked.epoch
       local writing = tracked.writing
       if not event.track and writing then
         return
       end
+
       local base = event.base
       update(event.buf, function(next)
         if event.track then
@@ -193,10 +183,15 @@ M.start = function()
         mark(REMOTE, event.buf)
       end
       local read, version, text = snapshot.read(event.buf)
-      local current = state.tracked[event.buf]
+      if not vim.api.nvim_buf_is_valid(event.buf) then
+        return
+      end
+
+      local current = vim.b[event.buf][TRACKED]
       if not current or current.epoch ~= epoch or not current.observing then
         return
       end
+
       update(event.buf, function(next)
         assert(next.observing)
         if next.observing == 1 then
@@ -206,9 +201,8 @@ M.start = function()
         end
         return next
       end)
-      if not vim.api.nvim_buf_is_valid(event.buf) then
-        return
-      elseif read == snapshot.STATES.RETRY then
+
+      if read == snapshot.STATES.RETRY then
         mark(REMOTE, event.buf)
       elseif read == snapshot.STATES.RECONCILE then
         mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = event.track and base or text, version = version }
@@ -219,12 +213,14 @@ M.start = function()
       end
     elseif event.kind == EVENTS.DIRTY then
       if event.change == LOCAL then
-        local rewrite = state.tracked[event.buf] and state.tracked[event.buf].rewrite
+        local tracked = vim.b[event.buf][TRACKED]
+        local rewrite = tracked and tracked.rewrite
         local changedtick = vim.api.nvim_buf_get_changedtick(event.buf)
-        update(event.buf, function(tracked)
-          tracked.rewrite = nil
-          return tracked
+        update(event.buf, function(trk)
+          trk.rewrite = nil
+          return trk
         end)
+
         if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
           return
         end
@@ -233,17 +229,13 @@ M.start = function()
         if event.watch then
           watches.update(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
         end
+
         if not event.watch or vim.bo[event.buf].modifiable then
           mark(REMOTE, event.buf)
         end
       else
         error(vim.inspect(event))
       end
-    elseif event.kind == EVENTS.DETACH then
-      watches.update(event.buf, "")
-      local tracked = clone(state.tracked)
-      tracked[event.buf] = nil
-      state = { observed = state.observed, tracked = tracked }
     elseif event.kind == EVENTS.DISCARD then
       update(event.buf, function(tracked)
         tracked.rewrite = nil
@@ -323,10 +315,9 @@ M.start = function()
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
-    ---@param args ChecktimeAutocmdArgs
-    callback = async(function(args)
-      mb.dispatch { kind = EVENTS.DETACH, buf = args.buf }
-    end),
+    callback = function(event)
+      vim.b[event.buf][TRACKED] = nil
+    end,
   })
 
   vim.api.nvim_create_autocmd({ "FocusGained" }, {
@@ -346,7 +337,7 @@ M.start = function()
 
   autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_buf_is_loaded(buf) then
+      if vim.api.nvim_buf_is_valid(buf) then
         mb.dispatch { kind = EVENTS.OBSERVE, buf = buf, base = snapshot.current(buf).text, track = true }
       end
     end
@@ -356,7 +347,7 @@ M.start = function()
   ---@param batch ChecktimeBatch
   ---@return ChecktimeBatch
   mb.latest = function(buf, batch)
-    local tracked = state.tracked[buf]
+    local tracked = vim.b[buf][TRACKED]
     local pending = tracked and tracked.events or {}
     local local_order = math.max(batch.events[LOCAL] or 0, pending[LOCAL] or 0)
     local remote_order = math.max(batch.events[REMOTE] or 0, pending[REMOTE] or 0)
@@ -378,14 +369,14 @@ M.start = function()
   ---@return table<integer, ChecktimeBatch>
   mb.take = function()
     watches.retry()
-    local previous = state
-    local tracked = clone(previous.tracked)
     local batches = {} ---@type table<integer, ChecktimeBatch>
-    for buf, item in pairs(previous.tracked) do
-      if not item.observing and not item.writing and watches.has(buf) and item.events then
-        local next = clone(item)
-        next.events = nil
-        tracked[buf] = next
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
+      local item = vim.b[buf][TRACKED]
+      if item and not item.observing and not item.writing and watches.has(buf) and item.events then
+        update(buf, function(next)
+          next.events = nil
+          return next
+        end)
         batches[buf] = {
           base = item.base,
           version = item.version,
@@ -394,7 +385,6 @@ M.start = function()
         }
       end
     end
-    state = { observed = previous.observed, tracked = tracked }
     return batches
   end
 

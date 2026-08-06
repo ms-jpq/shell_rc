@@ -1,4 +1,5 @@
 local async = require "goto.async"
+local autocmd = require "goto.autocmd"
 local lib = require "goto.lib"
 
 local M = {}
@@ -25,6 +26,7 @@ M.STATES = {
 
 local MAX_BYTES = 2 * 1024 * 1024
 local BOM = "\239\187\191"
+local INPUT_BASE = "__checktime_insert_base__"
 
 local same_version = function(before, after)
   return before
@@ -51,6 +53,24 @@ M.current = function(buf)
     endofline = endofline,
     final_empty = lines[#lines] == "",
   }
+end
+
+---@param buf integer
+---@return string?
+M.input = function(buf)
+  return vim.b[buf][INPUT_BASE]
+end
+
+---@param refresh fun(buf: integer)
+M.start = function(refresh)
+  autocmd.insert_mode({ group = lib.group }, function(event)
+    vim.b[event.buf][INPUT_BASE] = M.current(event.buf).text
+  end, function(event)
+    if M.input(event.buf) then
+      vim.b[event.buf][INPUT_BASE] = nil
+      refresh(event.buf)
+    end
+  end)
 end
 
 ---@param current ChecktimeCurrent

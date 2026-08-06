@@ -48,10 +48,10 @@ M.start = function(args)
       local text = snapshot.current(buf).text
       local _, version = async.uv.fs_stat(name)
       async.scheduled()
-      args.dispatch { kind = EVENTS.WRITING, buf = buf, value = false }
       if not vim.api.nvim_buf_is_valid(buf) then
         return false
       end
+      args.dispatch { kind = EVENTS.WRITING, buf = buf, value = false }
       args.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = text, version = version }
     end
     return complete
