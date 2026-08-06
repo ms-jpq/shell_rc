@@ -114,6 +114,10 @@ local REMOTE, LOCAL = "remote", "local"
 local RELOADING = "__checktime_reloading__"
 local TRACKED = "__checktime_mailbox__"
 
+local reloading = function(buf)
+  return vim.b[buf][RELOADING]
+end
+
 ---@param buf integer
 ---@param fn fun()
 ---@return boolean
@@ -163,6 +167,7 @@ M.start = function()
     changed = function(buf)
       mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = buf, watch = false }
     end,
+    reloading = reloading,
   }
 
   ---@param event ChecktimeMailboxEvent
@@ -376,7 +381,9 @@ M.start = function()
     vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
       group = lib.group,
       callback = function(event)
-        vim.b[event.buf][TRACKED] = nil
+        if not reloading(event.buf) then
+          vim.b[event.buf][TRACKED] = nil
+        end
       end,
     })
 

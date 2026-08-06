@@ -51,7 +51,7 @@ M.compute = function(resolution)
     return { action = M.ACTIONS.NOOP }
   elseif resolution.kind == resolve.KINDS.TEXT then
     local current, remote = resolution.current, resolution.remote
-    local base = resolution.input or resolution.base or ""
+    local base = resolution.base or resolution.input or ""
     local merged = hunks.merge(
       current.linefeed,
       snapshot.row_text(current, base),

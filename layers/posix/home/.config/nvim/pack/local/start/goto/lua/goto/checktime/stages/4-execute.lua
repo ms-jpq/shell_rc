@@ -109,6 +109,7 @@ M.start = function(args)
     elseif instruction.action == plan.ACTIONS.RECONCILE then
       ---@cast instruction ChecktimeReconcile
       if instruction.save and not snapshot.unchanged(buf, instruction.version) then
+        args.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = instruction.base, version = instruction.version }
         return { kind = M.OUTCOMES.DEFERRED }
       end
       apply(buf, instruction)

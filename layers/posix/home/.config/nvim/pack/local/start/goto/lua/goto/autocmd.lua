@@ -37,8 +37,9 @@ M.insert_leave = function(opts, leave)
     { "ModeChanged" },
     vim.tbl_extend("force", { group = lib.group }, opts, {
       callback = function(args)
-        local old = vim.fn.get(vim.v.event, "old_mode", "")
-        local new = vim.fn.get(vim.v.event, "new_mode", "")
+        local event = args.data or vim.v.event
+        local old = vim.fn.get(event, "old_mode", "")
+        local new = vim.fn.get(event, "new_mode", "")
         if insert_mode(old) and not insert_mode(new) then
           leave(args)
         end

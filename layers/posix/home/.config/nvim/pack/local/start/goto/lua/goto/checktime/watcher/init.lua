@@ -8,6 +8,7 @@ local WATCH = "__checktime_watcher__"
 
 ---@class ChecktimeWatcherArgs
 ---@field changed fun(buf: integer)
+---@field reloading fun(buf: integer): boolean
 
 ---@class ChecktimeWatcher
 ---@field has fun(buf: integer): boolean
@@ -93,7 +94,9 @@ M.start = function(args)
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
     callback = function(event)
-      reap(event.buf)
+      if not args.reloading(event.buf) then
+        reap(event.buf)
+      end
     end,
   })
 
