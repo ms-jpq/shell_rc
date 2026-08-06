@@ -20,6 +20,7 @@ end
 ---@alias ChecktimeChange "remote"|"local"
 ---@alias ChecktimeEvents table<ChecktimeChange, integer>
 ---@class ChecktimeInput
+---@field base string
 ---@field closing boolean
 
 ---@class ChecktimeRewrite
@@ -184,15 +185,18 @@ M.start = function()
       local tracked = state.tracked[event.buf] or {}
       local epoch = event.track and state.observed + 1 or tracked.epoch
       local writing = tracked.writing
+      if not event.track and writing then
+        return
+      end
       local base = event.base
       update(event.buf, function(next)
         if event.track then
           next.base, next.version, next.epoch = base, nil, epoch
+          next.observing = 1
+        else
+          next.observing = (next.observing or 0) + 1
         end
-        next.observing = (next.observing or 0) + 1
-        if not writing then
-          next.rewrite, next.input = nil, nil
-        end
+        next.rewrite, next.input = nil, nil
         return next
       end)
       if event.track then
@@ -211,7 +215,6 @@ M.start = function()
         else
           next.observing = next.observing - 1
         end
-        next.writing = nil
         return next
       end)
       if not vim.api.nvim_buf_is_valid(event.buf) then
@@ -225,15 +228,12 @@ M.start = function()
       else
         error(vim.inspect(read))
       end
-      if read ~= snapshot.STATES.RETRY and writing then
-        mark(REMOTE, event.buf)
-      end
     elseif event.kind == EVENTS.DIRTY then
       if event.change == LOCAL then
         if event.insert == false then
           update(event.buf, function(tracked)
             if tracked.input then
-              tracked.input = { closing = true }
+              tracked.input = { base = tracked.input.base, closing = true }
             end
             return tracked
           end)
@@ -249,7 +249,7 @@ M.start = function()
             return
           elseif event.insert then
             update(event.buf, function(tracked)
-              tracked.input = { closing = false }
+              tracked.input = tracked.input or { base = tracked.base or "", closing = false }
               return tracked
             end)
           end

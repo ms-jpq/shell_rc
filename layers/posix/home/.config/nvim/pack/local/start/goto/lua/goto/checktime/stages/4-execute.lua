@@ -48,6 +48,7 @@ M.start = function(args)
       local text = snapshot.current(buf).text
       local _, version = async.uv.fs_stat(name)
       async.scheduled()
+      args.dispatch { kind = EVENTS.WRITING, buf = buf, value = false }
       if not vim.api.nvim_buf_is_valid(buf) then
         return false
       end
@@ -106,7 +107,6 @@ M.start = function(args)
     elseif instruction.action == plan.ACTIONS.RECONCILE then
       ---@cast instruction ChecktimeReconcile
       if instruction.save and not snapshot.unchanged(buf, instruction.version) then
-        args.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = instruction.base, version = instruction.version }
         return { kind = M.OUTCOMES.DEFERRED }
       end
       apply(buf, instruction)
