@@ -60,7 +60,7 @@ M.start = function(args)
   ---@return boolean
   local reload = function(buf)
     local ok = pcall(vim.api.nvim_buf_call, buf, function()
-      vim.cmd [[silent! edit!]]
+      vim.cmd [[noautocmd silent! edit!]]
     end)
     return ok and not vim.bo[buf].modified
   end
