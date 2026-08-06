@@ -1,8 +1,8 @@
 local async = require "goto.async"
 local autocmd = require "goto.autocmd"
 local lib = require "goto.lib"
-local poll = require "goto.checktime.poll"
 local snapshot = require "goto.checktime.snapshot"
+local watcher = require "goto.checktime.watcher"
 
 local M = {}
 
@@ -34,11 +34,8 @@ end
 ---@field rewrite? ChecktimeRewrite
 ---@field writing? boolean
 ---@field observing? integer
----@field path? string
----@field retry? string
 
 ---@class ChecktimeMailboxState
----@field entries table<string, ChecktimePoller>
 ---@field observed integer
 ---@field tracked table<integer, ChecktimeTracked>
 
@@ -137,7 +134,6 @@ M.start = function()
   local EVENTS = M.EVENTS
   ---@type ChecktimeMailboxState
   local state = {
-    entries = {},
     observed = 0,
     tracked = {},
   }
@@ -150,7 +146,7 @@ M.start = function()
   local update = function(buf, fn)
     local tracked = clone(state.tracked)
     tracked[buf] = fn(clone(tracked[buf] or {}))
-    state = { entries = state.entries, observed = state.observed, tracked = tracked }
+    state = { observed = state.observed, tracked = tracked }
     return tracked[buf]
   end
 
@@ -172,68 +168,14 @@ M.start = function()
     events[kind] = math.max(events[kind] or 0, current)
     item.events = events
     tracked[buf] = item
-    state = { entries = state.entries, observed = observed, tracked = tracked }
+    state = { observed = observed, tracked = tracked }
   end
 
-  ---@param buf integer
-  ---@param path string
-  local watch = function(buf, path)
-    local tracked = state.tracked[buf]
-    if tracked and tracked.path == path and not tracked.retry then
-      return
-    end
-    local previous = tracked and tracked.path
-    update(buf, function(next)
-      next.path, next.retry = nil, nil
-      return next
-    end)
-    if previous then
-      local attached = false
-      for _, next in pairs(state.tracked) do
-        if next.path == previous then
-          attached = true
-          break
-        end
-      end
-      local watcher = state.entries[previous]
-      if watcher and not attached then
-        watcher.close()
-        local entries = clone(state.entries)
-        entries[previous] = nil
-        state = { entries = entries, observed = state.observed, tracked = state.tracked }
-      end
-    end
-    if path ~= "" then
-      update(buf, function(next)
-        next.retry = path
-        return next
-      end)
-      local watcher = state.entries[path] ---@type ChecktimePoller?
-      if not watcher then
-        watcher = poll.start(
-          path,
-          vim.schedule_wrap(async(function()
-            for current, next in pairs(state.tracked) do
-              if next.path == path then
-                mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = current, watch = false }
-              end
-            end
-          end))
-        )
-        if watcher then
-          local entries = clone(state.entries)
-          entries[path] = watcher
-          state = { entries = entries, observed = state.observed, tracked = state.tracked }
-        end
-      end
-      if watcher then
-        update(buf, function(next)
-          next.path, next.retry = path, nil
-          return next
-        end)
-      end
-    end
-  end
+  local watches = watcher.start {
+    changed = function(buf)
+      mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = buf, watch = false }
+    end,
+  }
 
   ---@param event ChecktimeMailboxEvent
   mb.dispatch = function(event)
@@ -252,7 +194,7 @@ M.start = function()
         return next
       end)
       if event.track then
-        watch(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
+        watches.update(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
         mark(REMOTE, event.buf)
       end
       local read, version = snapshot.read(event.buf)
@@ -310,7 +252,7 @@ M.start = function()
         end
       elseif event.change == REMOTE then
         if event.watch then
-          watch(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
+          watches.update(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
         end
         if not event.watch or vim.bo[event.buf].modifiable then
           mark(REMOTE, event.buf)
@@ -319,10 +261,10 @@ M.start = function()
         error(vim.inspect(event))
       end
     elseif event.kind == EVENTS.DETACH then
-      watch(event.buf, "")
+      watches.update(event.buf, "")
       local tracked = clone(state.tracked)
       tracked[event.buf] = nil
-      state = { entries = state.entries, observed = state.observed, tracked = tracked }
+      state = { observed = state.observed, tracked = tracked }
     elseif event.kind == EVENTS.DISCARD then
       update(event.buf, function(tracked)
         tracked.rewrite, tracked.input = nil, nil
@@ -437,11 +379,7 @@ M.start = function()
   vim.api.nvim_create_autocmd({ "FocusGained" }, {
     group = lib.group,
     callback = async(function()
-      for buf, tracked in pairs(state.tracked) do
-        if tracked.path then
-          mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = buf, watch = false }
-        end
-      end
+      watches.refresh()
     end),
   })
 
@@ -487,16 +425,12 @@ M.start = function()
 
   ---@return table<integer, ChecktimeBatch>
   mb.take = function()
-    for buf, tracked in pairs(state.tracked) do
-      if tracked.retry and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].modifiable then
-        mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = buf, watch = true }
-      end
-    end
+    watches.retry()
     local previous = state
     local tracked = clone(previous.tracked)
     local batches = {} ---@type table<integer, ChecktimeBatch>
     for buf, item in pairs(previous.tracked) do
-      if not item.observing and not item.writing and (item.path or item.retry) and item.events then
+      if not item.observing and not item.writing and watches.has(buf) and item.events then
         local next = clone(item)
         next.events = nil
         tracked[buf] = next
@@ -509,7 +443,7 @@ M.start = function()
         }
       end
     end
-    state = { entries = previous.entries, observed = previous.observed, tracked = tracked }
+    state = { observed = previous.observed, tracked = tracked }
     return batches
   end
 
