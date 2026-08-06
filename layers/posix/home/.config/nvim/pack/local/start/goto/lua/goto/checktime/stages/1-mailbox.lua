@@ -34,6 +34,7 @@ end
 ---@field rewrite? ChecktimeRewrite
 ---@field writing? boolean
 ---@field observing? integer
+---@field epoch? integer
 
 ---@class ChecktimeMailboxState
 ---@field observed integer
@@ -181,11 +182,12 @@ M.start = function()
   mb.dispatch = function(event)
     if event.kind == EVENTS.OBSERVE then
       local tracked = state.tracked[event.buf] or {}
+      local epoch = event.track and state.observed + 1 or tracked.epoch
       local writing = tracked.writing
       local base = event.base
       update(event.buf, function(next)
         if event.track then
-          next.base, next.version = base, nil
+          next.base, next.version, next.epoch = base, nil, epoch
         end
         next.observing = (next.observing or 0) + 1
         if not writing then
@@ -197,8 +199,9 @@ M.start = function()
         watches.update(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
         mark(REMOTE, event.buf)
       end
-      local read, version = snapshot.read(event.buf)
-      if not state.tracked[event.buf] then
+      local read, version, text = snapshot.read(event.buf)
+      local current = state.tracked[event.buf]
+      if not current or current.epoch ~= epoch or not current.observing then
         return
       end
       update(event.buf, function(next)
@@ -215,8 +218,10 @@ M.start = function()
         return
       elseif read == snapshot.STATES.RETRY then
         mark(REMOTE, event.buf)
-      elseif read == snapshot.STATES.RECONCILE or read == snapshot.STATES.OPAQUE or read == snapshot.STATES.NONE then
-        mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = base, version = version }
+      elseif read == snapshot.STATES.RECONCILE then
+        mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = event.track and base or text, version = version }
+      elseif read == snapshot.STATES.OPAQUE or read == snapshot.STATES.NONE then
+        mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = event.track and base or nil, version = version }
       else
         error(vim.inspect(read))
       end
