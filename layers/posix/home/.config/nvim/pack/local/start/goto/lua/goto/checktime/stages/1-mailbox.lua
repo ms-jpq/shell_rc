@@ -111,7 +111,18 @@ M.EVENTS = {
 }
 
 local REMOTE, LOCAL = "remote", "local"
+local RELOADING = "__checktime_reloading__"
 local TRACKED = "__checktime_mailbox__"
+
+---@param buf integer
+---@param fn fun()
+---@return boolean
+M.reloading = function(buf, fn)
+  vim.b[buf][RELOADING] = true
+  local ok = pcall(fn)
+  vim.b[buf][RELOADING] = nil
+  return ok
+end
 
 ---@return ChecktimeMailbox
 M.start = function()
@@ -293,6 +304,9 @@ M.start = function()
     group = lib.group,
     ---@param args ChecktimeAutocmdArgs
     callback = async(function(args)
+      if vim.b[args.buf][RELOADING] then
+        return
+      end
       mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text, track = true }
     end),
   })

@@ -60,8 +60,10 @@ M.start = function(args)
   ---@param buf integer
   ---@return boolean
   local reload = function(buf)
-    local ok = pcall(vim.api.nvim_buf_call, buf, function()
-      vim.cmd [[noautocmd silent! edit!]]
+    local ok = mailbox.reloading(buf, function()
+      vim.api.nvim_buf_call(buf, function()
+        vim.cmd [[silent edit!]]
+      end)
     end)
     return ok and not vim.bo[buf].modified
   end
