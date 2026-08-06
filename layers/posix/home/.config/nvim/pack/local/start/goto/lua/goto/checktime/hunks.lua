@@ -356,29 +356,29 @@ local merge_hunks = function(linefeed, base, grouped)
   return merged
 end
 
----@param eol string
+---@param linefeed string
 ---@param base string
 ---@param local_text string
 ---@param remote_text string
 ---@return string
-M.merge = function(eol, base, local_text, remote_text)
+M.merge = function(linefeed, base, local_text, remote_text)
   if local_text == base then
     return remote_text
   elseif remote_text == base then
     return local_text
   end
 
-  local base_lines = records(eol, base)
-  local local_lines = records(eol, local_text)
-  local remote_lines = records(eol, remote_text)
+  local base_lines = records(linefeed, base)
+  local local_lines = records(linefeed, local_text)
+  local remote_lines = records(linefeed, remote_text)
   local grouped = row_groups(base, local_text, remote_text, local_lines, remote_lines)
-  local patches = merge_hunks(eol, base_lines, grouped)
+  local patches = merge_hunks(linefeed, base_lines, grouped)
   sort(patches)
   return table.concat(patch(base_lines, patches))
 end
 
 ---@param buf integer
----@param current ChecktimeCurrent
+---@param current ChecktimeBuffer
 ---@param text string
 ---@param mark fun(start: integer, finish: integer)
 M.replace = function(buf, current, text, mark)

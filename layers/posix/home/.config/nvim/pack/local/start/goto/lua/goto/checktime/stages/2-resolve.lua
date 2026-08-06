@@ -28,7 +28,7 @@ M.ACTIONS = {
 
 ---@class ChecktimeReconcile
 ---@field action "reconcile"
----@field current ChecktimeCurrent
+---@field current ChecktimeBuffer
 ---@field text string
 ---@field accepted string
 ---@field modified boolean
@@ -71,24 +71,24 @@ M.start = function(spec)
       end
     end
 
-    local state, version, remote = snapshotter.read(buf)
-    if state == snapshotter.STATES.RETRY then
+    local read, version, remote = snapshotter.read(buf)
+    if read == snapshotter.STATES.RETRY then
       return { action = M.ACTIONS.RETRY }
-    elseif state == snapshotter.STATES.OPAQUE then
+    elseif read == snapshotter.STATES.OPAQUE then
       return { action = M.ACTIONS.RELOAD }
-    elseif state == snapshotter.STATES.RECONCILE or state == snapshotter.STATES.NONE then
-      local input, current = snapshotter.input(buf), snapshotter.current(buf)
+    elseif read == snapshotter.STATES.RECONCILE or read == snapshotter.STATES.MISSING then
+      local insert_base, current = snapshotter.insert_base(buf), snapshotter.buffer(buf)
       local accepted = remote or ""
-      local base = snapshotter.row_text(current, batch.accepted or input or "")
-      local remote_text = snapshotter.row_text(current, accepted)
+      local base = snapshotter.merge_text(current, batch.accepted or insert_base or "")
+      local remote_text = snapshotter.merge_text(current, accepted)
 
       if within_grace(batch, spec.grace_ms) and base ~= remote_text then
         return { action = M.ACTIONS.RETRY }
       end
 
-      local merged = hunks.merge(current.linefeed, base, snapshotter.row_text(current, current.text), remote_text)
+      local merged = hunks.merge(current.linefeed, base, snapshotter.merge_text(current, current.text), remote_text)
       local text = snapshotter.buffer_text(current, merged)
-      local modified = text ~= snapshotter.fit(current, accepted)
+      local modified = text ~= snapshotter.normalize(current, accepted)
 
       return {
         action = M.ACTIONS.RECONCILE,
@@ -97,11 +97,11 @@ M.start = function(spec)
         accepted = accepted,
         version = version,
         modified = modified,
-        save = modified and input == nil,
+        save = modified and insert_base == nil,
       }
     else
       ---@diagnostic disable-next-line: return-type-mismatch
-      return assert(false, vim.inspect(state))
+      return assert(false, vim.inspect(read))
     end
   end
 

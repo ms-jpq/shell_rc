@@ -28,7 +28,7 @@ M.start = function(commit)
     end
 
     local name = vim.api.nvim_buf_get_name(buf)
-    local text = snapshotter.current(buf).text
+    local text = snapshotter.buffer(buf).text
     local _, version = async.uv.fs_stat(name)
     async.scheduled()
     if not vim.api.nvim_buf_is_valid(buf) then

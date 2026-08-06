@@ -268,7 +268,7 @@ M.start = function()
         mark(REMOTE, action.buf)
       elseif read == snapshotter.STATES.RECONCILE then
         accept(action.buf, action.track and source or text, version)
-      elseif read == snapshotter.STATES.OPAQUE or read == snapshotter.STATES.NONE then
+      elseif read == snapshotter.STATES.OPAQUE or read == snapshotter.STATES.MISSING then
         accept(action.buf, action.track and source or nil, version)
       else
         assert(false, vim.inspect(read))
@@ -330,7 +330,7 @@ M.start = function()
   end
 
   do
-    snapshotter.start(function(buf)
+    snapshotter.track_insert(function(buf)
       dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = buf, watch = false }
     end)
 
@@ -353,7 +353,7 @@ M.start = function()
         if vim.b[args.buf][RELOADING] then
           return
         end
-        dispatch { kind = EVENTS.OBSERVE, buf = args.buf, text = snapshotter.current(args.buf).text, track = true }
+        dispatch { kind = EVENTS.OBSERVE, buf = args.buf, text = snapshotter.buffer(args.buf).text, track = true }
       end),
     })
 
@@ -369,7 +369,7 @@ M.start = function()
       group = lib.group,
       ---@param args ChecktimeAutocmdArgs
       callback = async(function(args)
-        dispatch { kind = EVENTS.OBSERVE, buf = args.buf, text = snapshotter.current(args.buf).text, track = false }
+        dispatch { kind = EVENTS.OBSERVE, buf = args.buf, text = snapshotter.buffer(args.buf).text, track = false }
       end),
     })
 
@@ -393,7 +393,7 @@ M.start = function()
     autocmd.vim_enter(function()
       for _, buf in pairs(vim.api.nvim_list_bufs()) do
         if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-          dispatch { kind = EVENTS.OBSERVE, buf = buf, text = snapshotter.current(buf).text, track = true }
+          dispatch { kind = EVENTS.OBSERVE, buf = buf, text = snapshotter.buffer(buf).text, track = true }
         end
       end
     end)

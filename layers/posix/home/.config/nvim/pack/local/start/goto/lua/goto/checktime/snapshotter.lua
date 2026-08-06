@@ -4,24 +4,24 @@ local lib = require "goto.lib"
 
 local M = {}
 
----@class ChecktimeCurrent
+---@class ChecktimeBuffer
 ---@field linefeed string
 ---@field text string
 ---@field endofline boolean
 ---@field final_empty boolean
 
----@alias ChecktimeState "reconcile"|"opaque"|"retry"|"none"
+---@alias ChecktimeReadState "reconcile"|"opaque"|"retry"|"missing"
 
----@class ChecktimeStates
----@field RECONCILE ChecktimeState
----@field OPAQUE ChecktimeState
----@field RETRY ChecktimeState
----@field NONE ChecktimeState
+---@class ChecktimeReadStates
+---@field RECONCILE ChecktimeReadState
+---@field OPAQUE ChecktimeReadState
+---@field RETRY ChecktimeReadState
+---@field MISSING ChecktimeReadState
 M.STATES = {
   RECONCILE = "reconcile",
   OPAQUE = "opaque",
   RETRY = "retry",
-  NONE = "none",
+  MISSING = "missing",
 }
 
 local MAX_BYTES = 2 * 1024 * 1024
@@ -41,8 +41,8 @@ local same_version = function(before, after)
 end
 
 ---@param buf integer
----@return ChecktimeCurrent
-M.current = function(buf)
+---@return ChecktimeBuffer
+M.buffer = function(buf)
   local endofline = vim.bo[buf].endofline
   local linefeed = lib.buf_linefeed(buf)
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
@@ -57,26 +57,26 @@ end
 
 ---@param buf integer
 ---@return string?
-M.input = function(buf)
+M.insert_base = function(buf)
   return vim.b[buf][INPUT_BASE]
 end
 
 ---@param refresh fun(buf: integer)
-M.start = function(refresh)
+M.track_insert = function(refresh)
   autocmd.insert_mode({ group = lib.group }, function(event)
-    vim.b[event.buf][INPUT_BASE] = M.current(event.buf).text
+    vim.b[event.buf][INPUT_BASE] = M.buffer(event.buf).text
   end, function(event)
-    if M.input(event.buf) then
+    if M.insert_base(event.buf) then
       vim.b[event.buf][INPUT_BASE] = nil
       refresh(event.buf)
     end
   end)
 end
 
----@param current ChecktimeCurrent
+---@param current ChecktimeBuffer
 ---@param text string
 ---@return string
-M.row_text = function(current, text)
+M.merge_text = function(current, text)
   local linefeed = current.linefeed
   if current.final_empty and not current.endofline then
     return text .. linefeed
@@ -87,7 +87,7 @@ M.row_text = function(current, text)
   end
 end
 
----@param current ChecktimeCurrent
+---@param current ChecktimeBuffer
 ---@param text string
 ---@return string
 M.buffer_text = function(current, text)
@@ -105,15 +105,15 @@ M.buffer_text = function(current, text)
   end
 end
 
----@param current ChecktimeCurrent
+---@param current ChecktimeBuffer
 ---@param text string
 ---@return string
-M.fit = function(current, text)
-  return M.buffer_text(current, M.row_text(current, text))
+M.normalize = function(current, text)
+  return M.buffer_text(current, M.merge_text(current, text))
 end
 
 ---@param buf integer
----@return ChecktimeState, uv.fs_stat.result?, string?
+---@return ChecktimeReadState, uv.fs_stat.result?, string?
 M.read = function(buf)
   local name = vim.api.nvim_buf_get_name(buf)
   local _, before = async.uv.fs_stat(name)
@@ -122,7 +122,7 @@ M.read = function(buf)
     return M.STATES.RETRY, nil, nil
   end
   if not before then
-    return M.STATES.NONE, nil, nil
+    return M.STATES.MISSING, nil, nil
   elseif before.size > MAX_BYTES or (not vim.bo[buf].modified and #vim.fn.win_findbuf(buf) == 0) then
     return M.STATES.OPAQUE, before, nil
   end
