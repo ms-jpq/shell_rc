@@ -12,7 +12,6 @@ local WATCH = "__checktime_watcher__"
 
 ---@class ChecktimeWatcher
 ---@field has fun(buf: integer): boolean
----@field refresh fun()
 ---@field retry fun()
 ---@field update fun(buf: integer, path: string)
 
@@ -56,14 +55,6 @@ M.start = function(args)
   ---@return boolean
   watcher.has = function(buf)
     return vim.api.nvim_buf_is_valid(buf) and vim.b[buf][WATCH] ~= nil
-  end
-
-  watcher.refresh = function()
-    for _, buf in pairs(vim.api.nvim_list_bufs()) do
-      if vim.b[buf][WATCH] then
-        args.changed(buf)
-      end
-    end
   end
 
   watcher.retry = function()

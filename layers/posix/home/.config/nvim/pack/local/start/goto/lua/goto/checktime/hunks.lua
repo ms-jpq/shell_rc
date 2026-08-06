@@ -191,7 +191,7 @@ local groups = function(local_patches, remote_patches)
   return grouped
 end
 
-local row_groups = function(base, local_text, remote_text, base_lines, local_lines, remote_lines)
+local row_groups = function(base, local_text, remote_text, local_lines, remote_lines)
   return groups(row_hunks(base, local_text, local_lines), row_hunks(base, remote_text, remote_lines))
 end
 
@@ -371,7 +371,7 @@ M.merge = function(eol, base, local_text, remote_text)
   local base_lines = records(eol, base)
   local local_lines = records(eol, local_text)
   local remote_lines = records(eol, remote_text)
-  local grouped = row_groups(base, local_text, remote_text, base_lines, local_lines, remote_lines)
+  local grouped = row_groups(base, local_text, remote_text, local_lines, remote_lines)
   local patches = merge_hunks(eol, base_lines, grouped)
   sort(patches)
   return table.concat(patch(base_lines, patches))

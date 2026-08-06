@@ -1,11 +1,9 @@
 local async = require "goto.async"
-local execute = require "goto.checktime.stages.4-execute"
+local execute = require "goto.checktime.stages.3-execute"
 local lib = require "goto.lib"
 local lock = require "goto.checktime.lock"
 local mailbox = require "goto.checktime.stages.1-mailbox"
-local plan = require "goto.checktime.stages.3-plan"
 local resolve = require "goto.checktime.stages.2-resolve"
-local snapshot = require "goto.checktime.snapshot"
 
 vim.opt.backup = false
 vim.opt.writebackup = false
@@ -17,15 +15,10 @@ do
   local alive = lib.generation "checktime"
   local interval = 99
   local inbox = mailbox.start()
-  local dispatch = inbox.dispatch
-  local EVENTS = mailbox.EVENTS
-  snapshot.start(function(buf)
-    dispatch { kind = EVENTS.DIRTY, change = "remote", buf = buf, watch = false }
-  end)
-  local executor = execute.start { dispatch = dispatch }
+  local executor = execute.start(inbox.commit)
 
   local tick = function()
-    for buf, batch in pairs(inbox.take()) do
+    for buf, captured in pairs(inbox.take()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
         lock.guard(vim.api.nvim_buf_get_name(buf), function()
           if
@@ -36,10 +29,9 @@ do
             return
           end
 
-          dispatch { kind = EVENTS.SAMPLE, buf = buf, changedtick = batch.changedtick }
-          local latest = inbox.latest(buf, batch)
-          local resolution = resolve.gather(buf, latest)
-          executor.run(buf, latest, plan.compute(resolution))
+          local batch = inbox.latest(buf, captured)
+          local instruction = resolve.plan(buf, batch)
+          executor.run(buf, batch, instruction)
         end)
       end
     end

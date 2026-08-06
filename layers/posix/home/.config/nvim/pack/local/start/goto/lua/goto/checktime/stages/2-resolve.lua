@@ -1,67 +1,79 @@
-local snapshot = require "goto.checktime.snapshot"
+local hunks = require "goto.checktime.hunks"
+local snapshotter = require "goto.checktime.snapshotter"
 
 local M = {}
 
----@class ChecktimeResolutionKinds
-M.KINDS = {
-  LOCAL = "local",
-  OPAQUE = "opaque",
+---@class ChecktimeActions
+M.ACTIONS = {
   RETRY = "retry",
-  TEXT = "text",
+  NOOP = "noop",
+  RELOAD = "reload",
+  WRITE = "write",
+  RECONCILE = "reconcile",
 }
 
-local text = function(buf, batch, version, remote)
-  return {
-    kind = M.KINDS.TEXT,
-    accepted = batch.accepted,
-    version = version,
-    remote = remote or "",
-    current = snapshot.current(buf),
-  }
-end
+---@class ChecktimeRetry
+---@field action "retry"
 
----@class ChecktimeResolutionRetry
----@field kind "retry"
+---@class ChecktimeNoop
+---@field action "noop"
 
----@class ChecktimeResolutionOpaque
----@field kind "opaque"
+---@class ChecktimeReload
+---@field action "reload"
 
----@class ChecktimeResolutionText
----@field kind "text"
----@field accepted? string
----@field input? string
+---@class ChecktimeWrite
+---@field action "write"
 ---@field version? uv.fs_stat.result
----@field remote string
+
+---@class ChecktimeReconcile
+---@field action "reconcile"
 ---@field current ChecktimeCurrent
-
----@class ChecktimeResolutionLocal
----@field kind "local"
----@field modified boolean
+---@field text string
+---@field accepted string
 ---@field version? uv.fs_stat.result
+---@field modified boolean
+---@field save boolean
 
----@alias ChecktimeResolution ChecktimeResolutionLocal|ChecktimeResolutionOpaque|ChecktimeResolutionRetry|ChecktimeResolutionText
+---@alias ChecktimeInstruction ChecktimeRetry|ChecktimeNoop|ChecktimeReload|ChecktimeWrite|ChecktimeReconcile
 
 ---@param buf integer
 ---@param batch ChecktimeBatch
----@return ChecktimeResolution
-M.gather = function(buf, batch)
+---@return ChecktimeInstruction
+M.plan = function(buf, batch)
   if not batch.events.remote then
-    return { kind = M.KINDS.LOCAL, modified = vim.bo[buf].modified, version = batch.version }
+    if vim.bo[buf].modified then
+      return { action = M.ACTIONS.WRITE, version = batch.version }
+    else
+      return { action = M.ACTIONS.NOOP }
+    end
   end
 
-  local state, version, remote = snapshot.read(buf)
-  if state == snapshot.STATES.RETRY then
-    return { kind = M.KINDS.RETRY }
-  elseif state == snapshot.STATES.OPAQUE then
-    return { kind = M.KINDS.OPAQUE }
-  elseif state == snapshot.STATES.RECONCILE then
-    local resolution = text(buf, batch, version, remote)
-    resolution.input = snapshot.input(buf)
-    return resolution
-  elseif state == snapshot.STATES.NONE then
-    local resolution = text(buf, batch, version, remote)
-    resolution.input = snapshot.input(buf)
-    return resolution
+  local state, version, remote = snapshotter.read(buf)
+  if state == snapshotter.STATES.RETRY then
+    return { action = M.ACTIONS.RETRY }
+  elseif state == snapshotter.STATES.OPAQUE then
+    return { action = M.ACTIONS.RELOAD }
+  elseif state == snapshotter.STATES.RECONCILE or state == snapshotter.STATES.NONE then
+    local input = snapshotter.input(buf)
+    local current = snapshotter.current(buf)
+    local accepted = remote or ""
+    local merged = hunks.merge(
+      current.linefeed,
+      snapshotter.row_text(current, batch.accepted or input or ""),
+      snapshotter.row_text(current, current.text),
+      snapshotter.row_text(current, accepted)
+    )
+    local text = snapshotter.buffer_text(current, merged)
+    local modified = text ~= snapshotter.fit(current, accepted)
+    return {
+      action = M.ACTIONS.RECONCILE,
+      current = current,
+      text = text,
+      accepted = accepted,
+      version = version,
+      modified = modified,
+      save = modified and input == nil,
+    }
   else
     ---@diagnostic disable-next-line: return-type-mismatch
     return assert(false, vim.inspect(state))
