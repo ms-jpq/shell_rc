@@ -63,8 +63,7 @@ end
 
 ---@generic T
 ---@param path string
----@param fn fun(): T
----@return T?
+---@param fn fun()
 M.guard = function(path, fn)
   vim.fn.mkdir(cache, "p")
   return lib.scope(function(defer)

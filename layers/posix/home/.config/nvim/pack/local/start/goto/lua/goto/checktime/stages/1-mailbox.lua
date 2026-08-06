@@ -25,7 +25,7 @@ end
 ---@field after? integer
 
 ---@class ChecktimeTracked
----@field base? string
+---@field accepted? string
 ---@field version? uv.fs_stat.result
 ---@field events? ChecktimeEvents
 ---@field rewrite? ChecktimeRewrite
@@ -35,7 +35,7 @@ end
 ---@field observed? integer
 
 ---@class ChecktimeBatch
----@field base? string
+---@field accepted? string
 ---@field version? uv.fs_stat.result
 ---@field events ChecktimeEvents
 ---@field changedtick integer
@@ -43,7 +43,7 @@ end
 ---@class ChecktimeObserve
 ---@field kind "observe"
 ---@field buf integer
----@field base string
+---@field text string
 ---@field track boolean
 
 ---@class ChecktimeDirtyLocal
@@ -57,20 +57,20 @@ end
 ---@field change "remote"
 ---@field watch boolean
 
+---@class ChecktimeAccept
+---@field kind "accept"
+---@field buf integer
+---@field text? string
+---@field version? uv.fs_stat.result
+
+---@class ChecktimeConsume
+---@field kind "consume"
+---@field buf integer
+---@field batch ChecktimeBatch
+
 ---@class ChecktimeDiscard
 ---@field kind "discard"
 ---@field buf integer
-
----@class ChecktimeRemember
----@field kind "remember"
----@field buf integer
----@field base? string
----@field version? uv.fs_stat.result
-
----@class ChecktimeRestore
----@field kind "restore"
----@field buf integer
----@field batch ChecktimeBatch
 
 ---@class ChecktimeRewriteEvent
 ---@field kind "rewrite"
@@ -88,7 +88,7 @@ end
 ---@field buf integer
 ---@field changedtick integer
 
----@alias ChecktimeMailboxEvent ChecktimeObserve|ChecktimeDirtyLocal|ChecktimeDirtyRemote|ChecktimeDiscard|ChecktimeRemember|ChecktimeRestore|ChecktimeRewriteEvent|ChecktimeSample|ChecktimeWriting
+---@alias ChecktimeMailboxEvent ChecktimeObserve|ChecktimeDirtyLocal|ChecktimeDirtyRemote|ChecktimeAccept|ChecktimeConsume|ChecktimeDiscard|ChecktimeRewriteEvent|ChecktimeSample|ChecktimeWriting
 
 ---@class ChecktimeAutocmdArgs
 ---@field buf integer
@@ -100,11 +100,11 @@ end
 
 ---@class ChecktimeMailboxEvents
 M.EVENTS = {
+  ACCEPT = "accept",
+  CONSUME = "consume",
   DIRTY = "dirty",
   DISCARD = "discard",
   OBSERVE = "observe",
-  REMEMBER = "remember",
-  RESTORE = "restore",
   REWRITE = "rewrite",
   SAMPLE = "sample",
   WRITING = "writing",
@@ -183,10 +183,10 @@ M.start = function()
         return
       end
 
-      local base = event.base
+      local source = event.text
       update(event.buf, function(next)
         if event.track then
-          next.base, next.version, next.epoch = base, nil, epoch
+          next.accepted, next.version, next.epoch = source, nil, epoch
           next.observing = 1
         else
           next.observing = (next.observing or 0) + 1
@@ -221,9 +221,9 @@ M.start = function()
       if read == snapshot.STATES.RETRY then
         mark(REMOTE, event.buf)
       elseif read == snapshot.STATES.RECONCILE then
-        mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = event.track and base or text, version = version }
+        mb.dispatch { kind = EVENTS.ACCEPT, buf = event.buf, text = event.track and source or text, version = version }
       elseif read == snapshot.STATES.OPAQUE or read == snapshot.STATES.NONE then
-        mb.dispatch { kind = EVENTS.REMEMBER, buf = event.buf, base = event.track and base or nil, version = version }
+        mb.dispatch { kind = EVENTS.ACCEPT, buf = event.buf, text = event.track and source or nil, version = version }
       else
         error(vim.inspect(read))
       end
@@ -252,21 +252,28 @@ M.start = function()
       else
         error(vim.inspect(event))
       end
+    elseif event.kind == EVENTS.ACCEPT then
+      update(event.buf, function(tracked)
+        tracked.accepted, tracked.version = event.text, event.version
+        return tracked
+      end)
+    elseif event.kind == EVENTS.CONSUME then
+      local batch = event.batch
+      update(event.buf, function(tracked)
+        local events = clone(tracked.events or {})
+        for kind, order in pairs(batch.events) do
+          if events[kind] == order then
+            events[kind] = nil
+          end
+        end
+        tracked.events = next(events) and events or nil
+        return tracked
+      end)
     elseif event.kind == EVENTS.DISCARD then
       update(event.buf, function(tracked)
         tracked.rewrite = nil
         return tracked
       end)
-    elseif event.kind == EVENTS.REMEMBER then
-      update(event.buf, function(tracked)
-        tracked.base, tracked.version = event.base, event.version
-        return tracked
-      end)
-    elseif event.kind == EVENTS.RESTORE then
-      local batch = assert(event.batch)
-      for kind, order in pairs(batch.events) do
-        mark(kind, event.buf, order)
-      end
     elseif event.kind == EVENTS.REWRITE then
       local rewrite = event.rewrite
       update(event.buf, function(tracked)
@@ -309,7 +316,7 @@ M.start = function()
       events[REMOTE] = remote_order
     end
     return {
-      base = batch.base,
+      accepted = batch.accepted,
       version = batch.version,
       events = events,
       changedtick = vim.api.nvim_buf_get_changedtick(buf),
@@ -323,12 +330,8 @@ M.start = function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       local item = vim.b[buf][TRACKED]
       if item and not item.observing and not item.writing and watches.has(buf) and item.events then
-        update(buf, function(next)
-          next.events = nil
-          return next
-        end)
         batches[buf] = {
-          base = item.base,
+          accepted = item.accepted,
           version = item.version,
           events = item.events,
           changedtick = vim.api.nvim_buf_get_changedtick(buf),
@@ -358,7 +361,7 @@ M.start = function()
         if vim.b[args.buf][RELOADING] then
           return
         end
-        mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text, track = true }
+        mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, text = snapshot.current(args.buf).text, track = true }
       end),
     })
 
@@ -374,7 +377,7 @@ M.start = function()
       group = lib.group,
       ---@param args ChecktimeAutocmdArgs
       callback = async(function(args)
-        mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text, track = false }
+        mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, text = snapshot.current(args.buf).text, track = false }
       end),
     })
 
@@ -404,8 +407,8 @@ M.start = function()
 
     autocmd.vim_enter(function()
       for _, buf in pairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_valid(buf) then
-          mb.dispatch { kind = EVENTS.OBSERVE, buf = buf, base = snapshot.current(buf).text, track = true }
+        if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+          mb.dispatch { kind = EVENTS.OBSERVE, buf = buf, text = snapshot.current(buf).text, track = true }
         end
       end
     end)

@@ -6,18 +6,18 @@ local M = {}
 
 ---@class ChecktimeActions
 M.ACTIONS = {
-  NOOP = "noop",
-  RECONCILE = "reconcile",
-  RELOAD = "reload",
   RETRY = "retry",
+  NOOP = "noop",
+  RELOAD = "reload",
   WRITE = "write",
+  RECONCILE = "reconcile",
 }
-
----@class ChecktimeNoop
----@field action "noop"
 
 ---@class ChecktimeRetry
 ---@field action "retry"
+
+---@class ChecktimeNoop
+---@field action "noop"
 
 ---@class ChecktimeReload
 ---@field action "reload"
@@ -30,28 +30,27 @@ M.ACTIONS = {
 ---@field action "reconcile"
 ---@field current ChecktimeCurrent
 ---@field text string
----@field base string
+---@field accepted string
 ---@field version? uv.fs_stat.result
 ---@field modified boolean
 ---@field save boolean
 
----@alias ChecktimeInstruction ChecktimeNoop|ChecktimeReconcile|ChecktimeReload|ChecktimeRetry|ChecktimeWrite
+---@alias ChecktimeInstruction ChecktimeRetry|ChecktimeNoop|ChecktimeReload|ChecktimeWrite|ChecktimeReconcile
 
 ---@param resolution ChecktimeResolution
 ---@return ChecktimeInstruction
 M.compute = function(resolution)
   if resolution.kind == resolve.KINDS.RETRY then
     return { action = M.ACTIONS.RETRY }
+  elseif resolution.kind == resolve.KINDS.LOCAL and not resolution.modified then
+    return { action = M.ACTIONS.NOOP }
   elseif resolution.kind == resolve.KINDS.OPAQUE then
     return { action = M.ACTIONS.RELOAD }
   elseif resolution.kind == resolve.KINDS.LOCAL then
-    if resolution.modified then
-      return { action = M.ACTIONS.WRITE, version = resolution.version }
-    end
-    return { action = M.ACTIONS.NOOP }
+    return { action = M.ACTIONS.WRITE, version = resolution.version }
   elseif resolution.kind == resolve.KINDS.TEXT then
     local current, remote = resolution.current, resolution.remote
-    local base = resolution.base or resolution.input or ""
+    local base = resolution.accepted or resolution.input or ""
     local merged = hunks.merge(
       current.linefeed,
       snapshot.row_text(current, base),
@@ -64,7 +63,7 @@ M.compute = function(resolution)
       action = M.ACTIONS.RECONCILE,
       current = current,
       text = text,
-      base = remote,
+      accepted = remote,
       version = resolution.version,
       modified = modified,
       save = modified and not resolution.input,

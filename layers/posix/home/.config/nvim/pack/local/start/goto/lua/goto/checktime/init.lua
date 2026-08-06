@@ -22,33 +22,25 @@ do
   snapshot.start(function(buf)
     dispatch { kind = EVENTS.DIRTY, change = "remote", buf = buf, watch = false }
   end)
-  local executor = execute.start {
-    dispatch = dispatch,
-  }
+  local executor = execute.start { dispatch = dispatch }
 
   local tick = function()
     for buf, batch in pairs(inbox.take()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-        local outcome = lock.guard(vim.api.nvim_buf_get_name(buf), function()
-          if not (vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modifiable) then
-            return { kind = execute.OUTCOMES.DEFERRED }
+        lock.guard(vim.api.nvim_buf_get_name(buf), function()
+          if
+            not vim.api.nvim_buf_is_valid(buf)
+            or not vim.api.nvim_buf_is_loaded(buf)
+            or not vim.bo[buf].modifiable
+          then
+            return
           end
+
           dispatch { kind = EVENTS.SAMPLE, buf = buf, changedtick = batch.changedtick }
           local latest = inbox.latest(buf, batch)
           local resolution = resolve.gather(buf, latest)
-          return executor.run(buf, plan.compute(resolution))
+          executor.run(buf, latest, plan.compute(resolution))
         end)
-        outcome = outcome or { kind = execute.OUTCOMES.DEFERRED }
-
-        if outcome.kind == execute.OUTCOMES.COMPLETE then
-        elseif outcome.kind == execute.OUTCOMES.DEFERRED then
-          if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-            dispatch { kind = EVENTS.SAMPLE, buf = buf, changedtick = batch.changedtick }
-            dispatch { kind = EVENTS.RESTORE, buf = buf, batch = batch }
-          end
-        else
-          assert(false, vim.inspect(outcome))
-        end
       end
     end
   end

@@ -13,7 +13,7 @@ M.KINDS = {
 local text = function(buf, batch, version, remote)
   return {
     kind = M.KINDS.TEXT,
-    base = batch.base,
+    accepted = batch.accepted,
     version = version,
     remote = remote or "",
     current = snapshot.current(buf),
@@ -28,7 +28,7 @@ end
 
 ---@class ChecktimeResolutionText
 ---@field kind "text"
----@field base? string
+---@field accepted? string
 ---@field input? string
 ---@field version? uv.fs_stat.result
 ---@field remote string
