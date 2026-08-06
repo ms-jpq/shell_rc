@@ -18,25 +18,29 @@ local clone = function(value)
 end
 
 ---@alias ChecktimeChange "remote"|"local"
----@alias ChecktimeEvents table<ChecktimeChange, integer>
+
+---@class ChecktimeGeneration
+---@field monotonic_ts integer
+---@field sequential integer
+
+---@alias ChecktimeEvents table<ChecktimeChange, ChecktimeGeneration>
 
 ---@class ChecktimeRewrite
 ---@field before integer
 ---@field after? integer
 
 ---@class ChecktimeTracked
+---@field events ChecktimeEvents
+---@field generation ChecktimeGeneration
+---@field guard integer
 ---@field accepted? string
 ---@field version? uv.fs_stat.result
----@field events? ChecktimeEvents
----@field observing? integer
----@field epoch? integer
----@field observed? integer
 
 ---@class ChecktimeBatch
----@field accepted? string
----@field version? uv.fs_stat.result
 ---@field events ChecktimeEvents
 ---@field changedtick integer
+---@field accepted? string
+---@field version? uv.fs_stat.result
 
 ---@class ChecktimeObserve
 ---@field kind "observe"
@@ -120,6 +124,15 @@ M.writing = function(buf, value)
   vim.b[buf][WRITING] = value or nil
 end
 
+local gen = (function()
+  local n = 0
+  ---@return ChecktimeGeneration
+  return function()
+    n = n + 1
+    return { monotonic_ts = vim.uv.hrtime(), sequential = n }
+  end
+end)()
+
 ---@return ChecktimeMailbox
 M.start = function()
   ---@diagnostic disable-next-line: missing-fields
@@ -129,7 +142,8 @@ M.start = function()
   ---@param fn fun(tracked: ChecktimeTracked): ChecktimeTracked
   ---@return ChecktimeTracked
   local update = function(buf, fn)
-    local tracked = fn(clone(vim.b[buf][TRACKED] or {}))
+    local tracked = clone(vim.b[buf][TRACKED] or { events = {}, generation = gen(), guard = 0 })
+    tracked = fn(tracked)
     vim.b[buf][TRACKED] = tracked
     return tracked
   end
@@ -146,22 +160,17 @@ M.start = function()
 
   ---@param kind ChecktimeChange
   ---@param buf integer
-  ---@param order? integer
-  local mark = function(kind, buf, order)
+  ---@return ChecktimeGeneration
+  local mark = function(kind, buf)
+    local generation
     update(buf, function(tracked)
-      local observed = tracked.observed or 0
-      local current = order
-      if current then
-        observed = math.max(observed, current)
-      else
-        observed = observed + 1
-        current = observed
-      end
-      local events = clone(tracked.events or {})
-      events[kind] = math.max(events[kind] or 0, current)
-      tracked.events, tracked.observed = events, observed
+      generation = gen()
+      local events = clone(tracked.events)
+      events[kind] = generation
+      tracked.events = events
       return tracked
     end)
+    return generation
   end
 
   local watches ---@type ChecktimeWatcher
@@ -177,13 +186,13 @@ M.start = function()
           tracked.accepted, tracked.version = action.accepted.text, action.accepted.version
         end
         if action.batch then
-          local events = clone(tracked.events or {})
-          for kind, order in pairs(action.batch.events) do
-            if events[kind] == order then
+          local events = clone(tracked.events)
+          for kind, generation in pairs(action.batch.events) do
+            if events[kind] and events[kind].sequential == generation.sequential then
               events[kind] = nil
             end
           end
-          tracked.events = next(events) and events or nil
+          tracked.events = events
         end
         return tracked
       end)
@@ -216,46 +225,42 @@ M.start = function()
       end
       return
     elseif action.kind == EVENTS.OBSERVE then
-      local tracked = vim.b[action.buf][TRACKED] or {}
-      local epoch = action.track and (tracked.observed or 0) + 1 or tracked.epoch
+      local tracked = vim.b[action.buf][TRACKED] or { events = {}, generation = gen(), guard = 0 }
+      local generation = tracked.generation
       local writing = vim.b[action.buf][WRITING]
       if not action.track and writing then
         return
       end
 
       local source = action.text
+      if action.track then
+        watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
+        generation = mark(REMOTE, action.buf)
+      end
       update(action.buf, function(next)
         if action.track then
-          next.accepted, next.version, next.epoch = source, nil, epoch
-          next.observing = 1
+          next.accepted, next.version, next.generation = source, nil, generation
+          next.guard = 1
         else
-          next.observing = (next.observing or 0) + 1
+          next.guard = next.guard + 1
         end
         return next
       end)
 
       vim.b[action.buf][REWRITE] = nil
-      if action.track then
-        watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
-        mark(REMOTE, action.buf)
-      end
 
       local read, version, text = snapshotter.read(action.buf)
       if not vim.api.nvim_buf_is_valid(action.buf) then
         return
       end
       local current = vim.b[action.buf][TRACKED]
-      if not current or current.epoch ~= epoch or not current.observing then
+      if not current or current.generation.sequential ~= generation.sequential or current.guard == 0 then
         return
       end
 
       update(action.buf, function(next)
-        assert(next.observing)
-        if next.observing == 1 then
-          next.observing = nil
-        else
-          next.observing = next.observing - 1
-        end
+        assert(next.guard > 0)
+        next.guard = next.guard - 1
         return next
       end)
 
@@ -289,7 +294,7 @@ M.start = function()
       mark(LOCAL, buf)
     end
     local tracked = vim.b[buf][TRACKED]
-    if not tracked or not tracked.events then
+    if not tracked or not next(tracked.events) then
       return nil
     end
     return {
@@ -306,7 +311,7 @@ M.start = function()
     local ready = {} ---@type table<integer, integer>
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       local item = vim.b[buf][TRACKED]
-      if item and not item.observing and not vim.b[buf][WRITING] and watches.has(buf) and item.events then
+      if item and item.guard == 0 and not vim.b[buf][WRITING] and watches.has(buf) and next(item.events) then
         ready[buf] = vim.api.nvim_buf_get_changedtick(buf)
       end
     end

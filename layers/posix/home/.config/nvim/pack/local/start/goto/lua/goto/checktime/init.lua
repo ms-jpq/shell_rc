@@ -16,6 +16,7 @@ do
   local interval = 99
   local inbox = mailbox.start()
   local executor = execute.start(inbox.commit)
+  local resolver = resolve.start { grace_ms = 3 * interval }
 
   local tick = function()
     for buf, changedtick in pairs(inbox.take()) do
@@ -33,7 +34,7 @@ do
           if not batch then
             return
           end
-          local instruction = resolve.plan(buf, batch)
+          local instruction = resolver.plan(buf, batch)
           executor.run(buf, batch, instruction)
         end)
       end

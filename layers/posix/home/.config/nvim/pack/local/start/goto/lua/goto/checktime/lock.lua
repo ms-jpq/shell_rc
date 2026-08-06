@@ -6,17 +6,16 @@ local M = {}
 ---@alias ChecktimeUnlock fun()
 
 local cache = vim.fs.joinpath(vim.fn.stdpath "cache", "checktime")
-local NANOSECONDS_PER_MILLISECOND, MILLISECONDS_PER_SECOND = 1000 * 1000, 1000
 local MAX_WAIT, MAX_DELAY, MAX_JITTER = 750, 96, 24
 local LEASE = 3 * 1000
 
 local milliseconds = function()
-  return vim.uv.hrtime() / NANOSECONDS_PER_MILLISECOND
+  return vim.uv.hrtime() / lib.NANOSECONDS_PER_MILLISECOND
 end
 
 local EPOCH_OFFSET = (function()
   local seconds, microseconds = vim.uv.gettimeofday()
-  return seconds * MILLISECONDS_PER_SECOND + microseconds / MILLISECONDS_PER_SECOND - milliseconds()
+  return seconds * lib.MILLISECONDS_PER_SECOND + microseconds / lib.MILLISECONDS_PER_SECOND - milliseconds()
 end)()
 
 local deadline = function()
@@ -48,7 +47,8 @@ local acquire = function(lock)
   if not fd then
     local _, stat = async.uv.fs_stat(lock)
     local now = EPOCH_OFFSET + milliseconds()
-    local modified = stat and (stat.mtime.sec * MILLISECONDS_PER_SECOND + stat.mtime.nsec / NANOSECONDS_PER_MILLISECOND)
+    local modified = stat
+      and (stat.mtime.sec * lib.MILLISECONDS_PER_SECOND + stat.mtime.nsec / lib.NANOSECONDS_PER_MILLISECOND)
     if modified and now - modified > LEASE then
       async.uv.fs_unlink(lock)
     end

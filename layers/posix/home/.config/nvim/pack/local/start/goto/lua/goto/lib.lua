@@ -6,6 +6,7 @@ local libexec = require "goto.libexec"
 local M = {}
 
 M.LF = "\n"
+M.MILLISECONDS_PER_SECOND, M.NANOSECONDS_PER_MILLISECOND = 1000, 1000 * 1000
 
 M.clamp = function(lo, self, hi)
   return math.max(lo, math.min(self, hi))
