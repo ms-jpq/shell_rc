@@ -19,9 +19,6 @@ end
 
 ---@alias ChecktimeChange "remote"|"local"
 ---@alias ChecktimeEvents table<ChecktimeChange, integer>
----@class ChecktimeInput
----@field base string
----@field closing boolean
 
 ---@class ChecktimeRewrite
 ---@field before integer
@@ -31,7 +28,6 @@ end
 ---@field base? string
 ---@field version? uv.fs_stat.result
 ---@field events? ChecktimeEvents
----@field input? ChecktimeInput
 ---@field rewrite? ChecktimeRewrite
 ---@field writing? boolean
 ---@field observing? integer
@@ -46,7 +42,6 @@ end
 ---@field version? uv.fs_stat.result
 ---@field events ChecktimeEvents
 ---@field changedtick integer
----@field input? ChecktimeInput
 
 ---@class ChecktimeObserve
 ---@field kind "observe"
@@ -58,7 +53,6 @@ end
 ---@field kind "dirty"
 ---@field buf integer
 ---@field change "local"
----@field insert? boolean
 
 ---@class ChecktimeDirtyRemote
 ---@field kind "dirty"
@@ -72,10 +66,6 @@ end
 
 ---@class ChecktimeDiscard
 ---@field kind "discard"
----@field buf integer
-
----@class ChecktimeFinish
----@field kind "finish"
 ---@field buf integer
 
 ---@class ChecktimeRemember
@@ -105,7 +95,7 @@ end
 ---@field buf integer
 ---@field changedtick integer
 
----@alias ChecktimeMailboxEvent ChecktimeObserve|ChecktimeDirtyLocal|ChecktimeDirtyRemote|ChecktimeDetach|ChecktimeDiscard|ChecktimeFinish|ChecktimeRemember|ChecktimeRestore|ChecktimeRewriteEvent|ChecktimeSample|ChecktimeWriting
+---@alias ChecktimeMailboxEvent ChecktimeObserve|ChecktimeDirtyLocal|ChecktimeDirtyRemote|ChecktimeDetach|ChecktimeDiscard|ChecktimeRemember|ChecktimeRestore|ChecktimeRewriteEvent|ChecktimeSample|ChecktimeWriting
 
 ---@class ChecktimeAutocmdArgs
 ---@field buf integer
@@ -120,7 +110,6 @@ M.EVENTS = {
   DETACH = "detach",
   DIRTY = "dirty",
   DISCARD = "discard",
-  FINISH = "finish",
   OBSERVE = "observe",
   REMEMBER = "remember",
   RESTORE = "restore",
@@ -196,7 +185,7 @@ M.start = function()
         else
           next.observing = (next.observing or 0) + 1
         end
-        next.rewrite, next.input = nil, nil
+        next.rewrite = nil
         return next
       end)
       if event.track then
@@ -230,31 +219,16 @@ M.start = function()
       end
     elseif event.kind == EVENTS.DIRTY then
       if event.change == LOCAL then
-        if event.insert == false then
-          update(event.buf, function(tracked)
-            if tracked.input then
-              tracked.input = { base = tracked.input.base, closing = true }
-            end
-            return tracked
-          end)
-          mark(LOCAL, event.buf)
-        else
-          local rewrite = state.tracked[event.buf] and state.tracked[event.buf].rewrite
-          local changedtick = vim.api.nvim_buf_get_changedtick(event.buf)
-          update(event.buf, function(tracked)
-            tracked.rewrite = nil
-            return tracked
-          end)
-          if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
-            return
-          elseif event.insert then
-            update(event.buf, function(tracked)
-              tracked.input = tracked.input or { base = tracked.base or "", closing = false }
-              return tracked
-            end)
-          end
-          mark(LOCAL, event.buf)
+        local rewrite = state.tracked[event.buf] and state.tracked[event.buf].rewrite
+        local changedtick = vim.api.nvim_buf_get_changedtick(event.buf)
+        update(event.buf, function(tracked)
+          tracked.rewrite = nil
+          return tracked
+        end)
+        if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
+          return
         end
+        mark(LOCAL, event.buf)
       elseif event.change == REMOTE then
         if event.watch then
           watches.update(event.buf, vim.bo[event.buf].modifiable and vim.api.nvim_buf_get_name(event.buf) or "")
@@ -272,20 +246,9 @@ M.start = function()
       state = { observed = state.observed, tracked = tracked }
     elseif event.kind == EVENTS.DISCARD then
       update(event.buf, function(tracked)
-        tracked.rewrite, tracked.input = nil, nil
+        tracked.rewrite = nil
         return tracked
       end)
-    elseif event.kind == EVENTS.FINISH then
-      local tracked = state.tracked[event.buf]
-      if tracked and tracked.input and tracked.input.closing then
-        update(event.buf, function(next)
-          next.input = nil
-          return next
-        end)
-        if vim.bo[event.buf].modified then
-          mark(LOCAL, event.buf)
-        end
-      end
     elseif event.kind == EVENTS.REMEMBER then
       update(event.buf, function(tracked)
         tracked.base, tracked.version = event.base, event.version
@@ -342,28 +305,13 @@ M.start = function()
     end),
   })
 
-  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedP" }, {
+  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "TextChangedP" }, {
     group = lib.group,
     ---@param args ChecktimeAutocmdArgs
     callback = async(function(args)
       mb.dispatch { kind = EVENTS.DIRTY, change = LOCAL, buf = args.buf }
     end),
   })
-
-  vim.api.nvim_create_autocmd({ "TextChangedI" }, {
-    group = lib.group,
-    ---@param args ChecktimeAutocmdArgs
-    callback = async(function(args)
-      mb.dispatch { kind = EVENTS.DIRTY, change = LOCAL, buf = args.buf, insert = true }
-    end),
-  })
-
-  autocmd.insert_leave(
-    {},
-    async(function(args)
-      mb.dispatch { kind = EVENTS.DIRTY, change = LOCAL, buf = args.buf, insert = false }
-    end)
-  )
 
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
@@ -396,13 +344,13 @@ M.start = function()
     end),
   })
 
-  autocmd.vim_enter(async(function()
+  autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) then
         mb.dispatch { kind = EVENTS.OBSERVE, buf = buf, base = snapshot.current(buf).text, track = true }
       end
     end
-  end))
+  end)
 
   ---@param buf integer
   ---@param batch ChecktimeBatch
@@ -424,7 +372,6 @@ M.start = function()
       version = batch.version,
       events = events,
       changedtick = vim.api.nvim_buf_get_changedtick(buf),
-      input = tracked and tracked.input or nil,
     }
   end
 
@@ -444,7 +391,6 @@ M.start = function()
           version = item.version,
           events = item.events,
           changedtick = vim.api.nvim_buf_get_changedtick(buf),
-          input = item.input,
         }
       end
     end

@@ -35,8 +35,8 @@ do
           return executor.run(buf, plan.compute(resolution))
         end)
         outcome = outcome or { kind = execute.OUTCOMES.DEFERRED }
+
         if outcome.kind == execute.OUTCOMES.COMPLETE then
-          dispatch { kind = EVENTS.FINISH, buf = buf }
         elseif outcome.kind == execute.OUTCOMES.DEFERRED then
           if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
             dispatch { kind = EVENTS.SAMPLE, buf = buf, changedtick = batch.changedtick }

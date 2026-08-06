@@ -50,11 +50,8 @@ M.compute = function(resolution)
     end
     return { action = M.ACTIONS.NOOP }
   elseif resolution.kind == resolve.KINDS.TEXT then
-    local publish = not resolution.input or resolution.input.closing
     local current, remote = resolution.current, resolution.remote
-    local durable = resolution.base or ""
-    local base = resolution.input and resolution.input.base or durable
-    local unchanged = snapshot.row_text(current, durable) == snapshot.row_text(current, remote)
+    local base = resolution.base or ""
     local merged = hunks.merge(
       current.linefeed,
       snapshot.row_text(current, base),
@@ -70,7 +67,7 @@ M.compute = function(resolution)
       base = remote,
       version = resolution.version,
       modified = modified,
-      save = modified and (publish or unchanged),
+      save = modified,
     }
   else
     ---@diagnostic disable-next-line: return-type-mismatch
