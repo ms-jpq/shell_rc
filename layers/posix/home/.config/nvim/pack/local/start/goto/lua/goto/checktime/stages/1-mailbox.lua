@@ -288,75 +288,6 @@ M.start = function()
     end
   end
 
-  vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
-    group = lib.group,
-    command = [[silent! wall! ++p]],
-  })
-
-  vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
-    group = lib.group,
-    callback = async(function()
-      vim.v.fcs_choice = ""
-    end),
-  })
-
-  vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufFilePost" }, {
-    group = lib.group,
-    ---@param args ChecktimeAutocmdArgs
-    callback = async(function(args)
-      if vim.b[args.buf][RELOADING] then
-        return
-      end
-      mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text, track = true }
-    end),
-  })
-
-  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "TextChangedP" }, {
-    group = lib.group,
-    ---@param args ChecktimeAutocmdArgs
-    callback = async(function(args)
-      mb.dispatch { kind = EVENTS.DIRTY, change = LOCAL, buf = args.buf }
-    end),
-  })
-
-  vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-    group = lib.group,
-    ---@param args ChecktimeAutocmdArgs
-    callback = async(function(args)
-      mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text, track = false }
-    end),
-  })
-
-  vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
-    group = lib.group,
-    callback = function(event)
-      vim.b[event.buf][TRACKED] = nil
-    end,
-  })
-
-  vim.api.nvim_create_autocmd({ "FocusGained" }, {
-    group = lib.group,
-    callback = async(function()
-      watches.refresh()
-    end),
-  })
-
-  vim.api.nvim_create_autocmd({ "OptionSet" }, {
-    group = lib.group,
-    pattern = "modifiable",
-    callback = async(function()
-      mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = vim.api.nvim_get_current_buf(), watch = true }
-    end),
-  })
-
-  autocmd.vim_enter(function()
-    for _, buf in pairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_buf_is_valid(buf) then
-        mb.dispatch { kind = EVENTS.OBSERVE, buf = buf, base = snapshot.current(buf).text, track = true }
-      end
-    end
-  end)
-
   ---@param buf integer
   ---@param batch ChecktimeBatch
   ---@return ChecktimeBatch
@@ -400,6 +331,77 @@ M.start = function()
       end
     end
     return batches
+  end
+
+  do
+    vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
+      group = lib.group,
+      command = [[silent! wall! ++p]],
+    })
+
+    vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
+      group = lib.group,
+      callback = async(function()
+        vim.v.fcs_choice = ""
+      end),
+    })
+
+    vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufFilePost" }, {
+      group = lib.group,
+      ---@param args ChecktimeAutocmdArgs
+      callback = async(function(args)
+        if vim.b[args.buf][RELOADING] then
+          return
+        end
+        mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text, track = true }
+      end),
+    })
+
+    vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "TextChangedP" }, {
+      group = lib.group,
+      ---@param args ChecktimeAutocmdArgs
+      callback = async(function(args)
+        mb.dispatch { kind = EVENTS.DIRTY, change = LOCAL, buf = args.buf }
+      end),
+    })
+
+    vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+      group = lib.group,
+      ---@param args ChecktimeAutocmdArgs
+      callback = async(function(args)
+        mb.dispatch { kind = EVENTS.OBSERVE, buf = args.buf, base = snapshot.current(args.buf).text, track = false }
+      end),
+    })
+
+    vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
+      group = lib.group,
+      callback = function(event)
+        vim.b[event.buf][TRACKED] = nil
+      end,
+    })
+
+    vim.api.nvim_create_autocmd({ "FocusGained" }, {
+      group = lib.group,
+      callback = async(function()
+        watches.refresh()
+      end),
+    })
+
+    vim.api.nvim_create_autocmd({ "OptionSet" }, {
+      group = lib.group,
+      pattern = "modifiable",
+      callback = async(function()
+        mb.dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = vim.api.nvim_get_current_buf(), watch = true }
+      end),
+    })
+
+    autocmd.vim_enter(function()
+      for _, buf in pairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_valid(buf) then
+          mb.dispatch { kind = EVENTS.OBSERVE, buf = buf, base = snapshot.current(buf).text, track = true }
+        end
+      end
+    end)
   end
 
   return mb
