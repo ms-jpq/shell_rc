@@ -108,12 +108,12 @@ M.start = function(args)
       return { kind = M.OUTCOMES.DEFERRED }
     elseif instruction.action == plan.ACTIONS.RECONCILE then
       ---@cast instruction ChecktimeReconcile
-      if instruction.save and not snapshot.unchanged(buf, instruction.version) then
-        args.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = instruction.base, version = instruction.version }
-        return { kind = M.OUTCOMES.DEFERRED }
-      end
+      local stale = instruction.save and not snapshot.unchanged(buf, instruction.version)
       apply(buf, instruction)
       args.dispatch { kind = EVENTS.REMEMBER, buf = buf, base = instruction.base, version = instruction.version }
+      if stale then
+        return { kind = M.OUTCOMES.DEFERRED }
+      end
       local written = not instruction.save or write(buf)
       if written then
         return { kind = M.OUTCOMES.COMPLETE }
