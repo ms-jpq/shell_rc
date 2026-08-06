@@ -71,9 +71,10 @@ M.compute = function(resolution)
       modified = modified,
       save = modified and publish,
     }
+  else
+    ---@diagnostic disable-next-line: return-type-mismatch
+    return assert(false, vim.inspect(resolution))
   end
-  ---@diagnostic disable-next-line: return-type-mismatch
-  return assert(false, vim.inspect(resolution))
 end
 
 return M

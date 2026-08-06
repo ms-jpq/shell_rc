@@ -262,7 +262,9 @@ M.start = function()
       return
     elseif state == snapshot.STATES.RECONCILE then
       mailbox.remember(buf, base or remote, version)
-    elseif state == snapshot.STATES.OPAQUE or state == snapshot.STATES.NONE then
+    elseif state == snapshot.STATES.OPAQUE then
+      mailbox.remember(buf, base, version)
+    elseif state == snapshot.STATES.NONE then
       mailbox.remember(buf, base, version)
     else
       assert(false, vim.inspect(state))

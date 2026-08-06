@@ -2,6 +2,17 @@ local snapshot = require "goto.checktime.snapshot"
 
 local M = {}
 
+local text = function(buf, batch, version, remote)
+  return {
+    kind = M.KINDS.TEXT,
+    base = batch.base,
+    input = batch.input,
+    version = version,
+    remote = remote or "",
+    current = snapshot.current(buf),
+  }
+end
+
 ---@class ChecktimeResolutionKinds
 M.KINDS = {
   LOCAL = "local",
@@ -45,18 +56,14 @@ M.gather = function(buf, batch)
     return { kind = M.KINDS.RETRY }
   elseif state == snapshot.STATES.OPAQUE then
     return { kind = M.KINDS.OPAQUE }
-  elseif state == snapshot.STATES.RECONCILE or state == snapshot.STATES.NONE then
-    return {
-      kind = M.KINDS.TEXT,
-      base = batch.base,
-      input = batch.input,
-      version = version,
-      remote = remote or "",
-      current = snapshot.current(buf),
-    }
+  elseif state == snapshot.STATES.RECONCILE then
+    return text(buf, batch, version, remote)
+  elseif state == snapshot.STATES.NONE then
+    return text(buf, batch, version, remote)
+  else
+    ---@diagnostic disable-next-line: return-type-mismatch
+    return assert(false, vim.inspect(state))
   end
-  ---@diagnostic disable-next-line: return-type-mismatch
-  return assert(false, vim.inspect(state))
 end
 
 return M

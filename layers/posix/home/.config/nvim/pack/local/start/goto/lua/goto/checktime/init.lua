@@ -36,9 +36,11 @@ do
         outcome = outcome or { kind = execute.OUTCOMES.DEFERRED }
         if outcome.kind == execute.OUTCOMES.COMPLETE then
           inbox.finish(buf)
-        elseif outcome.kind == execute.OUTCOMES.DEFERRED and vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-          inbox.restore(buf, batch)
-        elseif outcome.kind ~= execute.OUTCOMES.DEFERRED then
+        elseif outcome.kind == execute.OUTCOMES.DEFERRED then
+          if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+            inbox.restore(buf, batch)
+          end
+        else
           assert(false, vim.inspect(outcome))
         end
       end

@@ -64,8 +64,9 @@ M.new = function(io)
       return { kind = written and M.OUTCOMES.COMPLETE or M.OUTCOMES.DEFERRED }
     elseif instruction.action == plan.ACTIONS.NOOP then
       return { kind = M.OUTCOMES.COMPLETE }
+    else
+      assert(false, vim.inspect(instruction))
     end
-    assert(false, vim.inspect(instruction))
   end
 
   return { run = run }
