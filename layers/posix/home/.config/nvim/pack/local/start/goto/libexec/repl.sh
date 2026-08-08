@@ -22,6 +22,36 @@ fi
 
 case "$REPL_TARGET" in
 '')
+
+  REL_TARGET_PATH=""
+  if [[ $REPL_FILE_NAME == *.md ]]; then
+    read -r -d '' AWK << 'AWK' || true
+BEGIN {
+  FRONTMATTER = 0
+}
+
+NR == 1 {
+  if ($0 == "---") {
+    FRONTMATTER = 1
+    next
+  }
+  exit
+}
+
+FRONTMATTER && ($0 == "---" || $0 == "...") {
+  exit
+}
+
+FRONTMATTER && /^rel-target:[[:space:]]*/ {
+  sub(/^rel-target:[[:space:]]*/, "", $0)
+  sub(/[[:space:]]+$/, "", $0)
+  print
+  exit
+}
+AWK
+    REL_TARGET_PATH="$(awk "$AWK" < "$REPL_FILE_NAME")"
+  fi
+
   readarray -d ':' -t ANCESTOR_PATHS < <(printf '%s:' "$REPL_ANCESTOR_PATHS")
   declare -A -- ANCESTORS=()
   for ANCESTOR_PATH in "${ANCESTOR_PATHS[@]}"; do
@@ -62,9 +92,12 @@ AWK
   )
 
   "${TM[@]}" list-panes -a -F "$FORMAT" | while IFS=$'\t' read -r PANE_ID WINDOW_ID PANE_ACTIVE LOCATION PANE_PATH; do
-    if [[ $PANE_PATH == "$REPL_PARENT_PATH" || $PANE_PATH == "$REPL_PARENT_PATH/"* || -v "ANCESTORS[$PANE_PATH]" ]]; then
-      printf -- '%s\t%s\t%s\t%s\t%s\n' "$PANE_ID" "$WINDOW_ID" "$PANE_ACTIVE" "$LOCATION" "$PANE_PATH"
+    if [[ -n $REL_TARGET_PATH ]]; then
+      [[ $PANE_PATH == "$REL_TARGET_PATH" ]] || continue
+    elif [[ $PANE_PATH != "$REPL_PARENT_PATH" && $PANE_PATH != "$REPL_PARENT_PATH/"* && ! -v "ANCESTORS[$PANE_PATH]" ]]; then
+      continue
     fi
+    printf -- '%s\t%s\t%s\t%s\t%s\n' "$PANE_ID" "$WINDOW_ID" "$PANE_ACTIVE" "$LOCATION" "$PANE_PATH"
   done | "${PARSE[@]}" | LC_ALL=C.UTF-8 sort -t $'\t' -k1,1n -k2,2n -k3,3n | awk -F '\t' '{ printf "%s\t%s%c", $4, $5, 0 }'
   ;;
 *)
