@@ -11,11 +11,13 @@ REPL_PARENT_PATH="${REPL_PARENT_PATH:-}"
 REPL_PRETTY_NAME="${REPL_PRETTY_NAME:-}"
 REPL_TARGET="${REPL_TARGET:-}"
 
-SOCKET="${__TMUX_ROOT_SOCKET__:-${TMUX%%,*}}"
+TMUX_SOCKET="${TMUX:-}"
+SOCKET="${__TMUX_ROOT_SOCKET__:-${TMUX_SOCKET%%,*}}"
 CURRENT_PANE="${__TMUX_ROOT_PANE__:-${TMUX_PANE:-}}"
 
 if [[ -z $SOCKET || -z $CURRENT_PANE ]]; then
-  exit 0
+  printf -- ' ∅' >&2
+  exit 1
 fi
 
 case "$REPL_TARGET" in

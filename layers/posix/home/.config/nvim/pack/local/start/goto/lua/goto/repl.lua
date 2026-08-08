@@ -27,6 +27,7 @@ local pick = function(buf)
   end
 
   local proc = async.system({ exec }, { env = metadata(buf, "") })
+  async.scheduled()
   if proc.code ~= 0 then
     vim.notify(proc.stderr, vim.log.levels.ERROR)
     return
