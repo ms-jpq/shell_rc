@@ -8,6 +8,7 @@ REPL_LINE_COUNT="${REPL_LINE_COUNT:-}"
 REPL_LINE_ROW="${REPL_LINE_ROW:-}"
 REPL_PRETTY_NAME="${REPL_PRETTY_NAME:-}"
 REPL_TARGET="${REPL_TARGET:-}"
+REPL_TARGET_PATH="${REPL_TARGET_PATH:-}"
 
 SOCKET="${__TMUX_ROOT_SOCKET__:-${TMUX%%,*}}"
 CURRENT_PANE="${__TMUX_ROOT_PANE__:-${TMUX_PANE:-}}"
@@ -18,6 +19,8 @@ fi
 
 case "$REPL_TARGET" in
 '')
+  readarray -d ':' -t TARGET_PATHS < <(printf '%s:' "$REPL_TARGET_PATH")
+
   TM=(tmux -S "$SOCKET")
   CURRENT_WINDOW="$("${TM[@]}" display-message -t "$CURRENT_PANE" -p -F '#{window_id}')"
 
@@ -51,7 +54,14 @@ AWK
     "$AWK"
   )
 
-  "${TM[@]}" list-panes -a -F "$FORMAT" | "${PARSE[@]}" | LC_ALL=C.UTF-8 sort -t $'\t' -k1,1n -k2,2n -k3,3n | awk -F '\t' '{ printf "%s\t%s%c", $4, $5, 0 }'
+  "${TM[@]}" list-panes -a -F "$FORMAT" | while IFS=$'\t' read -r PANE_ID WINDOW_ID PANE_ACTIVE LOCATION PANE_PATH; do
+    for TARGET_PATH in "${TARGET_PATHS[@]}"; do
+      if [[ $PANE_PATH == "$TARGET_PATH" || $PANE_PATH == "$TARGET_PATH/"* ]]; then
+        printf -- '%s\t%s\t%s\t%s\t%s\n' "$PANE_ID" "$WINDOW_ID" "$PANE_ACTIVE" "$LOCATION" "$PANE_PATH"
+        break
+      fi
+    done
+  done | "${PARSE[@]}" | LC_ALL=C.UTF-8 sort -t $'\t' -k1,1n -k2,2n -k3,3n | awk -F '\t' '{ printf "%s\t%s%c", $4, $5, 0 }'
   ;;
 *)
   PANE="${REPL_TARGET%%$'\t'*}"
