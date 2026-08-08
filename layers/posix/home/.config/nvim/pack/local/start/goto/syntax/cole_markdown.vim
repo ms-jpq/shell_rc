@@ -1,7 +1,8 @@
 syntax match mdQuote "\%(^\s*\|[>|]\s\+\)\@<=\zs>\ze\%(\s\||\%(\s\|$\)\|$\)" conceal cchar=┃
 
-syntax match mdReplResponseOpen  "^\s*\zs<!--\s*|\ze\s" conceal cchar=┇
-syntax match mdReplResponseClose "\%(^\s*<!--\s*|.*\)\@<=\s*-->\s*$" conceal
+syntax match mdCommentOpen  "^\s*\zs<!--\ze\s" conceal cchar=│
+syntax match mdCommentClose "\%(^\s*<!--.*\)\@<=\s*-->\s*$" conceal
+syntax match mdReplResponse "\%(^\s*<!--\s*\)\@<=|\ze\s" conceal cchar=┇
 
 syntax match mdDash "^\s*\zs-\ze\%( \|$\)"  conceal cchar=*
 syntax match mdPlus "^\s*\zs+\ze\%( \|$\)"  conceal cchar=◆

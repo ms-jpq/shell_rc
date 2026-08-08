@@ -3,7 +3,8 @@ syntax match goShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 
 syntax match goImport '^\s*\zs\<import\>' conceal cchar=↓
 
-syntax match goCommentEdge '^\s*\zs//' conceal cchar=│
+syntax match goCommentEdge  '^\s*\zs//' conceal cchar=│
+syntax match goReplResponse '\%(^\s*//\s*\)\@<=|\ze\s' conceal cchar=┇
 
 syntax match goBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
 

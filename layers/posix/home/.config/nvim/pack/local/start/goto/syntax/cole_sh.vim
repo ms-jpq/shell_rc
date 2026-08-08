@@ -10,4 +10,5 @@ syntax match shDone "^\s*\zs\<done\>" conceal cchar=⌋
 syntax match shEsac "^\s*\zs\<esac\>" conceal cchar=⌋
 syntax match shFi "^\s*\zs\<fi\>" conceal cchar=⌋
 
-syntax match shCommentEdge '^\s*\zs#\ze!\@!' conceal cchar=│
+syntax match shCommentEdge  '^\s*\zs#\ze!\@!' conceal cchar=│
+syntax match shReplResponse '\%(^\s*#\s*\)\@<=|\ze\s' conceal cchar=┇

@@ -3,7 +3,8 @@ syntax match scalaShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 
 syntax match scalaImport '^\s*\zs\<import\>' conceal cchar=↓
 
-syntax match scalaCommentEdge '^\s*\zs//' conceal cchar=│
+syntax match scalaCommentEdge  '^\s*\zs//' conceal cchar=│
+syntax match scalaReplResponse '\%(^\s*//\s*\)\@<=|\ze\s' conceal cchar=┇
 
 syntax match scalaBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
 

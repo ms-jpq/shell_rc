@@ -3,4 +3,5 @@ syntax match hsShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 
 syntax match hsImport '^\s*\zs\<import\>' conceal cchar=↓
 
-syntax match hsCommentEdge '^\s*\zs--' conceal cchar=│
+syntax match hsCommentEdge  '^\s*\zs--' conceal cchar=│
+syntax match hsReplResponse '\%(^\s*--\s*\)\@<=|\ze\s' conceal cchar=┇
