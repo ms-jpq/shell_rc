@@ -2,16 +2,45 @@
 
 set -o pipefail
 
-FILE="$1"
-COUNT="$2"
-ROW="$3"
-COL="$4"
-PANE="$5"
-DISPLAY="$6"
+: "${REPL_FILE_NAME:?}"
+: "${REPL_LINE_COL:?}"
+: "${REPL_LINE_COUNT:?}"
+: "${REPL_LINE_ROW:?}"
+: "${REPL_PRETTY_NAME:?}"
+: "${REPL_TARGET:?}"
 
-WINDOW=6
+SOCKET="${__TMUX_ROOT_SOCKET__:-${TMUX%%,*}}"
+CURRENT_PANE="${__TMUX_ROOT_PANE__:-${TMUX_PANE:-}}"
 
-read -r -d '' AWK << 'AWK' || true
+if [[ -z $SOCKET || -z $CURRENT_PANE ]]; then
+  exit 0
+fi
+
+case "$REPL_TARGET" in
+"")
+  TM=(tmux -S "$SOCKET")
+  CURRENT_WINDOW="$("${TM[@]}" display-message -t "$CURRENT_PANE" -p -F '#{window_id}')"
+
+  FORMAT=$'#{pane_id}\t#{window_id}\t#{window_active}\t#{session_name} -> #{window_index} -> #{pane_index}\t#{?#{pane_path},#{pane_path},#{pane_current_path}}'
+
+  read -r -d '' AWK << 'AWK' || true
+$1 != pane {
+  active = $3 == "1" ? 0 : 1
+  same_window = $2 == window ? 0 : 1
+  glyph = same_window == 0 ? "\342\226\243" : active == 0 ? "\342\233\266" : ""
+  label = $4 " " $5
+  if (glyph != "") {
+    label = label " " glyph
+  }
+  printf "%d\t%d\t%09d\t%s\t%s\n", active, same_window, NR, $1, label
+}
+AWK
+
+  "${TM[@]}" list-panes -a -F "$FORMAT" | awk -F '\t' -v pane="$CURRENT_PANE" -v window="$CURRENT_WINDOW" "$AWK" | LC_ALL=C.UTF-8 sort -t $'\t' -k1,1n -k2,2n -k3,3n | awk -F '\t' '{ printf "%s\t%s%c", $4, $5, 0 }'
+  ;;
+*)
+
+  read -r -d '' AWK << 'AWK' || true
 BEGIN {
   WIDTH = length(COUNT)
   LO = ROW - WINDOW
@@ -35,6 +64,19 @@ NR > HI {
 }
 AWK
 
-awk -v DISPLAY="$DISPLAY" -v ROW="$ROW" -v COL="$COL" -v COUNT="$COUNT" -v WINDOW="$WINDOW" "$AWK" < "$FILE" | ~/.config/tmux/libexec/send-text.sh "$PANE"
+  GEN=(
+    awk
+    -v COL="$REPL_LINE_COL"
+    -v COUNT="$REPL_LINE_COUNT"
+    -v DISPLAY="$REPL_PRETTY_NAME"
+    -v ROW="$REPL_LINE_ROW"
+    -v WINDOW=6
+    --
+    "$AWK"
+  )
 
-printf '%s' "⮕  [$PANE]"
+  "${GEN[@]}" < "$REPL_FILE_NAME" | ~/.config/tmux/libexec/send-text.sh "$PANE"
+
+  printf '%s' "⮕  [$PANE]"
+  ;;
+esac
