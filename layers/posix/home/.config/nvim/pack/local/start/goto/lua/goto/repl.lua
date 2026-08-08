@@ -10,13 +10,14 @@ local metadata = function(buf, target)
   table.remove(paths)
 
   return {
+    REPL_ANCESTOR_PATHS = table.concat(paths, ":"),
     REPL_FILE_NAME = filename,
     REPL_LINE_COL = tostring(col + 1),
     REPL_LINE_COUNT = tostring(vim.api.nvim_buf_line_count(buf)),
     REPL_LINE_ROW = tostring(row),
+    REPL_PARENT_PATH = vim.fs.parents(filename),
     REPL_PRETTY_NAME = vim.fn.fnamemodify(filename, [[:~]]),
     REPL_TARGET = target,
-    REPL_TARGET_PATH = table.concat(paths, ":"),
   }
 end
 local pick = function(buf)
