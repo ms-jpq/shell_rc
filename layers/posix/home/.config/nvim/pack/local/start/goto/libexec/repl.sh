@@ -52,17 +52,6 @@ AWK
     REL_TARGET_PATH="$(awk "$AWK" < "$REPL_FILE_NAME")"
   fi
 
-  readarray -d ':' -t ANCESTOR_PATHS < <(printf '%s:' "$REPL_ANCESTOR_PATHS")
-  declare -A -- ANCESTORS=()
-  for ANCESTOR_PATH in "${ANCESTOR_PATHS[@]}"; do
-    ANCESTORS["$ANCESTOR_PATH"]=1
-  done
-
-  TM=(tmux -S "$SOCKET")
-  CURRENT_WINDOW="$("${TM[@]}" display-message -t "$CURRENT_PANE" -p -F '#{window_id}')"
-
-  FORMAT=$'#{pane_id}\t#{window_id}\t#{window_active}\t#{session_name} -> #{window_index} -> #{pane_index}\t#{?#{pane_path},#{pane_path},#{pane_current_path}}'
-
   read -r -d '' AWK << 'AWK' || true
 BEGIN {
   ACTIVE = 0
@@ -90,6 +79,20 @@ AWK
     -v WINDOW="$CURRENT_WINDOW"
     "$AWK"
   )
+
+  readarray -d ':' -t ANCESTOR_PATHS < <(printf '%s:' "$REPL_ANCESTOR_PATHS")
+  declare -A -- ANCESTORS=()
+  for ANCESTOR_PATH in "${ANCESTOR_PATHS[@]}"; do
+    if [[ -n $ANCESTOR_PATH ]]; then
+      ANCESTORS["$ANCESTOR_PATH"]=1
+    fi
+  done
+
+  TM=(tmux -S "$SOCKET")
+  CURRENT_WINDOW="$("${TM[@]}" display-message -t "$CURRENT_PANE" -p -F '#{window_id}')"
+
+  FORMAT=$'#{pane_id}\t#{window_id}\t#{window_active}\t#{session_name} -> #{window_index} -> #{pane_index}\t#{?#{pane_path},#{pane_path},#{pane_current_path}}'
+
 
   "${TM[@]}" list-panes -a -F "$FORMAT" | while IFS=$'\t' read -r PANE_ID WINDOW_ID PANE_ACTIVE LOCATION PANE_PATH; do
     if [[ -n $REL_TARGET_PATH ]]; then
