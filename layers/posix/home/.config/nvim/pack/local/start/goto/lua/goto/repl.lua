@@ -6,12 +6,8 @@ local exec = assert(unpack(vim.api.nvim_get_runtime_file("libexec/repl.sh", fals
 local metadata = function(buf, target)
   local filename = vim.api.nvim_buf_get_name(buf)
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-  local paths = vim
-    .iter(vim.fs.parents(filename))
-    :filter(function(path)
-      return path ~= "/"
-    end)
-    :join ":"
+  local paths = vim.iter(vim.fs.parents(filename)):totable()
+  table.remove(paths)
 
   return {
     REPL_FILE_NAME = filename,
@@ -20,7 +16,7 @@ local metadata = function(buf, target)
     REPL_LINE_ROW = tostring(row),
     REPL_PRETTY_NAME = vim.fn.fnamemodify(filename, [[:~]]),
     REPL_TARGET = target,
-    REPL_TARGET_PATH = paths,
+    REPL_TARGET_PATH = table.concat(paths, ":"),
   }
 end
 local pick = function(buf)
