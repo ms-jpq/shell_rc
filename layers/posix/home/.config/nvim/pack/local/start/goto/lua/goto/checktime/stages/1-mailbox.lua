@@ -6,6 +6,14 @@ local watcher = require "goto.checktime.watcher"
 
 local M = {}
 
+---@alias ChecktimeChange "remote"|"local"
+
+---@type ChecktimeChange
+M.LOCAL = "local"
+
+---@type ChecktimeChange
+M.REMOTE = "remote"
+
 ---@generic T: table
 ---@param value T
 ---@return T
@@ -16,8 +24,6 @@ local clone = function(value)
   end
   return copied
 end
-
----@alias ChecktimeChange "remote"|"local"
 
 ---@class ChecktimeGeneration
 ---@field monotonic_ts integer
@@ -82,13 +88,17 @@ end
 ---@field latest fun(buf: integer, changedtick: integer): ChecktimeBatch?
 ---@field take fun(): table<integer, integer>
 
+---@class ChecktimeMailboxConfig
+---@field grace_ms integer
+---@field visible_interval integer
+---@field hidden_interval integer
+
 local EVENTS = {
   COMMIT = "commit",
   DIRTY = "dirty",
   OBSERVE = "observe",
 }
 
-local REMOTE, LOCAL = "remote", "local"
 local RELOADING = "__checktime_reloading__"
 local REWRITE = "__checktime_rewrite__"
 local TRACKED = "__checktime_mailbox__"
@@ -133,10 +143,13 @@ local gen = (function()
   end
 end)()
 
+---@param spec ChecktimeMailboxConfig
 ---@return ChecktimeMailbox
-M.start = function()
+M.start = function(spec)
   ---@diagnostic disable-next-line: missing-fields
   local mb = {} ---@type ChecktimeMailbox
+  local pending = {} ---@type table<integer, true>
+  local grace_ns = spec.grace_ms * lib.NANOSECONDS_PER_MILLISECOND
 
   ---@param buf integer
   ---@param fn fun(tracked: ChecktimeTracked): ChecktimeTracked
@@ -145,6 +158,7 @@ M.start = function()
     local tracked = clone(vim.b[buf][TRACKED] or { events = {}, generation = gen(), guard = 0 })
     tracked = fn(tracked)
     vim.b[buf][TRACKED] = tracked
+    pending[buf] = next(tracked.events) and true or nil
     return tracked
   end
 
@@ -202,7 +216,7 @@ M.start = function()
       end
       return
     elseif action.kind == EVENTS.DIRTY then
-      if action.change == LOCAL then
+      if action.change == M.LOCAL then
         local rewrite = vim.b[action.buf][REWRITE]
         local changedtick = vim.api.nvim_buf_get_changedtick(action.buf)
         vim.b[action.buf][REWRITE] = nil
@@ -211,14 +225,14 @@ M.start = function()
           return
         end
 
-        mark(LOCAL, action.buf)
-      elseif action.change == REMOTE then
+        mark(M.LOCAL, action.buf)
+      elseif action.change == M.REMOTE then
         if action.watch then
           watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
         end
 
         if not action.watch or vim.bo[action.buf].modifiable then
-          mark(REMOTE, action.buf)
+          mark(M.REMOTE, action.buf)
         end
       else
         assert(false, vim.inspect(action))
@@ -235,7 +249,7 @@ M.start = function()
       local source = action.text
       if action.track then
         watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
-        generation = mark(REMOTE, action.buf)
+        generation = mark(M.REMOTE, action.buf)
       end
       update(action.buf, function(next)
         if action.track then
@@ -265,7 +279,7 @@ M.start = function()
       end)
 
       if read == snapshotter.STATES.RETRY then
-        mark(REMOTE, action.buf)
+        mark(M.REMOTE, action.buf)
       elseif read == snapshotter.STATES.RECONCILE then
         accept(action.buf, action.track and source or text, version)
       elseif read == snapshotter.STATES.OPAQUE or read == snapshotter.STATES.MISSING then
@@ -280,8 +294,10 @@ M.start = function()
 
   watches = watcher.start {
     changed = function(buf)
-      dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = buf, watch = false }
+      dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = buf, watch = false }
     end,
+    visible_interval = spec.visible_interval,
+    hidden_interval = spec.hidden_interval,
     reloading = reloading,
   }
 
@@ -291,7 +307,7 @@ M.start = function()
   mb.latest = function(buf, before)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
     if changedtick ~= before then
-      mark(LOCAL, buf)
+      mark(M.LOCAL, buf)
     end
     local tracked = vim.b[buf][TRACKED]
     if not tracked or not next(tracked.events) then
@@ -309,10 +325,24 @@ M.start = function()
   mb.take = function()
     watches.retry()
     local ready = {} ---@type table<integer, integer>
-    for _, buf in pairs(vim.api.nvim_list_bufs()) do
-      local item = vim.b[buf][TRACKED]
-      if item and item.guard == 0 and not vim.b[buf][WRITING] and watches.has(buf) and next(item.events) then
-        ready[buf] = vim.api.nvim_buf_get_changedtick(buf)
+    for buf in pairs(pending) do
+      if not vim.api.nvim_buf_is_valid(buf) then
+        pending[buf] = nil
+      else
+        local item = vim.b[buf][TRACKED]
+        if not item or not next(item.events) or not watches.has(buf) then
+          pending[buf] = nil
+        elseif
+          item.guard == 0
+          and not vim.b[buf][WRITING]
+          and not (
+            vim.bo[buf].modified
+            and item.events[M.LOCAL]
+            and vim.uv.hrtime() - item.events[M.LOCAL].monotonic_ts < grace_ns
+          )
+        then
+          ready[buf] = vim.api.nvim_buf_get_changedtick(buf)
+        end
       end
     end
     return ready
@@ -331,7 +361,7 @@ M.start = function()
 
   do
     snapshotter.track_insert(function(buf)
-      dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = buf, watch = false }
+      dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = buf, watch = false }
     end)
 
     vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
@@ -357,11 +387,31 @@ M.start = function()
       end),
     })
 
+    vim.api.nvim_create_autocmd("BufWinEnter", {
+      group = lib.group,
+      ---@param args ChecktimeAutocmdArgs
+      callback = function(args)
+        watches.refresh(args.buf)
+      end,
+    })
+
+    vim.api.nvim_create_autocmd("BufWinLeave", {
+      group = lib.group,
+      ---@param args ChecktimeAutocmdArgs
+      callback = function(args)
+        vim.schedule(function()
+          if vim.api.nvim_buf_is_valid(args.buf) and vim.api.nvim_buf_is_loaded(args.buf) then
+            watches.refresh(args.buf)
+          end
+        end)
+      end,
+    })
+
     vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "TextChangedP" }, {
       group = lib.group,
       ---@param args ChecktimeAutocmdArgs
       callback = async(function(args)
-        dispatch { kind = EVENTS.DIRTY, change = LOCAL, buf = args.buf, watch = false }
+        dispatch { kind = EVENTS.DIRTY, change = M.LOCAL, buf = args.buf, watch = false }
       end),
     })
 
@@ -378,6 +428,7 @@ M.start = function()
       callback = function(event)
         if not reloading(event.buf) then
           vim.b[event.buf][TRACKED] = nil
+          pending[event.buf] = nil
         end
       end,
     })
@@ -386,7 +437,7 @@ M.start = function()
       group = lib.group,
       pattern = "modifiable",
       callback = async(function()
-        dispatch { kind = EVENTS.DIRTY, change = REMOTE, buf = vim.api.nvim_get_current_buf(), watch = true }
+        dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = vim.api.nvim_get_current_buf(), watch = true }
       end),
     })
 

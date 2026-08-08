@@ -1,5 +1,6 @@
 local hunks = require "goto.checktime.hunks"
 local lib = require "goto.lib"
+local mailbox = require "goto.checktime.stages.1-mailbox"
 local snapshotter = require "goto.checktime.snapshotter"
 
 local M = {}
@@ -43,14 +44,11 @@ M.ACTIONS = {
 ---@class ChecktimeResolver
 ---@field plan fun(buf: integer, batch: ChecktimeBatch): ChecktimeInstruction
 
----@param batch ChecktimeBatch
+---@param generation? ChecktimeGeneration
 ---@param grace_ms integer
 ---@return boolean
-local within_grace = function(batch, grace_ms)
-  local local_change = batch.events["local"]
-  return local_change ~= nil
-    and batch.events.remote ~= nil
-    and vim.uv.hrtime() - local_change.monotonic_ts < grace_ms * lib.NANOSECONDS_PER_MILLISECOND
+local within_grace = function(generation, grace_ms)
+  return generation ~= nil and vim.uv.hrtime() - generation.monotonic_ts < grace_ms * lib.NANOSECONDS_PER_MILLISECOND
 end
 
 ---@param spec ChecktimeResolveConfig
@@ -63,7 +61,12 @@ M.start = function(spec)
   ---@param batch ChecktimeBatch
   ---@return ChecktimeInstruction
   resolver.plan = function(buf, batch)
-    if not batch.events.remote then
+    local local_change, remote_change = batch.events[mailbox.LOCAL], batch.events[mailbox.REMOTE]
+    local local_grace = within_grace(local_change, spec.grace_ms)
+
+    if vim.bo[buf].modified and local_grace then
+      return { action = M.ACTIONS.RETRY }
+    elseif not remote_change then
       if vim.bo[buf].modified then
         return { action = M.ACTIONS.WRITE, version = batch.version }
       else
@@ -82,7 +85,7 @@ M.start = function(spec)
       local base = snapshotter.merge_text(current, batch.accepted or insert_base or "")
       local remote_text = snapshotter.merge_text(current, accepted)
 
-      if within_grace(batch, spec.grace_ms) and base ~= remote_text then
+      if local_grace and base ~= remote_text then
         return { action = M.ACTIONS.RETRY }
       end
 

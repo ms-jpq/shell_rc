@@ -6,13 +6,14 @@ local M = {}
 
 ---@param path string
 ---@param changed fun()
+---@param interval integer
 ---@return ChecktimePoller?
-M.start = function(path, changed)
+M.start = function(path, changed, interval)
   local handle = vim.uv.new_fs_poll()
   if not handle then
     return nil
   end
-  if not handle:start(path, 99, changed) then
+  if not handle:start(path, interval, changed) then
     handle:close()
     return nil
   end

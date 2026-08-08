@@ -13,10 +13,15 @@ vim.opt.autoread = false
 
 do
   local alive = lib.generation "checktime"
-  local interval = 99
-  local inbox = mailbox.start()
+  local visible_interval, hidden_interval = 99, 999
+  local grace_ms = 3 * visible_interval
+  local inbox = mailbox.start {
+    grace_ms = grace_ms,
+    visible_interval = visible_interval,
+    hidden_interval = hidden_interval,
+  }
   local executor = execute.start(inbox.commit)
-  local resolver = resolve.start { grace_ms = 3 * interval }
+  local resolver = resolve.start { grace_ms = grace_ms }
 
   local tick = function()
     for buf, changedtick in pairs(inbox.take()) do
@@ -43,7 +48,7 @@ do
 
   async.run(function()
     while alive() do
-      async.sleep(interval)
+      async.sleep(visible_interval)
       lib.report(tick)
     end
   end)
