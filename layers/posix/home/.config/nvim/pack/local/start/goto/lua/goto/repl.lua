@@ -1,6 +1,7 @@
 local async = require "goto.async"
 local cmds = require "goto.commands"
 
+local REPL_IFS = string.char(31)
 local exec = assert(unpack(vim.api.nvim_get_runtime_file("libexec/repl.sh", false)))
 
 local metadata = function(buf, target)
@@ -12,24 +13,29 @@ local metadata = function(buf, target)
   return {
     REPL_ANCESTOR_PATHS = table.concat(paths, ":"),
     REPL_FILE_NAME = filename,
+    REPL_IFS = REPL_IFS,
     REPL_LINE_COL = tostring(col + 1),
     REPL_LINE_COUNT = tostring(vim.api.nvim_buf_line_count(buf)),
     REPL_LINE_ROW = tostring(row),
-    REPL_PARENT_PATH = vim.fs.parents(filename),
+    REPL_PARENT_PATH = vim.fs.dirname(filename),
     REPL_PRETTY_NAME = vim.fn.fnamemodify(filename, [[:~]]),
     REPL_TARGET = target,
   }
 end
 local pick = function(buf)
   local target = vim.b[buf].__repl_target__
-  if target then
+  if target and string.find(target, REPL_IFS, 1, true) then
     return target
   end
 
   local proc = async.system({ exec }, { env = metadata(buf, "") })
   async.scheduled()
-  if proc.code ~= 0 then
-    vim.notify(proc.stderr, vim.log.levels.ERROR)
+  if proc.code ~= 0 or proc.stderr ~= "" then
+    vim.notify(proc.stderr .. proc.stdout, vim.log.levels.ERROR)
+    return
+  end
+  if proc.stdout == "" then
+    vim.notify([[🚫]], vim.log.levels.ERROR)
     return
   end
 
@@ -40,7 +46,8 @@ local pick = function(buf)
   async.scheduled()
   target = async.ui.select(choices, {
     format_item = function(choice)
-      return string.match(choice, "^[^\t]*\t(.*)") or choice
+      local line = string.gsub(choice, "^[^" .. REPL_IFS .. "]*" .. REPL_IFS, "")
+      return string.gsub(line, REPL_IFS, " ")
     end,
   })
   vim.b[buf].__repl_target__ = target

@@ -2,21 +2,21 @@
 
 set -o pipefail
 
-REPL_ANCESTOR_PATHS="${REPL_ANCESTOR_PATHS:-}"
-REPL_FILE_NAME="${REPL_FILE_NAME:-}"
-REPL_LINE_COL="${REPL_LINE_COL:-}"
-REPL_LINE_COUNT="${REPL_LINE_COUNT:-}"
-REPL_LINE_ROW="${REPL_LINE_ROW:-}"
-REPL_PARENT_PATH="${REPL_PARENT_PATH:-}"
-REPL_PRETTY_NAME="${REPL_PRETTY_NAME:-}"
-REPL_TARGET="${REPL_TARGET:-}"
+: "${REPL_ANCESTOR_PATHS?}"
+: "${REPL_FILE_NAME?}"
+: "${REPL_IFS?}"
+: "${REPL_LINE_COL?}"
+: "${REPL_LINE_COUNT?}"
+: "${REPL_LINE_ROW?}"
+: "${REPL_PARENT_PATH?}"
+: "${REPL_PRETTY_NAME?}"
+: "${REPL_TARGET?}"
 
 TMUX_SOCKET="${TMUX:-}"
 SOCKET="${__TMUX_ROOT_SOCKET__:-${TMUX_SOCKET%%,*}}"
 CURRENT_PANE="${__TMUX_ROOT_PANE__:-${TMUX_PANE:-}}"
 
 if [[ -z $SOCKET || -z $CURRENT_PANE ]]; then
-  printf -- ' ∅' >&2
   exit 1
 fi
 
@@ -49,62 +49,53 @@ FRONTMATTER && /^rel-target:[[:space:]]*/ {
   exit
 }
 AWK
-    REL_TARGET_PATH="$(awk "$AWK" < "$REPL_FILE_NAME")"
+    REL_TARGET_PATH="$(awk -- "$AWK" < "$REPL_FILE_NAME")"
   fi
-
-  read -r -d '' AWK << 'AWK' || true
-BEGIN {
-  ACTIVE = 0
-  GLYPH = ""
-  LABEL = ""
-  SAME_WINDOW = 0
-}
-
-$1 != PANE {
-  ACTIVE = $3 == "1" ? 0 : 1
-  SAME_WINDOW = $2 == WINDOW ? 0 : 1
-  GLYPH = SAME_WINDOW == 0 ? SAME_WINDOW_GLYPH : ACTIVE == 0 ? ACTIVE_GLYPH : ""
-  LABEL = $4 " " $5
-  if (GLYPH != "") {
-    LABEL = LABEL " " GLYPH
-  }
-  printf "%d\t%d\t%09d\t%s\t%s\n", ACTIVE, SAME_WINDOW, NR, $1, LABEL
-}
-AWK
-  PARSE=(
-    awk -F '\t'
-    -v ACTIVE_GLYPH='⛶'
-    -v SAME_WINDOW_GLYPH='▣'
-    -v PANE="$CURRENT_PANE"
-    -v WINDOW="$CURRENT_WINDOW"
-    "$AWK"
-  )
-
-  readarray -d ':' -t ANCESTOR_PATHS < <(printf '%s:' "$REPL_ANCESTOR_PATHS")
-  declare -A -- ANCESTORS=()
-  for ANCESTOR_PATH in "${ANCESTOR_PATHS[@]}"; do
-    if [[ -n $ANCESTOR_PATH ]]; then
-      ANCESTORS["$ANCESTOR_PATH"]=1
-    fi
-  done
 
   TM=(tmux -S "$SOCKET")
   CURRENT_WINDOW="$("${TM[@]}" display-message -t "$CURRENT_PANE" -p -F '#{window_id}')"
 
-  FORMAT=$'#{pane_id}\t#{window_id}\t#{window_active}\t#{session_name} -> #{window_index} -> #{pane_index}\t#{?#{pane_path},#{pane_path},#{pane_current_path}}'
+  readarray -d ':' -t ANCESTOR_PATHS < <(printf -- '%s' "$REPL_ANCESTOR_PATHS")
+  declare -A -- ANCESTORS=()
+  for ANCESTOR_PATH in "${ANCESTOR_PATHS[@]}"; do
+    ANCESTORS["$ANCESTOR_PATH"]=1
+  done
 
+  FORMAT_FIELDS=(
+    '#{?pane_active,0,1}'
+    "#{?#{==:#{window_id},$CURRENT_WINDOW},0,1}"
+    '#{pane_id}'
+    '#{window_id}'
+    '#{pane_active}'
+    '#{session_name} → #{window_index}:#{pane_index}'
+    '#{?#{pane_path},#{pane_path},#{pane_current_path}}'
+  )
+  printf -v FORMAT -- "%s$REPL_IFS" "${FORMAT_FIELDS[@]}"
+  FORMAT="${FORMAT%"$REPL_IFS"}"
 
-  "${TM[@]}" list-panes -a -F "$FORMAT" | while IFS=$'\t' read -r PANE_ID WINDOW_ID PANE_ACTIVE LOCATION PANE_PATH; do
+  "${TM[@]}" list-panes -a -F "$FORMAT" | LC_ALL=C.UTF-8 sort --stable --field-separator "$REPL_IFS" --key 1,1n --key 2,2n | cut --delimiter "$REPL_IFS" --fields 3- | while IFS="$REPL_IFS" read -r PANE_ID WINDOW_ID PANE_ACTIVE SLUG PANE_PATH; do
+    if [[ $PANE_ID == "$CURRENT_PANE" ]]; then
+      continue
+    fi
     if [[ -n $REL_TARGET_PATH ]]; then
-      [[ $PANE_PATH == "$REL_TARGET_PATH" ]] || continue
+      if [[ $PANE_PATH != "$REL_TARGET_PATH" ]]; then
+        continue
+      fi
     elif [[ $PANE_PATH != "$REPL_PARENT_PATH" && $PANE_PATH != "$REPL_PARENT_PATH/"* && ! -v "ANCESTORS[$PANE_PATH]" ]]; then
       continue
     fi
-    printf -- '%s\t%s\t%s\t%s\t%s\n' "$PANE_ID" "$WINDOW_ID" "$PANE_ACTIVE" "$LOCATION" "$PANE_PATH"
-  done | "${PARSE[@]}" | LC_ALL=C.UTF-8 sort -t $'\t' -k1,1n -k2,2n -k3,3n | awk -F '\t' '{ printf "%s\t%s%c", $4, $5, 0 }'
+
+    DECOR=''
+    if [[ $WINDOW_ID == "$CURRENT_WINDOW" ]]; then
+      DECOR+=" ▣"
+    elif [[ $PANE_ACTIVE == 1 ]]; then
+      DECOR+=" ⛶"
+    fi
+    printf -- '%s\0' "$PANE_ID$REPL_IFS$SLUG ${PANE_PATH/#"$HOME"/"~"}$DECOR"
+  done
   ;;
 *)
-  PANE="${REPL_TARGET%%$'\t'*}"
+  PANE_ID="${REPL_TARGET%%"$REPL_IFS"*}"
 
   read -r -d '' AWK << 'AWK' || true
 BEGIN {
@@ -141,8 +132,8 @@ AWK
     "$AWK"
   )
 
-  "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | ~/.config/tmux/libexec/send-text.sh "$PANE"
+  "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | ~/.config/tmux/libexec/send-text.sh "$PANE_ID"
 
-  printf '%s' "⮕  [$PANE]"
+  printf '%s' "⮕  [$PANE_ID]"
   ;;
 esac

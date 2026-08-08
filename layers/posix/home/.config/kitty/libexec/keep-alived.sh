@@ -4,8 +4,6 @@ set -o pipefail
 
 VIM="$(< "${0%/*}/keep-alived.vim")"
 
-cd -- ~/
-
 SOCK=~/.cache/nvim/quic.sock
 KITTEN=(
   kitten quick-access-terminal
