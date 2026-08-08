@@ -47,7 +47,7 @@ local pick_pane = function(buf)
 end
 
 local repl = function()
-  if not tmux.current then
+  if not tmux.CURRENT_PANE then
     return
   end
 
