@@ -56,7 +56,7 @@ AWK
 
   "${TM[@]}" list-panes -a -F "$FORMAT" | while IFS=$'\t' read -r PANE_ID WINDOW_ID PANE_ACTIVE LOCATION PANE_PATH; do
     for TARGET_PATH in "${TARGET_PATHS[@]}"; do
-      if [[ $PANE_PATH == "$TARGET_PATH" || $PANE_PATH == "$TARGET_PATH/"* ]]; then
+      if [[ $PANE_PATH == "$TARGET_PATH" ]]; then
         printf -- '%s\t%s\t%s\t%s\t%s\n' "$PANE_ID" "$WINDOW_ID" "$PANE_ACTIVE" "$LOCATION" "$PANE_PATH"
         break
       fi
