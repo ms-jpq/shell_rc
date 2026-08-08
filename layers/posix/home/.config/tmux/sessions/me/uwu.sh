@@ -19,11 +19,11 @@ tmux paste-buffer -d -p
 tmux select-pane -t '{marked}'
 tmux select-pane -M
 
-tmux new-window
+tmux new-window -c ~/Downloads
 tmux set-buffer -- $'~/.local/opt/ai/bin/notificationd\n'
 tmux paste-buffer -d -p
 tmux select-pane -m
-tmux split-window -h
+tmux split-window -h -c ~/Downloads
 tmux set-buffer -- $'~/.config/kitty/libexec/keep-alived.sh\n'
 tmux paste-buffer -d -p
 tmux select-pane -t '{marked}'
