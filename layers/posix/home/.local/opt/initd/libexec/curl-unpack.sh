@@ -16,7 +16,7 @@ CURL=(
 
 case "$OSTYPE" in
 msys | cygwin)
-  # shellcheck disable=SC2154
+  : "${SYSTEMROOT?}"
   TAR="$SYSTEMROOT/system32/tar.exe"
   ;;
 *)

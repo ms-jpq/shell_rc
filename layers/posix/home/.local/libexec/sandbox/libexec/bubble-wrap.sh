@@ -131,7 +131,6 @@ if [[ -v TMPDIR && $TMPDIR != /tmp ]]; then
   RW_BIND+=("$TMPDIR")
 fi
 
-# shellcheck disable=SC2154
 if ((AUTH)); then
   RO_BIND+=(
     "$XDG_CONFIG_HOME/ssh"

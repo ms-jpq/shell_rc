@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+: "${BIN?}"
+: "${RUN?}"
+
 REPO='tekumara/typos-vscode'
 BASE="https://github.com/$REPO/releases/latest/download/typos-lsp"
 VERSION="$(gh-latest.sh . "$REPO")"
@@ -22,7 +25,5 @@ linux*)
   ;;
 esac
 
-# shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
-# shellcheck disable=SC2154
 install -v -bD -- "$RUN/"**'/typos-lsp'* "$BIN/typos-lsp$EXT"

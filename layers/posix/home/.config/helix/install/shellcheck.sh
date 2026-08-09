@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+: "${BIN?}"
+: "${RUN?}"
+
 REPO='koalaman/shellcheck'
 BASE="https://github.com/$REPO/releases/latest/download/shellcheck"
 VERSION="$(gh-latest.sh . "$REPO")"
@@ -18,7 +21,5 @@ linux*)
   ;;
 esac
 
-# shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
-# shellcheck disable=SC2154
 install -v -bD -- "$RUN/shellcheck"*'/shellcheck' "$BIN/shellcheck"

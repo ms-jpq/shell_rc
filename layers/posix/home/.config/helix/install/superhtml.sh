@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+: "${BIN?}"
+: "${RUN?}"
+
 BASE='https://github.com/kristoff-it/superhtml/releases/latest/download'
 
 EXT=''
@@ -27,8 +30,6 @@ linux*)
 esac
 
 ARCHIVE="superhtml-${URI##*/}"
-# shellcheck disable=SC2154
 get.sh "$URI" "$ARCHIVE" | unpack.sh "$RUN"
 find "$RUN" -name '*.pdb' -delete
-# shellcheck disable=SC2154
 install -v -bD -- "$RUN"/superhtml* "$BIN/superhtml$EXT"

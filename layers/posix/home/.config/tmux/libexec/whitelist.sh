@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+: "${XDG_CONFIG_HOME?}"
+
 if ! (($#)); then
   exit 1
 fi
@@ -16,7 +18,6 @@ aerc | autossh | */autossh | nvim | */nvim | hx | */hx | socat)
 *) ;;
 esac
 
-# shellcheck disable=SC2154
 case "$*" in
 */claude* | */codex* | */notificationd)
   exit

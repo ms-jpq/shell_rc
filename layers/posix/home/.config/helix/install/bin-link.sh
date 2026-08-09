@@ -2,12 +2,13 @@
 
 set -o pipefail
 
+: "${BIN?}"
+
 SELF="$(realpath -- "$0")"
 BASE="${SELF%/*}"
 BASE="${BASE%/*}"
 
 SRC="$BASE/bin"
-# shellcheck disable=SC2154
 DST="$BIN"
 
 shopt -u failglob

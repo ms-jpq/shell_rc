@@ -63,7 +63,7 @@ PROFILES=(
 )
 
 if ((AUTH)); then
-  # shellcheck disable=SC2154
+  : "${SSH_AUTH_SOCK?}"
   ARGV+=(-D SSH_AUTH_SOCK="$SSH_AUTH_SOCK")
   PROFILES+=('(import-profile "1-auth.sb")')
 fi

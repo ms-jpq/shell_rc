@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+: "${BIN?}"
+
 BASE='https://github.com/artempyanykh/marksman/releases/latest/download/marksman'
 
 EXT=''
@@ -19,5 +21,4 @@ linux*)
 esac
 
 FILE="$(get.sh "$URI")"
-# shellcheck disable=SC2154
 install -v -bD -- "$FILE" "$BIN/marksman$EXT"

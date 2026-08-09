@@ -62,7 +62,7 @@ JQ
     TMPDIR="/var/tmp/helix-rt"
     ;;
   msys | cygwin)
-    # shellcheck disable=SC2154
+    : "${TEMP?}"
     TMPDIR="$TEMP/helix-rt/var"
     ;;
   *)

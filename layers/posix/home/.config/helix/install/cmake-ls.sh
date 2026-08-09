@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+: "${BIN?}"
+: "${RUN?}"
+
 BASE='https://github.com/neocmakelsp/neocmakelsp/releases/latest/download/neocmakelsp'
 
 EXT=''
@@ -18,7 +21,5 @@ linux*)
   ;;
 esac
 
-# shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
-# shellcheck disable=SC2154
 install -v -bD -- "$RUN"/* "$BIN/neocmakelsp$EXT"

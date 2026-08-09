@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+: "${BIN?}"
+
 REPO='mvdan/sh'
 BASE="https://github.com/$REPO/releases/latest/download/shfmt"
 VERSION="$(gh-latest.sh . "$REPO")"
@@ -30,5 +32,4 @@ linux*)
 esac
 
 FILE="$(get.sh "$URI")"
-# shellcheck disable=SC2154
 install -v -bD -- "$FILE" "$BIN/$NAME"

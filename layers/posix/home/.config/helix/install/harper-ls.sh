@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+: "${BIN?}"
+: "${RUN?}"
+
 BASE='https://github.com/Automattic/harper/releases/latest/download/harper-ls'
 
 case "$OSTYPE" in
@@ -16,8 +19,5 @@ linux*)
   ;;
 esac
 
-# shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
-# shellcheck disable=2154
-
 install -v -bD -t "$BIN" -- "$RUN/"*

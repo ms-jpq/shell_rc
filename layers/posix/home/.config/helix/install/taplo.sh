@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+: "${BIN?}"
+: "${RUN?}"
+
 BASE='https://github.com/tamasfe/taplo/releases/latest/download/taplo'
 
 EXT=''
@@ -18,9 +21,7 @@ linux*)
   ;;
 esac
 
-# shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
 F=("$RUN"/*)
 chmod +x "${F[@]}"
-# shellcheck disable=SC2154
 install -v -bD -- "${F[@]}" "$BIN/taplo$EXT"

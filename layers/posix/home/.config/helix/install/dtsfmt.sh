@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+: "${BIN?}"
+: "${RUN?}"
+
 BASE='https://github.com/mskelton/dtsfmt/releases/latest/download/dtsfmt'
 
 case "$OSTYPE" in
@@ -23,7 +26,5 @@ linux*)
   ;;
 esac
 
-# shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
-# shellcheck disable=SC2154
 install -v -bD -- "$RUN/dtsfmt" "$BIN/dtsfmt"

@@ -3,6 +3,8 @@
 set -o pipefail
 shopt -u failglob
 
+: "${XDG_STATE_HOME?}"
+
 ENV='TMUX_NO_SAVE'
 if tmux show-environment -g -h -- "$ENV" > /dev/null 2>&1; then
   exit 0
@@ -14,7 +16,6 @@ fi
 
 PROCFS="${0%/*}/procfs.sh"
 
-# shellcheck disable=SC2154
 TMUX_SESSIONS="$XDG_STATE_HOME/tmux"
 
 declare -A -- SESSIONS=() WINDOWS=() PANES=() LAYOUTS=() WDS=() CMDS=() ACTIVE=() PS_IDS=() ARGVS=()

@@ -13,7 +13,7 @@ linux* | darwin*)
   T='bsdtar'
   ;;
 msys | cygwin)
-  # shellcheck disable=SC2154
+  : "${SYSTEMROOT?}"
   T="$(cygpath -- "$SYSTEMROOT/system32/tar.exe")"
   ;;
 *)

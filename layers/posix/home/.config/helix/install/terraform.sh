@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+: "${BIN?}"
+: "${RUN?}"
+
 BASE_URI='https://releases.hashicorp.com/terraform'
 VERSION="$(gh-latest.sh . 'hashicorp/terraform')"
 VERSION="${VERSION#v}"
@@ -29,7 +32,5 @@ esac
 
 URI="$BASE_URI/$VERSION/terraform_${VERSION}_$NAME.zip"
 
-# shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
-# shellcheck disable=SC2154
 install -v -bD -t "$BIN" -- "$RUN/"*

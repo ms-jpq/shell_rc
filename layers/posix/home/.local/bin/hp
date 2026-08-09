@@ -3,6 +3,8 @@
 set -o pipefail
 shopt -u failglob
 
+: "${PATH?}"
+
 RT="$HOME/.cache/helix-rt"
 PATHS=(
   "$RT/"{more,go,ruby}/*/bin
@@ -12,7 +14,6 @@ PATHS=(
   "$PATH"
 )
 IFS=':'
-# shellcheck disable=SC2154
 PATH="${PATHS[*]}"
 
 exec -- "$@"

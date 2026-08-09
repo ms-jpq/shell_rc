@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+: "${BIN?}"
+
 BASE='https://github.com/hadolint/hadolint/releases/latest/download/hadolint'
 
 case "$HOSTTYPE" in
@@ -28,5 +30,4 @@ linux*)
 esac
 
 FILE="$(get.sh "$URI")"
-# shellcheck disable=SC2154
 install -v -bD -- "$FILE" "$BIN/hadolint$EXT"

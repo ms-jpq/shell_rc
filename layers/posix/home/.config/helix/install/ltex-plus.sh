@@ -2,6 +2,10 @@
 
 set -o pipefail
 
+: "${BIN?}"
+: "${LIB?}"
+: "${RUN?}"
+
 REPO='ltex-plus/ltex-ls-plus'
 BASE="https://github.com/$REPO/releases/latest/download/ltex-ls-plus"
 VERSION="$(gh-latest.sh . "$REPO")"
@@ -29,12 +33,9 @@ linux*)
   ;;
 esac
 
-# shellcheck disable=SC2154
 DST="$BIN/ltex-ls-plus$EXT"
 
-# shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
-# shellcheck disable=SC2154
 rm -rf -- "$LIB"
 mkdir -v -p -- "$BIN" "$LIB"
 mv -f -- "$RUN"/*/* "$LIB/"

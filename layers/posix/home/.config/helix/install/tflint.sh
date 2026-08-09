@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+: "${BIN?}"
+: "${RUN?}"
+
 BASE='https://github.com/terraform-linters/tflint/releases/latest/download/tflint'
 
 case "$HOSTTYPE" in
@@ -27,7 +30,5 @@ linux*)
   ;;
 esac
 
-# shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
-# shellcheck disable=SC2154
 install -v -bD -- "$RUN/"* "$BIN/tflint$EXT"

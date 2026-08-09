@@ -2,7 +2,9 @@
 
 set -o pipefail
 
-# shellcheck disable=SC2154
+: "${BIN?}"
+: "${RUN?}"
+
 T_BIN="$BIN/tectonic"
 
 BASE='https://github.com/latex-lsp/texlab/releases/latest/download/texlab'
@@ -29,9 +31,7 @@ linux*)
   ;;
 esac
 
-# shellcheck disable=SC2154
 get.sh "$URI" | unpack.sh "$RUN"
 get.sh "$T_URI" | unpack.sh "$RUN"
-# shellcheck disable=SC2154
 install -v -bD -- "$RUN/texlab"* "$BIN/texlab$EXT"
 install -v -bD -- "$RUN/tectonic"* "$T_BIN"
