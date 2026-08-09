@@ -5,4 +5,4 @@ syntax match perlReq '^\s*\zs\<require\>' conceal cchar=↓
 syntax match perlUse '^\s*\zs\<use\>' conceal cchar=↓
 
 syntax match perlCommentEdge  '^\s*\zs#\ze!\@!' conceal cchar=│
-syntax match perlReplResponse '\%(^\s*#\s*\)\@<=|\ze\%(\s\|$)' conceal cchar=┇
+syntax match perlReplResponse '^\s*\zs#\s*|\ze\%(\s\|$\)' conceal cchar=┇

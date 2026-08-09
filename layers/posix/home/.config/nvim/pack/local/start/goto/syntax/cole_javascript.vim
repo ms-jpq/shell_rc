@@ -6,7 +6,7 @@ syntax match jsReq "\<require\ze\s*(" conceal cchar=←
 syntax match jsImport '^\s*\zs\<import\>' conceal cchar=↓
 
 syntax match jsCommentEdge  '^\s*\zs//' conceal cchar=│
-syntax match jsReplResponse '\%(^\s*//\s*\)\@<=|\ze\%(\s\|$)' conceal cchar=┇
+syntax match jsReplResponse '^\s*\zs//\s*|\ze\%(\s\|$\)' conceal cchar=┇
 
 syntax match jsBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
 
