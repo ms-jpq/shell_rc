@@ -6,4 +6,4 @@ syntax match pyFromImport '\(from\s\+\S\+\s\+\)\@<=\<import\>' conceal cchar=↓
 syntax match pyFrom '^\s*\zs\%(yield\_s\+\)\@<!\<from\>' conceal cchar=→
 
 syntax match pyCommentEdge  '^\s*\zs#\ze!\@!' conceal cchar=│
-syntax match pyReplResponse '^\s*\zs#\s*|\ze\%(\s\|$\)' conceal cchar=┇
+syntax match pyReplResponse '^\s*\zs#\s*|' conceal cchar=┇

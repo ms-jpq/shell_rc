@@ -4,4 +4,4 @@ syntax match nimShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 syntax match nimImport '^\s*\zs\<import\>' conceal cchar=↓
 
 syntax match nimCommentEdge  '^\s*\zs#' conceal cchar=│
-syntax match nimReplResponse '^\s*\zs#\s*|\ze\%(\s\|$\)' conceal cchar=┇
+syntax match nimReplResponse '^\s*\zs#\s*|' conceal cchar=┇

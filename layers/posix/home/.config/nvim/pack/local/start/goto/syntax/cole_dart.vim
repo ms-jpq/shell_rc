@@ -4,7 +4,7 @@ syntax match dartShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 syntax match dartImport '^\s*\zs\<import\>' conceal cchar=↓
 
 syntax match dartCommentEdge  '^\s*\zs//' conceal cchar=│
-syntax match dartReplResponse '^\s*\zs//\s*|\ze\%(\s\|$\)' conceal cchar=┇
+syntax match dartReplResponse '^\s*\zs//\s*|' conceal cchar=┇
 
 syntax match dartBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
 
