@@ -81,7 +81,7 @@ AWK
       if [[ $PANE_PATH != "$REL_TARGET_PATH" ]]; then
         continue
       fi
-    elif [[ $PANE_PATH != "$REPL_PARENT_PATH" && $PANE_PATH != "$REPL_PARENT_PATH/"* && ! -v "ANCESTORS[$PANE_PATH]" ]]; then
+    elif [[ $PANE_PATH != "$REPL_PARENT_PATH" ]] && [[ $PANE_PATH != "$REPL_PARENT_PATH/"* ]] && [[ -z ${ANCESTORS["$PANE_PATH"]+_} ]]; then
       continue
     fi
 
