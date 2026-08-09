@@ -5,7 +5,7 @@ import { spawnSync } from "node:child_process"
 import { mkdirSync, writeFileSync } from "node:fs"
 import { homedir, tmpdir } from "node:os"
 import { join, sep } from "node:path"
-import { platform } from "node:process"
+import { env, platform } from "node:process"
 import { parseArgs } from "node:util"
 
 const {
@@ -23,7 +23,7 @@ const [pkg, ...pkgs] = positionals.map((a) => a.trim())
 
 ok(pkg)
 
-const home = join(
+const cwd = join(
   homedir(),
   ".cache",
   "helix-rt",
@@ -34,25 +34,32 @@ const json = {
   dependencies: Object.fromEntries([pkg, ...pkgs].map((p) => [p, "*"])),
 }
 
-mkdirSync(home, { recursive: true })
-writeFileSync(join(home, "package.json"), JSON.stringify(json))
+mkdirSync(cwd, { recursive: true })
+writeFileSync(join(cwd, "package.json"), JSON.stringify(json))
 
-const { error, status, signal } = spawnSync(
-  "npm" + (platform === "win32" ? ".cmd" : ""),
-  [
-    "install",
-    `--ignore-scripts=${ignoreScripts}`,
-    "--no-package-lock",
-    "--no-update-notifier",
-    "--no-fund",
-    "--cache",
-    join(tmpdir(), "npm"),
-    "--no-progress",
-    "--prefix",
-    home,
-  ],
-  { shell: platform === "win32", stdio: "inherit" },
-)
+const args = [
+  "install",
+  `--ignore-scripts=${ignoreScripts}`,
+  "--no-package-lock",
+  "--no-update-notifier",
+  "--no-fund",
+  "--fetch-retries",
+  "5",
+  "--cache",
+  join(tmpdir(), "npm"),
+  "--no-progress",
+]
+const [command, commandArgs] = (() => {
+  if (platform === "win32") {
+    return [env.ComSpec ?? "cmd.exe", ["/d", "/s", "/c", "npm.cmd", ...args]]
+  }
+  return ["npm", args]
+})()
+
+const { error, status, signal } = spawnSync(command, commandArgs, {
+  cwd,
+  stdio: "inherit",
+})
 
 if (error) {
   console.warn(error)
