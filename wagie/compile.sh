@@ -3,6 +3,7 @@
 set -o pipefail
 
 OUT="$1"
+SNIPS="$2"
 
 SELF="${0%/*}"
 HOME_LAYER=./layers/posix/home
@@ -11,8 +12,6 @@ CONFIG="$OUT/config"
 LOCAL="$OUT/local"
 STUB="$OUT/layers/posix/home"
 CACHE="$OUT/cache"
-SNIPS="$HOME/.cache/helix-rt/nvim/pack/opt/snips"
-
 rm -fr -- "$OUT"
 mkdir -p -- "$CACHE" "$CONFIG" "$LOCAL" "$STUB"
 
