@@ -27,6 +27,8 @@ env -C "$SRC" -- ./zsh.sh "$OS" "$ZOUT" "$SRC"
 
 mkdir -p -- ~/.config ~/.local/share ~/.local/state/{shell_history,ssh,tmux} ~/.cache
 
+rsync --archive -- "$SRC/cache/" ~/.cache/
+
 mkdir -p -- "$BIN_LINK"
 ln -sTnfr -- "$SRC/bin-link" "$BIN_LINK/bin"
 

@@ -10,9 +10,11 @@ DARWIN_LAYER=./layers/darwin/home
 CONFIG="$OUT/config"
 LOCAL="$OUT/local"
 STUB="$OUT/layers/posix/home"
+CACHE="$OUT/cache"
+SNIPS="$HOME/.cache/helix-rt/nvim/pack/opt/snips"
 
 rm -fr -- "$OUT"
-mkdir -p -- "$CONFIG" "$LOCAL" "$STUB"
+mkdir -p -- "$CACHE" "$CONFIG" "$LOCAL" "$STUB"
 
 CP=(cp -a -f --)
 COPIES=(
@@ -27,6 +29,8 @@ COPIES=(
 for ((I = 0; I < ${#COPIES[@]}; I += 2)); do
   "${CP[@]}" "${COPIES[I]}" "${COPIES[I + 1]}"
 done
+
+rsync --archive --exclude='.git' -- "$SNIPS/" "$CACHE/helix-rt/nvim/pack/opt/snips/"
 
 COPIES=(
   bin
