@@ -95,7 +95,9 @@ eval -- "$ENV"
 set +a
 printf -- '%s\n' "$ENV"
 
-# shellcheck disable=SC2154
+: "${ENV_HOME?}"
+: "${ENV_OSTYPE?}"
+
 case "$ENV_OSTYPE" in
 darwin*)
   OS=darwin
@@ -118,7 +120,6 @@ esac
 
 declare -A -- FFS ROOTS
 FFS=([root]=1 [home]=0)
-# shellcheck disable=SC2154
 ROOTS=(
   ['root']=/
   ['home']="$ENV_HOME"
@@ -155,5 +156,4 @@ done
 
 shell "${BSH[@]}" <<< "$(< ./libexec/essentials.sh)"
 ENVS=(USERPROFILE="$ENV_HOME")
-# shellcheck disable=SC2154
 shell "${BSH[@]}" "$ENV_HOME/.local/opt/initd/make.sh" "${ENVS[@]}" "$@"

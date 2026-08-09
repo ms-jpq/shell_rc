@@ -20,7 +20,7 @@ darwin*)
 msys | cygwin)
   PATH="/usr/bin:$PATH"
 
-  # shellcheck disable=2154
+  : "${USERPROFILE?}"
   HOME="$USERPROFILE"
   ID="$(powershell.exe 'Get-ComputerInfo | Select-Object -ExpandProperty WindowsEditionId' | tr -d -- '\r')"
   VERSION_ID="$(powershell.exe 'Get-ComputerInfo | Select-Object -ExpandProperty WindowsVersion' | tr -d -- '\r')"
