@@ -23,7 +23,7 @@ fi
 case "$REPL_TARGET" in
 '')
 
-  REL_TARGET_PATH=""
+  EXPLICIT_TARGET_PATH=""
   if [[ $REPL_FILE_NAME == *.md ]]; then
     read -r -d '' AWK << 'AWK' || true
 BEGIN {
@@ -42,14 +42,14 @@ FRONTMATTER && ($0 == "---" || $0 == "...") {
   exit
 }
 
-FRONTMATTER && /^rel-target:[[:space:]]*/ {
-  sub(/^rel-target:[[:space:]]*/, "", $0)
+FRONTMATTER && /^repl-target:[[:space:]]*/ {
+  sub(/^repl-target:[[:space:]]*/, "", $0)
   sub(/[[:space:]]+$/, "", $0)
   print
   exit
 }
 AWK
-    REL_TARGET_PATH="$(awk -- "$AWK" < "$REPL_FILE_NAME")"
+    EXPLICIT_TARGET_PATH="$(awk -- "$AWK" < "$REPL_FILE_NAME")"
   fi
 
   TM=(tmux -S "$SOCKET")
@@ -77,8 +77,8 @@ AWK
     if [[ $PANE_ID == "$CURRENT_PANE" ]]; then
       continue
     fi
-    if [[ -n $REL_TARGET_PATH ]]; then
-      if [[ $PANE_PATH != "$REL_TARGET_PATH" ]]; then
+    if [[ -n $EXPLICIT_TARGET_PATH ]]; then
+      if [[ $PANE_PATH != "$EXPLICIT_TARGET_PATH" ]]; then
         continue
       fi
     elif [[ $PANE_PATH != "$REPL_PARENT_PATH" ]] && [[ $PANE_PATH != "$REPL_PARENT_PATH/"* ]] && [[ -z ${ANCESTORS["$PANE_PATH"]+_} ]]; then
