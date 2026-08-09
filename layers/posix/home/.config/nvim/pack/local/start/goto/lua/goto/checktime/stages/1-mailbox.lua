@@ -335,6 +335,7 @@ M.start = function(spec)
         elseif
           item.guard == 0
           and not vim.b[buf][WRITING]
+          and not snapshotter.insert_base(buf)
           and not (
             vim.bo[buf].modified
             and item.events[M.LOCAL]

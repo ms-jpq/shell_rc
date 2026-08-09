@@ -68,7 +68,9 @@ M.start = function(commit)
   ---@param batch ChecktimeBatch
   ---@param instruction ChecktimeInstruction
   local run = function(buf, batch, instruction)
-    if instruction.action == resolve.ACTIONS.RETRY then
+    if snapshotter.insert_base(buf) then
+      return
+    elseif instruction.action == resolve.ACTIONS.RETRY then
       return
     elseif instruction.action == resolve.ACTIONS.NOOP then
       commit { buf = buf, batch = batch }
