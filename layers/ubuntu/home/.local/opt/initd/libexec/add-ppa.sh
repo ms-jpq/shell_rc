@@ -6,6 +6,7 @@ hash -- curl jq gpg
 
 # shellcheck disable=SC1091
 source -- /etc/os-release
+: "${VERSION_CODENAME?}"
 
 PPA="$1"
 
@@ -30,7 +31,6 @@ FINGER_PRINT="$(jq --exit-status --raw-output '.signing_key_fingerprint' <<< "$J
 URI="https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x$FINGER_PRINT"
 "${CURL[@]}" "$URI" | gpg --batch --dearmor --yes --output "$GPG_FILE"
 
-# shellcheck disable=SC2154
 tee -- "$SOURCE_FILE" <<- EOF
 deb http://ppa.launchpad.net/$DIST/$NAME/ubuntu $VERSION_CODENAME main
 EOF

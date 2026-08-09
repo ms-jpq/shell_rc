@@ -39,7 +39,8 @@ else
 
   # shellcheck disable=SC1091
   source -- /etc/os-release
-  # shellcheck disable=SC2154
+  : "${ID?}"
+  : "${VERSION_ID?}"
   TOOLCHAIN="https://download.swift.org/$SWIFT_V/$ID${VERSION_ID//./}/$SWIFT_VERSION/$SWIFT_VERSION-$ID$VERSION_ID.tar.gz"
   STATIC_SDK="https://download.swift.org/$SWIFT_V/static-sdk/$SWIFT_VERSION/${SWIFT_VERSION}_static-linux-$SDK_V.artifactbundle.tar.gz"
   SDK_VERSION="${STATIC_SDK##*/}"

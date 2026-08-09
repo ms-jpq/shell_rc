@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+: "${XDG_DATA_HOME?}"
+
 apt-install() {
   DEBIAN_FRONTEND=noninteractive sudo --preserve-env -- apt-get install --yes -- "$@"
 }
@@ -37,7 +39,6 @@ PYTHON_DEPS=(
 apt-install "${PYTHON_DEPS[@]}"
 asdf-install --global -- python
 
-# shellcheck disable=SC2154
 mkdir --verbose --parent -- "$XDG_DATA_HOME/gnupg"
 NODEJS_CHECK_SIGNATURES=no asdf-install --global -- nodejs
 
