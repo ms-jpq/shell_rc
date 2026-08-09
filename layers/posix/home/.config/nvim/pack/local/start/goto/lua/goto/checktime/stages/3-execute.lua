@@ -72,44 +72,54 @@ M.start = function(commit)
       return vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_get_changedtick(buf) == batch.changedtick
     end
 
-    if not current() or snapshotter.insert_base(buf) then
+    if not current() or snapshotter.insert_base(buf) or instruction.action == resolve.ACTIONS.RETRY then
       return
-    elseif instruction.action == resolve.ACTIONS.RETRY then
-      return
-    elseif instruction.action == resolve.ACTIONS.NOOP then
+    end
+
+    if instruction.action == resolve.ACTIONS.NOOP then
       commit { buf = buf, batch = batch }
-    elseif instruction.action == resolve.ACTIONS.RELOAD then
+      return
+    end
+    if instruction.action == resolve.ACTIONS.RELOAD then
       if reload(buf) then
         commit { buf = buf, batch = batch, discard = true }
       end
-    elseif instruction.action == resolve.ACTIONS.WRITE then
+      return
+    end
+    if instruction.action == resolve.ACTIONS.WRITE then
       ---@cast instruction ChecktimeWrite
-      if snapshotter.unchanged(buf, instruction.version) and current() and not snapshotter.insert_base(buf) then
-        local accepted = publish(buf)
-        if accepted then
-          commit { buf = buf, batch = batch, accepted = accepted }
-        end
-      end
-    elseif instruction.action == resolve.ACTIONS.RECONCILE then
-      ---@cast instruction ChecktimeReconcile
-      local stale = instruction.save and not snapshotter.unchanged(buf, instruction.version)
-      if not current() or snapshotter.insert_base(buf) then
+      if not snapshotter.unchanged(buf, instruction.version) or not current() or snapshotter.insert_base(buf) then
         return
       end
 
-      apply(buf, instruction)
-      local accepted = { text = instruction.accepted, version = instruction.version } ---@type ChecktimeAccepted
-      if stale then
-        commit { buf = buf, accepted = accepted }
-      elseif not instruction.save then
+      local accepted = publish(buf)
+      if accepted then
         commit { buf = buf, batch = batch, accepted = accepted }
-      else
-        local published = publish(buf)
-        commit { buf = buf, accepted = published or accepted, batch = published and batch or nil }
       end
-    else
+      return
+    end
+    if instruction.action ~= resolve.ACTIONS.RECONCILE then
       error(vim.inspect(instruction))
     end
+
+    ---@cast instruction ChecktimeReconcile
+    local stale = instruction.save and not snapshotter.unchanged(buf, instruction.version)
+    if not current() or snapshotter.insert_base(buf) then
+      return
+    end
+
+    apply(buf, instruction)
+    local accepted = { text = instruction.accepted, version = instruction.version } ---@type ChecktimeAccepted
+    if stale then
+      commit { buf = buf, accepted = accepted }
+      return
+    elseif not instruction.save then
+      commit { buf = buf, batch = batch, accepted = accepted }
+      return
+    end
+
+    local published = publish(buf)
+    commit { buf = buf, accepted = published or accepted, batch = published and batch or nil }
   end
 
   return { run = run }

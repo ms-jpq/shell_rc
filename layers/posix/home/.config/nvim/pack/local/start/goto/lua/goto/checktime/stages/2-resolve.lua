@@ -63,49 +63,50 @@ M.start = function(spec)
   resolver.plan = function(buf, batch)
     local local_change, remote_change = batch.events[mailbox.LOCAL], batch.events[mailbox.REMOTE]
     local local_grace = within_grace(local_change, spec.grace_ms)
+    local buffer_modified = vim.bo[buf].modified
 
-    if vim.bo[buf].modified and local_grace then
+    if buffer_modified and local_grace then
       return { action = M.ACTIONS.RETRY }
-    elseif not remote_change then
-      if vim.bo[buf].modified then
+    end
+    if not remote_change then
+      if buffer_modified then
         return { action = M.ACTIONS.WRITE, version = batch.version }
-      else
-        return { action = M.ACTIONS.NOOP }
       end
+      return { action = M.ACTIONS.NOOP }
     end
 
     local read, version, remote = snapshotter.read(buf)
     if read == snapshotter.STATES.RETRY then
       return { action = M.ACTIONS.RETRY }
-    elseif read == snapshotter.STATES.OPAQUE then
+    end
+    if read == snapshotter.STATES.OPAQUE then
       return { action = M.ACTIONS.RELOAD }
-    elseif read == snapshotter.STATES.RECONCILE or read == snapshotter.STATES.MISSING then
-      local insert_base, current = snapshotter.insert_base(buf), snapshotter.buffer(buf)
-      local accepted = remote or ""
-      local base = snapshotter.merge_text(current, batch.accepted or insert_base or "")
-      local remote_text = snapshotter.merge_text(current, accepted)
-
-      if local_grace and base ~= remote_text then
-        return { action = M.ACTIONS.RETRY }
-      end
-
-      local merged = hunks.merge(current.linefeed, base, snapshotter.merge_text(current, current.text), remote_text)
-      local text = snapshotter.buffer_text(current, merged)
-      local modified = text ~= snapshotter.normalize(current, accepted)
-
-      return {
-        action = M.ACTIONS.RECONCILE,
-        current = current,
-        text = text,
-        accepted = accepted,
-        version = version,
-        modified = modified,
-        save = modified and insert_base == nil,
-      }
-    else
+    end
+    if read ~= snapshotter.STATES.RECONCILE and read ~= snapshotter.STATES.MISSING then
       ---@diagnostic disable-next-line: return-type-mismatch
       return assert(false, vim.inspect(read))
     end
+
+    local insert_base, current = snapshotter.insert_base(buf), snapshotter.buffer(buf)
+    local accepted = remote or ""
+    local base = snapshotter.merge_text(current, batch.accepted or insert_base or "")
+    local remote_text = snapshotter.merge_text(current, accepted)
+    if local_grace and base ~= remote_text then
+      return { action = M.ACTIONS.RETRY }
+    end
+
+    local merged = hunks.merge(current.linefeed, base, snapshotter.merge_text(current, current.text), remote_text)
+    local text = snapshotter.buffer_text(current, merged)
+    local modified = text ~= snapshotter.normalize(current, accepted)
+    return {
+      action = M.ACTIONS.RECONCILE,
+      current = current,
+      text = text,
+      accepted = accepted,
+      version = version,
+      modified = modified,
+      save = modified and insert_base == nil,
+    }
   end
 
   return resolver
