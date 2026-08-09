@@ -51,7 +51,7 @@ const { error, status, signal } = spawnSync(
     "--prefix",
     home,
   ],
-  { stdio: "inherit" },
+  { shell: platform === "win32", stdio: "inherit" },
 )
 
 if (error) {
