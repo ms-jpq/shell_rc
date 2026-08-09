@@ -1,5 +1,7 @@
 local autocmd = require "goto.autocmd"
 
+vim.opt.formatoptions:append "r"
+
 do
   local enter = autocmd.buf_win({ buffer = 0 }, function()
     vim.wo.winhighlight = "Conceal:None"
