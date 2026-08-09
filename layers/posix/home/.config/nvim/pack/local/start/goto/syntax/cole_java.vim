@@ -4,7 +4,7 @@ syntax match javaShebangBang '\%1l\(^#\)\@<=!' conceal cchar= 
 syntax match javaImport '^\s*\zs\<import\>' conceal cchar=↓
 
 syntax match javaCommentEdge  '^\s*\zs//' conceal cchar=│
-syntax match javaReplResponse '\%(^\s*//\s*\)\@<=|\ze\s' conceal cchar=┇
+syntax match javaReplResponse '\%(^\s*//\s*\)\@<=|\ze\%(\s\|$)' conceal cchar=┇
 
 syntax match javaBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
 
