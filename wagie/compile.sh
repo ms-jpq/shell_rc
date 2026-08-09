@@ -30,7 +30,9 @@ for ((I = 0; I < ${#COPIES[@]}; I += 2)); do
   "${CP[@]}" "${COPIES[I]}" "${COPIES[I + 1]}"
 done
 
-rsync --archive --exclude='.git' -- "$SNIPS/" "$CACHE/helix-rt/nvim/pack/opt/snips/"
+SNIPS_OUT="$CACHE/helix-rt/nvim/pack/opt/snips"
+mkdir -p -- "$SNIPS_OUT"
+rsync --archive --exclude='.git' -- "$SNIPS/" "$SNIPS_OUT/"
 
 COPIES=(
   bin
