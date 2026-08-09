@@ -2,8 +2,8 @@
 
 set -o pipefail
 
-if [[ -v KITTY_PID ]]; then
-  if [[ -v FZF_PREVIEW_COLUMNS ]]; then
+if [[ -n ${KITTY_PID:-} ]]; then
+  if [[ -n ${FZF_PREVIEW_COLUMNS:-} ]]; then
     : "${FZF_PREVIEW_LINES?}"
     ARGV=(
       --stdin no
@@ -13,7 +13,7 @@ if [[ -v KITTY_PID ]]; then
     ARGV=()
   fi
 
-  if [[ -v SSH_TTY ]] && [[ -t 0 ]]; then
+  if [[ -n ${SSH_TTY:-} ]] && [[ -t 0 ]]; then
     MODE=stream
   else
     MODE=memory

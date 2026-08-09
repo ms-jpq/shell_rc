@@ -100,7 +100,7 @@ unpin)
   ;;
 new)
   {
-    if ! [[ -v UNDER ]]; then
+    if [[ -z ${UNDER:-} ]]; then
       mkdir -v -p -- "$ROOT"
       UNDER=1 exec -- flock --nonblock "$ROOT" "$0" "${ARGV[@]}"
     fi
@@ -109,7 +109,7 @@ new)
       "$DIR/libexec/cloud-init.sh" "$NAME" "$CLOUD_INIT"
     fi
 
-    if [[ -v FORK ]]; then
+    if [[ -n ${FORK:-} ]]; then
       F_DRIVE="$LIB/$FORK/$RAW"
 
       set -x
@@ -129,7 +129,7 @@ new)
   exit
   ;;
 run)
-  if ! [[ -f $DRIVE ]] || [[ -v FORK ]]; then
+  if ! [[ -f $DRIVE ]] || [[ -n ${FORK:-} ]]; then
     ACTION=new "$0" "${ARGV[@]}"
   fi
 

@@ -150,7 +150,7 @@ else
   ARGV+=(-nographic)
 fi
 
-if [[ -v SSH ]]; then
+if [[ -n ${SSH:-} ]]; then
   SSH_FWD=",hostfwd=unix:$SSH-:22"
 else
   SSH_FWD=''

@@ -94,12 +94,12 @@ if (("${#ADD[@]}")); then
   printf -- '%s\n' "${ADD[@]@Q}" >&2
   case "$OSTYPE" in
   darwin*)
-    if ! [[ -v CI ]]; then
+    if [[ -z ${CI:-} ]]; then
       brew update
       brew upgrade
     fi
     brew install --formula -- "${ADD[@]}"
-    if ! [[ -v CI ]]; then
+    if [[ -z ${CI:-} ]]; then
       brew cleanup
     fi
     ;;

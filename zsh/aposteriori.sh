@@ -1,6 +1,6 @@
 #!/usr/bin/env -S -- bash
 
-if [[ -v BASH_VERSION ]]; then
+if [[ -n ${BASH_VERSION:-} ]]; then
   _sh='bash'
 else
   _sh='zsh'
@@ -39,7 +39,7 @@ if [[ $_sh == zsh ]]; then
   ZLE_RPROMPT_INDENT=0
 
   _set_title() {
-    if ! [[ -v SSH_TTY ]]; then
+    if [[ -z ${SSH_TTY:-} ]]; then
       if [[ $PWD == "$HOME" ]]; then
         # shellcheck disable=SC2088
         title '~/'

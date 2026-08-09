@@ -78,7 +78,7 @@ JQ
   ARGV=()
   case "$OSTYPE" in
   linux* | darwin*)
-    if ! [[ -v CI ]]; then
+    if [[ -z ${CI:-} ]]; then
       ARGV+=(
         nice
         -n 19

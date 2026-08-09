@@ -16,14 +16,14 @@ END {
 }
 AWK
 
-  if [[ -v TMUX ]]; then
-    if [[ -v SSH_TTY ]]; then
+  if [[ -n ${TMUX:-} ]]; then
+    if [[ -n ${SSH_TTY:-} ]]; then
       LS="$(awk "$AWK")"
       awk "$AWK" <<< "$LS"
     else
       awk "$AWK"
     fi
-  elif [[ -v SSH_TTY ]]; then
+  elif [[ -n ${SSH_TTY:-} ]]; then
     awk "$AWK"
   else
     tee

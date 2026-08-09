@@ -16,7 +16,7 @@ CURL=(
   --no-progress-meter
 )
 
-if [[ -v LC_ALL ]]; then
+if [[ -n ${LC_ALL:-} ]]; then
   CURL+=(--header "Accept-Language: ${LC_ALL%_*}")
 fi
 

@@ -23,7 +23,7 @@ while (($#)); do
   esac
 done
 
-if ! [[ -v FONT ]]; then
+if [[ -z ${FONT:-} ]]; then
   FONTS=("$(figlet -I 2)"/**.flf)
   FONT="${FONTS[$((RANDOM % ${#FONTS[@]}))]}"
 fi

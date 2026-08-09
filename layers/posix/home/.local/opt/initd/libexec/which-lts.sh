@@ -4,7 +4,7 @@ set -o pipefail
 
 CONSERVE=3
 
-if ! [[ -v RELEASE ]]; then
+if [[ -z ${RELEASE:-} ]]; then
   TIME="$(date -- '+%y %m')"
   YEAR="${TIME%% *}"
   MONTH="${TIME##* }"

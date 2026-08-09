@@ -4,7 +4,7 @@ set -o pipefail
 
 LOCK="/tmp/tmux-saved.$UID.lock"
 
-if ! [[ -v TMUX_SAVED ]]; then
+if [[ -z ${TMUX_SAVED:-} ]]; then
   if ! mkdir -- "$LOCK" 2> /dev/null; then
     exit 0
   fi

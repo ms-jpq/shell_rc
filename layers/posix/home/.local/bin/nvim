@@ -21,7 +21,7 @@ fi
 
 ARGV=("$NVIM")
 
-if [[ -v NVIM_SERVERNAME ]]; then
+if [[ -n ${NVIM_SERVERNAME:-} ]]; then
   ARGV+=(
     --server "$NVIM_SERVERNAME"
     --remote

@@ -16,7 +16,7 @@ elif [[ -n $SESSION ]]; then
   if [[ $SESSION == me/* ]]; then
     SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
   fi
-elif [[ -v TMUX ]]; then
+elif [[ -n ${TMUX:-} ]]; then
   exec -- tmux choose-tree -G -Z -O name -s -NN
 elif SESSIONS="$(tmux list-sessions -F '#{session_name}' 2> /dev/null)" && [[ -n $SESSIONS ]]; then
   exec -- tmux attach-session -t "=${SESSIONS%%$'\n'*}" \; choose-tree -G -Z -O name -s -NN

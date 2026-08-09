@@ -26,7 +26,7 @@ done
 COLS="$(tput -- cols)"
 WRAP=$((COLS / 3))
 
-if ! [[ -v COW ]]; then
+if [[ -z ${COW:-} ]]; then
   RAW="$(cowsay -l | tail -n +2)"
   NORM="${RAW//$'\n'/' '}"
   readarray -t -d ' ' -- COWS < <(printf -- '%s' "$NORM")

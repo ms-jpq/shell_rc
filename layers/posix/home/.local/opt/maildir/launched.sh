@@ -5,7 +5,7 @@ shopt -u failglob
 
 STATE="$HOME/.local/state/notify-mails"
 
-if [[ -v RECURSION ]]; then
+if [[ -n ${RECURSION:-} ]]; then
   MAIL="$1"
   ID="$(b3sum --length 16 -- "$MAIL" | cut -d ' ' -f 1)"
   SID="$STATE/$ID"

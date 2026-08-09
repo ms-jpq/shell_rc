@@ -17,7 +17,7 @@ darwin*)
 esac
 
 GPG_OPTS=()
-if [[ -v GPG_USER ]]; then
+if [[ -n ${GPG_USER:-} ]]; then
   GPG_OPTS+=(--local-user "$GPG_USER")
 fi
 

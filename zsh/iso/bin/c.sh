@@ -6,13 +6,13 @@ if [[ -t 0 ]]; then
   exit 2
 fi
 
-if [[ -v TMUX ]] && command -v -- tmux > /dev/null; then
+if [[ -n ${TMUX:-} ]] && command -v -- tmux > /dev/null; then
   exec -- tmux load-buffer -w -- -
 fi
 
 if command -v -- pbcopy > /dev/null; then
   exec -- pbcopy
-elif [[ -v WAYLAND_DISPLAY ]] && command -v -- wl-copy > /dev/null; then
+elif [[ -n ${WAYLAND_DISPLAY:-} ]] && command -v -- wl-copy > /dev/null; then
   exec -- wl-copy
 fi
 
@@ -24,11 +24,11 @@ tmux*)
 *) ;;
 esac
 
-if [[ -v TMUX ]]; then
+if [[ -n ${TMUX:-} ]]; then
   T=1
 fi
 
-if [[ -v NVIM_SERVERNAME ]]; then
+if [[ -n ${NVIM_SERVERNAME:-} ]]; then
   T=0
 fi
 

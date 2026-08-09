@@ -41,7 +41,7 @@ _=(
 
 export -- TERM=xterm-256color
 
-if ! [[ -v FONT ]]; then
+if [[ -z ${FONT:-} ]]; then
   FONTS=("$(figlet -I 2)"/**.flf)
   FONT="$(printf -- '%s\0' "${FONTS[@]}" | fzf --read0)"
 fi

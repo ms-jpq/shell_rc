@@ -17,7 +17,7 @@ tmux*)
 *) ;;
 esac
 
-if [[ -v TMUX_PANE ]]; then
+if [[ -n ${TMUX_PANE:-} ]]; then
   T=1
 fi
 

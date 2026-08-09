@@ -3,7 +3,7 @@
 set -Eeu -o pipefail
 shopt -s dotglob nullglob extglob globstar
 
-if ! [[ -v UNDER ]]; then
+if [[ -z ${UNDER:-} ]]; then
   HOSTS=()
   while (($#)); do
     case "$1" in

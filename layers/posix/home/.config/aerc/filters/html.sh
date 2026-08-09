@@ -4,7 +4,7 @@ set -o pipefail
 
 COLUMNS=${COLUMNS:-"$(stty size < /dev/tty | cut -d ' ' -f 2)"}
 
-if [[ -v AERC_MIME_TYPE ]]; then
+if [[ -n ${AERC_MIME_TYPE:-} ]]; then
   MAX=128
 
   C="$COLUMNS"
@@ -46,7 +46,7 @@ SED=(
   -e '/[[:space:]]+$/d'
 )
 
-"${ARGV[@]}" | if [[ -v AERC_MIME_TYPE ]]; then
+"${ARGV[@]}" | if [[ -n ${AERC_MIME_TYPE:-} ]]; then
   SELF="$(realpath -- "$0")"
   BASE="${SELF%/*}"
   tac | IDENT=$(((C - COLS) / 2)) WIDTH="$C" "$BASE/html.awk" | tac

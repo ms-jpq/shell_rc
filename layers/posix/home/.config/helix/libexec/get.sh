@@ -10,9 +10,9 @@ ETAG="$DST.etag"
 
 CURL=(curl)
 
-if [[ -v IPV4 ]]; then
+if [[ -n ${IPV4:-} ]]; then
   CURL+=(-4)
-elif [[ -v IPV6 ]]; then
+elif [[ -n ${IPV6:-} ]]; then
   CURL+=(-6)
 fi
 

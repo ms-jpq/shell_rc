@@ -1,6 +1,6 @@
 #!/usr/bin/env -S -- bash
 
-if [[ -v TMUX ]]; then
+if [[ -n ${TMUX:-} ]]; then
   tmux new-window -a -c '#{pane_current_path}' -- "$@"
 else
   "$@"

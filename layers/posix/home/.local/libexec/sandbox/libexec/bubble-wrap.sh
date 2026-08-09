@@ -127,7 +127,7 @@ RW_BIND=(
   "$XDG_DATA_HOME/pnpm"
 )
 
-if [[ -v TMPDIR && $TMPDIR != /tmp ]]; then
+if [[ -n ${TMPDIR:-} && $TMPDIR != /tmp ]]; then
   RW_BIND+=("$TMPDIR")
 fi
 
@@ -144,7 +144,7 @@ if ((AUTH)); then
     "$XDG_CONFIG_HOME/aws"
     "$XDG_CONFIG_HOME/gcloud"
   )
-  if [[ -v SSH_AUTH_SOCK ]]; then
+  if [[ -n ${SSH_AUTH_SOCK:-} ]]; then
     RW_BIND+=("$SSH_AUTH_SOCK")
   fi
 fi

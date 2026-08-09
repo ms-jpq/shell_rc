@@ -5,7 +5,7 @@ set -o pipefail
 SESSION="$1"
 shift -- 1
 
-if [[ -t 0 ]] && ! [[ -v TMUX ]]; then
+if [[ -t 0 ]] && [[ -z ${TMUX:-} ]]; then
   exec -- tmux new-session -A -c "$HOME" -s "$SESSION" -- "$@"
 fi
 

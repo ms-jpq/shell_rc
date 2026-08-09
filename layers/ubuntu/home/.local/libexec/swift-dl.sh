@@ -5,7 +5,7 @@ set -o pipefail
 SWIFT_VERSION='swift-6.0.1-RELEASE'
 SDK_V='0.0.1'
 
-if [[ -v RECURSION ]]; then
+if [[ -n ${RECURSION:-} ]]; then
   TMP="$1"
   DST="${TMP%'.tmp'}"
   CURL=(

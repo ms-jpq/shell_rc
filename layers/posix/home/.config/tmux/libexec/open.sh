@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-if ! [[ -v TMUX ]] && ! [[ -v __TMUX_ROOT_SOCKET__ ]]; then
+if [[ -z ${TMUX:-} ]] && [[ -z ${__TMUX_ROOT_SOCKET__:-} ]]; then
   exec -- "$@"
 fi
 
