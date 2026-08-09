@@ -19,6 +19,7 @@ local WATCH = "__checktime_watcher__"
 ---@field update fun(buf: integer, path: string)
 
 ---@class ChecktimeWatch
+---@field generation integer
 ---@field path string
 ---@field poller? ChecktimePoller
 ---@field interval integer
@@ -29,6 +30,7 @@ M.start = function(args)
   ---@diagnostic disable-next-line: missing-fields
   local watcher = {} ---@type ChecktimeWatcher
   local retrying = {} ---@type table<integer, true>
+  local generation = 0
 
   ---@param buf integer
   ---@return integer
@@ -40,19 +42,22 @@ M.start = function(args)
   ---@param path string
   local start = function(buf, path)
     local period = interval(buf)
-    local entry = poll.start(
+    generation = generation + 1
+    local current_generation = generation
+    local entry
+    entry = poll.start(
       path,
       vim.schedule_wrap(async(function()
         if vim.api.nvim_buf_is_valid(buf) then
           local current = vim.b[buf][WATCH]
-          if current and current.path == path then
+          if current and current.generation == current_generation then
             args.changed(buf)
           end
         end
       end)),
       period
     )
-    vim.b[buf][WATCH] = { path = path, poller = entry, interval = period }
+    vim.b[buf][WATCH] = { generation = current_generation, path = path, poller = entry, interval = period }
     retrying[buf] = entry and nil or true
   end
 

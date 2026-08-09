@@ -18,6 +18,7 @@ M.start = function(commit)
   ---@param buf integer
   ---@return ChecktimeAccepted?
   local publish = function(buf)
+    local text = snapshotter.buffer(buf).text
     mailbox.writing(buf, true)
     local ok = pcall(vim.api.nvim_buf_call, buf, function()
       vim.cmd [[silent! write! ++p]]
@@ -28,7 +29,6 @@ M.start = function(commit)
     end
 
     local name = vim.api.nvim_buf_get_name(buf)
-    local text = snapshotter.buffer(buf).text
     local _, version = async.uv.fs_stat(name)
     async.scheduled()
     if not vim.api.nvim_buf_is_valid(buf) then
@@ -68,7 +68,11 @@ M.start = function(commit)
   ---@param batch ChecktimeBatch
   ---@param instruction ChecktimeInstruction
   local run = function(buf, batch, instruction)
-    if snapshotter.insert_base(buf) then
+    local current = function()
+      return vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_get_changedtick(buf) == batch.changedtick
+    end
+
+    if not current() or snapshotter.insert_base(buf) then
       return
     elseif instruction.action == resolve.ACTIONS.RETRY then
       return
@@ -80,7 +84,7 @@ M.start = function(commit)
       end
     elseif instruction.action == resolve.ACTIONS.WRITE then
       ---@cast instruction ChecktimeWrite
-      if snapshotter.unchanged(buf, instruction.version) then
+      if snapshotter.unchanged(buf, instruction.version) and current() and not snapshotter.insert_base(buf) then
         local accepted = publish(buf)
         if accepted then
           commit { buf = buf, batch = batch, accepted = accepted }
@@ -89,6 +93,10 @@ M.start = function(commit)
     elseif instruction.action == resolve.ACTIONS.RECONCILE then
       ---@cast instruction ChecktimeReconcile
       local stale = instruction.save and not snapshotter.unchanged(buf, instruction.version)
+      if not current() or snapshotter.insert_base(buf) then
+        return
+      end
+
       apply(buf, instruction)
       local accepted = { text = instruction.accepted, version = instruction.version } ---@type ChecktimeAccepted
       if stale then
