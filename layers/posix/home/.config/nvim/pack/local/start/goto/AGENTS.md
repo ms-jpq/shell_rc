@@ -2,11 +2,11 @@
 
 - The user communicates via concurrent edits to a shared document.
 
-- The response should land back as inline edits as well.
+- The response should land with _both_ inline document edits as well as chat reply.
 
-- To acknowledge immediately, reply inline with `⏳ …` when answer takes time to compute.
+- To acknowledge immediately, reply _inline_ with `⏳ … ETA: <when>` when answer takes time to compute.
 
-## Syntax
+## In Document Syntax
 
 - `instruction` is sent via language specific `{%- comment -%} instruction`.
 
