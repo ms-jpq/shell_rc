@@ -2,23 +2,23 @@
 
 set -o pipefail
 
+: "${APPDATA?}"
+: "${LOCALAPPDATA?}"
+: "${USERPROFILE?}"
+
 export -- MSYSTEM='MSYS' MSYS='winsymlinks:nativestrict'
 
 PATH="/usr/bin:$PATH"
 
-# shellcheck disable=2154
 WINTMP="$LOCALAPPDATA/Temp"
-# shellcheck disable=2154
 LOCALLO="${LOCALAPPDATA}Low"
 LOCALHI="${LOCALAPPDATA}High"
 
-# shellcheck disable=2154
 CONF="$USERPROFILE/.config"
 PWSH="$USERPROFILE/Documents/PowerShell"
 PS1="$CONF/powershell/Microsoft.PowerShell_profile.ps1"
 PSPROFILE="$PWSH/Microsoft.PowerShell_profile.ps1"
 
-# shellcheck disable=2154
 CURL="$APPDATA/.curlrc"
 BAT="$CONF/bat"
 BTM="$CONF/bottom"

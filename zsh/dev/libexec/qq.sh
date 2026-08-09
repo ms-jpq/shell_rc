@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+: "${XDG_CACHE_HOME?}"
+
 A0="$1"
 ARGV=("$A0")
 shift -- 1
@@ -49,7 +51,6 @@ osa)
   ARGV=(osascript -l JavaScript)
   ;;
 clj)
-  # shellcheck disable=SC2154
   M2="$XDG_CACHE_HOME/m2"
   M2="$(jq --exit-status --raw-input <<< "$M2")"
   ARGV+=(-Sdeps "{:mvn/local-repo $M2}")

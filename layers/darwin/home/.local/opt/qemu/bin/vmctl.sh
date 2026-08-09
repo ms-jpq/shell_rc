@@ -2,6 +2,9 @@
 
 set -o pipefail
 
+: "${XDG_CACHE_HOME?}"
+: "${XDG_DATA_HOME?}"
+
 LONG_OPTS='fork:,vnc'
 GO="$(getopt --options='' --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
@@ -44,9 +47,7 @@ if (($#)); then
   shift -- 1
 fi
 
-# shellcheck disable=SC2154
 LIB="$XDG_DATA_HOME/qemu"
-# shellcheck disable=SC2154
 CACHE="$XDG_CACHE_HOME/qemu"
 
 ROOT="$LIB/$NAME"

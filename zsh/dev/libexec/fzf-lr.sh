@@ -28,7 +28,7 @@ if [[ -v __FZF_LR_ARGV__ ]]; then
     FILE="${FILE#"$PREVIEW_HEAD"}"
     MODE='preview'
   fi
-  # shellcheck disable=SC2154
+  : "${__FZF_LR_SH__?}"
   SHELL="$__FZF_LR_SH__" SCRIPT_MODE="$MODE" exec -- "${ARGV[@]}" < "$FILE"
 else
   IFS="$SEP"

@@ -2,9 +2,11 @@
 
 set -o pipefail
 
+: "${XDG_CONFIG_HOME?}"
+: "${XDG_STATE_HOME?}"
+
 SESSION="$*"
 
-# shellcheck disable=2154
 PLANNED_SESSION="$XDG_CONFIG_HOME/tmux/sessions/$SESSION.sh"
 
 SESSION_SCRIPT='/dev/null'
@@ -12,7 +14,6 @@ if [[ -s $PLANNED_SESSION ]]; then
   SESSION_SCRIPT="$PLANNED_SESSION"
 elif [[ -n $SESSION ]]; then
   if [[ $SESSION == me/* ]]; then
-    # shellcheck disable=2154
     SESSION_SCRIPT="$XDG_STATE_HOME/tmux/$SESSION.sh"
   fi
 elif [[ -v TMUX ]]; then
