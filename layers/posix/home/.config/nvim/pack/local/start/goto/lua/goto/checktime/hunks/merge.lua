@@ -1,30 +1,10 @@
-local M = {}
+local diff = require "goto.checktime.hunks.diff"
 
----@class ChecktimeHunk
----@field start integer
----@field finish integer
----@field lines string[]
----@field slot? integer
+local M = {}
 
 ---@class ChecktimeHunkGroup
 ---@field local_patches ChecktimeHunk[]
 ---@field remote_patches ChecktimeHunk[]
-
-M.records = function(linefeed, text)
-  if text == "" then
-    return {}
-  end
-
-  local parts = vim.split(text, linefeed, { plain = true })
-  local records = {}
-  for index = 1, #parts - 1 do
-    table.insert(records, parts[index] .. linefeed)
-  end
-  if string.sub(text, -#linefeed) ~= linefeed then
-    table.insert(records, parts[#parts])
-  end
-  return records
-end
 
 local chars = function(pieces)
   local text = table.concat(pieces)
@@ -63,27 +43,10 @@ local split = function(hunk)
   return patches
 end
 
-local slice = function(lines, start, finish)
-  return vim.list_slice(lines, math.floor(start + 1), math.floor(finish))
-end
-
-M.changes = function(after_records, indices)
-  return vim
-    .iter(indices)
-    :map(function(hunk)
-      local old_start, old_count, new_start, new_count = unpack(hunk)
-      local start = old_start - (old_count == 0 and 0 or 1)
-      return {
-        start = start,
-        finish = start + old_count,
-        lines = slice(after_records, new_start - 1, new_start + new_count - 1),
-      }
-    end)
-    :totable()
-end
-
-local diff = function(before, after, after_records)
-  return M.changes(after_records, vim.text.diff(before, after, { result_type = "indices" }))
+local changes = function(before, after, after_records)
+  local indices = vim.text.diff(before, after, { result_type = "indices" })
+  ---@cast indices integer[][]
+  return diff.changes(after_records, indices)
 end
 
 local row_patches = function(changes)
@@ -107,7 +70,7 @@ local has_variable = function(patches)
 end
 
 local row_hunks = function(before, after, after_records)
-  return row_patches(diff(before, after, after_records))
+  return row_patches(changes(before, after, after_records))
 end
 
 local overlaps = function(left, right)
@@ -122,7 +85,7 @@ local overlaps = function(left, right)
 end
 
 local patch = function(base, patches)
-  local lines = slice(base, 0, #base)
+  local lines = diff.slice(base, 0, #base)
 
   for hunk in vim.iter(patches):rev() do
     for _ = hunk.start, hunk.finish - 1 do
@@ -232,7 +195,8 @@ local sort = function(patches)
 end
 
 local bounds = function(group)
-  local start, finish = math.huge, 0
+  local first = group.local_patches[1] or group.remote_patches[1]
+  local start, finish = first.start, first.finish
   for _, patches in pairs { group.local_patches, group.remote_patches } do
     for _, hunk in ipairs(patches) do
       start = math.min(start, hunk.start)
@@ -281,7 +245,7 @@ end
 local character_hunk = function(linefeed, base, group)
   local start, finish = bounds(group)
   local source = group.local_patches[1] or group.remote_patches[1]
-  local before = slice(base, start, finish)
+  local before = diff.slice(base, start, finish)
   local local_lines = patch(before, relative(group.local_patches, start))
   local remote_lines = patch(before, relative(group.remote_patches, start))
   local characters = chars(before)
@@ -291,9 +255,9 @@ local character_hunk = function(linefeed, base, group)
   local character_text = table.concat(characters, linefeed)
   local local_character_text = table.concat(local_characters, linefeed)
   local remote_character_text = table.concat(remote_characters, linefeed)
-  local local_hunks = character_patches(diff(character_text, local_character_text, local_characters))
+  local local_hunks = character_patches(changes(character_text, local_character_text, local_characters))
   local remote_hunks = vim
-    .iter(character_patches(diff(character_text, remote_character_text, remote_characters)))
+    .iter(character_patches(changes(character_text, remote_character_text, remote_characters)))
     :filter(function(hunk)
       return not touches(local_hunks, hunk)
     end)
@@ -315,7 +279,7 @@ local character_hunk = function(linefeed, base, group)
   return {
     start = start,
     finish = finish,
-    lines = M.records(linefeed, table.concat(merged)),
+    lines = diff.records(linefeed, table.concat(merged)),
     slot = start == finish and source.slot or nil,
   }
 end
@@ -346,9 +310,9 @@ M.merge = function(linefeed, base, local_text, remote_text)
     return local_text
   end
 
-  local base_lines = M.records(linefeed, base)
-  local local_lines = M.records(linefeed, local_text)
-  local remote_lines = M.records(linefeed, remote_text)
+  local base_lines = diff.records(linefeed, base)
+  local local_lines = diff.records(linefeed, local_text)
+  local remote_lines = diff.records(linefeed, remote_text)
   local grouped = row_groups(base, local_text, remote_text, local_lines, remote_lines)
   local patches = merge_hunks(linefeed, base_lines, grouped)
   sort(patches)

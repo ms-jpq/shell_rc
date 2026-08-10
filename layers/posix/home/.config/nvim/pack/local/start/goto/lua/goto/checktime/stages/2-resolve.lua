@@ -90,22 +90,22 @@ M.start = function(spec)
     end
 
     local insert_base, current = snapshotter.insert_base(buf), snapshotter.buffer(buf)
-    local remote_base = remote or ""
-    local common_base = snapshotter.merge_text(current, batch.base or insert_base or "")
-    local remote_text = snapshotter.merge_text(current, remote_base)
-    if local_grace and common_base ~= remote_text then
+    local observed_text = remote or ""
+    local base_text = snapshotter.merge_text(current, batch.base or insert_base or "")
+    local local_text = snapshotter.merge_text(current, current.text)
+    local remote_text = snapshotter.merge_text(current, observed_text)
+    if local_grace and base_text ~= remote_text then
       return { action = M.ACTIONS.RETRY }
     end
 
-    local merged =
-      hunks.merge(current.linefeed, common_base, snapshotter.merge_text(current, current.text), remote_text)
+    local merged = hunks.merge(current.linefeed, base_text, local_text, remote_text)
     local text = snapshotter.buffer_text(current, merged)
-    local modified = text ~= snapshotter.normalize(current, remote_base)
+    local modified = text ~= snapshotter.normalize(current, observed_text)
     return {
       action = M.ACTIONS.RECONCILE,
       current = current,
       text = text,
-      base = remote_base,
+      base = observed_text,
       version = version,
       modified = modified,
       save = modified and insert_base == nil,

@@ -1,6 +1,6 @@
 local apply = require "goto.checktime.hunks.apply"
 local async = require "goto.async"
-local core = require "goto.checktime.hunks.merge"
+local diff = require "goto.checktime.hunks.diff"
 
 local M = {}
 
@@ -37,12 +37,12 @@ local diff_work = function(before, after)
   return vim.json.encode(ok and { result = response } or { error = response })
 end
 
-local diff = function(before, after, after_records)
+local index_diff = function(before, after)
   local response = vim.json.decode(async.work(diff_work, before, after))
   if response.error then
     error(response.error, 0)
   end
-  return core.changes(after_records, response.result)
+  return response.result
 end
 
 ---@param buf integer
@@ -52,11 +52,15 @@ end
 ---@return boolean
 M.replace = function(buf, current, text, mark)
   local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-  local changes = diff(current.text, text, core.records(current.linefeed, text))
+  local indices = index_diff(current.text, text)
   if not vim.api.nvim_buf_is_valid(buf) or vim.api.nvim_buf_get_changedtick(buf) ~= changedtick then
     return false
   end
-  return apply.run(buf, current, text, changes, mark)
+  local replacement = {
+    changes = diff.changes(diff.records(current.linefeed, text), indices),
+    trailing_empty = string.sub(text, -#current.linefeed) == current.linefeed,
+  }
+  return apply.run(buf, current, replacement, mark)
 end
 
 return M

@@ -13,15 +13,14 @@ end
 
 ---@param buf integer
 ---@param current ChecktimeBuffer
----@param text string
----@param changes ChecktimeHunk[]
+---@param replacement ChecktimeReplacement
 ---@param mark fun(start: integer, finish: integer)
 ---@return boolean
-M.run = function(buf, current, text, changes, mark)
+M.run = function(buf, current, replacement, mark)
   return feedback.rewrite(buf, function()
     vim.api.nvim_buf_call(buf, function()
-      for index, hunk in vim.iter(changes):rev():enumerate() do
-        if index == #changes then
+      for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
+        if index == #replacement.changes then
           vim.cmd [[let &undolevels=&undolevels]]
         else
           vim.cmd.undojoin()
@@ -37,10 +36,15 @@ M.run = function(buf, current, text, changes, mark)
       if not current.endofline then
         local count = vim.api.nvim_buf_line_count(buf)
         local last = unpack(vim.api.nvim_buf_get_lines(buf, count - 1, count, true))
-        local ending = string.sub(text, -#current.linefeed) == current.linefeed
-        if ending ~= (count > 1 and last == "") then
+        if replacement.trailing_empty ~= (count > 1 and last == "") then
           vim.cmd.undojoin()
-          vim.api.nvim_buf_set_lines(buf, ending and -1 or -2, -1, true, ending and { "" } or {})
+          vim.api.nvim_buf_set_lines(
+            buf,
+            replacement.trailing_empty and -1 or -2,
+            -1,
+            true,
+            replacement.trailing_empty and { "" } or {}
+          )
         end
       end
     end)

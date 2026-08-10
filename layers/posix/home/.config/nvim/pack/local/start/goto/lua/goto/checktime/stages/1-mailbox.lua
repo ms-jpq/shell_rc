@@ -88,7 +88,6 @@ mailbox.start = function(spec)
       if action.discard then
         feedback.clear_rewrite(action.buf)
       end
-      return
     elseif action.kind == EVENTS.LOCAL then
       local rewrite = feedback.take_rewrite(action.buf)
       local changedtick = vim.api.nvim_buf_get_changedtick(action.buf)
@@ -96,16 +95,13 @@ mailbox.start = function(spec)
         return
       end
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.LOCAL }
-      return
     elseif action.kind == EVENTS.REMOTE then
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
-      return
     elseif action.kind == EVENTS.WATCH then
       watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
       if vim.bo[action.buf].modifiable then
         state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
       end
-      return
     elseif action.kind == EVENTS.LOAD then
       ---@cast action ChecktimeLoad
       watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
@@ -113,14 +109,12 @@ mailbox.start = function(spec)
       state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = { text = action.base } }
       feedback.clear_rewrite(action.buf)
       reads.read { buf = action.buf, base = action.base }
-      return
     elseif action.kind == EVENTS.POST_WRITE then
       if feedback.writing(action.buf) then
         return
       end
       feedback.clear_rewrite(action.buf)
       reads.read { buf = action.buf }
-      return
     elseif action.kind == EVENTS.READ then
       ---@cast action ChecktimeReadEvent
       if action.state == snapshotter.STATES.RETRY then
@@ -140,7 +134,6 @@ mailbox.start = function(spec)
       else
         assert(false, vim.inspect(action))
       end
-      return
     else
       assert(false, vim.inspect(action))
     end
@@ -208,96 +201,94 @@ mailbox.start = function(spec)
     }
   end
 
-  do
-    snapshotter.track_insert(function(buf)
-      post { kind = EVENTS.REMOTE, buf = buf }
-    end)
+  snapshotter.track_insert(function(buf)
+    post { kind = EVENTS.REMOTE, buf = buf }
+  end)
 
-    vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
-      group = lib.group,
-      command = [[silent! wall! ++p]],
-    })
+  vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
+    group = lib.group,
+    command = [[silent! wall! ++p]],
+  })
 
-    vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
-      group = lib.group,
-      callback = async(function()
-        vim.v.fcs_choice = ""
-      end),
-    })
+  vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
+    group = lib.group,
+    callback = async(function()
+      vim.v.fcs_choice = ""
+    end),
+  })
 
-    vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufFilePost" }, {
-      group = lib.group,
-      ---@param args ChecktimeAutocmdArgs
-      callback = async(function(args)
-        if not feedback.reloading(args.buf) then
-          post { kind = EVENTS.LOAD, buf = args.buf, base = snapshotter.buffer(args.buf).text }
-        end
-      end),
-    })
-
-    vim.api.nvim_create_autocmd("BufWinEnter", {
-      group = lib.group,
-      ---@param args ChecktimeAutocmdArgs
-      callback = function(args)
-        watches.refresh(args.buf)
-      end,
-    })
-
-    vim.api.nvim_create_autocmd("BufWinLeave", {
-      group = lib.group,
-      ---@param args ChecktimeAutocmdArgs
-      callback = function(args)
-        vim.schedule(function()
-          if vim.api.nvim_buf_is_valid(args.buf) and vim.api.nvim_buf_is_loaded(args.buf) then
-            watches.refresh(args.buf)
-          end
-        end)
-      end,
-    })
-
-    vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "TextChangedP" }, {
-      group = lib.group,
-      ---@param args ChecktimeAutocmdArgs
-      callback = async(function(args)
-        post { kind = EVENTS.LOCAL, buf = args.buf }
-      end),
-    })
-
-    vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-      group = lib.group,
-      ---@param args ChecktimeAutocmdArgs
-      callback = async(function(args)
-        post { kind = EVENTS.POST_WRITE, buf = args.buf }
-      end),
-    })
-
-    vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
-      group = lib.group,
-      callback = function(event)
-        reads.drop(event.buf)
-        if not feedback.reloading(event.buf) then
-          state.drop(event.buf)
-        end
-      end,
-    })
-
-    vim.api.nvim_create_autocmd({ "OptionSet" }, {
-      group = lib.group,
-      pattern = "modifiable",
-      ---@param args ChecktimeAutocmdArgs
-      callback = async(function(args)
-        post { kind = EVENTS.WATCH, buf = args.buf }
-      end),
-    })
-
-    autocmd.vim_enter(function()
-      for _, buf in pairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-          post { kind = EVENTS.LOAD, buf = buf, base = snapshotter.buffer(buf).text }
-        end
+  vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufFilePost" }, {
+    group = lib.group,
+    ---@param args ChecktimeAutocmdArgs
+    callback = async(function(args)
+      if not feedback.reloading(args.buf) then
+        post { kind = EVENTS.LOAD, buf = args.buf, base = snapshotter.buffer(args.buf).text }
       end
-    end)
-  end
+    end),
+  })
+
+  vim.api.nvim_create_autocmd("BufWinEnter", {
+    group = lib.group,
+    ---@param args ChecktimeAutocmdArgs
+    callback = function(args)
+      watches.refresh(args.buf)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("BufWinLeave", {
+    group = lib.group,
+    ---@param args ChecktimeAutocmdArgs
+    callback = function(args)
+      vim.schedule(function()
+        if vim.api.nvim_buf_is_valid(args.buf) and vim.api.nvim_buf_is_loaded(args.buf) then
+          watches.refresh(args.buf)
+        end
+      end)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "TextChangedP" }, {
+    group = lib.group,
+    ---@param args ChecktimeAutocmdArgs
+    callback = async(function(args)
+      post { kind = EVENTS.LOCAL, buf = args.buf }
+    end),
+  })
+
+  vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+    group = lib.group,
+    ---@param args ChecktimeAutocmdArgs
+    callback = async(function(args)
+      post { kind = EVENTS.POST_WRITE, buf = args.buf }
+    end),
+  })
+
+  vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
+    group = lib.group,
+    callback = function(event)
+      reads.drop(event.buf)
+      if not feedback.reloading(event.buf) then
+        state.drop(event.buf)
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "OptionSet" }, {
+    group = lib.group,
+    pattern = "modifiable",
+    ---@param args ChecktimeAutocmdArgs
+    callback = async(function(args)
+      post { kind = EVENTS.WATCH, buf = args.buf }
+    end),
+  })
+
+  autocmd.vim_enter(function()
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+        post { kind = EVENTS.LOAD, buf = buf, base = snapshotter.buffer(buf).text }
+      end
+    end
+  end)
 
   return mb
 end

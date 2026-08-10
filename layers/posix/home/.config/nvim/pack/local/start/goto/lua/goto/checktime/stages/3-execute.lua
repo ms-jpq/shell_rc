@@ -52,7 +52,7 @@ M.start = function(commit)
   ---@param buf integer
   ---@param instruction ChecktimeReconcile
   local apply = function(buf, instruction)
-    local current, text = assert(instruction.current), assert(instruction.text)
+    local current, text = instruction.current, instruction.text
     if text ~= current.text then
       vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
       if
