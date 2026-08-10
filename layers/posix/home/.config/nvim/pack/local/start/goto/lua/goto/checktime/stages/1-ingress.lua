@@ -20,6 +20,7 @@ local M = {}
 ---@class ChecktimeRemote
 ---@field kind "remote"
 ---@field buf integer
+---@field version? uv.fs_stat.result
 
 ---@class ChecktimeWatch
 ---@field kind "watch"
@@ -93,7 +94,9 @@ M.start = function(spec)
       end
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.LOCAL }
     elseif action.kind == EVENTS.REMOTE then
-      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
+      if not feedback.writing(action.buf) then
+        state.remote(action.buf, action.version)
+      end
     elseif action.kind == EVENTS.WATCH then
       watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
       if vim.bo[action.buf].modifiable then
@@ -124,8 +127,8 @@ M.start = function(spec)
   end
 
   watches = watcher.start {
-    changed = function(buf)
-      post { kind = EVENTS.REMOTE, buf = buf }
+    changed = function(buf, version)
+      post { kind = EVENTS.REMOTE, buf = buf, version = version }
     end,
     visible_interval = spec.visible_interval,
     hidden_interval = spec.hidden_interval,
@@ -251,9 +254,9 @@ M.start = function(spec)
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = lib.group,
     pattern = "modifiable",
-    ---@param args ChecktimeAutocmdArgs
-    callback = async(function(args)
-      post { kind = EVENTS.WATCH, buf = args.buf }
+    callback = async(function()
+      local buf = vim.api.nvim_get_current_buf()
+      post { kind = EVENTS.WATCH, buf = buf }
     end),
   })
 

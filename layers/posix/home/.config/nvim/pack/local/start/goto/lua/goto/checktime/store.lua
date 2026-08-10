@@ -1,5 +1,6 @@
 local lib = require "goto.lib"
 local reducer = require "goto.checktime.reducer"
+local snapshotter = require "goto.checktime.snapshotter"
 
 local store = {}
 
@@ -45,6 +46,7 @@ local store = {}
 ---@field drop fun(buf: integer)
 ---@field latest fun(buf: integer, changedtick: integer): ChecktimeBatch?
 ---@field pending fun(): integer[]
+---@field remote fun(buf: integer, version?: uv.fs_stat.result)
 ---@field take fun(statuses: table<integer, ChecktimeStoreStatus>): table<integer, integer>
 
 local FACTS = "__checktime_facts__"
@@ -95,6 +97,15 @@ store.start = function(spec)
   state.latest = function(buf, changedtick)
     local facts = vim.b[buf][FACTS]
     return facts and reducer.batch(facts, changedtick) or nil
+  end
+
+  ---@param buf integer
+  ---@param version? uv.fs_stat.result
+  state.remote = function(buf, version)
+    local facts = vim.b[buf][FACTS]
+    if not (facts and snapshotter.same_version(facts.base and facts.base.version, version)) then
+      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.REMOTE }
+    end
   end
 
   ---@return integer[]

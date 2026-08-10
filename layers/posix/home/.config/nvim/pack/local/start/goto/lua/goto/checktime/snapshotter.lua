@@ -40,6 +40,13 @@ local same_version = function(before, after)
     and before.ctime.nsec == after.ctime.nsec
 end
 
+---@param before uv.fs_stat.result?
+---@param after uv.fs_stat.result?
+---@return boolean
+M.same_version = function(before, after)
+  return same_version(before, after)
+end
+
 ---@param buf integer
 ---@return ChecktimeBuffer
 M.buffer = function(buf)

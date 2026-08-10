@@ -1,4 +1,3 @@
-local async = require "goto.async"
 local lib = require "goto.lib"
 local poll = require "goto.checktime.watcher.poller"
 
@@ -7,7 +6,7 @@ local M = {}
 local WATCH = "__checktime_watcher__"
 
 ---@class ChecktimeWatcherArgs
----@field changed fun(buf: integer)
+---@field changed fun(buf: integer, version?: uv.fs_stat.result)
 ---@field visible_interval integer
 ---@field hidden_interval integer
 ---@field reloading fun(buf: integer): boolean
@@ -45,18 +44,14 @@ M.start = function(args)
     generation = generation + 1
     local current_generation = generation
     local entry
-    entry = poll.start(
-      path,
-      vim.schedule_wrap(async(function()
-        if vim.api.nvim_buf_is_valid(buf) then
-          local current = vim.b[buf][WATCH]
-          if current and current.generation == current_generation then
-            args.changed(buf)
-          end
+    entry = poll.start(path, function(current)
+      if vim.api.nvim_buf_is_valid(buf) then
+        local watch = vim.b[buf][WATCH]
+        if watch and watch.generation == current_generation then
+          args.changed(buf, current)
         end
-      end)),
-      period
-    )
+      end
+    end, period)
     vim.b[buf][WATCH] = { generation = current_generation, path = path, poller = entry, interval = period }
     retrying[buf] = entry and nil or true
   end

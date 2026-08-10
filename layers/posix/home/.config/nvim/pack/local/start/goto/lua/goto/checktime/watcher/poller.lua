@@ -5,7 +5,7 @@ local M = {}
 ---@field close fun()
 
 ---@param path string
----@param changed fun()
+---@param changed fun(current?: uv.fs_stat.result)
 ---@param interval integer
 ---@return ChecktimePoller?
 M.start = function(path, changed, interval)
@@ -13,7 +13,15 @@ M.start = function(path, changed, interval)
   if not handle then
     return nil
   end
-  if not handle:start(path, interval, changed) then
+  if
+    not handle:start(
+      path,
+      interval,
+      vim.schedule_wrap(function(_, _, current)
+        changed(current)
+      end)
+    )
+  then
     handle:close()
     return nil
   end
