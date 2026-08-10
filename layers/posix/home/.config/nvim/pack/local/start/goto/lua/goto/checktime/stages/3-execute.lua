@@ -1,6 +1,6 @@
 local async = require "goto.async"
+local feedback = require "goto.checktime.feedback"
 local hunks = require "goto.checktime.hunks"
-local mailbox = require "goto.checktime.stages.1-mailbox"
 local resolve = require "goto.checktime.stages.2-resolve"
 local snapshotter = require "goto.checktime.snapshotter"
 
@@ -19,12 +19,12 @@ M.start = function(commit)
   ---@return ChecktimeAccepted?
   local publish = function(buf)
     local text = snapshotter.buffer(buf).text
-    mailbox.writing(buf, true)
+    feedback.writing(buf, true)
     local ok = pcall(vim.api.nvim_buf_call, buf, function()
       vim.cmd [[silent! write! ++p]]
     end)
     if not ok or vim.bo[buf].modified then
-      mailbox.writing(buf, false)
+      feedback.writing(buf, false)
       return nil
     end
 
@@ -34,14 +34,14 @@ M.start = function(commit)
     if not vim.api.nvim_buf_is_valid(buf) then
       return nil
     end
-    mailbox.writing(buf, false)
+    feedback.writing(buf, false)
     return { text = text, version = version }
   end
 
   ---@param buf integer
   ---@return boolean
   local reload = function(buf)
-    local ok = mailbox.reloading(buf, function()
+    local ok = feedback.reload(buf, function()
       vim.api.nvim_buf_call(buf, function()
         vim.cmd [[silent edit!]]
       end)
@@ -54,7 +54,7 @@ M.start = function(commit)
   local apply = function(buf, instruction)
     local current, text = assert(instruction.current), assert(instruction.text)
     if text ~= current.text then
-      mailbox.rewriting(buf, function()
+      feedback.rewrite(buf, function()
         vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
         hunks.replace(buf, current, text, function(start, finish)
           vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })

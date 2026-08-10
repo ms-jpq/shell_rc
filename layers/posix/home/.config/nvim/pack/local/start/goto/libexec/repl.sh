@@ -67,7 +67,7 @@ AWK
     '#{pane_id}'
     '#{window_id}'
     '#{pane_active}'
-    '#{session_name} → #{window_index}:#{pane_index} #{pane_current_command}'
+    '#{session_name} → #{window_index}:#{pane_index} ↘ #{pane_current_command}'
     '#{?#{pane_path},#{pane_path},#{pane_current_path}}'
   )
   printf -v FORMAT -- "%s$REPL_IFS" "${FORMAT_FIELDS[@]}"
