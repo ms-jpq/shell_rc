@@ -96,6 +96,10 @@ AWK
   done
   ;;
 *)
+  SELF="$(realpath -- "$0")"
+  BASE="${SELF%/*}"
+  REPL_MD="$BASE/REPL_PROTOCOL.md"
+
   PANE_ID="${REPL_TARGET%%"$REPL_IFS"*}"
 
   read -r -d '' AWK << 'AWK' || true
@@ -105,28 +109,29 @@ BEGIN {
   HI = ROW + WINDOW
   LO = LO < 1 ? 1 : LO
   HI = HI > COUNT ? COUNT : HI
-  printf "REPL> %s:%d:%d\n", DISPLAY, ROW, COL
+  printf "REPL> @%s\n%s:%d:%d\n", REPL_MD, DISPLAY, ROW, COL
 }
 
-NR < LO {
+FNR < LO {
   next
 }
 
-NR > HI {
+FNR > HI {
   exit
 }
 
 {
-  MARKER = NR == ROW ? "→" : " "
-  printf "%s %*d | %s\n", MARKER, WIDTH, NR, $0
+  MARKER = FNR == ROW ? "→" : " "
+  printf "%s %*d | %s\n", MARKER, WIDTH, FNR, $0
 }
 AWK
 
-  PRINT_CONTEXT=(
+    PRINT_CONTEXT=(
     awk
     -v COL="$REPL_LINE_COL"
     -v COUNT="$REPL_LINE_COUNT"
     -v DISPLAY="$REPL_PRETTY_NAME"
+    -v REPL_MD="${REPL_MD/#"$HOME"/"~"}"
     -v ROW="$REPL_LINE_ROW"
     -v WINDOW=6
     --
