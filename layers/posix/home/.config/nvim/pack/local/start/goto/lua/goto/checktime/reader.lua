@@ -2,52 +2,57 @@ local snapshotter = require "goto.checktime.snapshotter"
 
 local reader = {}
 
----@class ChecktimeSample
+---@class ChecktimeRead
 ---@field buf integer
----@field source string
----@field track boolean
+---@field base? string
+
+---@class ChecktimeReadResult: ChecktimeRead
+---@field state ChecktimeReadState
+---@field version? uv.fs_stat.result
+---@field text? string
 
 ---@class ChecktimeReader
 ---@field active fun(buf: integer): boolean
 ---@field drop fun(buf: integer)
----@field observe fun(sample: ChecktimeSample)
+---@field read fun(request: ChecktimeRead)
 
----@param done fun(sample: ChecktimeSample, state: ChecktimeReadState, version: uv.fs_stat.result?, text: string?)
+---@param done fun(result: ChecktimeReadResult)
 ---@return ChecktimeReader
 reader.start = function(done)
   ---@diagnostic disable-next-line: missing-fields
-  local reads = {} ---@type ChecktimeReader
+  local r = {} ---@type ChecktimeReader
+
   local latest = {} ---@type table<integer, integer>
   local sequential = 0
 
   ---@param buf integer
   ---@return boolean
-  reads.active = function(buf)
+  r.active = function(buf)
     return latest[buf] ~= nil
   end
 
   ---@param buf integer
-  reads.drop = function(buf)
+  r.drop = function(buf)
     latest[buf] = nil
   end
 
-  ---@param sample ChecktimeSample
-  reads.observe = function(sample)
+  ---@param request ChecktimeRead
+  r.read = function(request)
     sequential = sequential + 1
     local token = sequential
-    latest[sample.buf] = token
+    latest[request.buf] = token
 
-    local state, version, text = snapshotter.read(sample.buf)
-    if latest[sample.buf] ~= token then
+    local state, version, text = snapshotter.read(request.buf)
+    if latest[request.buf] ~= token then
       return
     end
-    latest[sample.buf] = nil
-    if vim.api.nvim_buf_is_valid(sample.buf) then
-      done(sample, state, version, text)
+    latest[request.buf] = nil
+    if vim.api.nvim_buf_is_valid(request.buf) then
+      done { buf = request.buf, base = request.base, state = state, version = version, text = text }
     end
   end
 
-  return reads
+  return r
 end
 
 return reader

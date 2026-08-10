@@ -1,6 +1,6 @@
 local hunks = require "goto.checktime.hunks"
 local lib = require "goto.lib"
-local mailbox = require "goto.checktime.stages.1-mailbox"
+local reducer = require "goto.checktime.reducer"
 local snapshotter = require "goto.checktime.snapshotter"
 
 local M = {}
@@ -31,7 +31,7 @@ M.ACTIONS = {
 ---@field action "reconcile"
 ---@field current ChecktimeBuffer
 ---@field text string
----@field accepted string
+---@field base string
 ---@field modified boolean
 ---@field save boolean
 ---@field version? uv.fs_stat.result
@@ -61,7 +61,7 @@ M.start = function(spec)
   ---@param batch ChecktimeBatch
   ---@return ChecktimeInstruction
   resolver.plan = function(buf, batch)
-    local local_change, remote_change = batch.events[mailbox.LOCAL], batch.events[mailbox.REMOTE]
+    local local_change, remote_change = batch.events[reducer.CHANGES.LOCAL], batch.events[reducer.CHANGES.REMOTE]
     local local_grace = within_grace(local_change, spec.grace_ms)
     local buffer_modified = vim.bo[buf].modified
 
@@ -88,21 +88,22 @@ M.start = function(spec)
     end
 
     local insert_base, current = snapshotter.insert_base(buf), snapshotter.buffer(buf)
-    local accepted = remote or ""
-    local base = snapshotter.merge_text(current, batch.accepted or insert_base or "")
-    local remote_text = snapshotter.merge_text(current, accepted)
-    if local_grace and base ~= remote_text then
+    local remote_base = remote or ""
+    local common_base = snapshotter.merge_text(current, batch.base or insert_base or "")
+    local remote_text = snapshotter.merge_text(current, remote_base)
+    if local_grace and common_base ~= remote_text then
       return { action = M.ACTIONS.RETRY }
     end
 
-    local merged = hunks.merge(current.linefeed, base, snapshotter.merge_text(current, current.text), remote_text)
+    local merged =
+      hunks.merge(current.linefeed, common_base, snapshotter.merge_text(current, current.text), remote_text)
     local text = snapshotter.buffer_text(current, merged)
-    local modified = text ~= snapshotter.normalize(current, accepted)
+    local modified = text ~= snapshotter.normalize(current, remote_base)
     return {
       action = M.ACTIONS.RECONCILE,
       current = current,
       text = text,
-      accepted = accepted,
+      base = remote_base,
       version = version,
       modified = modified,
       save = modified and insert_base == nil,

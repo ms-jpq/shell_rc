@@ -7,45 +7,42 @@ local reducer = require "goto.checktime.reducer"
 local snapshotter = require "goto.checktime.snapshotter"
 local watcher = require "goto.checktime.watcher"
 
-local M = {}
-
-M.LOCAL = "local"
-
-M.REMOTE = "remote"
-
----@class ChecktimeObserve
----@field kind "observe"
----@field buf integer
----@field text string
----@field track boolean
-
----@class ChecktimeDirtyLocal
----@field kind "dirty"
----@field buf integer
----@field change "local"
-
----@class ChecktimeDirtyRemote
----@field kind "dirty"
----@field buf integer
----@field change "remote"
----@field watch boolean
+local mailbox = {}
 
 ---@class ChecktimeCommit
 ---@field buf integer
----@field accepted? ChecktimeAccepted
+---@field base? ChecktimeBase
 ---@field batch? ChecktimeBatch
 ---@field discard? boolean
 
 ---@class ChecktimeCommitEvent: ChecktimeCommit
 ---@field kind "commit"
 
----@class ChecktimeSampled: ChecktimeSample
----@field kind "sampled"
----@field state ChecktimeReadState
----@field version? uv.fs_stat.result
----@field text? string
+---@class ChecktimeLocal
+---@field kind "local"
+---@field buf integer
 
----@alias ChecktimeMailboxAction ChecktimeObserve|ChecktimeDirtyLocal|ChecktimeDirtyRemote|ChecktimeCommitEvent|ChecktimeSampled
+---@class ChecktimeRemote
+---@field kind "remote"
+---@field buf integer
+
+---@class ChecktimeWatch
+---@field kind "watch"
+---@field buf integer
+
+---@class ChecktimeLoad
+---@field kind "load"
+---@field buf integer
+---@field base string
+
+---@class ChecktimePostWrite
+---@field kind "post-write"
+---@field buf integer
+
+---@class ChecktimeReadEvent: ChecktimeReadResult
+---@field kind "read"
+
+---@alias ChecktimeMailboxAction ChecktimeCommitEvent|ChecktimeLocal|ChecktimeRemote|ChecktimeWatch|ChecktimeLoad|ChecktimePostWrite|ChecktimeReadEvent
 
 ---@class ChecktimeAutocmdArgs
 ---@field buf integer
@@ -60,14 +57,18 @@ M.REMOTE = "remote"
 ---@field visible_interval integer
 ---@field hidden_interval integer
 
+---@class ChecktimeMailboxEvents
 local EVENTS = {
   COMMIT = "commit",
-  DIRTY = "dirty",
-  OBSERVE = "observe",
-  SAMPLED = "sampled",
+  LOCAL = "local",
+  REMOTE = "remote",
+  WATCH = "watch",
+  LOAD = "load",
+  POST_WRITE = "post-write",
+  READ = "read",
 }
 
-local TRACKED = "__checktime_mailbox__"
+local FACTS = "__checktime_facts__"
 
 local gen = (function()
   local n = 0
@@ -80,7 +81,7 @@ end)()
 
 ---@param spec ChecktimeMailboxConfig
 ---@return ChecktimeMailbox
-M.start = function(spec)
+mailbox.start = function(spec)
   ---@diagnostic disable-next-line: missing-fields
   local mb = {} ---@type ChecktimeMailbox
   local pending = {} ---@type table<integer, true>
@@ -88,28 +89,23 @@ M.start = function(spec)
 
   ---@param buf integer
   ---@param action ChecktimeReducerAction
-  ---@return ChecktimeFacts
-  local update = function(buf, action)
-    local facts = reducer.reduce(vim.b[buf][TRACKED] or reducer.new(), action)
-    vim.b[buf][TRACKED] = facts
+  local reduce = function(buf, action)
+    local facts = reducer.reduce(vim.b[buf][FACTS] or { events = {} }, action)
+    vim.b[buf][FACTS] = facts
     pending[buf] = next(facts.events) and true or nil
-    return facts
   end
 
   ---@param buf integer
   ---@param text? string
   ---@param version? uv.fs_stat.result
-  local accept = function(buf, text, version)
-    update(buf, { kind = reducer.ACTIONS.ACCEPT, accepted = { text = text, version = version } })
+  local base = function(buf, text, version)
+    reduce(buf, { kind = reducer.ACTIONS.BASE, base = { text = text, version = version } })
   end
 
-  ---@param kind ChecktimeChange
+  ---@param change ChecktimeChange
   ---@param buf integer
-  ---@return ChecktimeGeneration
-  local mark = function(kind, buf)
-    local generation = gen()
-    update(buf, { kind = reducer.ACTIONS.CHANGE, change = kind, generation = generation })
-    return generation
+  local mark = function(change, buf)
+    reduce(buf, { kind = reducer.ACTIONS.CHANGE, change = change, generation = gen() })
   end
 
   local watches ---@type ChecktimeWatcher
@@ -120,60 +116,57 @@ M.start = function(spec)
   dispatch = function(action)
     if not vim.api.nvim_buf_is_valid(action.buf) then
       return
-    end
-    if action.kind == EVENTS.COMMIT then
-      update(action.buf, { kind = reducer.ACTIONS.COMMIT, accepted = action.accepted, batch = action.batch })
-
+    elseif action.kind == EVENTS.COMMIT then
+      ---@cast action ChecktimeCommitEvent
+      reduce(action.buf, { kind = reducer.ACTIONS.COMMIT, base = action.base, batch = action.batch })
       if action.discard then
-        feedback.discard(action.buf)
+        feedback.clear_rewrite(action.buf)
       end
       return
-    elseif action.kind == EVENTS.DIRTY then
-      if action.change == M.LOCAL then
-        local rewrite = feedback.take_rewrite(action.buf)
-        local changedtick = vim.api.nvim_buf_get_changedtick(action.buf)
-
-        if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
-          return
-        end
-
-        mark(M.LOCAL, action.buf)
-      elseif action.change == M.REMOTE then
-        if action.watch then
-          watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
-        end
-
-        if not action.watch or vim.bo[action.buf].modifiable then
-          mark(M.REMOTE, action.buf)
-        end
-      else
-        assert(false, vim.inspect(action))
-      end
-      return
-    elseif action.kind == EVENTS.OBSERVE then
-      if not action.track and feedback.writes(action.buf) then
+    elseif action.kind == EVENTS.LOCAL then
+      local rewrite = feedback.take_rewrite(action.buf)
+      local changedtick = vim.api.nvim_buf_get_changedtick(action.buf)
+      if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
         return
       end
-
-      if action.track then
-        watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
-        mark(M.REMOTE, action.buf)
-        accept(action.buf, action.text)
-      end
-
-      feedback.discard(action.buf)
-      reads.observe { buf = action.buf, source = action.text, track = action.track }
+      mark(reducer.CHANGES.LOCAL, action.buf)
       return
-    elseif action.kind == EVENTS.SAMPLED then
+    elseif action.kind == EVENTS.REMOTE then
+      mark(reducer.CHANGES.REMOTE, action.buf)
+      return
+    elseif action.kind == EVENTS.WATCH then
+      watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
+      if vim.bo[action.buf].modifiable then
+        mark(reducer.CHANGES.REMOTE, action.buf)
+      end
+      return
+    elseif action.kind == EVENTS.LOAD then
+      ---@cast action ChecktimeLoad
+      watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
+      mark(reducer.CHANGES.REMOTE, action.buf)
+      base(action.buf, action.base)
+      feedback.clear_rewrite(action.buf)
+      reads.read { buf = action.buf, base = action.base }
+      return
+    elseif action.kind == EVENTS.POST_WRITE then
+      if feedback.writing(action.buf) then
+        return
+      end
+      feedback.clear_rewrite(action.buf)
+      reads.read { buf = action.buf }
+      return
+    elseif action.kind == EVENTS.READ then
+      ---@cast action ChecktimeReadEvent
       if action.state == snapshotter.STATES.RETRY then
-        mark(M.REMOTE, action.buf)
+        mark(reducer.CHANGES.REMOTE, action.buf)
       elseif action.state == snapshotter.STATES.RECONCILE then
-        accept(action.buf, action.track and action.source or action.text, action.version)
+        base(action.buf, action.base or action.text, action.version)
       elseif action.state == snapshotter.STATES.OPAQUE or action.state == snapshotter.STATES.MISSING then
-        accept(action.buf, action.track and action.source or nil, action.version)
+        base(action.buf, action.base, action.version)
       else
         assert(false, vim.inspect(action))
       end
+      return
     else
       assert(false, vim.inspect(action))
     end
@@ -181,22 +174,21 @@ M.start = function(spec)
 
   watches = watcher.start {
     changed = function(buf)
-      dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = buf, watch = false }
+      dispatch { kind = EVENTS.REMOTE, buf = buf }
     end,
     visible_interval = spec.visible_interval,
     hidden_interval = spec.hidden_interval,
     reloading = feedback.reloading,
   }
 
-  reads = reader.start(function(sample, state, version, text)
+  reads = reader.start(function(result)
     dispatch {
-      kind = EVENTS.SAMPLED,
-      buf = sample.buf,
-      source = sample.source,
-      track = sample.track,
-      state = state,
-      version = version,
-      text = text,
+      kind = EVENTS.READ,
+      buf = result.buf,
+      base = result.base,
+      state = result.state,
+      version = result.version,
+      text = result.text,
     }
   end)
 
@@ -206,9 +198,9 @@ M.start = function(spec)
   mb.latest = function(buf, before)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
     if changedtick ~= before then
-      mark(M.LOCAL, buf)
+      mark(reducer.CHANGES.LOCAL, buf)
     end
-    local facts = vim.b[buf][TRACKED]
+    local facts = vim.b[buf][FACTS]
     return facts and reducer.batch(facts, changedtick) or nil
   end
 
@@ -220,17 +212,17 @@ M.start = function(spec)
       if not vim.api.nvim_buf_is_valid(buf) then
         pending[buf] = nil
       else
-        local facts = vim.b[buf][TRACKED]
+        local facts = vim.b[buf][FACTS]
         if not facts or not next(facts.events) or not watches.has(buf) then
           pending[buf] = nil
         elseif
           not reads.active(buf)
-          and not feedback.writes(buf)
+          and not feedback.writing(buf)
           and not snapshotter.insert_base(buf)
           and not (
             vim.bo[buf].modified
-            and facts.events[M.LOCAL]
-            and vim.uv.hrtime() - facts.events[M.LOCAL].monotonic_ts < grace_ns
+            and facts.events[reducer.CHANGES.LOCAL]
+            and vim.uv.hrtime() - facts.events[reducer.CHANGES.LOCAL].monotonic_ts < grace_ns
           )
         then
           ready[buf] = vim.api.nvim_buf_get_changedtick(buf)
@@ -245,7 +237,7 @@ M.start = function(spec)
     dispatch {
       kind = EVENTS.COMMIT,
       buf = change.buf,
-      accepted = change.accepted,
+      base = change.base,
       batch = change.batch,
       discard = change.discard,
     }
@@ -253,7 +245,7 @@ M.start = function(spec)
 
   do
     snapshotter.track_insert(function(buf)
-      dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = buf, watch = false }
+      dispatch { kind = EVENTS.REMOTE, buf = buf }
     end)
 
     vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
@@ -272,10 +264,9 @@ M.start = function(spec)
       group = lib.group,
       ---@param args ChecktimeAutocmdArgs
       callback = async(function(args)
-        if feedback.reloading(args.buf) then
-          return
+        if not feedback.reloading(args.buf) then
+          dispatch { kind = EVENTS.LOAD, buf = args.buf, base = snapshotter.buffer(args.buf).text }
         end
-        dispatch { kind = EVENTS.OBSERVE, buf = args.buf, text = snapshotter.buffer(args.buf).text, track = true }
       end),
     })
 
@@ -303,7 +294,7 @@ M.start = function(spec)
       group = lib.group,
       ---@param args ChecktimeAutocmdArgs
       callback = async(function(args)
-        dispatch { kind = EVENTS.DIRTY, change = M.LOCAL, buf = args.buf, watch = false }
+        dispatch { kind = EVENTS.LOCAL, buf = args.buf }
       end),
     })
 
@@ -311,7 +302,7 @@ M.start = function(spec)
       group = lib.group,
       ---@param args ChecktimeAutocmdArgs
       callback = async(function(args)
-        dispatch { kind = EVENTS.OBSERVE, buf = args.buf, text = snapshotter.buffer(args.buf).text, track = false }
+        dispatch { kind = EVENTS.POST_WRITE, buf = args.buf }
       end),
     })
 
@@ -320,7 +311,7 @@ M.start = function(spec)
       callback = function(event)
         reads.drop(event.buf)
         if not feedback.reloading(event.buf) then
-          vim.b[event.buf][TRACKED] = nil
+          vim.b[event.buf][FACTS] = nil
           pending[event.buf] = nil
         end
       end,
@@ -330,14 +321,14 @@ M.start = function(spec)
       group = lib.group,
       pattern = "modifiable",
       callback = async(function()
-        dispatch { kind = EVENTS.DIRTY, change = M.REMOTE, buf = vim.api.nvim_get_current_buf(), watch = true }
+        dispatch { kind = EVENTS.WATCH, buf = vim.api.nvim_get_current_buf() }
       end),
     })
 
     autocmd.vim_enter(function()
       for _, buf in pairs(vim.api.nvim_list_bufs()) do
         if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-          dispatch { kind = EVENTS.OBSERVE, buf = buf, text = snapshotter.buffer(buf).text, track = true }
+          dispatch { kind = EVENTS.LOAD, buf = buf, base = snapshotter.buffer(buf).text }
         end
       end
     end)
@@ -346,4 +337,4 @@ M.start = function(spec)
   return mb
 end
 
-return M
+return mailbox

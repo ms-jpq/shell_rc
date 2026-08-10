@@ -43,19 +43,19 @@ M.take_rewrite = function(buf)
 end
 
 ---@param buf integer
-M.discard = function(buf)
+M.clear_rewrite = function(buf)
   vim.b[buf][REWRITE] = nil
 end
 
 ---@param buf integer
 ---@param value boolean
-M.writing = function(buf, value)
+M.write = function(buf, value)
   vim.b[buf][WRITING] = value or nil
 end
 
 ---@param buf integer
 ---@return boolean
-M.writes = function(buf)
+M.writing = function(buf)
   return vim.b[buf][WRITING] == true
 end
 

@@ -1,18 +1,21 @@
 local reducer = {}
 
+---@alias ChecktimeReducerActionKind "change"|"base"|"commit"
+
 ---@class ChecktimeReducerActions
----@field CHANGE "change"
----@field ACCEPT "accept"
----@field COMMIT "commit"
-local ACTIONS = {
+reducer.ACTIONS = {
   CHANGE = "change",
-  ACCEPT = "accept",
+  BASE = "base",
   COMMIT = "commit",
 }
 
-reducer.ACTIONS = ACTIONS
-
 ---@alias ChecktimeChange "remote"|"local"
+
+---@class ChecktimeChanges
+reducer.CHANGES = {
+  LOCAL = "local",
+  REMOTE = "remote",
+}
 
 ---@class ChecktimeGeneration
 ---@field monotonic_ts integer
@@ -20,19 +23,19 @@ reducer.ACTIONS = ACTIONS
 
 ---@alias ChecktimeEvents table<ChecktimeChange, ChecktimeGeneration>
 
----@class ChecktimeAccepted
+---@class ChecktimeBase
 ---@field text? string
 ---@field version? uv.fs_stat.result
 
 ---@class ChecktimeFacts
 ---@field events ChecktimeEvents
----@field accepted? string
+---@field base? string
 ---@field version? uv.fs_stat.result
 
 ---@class ChecktimeBatch
 ---@field events ChecktimeEvents
 ---@field changedtick integer
----@field accepted? string
+---@field base? string
 ---@field version? uv.fs_stat.result
 
 ---@class ChecktimeChangeAction
@@ -40,16 +43,16 @@ reducer.ACTIONS = ACTIONS
 ---@field change ChecktimeChange
 ---@field generation ChecktimeGeneration
 
----@class ChecktimeAcceptAction
----@field kind "accept"
----@field accepted ChecktimeAccepted
+---@class ChecktimeBaseAction
+---@field kind "base"
+---@field base ChecktimeBase
 
 ---@class ChecktimeCommitAction
 ---@field kind "commit"
----@field accepted? ChecktimeAccepted
+---@field base? ChecktimeBase
 ---@field batch? ChecktimeBatch
 
----@alias ChecktimeReducerAction ChecktimeChangeAction|ChecktimeAcceptAction|ChecktimeCommitAction
+---@alias ChecktimeReducerAction ChecktimeChangeAction|ChecktimeBaseAction|ChecktimeCommitAction
 
 ---@generic T: table
 ---@param value T
@@ -62,27 +65,22 @@ local clone = function(value)
   return copied
 end
 
----@return ChecktimeFacts
-reducer.new = function()
-  return { events = {} }
-end
-
 ---@param facts ChecktimeFacts
 ---@param action ChecktimeReducerAction
 ---@return ChecktimeFacts
 reducer.reduce = function(facts, action)
   local next = clone(facts)
 
-  if action.kind == ACTIONS.CHANGE then
+  if action.kind == reducer.ACTIONS.CHANGE then
     next.events = clone(facts.events)
     next.events[action.change] = action.generation
     return next
-  elseif action.kind == ACTIONS.ACCEPT then
-    next.accepted, next.version = action.accepted.text, action.accepted.version
+  elseif action.kind == reducer.ACTIONS.BASE then
+    next.base, next.version = action.base.text, action.base.version
     return next
-  elseif action.kind == ACTIONS.COMMIT then
-    if action.accepted then
-      next.accepted, next.version = action.accepted.text, action.accepted.version
+  elseif action.kind == reducer.ACTIONS.COMMIT then
+    if action.base then
+      next.base, next.version = action.base.text, action.base.version
     end
     if action.batch then
       next.events = clone(facts.events)
@@ -106,7 +104,7 @@ reducer.batch = function(facts, changedtick)
     return nil
   end
   return {
-    accepted = facts.accepted,
+    base = facts.base,
     version = facts.version,
     events = facts.events,
     changedtick = changedtick,

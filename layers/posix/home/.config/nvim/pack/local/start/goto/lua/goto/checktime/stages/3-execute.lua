@@ -16,15 +16,15 @@ local ns = vim.api.nvim_create_namespace "goto.checktime"
 ---@return ChecktimeExecutor
 M.start = function(commit)
   ---@param buf integer
-  ---@return ChecktimeAccepted?
+  ---@return ChecktimeBase?
   local publish = function(buf)
     local text = snapshotter.buffer(buf).text
-    feedback.writing(buf, true)
+    feedback.write(buf, true)
     local ok = pcall(vim.api.nvim_buf_call, buf, function()
       vim.cmd [[silent! write! ++p]]
     end)
     if not ok or vim.bo[buf].modified then
-      feedback.writing(buf, false)
+      feedback.write(buf, false)
       return nil
     end
 
@@ -34,7 +34,7 @@ M.start = function(commit)
     if not vim.api.nvim_buf_is_valid(buf) then
       return nil
     end
-    feedback.writing(buf, false)
+    feedback.write(buf, false)
     return { text = text, version = version }
   end
 
@@ -92,9 +92,9 @@ M.start = function(commit)
         return
       end
 
-      local accepted = publish(buf)
-      if accepted then
-        commit { buf = buf, batch = batch, accepted = accepted }
+      local base = publish(buf)
+      if base then
+        commit { buf = buf, batch = batch, base = base }
       end
       return
     end
@@ -109,17 +109,17 @@ M.start = function(commit)
     end
 
     apply(buf, instruction)
-    local accepted = { text = instruction.accepted, version = instruction.version } ---@type ChecktimeAccepted
+    local base = { text = instruction.base, version = instruction.version } ---@type ChecktimeBase
     if stale then
-      commit { buf = buf, accepted = accepted }
+      commit { buf = buf, base = base }
       return
     elseif not instruction.save then
-      commit { buf = buf, batch = batch, accepted = accepted }
+      commit { buf = buf, batch = batch, base = base }
       return
     end
 
     local published = publish(buf)
-    commit { buf = buf, accepted = published or accepted, batch = published and batch or nil }
+    commit { buf = buf, base = published or base, batch = published and batch or nil }
   end
 
   return { run = run }
