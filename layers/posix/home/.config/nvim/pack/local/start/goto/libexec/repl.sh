@@ -109,7 +109,7 @@ BEGIN {
   HI = ROW + WINDOW
   LO = LO < 1 ? 1 : LO
   HI = HI > COUNT ? COUNT : HI
-  printf "REPL> @%s\n%s:%d:%d\n", REPL_MD, DISPLAY, ROW, COL
+  printf "REPL> @%s\n\n%s:%d:%d\n", REPL_MD, DISPLAY, ROW, COL
 }
 
 FNR < LO {
