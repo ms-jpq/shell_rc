@@ -49,6 +49,14 @@ M.take_rewrite = function(buf)
 end
 
 ---@param buf integer
+---@param changedtick integer
+---@return boolean
+M.is_echo = function(buf, changedtick)
+  local rewrite = vim.b[buf][REWRITE]
+  return rewrite ~= nil and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after)
+end
+
+---@param buf integer
 M.clear_rewrite = function(buf)
   vim.b[buf][REWRITE] = nil
 end

@@ -89,9 +89,10 @@ mailbox.start = function(spec)
         feedback.clear_rewrite(action.buf)
       end
     elseif action.kind == EVENTS.LOCAL then
-      local rewrite = feedback.take_rewrite(action.buf)
       local changedtick = vim.api.nvim_buf_get_changedtick(action.buf)
-      if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
+      local echo = feedback.is_echo(action.buf, changedtick)
+      feedback.take_rewrite(action.buf)
+      if echo then
         return
       end
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.LOCAL }
@@ -164,7 +165,7 @@ mailbox.start = function(spec)
   ---@return ChecktimeBatch?
   mb.latest = function(buf, before)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-    if changedtick ~= before then
+    if changedtick ~= before and not feedback.is_echo(buf, changedtick) then
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.LOCAL }
     end
     return state.latest(buf, changedtick)
