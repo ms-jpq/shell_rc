@@ -8,15 +8,17 @@
 
 ## In Document Syntax
 
-- `instruction` is sent via language-specific `{%- comment -%} instruction`.
+- `comment(text)` means text written in the document's native comment form.
 
-- `response` should be relayed via `{%- comment -%} | response`.
+- An `instruction` is `comment(instruction)`.
+
+- A `response` is `comment(| response)`.
 
   - Add a blank line below user's instructions.
 
-  - For highlighting, the first line of response should be `{%- comment -%} | >>> response`.
+  - Its highlighted first line is `comment(| >>> response)`.
 
-- Crave out for markdown: use `> ` and `> | ` for `instruction` and `response`, respectively.
+- In Markdown, `comment(text)` is `> text`.
 
 ## Example
 
