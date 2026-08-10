@@ -5,15 +5,10 @@ local lib = require "goto.lib"
 local reader = require "goto.checktime.reader"
 local reducer = require "goto.checktime.reducer"
 local snapshotter = require "goto.checktime.snapshotter"
+local store = require "goto.checktime.store"
 local watcher = require "goto.checktime.watcher"
 
 local mailbox = {}
-
----@class ChecktimeCommit
----@field buf integer
----@field base? ChecktimeBase
----@field batch? ChecktimeBatch
----@field discard? boolean
 
 ---@class ChecktimeCommitEvent: ChecktimeCommit
 ---@field kind "commit"
@@ -68,57 +63,24 @@ local EVENTS = {
   READ = "read",
 }
 
-local FACTS = "__checktime_facts__"
-
-local gen = (function()
-  local n = 0
-  ---@return ChecktimeGeneration
-  return function()
-    n = n + 1
-    return { monotonic_ts = vim.uv.hrtime(), sequential = n }
-  end
-end)()
-
 ---@param spec ChecktimeMailboxConfig
 ---@return ChecktimeMailbox
 mailbox.start = function(spec)
   ---@diagnostic disable-next-line: missing-fields
   local mb = {} ---@type ChecktimeMailbox
-  local pending = {} ---@type table<integer, true>
-  local grace_ns = spec.grace_ms * lib.NANOSECONDS_PER_MILLISECOND
-
-  ---@param buf integer
-  ---@param action ChecktimeReducerAction
-  local reduce = function(buf, action)
-    local facts = reducer.reduce(vim.b[buf][FACTS] or { events = {} }, action)
-    vim.b[buf][FACTS] = facts
-    pending[buf] = next(facts.events) and true or nil
-  end
-
-  ---@param buf integer
-  ---@param text? string
-  ---@param version? uv.fs_stat.result
-  local base = function(buf, text, version)
-    reduce(buf, { kind = reducer.ACTIONS.BASE, base = { text = text, version = version } })
-  end
-
-  ---@param change ChecktimeChange
-  ---@param buf integer
-  local mark = function(change, buf)
-    reduce(buf, { kind = reducer.ACTIONS.CHANGE, change = change, generation = gen() })
-  end
+  local state = store.start { grace_ms = spec.grace_ms }
 
   local watches ---@type ChecktimeWatcher
   local reads ---@type ChecktimeReader
-  local dispatch ---@type fun(action: ChecktimeMailboxAction)
+  local post ---@type fun(action: ChecktimeMailboxAction)
 
   ---@param action ChecktimeMailboxAction
-  dispatch = function(action)
+  post = function(action)
     if not vim.api.nvim_buf_is_valid(action.buf) then
       return
     elseif action.kind == EVENTS.COMMIT then
       ---@cast action ChecktimeCommitEvent
-      reduce(action.buf, { kind = reducer.ACTIONS.COMMIT, base = action.base, batch = action.batch })
+      state.dispatch { kind = reducer.ACTIONS.COMMIT, buf = action.buf, base = action.base, batch = action.batch }
       if action.discard then
         feedback.clear_rewrite(action.buf)
       end
@@ -129,22 +91,22 @@ mailbox.start = function(spec)
       if rewrite and changedtick ~= rewrite.before and (not rewrite.after or changedtick == rewrite.after) then
         return
       end
-      mark(reducer.CHANGES.LOCAL, action.buf)
+      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.LOCAL }
       return
     elseif action.kind == EVENTS.REMOTE then
-      mark(reducer.CHANGES.REMOTE, action.buf)
+      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
       return
     elseif action.kind == EVENTS.WATCH then
       watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
       if vim.bo[action.buf].modifiable then
-        mark(reducer.CHANGES.REMOTE, action.buf)
+        state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
       end
       return
     elseif action.kind == EVENTS.LOAD then
       ---@cast action ChecktimeLoad
       watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
-      mark(reducer.CHANGES.REMOTE, action.buf)
-      base(action.buf, action.base)
+      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
+      state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = { text = action.base } }
       feedback.clear_rewrite(action.buf)
       reads.read { buf = action.buf, base = action.base }
       return
@@ -158,11 +120,19 @@ mailbox.start = function(spec)
     elseif action.kind == EVENTS.READ then
       ---@cast action ChecktimeReadEvent
       if action.state == snapshotter.STATES.RETRY then
-        mark(reducer.CHANGES.REMOTE, action.buf)
+        state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
       elseif action.state == snapshotter.STATES.RECONCILE then
-        base(action.buf, action.base or action.text, action.version)
+        state.dispatch {
+          kind = reducer.ACTIONS.BASE,
+          buf = action.buf,
+          base = { text = action.base or action.text, version = action.version },
+        }
       elseif action.state == snapshotter.STATES.OPAQUE or action.state == snapshotter.STATES.MISSING then
-        base(action.buf, action.base, action.version)
+        state.dispatch {
+          kind = reducer.ACTIONS.BASE,
+          buf = action.buf,
+          base = { text = action.base, version = action.version },
+        }
       else
         assert(false, vim.inspect(action))
       end
@@ -174,7 +144,7 @@ mailbox.start = function(spec)
 
   watches = watcher.start {
     changed = function(buf)
-      dispatch { kind = EVENTS.REMOTE, buf = buf }
+      post { kind = EVENTS.REMOTE, buf = buf }
     end,
     visible_interval = spec.visible_interval,
     hidden_interval = spec.hidden_interval,
@@ -182,7 +152,7 @@ mailbox.start = function(spec)
   }
 
   reads = reader.start(function(result)
-    dispatch {
+    post {
       kind = EVENTS.READ,
       buf = result.buf,
       base = result.base,
@@ -197,44 +167,32 @@ mailbox.start = function(spec)
   ---@return ChecktimeBatch?
   mb.latest = function(buf, before)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-    if changedtick ~= before then
-      mark(reducer.CHANGES.LOCAL, buf)
-    end
-    local facts = vim.b[buf][FACTS]
-    return facts and reducer.batch(facts, changedtick) or nil
+    return state.latest(buf, before, changedtick)
   end
 
   ---@return table<integer, integer>
   mb.take = function()
     watches.retry()
-    local ready = {} ---@type table<integer, integer>
-    for buf in pairs(pending) do
-      if not vim.api.nvim_buf_is_valid(buf) then
-        pending[buf] = nil
-      else
-        local facts = vim.b[buf][FACTS]
-        if not facts or not next(facts.events) or not watches.has(buf) then
-          pending[buf] = nil
-        elseif
-          not reads.active(buf)
-          and not feedback.writing(buf)
-          and not snapshotter.insert_base(buf)
-          and not (
-            vim.bo[buf].modified
-            and facts.events[reducer.CHANGES.LOCAL]
-            and vim.uv.hrtime() - facts.events[reducer.CHANGES.LOCAL].monotonic_ts < grace_ns
-          )
-        then
-          ready[buf] = vim.api.nvim_buf_get_changedtick(buf)
-        end
+    local statuses = {} ---@type table<integer, ChecktimeStoreStatus>
+    for _, buf in ipairs(state.pending()) do
+      if vim.api.nvim_buf_is_valid(buf) then
+        statuses[buf] = {
+          valid = true,
+          watched = watches.has(buf),
+          reading = reads.active(buf),
+          writing = feedback.writing(buf),
+          insert_base = snapshotter.insert_base(buf) ~= nil,
+          modified = vim.bo[buf].modified,
+          changedtick = vim.api.nvim_buf_get_changedtick(buf),
+        }
       end
     end
-    return ready
+    return state.take(statuses)
   end
 
   ---@param change ChecktimeCommit
   mb.commit = function(change)
-    dispatch {
+    post {
       kind = EVENTS.COMMIT,
       buf = change.buf,
       base = change.base,
@@ -245,7 +203,7 @@ mailbox.start = function(spec)
 
   do
     snapshotter.track_insert(function(buf)
-      dispatch { kind = EVENTS.REMOTE, buf = buf }
+      post { kind = EVENTS.REMOTE, buf = buf }
     end)
 
     vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
@@ -265,7 +223,7 @@ mailbox.start = function(spec)
       ---@param args ChecktimeAutocmdArgs
       callback = async(function(args)
         if not feedback.reloading(args.buf) then
-          dispatch { kind = EVENTS.LOAD, buf = args.buf, base = snapshotter.buffer(args.buf).text }
+          post { kind = EVENTS.LOAD, buf = args.buf, base = snapshotter.buffer(args.buf).text }
         end
       end),
     })
@@ -294,7 +252,7 @@ mailbox.start = function(spec)
       group = lib.group,
       ---@param args ChecktimeAutocmdArgs
       callback = async(function(args)
-        dispatch { kind = EVENTS.LOCAL, buf = args.buf }
+        post { kind = EVENTS.LOCAL, buf = args.buf }
       end),
     })
 
@@ -302,7 +260,7 @@ mailbox.start = function(spec)
       group = lib.group,
       ---@param args ChecktimeAutocmdArgs
       callback = async(function(args)
-        dispatch { kind = EVENTS.POST_WRITE, buf = args.buf }
+        post { kind = EVENTS.POST_WRITE, buf = args.buf }
       end),
     })
 
@@ -311,8 +269,7 @@ mailbox.start = function(spec)
       callback = function(event)
         reads.drop(event.buf)
         if not feedback.reloading(event.buf) then
-          vim.b[event.buf][FACTS] = nil
-          pending[event.buf] = nil
+          state.drop(event.buf)
         end
       end,
     })
@@ -321,14 +278,14 @@ mailbox.start = function(spec)
       group = lib.group,
       pattern = "modifiable",
       callback = async(function()
-        dispatch { kind = EVENTS.WATCH, buf = vim.api.nvim_get_current_buf() }
+        post { kind = EVENTS.WATCH, buf = vim.api.nvim_get_current_buf() }
       end),
     })
 
     autocmd.vim_enter(function()
       for _, buf in pairs(vim.api.nvim_list_bufs()) do
         if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-          dispatch { kind = EVENTS.LOAD, buf = buf, base = snapshotter.buffer(buf).text }
+          post { kind = EVENTS.LOAD, buf = buf, base = snapshotter.buffer(buf).text }
         end
       end
     end)
