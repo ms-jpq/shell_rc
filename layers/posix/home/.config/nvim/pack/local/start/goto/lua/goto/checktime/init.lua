@@ -1,8 +1,8 @@
 local async = require "goto.async"
 local execute = require "goto.checktime.stages.3-execute"
+local ingress = require "goto.checktime.stages.1-ingress"
 local lib = require "goto.lib"
 local lock = require "goto.checktime.lock"
-local mailbox = require "goto.checktime.stages.1-mailbox"
 local resolve = require "goto.checktime.stages.2-resolve"
 
 vim.opt.backup = false
@@ -16,7 +16,7 @@ do
   local visible_interval, hidden_interval = 99, 999
   local local_debounce_ms = 3 * visible_interval
   local remote_quiet_ms = 6 * visible_interval
-  local inbox = mailbox.start {
+  local inbox = ingress.start {
     local_debounce_ms = local_debounce_ms,
     remote_quiet_ms = remote_quiet_ms,
     visible_interval = visible_interval,

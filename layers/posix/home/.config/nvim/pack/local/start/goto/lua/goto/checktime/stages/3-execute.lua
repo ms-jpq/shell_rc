@@ -91,7 +91,11 @@ M.start = function(commit)
     end
     if instruction.action == resolve.ACTIONS.WRITE then
       ---@cast instruction ChecktimeWrite
-      if not snapshotter.unchanged(buf, instruction.base and instruction.base.version) or not current() or snapshotter.insert_base(buf) then
+      if
+        not snapshotter.unchanged(buf, instruction.base and instruction.base.version)
+        or not current()
+        or snapshotter.insert_base(buf)
+      then
         return
       end
 

@@ -8,7 +8,7 @@ local snapshotter = require "goto.checktime.snapshotter"
 local store = require "goto.checktime.store"
 local watcher = require "goto.checktime.watcher"
 
-local mailbox = {}
+local M = {}
 
 ---@class ChecktimeCommitEvent: ChecktimeCommit
 ---@field kind "commit"
@@ -34,23 +34,23 @@ local mailbox = {}
 ---@field kind "post-write"
 ---@field buf integer
 
----@alias ChecktimeMailboxAction ChecktimeCommitEvent|ChecktimeLocal|ChecktimeRemote|ChecktimeWatch|ChecktimeLoad|ChecktimePostWrite|ChecktimeReaderObservation
+---@alias ChecktimeIngressAction ChecktimeCommitEvent|ChecktimeLocal|ChecktimeRemote|ChecktimeWatch|ChecktimeLoad|ChecktimePostWrite|ChecktimeReaderObservation
 
 ---@class ChecktimeAutocmdArgs
 ---@field buf integer
 
----@class ChecktimeMailbox
+---@class ChecktimeIngress
 ---@field commit fun(change: ChecktimeCommit)
 ---@field latest fun(buf: integer, changedtick: integer): ChecktimeBatch?
 ---@field take fun(): table<integer, integer>
 
----@class ChecktimeMailboxConfig
+---@class ChecktimeIngressConfig
 ---@field local_debounce_ms integer
 ---@field remote_quiet_ms integer
 ---@field visible_interval integer
 ---@field hidden_interval integer
 
----@class ChecktimeMailboxEvents
+---@class ChecktimeIngressEvents
 local EVENTS = {
   COMMIT = "commit",
   LOCAL = "local",
@@ -60,11 +60,11 @@ local EVENTS = {
   POST_WRITE = "post-write",
 }
 
----@param spec ChecktimeMailboxConfig
----@return ChecktimeMailbox
-mailbox.start = function(spec)
+---@param spec ChecktimeIngressConfig
+---@return ChecktimeIngress
+M.start = function(spec)
   ---@diagnostic disable-next-line: missing-fields
-  local mb = {} ---@type ChecktimeMailbox
+  local mb = {} ---@type ChecktimeIngress
   local state = store.start {
     local_debounce_ms = spec.local_debounce_ms,
     remote_quiet_ms = spec.remote_quiet_ms,
@@ -72,9 +72,9 @@ mailbox.start = function(spec)
 
   local watches ---@type ChecktimeWatcher
   local reads ---@type ChecktimeReader
-  local post ---@type fun(action: ChecktimeMailboxAction)
+  local post ---@type fun(action: ChecktimeIngressAction)
 
-  ---@param action ChecktimeMailboxAction
+  ---@param action ChecktimeIngressAction
   post = function(action)
     if not vim.api.nvim_buf_is_valid(action.buf) then
       return
@@ -268,4 +268,4 @@ mailbox.start = function(spec)
   return mb
 end
 
-return mailbox
+return M
