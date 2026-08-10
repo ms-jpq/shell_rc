@@ -19,6 +19,9 @@ end
 ---@param hunks ChecktimeHunk[]
 ---@return fun()
 M.capture = function(buf, hunks)
+  local reflows = {}
+  local touches = {}
+  local wraps = {}
   local views = vim
     .iter(vim.api.nvim_list_wins())
     :filter(function(win)
@@ -26,12 +29,17 @@ M.capture = function(buf, hunks)
     end)
     :fold({}, function(views, win)
       local row = unpack(vim.api.nvim_win_get_cursor(win))
-      views[win] = {
-        reset_curswant = vim.iter(hunks):any(function(hunk)
-          return hunk.start <= row - 1 and row - 1 < hunk.finish and hunk.finish - hunk.start ~= #hunk.lines
-        end),
-        state = vim.api.nvim_win_call(win, vim.fn.winsaveview),
-      }
+      for _, hunk in ipairs(hunks) do
+        if hunk.start <= row - 1 and row - 1 < hunk.finish then
+          touches[win] = true
+          reflows[win] = hunk.finish - hunk.start ~= #hunk.lines
+          break
+        end
+      end
+      views[win] = vim.api.nvim_win_call(win, function()
+        wraps[win] = vim.wo.wrap
+        return vim.fn.winsaveview()
+      end)
       return views
     end)
 
@@ -39,15 +47,18 @@ M.capture = function(buf, hunks)
     local line_count = vim.api.nvim_buf_line_count(buf)
     for win, view in pairs(views) do
       if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
-        view.state.lnum = math.min(translate(view.state.lnum, hunks, true), line_count)
-        view.state.topline = math.min(translate(view.state.topline, hunks, false), line_count)
-        local line = unpack(vim.api.nvim_buf_get_lines(buf, view.state.lnum - 1, view.state.lnum, true))
-        view.state.col = math.min(view.state.col, #line)
+        view.lnum = math.min(translate(view.lnum, hunks, true), line_count)
+        view.topline = math.min(translate(view.topline, hunks, false), line_count)
+        local line = unpack(vim.api.nvim_buf_get_lines(buf, view.lnum - 1, view.lnum, true))
+        local col = math.min(view.col, math.max(#line - 1, 0))
+        local clamped = view.col ~= col
+        view.col = col
+        local reset = reflows[win] or (touches[win] and wraps[win] and clamped)
+        if reset then
+          view.curswant = view.col
+        end
         vim.api.nvim_win_call(win, function()
-          vim.fn.winrestview(view.state)
-          if view.reset_curswant then
-            vim.api.nvim_win_set_cursor(win, { view.state.lnum, view.state.col })
-          end
+          vim.fn.winrestview(view)
         end)
       end
     end
