@@ -52,11 +52,11 @@ end
 ---@return boolean
 M.replace = function(buf, current, text, mark)
   local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-  local whole = diff(current.text, text, core.records(current.linefeed, text))
+  local changes = diff(current.text, text, core.records(current.linefeed, text))
   if not vim.api.nvim_buf_is_valid(buf) or vim.api.nvim_buf_get_changedtick(buf) ~= changedtick then
     return false
   end
-  return apply.run(buf, current, text, whole, mark)
+  return apply.run(buf, current, text, changes, mark)
 end
 
 return M

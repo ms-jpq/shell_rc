@@ -86,7 +86,7 @@ local diff = function(before, after, after_records)
   return M.changes(after_records, vim.text.diff(before, after, { result_type = "indices" }))
 end
 
-M.row_patches = function(changes)
+local row_patches = function(changes)
   return vim.iter(changes):map(split):flatten():totable()
 end
 
@@ -107,7 +107,7 @@ local has_variable = function(patches)
 end
 
 local row_hunks = function(before, after, after_records)
-  return M.row_patches(diff(before, after, after_records))
+  return row_patches(diff(before, after, after_records))
 end
 
 local overlaps = function(left, right)

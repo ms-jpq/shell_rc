@@ -43,7 +43,7 @@ local store = {}
 ---@class ChecktimeStore
 ---@field dispatch fun(action: ChecktimeStoreAction)
 ---@field drop fun(buf: integer)
----@field latest fun(buf: integer, before: integer, changedtick: integer): ChecktimeBatch?
+---@field latest fun(buf: integer, changedtick: integer): ChecktimeBatch?
 ---@field pending fun(): integer[]
 ---@field take fun(statuses: table<integer, ChecktimeStoreStatus>): table<integer, integer>
 
@@ -90,13 +90,9 @@ store.start = function(spec)
   end
 
   ---@param buf integer
-  ---@param before integer
   ---@param changedtick integer
   ---@return ChecktimeBatch?
-  state.latest = function(buf, before, changedtick)
-    if changedtick ~= before then
-      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.LOCAL }
-    end
+  state.latest = function(buf, changedtick)
     local facts = vim.b[buf][FACTS]
     return facts and reducer.batch(facts, changedtick) or nil
   end

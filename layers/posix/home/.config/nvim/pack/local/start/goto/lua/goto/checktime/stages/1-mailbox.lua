@@ -171,7 +171,10 @@ mailbox.start = function(spec)
   ---@return ChecktimeBatch?
   mb.latest = function(buf, before)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-    return state.latest(buf, before, changedtick)
+    if changedtick ~= before then
+      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.LOCAL }
+    end
+    return state.latest(buf, changedtick)
   end
 
   ---@return table<integer, integer>

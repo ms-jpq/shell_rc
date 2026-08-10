@@ -1,12 +1,10 @@
-local core = require "goto.checktime.hunks.merge"
 local feedback = require "goto.checktime.feedback"
-local view = require "goto.checktime.view"
 
 local M = {}
 
-local buffer_lines = function(linefeed, text)
+local buffer_lines = function(linefeed, records)
   return vim
-    .iter(core.records(linefeed, text))
+    .iter(records)
     :map(function(record)
       return string.sub(record, -#linefeed) == linefeed and string.sub(record, 1, -#linefeed - 1) or record
     end)
@@ -16,23 +14,20 @@ end
 ---@param buf integer
 ---@param current ChecktimeBuffer
 ---@param text string
----@param whole ChecktimeHunk[]
+---@param changes ChecktimeHunk[]
 ---@param mark fun(start: integer, finish: integer)
 ---@return boolean
-M.run = function(buf, current, text, whole, mark)
-  local patches = core.row_patches(whole)
-  local restore = view.capture(buf, whole)
-
+M.run = function(buf, current, text, changes, mark)
   return feedback.rewrite(buf, function()
     vim.api.nvim_buf_call(buf, function()
-      for index, hunk in vim.iter(patches):rev():enumerate() do
-        if index == #patches then
+      for index, hunk in vim.iter(changes):rev():enumerate() do
+        if index == #changes then
           vim.cmd [[let &undolevels=&undolevels]]
         else
           vim.cmd.undojoin()
         end
 
-        local lines = buffer_lines(current.linefeed, table.concat(hunk.lines))
+        local lines = buffer_lines(current.linefeed, hunk.lines)
         vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
         if #lines > 0 then
           mark(hunk.start, hunk.start + #lines)
@@ -49,7 +44,6 @@ M.run = function(buf, current, text, whole, mark)
         end
       end
     end)
-    restore()
     return true
   end)
 end
