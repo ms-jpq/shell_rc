@@ -61,6 +61,9 @@ local repl = function()
     return
   end
 
+  vim.api.nvim_buf_call(buf, function()
+    vim.cmd [[silent! write! ++p]]
+  end)
   local proc = async.system({ exec }, { env = metadata(buf, target) })
 
   async.scheduled()

@@ -15,13 +15,14 @@ do
   local alive = lib.generation "checktime"
   local visible_interval, hidden_interval = 99, 999
   local grace_ms = 3 * visible_interval
+  local remote_grace_ms = 6 * visible_interval
   local inbox = mailbox.start {
     grace_ms = grace_ms,
     visible_interval = visible_interval,
     hidden_interval = hidden_interval,
   }
   local executor = execute.start(inbox.commit)
-  local resolver = resolve.start { grace_ms = grace_ms }
+  local resolver = resolve.start { grace_ms = grace_ms, remote_grace_ms = remote_grace_ms }
 
   local tick = function()
     for buf, changedtick in pairs(inbox.take()) do

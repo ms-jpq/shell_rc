@@ -18,7 +18,6 @@ M.start = function(commit)
   ---@param buf integer
   ---@return ChecktimeBase?
   local publish = function(buf)
-    local text = snapshotter.buffer(buf).text
     feedback.write(buf, true)
     local ok = pcall(vim.api.nvim_buf_call, buf, function()
       vim.cmd [[silent! write! ++p]]
@@ -28,6 +27,7 @@ M.start = function(commit)
       return nil
     end
 
+    local text = snapshotter.buffer(buf).text
     local name = vim.api.nvim_buf_get_name(buf)
     local _, version = async.uv.fs_stat(name)
     async.scheduled()

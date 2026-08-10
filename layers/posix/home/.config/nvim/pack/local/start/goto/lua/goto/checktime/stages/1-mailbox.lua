@@ -277,8 +277,9 @@ mailbox.start = function(spec)
     vim.api.nvim_create_autocmd({ "OptionSet" }, {
       group = lib.group,
       pattern = "modifiable",
-      callback = async(function()
-        post { kind = EVENTS.WATCH, buf = vim.api.nvim_get_current_buf() }
+      ---@param args ChecktimeAutocmdArgs
+      callback = async(function(args)
+        post { kind = EVENTS.WATCH, buf = args.buf }
       end),
     })
 

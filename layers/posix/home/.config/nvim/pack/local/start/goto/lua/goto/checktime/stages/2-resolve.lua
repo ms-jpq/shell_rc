@@ -40,6 +40,7 @@ M.ACTIONS = {
 
 ---@class ChecktimeResolveConfig
 ---@field grace_ms integer
+---@field remote_grace_ms integer
 
 ---@class ChecktimeResolver
 ---@field plan fun(buf: integer, batch: ChecktimeBatch): ChecktimeInstruction
@@ -63,9 +64,10 @@ M.start = function(spec)
   resolver.plan = function(buf, batch)
     local local_change, remote_change = batch.events[reducer.CHANGES.LOCAL], batch.events[reducer.CHANGES.REMOTE]
     local local_grace = within_grace(local_change, spec.grace_ms)
+    local remote_grace = within_grace(remote_change, spec.remote_grace_ms)
     local buffer_modified = vim.bo[buf].modified
 
-    if buffer_modified and local_grace then
+    if (buffer_modified and local_grace) or remote_grace then
       return { action = M.ACTIONS.RETRY }
     end
     if not remote_change then
