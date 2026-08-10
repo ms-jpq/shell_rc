@@ -91,7 +91,7 @@ M.start = function(commit)
     end
     if instruction.action == resolve.ACTIONS.WRITE then
       ---@cast instruction ChecktimeWrite
-      if not snapshotter.unchanged(buf, instruction.version) or not current() or snapshotter.insert_base(buf) then
+      if not snapshotter.unchanged(buf, instruction.base and instruction.base.version) or not current() or snapshotter.insert_base(buf) then
         return
       end
 
@@ -106,7 +106,7 @@ M.start = function(commit)
     end
 
     ---@cast instruction ChecktimeReconcile
-    local stale = instruction.save and not snapshotter.unchanged(buf, instruction.version)
+    local stale = instruction.save and not snapshotter.unchanged(buf, instruction.base.version)
     if not current() or snapshotter.insert_base(buf) then
       return
     end
@@ -114,17 +114,16 @@ M.start = function(commit)
     if not apply(buf, instruction) then
       return
     end
-    local base = { text = instruction.base, version = instruction.version } ---@type ChecktimeBase
     if stale then
-      commit { buf = buf, base = base }
+      commit { buf = buf, base = instruction.base }
       return
     elseif not instruction.save then
-      commit { buf = buf, batch = batch, base = base }
+      commit { buf = buf, batch = batch, base = instruction.base }
       return
     end
 
     local published = publish(buf)
-    commit { buf = buf, base = published or base, batch = published and batch or nil }
+    commit { buf = buf, base = published or instruction.base, batch = published and batch or nil }
   end
 
   return { run = run }

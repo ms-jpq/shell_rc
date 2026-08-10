@@ -29,14 +29,12 @@ reducer.CHANGES = {
 
 ---@class ChecktimeFacts
 ---@field events ChecktimeEvents
----@field base? string
----@field version? uv.fs_stat.result
+---@field base? ChecktimeBase
 
 ---@class ChecktimeBatch
 ---@field events ChecktimeEvents
 ---@field changedtick integer
----@field base? string
----@field version? uv.fs_stat.result
+---@field base? ChecktimeBase
 
 ---@class ChecktimeChangeAction
 ---@field kind "change"
@@ -76,11 +74,11 @@ reducer.reduce = function(facts, action)
     next.events[action.change] = action.generation
     return next
   elseif action.kind == reducer.ACTIONS.BASE then
-    next.base, next.version = action.base.text, action.base.version
+    next.base = action.base
     return next
   elseif action.kind == reducer.ACTIONS.COMMIT then
     if action.base then
-      next.base, next.version = action.base.text, action.base.version
+      next.base = action.base
     end
     if action.batch then
       next.events = clone(facts.events)
@@ -105,7 +103,6 @@ reducer.batch = function(facts, changedtick)
   end
   return {
     base = facts.base,
-    version = facts.version,
     events = facts.events,
     changedtick = changedtick,
   }

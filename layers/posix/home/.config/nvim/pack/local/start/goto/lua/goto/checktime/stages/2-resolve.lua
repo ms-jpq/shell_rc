@@ -25,16 +25,15 @@ M.ACTIONS = {
 
 ---@class ChecktimeWrite
 ---@field action "write"
----@field version? uv.fs_stat.result
+---@field base? ChecktimeBase
 
 ---@class ChecktimeReconcile
 ---@field action "reconcile"
 ---@field current ChecktimeBuffer
 ---@field text string
----@field base string
+---@field base ChecktimeBase
 ---@field modified boolean
 ---@field save boolean
----@field version? uv.fs_stat.result
 
 ---@alias ChecktimeInstruction ChecktimeRetry|ChecktimeNoop|ChecktimeReload|ChecktimeWrite|ChecktimeReconcile
 
@@ -72,7 +71,7 @@ M.start = function(spec)
     end
     if not remote_change then
       if buffer_modified then
-        return { action = M.ACTIONS.WRITE, version = batch.version }
+        return { action = M.ACTIONS.WRITE, base = batch.base }
       end
       return { action = M.ACTIONS.NOOP }
     end
@@ -91,7 +90,7 @@ M.start = function(spec)
 
     local insert_base, current = snapshotter.insert_base(buf), snapshotter.buffer(buf)
     local observed_text = remote or ""
-    local base_text = snapshotter.merge_text(current, batch.base or insert_base or "")
+    local base_text = snapshotter.merge_text(current, batch.base and batch.base.text or insert_base or "")
     local local_text = snapshotter.merge_text(current, current.text)
     local remote_text = snapshotter.merge_text(current, observed_text)
     if local_grace and base_text ~= remote_text then
@@ -105,8 +104,7 @@ M.start = function(spec)
       action = M.ACTIONS.RECONCILE,
       current = current,
       text = text,
-      base = observed_text,
-      version = version,
+      base = { text = observed_text, version = version },
       modified = modified,
       save = modified and insert_base == nil,
     }
