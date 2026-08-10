@@ -1,5 +1,5 @@
-local async = require "goto.async"
 local apply = require "goto.checktime.hunks.apply"
+local async = require "goto.async"
 local core = require "goto.checktime.hunks.merge"
 
 local M = {}
