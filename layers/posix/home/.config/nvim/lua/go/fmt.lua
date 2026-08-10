@@ -77,11 +77,6 @@ local fmt = function()
     return
   end
 
-  if vim.api.nvim_buf_get_changedtick(buf) ~= changedtick then
-    vim.notify([[🖐️...]], vim.log.levels.WARN)
-    return
-  end
-
   local lines = vim.split(waited.stdout, lib.LF, { plain = true })
   if lines[#lines] == "" then
     lines[#lines] = nil
