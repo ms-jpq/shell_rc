@@ -33,7 +33,7 @@ vim.opt.whichwrap:append "h,l,<,>,[,]"
 vim.opt.mouse = "a"
 -- right click behaviour
 vim.opt.mousemodel = "popup_setpos"
--- doubleclick time
+-- double-click time
 vim.opt.mousetime = 250
 
 -- scroll bound windows scroll horizontally as well
