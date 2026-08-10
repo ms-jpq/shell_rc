@@ -57,8 +57,13 @@ end
 ---@param current ChecktimeBuffer
 ---@param text string
 ---@param mark fun(start: integer, finish: integer)
+---@return boolean
 M.replace = function(buf, current, text, mark)
+  local changedtick = vim.api.nvim_buf_get_changedtick(buf)
   local whole = diff(current.text, text, core.records(current.linefeed, text))
+  if not vim.api.nvim_buf_is_valid(buf) or vim.api.nvim_buf_get_changedtick(buf) ~= changedtick then
+    return false
+  end
   local patches = core.row_patches(whole)
   local restore = require("goto.checktime.view").capture(buf, whole)
 
@@ -88,6 +93,7 @@ M.replace = function(buf, current, text, mark)
     end
   end)
   restore()
+  return true
 end
 
 return M

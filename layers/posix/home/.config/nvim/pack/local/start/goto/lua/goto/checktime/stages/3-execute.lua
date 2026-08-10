@@ -54,14 +54,19 @@ M.start = function(commit)
   local apply = function(buf, instruction)
     local current, text = assert(instruction.current), assert(instruction.text)
     if text ~= current.text then
-      feedback.rewrite(buf, function()
+      local rewritten = feedback.rewrite(buf, function()
         vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-        hunks.replace(buf, current, text, function(start, finish)
+        return hunks.replace(buf, current, text, function(start, finish)
           vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
         end)
       end)
+      if not rewritten then
+        feedback.clear_rewrite(buf)
+        return false
+      end
     end
     vim.bo[buf].modified = instruction.modified
+    return true
   end
 
   ---@param buf integer
@@ -108,7 +113,9 @@ M.start = function(commit)
       return
     end
 
-    apply(buf, instruction)
+    if not apply(buf, instruction) then
+      return
+    end
     local base = { text = instruction.base, version = instruction.version } ---@type ChecktimeBase
     if stale then
       commit { buf = buf, base = base }

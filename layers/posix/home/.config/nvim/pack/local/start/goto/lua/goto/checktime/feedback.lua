@@ -25,13 +25,15 @@ M.reload = function(buf, fn)
 end
 
 ---@param buf integer
----@param fn fun()
+---@param fn fun(): boolean
+---@return boolean
 M.rewrite = function(buf, fn)
   local rewrite = { before = vim.api.nvim_buf_get_changedtick(buf) } ---@type ChecktimeRewrite
   vim.b[buf][REWRITE] = rewrite
-  fn()
+  local rewritten = fn()
   rewrite.after = vim.api.nvim_buf_get_changedtick(buf)
   vim.b[buf][REWRITE] = rewrite
+  return rewritten
 end
 
 ---@param buf integer
