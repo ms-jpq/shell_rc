@@ -44,7 +44,6 @@ local fmt = function()
   end
 
   local buf = vim.api.nvim_get_current_buf()
-  local changedtick = vim.api.nvim_buf_get_changedtick(buf)
   -- local name = vim.api.nvim_buf_get_name(buf)
   local cwd = vim.fn.getcwd()
 
