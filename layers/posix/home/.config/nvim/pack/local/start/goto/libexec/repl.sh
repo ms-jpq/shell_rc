@@ -99,7 +99,6 @@ AWK
   SELF="$(realpath -- "$0")"
   BASE="${SELF%/*}"
   REPL_MD="$BASE/REPL_PROTOCOL.md"
-
   PANE_ID="${REPL_TARGET%%"$REPL_IFS"*}"
 
   read -r -d '' AWK << 'AWK' || true
@@ -126,7 +125,7 @@ FNR > HI {
 }
 AWK
 
-    PRINT_CONTEXT=(
+  PRINT_CONTEXT=(
     awk
     -v COL="$REPL_LINE_COL"
     -v COUNT="$REPL_LINE_COUNT"
@@ -138,7 +137,7 @@ AWK
     "$AWK"
   )
 
-  "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | ~/.config/tmux/libexec/send-text.sh "$PANE_ID"
+  "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | "$BASE/send-text.sh" "$PANE_ID"
 
   printf '%s' "⮕  [$PANE_ID]"
   ;;
