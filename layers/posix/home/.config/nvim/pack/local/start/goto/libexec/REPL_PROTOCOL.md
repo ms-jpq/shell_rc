@@ -17,3 +17,13 @@
   - For highlighting, the first line of response should be `{%- comment -%} | >>> response`.
 
 - Crave out for markdown: use `> ` and `> | ` for `instruction` and `response`, respectively.
+
+## Example
+
+```markdown
+> add a Markdown example
+
+> | >>> ⏳ Adding the example. ETA: now.
+> |
+> | The response is inline and uses the response quote prefix.
+```
