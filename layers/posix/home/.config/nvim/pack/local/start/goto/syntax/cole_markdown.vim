@@ -1,4 +1,5 @@
-syntax match mdQuote "\%(^\s*\|[>|]\s\+\)\@<=\zs>\ze\%(\s\||\%(\s\|$\)\|$\)" conceal cchar=┃
+syntax match mdQuote        "\%(^\s*\|[>|]\s\+\)\@<=\zs>\ze\%(\s\||\%(\s\|$\)\|$\)" conceal cchar=┃
+syntax match mdMachineQuote "\(>\s*\)\@<=|" conceal cchar=┇
 
 syntax match mdCommentOpen  "^\s*\zs<!--\ze\s" conceal cchar=│
 syntax match mdCommentClose "\%(^\s*<!--.*\)\@<=\s*-->\s*$" conceal
