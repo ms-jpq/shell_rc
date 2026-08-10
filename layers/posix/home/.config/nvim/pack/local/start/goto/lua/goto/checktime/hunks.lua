@@ -32,16 +32,6 @@ local chars = function(pieces)
   return vim.fn.split(table.concat(pieces), [[\zs]])
 end
 
-local offsets = function(characters)
-  local offsets = { [0] = 0 }
-  local offset = 0
-  for index, character in ipairs(characters) do
-    offset = offset + #character
-    offsets[index] = offset
-  end
-  return offsets
-end
-
 local buffer_lines = function(linefeed, text)
   return vim
     .iter(records(linefeed, text))
@@ -273,26 +263,6 @@ local span = function(base, text)
   return { start = start - 1, finish = finish, slot = 0 }
 end
 
-local replace_cursor_line = function(buf, linefeed, hunk)
-  local before = unpack(vim.api.nvim_buf_get_lines(buf, hunk.start, hunk.finish, true))
-  local after = unpack(buffer_lines(linefeed, table.concat(hunk.lines)))
-  local before_characters = chars { before }
-  local after_characters = chars { after }
-  local changed = span(before_characters, after_characters)
-  local suffix = #before_characters - changed.finish
-  local replacement = slice(after_characters, changed.start, #after_characters - suffix)
-  local bytes = offsets(before_characters)
-
-  vim.api.nvim_buf_set_text(
-    buf,
-    hunk.start,
-    bytes[changed.start],
-    hunk.start,
-    bytes[changed.finish],
-    #replacement == 0 and {} or { table.concat(replacement) }
-  )
-end
-
 local touches = function(local_hunks, hunk)
   return hunk.finish > hunk.start
     and vim.iter(local_hunks):any(function(other)
@@ -382,8 +352,9 @@ end
 ---@param text string
 ---@param mark fun(start: integer, finish: integer)
 M.replace = function(buf, current, text, mark)
-  local patches = row_hunks(current.text, text, records(current.linefeed, text))
-  local rows, restore = view.capture(buf)
+  local whole = diff(current.text, text, records(current.linefeed, text))
+  local patches = row_patches(whole)
+  local restore = view.capture(buf, whole)
 
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(patches):rev():enumerate() do
@@ -394,11 +365,7 @@ M.replace = function(buf, current, text, mark)
       end
 
       local lines = buffer_lines(current.linefeed, table.concat(hunk.lines))
-      if rows[hunk.start] and hunk.finish == hunk.start + 1 and #lines == 1 then
-        replace_cursor_line(buf, current.linefeed, hunk)
-      else
-        vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
-      end
+      vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
       if #lines > 0 then
         mark(hunk.start, hunk.start + #lines)
       end

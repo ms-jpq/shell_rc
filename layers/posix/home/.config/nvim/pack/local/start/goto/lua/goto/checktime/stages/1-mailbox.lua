@@ -48,7 +48,8 @@ local mailbox = {}
 ---@field take fun(): table<integer, integer>
 
 ---@class ChecktimeMailboxConfig
----@field grace_ms integer
+---@field local_debounce_ms integer
+---@field remote_quiet_ms integer
 ---@field visible_interval integer
 ---@field hidden_interval integer
 
@@ -68,7 +69,10 @@ local EVENTS = {
 mailbox.start = function(spec)
   ---@diagnostic disable-next-line: missing-fields
   local mb = {} ---@type ChecktimeMailbox
-  local state = store.start { grace_ms = spec.grace_ms }
+  local state = store.start {
+    local_debounce_ms = spec.local_debounce_ms,
+    remote_quiet_ms = spec.remote_quiet_ms,
+  }
 
   local watches ---@type ChecktimeWatcher
   local reads ---@type ChecktimeReader

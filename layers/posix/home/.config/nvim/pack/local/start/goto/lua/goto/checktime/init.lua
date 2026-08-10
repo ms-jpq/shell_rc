@@ -14,15 +14,16 @@ vim.opt.autoread = false
 do
   local alive = lib.generation "checktime"
   local visible_interval, hidden_interval = 99, 999
-  local grace_ms = 3 * visible_interval
-  local remote_grace_ms = 6 * visible_interval
+  local local_debounce_ms = 3 * visible_interval
+  local remote_quiet_ms = 6 * visible_interval
   local inbox = mailbox.start {
-    grace_ms = grace_ms,
+    local_debounce_ms = local_debounce_ms,
+    remote_quiet_ms = remote_quiet_ms,
     visible_interval = visible_interval,
     hidden_interval = hidden_interval,
   }
   local executor = execute.start(inbox.commit)
-  local resolver = resolve.start { grace_ms = grace_ms, remote_grace_ms = remote_grace_ms }
+  local resolver = resolve.start { local_grace_ms = local_debounce_ms }
 
   local tick = function()
     for buf, changedtick in pairs(inbox.take()) do

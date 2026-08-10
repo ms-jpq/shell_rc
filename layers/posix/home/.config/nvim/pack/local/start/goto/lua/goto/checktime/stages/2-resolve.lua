@@ -39,17 +39,18 @@ M.ACTIONS = {
 ---@alias ChecktimeInstruction ChecktimeRetry|ChecktimeNoop|ChecktimeReload|ChecktimeWrite|ChecktimeReconcile
 
 ---@class ChecktimeResolveConfig
----@field grace_ms integer
----@field remote_grace_ms integer
+---@field local_grace_ms integer
 
 ---@class ChecktimeResolver
 ---@field plan fun(buf: integer, batch: ChecktimeBatch): ChecktimeInstruction
 
 ---@param generation? ChecktimeGeneration
----@param grace_ms integer
+---@param local_grace_ms integer
 ---@return boolean
-local within_grace = function(generation, grace_ms)
-  return grace_ms > 0 and generation ~= nil and vim.uv.hrtime() - generation.monotonic_ts < grace_ms * lib.NANOSECONDS_PER_MILLISECOND
+local within_grace = function(generation, local_grace_ms)
+  return local_grace_ms > 0
+    and generation ~= nil
+    and vim.uv.hrtime() - generation.monotonic_ts < local_grace_ms * lib.NANOSECONDS_PER_MILLISECOND
 end
 
 ---@param spec ChecktimeResolveConfig
@@ -63,11 +64,10 @@ M.start = function(spec)
   ---@return ChecktimeInstruction
   resolver.plan = function(buf, batch)
     local local_change, remote_change = batch.events[reducer.CHANGES.LOCAL], batch.events[reducer.CHANGES.REMOTE]
-    local local_grace = within_grace(local_change, spec.grace_ms)
-    local remote_grace = within_grace(remote_change, spec.remote_grace_ms)
+    local local_grace = within_grace(local_change, spec.local_grace_ms)
     local buffer_modified = vim.bo[buf].modified
 
-    if (buffer_modified and local_grace) or remote_grace then
+    if buffer_modified and local_grace then
       return { action = M.ACTIONS.RETRY }
     end
     if not remote_change then

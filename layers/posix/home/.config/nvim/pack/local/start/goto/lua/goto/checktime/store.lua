@@ -37,7 +37,8 @@ local store = {}
 ---@field changedtick integer
 
 ---@class ChecktimeStoreConfig
----@field grace_ms integer
+---@field local_debounce_ms integer
+---@field remote_quiet_ms integer
 
 ---@class ChecktimeStore
 ---@field dispatch fun(action: ChecktimeStoreAction)
@@ -54,7 +55,8 @@ store.start = function(spec)
   ---@diagnostic disable-next-line: missing-fields
   local state = {} ---@type ChecktimeStore
   local pending = {} ---@type table<integer, true>
-  local grace_ns = spec.grace_ms * lib.NANOSECONDS_PER_MILLISECOND
+  local local_debounce_ns = spec.local_debounce_ms * lib.NANOSECONDS_PER_MILLISECOND
+  local remote_quiet_ns = spec.remote_quiet_ms * lib.NANOSECONDS_PER_MILLISECOND
   local sequential = 0
 
   ---@return ChecktimeGeneration
@@ -122,13 +124,15 @@ store.start = function(spec)
         pending[buf] = nil
       else
         local facts = vim.b[buf][FACTS]
-        local local_change = facts and facts.events[reducer.CHANGES.LOCAL]
-        local local_grace = local_change and now - local_change.monotonic_ts < grace_ns
+        local local_change, remote_change = facts.events[reducer.CHANGES.LOCAL], facts.events[reducer.CHANGES.REMOTE]
+        local local_debounce = local_change and now - local_change.monotonic_ts < local_debounce_ns
+        local remote_quiet = remote_change and now - remote_change.monotonic_ts < remote_quiet_ns
         if
           not status.reading
           and not status.writing
           and not status.insert_base
-          and not (status.modified and local_grace)
+          and not (status.modified and local_debounce)
+          and not remote_quiet
         then
           ready[buf] = status.changedtick
         end
