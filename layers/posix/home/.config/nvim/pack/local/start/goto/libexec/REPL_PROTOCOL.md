@@ -4,7 +4,7 @@
 
 - The response should land _inline in the document_ as well as in the chat.
 
-- Acknowledge immediately and reply _inline in the document_ with `⏳ … ETA: <when>`.
+- Acknowledge immediately and reply _inline in the document_ with `| >>> ⏳ … ETA: <when>`.
 
 ## In Document Syntax
 
