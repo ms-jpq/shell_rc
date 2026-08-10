@@ -4,8 +4,6 @@
 
 - The response should land _inline in the document_ as well as in the chat.
 
-- Acknowledge immediately and reply _inline in the document_ with `| >>> ⏳ … ETA: <when>`.
-
 ## In Document Syntax
 
 - `comment(text)` means text written in the document's native comment form.

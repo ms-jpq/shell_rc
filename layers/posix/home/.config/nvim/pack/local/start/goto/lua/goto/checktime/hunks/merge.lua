@@ -1,5 +1,3 @@
-local view = require "goto.checktime.view"
-
 local M = {}
 
 ---@class ChecktimeHunk
@@ -12,7 +10,7 @@ local M = {}
 ---@field local_patches ChecktimeHunk[]
 ---@field remote_patches ChecktimeHunk[]
 
-local records = function(linefeed, text)
+M.records = function(linefeed, text)
   if text == "" then
     return {}
   end
@@ -29,16 +27,22 @@ local records = function(linefeed, text)
 end
 
 local chars = function(pieces)
-  return vim.fn.split(table.concat(pieces), [[\zs]])
-end
+  local text = table.concat(pieces)
+  local characters = {}
+  local start = 1
 
-local buffer_lines = function(linefeed, text)
-  return vim
-    .iter(records(linefeed, text))
-    :map(function(record)
-      return string.sub(record, -#linefeed) == linefeed and string.sub(record, 1, -#linefeed - 1) or record
-    end)
-    :totable()
+  for index = 2, #text do
+    local byte = string.byte(text, index)
+    if byte < 128 or byte >= 192 then
+      table.insert(characters, string.sub(text, start, index - 1))
+      start = index
+    end
+  end
+  if start <= #text then
+    table.insert(characters, string.sub(text, start))
+  end
+
+  return characters
 end
 
 local split = function(hunk)
@@ -63,9 +67,9 @@ local slice = function(lines, start, finish)
   return vim.list_slice(lines, math.floor(start + 1), math.floor(finish))
 end
 
-local diff = function(before, after, after_records)
+M.changes = function(after_records, indices)
   return vim
-    .iter(vim.text.diff(before, after, { result_type = "indices" }))
+    .iter(indices)
     :map(function(hunk)
       local old_start, old_count, new_start, new_count = unpack(hunk)
       local start = old_start - (old_count == 0 and 0 or 1)
@@ -78,7 +82,11 @@ local diff = function(before, after, after_records)
     :totable()
 end
 
-local row_patches = function(changes)
+local diff = function(before, after, after_records)
+  return M.changes(after_records, vim.text.diff(before, after, { result_type = "indices" }))
+end
+
+M.row_patches = function(changes)
   return vim.iter(changes):map(split):flatten():totable()
 end
 
@@ -99,7 +107,7 @@ local has_variable = function(patches)
 end
 
 local row_hunks = function(before, after, after_records)
-  return row_patches(diff(before, after, after_records))
+  return M.row_patches(diff(before, after, after_records))
 end
 
 local overlaps = function(left, right)
@@ -307,7 +315,7 @@ local character_hunk = function(linefeed, base, group)
   return {
     start = start,
     finish = finish,
-    lines = records(linefeed, table.concat(merged)),
+    lines = M.records(linefeed, table.concat(merged)),
     slot = start == finish and source.slot or nil,
   }
 end
@@ -338,50 +346,13 @@ M.merge = function(linefeed, base, local_text, remote_text)
     return local_text
   end
 
-  local base_lines = records(linefeed, base)
-  local local_lines = records(linefeed, local_text)
-  local remote_lines = records(linefeed, remote_text)
+  local base_lines = M.records(linefeed, base)
+  local local_lines = M.records(linefeed, local_text)
+  local remote_lines = M.records(linefeed, remote_text)
   local grouped = row_groups(base, local_text, remote_text, local_lines, remote_lines)
   local patches = merge_hunks(linefeed, base_lines, grouped)
   sort(patches)
   return table.concat(patch(base_lines, patches))
-end
-
----@param buf integer
----@param current ChecktimeBuffer
----@param text string
----@param mark fun(start: integer, finish: integer)
-M.replace = function(buf, current, text, mark)
-  local whole = diff(current.text, text, records(current.linefeed, text))
-  local patches = row_patches(whole)
-  local restore = view.capture(buf, whole)
-
-  vim.api.nvim_buf_call(buf, function()
-    for index, hunk in vim.iter(patches):rev():enumerate() do
-      if index == #patches then
-        vim.cmd [[let &undolevels=&undolevels]]
-      else
-        vim.cmd.undojoin()
-      end
-
-      local lines = buffer_lines(current.linefeed, table.concat(hunk.lines))
-      vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
-      if #lines > 0 then
-        mark(hunk.start, hunk.start + #lines)
-      end
-    end
-
-    if not current.endofline then
-      local count = vim.api.nvim_buf_line_count(buf)
-      local last = unpack(vim.api.nvim_buf_get_lines(buf, count - 1, count, true))
-      local ending = string.sub(text, -#current.linefeed) == current.linefeed
-      if ending ~= (count > 1 and last == "") then
-        vim.cmd.undojoin()
-        vim.api.nvim_buf_set_lines(buf, ending and -1 or -2, -1, true, ending and { "" } or {})
-      end
-    end
-  end)
-  restore()
 end
 
 return M

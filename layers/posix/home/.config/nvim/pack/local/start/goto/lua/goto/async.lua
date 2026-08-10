@@ -62,6 +62,18 @@ M.sleep = function(milliseconds)
   return fut.await()
 end
 
+---@param bytecode string
+local transfer = function(bytecode, ...)
+  return assert(load(bytecode))(...)
+end
+
+M.work = function(fn, ...)
+  local fut = M.future()
+  local work = vim.uv.new_work(transfer, vim.schedule_wrap(fut.resolve))
+  work:queue(string.dump(fn), ...)
+  return fut.await()
+end
+
 M.scheduled = M.wrap(vim.schedule)
 M.system = M.wrap(vim.system)
 

@@ -1,1 +1,1 @@
-../nvim/pack/local/start/goto/libexec/send-text.sh
+../../nvim/pack/local/start/goto/libexec/send-text.sh
