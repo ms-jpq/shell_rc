@@ -62,10 +62,11 @@ AWK
   done
 
   FORMAT_FIELDS=(
-    '#{?pane_active,0,1}'
-    "#{?#{==:#{window_id},$CURRENT_WINDOW},0,1}"
-    '#{pane_id}'
+    '#{session_name}'
+    '#{window_index}'
+    '#{pane_index}'
     '#{window_id}'
+    '#{pane_id}'
     '#{pane_active}'
     '#{session_name} → #{window_index}:#{pane_index} ↘ #{pane_current_command}'
     '#{?#{pane_path},#{pane_path},#{pane_current_path}}'
@@ -73,7 +74,7 @@ AWK
   printf -v FORMAT -- "%s$REPL_IFS" "${FORMAT_FIELDS[@]}"
   FORMAT="${FORMAT%"$REPL_IFS"}"
 
-  "${TM[@]}" list-panes -a -F "$FORMAT" | LC_ALL=C.UTF-8 sort --stable --field-separator "$REPL_IFS" --key 1,1n --key 2,2n | cut --delimiter "$REPL_IFS" --fields 3- | while IFS="$REPL_IFS" read -r PANE_ID WINDOW_ID PANE_ACTIVE SLUG PANE_PATH; do
+  "${TM[@]}" list-panes -a -F "$FORMAT" | LC_ALL=C.UTF-8 sort --stable --field-separator "$REPL_IFS" --key 1,1 --key 2,2n --key 3,3n | cut --delimiter "$REPL_IFS" --fields 4- | while IFS="$REPL_IFS" read -r WINDOW_ID PANE_ID PANE_ACTIVE SLUG PANE_PATH; do
     if [[ $PANE_ID == "$CURRENT_PANE" ]]; then
       continue
     fi
