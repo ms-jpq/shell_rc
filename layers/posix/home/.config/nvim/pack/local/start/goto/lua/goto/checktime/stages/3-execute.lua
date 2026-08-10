@@ -54,14 +54,12 @@ M.start = function(commit)
   local apply = function(buf, instruction)
     local current, text = assert(instruction.current), assert(instruction.text)
     if text ~= current.text then
-      local rewritten = feedback.rewrite(buf, function()
-        vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-        return hunks.replace(buf, current, text, function(start, finish)
+      vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+      if
+        not hunks.replace(buf, current, text, function(start, finish)
           vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
         end)
-      end)
-      if not rewritten then
-        feedback.clear_rewrite(buf)
+      then
         return false
       end
     end

@@ -30,7 +30,11 @@ end
 M.rewrite = function(buf, fn)
   local rewrite = { before = vim.api.nvim_buf_get_changedtick(buf) } ---@type ChecktimeRewrite
   vim.b[buf][REWRITE] = rewrite
-  local rewritten = fn()
+  local ok, rewritten = xpcall(fn, debug.traceback)
+  if not ok then
+    vim.b[buf][REWRITE] = nil
+    error(rewritten, 0)
+  end
   rewrite.after = vim.api.nvim_buf_get_changedtick(buf)
   vim.b[buf][REWRITE] = rewrite
   return rewritten
