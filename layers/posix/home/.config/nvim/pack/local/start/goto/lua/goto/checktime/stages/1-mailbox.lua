@@ -34,10 +34,7 @@ local mailbox = {}
 ---@field kind "post-write"
 ---@field buf integer
 
----@class ChecktimeReadEvent: ChecktimeReadResult
----@field kind "read"
-
----@alias ChecktimeMailboxAction ChecktimeCommitEvent|ChecktimeLocal|ChecktimeRemote|ChecktimeWatch|ChecktimeLoad|ChecktimePostWrite|ChecktimeReadEvent
+---@alias ChecktimeMailboxAction ChecktimeCommitEvent|ChecktimeLocal|ChecktimeRemote|ChecktimeWatch|ChecktimeLoad|ChecktimePostWrite|ChecktimeReaderObservation
 
 ---@class ChecktimeAutocmdArgs
 ---@field buf integer
@@ -61,7 +58,6 @@ local EVENTS = {
   WATCH = "watch",
   LOAD = "load",
   POST_WRITE = "post-write",
-  READ = "read",
 }
 
 ---@param spec ChecktimeMailboxConfig
@@ -116,25 +112,12 @@ mailbox.start = function(spec)
       end
       feedback.clear_rewrite(action.buf)
       reads.read { buf = action.buf }
-    elseif action.kind == EVENTS.READ then
-      ---@cast action ChecktimeReadEvent
-      if action.state == snapshotter.STATES.RETRY then
-        state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
-      elseif action.state == snapshotter.STATES.RECONCILE then
-        state.dispatch {
-          kind = reducer.ACTIONS.BASE,
-          buf = action.buf,
-          base = { text = action.base or action.text, version = action.version },
-        }
-      elseif action.state == snapshotter.STATES.OPAQUE or action.state == snapshotter.STATES.MISSING then
-        state.dispatch {
-          kind = reducer.ACTIONS.BASE,
-          buf = action.buf,
-          base = { text = action.base, version = action.version },
-        }
-      else
-        assert(false, vim.inspect(action))
-      end
+    elseif action.kind == reader.OBSERVATIONS.RETRY then
+      ---@cast action ChecktimeReaderRetry
+      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
+    elseif action.kind == reader.OBSERVATIONS.BASE then
+      ---@cast action ChecktimeReaderBase
+      state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = action.base }
     else
       assert(false, vim.inspect(action))
     end
@@ -149,16 +132,7 @@ mailbox.start = function(spec)
     reloading = feedback.reloading,
   }
 
-  reads = reader.start(function(result)
-    post {
-      kind = EVENTS.READ,
-      buf = result.buf,
-      base = result.base,
-      state = result.state,
-      version = result.version,
-      text = result.text,
-    }
-  end)
+  reads = reader.start(post)
 
   ---@param buf integer
   ---@param before integer

@@ -6,17 +6,29 @@ local reader = {}
 ---@field buf integer
 ---@field base? string
 
----@class ChecktimeReadResult: ChecktimeRead
----@field state ChecktimeReadState
----@field version? uv.fs_stat.result
----@field text? string
+---@class ChecktimeReaderRetry
+---@field kind "retry"
+---@field buf integer
+
+---@class ChecktimeReaderBase
+---@field kind "base"
+---@field buf integer
+---@field base ChecktimeBase
+
+---@alias ChecktimeReaderObservation ChecktimeReaderRetry|ChecktimeReaderBase
+
+local OBSERVATIONS = {
+  RETRY = "retry",
+  BASE = "base",
+}
+reader.OBSERVATIONS = OBSERVATIONS
 
 ---@class ChecktimeReader
 ---@field active fun(buf: integer): boolean
 ---@field drop fun(buf: integer)
 ---@field read fun(request: ChecktimeRead)
 
----@param done fun(result: ChecktimeReadResult)
+---@param done fun(observation: ChecktimeReaderObservation)
 ---@return ChecktimeReader
 reader.start = function(done)
   ---@diagnostic disable-next-line: missing-fields
@@ -47,8 +59,16 @@ reader.start = function(done)
       return
     end
     latest[request.buf] = nil
-    if vim.api.nvim_buf_is_valid(request.buf) then
-      done { buf = request.buf, base = request.base, state = state, version = version, text = text }
+    if not vim.api.nvim_buf_is_valid(request.buf) then
+      return
+    elseif state == snapshotter.STATES.RETRY then
+      done { kind = OBSERVATIONS.RETRY, buf = request.buf }
+    elseif state == snapshotter.STATES.RECONCILE then
+      done { kind = OBSERVATIONS.BASE, buf = request.buf, base = { text = request.base or text, version = version } }
+    elseif state == snapshotter.STATES.OPAQUE or state == snapshotter.STATES.MISSING then
+      done { kind = OBSERVATIONS.BASE, buf = request.buf, base = { text = request.base, version = version } }
+    else
+      assert(false, vim.inspect { state = state, buf = request.buf })
     end
   end
 
