@@ -20,12 +20,7 @@ if [[ -z $SOCKET || -z $CURRENT_PANE ]]; then
   exit 1
 fi
 
-case "$REPL_TARGET" in
-'')
-
-  EXPLICIT_TARGET_PATH=""
-  if [[ $REPL_FILE_NAME == *.md ]]; then
-    read -r -d '' AWK << 'AWK' || true
+read -r -d '' FRONTMATTER << 'AWK' || true
 BEGIN {
   FRONTMATTER = 0
 }
@@ -42,14 +37,19 @@ FRONTMATTER && ($0 == "---" || $0 == "...") {
   exit
 }
 
-FRONTMATTER && /^repl-target:[[:space:]]*/ {
-  sub(/^repl-target:[[:space:]]*/, "", $0)
+FRONTMATTER && $0 ~ ("^" PARSE_KEY ":[[:space:]]*") {
+  sub("^" PARSE_KEY ":[[:space:]]*", "", $0)
   sub(/[[:space:]]+$/, "", $0)
   print
   exit
 }
 AWK
-    EXPLICIT_TARGET_PATH="$(awk -- "$AWK" < "$REPL_FILE_NAME")"
+
+case "$REPL_TARGET" in
+'')
+  EXPLICIT_TARGET_PATH=''
+  if [[ $REPL_FILE_NAME == *.md ]]; then
+    EXPLICIT_TARGET_PATH="$(awk -v PARSE_KEY='repl-target' -- "$FRONTMATTER" < "$REPL_FILE_NAME")"
   fi
 
   TM=(tmux -S "$SOCKET")
@@ -100,8 +100,15 @@ AWK
   BASE="${SELF%/*}"
   REPL_MD="$BASE/REPL_PROTOCOL.md"
   PANE_ID="${REPL_TARGET%%"$REPL_IFS"*}"
+  REPL_SCRIPT=''
+  if [[ $REPL_FILE_NAME == *.md ]]; then
+    REPL_SCRIPT="$(awk -v PARSE_KEY='repl-script' -- "$FRONTMATTER" < "$REPL_FILE_NAME")"
+  fi
+  if [[ -z $REPL_SCRIPT ]]; then
+    REPL_SCRIPT="$BASE/send-text.sh"
+  fi
 
-  read -r -d '' AWK << 'AWK' || true
+  read -r -d '' FRONTMATTER << 'AWK' || true
 BEGIN {
   WIDTH = length(COUNT)
   LO = ROW - WINDOW
@@ -134,10 +141,10 @@ AWK
     -v ROW="$REPL_LINE_ROW"
     -v WINDOW=6
     --
-    "$AWK"
+    "$FRONTMATTER"
   )
 
-  "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | "$BASE/send-text.sh" "$PANE_ID"
+  "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | "$REPL_SCRIPT" "$PANE_ID"
 
   printf '%s' "⮕  [$PANE_ID]"
   ;;
