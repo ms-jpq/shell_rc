@@ -110,24 +110,25 @@ M.start = function(commit)
     end
 
     ---@cast instruction ChecktimeReconcile
-    local stale = instruction.save and not snapshotter.unchanged(buf, instruction.base.version)
-    if not current() or snapshotter.insert_base(buf) then
+    if
+      not snapshotter.unchanged(buf, instruction.base.version)
+      or not current()
+      or snapshotter.insert_base(buf)
+    then
       return
     end
 
     if not apply(buf, instruction) then
       return
     end
-    if stale then
-      commit { buf = buf, base = instruction.base }
-      return
-    elseif not instruction.save then
-      commit { buf = buf, batch = batch, base = instruction.base }
+    if instruction.create then
+      local base = publish(buf)
+      if base then
+        commit { buf = buf, batch = batch, base = base }
+      end
       return
     end
-
-    local published = publish(buf)
-    commit { buf = buf, base = published or instruction.base, batch = published and batch or nil }
+    commit { buf = buf, batch = batch, base = instruction.base }
   end
 
   return { run = run }

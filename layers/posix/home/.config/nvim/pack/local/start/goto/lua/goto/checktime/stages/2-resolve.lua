@@ -33,7 +33,7 @@ M.ACTIONS = {
 ---@field text string
 ---@field base ChecktimeBase
 ---@field modified boolean
----@field save boolean
+---@field create boolean
 
 ---@alias ChecktimeInstruction ChecktimeRetry|ChecktimeNoop|ChecktimeReload|ChecktimeWrite|ChecktimeReconcile
 
@@ -106,7 +106,7 @@ M.start = function(spec)
       text = text,
       base = { text = observed_text, version = version },
       modified = modified,
-      save = modified and insert_base == nil,
+      create = read == snapshotter.STATES.MISSING and modified and insert_base == nil and not (batch.base and batch.base.version),
     }
   end
 

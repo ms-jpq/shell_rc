@@ -49,13 +49,13 @@ local changes = function(before, after, after_records)
   return diff.changes(after_records, indices)
 end
 
-local row_patches = function(changes)
-  return vim.iter(changes):map(split):flatten():totable()
+local row_patches = function(hunks)
+  return vim.iter(hunks):map(split):flatten():totable()
 end
 
-local character_patches = function(changes)
+local character_patches = function(hunks)
   return vim
-    .iter(changes)
+    .iter(hunks)
     :map(function(hunk)
       return hunk.finish - hunk.start == #hunk.lines and split(hunk) or { hunk }
     end)
