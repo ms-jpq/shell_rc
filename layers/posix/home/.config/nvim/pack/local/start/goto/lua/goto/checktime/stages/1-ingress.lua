@@ -74,6 +74,7 @@ M.start = function(spec)
   local watches ---@type ChecktimeWatcher
   local reads ---@type ChecktimeReader
   local post ---@type fun(action: ChecktimeIngressAction)
+  local written = {} ---@type table<integer, string>
 
   ---@param action ChecktimeIngressAction
   post = function(action)
@@ -233,10 +234,24 @@ M.start = function(spec)
     end),
   })
 
+  vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+    group = lib.group,
+    ---@param args ChecktimeAutocmdArgs
+    callback = function(args)
+      written[args.buf] = snapshotter.buffer(args.buf).text
+    end,
+  })
+
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     ---@param args ChecktimeAutocmdArgs
     callback = async(function(args)
+      async.scheduled()
+      local before = written[args.buf]
+      written[args.buf] = nil
+      if before and before ~= snapshotter.buffer(args.buf).text then
+        vim.bo[args.buf].modified = true
+      end
       post { kind = EVENTS.POST_WRITE, buf = args.buf }
     end),
   })
@@ -244,6 +259,7 @@ M.start = function(spec)
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
     callback = function(event)
+      written[event.buf] = nil
       reads.drop(event.buf)
       if not feedback.reloading(event.buf) then
         state.drop(event.buf)
