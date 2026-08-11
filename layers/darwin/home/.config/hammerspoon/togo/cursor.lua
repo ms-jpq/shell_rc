@@ -4,6 +4,7 @@ local RADIUS, SIZE = 40, 40
 local EDGE_PADDING = 8
 local ANGLE_DECAY = 0.18
 local FRAME_INTERVAL = 1 / 60
+local SCREEN_SETTLE_DELAY = 0.1
 
 local IMAGE_EXTENSIONS = { gif = true, jpeg = true, jpg = true, png = true }
 
@@ -109,7 +110,7 @@ local new_cursor = function()
   local point = { x = 0, y = 0 }
   ---@type CursorFrame
   local frame = { x = 0, y = 0, w = 0, h = 0 }
-  local tap, timer = nil, nil
+  local screen_watcher, settle, tap, timer = nil, nil, nil, nil
   local view = new_view()
   local direction = new_direction()
 
@@ -147,8 +148,18 @@ local new_cursor = function()
     view:topLeft(position(direction.vector()))
   end
 
+  local hide = function()
+    cancel()
+    view:hide()
+    return false
+  end
+
   local move = function()
-    local current = assert(hs.mouse.getCurrentScreen())
+    local current = hs.mouse.getCurrentScreen()
+    if not current then
+      return hide()
+    end
+
     point = hs.mouse.absolutePosition()
     frame = current:fullFrame()
     ---@cast point CursorPoint
@@ -160,12 +171,6 @@ local new_cursor = function()
     end
     render()
     timer = hs.timer.doEvery(FRAME_INTERVAL, render)
-    return false
-  end
-
-  local hide = function()
-    cancel()
-    view:hide()
     return false
   end
 
@@ -189,12 +194,27 @@ local new_cursor = function()
         hs.eventtap.event.types.rightMouseDragged,
       }, react)
       :start()
+    screen_watcher = hs.screen.watcher
+      .new(function()
+        hide()
+        if settle then
+          settle:stop()
+        end
+        settle = hs.timer.doAfter(SCREEN_SETTLE_DELAY, move)
+      end)
+      :start()
     move()
   end
 
   local stop = function()
     if tap then
       tap:stop()
+    end
+    if screen_watcher then
+      screen_watcher:stop()
+    end
+    if settle then
+      settle:stop()
     end
     cancel()
     view:delete()
