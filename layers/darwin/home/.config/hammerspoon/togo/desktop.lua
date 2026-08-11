@@ -6,6 +6,7 @@ local ROOT = hs.configdir .. "/togo/desktop"
 local PORT = 42069
 local URL = "http://localhost:" .. PORT .. "/"
 local MAINTENANCE_INTERVAL = 6
+local SCREEN_SETTLE_DELAY = 0.1
 
 local start_server = function()
   return hsminweb.new(ROOT):bonjour(false):interface("localhost"):port(PORT):allowDirectory(false):start()
@@ -23,13 +24,13 @@ local new_view = function(screen)
     :behaviorAsLabels({ "stationary", "canJoinAllSpaces" })
     :url(URL .. "?reload=" .. hs.timer.secondsSinceEpoch())
     :transparent(true)
-    :sendToBack()
     :show()
+    :sendToBack()
 end
 
 local new_desktop = function()
   local server = start_server()
-  local timer
+  local screen_watcher, settle, timer = nil, nil, nil
   local views = {}
 
   local maintain = function()
@@ -57,10 +58,27 @@ local new_desktop = function()
   local start = function()
     maintain()
     timer = hs.timer.doEvery(MAINTENANCE_INTERVAL, maintain):start()
+    screen_watcher = hs.screen.watcher
+      .new(function()
+        maintain()
+        if settle then
+          settle:stop()
+        end
+        settle = hs.timer.doAfter(SCREEN_SETTLE_DELAY, maintain)
+      end)
+      :start()
   end
 
   local stop = function()
-    timer:stop()
+    if timer then
+      timer:stop()
+    end
+    if screen_watcher then
+      screen_watcher:stop()
+    end
+    if settle then
+      settle:stop()
+    end
     for _, view in pairs(views) do
       view:delete()
     end
