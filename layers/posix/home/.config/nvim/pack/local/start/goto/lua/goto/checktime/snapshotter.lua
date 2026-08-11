@@ -180,9 +180,12 @@ M.unchanged = function(buf, version)
     return false
   end
   local name = vim.api.nvim_buf_get_name(buf)
-  local _, current = async.uv.fs_stat(name)
   async.scheduled()
-  return vim.api.nvim_buf_is_valid(buf) and (version and same_version(version, current) or not current)
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return false
+  end
+  local current = vim.uv.fs_stat(name)
+  return version and same_version(version, current) or not current
 end
 
 return M

@@ -1,4 +1,4 @@
-local feedback = require "goto.checktime.feedback"
+local buffer_state = require "goto.checktime.buffer-state"
 
 local M = {}
 
@@ -17,7 +17,7 @@ end
 ---@param mark fun(start: integer, finish: integer)
 ---@return boolean
 M.run = function(buf, current, replacement, mark)
-  return feedback.rewrite(buf, function()
+  return buffer_state.rewrite(buf, function()
     vim.api.nvim_buf_call(buf, function()
       for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
         if index == #replacement.changes then

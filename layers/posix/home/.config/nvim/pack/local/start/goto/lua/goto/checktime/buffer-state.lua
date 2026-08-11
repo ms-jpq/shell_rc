@@ -7,6 +7,12 @@ local M = {}
 local RELOADING = "__checktime_reloading__"
 local REWRITE = "__checktime_rewrite__"
 local WRITING = "__checktime_writing__"
+local WRITTEN = "__checktime_written__"
+local CHECKPOINT = "__checktime_checkpoint__"
+
+---@class ChecktimePostWriteCheckpoint
+---@field changedtick integer
+---@field text string
 
 ---@param buf integer
 ---@return boolean
@@ -71,6 +77,34 @@ end
 ---@return boolean
 M.writing = function(buf)
   return vim.b[buf][WRITING] == true
+end
+
+---@param buf integer
+---@param text string
+M.remember_written = function(buf, text)
+  vim.b[buf][WRITTEN] = text
+end
+
+---@param buf integer
+---@return string?
+M.take_written = function(buf)
+  local written = vim.b[buf][WRITTEN]
+  vim.b[buf][WRITTEN] = nil
+  return written
+end
+
+---@param buf integer
+---@param checkpoint ChecktimePostWriteCheckpoint
+M.remember_checkpoint = function(buf, checkpoint)
+  vim.b[buf][CHECKPOINT] = checkpoint
+end
+
+---@param buf integer
+---@return ChecktimePostWriteCheckpoint?
+M.take_checkpoint = function(buf)
+  local checkpoint = vim.b[buf][CHECKPOINT]
+  vim.b[buf][CHECKPOINT] = nil
+  return checkpoint
 end
 
 return M

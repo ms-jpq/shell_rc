@@ -1,6 +1,6 @@
 local async = require "goto.async"
 local autocmd = require "goto.autocmd"
-local feedback = require "goto.checktime.feedback"
+local buffer_state = require "goto.checktime.buffer-state"
 local lib = require "goto.lib"
 local reader = require "goto.checktime.reader"
 local reducer = require "goto.checktime.reducer"
@@ -74,8 +74,6 @@ M.start = function(spec)
   local watches ---@type ChecktimeWatcher
   local reads ---@type ChecktimeReader
   local post ---@type fun(action: ChecktimeIngressAction)
-  local written = {} ---@type table<integer, string>
-
   ---@param action ChecktimeIngressAction
   post = function(action)
     if not vim.api.nvim_buf_is_valid(action.buf) then
@@ -84,20 +82,18 @@ M.start = function(spec)
       ---@cast action ChecktimeCommitEvent
       state.dispatch { kind = reducer.ACTIONS.COMMIT, buf = action.buf, base = action.base, batch = action.batch }
       if action.discard then
-        feedback.clear_rewrite(action.buf)
+        buffer_state.clear_rewrite(action.buf)
       end
     elseif action.kind == EVENTS.LOCAL then
       local changedtick = vim.api.nvim_buf_get_changedtick(action.buf)
-      local echo = feedback.is_echo(action.buf, changedtick)
-      feedback.take_rewrite(action.buf)
+      local echo = buffer_state.is_echo(action.buf, changedtick)
+      buffer_state.take_rewrite(action.buf)
       if echo then
         return
       end
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.LOCAL }
     elseif action.kind == EVENTS.REMOTE then
-      if not feedback.writing(action.buf) then
-        state.remote(action.buf, action.version)
-      end
+      state.remote(action.buf, action.version)
     elseif action.kind == EVENTS.WATCH then
       watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
       if vim.bo[action.buf].modifiable then
@@ -108,20 +104,35 @@ M.start = function(spec)
       watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
       state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = { text = action.base } }
-      feedback.clear_rewrite(action.buf)
+      buffer_state.clear_rewrite(action.buf)
+      buffer_state.take_checkpoint(action.buf)
       reads.read { buf = action.buf, base = action.base }
     elseif action.kind == EVENTS.POST_WRITE then
-      if feedback.writing(action.buf) then
+      if buffer_state.writing(action.buf) then
         return
       end
-      feedback.clear_rewrite(action.buf)
+      buffer_state.clear_rewrite(action.buf)
+      buffer_state.remember_checkpoint(action.buf, {
+        changedtick = vim.api.nvim_buf_get_changedtick(action.buf),
+        text = snapshotter.buffer(action.buf).text,
+      })
       reads.read { buf = action.buf }
     elseif action.kind == reader.OBSERVATIONS.RETRY then
       ---@cast action ChecktimeReaderRetry
+      local checkpoint = buffer_state.take_checkpoint(action.buf)
+      if checkpoint and vim.api.nvim_buf_get_changedtick(action.buf) == checkpoint.changedtick then
+        vim.bo[action.buf].modified = true
+      end
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
     elseif action.kind == reader.OBSERVATIONS.BASE then
       ---@cast action ChecktimeReaderBase
-      state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = action.base }
+      local checkpoint = buffer_state.take_checkpoint(action.buf)
+      if checkpoint and (vim.api.nvim_buf_get_changedtick(action.buf) ~= checkpoint.changedtick or action.base.text ~= checkpoint.text) then
+        vim.bo[action.buf].modified = true
+        state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
+      else
+        state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = action.base }
+      end
     else
       assert(false, vim.inspect(action))
     end
@@ -133,7 +144,7 @@ M.start = function(spec)
     end,
     visible_interval = spec.visible_interval,
     hidden_interval = spec.hidden_interval,
-    reloading = feedback.reloading,
+    reloading = buffer_state.reloading,
   }
 
   reads = reader.start(post)
@@ -143,7 +154,7 @@ M.start = function(spec)
   ---@return ChecktimeBatch?
   mb.latest = function(buf, before)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-    if changedtick ~= before and not feedback.is_echo(buf, changedtick) then
+    if changedtick ~= before and not buffer_state.is_echo(buf, changedtick) then
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.LOCAL }
     end
     return state.latest(buf, changedtick)
@@ -159,7 +170,7 @@ M.start = function(spec)
           valid = true,
           watched = watches.has(buf),
           reading = reads.active(buf),
-          writing = feedback.writing(buf),
+          writing = buffer_state.writing(buf),
           insert_base = snapshotter.insert_base(buf) ~= nil,
           modified = vim.bo[buf].modified,
           changedtick = vim.api.nvim_buf_get_changedtick(buf),
@@ -200,7 +211,7 @@ M.start = function(spec)
     group = lib.group,
     ---@param args ChecktimeAutocmdArgs
     callback = async(function(args)
-      if not feedback.reloading(args.buf) then
+      if not buffer_state.reloading(args.buf) then
         post { kind = EVENTS.LOAD, buf = args.buf, base = snapshotter.buffer(args.buf).text }
       end
     end),
@@ -238,7 +249,7 @@ M.start = function(spec)
     group = lib.group,
     ---@param args ChecktimeAutocmdArgs
     callback = function(args)
-      written[args.buf] = snapshotter.buffer(args.buf).text
+      buffer_state.remember_written(args.buf, snapshotter.buffer(args.buf).text)
     end,
   })
 
@@ -247,8 +258,7 @@ M.start = function(spec)
     ---@param args ChecktimeAutocmdArgs
     callback = async(function(args)
       async.scheduled()
-      local before = written[args.buf]
-      written[args.buf] = nil
+      local before = buffer_state.take_written(args.buf)
       if before and before ~= snapshotter.buffer(args.buf).text then
         vim.bo[args.buf].modified = true
       end
@@ -259,9 +269,8 @@ M.start = function(spec)
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
     callback = function(event)
-      written[event.buf] = nil
       reads.drop(event.buf)
-      if not feedback.reloading(event.buf) then
+      if not buffer_state.reloading(event.buf) then
         state.drop(event.buf)
       end
     end,
