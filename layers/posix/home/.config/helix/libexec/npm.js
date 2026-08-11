@@ -51,7 +51,7 @@ const args = [
 ]
 const [command, commandArgs] = (() => {
   if (platform === "win32") {
-    return [env.ComSpec ?? "cmd.exe", ["/d", "/s", "/c", "npm.cmd", ...args]]
+    return [env.ComSpec ?? "cmd.exe", ["/d", "/c", "npm.cmd", ...args]]
   }
   return ["npm", args]
 })()
