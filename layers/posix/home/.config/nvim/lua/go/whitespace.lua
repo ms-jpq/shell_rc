@@ -76,11 +76,14 @@ local detect_tabs = function(buf)
   return tabsize
 end
 
-vim.api.nvim_create_autocmd({ "BufReadPost" }, {
+vim.api.nvim_create_autocmd({ "BufReadPost", "FileType" }, {
   group = lib.group,
   callback = async(function(args)
     local buf = args.buf
-    local tabsize = vim.b[buf].__tabsize__ or detect_tabs(buf)
+    local tabsize = vim.b[buf].__tabsize__ or (args.event == "BufReadPost" and detect_tabs(buf))
+    if not tabsize then
+      return
+    end
 
     async.scheduled()
     if vim.api.nvim_buf_is_valid(buf) then
