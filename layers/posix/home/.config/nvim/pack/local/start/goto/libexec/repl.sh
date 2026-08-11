@@ -111,7 +111,7 @@ case "$REPL_TARGET" in
   read -r -d '' FRONTMATTER << 'AWK' || true
 BEGIN {
   BEFORE = 6
-  AFTER = 3
+  AFTER = 6
 
   WIDTH = length(COUNT)
   LO = ROW > BEFORE ? ROW - BEFORE : 1
