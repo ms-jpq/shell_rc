@@ -1,8 +1,8 @@
 local lib = require "goto.lib"
-local reducer = require "goto.checktime.reducer"
+local reducer = require "goto.checktime.redux.reducer"
 local snapshotter = require "goto.checktime.snapshotter"
 
-local store = {}
+local M = {}
 
 ---@class ChecktimeCommit
 ---@field buf integer
@@ -53,7 +53,7 @@ local FACTS = "__checktime_facts__"
 
 ---@param spec ChecktimeStoreConfig
 ---@return ChecktimeStore
-store.start = function(spec)
+M.start = function(spec)
   ---@diagnostic disable-next-line: missing-fields
   local state = {} ---@type ChecktimeStore
   local pending = {} ---@type table<integer, true>
@@ -151,4 +151,4 @@ store.start = function(spec)
   return state
 end
 
-return store
+return M

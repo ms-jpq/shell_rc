@@ -1,6 +1,6 @@
 local hunks = require "goto.checktime.hunks"
 local lib = require "goto.lib"
-local reducer = require "goto.checktime.reducer"
+local reducer = require "goto.checktime.redux.reducer"
 local snapshotter = require "goto.checktime.snapshotter"
 
 local M = {}
@@ -106,7 +106,10 @@ M.start = function(spec)
       text = text,
       base = { text = observed_text, version = version },
       modified = modified,
-      create = read == snapshotter.STATES.MISSING and modified and insert_base == nil and not (batch.base and batch.base.version),
+      create = read == snapshotter.STATES.MISSING
+        and modified
+        and insert_base == nil
+        and not (batch.base and batch.base.version),
     }
   end
 

@@ -110,11 +110,7 @@ M.start = function(commit)
     end
 
     ---@cast instruction ChecktimeReconcile
-    if
-      not snapshotter.unchanged(buf, instruction.base.version)
-      or not current()
-      or snapshotter.insert_base(buf)
-    then
+    if not snapshotter.unchanged(buf, instruction.base.version) or not current() or snapshotter.insert_base(buf) then
       return
     end
 

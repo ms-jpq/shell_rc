@@ -3,9 +3,9 @@ local autocmd = require "goto.autocmd"
 local buffer_state = require "goto.checktime.buffer-state"
 local lib = require "goto.lib"
 local reader = require "goto.checktime.reader"
-local reducer = require "goto.checktime.reducer"
+local reducer = require "goto.checktime.redux.reducer"
 local snapshotter = require "goto.checktime.snapshotter"
-local store = require "goto.checktime.store"
+local store = require "goto.checktime.redux.store"
 local watcher = require "goto.checktime.watcher"
 
 local M = {}
@@ -127,7 +127,13 @@ M.start = function(spec)
     elseif action.kind == reader.OBSERVATIONS.BASE then
       ---@cast action ChecktimeReaderBase
       local checkpoint = buffer_state.take_checkpoint(action.buf)
-      if checkpoint and (vim.api.nvim_buf_get_changedtick(action.buf) ~= checkpoint.changedtick or action.base.text ~= checkpoint.text) then
+      if
+        checkpoint
+        and (
+          vim.api.nvim_buf_get_changedtick(action.buf) ~= checkpoint.changedtick
+          or action.base.text ~= checkpoint.text
+        )
+      then
         vim.bo[action.buf].modified = true
         state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
       else

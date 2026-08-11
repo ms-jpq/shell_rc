@@ -1,9 +1,9 @@
-local reducer = {}
+local M = {}
 
 ---@alias ChecktimeReducerActionKind "change"|"base"|"commit"
 
 ---@class ChecktimeReducerActions
-reducer.ACTIONS = {
+M.ACTIONS = {
   CHANGE = "change",
   BASE = "base",
   COMMIT = "commit",
@@ -12,7 +12,7 @@ reducer.ACTIONS = {
 ---@alias ChecktimeChange "remote"|"local"
 
 ---@class ChecktimeChanges
-reducer.CHANGES = {
+M.CHANGES = {
   LOCAL = "local",
   REMOTE = "remote",
 }
@@ -66,17 +66,17 @@ end
 ---@param facts ChecktimeFacts
 ---@param action ChecktimeReducerAction
 ---@return ChecktimeFacts
-reducer.reduce = function(facts, action)
+M.reduce = function(facts, action)
   local next = clone(facts)
 
-  if action.kind == reducer.ACTIONS.CHANGE then
+  if action.kind == M.ACTIONS.CHANGE then
     next.events = clone(facts.events)
     next.events[action.change] = action.generation
     return next
-  elseif action.kind == reducer.ACTIONS.BASE then
+  elseif action.kind == M.ACTIONS.BASE then
     next.base = action.base
     return next
-  elseif action.kind == reducer.ACTIONS.COMMIT then
+  elseif action.kind == M.ACTIONS.COMMIT then
     if action.base then
       next.base = action.base
     end
@@ -97,7 +97,7 @@ end
 ---@param facts ChecktimeFacts
 ---@param changedtick integer
 ---@return ChecktimeBatch?
-reducer.batch = function(facts, changedtick)
+M.batch = function(facts, changedtick)
   if not next(facts.events) then
     return nil
   end
@@ -108,4 +108,4 @@ reducer.batch = function(facts, changedtick)
   }
 end
 
-return reducer
+return M
