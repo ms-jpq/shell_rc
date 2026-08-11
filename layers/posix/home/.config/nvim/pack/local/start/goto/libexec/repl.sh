@@ -110,11 +110,12 @@ case "$REPL_TARGET" in
 
   read -r -d '' FRONTMATTER << 'AWK' || true
 BEGIN {
+  BEFORE = 6
+  AFTER = 3
+
   WIDTH = length(COUNT)
-  LO = ROW - WINDOW
-  HI = ROW + WINDOW
-  LO = LO < 1 ? 1 : LO
-  HI = HI > COUNT ? COUNT : HI
+  LO = ROW > BEFORE ? ROW - BEFORE : 1
+  HI = ROW + AFTER < COUNT ? ROW + AFTER : COUNT
   printf "REPL> @%s\n\n%s:%d:%d\n", REPL_MD, DISPLAY, ROW, COL
 }
 
@@ -139,7 +140,6 @@ AWK
     -v DISPLAY="$REPL_PRETTY_NAME"
     -v REPL_MD="${REPL_MD/#"$HOME"/"~"}"
     -v ROW="$REPL_LINE_ROW"
-    -v WINDOW=6
     --
     "$FRONTMATTER"
   )
