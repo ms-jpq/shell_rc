@@ -1,4 +1,5 @@
 local hsminweb = require "hs.httpserver.hsminweb"
+local screen = require "togo.lib.screen"
 
 local M = {}
 
@@ -6,8 +7,6 @@ local ROOT = hs.configdir .. "/togo/desktop"
 local PORT = 42069
 local URL = "http://localhost:" .. PORT .. "/"
 local MAINTENANCE_INTERVAL = 6
-local SCREEN_SETTLE_DELAY = 0.1
-
 local start_server = function()
   return hsminweb.new(ROOT):bonjour(false):interface("localhost"):port(PORT):allowDirectory(false):start()
 end
@@ -30,14 +29,30 @@ end
 
 local new_desktop = function()
   local server = start_server()
-  local screen_watcher, settle, timer = nil, nil, nil
+  local screen_watcher, timer = nil, nil
+  ---@type TogoScreenSettler?
+  local settler = nil
   local views = {}
 
-  local maintain = function()
+  local snapshot = function(screens)
+    if #screens == 0 then
+      return nil
+    end
+
+    local frames = {}
+    for _, screen in ipairs(screens) do
+      local frame = screen:fullFrame()
+      table.insert(frames, string.format("%d:%f:%f:%f:%f", screen:id(), frame.x, frame.y, frame.w, frame.h))
+    end
+    table.sort(frames)
+    return table.concat(frames, "|")
+  end
+
+  local maintain = function(screens)
     local present = {}
 
     ---@diagnostic disable-next-line: param-type-mismatch
-    for _, screen in ipairs(hs.screen.allScreens()) do
+    for _, screen in ipairs(screens or hs.screen.allScreens()) do
       local id = screen:id()
       present[id] = true
       if views[id] then
@@ -55,16 +70,23 @@ local new_desktop = function()
     end
   end
 
+  local sample = function()
+    local screens = hs.screen.allScreens()
+    maintain(screens)
+    return snapshot(screens)
+  end
+
+  local settle = function()
+    assert(settler).restart()
+  end
+
   local start = function()
     maintain()
     timer = hs.timer.doEvery(MAINTENANCE_INTERVAL, maintain):start()
+    settler = screen.new_settler(sample)
     screen_watcher = hs.screen.watcher
       .new(function()
-        maintain()
-        if settle then
-          settle:stop()
-        end
-        settle = hs.timer.doAfter(SCREEN_SETTLE_DELAY, maintain)
+        settle()
       end)
       :start()
   end
@@ -76,8 +98,8 @@ local new_desktop = function()
     if screen_watcher then
       screen_watcher:stop()
     end
-    if settle then
-      settle:stop()
+    if settler then
+      settler.stop()
     end
     for _, view in pairs(views) do
       view:delete()

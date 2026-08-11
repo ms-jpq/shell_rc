@@ -1,11 +1,11 @@
+local screen = require "togo.lib.screen"
+
 local M = {}
 
 local RADIUS, SIZE = 40, 40
 local EDGE_PADDING = 8
 local ANGLE_DECAY = 0.18
 local FRAME_INTERVAL = 1 / 60
-local SCREEN_SETTLE_DELAY = 0.1
-
 local IMAGE_EXTENSIONS = { gif = true, jpeg = true, jpg = true, png = true }
 
 ---@class CursorPoint
@@ -110,7 +110,9 @@ local new_cursor = function()
   local point = { x = 0, y = 0 }
   ---@type CursorFrame
   local frame = { x = 0, y = 0, w = 0, h = 0 }
-  local screen_watcher, settle, tap, timer = nil, nil, nil, nil
+  local screen_watcher, tap, timer = nil, nil, nil
+  ---@type TogoScreenSettler?
+  local settler = nil
   local view = new_view()
   local direction = new_direction()
 
@@ -181,6 +183,28 @@ local new_cursor = function()
     return move()
   end
 
+  local sample = function()
+    local current = hs.mouse.getCurrentScreen()
+    if not current then
+      return
+    end
+
+    local current_frame = current:fullFrame()
+    return string.format(
+      "%d:%f:%f:%f:%f",
+      current:id(),
+      current_frame.x,
+      current_frame.y,
+      current_frame.w,
+      current_frame.h
+    )
+  end
+
+  local settle = function()
+    hide()
+    assert(settler).restart()
+  end
+
   local start = function()
     tap = hs.eventtap
       .new({
@@ -194,13 +218,10 @@ local new_cursor = function()
         hs.eventtap.event.types.rightMouseDragged,
       }, react)
       :start()
+    settler = screen.new_settler(sample, move)
     screen_watcher = hs.screen.watcher
       .new(function()
-        hide()
-        if settle then
-          settle:stop()
-        end
-        settle = hs.timer.doAfter(SCREEN_SETTLE_DELAY, move)
+        settle()
       end)
       :start()
     move()
@@ -213,8 +234,8 @@ local new_cursor = function()
     if screen_watcher then
       screen_watcher:stop()
     end
-    if settle then
-      settle:stop()
+    if settler then
+      settler.stop()
     end
     cancel()
     view:delete()
