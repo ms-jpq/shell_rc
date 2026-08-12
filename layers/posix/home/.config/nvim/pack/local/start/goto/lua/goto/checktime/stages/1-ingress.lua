@@ -161,7 +161,11 @@ M.start = function(spec)
   ---@return ChecktimeBatch?
   mb.latest = function(buf, before)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-    if changedtick ~= before and not buffer_state.is_echo(buf, changedtick) and buffer_state.changed(buf, changedtick) then
+    if
+      changedtick ~= before
+      and not buffer_state.is_echo(buf, changedtick)
+      and buffer_state.changed(buf, changedtick)
+    then
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.LOCAL }
     end
     return state.latest(buf, changedtick)
@@ -199,7 +203,9 @@ M.start = function(spec)
   end
 
   snapshotter.track_insert(function(buf)
-    post { kind = EVENTS.REMOTE, buf = buf, version = vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf)) }
+    if not reads.active(buf) then
+      post { kind = EVENTS.REMOTE, buf = buf, version = vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf)) }
+    end
   end)
 
   vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
