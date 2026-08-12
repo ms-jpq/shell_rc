@@ -13,14 +13,19 @@ local epoch = 0
 ---@field changedtick integer
 ---@field text string
 
+---@class ChecktimeWatchBinding
+---@field path string
+---@field epoch integer
+---@field interval integer
+---@field enabled boolean
+---@field poller? ChecktimePoller
+---@field retry? boolean
+
 ---@class ChecktimeSession
 ---@field buf integer
 ---@field epoch integer
----@field path string
 ---@field changedtick integer
----@field interval integer
----@field poller? ChecktimePoller
----@field retry? boolean
+---@field watch ChecktimeWatchBinding
 ---@field reading? integer
 ---@field read_token integer
 ---@field insert_base? string
@@ -37,12 +42,12 @@ local epoch = 0
 ---@field hidden_interval integer
 
 ---@class ChecktimeWatcher
----@field attach fun(buf: integer, path: string, refresh?: boolean): boolean
+---@field attach fun(buf: integer, path: string, refresh?: boolean, enabled?: boolean): boolean
 ---@field detach fun(buf: integer)
 ---@field has fun(buf: integer): boolean
 ---@field refresh fun(buf: integer)
 ---@field retry fun()
----@field update fun(buf: integer, path: string)
+---@field update fun(buf: integer, path: string, enabled: boolean): boolean rebase
 
 ---@param buf integer
 ---@return ChecktimeSession?
@@ -66,9 +71,8 @@ M.attach = function(buf, path)
   local session = {
     buf = buf,
     epoch = epoch,
-    path = path,
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
-    interval = 0,
+    watch = { path = path, epoch = 0, interval = 0, enabled = false },
     read_token = 0,
   }
   vim.b[buf][SESSION] = session
@@ -87,8 +91,8 @@ end
 M.detach = function(buf)
   local session = M.current(buf)
   if session then
-    if session.poller then
-      session.poller.close()
+    if session.watch.poller then
+      session.watch.poller.close()
     end
     vim.b[buf][SESSION] = nil
   end
@@ -109,17 +113,53 @@ M.start_watch = function(spec)
 
   ---@param current ChecktimeSession
   local start = function(current)
-    if current.poller then
-      current.poller.close()
+    local binding = current.watch
+    if binding.poller then
+      binding.poller.close()
     end
-    current.interval = interval(current.buf)
-    current.poller = poll.start(current.path, function(version)
-      if M.valid(current) then
+    binding.epoch = binding.epoch + 1
+    binding.interval = interval(current.buf)
+    local epoch = binding.epoch
+    binding.poller = poll.start(binding.path, function(version)
+      local active = M.current(current.buf)
+      if active and active.epoch == current.epoch and active.watch.epoch == epoch then
         spec.changed(current.buf, version)
       end
-    end, current.interval)
-    current.retry = current.poller == nil
+    end, binding.interval)
+    binding.retry = binding.poller == nil
     M.put(current)
+  end
+
+  ---@param current ChecktimeSession
+  ---@param path string
+  ---@param enabled boolean
+  ---@return boolean rebase
+  local bind = function(current, path, enabled)
+    local binding = current.watch
+    local path_changed = binding.path ~= path
+    local rebase = enabled and (path_changed or not binding.enabled)
+    if not enabled then
+      if binding.poller then
+        binding.poller.close()
+      end
+      binding.epoch = binding.epoch + 1
+      binding.poller = nil
+      binding.retry = nil
+      binding.interval = interval(current.buf)
+      binding.enabled = false
+      M.put(current)
+      return false
+    end
+    if not path_changed and binding.enabled and binding.interval == interval(current.buf) then
+      if binding.retry then
+        start(current)
+      end
+      return false
+    end
+    binding.path = path
+    binding.enabled = true
+    start(current)
+    return rebase
   end
 
   ---@param buf integer
@@ -131,16 +171,18 @@ M.start_watch = function(spec)
   ---@param path string
   ---@param refresh? boolean
   ---@return boolean
-  watch.attach = function(buf, path, refresh)
+  watch.attach = function(buf, path, refresh, enabled)
+    enabled = enabled == nil and path ~= "" or enabled
     local current = M.current(buf)
     if current and not refresh then
       return false
     end
-    M.detach(buf)
-    current = M.attach(buf, path)
-    if path ~= "" then
-      start(current)
+    if current then
+      bind(current, path, enabled)
+      return true
     end
+    current = M.attach(buf, path)
+    bind(current, path, enabled)
     return true
   end
 
@@ -148,34 +190,31 @@ M.start_watch = function(spec)
   ---@return boolean
   watch.has = function(buf)
     local current = M.current(buf)
-    return current ~= nil and current.poller ~= nil
+    return current ~= nil and current.watch.poller ~= nil
   end
 
   ---@param buf integer
   ---@param path string
-  watch.update = function(buf, path)
+  watch.update = function(buf, path, enabled)
     local current = M.current(buf)
-    if current and current.path == path and current.interval == interval(buf) then
-      if current.retry then
-        start(current)
-      end
-      return
+    if not current then
+      return false
     end
-    watch.attach(buf, path, true)
+    return bind(current, path, enabled)
   end
 
   ---@param buf integer
   watch.refresh = function(buf)
     local current = M.current(buf)
     if current then
-      watch.update(buf, current.path)
+      watch.update(buf, current.watch.path, current.watch.enabled)
     end
   end
 
   watch.retry = function()
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
       local current = M.current(buf)
-      if current and current.retry then
+      if current and current.watch.enabled and current.watch.retry then
         start(current)
       end
     end

@@ -21,13 +21,17 @@ local M = {}
 ---@field buf integer
 ---@field base ChecktimeBase
 
+---@class ChecktimeStoreForgetBase
+---@field kind "forget-base"
+---@field buf integer
+
 ---@class ChecktimeStoreCommit
 ---@field kind "commit"
 ---@field buf integer
 ---@field base? ChecktimeBase
 ---@field batch? ChecktimeBatch
 
----@alias ChecktimeStoreAction ChecktimeStoreChange|ChecktimeStoreBase|ChecktimeStoreCommit
+---@alias ChecktimeStoreAction ChecktimeStoreChange|ChecktimeStoreBase|ChecktimeStoreForgetBase|ChecktimeStoreCommit
 
 ---@class ChecktimeStoreAdmission
 ---@field watched boolean
@@ -44,6 +48,7 @@ local M = {}
 ---@class ChecktimeStore
 ---@field dispatch fun(action: ChecktimeStoreAction)
 ---@field drop fun(buf: integer)
+---@field forget_base fun(buf: integer)
 ---@field latest fun(buf: integer, changedtick: integer): ChecktimeBatch?
 ---@field remote fun(buf: integer, version?: uv.fs_stat.result)
 ---@field take fun(admit: fun(buf: integer): ChecktimeStoreAdmission?): table<integer, integer>
@@ -70,6 +75,8 @@ M.start = function(spec)
       facts = reducer.reduce(facts, { kind = action.kind, change = action.change, generation = generation() })
     elseif action.kind == reducer.ACTIONS.BASE then
       facts = reducer.reduce(facts, { kind = action.kind, base = action.base })
+    elseif action.kind == reducer.ACTIONS.FORGET_BASE then
+      facts = reducer.reduce(facts, { kind = action.kind })
     elseif action.kind == reducer.ACTIONS.COMMIT then
       facts = reducer.reduce(facts, { kind = action.kind, base = action.base, batch = action.batch })
     else
@@ -81,6 +88,11 @@ M.start = function(spec)
   ---@param buf integer
   state.drop = function(buf)
     session.drop_facts(buf)
+  end
+
+  ---@param buf integer
+  state.forget_base = function(buf)
+    state.dispatch { kind = reducer.ACTIONS.FORGET_BASE, buf = buf }
   end
 
   ---@param buf integer

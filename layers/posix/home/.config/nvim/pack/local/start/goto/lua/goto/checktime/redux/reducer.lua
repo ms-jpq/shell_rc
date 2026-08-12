@@ -1,11 +1,12 @@
 local M = {}
 
----@alias ChecktimeReducerActionKind "change"|"base"|"commit"
+---@alias ChecktimeReducerActionKind "change"|"base"|"forget-base"|"commit"
 
 ---@class ChecktimeReducerActions
 M.ACTIONS = {
   CHANGE = "change",
   BASE = "base",
+  FORGET_BASE = "forget-base",
   COMMIT = "commit",
 }
 
@@ -45,12 +46,15 @@ M.CHANGES = {
 ---@field kind "base"
 ---@field base ChecktimeBase
 
+---@class ChecktimeForgetBaseAction
+---@field kind "forget-base"
+
 ---@class ChecktimeCommitAction
 ---@field kind "commit"
 ---@field base? ChecktimeBase
 ---@field batch? ChecktimeBatch
 
----@alias ChecktimeReducerAction ChecktimeChangeAction|ChecktimeBaseAction|ChecktimeCommitAction
+---@alias ChecktimeReducerAction ChecktimeChangeAction|ChecktimeBaseAction|ChecktimeForgetBaseAction|ChecktimeCommitAction
 
 ---@generic T: table
 ---@param value T
@@ -75,6 +79,9 @@ M.reduce = function(facts, action)
     return next
   elseif action.kind == M.ACTIONS.BASE then
     next.base = action.base
+    return next
+  elseif action.kind == M.ACTIONS.FORGET_BASE then
+    next.base = nil
     return next
   elseif action.kind == M.ACTIONS.COMMIT then
     if action.base then

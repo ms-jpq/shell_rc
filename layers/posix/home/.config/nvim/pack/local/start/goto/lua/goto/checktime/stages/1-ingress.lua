@@ -67,6 +67,7 @@ M.start = function(spec)
 
   local watches ---@type ChecktimeWatcher
   local reads ---@type ChecktimeReader
+  local rebind ---@type fun(buf: integer)
 
   ---@param buf integer
   local local_change = function(buf)
@@ -102,20 +103,18 @@ M.start = function(spec)
     elseif action.kind == EVENTS.REMOTE then
       state.remote(action.buf, action.version)
     elseif action.kind == EVENTS.WATCH then
-      watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
-      if vim.bo[action.buf].modifiable then
-        state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
-      end
+      rebind(action.buf)
     elseif action.kind == EVENTS.POST_WRITE then
       if session.writing(action.buf) then
         return
       end
       session.clear_rewrite(action.buf)
-      session.remember_checkpoint(action.buf, {
+      local checkpoint = {
         changedtick = vim.api.nvim_buf_get_changedtick(action.buf),
         text = snapshotter.buffer(action.buf).text,
-      })
-      reads.read { buf = action.buf }
+      }
+      session.remember_checkpoint(action.buf, checkpoint)
+      reads.read { buf = action.buf, initial = checkpoint.text }
     elseif action.kind == reader.OBSERVATIONS.RETRY then
       ---@cast action ChecktimeReaderRetry
       local checkpoint = session.take_checkpoint(action.buf)
@@ -146,16 +145,41 @@ M.start = function(spec)
     end
   end
 
-  local attach = function(buf, refresh)
-    local path = vim.bo[buf].modifiable and vim.api.nvim_buf_get_name(buf) or ""
-    if not watches.attach(buf, path, refresh) then
+  local open = function(buf)
+    if session.current(buf) then
       return
     end
+    local path = vim.bo[buf].modifiable and vim.api.nvim_buf_get_name(buf) or ""
+    assert(watches.attach(buf, path, false, path ~= ""))
     local text = snapshotter.buffer(buf).text
     state.dispatch { kind = reducer.ACTIONS.BASE, buf = buf, base = { text = text } }
     session.clear_rewrite(buf)
     session.take_checkpoint(buf)
-    reads.read { buf = buf, initial = text }
+    if path ~= "" then
+      reads.read { buf = buf, initial = text }
+    end
+  end
+
+  rebind = function(buf)
+    if not session.current(buf) then
+      return
+    end
+    local path = vim.api.nvim_buf_get_name(buf)
+    local enabled = vim.bo[buf].modifiable and path ~= ""
+    if not watches.update(buf, path, enabled) then
+      return
+    end
+    reads.drop(buf)
+    local facts = session.facts(buf)
+    local local_change = facts and facts.events[reducer.CHANGES.LOCAL]
+    local text = snapshotter.buffer(buf).text
+    state.forget_base(buf)
+    if not enabled then
+      return
+    end
+    session.clear_rewrite(buf)
+    session.take_checkpoint(buf)
+    reads.read { buf = buf, initial = local_change and nil or text }
   end
 
   watches = session.start_watch {
@@ -242,12 +266,22 @@ M.start = function(spec)
     end),
   })
 
-  vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufFilePost" }, {
+  vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost" }, {
     group = lib.group,
     ---@param args ChecktimeAutocmdArgs
     callback = async(function(args)
       if not session.reloading(args.buf) then
-        attach(args.buf, args.event == "BufFilePost")
+        open(args.buf)
+      end
+    end),
+  })
+
+  vim.api.nvim_create_autocmd("BufFilePost", {
+    group = lib.group,
+    ---@param args ChecktimeAutocmdArgs
+    callback = async(function(args)
+      if not session.reloading(args.buf) then
+        rebind(args.buf)
       end
     end),
   })
@@ -324,7 +358,7 @@ M.start = function(spec)
   autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-        attach(buf)
+        open(buf)
       end
     end
   end)
