@@ -30,7 +30,6 @@ local epoch = 0
 ---@field written? string
 ---@field checkpoint? ChecktimePostWriteCheckpoint
 ---@field facts? ChecktimeFacts
----@field pending? boolean
 
 ---@class ChecktimeWatchConfig
 ---@field changed fun(buf: integer, version?: uv.fs_stat.result)
@@ -198,7 +197,6 @@ M.put_facts = function(buf, facts)
   local current = M.current(buf)
   if current then
     current.facts = facts
-    current.pending = next(facts.events) and true or nil
     M.put(current)
   end
 end
@@ -208,17 +206,16 @@ M.drop_facts = function(buf)
   local current = M.current(buf)
   if current then
     current.facts = nil
-    current.pending = nil
     M.put(current)
   end
 end
 
 ---@return integer[]
-M.pending = function()
+M.fact_buffers = function()
   local bufs = {}
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     local current = M.current(buf)
-    if current and current.pending then
+    if current and current.facts and next(current.facts.events) then
       table.insert(bufs, buf)
     end
   end
@@ -234,15 +231,6 @@ M.buffers = function()
     end
   end
   return bufs
-end
-
----@param buf integer
-M.defer = function(buf)
-  local current = M.current(buf)
-  if current then
-    current.pending = nil
-    M.put(current)
-  end
 end
 
 ---@param buf integer

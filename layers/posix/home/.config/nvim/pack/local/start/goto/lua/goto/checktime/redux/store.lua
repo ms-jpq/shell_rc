@@ -106,13 +106,11 @@ M.start = function(spec)
     local ready = {} ---@type table<integer, integer>
     local now = vim.uv.hrtime()
 
-    for _, buf in ipairs(session.pending()) do
+    for _, buf in ipairs(session.fact_buffers()) do
       local status = admit(buf)
       if not status then
         state.drop(buf)
-      elseif not status.watched then
-        session.defer(buf)
-      else
+      elseif status.watched then
         local facts = assert(session.facts(buf))
         local local_change, remote_change = facts.events[reducer.CHANGES.LOCAL], facts.events[reducer.CHANGES.REMOTE]
         local local_debounce = local_change and now - local_change.monotonic_ts < local_debounce_ns
