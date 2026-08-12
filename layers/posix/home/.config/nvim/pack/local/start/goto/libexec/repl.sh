@@ -46,7 +46,7 @@ FRONTMATTER && $0 ~ ("^" PARSE_KEY ":[[:space:]]*") {
 AWK
 
 case "$REPL_TARGET" in
-'')
+'' | '*')
   EXPLICIT_TARGET_PATH=''
   if [[ $REPL_FILE_NAME == *.md ]]; then
     EXPLICIT_TARGET_PATH="$(awk -v PARSE_KEY='repl-target' -- "$FRONTMATTER" < "$REPL_FILE_NAME")"
@@ -78,12 +78,14 @@ case "$REPL_TARGET" in
     if [[ $PANE_ID == "$CURRENT_PANE" ]]; then
       continue
     fi
-    if [[ -n $EXPLICIT_TARGET_PATH ]]; then
-      if [[ $PANE_PATH != "$EXPLICIT_TARGET_PATH" ]]; then
+    if [[ $REPL_TARGET != '*' ]]; then
+      if [[ -n $EXPLICIT_TARGET_PATH ]]; then
+        if [[ $PANE_PATH != "$EXPLICIT_TARGET_PATH" ]]; then
+          continue
+        fi
+      elif [[ $PANE_PATH != "$REPL_PARENT_PATH" ]] && [[ $PANE_PATH != "$REPL_PARENT_PATH/"* ]] && [[ -z ${ANCESTORS["$PANE_PATH"]+_} ]]; then
         continue
       fi
-    elif [[ $PANE_PATH != "$REPL_PARENT_PATH" ]] && [[ $PANE_PATH != "$REPL_PARENT_PATH/"* ]] && [[ -z ${ANCESTORS["$PANE_PATH"]+_} ]]; then
-      continue
     fi
 
     DECOR=''

@@ -48,13 +48,15 @@ local metadata = function(buf, target)
     REPL_TARGET = target,
   }
 end
-local pick = function(buf)
+---@param buf integer
+---@param all? boolean
+local pick = function(buf, all)
   local target = vim.b[buf].__repl_target__
-  if target and string.find(target, REPL_IFS, 1, true) then
+  if not all and target and string.find(target, REPL_IFS, 1, true) then
     return target
   end
 
-  local proc = async.system({ exec }, { env = metadata(buf, "") })
+  local proc = async.system({ exec }, { env = metadata(buf, all and "*" or "") })
   async.scheduled()
   if proc.code ~= 0 or proc.stderr ~= "" then
     vim.notify(proc.stderr .. proc.stdout, vim.log.levels.ERROR)
@@ -80,27 +82,35 @@ local pick = function(buf)
   return target
 end
 
-local repl = function()
-  local buf = vim.api.nvim_get_current_buf()
-  local target = pick(buf)
-  if not target then
-    return
-  end
+---@param all? boolean
+---@return fun()
+local run_repl = function(all)
+  return async(function()
+    local buf = vim.api.nvim_get_current_buf()
+    local target = pick(buf, all)
+    if not target then
+      return
+    end
 
-  vim.api.nvim_buf_call(buf, function()
-    vim.cmd [[silent! write! ++p]]
+    vim.api.nvim_buf_call(buf, function()
+      vim.cmd [[silent! write! ++p]]
+    end)
+    local proc = async.system({ exec }, { env = metadata(buf, target) })
+
+    async.scheduled()
+    vim.notify(proc.stdout, vim.log.levels.INFO)
+    vim.notify(proc.stderr, vim.log.levels.ERROR)
   end)
-  local proc = async.system({ exec }, { env = metadata(buf, target) })
-
-  async.scheduled()
-  vim.notify(proc.stdout, vim.log.levels.INFO)
-  vim.notify(proc.stderr, vim.log.levels.ERROR)
 end
 
 local clear = function()
   vim.b.__repl_target__ = nil
 end
 
-cmds.register { repl = async(repl), ["repl-clear"] = clear }
+cmds.register {
+  repl = run_repl(false),
+  ["repl-all"] = run_repl(true),
+  ["repl-clear"] = clear,
+}
 
 return M
