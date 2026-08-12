@@ -8,8 +8,6 @@ local REPL_IFS = string.char(31)
 local exec = assert(unpack(vim.api.nvim_get_runtime_file("libexec/repl.sh", false)))
 
 do
-  -- | >>> Added lifecycle coverage for relative and absolute symlink opens,
-  -- | `:cd`, repeated alias opens, new files, and renames.
   local tag = "__goto_repl_path__"
   vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPre" }, {
     group = lib.group,

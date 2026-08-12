@@ -26,16 +26,11 @@ local M = {}
 ---@field kind "watch"
 ---@field buf integer
 
----@class ChecktimeLoad
----@field kind "load"
----@field buf integer
----@field text string
-
 ---@class ChecktimePostWrite
 ---@field kind "post-write"
 ---@field buf integer
 
----@alias ChecktimeIngressAction ChecktimeCommitEvent|ChecktimeLocal|ChecktimeRemote|ChecktimeWatch|ChecktimeLoad|ChecktimePostWrite|ChecktimeReaderObservation
+---@alias ChecktimeIngressAction ChecktimeCommitEvent|ChecktimeLocal|ChecktimeRemote|ChecktimeWatch|ChecktimePostWrite|ChecktimeReaderObservation
 
 ---@class ChecktimeAutocmdArgs
 ---@field buf integer
@@ -58,7 +53,6 @@ local EVENTS = {
   LOCAL = "local",
   REMOTE = "remote",
   WATCH = "watch",
-  LOAD = "load",
   POST_WRITE = "post-write",
 }
 
@@ -89,7 +83,7 @@ M.start = function(spec)
       local changedtick = vim.api.nvim_buf_get_changedtick(action.buf)
       local echo = buffer_state.is_echo(action.buf, changedtick)
       buffer_state.take_rewrite(action.buf)
-      if echo then
+      if echo or not buffer_state.changed(action.buf, changedtick) then
         return
       end
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.LOCAL }
@@ -100,13 +94,6 @@ M.start = function(spec)
       if vim.bo[action.buf].modifiable then
         state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
       end
-    elseif action.kind == EVENTS.LOAD then
-      ---@cast action ChecktimeLoad
-      watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
-      state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = { text = action.text } }
-      buffer_state.clear_rewrite(action.buf)
-      buffer_state.take_checkpoint(action.buf)
-      reads.read { buf = action.buf, initial = action.text }
     elseif action.kind == EVENTS.POST_WRITE then
       if buffer_state.writing(action.buf) then
         return
@@ -147,11 +134,16 @@ M.start = function(spec)
     end
   end
 
-  local load = function(buf, refresh)
-    if not buffer_state.register(buf, refresh) then
+  local attach = function(buf, refresh)
+    local path = vim.bo[buf].modifiable and vim.api.nvim_buf_get_name(buf) or ""
+    if not watches.attach(buf, path, refresh) then
       return
     end
-    post { kind = EVENTS.LOAD, buf = buf, text = snapshotter.buffer(buf).text }
+    local text = snapshotter.buffer(buf).text
+    state.dispatch { kind = reducer.ACTIONS.BASE, buf = buf, base = { text = text } }
+    buffer_state.clear_rewrite(buf)
+    buffer_state.take_checkpoint(buf)
+    reads.read { buf = buf, initial = text }
   end
 
   watches = watcher.start {
@@ -160,7 +152,6 @@ M.start = function(spec)
     end,
     visible_interval = spec.visible_interval,
     hidden_interval = spec.hidden_interval,
-    reloading = buffer_state.reloading,
   }
 
   reads = reader.start(post)
@@ -170,7 +161,7 @@ M.start = function(spec)
   ---@return ChecktimeBatch?
   mb.latest = function(buf, before)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-    if changedtick ~= before and not buffer_state.is_echo(buf, changedtick) then
+    if changedtick ~= before and not buffer_state.is_echo(buf, changedtick) and buffer_state.changed(buf, changedtick) then
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.LOCAL }
     end
     return state.latest(buf, changedtick)
@@ -208,7 +199,7 @@ M.start = function(spec)
   end
 
   snapshotter.track_insert(function(buf)
-    post { kind = EVENTS.REMOTE, buf = buf }
+    post { kind = EVENTS.REMOTE, buf = buf, version = vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf)) }
   end)
 
   vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
@@ -239,7 +230,7 @@ M.start = function(spec)
     ---@param args ChecktimeAutocmdArgs
     callback = async(function(args)
       if not buffer_state.reloading(args.buf) then
-        load(args.buf, args.event == "BufFilePost")
+        attach(args.buf, args.event == "BufFilePost")
       end
     end),
   })
@@ -298,7 +289,7 @@ M.start = function(spec)
     callback = function(event)
       reads.drop(event.buf)
       if not buffer_state.reloading(event.buf) then
-        buffer_state.unregister(event.buf)
+        watches.detach(event.buf)
         state.drop(event.buf)
       end
     end,
@@ -316,7 +307,7 @@ M.start = function(spec)
   autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-        load(buf)
+        attach(buf)
       end
     end
   end)

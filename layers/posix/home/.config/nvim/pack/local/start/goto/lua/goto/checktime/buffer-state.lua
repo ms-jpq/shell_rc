@@ -3,20 +3,44 @@ local M = {}
 do
   local REGISTRATION = "__checktime_registration__"
 
+  ---@class ChecktimeBufferRegistration
+  ---@field changedtick integer
+  ---@field generation integer
+  ---@field interval integer
+  ---@field path string
+  ---@field poller? ChecktimePoller
+  ---@field retry? boolean
+
   ---@param buf integer
-  ---@param refresh? boolean
-  ---@return boolean
-  M.register = function(buf, refresh)
-    if vim.b[buf][REGISTRATION] and not refresh then
-      return false
-    end
-    vim.b[buf][REGISTRATION] = true
-    return true
+  ---@return ChecktimeBufferRegistration?
+  M.registration = function(buf)
+    return vim.api.nvim_buf_is_valid(buf) and vim.b[buf][REGISTRATION] or nil
   end
 
   ---@param buf integer
-  M.unregister = function(buf)
-    vim.b[buf][REGISTRATION] = nil
+  ---@param registration ChecktimeBufferRegistration
+  M.put_registration = function(buf, registration)
+    vim.b[buf][REGISTRATION] = registration
+  end
+
+  ---@param buf integer
+  M.clear_registration = function(buf)
+    if vim.api.nvim_buf_is_valid(buf) then
+      vim.b[buf][REGISTRATION] = nil
+    end
+  end
+
+  ---@param buf integer
+  ---@param changedtick integer
+  ---@return boolean
+  M.changed = function(buf, changedtick)
+    local registration = M.registration(buf)
+    if not registration or changedtick <= registration.changedtick then
+      return false
+    end
+    registration.changedtick = changedtick
+    M.put_registration(buf, registration)
+    return true
   end
 end
 
