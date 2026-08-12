@@ -83,6 +83,17 @@ M.start = function(spec)
     state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.LOCAL }
   end
 
+  ---@param buf integer
+  ---@param read_tick integer
+  local observe_read = function(buf, read_tick)
+    local changedtick = vim.api.nvim_buf_get_changedtick(buf)
+    if changedtick == read_tick then
+      session.changed(buf, changedtick)
+    else
+      local_change(buf)
+    end
+  end
+
   ---@param action ChecktimeIngressAction
   local post = function(action)
     if not vim.api.nvim_buf_is_valid(action.buf) then
@@ -117,6 +128,7 @@ M.start = function(spec)
       reads.read { buf = action.buf, initial = checkpoint.text }
     elseif action.kind == reader.OBSERVATIONS.RETRY then
       ---@cast action ChecktimeReaderRetry
+      observe_read(action.buf, action.changedtick)
       local checkpoint = session.take_checkpoint(action.buf)
       if checkpoint and vim.api.nvim_buf_get_changedtick(action.buf) == checkpoint.changedtick then
         vim.bo[action.buf].modified = true
@@ -124,6 +136,7 @@ M.start = function(spec)
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
     elseif action.kind == reader.OBSERVATIONS.BASE then
       ---@cast action ChecktimeReaderBase
+      observe_read(action.buf, action.changedtick)
       local checkpoint = session.take_checkpoint(action.buf)
       if
         checkpoint
@@ -135,7 +148,6 @@ M.start = function(spec)
         vim.bo[action.buf].modified = true
         state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
       else
-        session.changed(action.buf, vim.api.nvim_buf_get_changedtick(action.buf))
         state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = action.base }
         if action.observed and action.base.text ~= action.observed then
           state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }

@@ -11,11 +11,13 @@ local reader = {}
 ---@field kind "retry"
 ---@field buf integer
 ---@field session ChecktimeSession
+---@field changedtick integer
 
 ---@class ChecktimeReaderBase
 ---@field kind "base"
 ---@field buf integer
 ---@field session ChecktimeSession
+---@field changedtick integer
 ---@field base ChecktimeBase
 ---@field observed? string
 
@@ -56,17 +58,19 @@ reader.start = function(done)
       return
     end
 
+    local changedtick = vim.api.nvim_buf_get_changedtick(request.buf)
     local state, version, text = snapshotter.read(request.buf)
     if not session.finish_read(current, token) then
       return
     end
     if state == snapshotter.STATES.RETRY then
-      done { kind = OBSERVATIONS.RETRY, buf = request.buf, session = current }
+      done { kind = OBSERVATIONS.RETRY, buf = request.buf, session = current, changedtick = changedtick }
     elseif state == snapshotter.STATES.RECONCILE then
       done {
         kind = OBSERVATIONS.BASE,
         buf = request.buf,
         session = current,
+        changedtick = changedtick,
         base = { text = request.initial or text, version = version },
         observed = text,
       }
@@ -75,6 +79,7 @@ reader.start = function(done)
         kind = OBSERVATIONS.BASE,
         buf = request.buf,
         session = current,
+        changedtick = changedtick,
         base = { text = request.initial, version = version },
       }
     else
