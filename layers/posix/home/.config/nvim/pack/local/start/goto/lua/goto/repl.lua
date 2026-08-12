@@ -1,11 +1,37 @@
 local async = require "goto.async"
 local cmds = require "goto.commands"
+local lib = require "goto.lib"
+
+local M = {}
 
 local REPL_IFS = string.char(31)
 local exec = assert(unpack(vim.api.nvim_get_runtime_file("libexec/repl.sh", false)))
 
+do
+  local tag = "__goto_repl_path__"
+  vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPre" }, {
+    group = lib.group,
+    callback = function(args)
+      if args.file ~= "" then
+        vim.b[args.buf][tag] = vim.fs.abspath(args.file)
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("BufFilePost", {
+    group = lib.group,
+    callback = function(args)
+      vim.b[args.buf][tag] = vim.fs.abspath(args.file)
+    end,
+  })
+
+  M.buf_path = function(buf)
+    return vim.b[buf][tag] or vim.fs.abspath(vim.api.nvim_buf_get_name(buf))
+  end
+end
+
 local metadata = function(buf, target)
-  local filename = vim.fn.fnamemodify(vim.fn.bufname(buf), [[:p]])
+  local filename = M.buf_path(buf)
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
   local paths = vim.iter(vim.fs.parents(filename)):totable()
   table.remove(paths)
@@ -76,3 +102,5 @@ local clear = function()
 end
 
 cmds.register { repl = async(repl), ["repl-clear"] = clear }
+
+return M
