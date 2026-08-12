@@ -74,6 +74,7 @@ M.start = function(spec)
 
   local watches ---@type ChecktimeWatcher
   local reads ---@type ChecktimeReader
+
   ---@param action ChecktimeIngressAction
   local post = function(action)
     if not vim.api.nvim_buf_is_valid(action.buf) then
