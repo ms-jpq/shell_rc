@@ -62,6 +62,7 @@ end
 ---@param path string
 ---@return ChecktimeSession
 M.attach = function(buf, path)
+  M.detach(buf)
   epoch = epoch + 1
   local session = {
     buf = buf,
@@ -218,6 +219,17 @@ M.pending = function()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     local current = M.current(buf)
     if current and current.pending then
+      table.insert(bufs, buf)
+    end
+  end
+  return bufs
+end
+
+---@return integer[]
+M.buffers = function()
+  local bufs = {}
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if M.current(buf) then
       table.insert(bufs, buf)
     end
   end

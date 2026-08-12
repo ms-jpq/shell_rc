@@ -68,6 +68,20 @@ M.start = function(spec)
   local watches ---@type ChecktimeWatcher
   local reads ---@type ChecktimeReader
 
+  ---@param buf integer
+  local local_change = function(buf)
+    local changedtick = vim.api.nvim_buf_get_changedtick(buf)
+    if not session.changed(buf, changedtick) then
+      return
+    end
+    local echo = session.is_echo(buf, changedtick)
+    session.take_rewrite(buf)
+    if echo then
+      return
+    end
+    state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.LOCAL }
+  end
+
   ---@param action ChecktimeIngressAction
   local post = function(action)
     if not vim.api.nvim_buf_is_valid(action.buf) then
@@ -84,13 +98,7 @@ M.start = function(spec)
         session.clear_rewrite(action.buf)
       end
     elseif action.kind == EVENTS.LOCAL then
-      local changedtick = vim.api.nvim_buf_get_changedtick(action.buf)
-      local echo = session.is_echo(action.buf, changedtick)
-      session.take_rewrite(action.buf)
-      if echo or not session.changed(action.buf, changedtick) then
-        return
-      end
-      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.LOCAL }
+      local_change(action.buf)
     elseif action.kind == EVENTS.REMOTE then
       state.remote(action.buf, action.version)
     elseif action.kind == EVENTS.WATCH then
@@ -165,8 +173,8 @@ M.start = function(spec)
   ---@return ChecktimeBatch?
   mb.latest = function(buf, before)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-    if changedtick ~= before and not session.is_echo(buf, changedtick) and session.changed(buf, changedtick) then
-      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.LOCAL }
+    if changedtick ~= before then
+      local_change(buf)
     end
     return state.latest(buf, changedtick)
   end
@@ -174,6 +182,9 @@ M.start = function(spec)
   ---@return table<integer, integer>
   mb.take = function()
     watches.retry()
+    for _, buf in ipairs(session.buffers()) do
+      local_change(buf)
+    end
     return state.take(function(buf)
       if not vim.api.nvim_buf_is_valid(buf) then
         return nil
