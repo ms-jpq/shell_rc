@@ -5,6 +5,14 @@ local M = {}
 local SESSION = "__checktime_session__"
 local epoch = 0
 
+---@class ChecktimeRewrite
+---@field before integer
+---@field after? integer
+
+---@class ChecktimePostWriteCheckpoint
+---@field changedtick integer
+---@field text string
+
 ---@class ChecktimeSession
 ---@field buf integer
 ---@field epoch integer
