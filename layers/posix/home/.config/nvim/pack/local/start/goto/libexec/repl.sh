@@ -51,6 +51,9 @@ case "$REPL_TARGET" in
   if [[ $REPL_FILE_NAME == *.md ]]; then
     EXPLICIT_TARGET_PATH="$(awk -v PARSE_KEY='repl-target' -- "$FRONTMATTER" < "$REPL_FILE_NAME")"
   fi
+  if [[ $EXPLICIT_TARGET_PATH == '*' ]]; then
+    REPL_TARGET='*'
+  fi
 
   TM=(tmux -S "$SOCKET")
   CURRENT_WINDOW="$("${TM[@]}" display-message -t "$CURRENT_PANE" -p -F '#{window_id}')"
