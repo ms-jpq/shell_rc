@@ -126,7 +126,11 @@ M.start = function(commit)
     end
     local committed = batch
     if instruction.modified then
-      committed = { events = { remote = batch.events.remote } }
+      committed = {
+        base = batch.base,
+        changedtick = batch.changedtick,
+        events = { remote = batch.events.remote },
+      }
     end
     commit { buf = buf, batch = committed, base = instruction.base }
   end
