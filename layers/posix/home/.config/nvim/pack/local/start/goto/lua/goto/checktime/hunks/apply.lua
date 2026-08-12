@@ -1,4 +1,4 @@
-local buffer_state = require "goto.checktime.buffer-state"
+local session = require "goto.checktime.session"
 
 local M = {}
 
@@ -17,7 +17,7 @@ end
 ---@param mark fun(start: integer, finish: integer)
 ---@return boolean
 M.run = function(buf, current, replacement, mark)
-  return buffer_state.rewrite(buf, function()
+  local apply = function()
     vim.api.nvim_buf_call(buf, function()
       for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
         if index == #replacement.changes then
@@ -49,7 +49,8 @@ M.run = function(buf, current, replacement, mark)
       end
     end)
     return true
-  end)
+  end
+  return session.current(buf) and session.rewrite(buf, apply) or apply()
 end
 
 return M

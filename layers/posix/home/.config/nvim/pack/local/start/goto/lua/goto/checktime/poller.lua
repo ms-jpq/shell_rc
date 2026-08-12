@@ -27,12 +27,13 @@ M.start = function(path, changed, interval)
   end
 
   ---@diagnostic disable-next-line: missing-fields
-  local watcher = { path = path } ---@type ChecktimePoller
-  watcher.close = function()
+  local p = { path = path } ---@type ChecktimePoller
+
+  p.close = function()
     handle:stop()
     handle:close()
   end
-  return watcher
+  return p
 end
 
 return M

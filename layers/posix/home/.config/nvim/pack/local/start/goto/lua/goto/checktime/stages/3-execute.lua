@@ -1,7 +1,7 @@
 local async = require "goto.async"
-local buffer_state = require "goto.checktime.buffer-state"
 local hunks = require "goto.checktime.hunks"
 local resolve = require "goto.checktime.stages.2-resolve"
+local session = require "goto.checktime.session"
 local snapshotter = require "goto.checktime.snapshotter"
 
 local M = {}
@@ -18,12 +18,12 @@ M.start = function(commit)
   ---@param buf integer
   ---@return ChecktimeBase?
   local publish = function(buf)
-    buffer_state.write(buf, true)
+    session.write(buf, true)
     local ok = pcall(vim.api.nvim_buf_call, buf, function()
       vim.cmd [[silent! write! ++p]]
     end)
     if not ok or vim.bo[buf].modified then
-      buffer_state.write(buf, false)
+      session.write(buf, false)
       return nil
     end
 
@@ -34,14 +34,14 @@ M.start = function(commit)
     if not vim.api.nvim_buf_is_valid(buf) then
       return nil
     end
-    buffer_state.write(buf, false)
+    session.write(buf, false)
     return { text = text, version = version }
   end
 
   ---@param buf integer
   ---@return boolean
   local reload = function(buf)
-    local ok = buffer_state.reload(buf, function()
+    local ok = session.reload(buf, function()
       vim.api.nvim_buf_call(buf, function()
         vim.cmd [[silent edit!]]
       end)
