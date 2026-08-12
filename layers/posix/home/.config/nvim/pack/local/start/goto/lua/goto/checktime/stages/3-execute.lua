@@ -124,7 +124,11 @@ M.start = function(commit)
       end
       return
     end
-    commit { buf = buf, batch = batch, base = instruction.base }
+    local committed = batch
+    if instruction.modified then
+      committed = { events = { remote = batch.events.remote } }
+    end
+    commit { buf = buf, batch = committed, base = instruction.base }
   end
 
   return { run = run }
