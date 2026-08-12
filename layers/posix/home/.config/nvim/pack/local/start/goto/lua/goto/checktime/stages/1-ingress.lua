@@ -182,7 +182,7 @@ M.start = function(spec)
         watched = watches.has(buf),
         reading = reads.active(buf),
         writing = session.writing(buf),
-        insert_base = snapshotter.insert_base(buf) ~= nil,
+        insert_base = session.insert_base(buf) ~= nil,
         modified = vim.bo[buf].modified,
         changedtick = vim.api.nvim_buf_get_changedtick(buf),
       }
@@ -200,9 +200,11 @@ M.start = function(spec)
     }
   end
 
-  snapshotter.track_insert(function(buf)
-    if not reads.active(buf) then
-      post { kind = EVENTS.REMOTE, buf = buf, version = vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf)) }
+  autocmd.insert_mode({ group = lib.group }, function(event)
+    session.begin_insert(event.buf, snapshotter.buffer(event.buf).text)
+  end, function(event)
+    if session.end_insert(event.buf) and not reads.active(event.buf) then
+      post { kind = EVENTS.REMOTE, buf = event.buf, version = vim.uv.fs_stat(vim.api.nvim_buf_get_name(event.buf)) }
     end
   end)
 

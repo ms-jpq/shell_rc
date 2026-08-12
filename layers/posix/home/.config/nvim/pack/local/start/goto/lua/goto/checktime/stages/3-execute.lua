@@ -75,7 +75,7 @@ M.start = function(commit)
       return vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_get_changedtick(buf) == batch.changedtick
     end
 
-    if not current() or snapshotter.insert_base(buf) or instruction.action == resolve.ACTIONS.RETRY then
+    if not current() or session.insert_base(buf) or instruction.action == resolve.ACTIONS.RETRY then
       return
     end
 
@@ -94,7 +94,7 @@ M.start = function(commit)
       if
         not snapshotter.unchanged(buf, instruction.base and instruction.base.version)
         or not current()
-        or snapshotter.insert_base(buf)
+        or session.insert_base(buf)
       then
         return
       end
@@ -110,7 +110,7 @@ M.start = function(commit)
     end
 
     ---@cast instruction ChecktimeReconcile
-    if not snapshotter.unchanged(buf, instruction.base.version) or not current() or snapshotter.insert_base(buf) then
+    if not snapshotter.unchanged(buf, instruction.base.version) or not current() or session.insert_base(buf) then
       return
     end
 

@@ -1,7 +1,5 @@
 local async = require "goto.async"
-local autocmd = require "goto.autocmd"
 local lib = require "goto.lib"
-local session = require "goto.checktime.session"
 
 local M = {}
 
@@ -60,23 +58,6 @@ M.buffer = function(buf)
     endofline = endofline,
     final_empty = lines[#lines] == "",
   }
-end
-
----@param buf integer
----@return string?
-M.insert_base = function(buf)
-  return session.insert_base(buf)
-end
-
----@param refresh fun(buf: integer)
-M.track_insert = function(refresh)
-  autocmd.insert_mode({ group = lib.group }, function(event)
-    session.begin_insert(event.buf, M.buffer(event.buf).text)
-  end, function(event)
-    if session.end_insert(event.buf) then
-      refresh(event.buf)
-    end
-  end)
 end
 
 ---@param current ChecktimeBuffer

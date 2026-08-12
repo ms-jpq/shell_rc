@@ -1,6 +1,7 @@
 local hunks = require "goto.checktime.hunks"
 local lib = require "goto.lib"
 local reducer = require "goto.checktime.redux.reducer"
+local session = require "goto.checktime.session"
 local snapshotter = require "goto.checktime.snapshotter"
 
 local M = {}
@@ -88,7 +89,7 @@ M.start = function(spec)
       return assert(false, vim.inspect(read))
     end
 
-    local insert_base, current = snapshotter.insert_base(buf), snapshotter.buffer(buf)
+    local insert_base, current = session.insert_base(buf), snapshotter.buffer(buf)
     local observed_text = remote or ""
     local base_text = snapshotter.merge_text(current, batch.base and batch.base.text or insert_base or "")
     local local_text = snapshotter.merge_text(current, current.text)
