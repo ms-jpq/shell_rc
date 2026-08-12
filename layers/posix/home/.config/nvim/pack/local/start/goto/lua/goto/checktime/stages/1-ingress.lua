@@ -29,7 +29,7 @@ local M = {}
 ---@class ChecktimeLoad
 ---@field kind "load"
 ---@field buf integer
----@field base string
+---@field text string
 
 ---@class ChecktimePostWrite
 ---@field kind "post-write"
@@ -39,6 +39,7 @@ local M = {}
 
 ---@class ChecktimeAutocmdArgs
 ---@field buf integer
+---@field event string
 
 ---@class ChecktimeIngress
 ---@field commit fun(change: ChecktimeCommit)
@@ -73,9 +74,8 @@ M.start = function(spec)
 
   local watches ---@type ChecktimeWatcher
   local reads ---@type ChecktimeReader
-  local post ---@type fun(action: ChecktimeIngressAction)
   ---@param action ChecktimeIngressAction
-  post = function(action)
+  local post = function(action)
     if not vim.api.nvim_buf_is_valid(action.buf) then
       return
     elseif action.kind == EVENTS.COMMIT then
@@ -102,11 +102,10 @@ M.start = function(spec)
     elseif action.kind == EVENTS.LOAD then
       ---@cast action ChecktimeLoad
       watches.update(action.buf, vim.bo[action.buf].modifiable and vim.api.nvim_buf_get_name(action.buf) or "")
-      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
-      state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = { text = action.base } }
+      state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = { text = action.text } }
       buffer_state.clear_rewrite(action.buf)
       buffer_state.take_checkpoint(action.buf)
-      reads.read { buf = action.buf, base = action.base }
+      reads.read { buf = action.buf, initial = action.text }
     elseif action.kind == EVENTS.POST_WRITE then
       if buffer_state.writing(action.buf) then
         return
@@ -138,10 +137,20 @@ M.start = function(spec)
         state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
       else
         state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = action.base }
+        if action.observed and action.base.text ~= action.observed then
+          state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
+        end
       end
     else
       assert(false, vim.inspect(action))
     end
+  end
+
+  local load = function(buf, refresh)
+    if not buffer_state.register(buf, refresh) then
+      return
+    end
+    post { kind = EVENTS.LOAD, buf = buf, text = snapshotter.buffer(buf).text }
   end
 
   watches = watcher.start {
@@ -229,7 +238,7 @@ M.start = function(spec)
     ---@param args ChecktimeAutocmdArgs
     callback = async(function(args)
       if not buffer_state.reloading(args.buf) then
-        post { kind = EVENTS.LOAD, buf = args.buf, base = snapshotter.buffer(args.buf).text }
+        load(args.buf, args.event == "BufFilePost")
       end
     end),
   })
@@ -288,6 +297,7 @@ M.start = function(spec)
     callback = function(event)
       reads.drop(event.buf)
       if not buffer_state.reloading(event.buf) then
+        buffer_state.unregister(event.buf)
         state.drop(event.buf)
       end
     end,
@@ -305,7 +315,7 @@ M.start = function(spec)
   autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-        post { kind = EVENTS.LOAD, buf = buf, base = snapshotter.buffer(buf).text }
+        load(buf)
       end
     end
   end)

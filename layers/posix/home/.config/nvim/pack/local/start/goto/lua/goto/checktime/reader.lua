@@ -4,7 +4,7 @@ local reader = {}
 
 ---@class ChecktimeRead
 ---@field buf integer
----@field base? string
+---@field initial? string
 
 ---@class ChecktimeReaderRetry
 ---@field kind "retry"
@@ -14,6 +14,7 @@ local reader = {}
 ---@field kind "base"
 ---@field buf integer
 ---@field base ChecktimeBase
+---@field observed? string
 
 ---@alias ChecktimeReaderObservation ChecktimeReaderRetry|ChecktimeReaderBase
 
@@ -64,9 +65,14 @@ reader.start = function(done)
     elseif state == snapshotter.STATES.RETRY then
       done { kind = OBSERVATIONS.RETRY, buf = request.buf }
     elseif state == snapshotter.STATES.RECONCILE then
-      done { kind = OBSERVATIONS.BASE, buf = request.buf, base = { text = request.base or text, version = version } }
+      done {
+        kind = OBSERVATIONS.BASE,
+        buf = request.buf,
+        base = { text = request.initial or text, version = version },
+        observed = text,
+      }
     elseif state == snapshotter.STATES.OPAQUE or state == snapshotter.STATES.MISSING then
-      done { kind = OBSERVATIONS.BASE, buf = request.buf, base = { text = request.base, version = version } }
+      done { kind = OBSERVATIONS.BASE, buf = request.buf, base = { text = request.initial, version = version } }
     else
       assert(false, vim.inspect { state = state, buf = request.buf })
     end

@@ -5,7 +5,7 @@ local REPL_IFS = string.char(31)
 local exec = assert(unpack(vim.api.nvim_get_runtime_file("libexec/repl.sh", false)))
 
 local metadata = function(buf, target)
-  local filename = vim.api.nvim_buf_get_name(buf)
+  local filename = vim.fn.fnamemodify(vim.fn.bufname(buf), [[:p]])
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
   local paths = vim.iter(vim.fs.parents(filename)):totable()
   table.remove(paths)

@@ -1,6 +1,26 @@
 local M = {}
 
 do
+  local REGISTRATION = "__checktime_registration__"
+
+  ---@param buf integer
+  ---@param refresh? boolean
+  ---@return boolean
+  M.register = function(buf, refresh)
+    if vim.b[buf][REGISTRATION] and not refresh then
+      return false
+    end
+    vim.b[buf][REGISTRATION] = true
+    return true
+  end
+
+  ---@param buf integer
+  M.unregister = function(buf)
+    vim.b[buf][REGISTRATION] = nil
+  end
+end
+
+do
   local RELOADING = "__checktime_reloading__"
 
   ---@param buf integer
