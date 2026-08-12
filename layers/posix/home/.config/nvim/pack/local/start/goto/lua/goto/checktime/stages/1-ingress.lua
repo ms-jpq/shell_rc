@@ -124,6 +124,7 @@ M.start = function(spec)
       state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
     elseif action.kind == reader.OBSERVATIONS.BASE then
       ---@cast action ChecktimeReaderBase
+      local_change(action.buf)
       local checkpoint = session.take_checkpoint(action.buf)
       if
         checkpoint
@@ -135,7 +136,6 @@ M.start = function(spec)
         vim.bo[action.buf].modified = true
         state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
       else
-        local_change(action.buf)
         state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = action.base }
         if action.observed and action.base.text ~= action.observed then
           state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
