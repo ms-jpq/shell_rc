@@ -261,17 +261,6 @@ M.start = function(spec)
     command = [[silent! wall! ++p]],
   })
 
-  vim.api.nvim_create_autocmd("FocusGained", {
-    group = lib.group,
-    callback = function()
-      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        if watches.has(buf) then
-          post { kind = EVENTS.REMOTE, buf = buf }
-        end
-      end
-    end,
-  })
-
   vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
     group = lib.group,
     callback = async(function()
