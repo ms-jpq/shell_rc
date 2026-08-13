@@ -1,6 +1,6 @@
 require("nvim-treesitter").setup {}
 
-vim.opt.indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
+-- vim.opt.indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
 
 -- require("treesitter-context").setup {
 --   multiline_threshold = 1,
