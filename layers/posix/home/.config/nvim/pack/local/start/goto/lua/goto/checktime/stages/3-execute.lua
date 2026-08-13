@@ -9,6 +9,39 @@ local FLASH_SPAN = 1688
 
 local ns = vim.api.nvim_create_namespace "goto.checktime"
 
+---@param buf integer
+---@return boolean
+local save = function(buf)
+  local write = function()
+    vim.cmd [[silent! write! ++p]]
+  end
+  if buf == vim.api.nvim_get_current_buf() then
+    return pcall(write)
+  end
+
+  local opened, win = pcall(vim.api.nvim_open_win, buf, false, {
+    relative = "laststatus",
+    anchor = "SE",
+    row = 0,
+    col = vim.o.columns - 1,
+    width = 1,
+    height = 1,
+    style = "minimal",
+    focusable = false,
+    hide = true,
+    noautocmd = true,
+  })
+  if not opened then
+    return false
+  end
+
+  local ok = pcall(vim.api.nvim_win_call, win, write)
+  if vim.api.nvim_win_is_valid(win) then
+    pcall(vim.api.nvim_win_close, win, true)
+  end
+  return ok
+end
+
 ---@class ChecktimeExecutor
 ---@field run fun(buf: integer, batch: ChecktimeBatch, instruction: ChecktimeInstruction)
 
@@ -19,9 +52,7 @@ M.start = function(commit)
   ---@return ChecktimeBase?
   local publish = function(buf)
     session.write(buf, true)
-    local ok = pcall(vim.api.nvim_buf_call, buf, function()
-      vim.cmd [[silent! write! ++p]]
-    end)
+    local ok = save(buf)
     if not ok or vim.bo[buf].modified then
       session.write(buf, false)
       return nil
