@@ -173,8 +173,9 @@ M.start = function(spec)
     local text = snapshotter.buffer(buf).text
     inbox.dispatch { kind = mailbox.ACTIONS.BASE, buf = buf, base = { text = text } }
     session.clear_rewrite(buf)
+    session.take_checkpoint(buf)
     if path ~= "" then
-      start_read(buf, text)
+      reads.read { buf = buf, initial = text }
     end
   end
 
