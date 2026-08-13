@@ -34,7 +34,7 @@ local epoch = 0
 ---@field writing? boolean
 ---@field written? string
 ---@field checkpoint? ChecktimePostWriteCheckpoint
----@field facts? ChecktimeFacts
+---@field mailbox? ChecktimeMailboxFacts
 
 ---@class ChecktimeWatchConfig
 ---@field changed fun(buf: integer, version?: uv.fs_stat.result)
@@ -224,37 +224,37 @@ M.start_watch = function(spec)
 end
 
 ---@param buf integer
----@return ChecktimeFacts?
-M.facts = function(buf)
+---@return ChecktimeMailboxFacts?
+M.mailbox = function(buf)
   local current = M.current(buf)
-  return current and current.facts or nil
+  return current and current.mailbox or nil
 end
 
 ---@param buf integer
----@param facts ChecktimeFacts
-M.put_facts = function(buf, facts)
+---@param mailbox ChecktimeMailboxFacts
+M.put_mailbox = function(buf, mailbox)
   local current = M.current(buf)
   if current then
-    current.facts = facts
+    current.mailbox = mailbox
     M.put(current)
   end
 end
 
 ---@param buf integer
-M.drop_facts = function(buf)
+M.drop_mailbox = function(buf)
   local current = M.current(buf)
   if current then
-    current.facts = nil
+    current.mailbox = nil
     M.put(current)
   end
 end
 
 ---@return integer[]
-M.fact_buffers = function()
+M.mailbox_buffers = function()
   local bufs = {}
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     local current = M.current(buf)
-    if current and current.facts and next(current.facts.events) then
+    if current and current.mailbox and next(current.mailbox.events) then
       table.insert(bufs, buf)
     end
   end

@@ -9,13 +9,13 @@ local M = {}
 ---@field endofline boolean
 ---@field final_empty boolean
 
----@alias ChecktimeReadState "reconcile"|"opaque"|"retry"|"missing"
+---@alias ChecktimeFileObservation "text"|"opaque"|"unstable"|"missing"
 
----@class ChecktimeReadStates
-M.STATES = {
-  RECONCILE = "reconcile",
+---@class ChecktimeFileObservations
+M.OBSERVATIONS = {
+  TEXT = "text",
   OPAQUE = "opaque",
-  RETRY = "retry",
+  UNSTABLE = "unstable",
   MISSING = "missing",
 }
 
@@ -123,45 +123,45 @@ end
 
 ---@param buf integer
 ---@param content boolean
----@return ChecktimeReadState, uv.fs_stat.result?, string?
+---@return ChecktimeFileObservation, uv.fs_stat.result?, string?
 local read_file = function(buf, content)
   local name = vim.api.nvim_buf_get_name(buf)
   local _, before = async.uv.fs_stat(name)
   async.scheduled()
   if not vim.api.nvim_buf_is_valid(buf) then
-    return M.STATES.RETRY, nil, nil
+    return M.OBSERVATIONS.UNSTABLE, nil, nil
   end
   if not before then
-    return M.STATES.MISSING, nil, nil
+    return M.OBSERVATIONS.MISSING, nil, nil
   elseif before.size > MAX_BYTES or not content then
-    return M.STATES.OPAQUE, before, nil
+    return M.OBSERVATIONS.OPAQUE, before, nil
   end
 
   local ok, text = pcall(vim.fn.readblob, name)
   if not ok then
-    return M.STATES.RETRY, nil, nil
+    return M.OBSERVATIONS.UNSTABLE, nil, nil
   elseif type(text) ~= "string" then
-    return M.STATES.OPAQUE, nil, nil
+    return M.OBSERVATIONS.OPAQUE, nil, nil
   end
-  text = decode(buf, text)
+  text = decode(buf, assert(text))
   if not text then
-    return M.STATES.OPAQUE, nil, nil
+    return M.OBSERVATIONS.OPAQUE, nil, nil
   end
 
   local _, after = async.uv.fs_stat(name)
   async.scheduled()
   if not vim.api.nvim_buf_is_valid(buf) or not same_version(before, after) then
-    return M.STATES.RETRY, nil, nil
+    return M.OBSERVATIONS.UNSTABLE, nil, nil
   end
-  return M.STATES.RECONCILE, before, text
+  return M.OBSERVATIONS.TEXT, before, text
 end
 
 ---@param buf integer
 ---@param expected string
 ---@return ChecktimeBase?, boolean diverged
 M.attest = function(buf, expected)
-  local state, version, text = read_file(buf, true)
-  if state ~= M.STATES.RECONCILE then
+  local observation, version, text = read_file(buf, true)
+  if observation ~= M.OBSERVATIONS.TEXT then
     return nil, false
   end
   if text ~= expected then
@@ -171,7 +171,7 @@ M.attest = function(buf, expected)
 end
 
 ---@param buf integer
----@return ChecktimeReadState, uv.fs_stat.result?, string?
+---@return ChecktimeFileObservation, uv.fs_stat.result?, string?
 M.read = function(buf)
   local content = vim.bo[buf].modified or #vim.fn.win_findbuf(buf) > 0
   return read_file(buf, content)

@@ -1,6 +1,6 @@
 local hunks = require "goto.checktime.hunks"
 local lib = require "goto.lib"
-local reducer = require "goto.checktime.redux.reducer"
+local mailbox = require "goto.checktime.mailbox"
 local session = require "goto.checktime.session"
 local snapshotter = require "goto.checktime.snapshotter"
 
@@ -63,7 +63,7 @@ M.start = function(spec)
   ---@param batch ChecktimeBatch
   ---@return ChecktimeInstruction
   resolver.plan = function(buf, batch)
-    local local_change, remote_change = batch.events[reducer.CHANGES.LOCAL], batch.events[reducer.CHANGES.REMOTE]
+    local local_change, remote_change = batch.events[mailbox.CHANGES.LOCAL], batch.events[mailbox.CHANGES.REMOTE]
     local local_grace = within_grace(local_change, spec.local_grace_ms)
     local buffer_modified = vim.bo[buf].modified
 
@@ -77,16 +77,19 @@ M.start = function(spec)
       return { action = M.ACTIONS.NOOP }
     end
 
-    local read, version, remote = snapshotter.read(buf)
-    if read == snapshotter.STATES.RETRY then
+    local observation, version, remote = snapshotter.read(buf)
+    if observation == snapshotter.OBSERVATIONS.UNSTABLE then
       return { action = M.ACTIONS.RETRY }
     end
-    if read == snapshotter.STATES.OPAQUE then
-      return { action = buffer_modified and M.ACTIONS.RETRY or M.ACTIONS.RELOAD }
+    if observation == snapshotter.OBSERVATIONS.OPAQUE then
+      if buffer_modified then
+        return { action = M.ACTIONS.RETRY }
+      end
+      return { action = M.ACTIONS.RELOAD }
     end
-    if read ~= snapshotter.STATES.RECONCILE and read ~= snapshotter.STATES.MISSING then
+    if observation ~= snapshotter.OBSERVATIONS.TEXT and observation ~= snapshotter.OBSERVATIONS.MISSING then
       ---@diagnostic disable-next-line: return-type-mismatch
-      return assert(false, vim.inspect(read))
+      return assert(false, vim.inspect(observation))
     end
 
     local insert_base, current = session.insert_base(buf), snapshotter.buffer(buf)
@@ -107,7 +110,7 @@ M.start = function(spec)
       text = text,
       base = { text = observed_text, version = version },
       modified = modified,
-      create = read == snapshotter.STATES.MISSING
+      create = observation == snapshotter.OBSERVATIONS.MISSING
         and modified
         and insert_base == nil
         and not (batch.base and batch.base.version),

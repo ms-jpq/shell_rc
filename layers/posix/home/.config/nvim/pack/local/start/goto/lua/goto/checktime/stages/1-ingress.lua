@@ -1,11 +1,10 @@
 local async = require "goto.async"
 local autocmd = require "goto.autocmd"
 local lib = require "goto.lib"
+local mailbox = require "goto.checktime.mailbox"
 local reader = require "goto.checktime.reader"
-local reducer = require "goto.checktime.redux.reducer"
 local session = require "goto.checktime.session"
 local snapshotter = require "goto.checktime.snapshotter"
-local store = require "goto.checktime.redux.store"
 
 local M = {}
 
@@ -60,7 +59,7 @@ local EVENTS = {
 M.start = function(spec)
   ---@diagnostic disable-next-line: missing-fields
   local mb = {} ---@type ChecktimeIngress
-  local state = store.start {
+  local inbox = mailbox.start {
     local_debounce_ms = spec.local_debounce_ms,
     remote_quiet_ms = spec.remote_quiet_ms,
   }
@@ -80,7 +79,7 @@ M.start = function(spec)
     if echo then
       return
     end
-    state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = buf, change = reducer.CHANGES.LOCAL }
+    inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = buf, change = mailbox.CHANGES.LOCAL }
   end
 
   ---@param buf integer
@@ -105,14 +104,14 @@ M.start = function(spec)
       return
     elseif action.kind == EVENTS.COMMIT then
       ---@cast action ChecktimeCommitEvent
-      state.dispatch { kind = reducer.ACTIONS.COMMIT, buf = action.buf, base = action.base, batch = action.batch }
+      inbox.dispatch { kind = mailbox.ACTIONS.COMMIT, buf = action.buf, base = action.base, batch = action.batch }
       if action.discard then
         session.clear_rewrite(action.buf)
       end
     elseif action.kind == EVENTS.LOCAL then
       local_change(action.buf)
     elseif action.kind == EVENTS.REMOTE then
-      state.remote(action.buf, action.version)
+      inbox.remote(action.buf, action.version)
     elseif action.kind == EVENTS.WATCH then
       rebind(action.buf)
     elseif action.kind == EVENTS.POST_WRITE then
@@ -133,7 +132,7 @@ M.start = function(spec)
       if checkpoint and vim.api.nvim_buf_get_changedtick(action.buf) == checkpoint.changedtick then
         vim.bo[action.buf].modified = true
       end
-      state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
+      inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
     elseif action.kind == reader.OBSERVATIONS.BASE then
       ---@cast action ChecktimeReaderBase
       observe_read(action.buf, action.changedtick)
@@ -146,11 +145,11 @@ M.start = function(spec)
         )
       then
         vim.bo[action.buf].modified = true
-        state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
+        inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
       else
-        state.dispatch { kind = reducer.ACTIONS.BASE, buf = action.buf, base = action.base }
+        inbox.dispatch { kind = mailbox.ACTIONS.BASE, buf = action.buf, base = action.base }
         if action.observed and action.base.text ~= action.observed then
-          state.dispatch { kind = reducer.ACTIONS.CHANGE, buf = action.buf, change = reducer.CHANGES.REMOTE }
+          inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
         end
       end
     else
@@ -165,7 +164,7 @@ M.start = function(spec)
     local path = vim.bo[buf].modifiable and vim.api.nvim_buf_get_name(buf) or ""
     assert(watches.attach(buf, path, false, path ~= ""))
     local text = snapshotter.buffer(buf).text
-    state.dispatch { kind = reducer.ACTIONS.BASE, buf = buf, base = { text = text } }
+    inbox.dispatch { kind = mailbox.ACTIONS.BASE, buf = buf, base = { text = text } }
     session.clear_rewrite(buf)
     session.take_checkpoint(buf)
     if path ~= "" then
@@ -183,10 +182,10 @@ M.start = function(spec)
       return
     end
     reads.drop(buf)
-    local facts = session.facts(buf)
-    local local_change = facts and facts.events[reducer.CHANGES.LOCAL]
+    local facts = session.mailbox(buf)
+    local local_change = facts and facts.events[mailbox.CHANGES.LOCAL]
     local text = snapshotter.buffer(buf).text
-    state.forget_base(buf)
+    inbox.forget_base(buf)
     if not enabled then
       return
     end
@@ -213,7 +212,7 @@ M.start = function(spec)
     if changedtick ~= before then
       local_change(buf)
     end
-    return state.latest(buf, changedtick)
+    return inbox.latest(buf, changedtick)
   end
 
   ---@return table<integer, integer>
@@ -222,7 +221,7 @@ M.start = function(spec)
     for _, buf in ipairs(session.buffers()) do
       local_change(buf)
     end
-    return state.take(function(buf)
+    return inbox.take(function(buf)
       if not vim.api.nvim_buf_is_valid(buf) then
         return nil
       end

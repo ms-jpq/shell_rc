@@ -59,13 +59,13 @@ reader.start = function(done)
     end
 
     local changedtick = vim.api.nvim_buf_get_changedtick(request.buf)
-    local state, version, text = snapshotter.read(request.buf)
+    local observation, version, text = snapshotter.read(request.buf)
     if not session.finish_read(current, token) then
       return
     end
-    if state == snapshotter.STATES.RETRY then
+    if observation == snapshotter.OBSERVATIONS.UNSTABLE then
       done { kind = OBSERVATIONS.RETRY, buf = request.buf, session = current, changedtick = changedtick }
-    elseif state == snapshotter.STATES.RECONCILE then
+    elseif observation == snapshotter.OBSERVATIONS.TEXT then
       done {
         kind = OBSERVATIONS.BASE,
         buf = request.buf,
@@ -74,7 +74,7 @@ reader.start = function(done)
         base = { text = request.initial or text, version = version },
         observed = text,
       }
-    elseif state == snapshotter.STATES.OPAQUE or state == snapshotter.STATES.MISSING then
+    elseif observation == snapshotter.OBSERVATIONS.OPAQUE or observation == snapshotter.OBSERVATIONS.MISSING then
       done {
         kind = OBSERVATIONS.BASE,
         buf = request.buf,
@@ -83,7 +83,7 @@ reader.start = function(done)
         base = { text = request.initial, version = version },
       }
     else
-      assert(false, vim.inspect { state = state, buf = request.buf })
+      assert(false, vim.inspect { observation = observation, buf = request.buf })
     end
   end
 
