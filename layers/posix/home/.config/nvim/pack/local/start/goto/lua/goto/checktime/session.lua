@@ -9,10 +9,6 @@ local epoch = 0
 ---@field before integer
 ---@field after? integer
 
----@class ChecktimePostWriteCheckpoint
----@field changedtick integer
----@field text string
-
 ---@class ChecktimeWatchBinding
 ---@field path string
 ---@field epoch integer
@@ -33,7 +29,6 @@ local epoch = 0
 ---@field rewrite? ChecktimeRewrite
 ---@field writing? boolean
 ---@field written? string
----@field checkpoint? ChecktimePostWriteCheckpoint
 ---@field mailbox? ChecktimeMailboxFacts
 
 ---@class ChecktimeWatchConfig
@@ -481,29 +476,6 @@ M.take_written = function(buf)
   current.written = nil
   M.put(current)
   return written
-end
-
----@param buf integer
----@param checkpoint ChecktimePostWriteCheckpoint
-M.remember_checkpoint = function(buf, checkpoint)
-  local current = M.current(buf)
-  if current then
-    current.checkpoint = checkpoint
-    M.put(current)
-  end
-end
-
----@param buf integer
----@return ChecktimePostWriteCheckpoint?
-M.take_checkpoint = function(buf)
-  local current = M.current(buf)
-  if not current then
-    return nil
-  end
-  local checkpoint = current.checkpoint
-  current.checkpoint = nil
-  M.put(current)
-  return checkpoint
 end
 
 return M

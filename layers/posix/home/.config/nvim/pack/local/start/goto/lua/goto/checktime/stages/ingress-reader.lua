@@ -3,15 +3,20 @@ local snapshotter = require "goto.checktime.snapshotter"
 
 local reader = {}
 
+---@class ChecktimeReadExpectation
+---@field text string
+
 ---@class ChecktimeRead
 ---@field buf integer
----@field initial? string
+---@field assumed_base? string
+---@field expected? ChecktimeReadExpectation
 
 ---@class ChecktimeReaderRetry
 ---@field kind "retry"
 ---@field buf integer
 ---@field session ChecktimeSession
 ---@field changedtick integer
+---@field expected? ChecktimeReadExpectation
 
 ---@class ChecktimeReaderBase
 ---@field kind "base"
@@ -20,6 +25,7 @@ local reader = {}
 ---@field changedtick integer
 ---@field base ChecktimeBase
 ---@field observed? string
+---@field expected? ChecktimeReadExpectation
 
 ---@alias ChecktimeReaderObservation ChecktimeReaderRetry|ChecktimeReaderBase
 
@@ -64,15 +70,22 @@ reader.start = function(done)
       return
     end
     if observation == snapshotter.OBSERVATIONS.UNSTABLE then
-      done { kind = OBSERVATIONS.RETRY, buf = request.buf, session = current, changedtick = changedtick }
+      done {
+        kind = OBSERVATIONS.RETRY,
+        buf = request.buf,
+        session = current,
+        changedtick = changedtick,
+        expected = request.expected,
+      }
     elseif observation == snapshotter.OBSERVATIONS.TEXT then
       done {
         kind = OBSERVATIONS.BASE,
         buf = request.buf,
         session = current,
         changedtick = changedtick,
-        base = { text = request.initial or text, version = version },
+        base = { text = request.assumed_base or text, version = version },
         observed = text,
+        expected = request.expected,
       }
     elseif observation == snapshotter.OBSERVATIONS.OPAQUE or observation == snapshotter.OBSERVATIONS.MISSING then
       done {
@@ -80,7 +93,8 @@ reader.start = function(done)
         buf = request.buf,
         session = current,
         changedtick = changedtick,
-        base = { text = request.initial, version = version },
+        base = { text = request.assumed_base, version = version },
+        expected = request.expected,
       }
     else
       assert(false, vim.inspect { observation = observation, buf = request.buf })
