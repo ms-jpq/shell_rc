@@ -135,7 +135,6 @@ M.start = function(spec)
       inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
     elseif action.kind == reader.OBSERVATIONS.BASE then
       ---@cast action ChecktimeReaderBase
-      observe_read(action.buf, action.changedtick)
       local checkpoint = session.take_checkpoint(action.buf)
       if
         checkpoint
@@ -147,6 +146,7 @@ M.start = function(spec)
         vim.bo[action.buf].modified = true
         inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
       else
+        session.changed(action.buf, vim.api.nvim_buf_get_changedtick(action.buf))
         inbox.dispatch { kind = mailbox.ACTIONS.BASE, buf = action.buf, base = action.base }
         if action.observed and action.base.text ~= action.observed then
           inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
