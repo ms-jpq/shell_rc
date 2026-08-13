@@ -13,12 +13,7 @@ local ns = vim.api.nvim_create_namespace "goto.checktime"
 ---@return boolean
 local save = function(buf)
   local write = function()
-    local confirm = vim.o.confirm
-    vim.o.confirm = false
-    ---@diagnostic disable-next-line: param-type-mismatch
-    local ok = pcall(vim.cmd, [[silent! write ++p]])
-    vim.o.confirm = confirm
-    return ok
+    vim.cmd [[silent! write! ++p]]
   end
   if buf == vim.api.nvim_get_current_buf() then
     return pcall(write)
