@@ -69,6 +69,17 @@ M.start = function(spec)
   local rebind ---@type fun(buf: integer)
 
   ---@param buf integer
+  ---@param initial? string
+  local start_read = function(buf, initial)
+    local checkpoint = {
+      changedtick = vim.api.nvim_buf_get_changedtick(buf),
+      text = snapshotter.buffer(buf).text,
+    }
+    session.remember_checkpoint(buf, checkpoint)
+    reads.read { buf = buf, initial = initial }
+  end
+
+  ---@param buf integer
   local local_change = function(buf)
     local changedtick = vim.api.nvim_buf_get_changedtick(buf)
     if not session.changed(buf, changedtick) then
@@ -119,12 +130,7 @@ M.start = function(spec)
         return
       end
       session.clear_rewrite(action.buf)
-      local checkpoint = {
-        changedtick = vim.api.nvim_buf_get_changedtick(action.buf),
-        text = snapshotter.buffer(action.buf).text,
-      }
-      session.remember_checkpoint(action.buf, checkpoint)
-      reads.read { buf = action.buf, initial = checkpoint.text }
+      start_read(action.buf, snapshotter.buffer(action.buf).text)
     elseif action.kind == reader.OBSERVATIONS.RETRY then
       ---@cast action ChecktimeReaderRetry
       observe_read(action.buf, action.changedtick)
@@ -143,6 +149,7 @@ M.start = function(spec)
           or action.base.text ~= checkpoint.text
         )
       then
+        observe_read(action.buf, action.changedtick)
         vim.bo[action.buf].modified = true
         inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
       else
@@ -166,9 +173,8 @@ M.start = function(spec)
     local text = snapshotter.buffer(buf).text
     inbox.dispatch { kind = mailbox.ACTIONS.BASE, buf = buf, base = { text = text } }
     session.clear_rewrite(buf)
-    session.take_checkpoint(buf)
     if path ~= "" then
-      reads.read { buf = buf, initial = text }
+      start_read(buf, text)
     end
   end
 
@@ -190,8 +196,7 @@ M.start = function(spec)
       return
     end
     session.clear_rewrite(buf)
-    session.take_checkpoint(buf)
-    reads.read { buf = buf, initial = local_change and nil or text }
+    start_read(buf, local_change and nil or text)
   end
 
   watches = session.start_watch {
