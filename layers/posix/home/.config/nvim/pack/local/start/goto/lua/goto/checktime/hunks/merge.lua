@@ -65,7 +65,7 @@ local variable = function(patches)
   end)
 end
 
-local lines = function(patches)
+local patches_lines = function(patches)
   return vim
     .iter(patches)
     :map(function(patch)
@@ -224,7 +224,10 @@ local replacement = function(group, replacement_lines)
 end
 
 local take_both = function(linefeed, group)
-  return replacement(group, take_both_lines(linefeed, lines(group.local_patches), lines(group.remote_patches)))
+  return replacement(
+    group,
+    take_both_lines(linefeed, patches_lines(group.local_patches), patches_lines(group.remote_patches))
+  )
 end
 
 local merge_overlap = function(linefeed, base, group)
