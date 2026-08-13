@@ -15,6 +15,7 @@ local save = function(buf)
   local write = function()
     local confirm = vim.o.confirm
     vim.o.confirm = false
+    ---@diagnostic disable-next-line: param-type-mismatch
     local ok = pcall(vim.cmd, [[silent! write ++p]])
     vim.o.confirm = confirm
     return ok

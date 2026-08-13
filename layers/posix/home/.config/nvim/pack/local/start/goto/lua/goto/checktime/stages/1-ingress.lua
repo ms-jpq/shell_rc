@@ -341,7 +341,7 @@ M.start = function(spec)
     callback = function(event)
       reads.drop(event.buf)
       if not session.reloading(event.buf) then
-        state.drop(event.buf)
+        inbox.drop(event.buf)
         watches.detach(event.buf)
       end
     end,
