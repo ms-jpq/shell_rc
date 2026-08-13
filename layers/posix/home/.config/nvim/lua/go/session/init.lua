@@ -111,7 +111,6 @@ local restore = function()
   if vim.fn.filereadable(path) == 1 then
     async.scheduled()
     vim.cmd.source { path, mods = { silent = true, emsg_silent = true } }
-    scope.prune_session(startup_cwd)
   end
 end
 
