@@ -82,7 +82,7 @@ M.start = function(spec)
       return { action = M.ACTIONS.RETRY }
     end
     if read == snapshotter.STATES.OPAQUE then
-      return { action = M.ACTIONS.RELOAD }
+      return { action = buffer_modified and M.ACTIONS.RETRY or M.ACTIONS.RELOAD }
     end
     if read ~= snapshotter.STATES.RECONCILE and read ~= snapshotter.STATES.MISSING then
       ---@diagnostic disable-next-line: return-type-mismatch

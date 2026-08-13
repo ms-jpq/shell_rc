@@ -26,6 +26,32 @@ M.STATES = {
 local MAX_BYTES = 2 * 1024 * 1024
 local BOM = "\239\187\191"
 
+---@param buf integer
+---@param text string
+---@return string?
+local decode = function(buf, text)
+  local encoding = vim.bo[buf].fileencoding
+  if encoding ~= "" and encoding ~= vim.o.encoding then
+    local ok, converted = pcall(vim.fn.iconv, text, encoding, vim.o.encoding)
+    if not ok or (text ~= "" and converted == "") then
+      return nil
+    end
+    text = converted
+  end
+  local has_bom = string.sub(text, 1, #BOM) == BOM
+  if has_bom ~= vim.bo[buf].bomb then
+    return nil
+  elseif has_bom then
+    text = string.sub(text, #BOM + 1)
+  end
+
+  local remainder = string.gsub(text, lib.buf_linefeed(buf), "")
+  if string.find(remainder, "[\r\n]") then
+    return nil
+  end
+  return text
+end
+
 local same_version = function(before, after)
   return before
     and after
@@ -100,6 +126,37 @@ M.normalize = function(current, text)
 end
 
 ---@param buf integer
+---@param expected string
+---@return ChecktimeBase?, boolean diverged
+M.attest = function(buf, expected)
+  local name = vim.api.nvim_buf_get_name(buf)
+  local _, before = async.uv.fs_stat(name)
+  async.scheduled()
+  if not vim.api.nvim_buf_is_valid(buf) or not before or before.size > MAX_BYTES then
+    return nil, false
+  end
+
+  local ok, text = pcall(vim.fn.readblob, name)
+  if not ok or type(text) ~= "string" then
+    return nil, false
+  end
+  text = decode(buf, text)
+  if not text then
+    return nil, false
+  end
+
+  local _, after = async.uv.fs_stat(name)
+  async.scheduled()
+  if not vim.api.nvim_buf_is_valid(buf) or not same_version(before, after) then
+    return nil, false
+  end
+  if text ~= expected then
+    return nil, true
+  end
+  return { text = text, version = before }, false
+end
+
+---@param buf integer
 ---@return ChecktimeReadState, uv.fs_stat.result?, string?
 M.read = function(buf)
   local name = vim.api.nvim_buf_get_name(buf)
@@ -123,23 +180,8 @@ M.read = function(buf)
     return M.STATES.OPAQUE, nil, nil
   end
 
-  local encoding = vim.bo[buf].fileencoding
-  if encoding ~= "" and encoding ~= vim.o.encoding then
-    local ok, converted = pcall(vim.fn.iconv, text, encoding, vim.o.encoding)
-    if not ok or (text ~= "" and converted == "") then
-      return M.STATES.OPAQUE, nil, nil
-    end
-    text = converted
-  end
-  local has_bom = string.sub(text, 1, #BOM) == BOM
-  if has_bom ~= vim.bo[buf].bomb then
-    return M.STATES.OPAQUE, nil, nil
-  elseif has_bom then
-    text = string.sub(text, #BOM + 1)
-  end
-
-  local remainder = string.gsub(text, lib.buf_linefeed(buf), "")
-  if string.find(remainder, "[\r\n]") then
+  text = decode(buf, text)
+  if not text then
     return M.STATES.OPAQUE, nil, nil
   end
 

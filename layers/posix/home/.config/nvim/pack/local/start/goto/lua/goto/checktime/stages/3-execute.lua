@@ -13,7 +13,11 @@ local ns = vim.api.nvim_create_namespace "goto.checktime"
 ---@return boolean
 local save = function(buf)
   local write = function()
-    vim.cmd [[silent! write! ++p]]
+    local confirm = vim.o.confirm
+    vim.o.confirm = false
+    local ok = pcall(vim.cmd, [[silent! write ++p]])
+    vim.o.confirm = confirm
+    return ok
   end
   if buf == vim.api.nvim_get_current_buf() then
     return pcall(write)
@@ -59,14 +63,15 @@ M.start = function(commit)
     end
 
     local text = snapshotter.buffer(buf).text
-    local name = vim.api.nvim_buf_get_name(buf)
-    local _, version = async.uv.fs_stat(name)
-    async.scheduled()
+    local base, diverged = snapshotter.attest(buf, text)
     if not vim.api.nvim_buf_is_valid(buf) then
       return nil
     end
+    if diverged then
+      vim.bo[buf].modified = true
+    end
     session.write(buf, false)
-    return { text = text, version = version }
+    return base
   end
 
   ---@param buf integer
