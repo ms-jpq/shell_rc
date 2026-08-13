@@ -2,7 +2,7 @@ local async = require "goto.async"
 local autocmd = require "goto.autocmd"
 local lib = require "goto.lib"
 local mailbox = require "goto.checktime.mailbox"
-local reader = require "goto.checktime.reader"
+local reader = require "goto.checktime.stages.ingress-reader"
 local session = require "goto.checktime.session"
 local snapshotter = require "goto.checktime.snapshotter"
 
@@ -59,18 +59,31 @@ local EVENTS = {
 M.start = function(spec)
   ---@diagnostic disable-next-line: missing-fields
   local mb = {} ---@type ChecktimeIngress
+
   local inbox = mailbox.start {
     local_debounce_ms = spec.local_debounce_ms,
     remote_quiet_ms = spec.remote_quiet_ms,
   }
 
-  local watches ---@type ChecktimeWatcher
-  local reads ---@type ChecktimeReader
-  local rebind ---@type fun(buf: integer)
+  ---@param action ChecktimeIngressAction
+  local post = function(action)
+    error(vim.inspect(action))
+  end
+
+  local watches = session.start_watch {
+    changed = function(buf, version)
+      post { kind = EVENTS.REMOTE, buf = buf, version = version }
+    end,
+    visible_interval = spec.visible_interval,
+    hidden_interval = spec.hidden_interval,
+  }
+  local reads = reader.start(function(action)
+    post(action)
+  end)
 
   ---@param buf integer
   ---@param initial? string
-  local start_read = function(buf, initial)
+  local checkpoint_read = function(buf, initial)
     local checkpoint = {
       changedtick = vim.api.nvim_buf_get_changedtick(buf),
       text = snapshotter.buffer(buf).text,
@@ -104,14 +117,79 @@ M.start = function(spec)
     end
   end
 
+  ---@param action ChecktimeReaderBase
+  local complete_base = function(action)
+    local checkpoint = session.take_checkpoint(action.buf)
+    if
+      checkpoint
+      and (
+        vim.api.nvim_buf_get_changedtick(action.buf) ~= checkpoint.changedtick
+        or action.base.text ~= checkpoint.text
+      )
+    then
+      observe_read(action.buf, action.changedtick)
+      vim.bo[action.buf].modified = true
+      inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
+      return
+    end
+    session.changed(action.buf, vim.api.nvim_buf_get_changedtick(action.buf))
+    inbox.dispatch { kind = mailbox.ACTIONS.BASE, buf = action.buf, base = action.base }
+    if action.observed and action.base.text ~= action.observed then
+      inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
+    end
+  end
+
+  ---@param action ChecktimeReaderObservation
+  local complete_read = function(action)
+    if action.kind == reader.OBSERVATIONS.RETRY then
+      ---@cast action ChecktimeReaderRetry
+      observe_read(action.buf, action.changedtick)
+      local checkpoint = session.take_checkpoint(action.buf)
+      if checkpoint and vim.api.nvim_buf_get_changedtick(action.buf) == checkpoint.changedtick then
+        vim.bo[action.buf].modified = true
+      end
+      inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
+    elseif action.kind == reader.OBSERVATIONS.BASE then
+      ---@cast action ChecktimeReaderBase
+      complete_base(action)
+    else
+      assert(false, vim.inspect(action))
+    end
+  end
+
+  local rebind = function(buf)
+    if not session.current(buf) then
+      return
+    end
+    local path = vim.api.nvim_buf_get_name(buf)
+    local enabled = vim.bo[buf].modifiable and path ~= ""
+    if not watches.update(buf, path, enabled) then
+      return
+    end
+    reads.drop(buf)
+    local facts = session.mailbox(buf)
+    local local_change = facts and facts.events[mailbox.CHANGES.LOCAL]
+    local text = snapshotter.buffer(buf).text
+    inbox.forget_base(buf)
+    if not enabled then
+      return
+    end
+    session.clear_rewrite(buf)
+    checkpoint_read(buf, local_change and nil or text)
+  end
+
   ---@param action ChecktimeIngressAction
-  local post = function(action)
+  post = function(action)
     if not vim.api.nvim_buf_is_valid(action.buf) then
       return
     elseif
       (action.kind == reader.OBSERVATIONS.RETRY or action.kind == reader.OBSERVATIONS.BASE)
       and not session.valid(action.session)
     then
+      return
+    elseif action.kind == reader.OBSERVATIONS.RETRY or action.kind == reader.OBSERVATIONS.BASE then
+      ---@cast action ChecktimeReaderObservation
+      complete_read(action)
       return
     elseif action.kind == EVENTS.COMMIT then
       ---@cast action ChecktimeCommitEvent
@@ -130,35 +208,7 @@ M.start = function(spec)
         return
       end
       session.clear_rewrite(action.buf)
-      start_read(action.buf, snapshotter.buffer(action.buf).text)
-    elseif action.kind == reader.OBSERVATIONS.RETRY then
-      ---@cast action ChecktimeReaderRetry
-      observe_read(action.buf, action.changedtick)
-      local checkpoint = session.take_checkpoint(action.buf)
-      if checkpoint and vim.api.nvim_buf_get_changedtick(action.buf) == checkpoint.changedtick then
-        vim.bo[action.buf].modified = true
-      end
-      inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
-    elseif action.kind == reader.OBSERVATIONS.BASE then
-      ---@cast action ChecktimeReaderBase
-      local checkpoint = session.take_checkpoint(action.buf)
-      if
-        checkpoint
-        and (
-          vim.api.nvim_buf_get_changedtick(action.buf) ~= checkpoint.changedtick
-          or action.base.text ~= checkpoint.text
-        )
-      then
-        observe_read(action.buf, action.changedtick)
-        vim.bo[action.buf].modified = true
-        inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
-      else
-        session.changed(action.buf, vim.api.nvim_buf_get_changedtick(action.buf))
-        inbox.dispatch { kind = mailbox.ACTIONS.BASE, buf = action.buf, base = action.base }
-        if action.observed and action.base.text ~= action.observed then
-          inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
-        end
-      end
+      checkpoint_read(action.buf, snapshotter.buffer(action.buf).text)
     else
       assert(false, vim.inspect(action))
     end
@@ -178,37 +228,6 @@ M.start = function(spec)
       reads.read { buf = buf, initial = text }
     end
   end
-
-  rebind = function(buf)
-    if not session.current(buf) then
-      return
-    end
-    local path = vim.api.nvim_buf_get_name(buf)
-    local enabled = vim.bo[buf].modifiable and path ~= ""
-    if not watches.update(buf, path, enabled) then
-      return
-    end
-    reads.drop(buf)
-    local facts = session.mailbox(buf)
-    local local_change = facts and facts.events[mailbox.CHANGES.LOCAL]
-    local text = snapshotter.buffer(buf).text
-    inbox.forget_base(buf)
-    if not enabled then
-      return
-    end
-    session.clear_rewrite(buf)
-    start_read(buf, local_change and nil or text)
-  end
-
-  watches = session.start_watch {
-    changed = function(buf, version)
-      post { kind = EVENTS.REMOTE, buf = buf, version = version }
-    end,
-    visible_interval = spec.visible_interval,
-    hidden_interval = spec.hidden_interval,
-  }
-
-  reads = reader.start(post)
 
   ---@param buf integer
   ---@param before integer
