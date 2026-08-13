@@ -103,7 +103,7 @@ end
 ---@return ChecktimeWatcher
 M.start_watch = function(spec)
   ---@diagnostic disable-next-line: missing-fields
-  local watch = {} ---@type ChecktimeWatcher
+  local w = {} ---@type ChecktimeWatcher
 
   ---@param buf integer
   ---@return integer
@@ -163,7 +163,7 @@ M.start_watch = function(spec)
   end
 
   ---@param buf integer
-  watch.detach = function(buf)
+  w.detach = function(buf)
     M.detach(buf)
   end
 
@@ -171,7 +171,7 @@ M.start_watch = function(spec)
   ---@param path string
   ---@param refresh? boolean
   ---@return boolean
-  watch.attach = function(buf, path, refresh, enabled)
+  w.attach = function(buf, path, refresh, enabled)
     enabled = enabled == nil and path ~= "" or enabled
     local current = M.current(buf)
     if current and not refresh then
@@ -188,14 +188,14 @@ M.start_watch = function(spec)
 
   ---@param buf integer
   ---@return boolean
-  watch.has = function(buf)
+  w.has = function(buf)
     local current = M.current(buf)
     return current ~= nil and current.watch.poller ~= nil
   end
 
   ---@param buf integer
   ---@param path string
-  watch.update = function(buf, path, enabled)
+  w.update = function(buf, path, enabled)
     local current = M.current(buf)
     if not current then
       return false
@@ -204,14 +204,14 @@ M.start_watch = function(spec)
   end
 
   ---@param buf integer
-  watch.refresh = function(buf)
+  w.refresh = function(buf)
     local current = M.current(buf)
     if current then
-      watch.update(buf, current.watch.path, current.watch.enabled)
+      w.update(buf, current.watch.path, current.watch.enabled)
     end
   end
 
-  watch.retry = function()
+  w.retry = function()
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
       local current = M.current(buf)
       if current and current.watch.enabled and current.watch.retry then
@@ -220,7 +220,7 @@ M.start_watch = function(spec)
     end
   end
 
-  return watch
+  return w
 end
 
 ---@param buf integer
