@@ -132,7 +132,7 @@ M.start = function(spec)
       inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
       return
     end
-    session.changed(action.buf, vim.api.nvim_buf_get_changedtick(action.buf))
+    observe_read(action.buf, action.changedtick)
     inbox.dispatch { kind = mailbox.ACTIONS.BASE, buf = action.buf, base = action.base }
     if action.observed and action.base.text ~= action.observed then
       inbox.dispatch { kind = mailbox.ACTIONS.CHANGE, buf = action.buf, change = mailbox.CHANGES.REMOTE }
