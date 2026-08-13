@@ -193,4 +193,15 @@ M.unchanged = function(buf, version)
   return version and same_version(version, current) or not current
 end
 
+---@param buf integer
+---@param version uv.fs_stat.result?
+---@return boolean
+M.unchanged_now = function(buf, version)
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return false
+  end
+  local current = vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf))
+  return version and same_version(version, current) or not current
+end
+
 return M

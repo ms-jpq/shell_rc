@@ -10,13 +10,29 @@ local FLASH_SPAN = 1688
 local ns = vim.api.nvim_create_namespace "goto.checktime"
 
 ---@param buf integer
+---@param version uv.fs_stat.result?
 ---@return boolean
-local save = function(buf)
+local save = function(buf, version)
   local write = function()
-    vim.cmd [[silent! write! ++p]]
+    local id = vim.api.nvim_create_autocmd("BufWriteCmd", {
+      buffer = buf,
+      once = true,
+      callback = function()
+        vim.api.nvim_exec_autocmds("BufWritePre", { buffer = buf })
+        if not snapshotter.unchanged_now(buf, version) then
+          return
+        end
+        vim.cmd [[noautocmd write! ++p]]
+        vim.api.nvim_exec_autocmds("BufWritePost", { buffer = buf })
+      end,
+    })
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local ok = pcall(vim.cmd, [[silent! write! ++p]])
+    pcall(vim.api.nvim_del_autocmd, id)
+    return ok
   end
   if buf == vim.api.nvim_get_current_buf() then
-    return pcall(write)
+    return write()
   end
 
   local opened, win = pcall(vim.api.nvim_open_win, buf, false, {
@@ -35,11 +51,11 @@ local save = function(buf)
     return false
   end
 
-  local ok = pcall(vim.api.nvim_win_call, win, write)
+  local ok, written = pcall(vim.api.nvim_win_call, win, write)
   if vim.api.nvim_win_is_valid(win) then
     pcall(vim.api.nvim_win_close, win, true)
   end
-  return ok
+  return ok and written
 end
 
 ---@class ChecktimeExecutor
@@ -49,10 +65,11 @@ end
 ---@return ChecktimeExecutor
 M.start = function(commit)
   ---@param buf integer
+  ---@param version uv.fs_stat.result?
   ---@return ChecktimeBase?
-  local publish = function(buf)
+  local publish = function(buf, version)
     session.write(buf, true)
-    local ok = save(buf)
+    local ok = save(buf, version)
     if not ok or vim.bo[buf].modified then
       session.write(buf, false)
       return nil
@@ -131,7 +148,7 @@ M.start = function(commit)
         return
       end
 
-      local base = publish(buf)
+      local base = publish(buf, instruction.base and instruction.base.version)
       if base then
         commit { buf = buf, batch = batch, base = base }
       end
@@ -150,7 +167,7 @@ M.start = function(commit)
       return
     end
     if instruction.create then
-      local base = publish(buf)
+      local base = publish(buf, instruction.base.version)
       if base then
         commit { buf = buf, batch = batch, base = base }
       end
