@@ -29,7 +29,6 @@ local ns = vim.api.nvim_create_namespace "fs-reconcile"
 ---@class FsReconcileState
 ---@field path string
 ---@field base? FsReconcileBase
----@field enabled boolean
 ---@field inserting boolean
 ---@field local_at? integer
 ---@field pending boolean
@@ -81,6 +80,10 @@ local mark = function(buf)
   return function(start, finish)
     vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
   end
+end
+
+local active = function(buf, path)
+  return path ~= "" and vim.bo[buf].modifiable
 end
 
 ---@param buf integer
@@ -153,34 +156,26 @@ local detach = function(buf)
   end
 end
 
-local wrap = function(handle, stop)
-  local closed = false
-  return {
-    close = function()
-      if closed then
-        return
-      end
-      closed = true
-      if stop then
-        handle:stop()
-      end
-      handle:close()
-    end,
-  }
-end
-
 local poller = function(buf, path)
   local poll = vim.uv.new_fs_poll()
+  local changed = async(function()
+    wake(buf)
+  end)
   if not poll then
     return
-  elseif poll:start(
-    path,
-    INTERVAL_MS,
-    vim.schedule_wrap(function()
-      wake(buf)
-    end)
-  ) then
-    return wrap(poll, true)
+  elseif poll:start(path, INTERVAL_MS, function()
+    vim.schedule(changed)
+  end) then
+    local closed = false
+    return {
+      close = function()
+        if not closed then
+          closed = true
+          poll:stop()
+          poll:close()
+        end
+      end,
+    }
   end
   poll:close()
 end
@@ -192,7 +187,7 @@ end)
 
 local defer = function(buf)
   local state = M.state.get(buf)
-  if not state or not state.enabled then
+  if not state or not active(buf, state.path) then
     return
   end
   M.state.put(
@@ -207,7 +202,7 @@ end
 
 local commit = function(buf, path, next)
   local state = M.state.get(buf)
-  if not state or not state.enabled or state.path ~= path then
+  if not state or not active(buf, path) or state.path ~= path then
     return false
   elseif state.pending then
     next = lib.copy(next, {
@@ -261,19 +256,18 @@ end
 
 local drive = function(buf, path)
   local state = M.state.get(buf)
-  if not state or not state.enabled or state.path ~= path then
+  if not state or not active(buf, path) or state.path ~= path then
     return
   end
   local value = util.buffer(buf)
   local observed = read_file(buf, path, value)
   state = M.state.get(buf)
-  if not state or not state.enabled or state.path ~= path then
+  if not state or not active(buf, path) or state.path ~= path then
     return
   elseif not observed then
-    commit(buf, path, lib.copy(state, { running = false }))
     return
   end
-  local next = lib.copy(state, { running = false })
+  local next = lib.copy(state, {})
   local base = state.base
   if not base then
     next = lib.copy(next, { base = observed })
@@ -296,29 +290,40 @@ local drive = function(buf, path)
   end
 end
 
+---@param buf integer
+---@param path string
+---@param poller? FsReconcileHandle
+local drain = function(buf, path, poller)
+  while true do
+    local state = M.state.get(buf)
+    if not state or state.path ~= path or state.poller ~= poller then
+      return
+    elseif not state.pending then
+      M.state.put(buf, lib.copy(state, { running = false }))
+      return
+    end
+    M.state.put(buf, lib.copy(state, { pending = false }))
+    drive(buf, path)
+  end
+end
+
 wake = function(buf)
   local state = M.state.get(buf)
-  if not state or not state.enabled then
+  if not state or not active(buf, state.path) then
     return
   elseif state.running then
     M.state.put(buf, lib.copy(state, { pending = true }))
     return
   end
-  local next = lib.copy(state, { running = true, pending = false })
+  local next = lib.copy(state, { running = true, pending = true })
   M.state.put(buf, next)
-  async.run(function()
-    lib.report(drive, buf, next.path)
-    local after = M.state.get(buf)
-    if after and after.pending then
-      M.state.put(buf, lib.copy(after, { pending = false }))
-      wake(buf)
-    end
-  end)
+  drain(buf, next.path, next.poller)
 end
 
-local bind = function(buf, path, enabled)
+local bind = function(buf, path)
   local old = M.state.get(buf)
-  if old and old.path == path and old.enabled == enabled then
+  local enabled = active(buf, path)
+  if old and old.path == path and enabled == (old.poller ~= nil) then
     return old
   end
   if old then
@@ -329,7 +334,6 @@ local bind = function(buf, path, enabled)
   local state = old
       and old.path == path
       and lib.copy(old, {
-        enabled = enabled,
         inserting = old.inserting,
         pending = false,
         poller = nil,
@@ -338,7 +342,6 @@ local bind = function(buf, path, enabled)
     or {
       path = path,
       base = nil,
-      enabled = enabled,
       inserting = false,
       local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
       pending = false,
@@ -351,10 +354,11 @@ local bind = function(buf, path, enabled)
   state = lib.copy(state, { poller = poller(buf, path) })
   M.state.put(buf, state)
   if not old then
+    local deferred = async(function()
+      defer(buf)
+    end)
     local schedule_defer = function()
-      vim.schedule(function()
-        defer(buf)
-      end)
+      vim.schedule(deferred)
     end
     vim.api.nvim_buf_attach(buf, false, {
       on_changedtick = schedule_defer,
@@ -375,8 +379,8 @@ local attach = function(buf)
     return
   end
   local path = vim.api.nvim_buf_get_name(buf)
-  local state = bind(buf, path, vim.bo[buf].modifiable and path ~= "")
-  if state.enabled then
+  bind(buf, path)
+  if active(buf, path) then
     wake(buf)
   end
 end
@@ -384,9 +388,9 @@ end
 do
   vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile", "BufFilePost", "BufWritePost" }, {
     group = lib.group,
-    callback = function(args)
+    callback = async(function(args)
       attach(args.buf)
-    end,
+    end),
   })
 
   local set_inserting = function(args, inserting)
@@ -396,11 +400,11 @@ do
     end
     wake(args.buf)
   end
-  autocmd.insert_mode({ group = lib.group }, function(args)
+  autocmd.insert_mode({ group = lib.group }, async(function(args)
     set_inserting(args, true)
-  end, function(args)
+  end), async(function(args)
     set_inserting(args, false)
-  end)
+  end))
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
@@ -412,9 +416,9 @@ do
   vim.api.nvim_create_autocmd("OptionSet", {
     group = lib.group,
     pattern = "modifiable",
-    callback = function()
+    callback = async(function()
       attach(vim.api.nvim_get_current_buf())
-    end,
+    end),
   })
 
   autocmd.vim_enter(function()
