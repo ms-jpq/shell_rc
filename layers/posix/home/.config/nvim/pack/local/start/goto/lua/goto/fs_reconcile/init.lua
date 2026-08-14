@@ -346,8 +346,16 @@ local drive = function(buf, path, chan, close)
       local base = document.base
       local resolution = resolve(base, value, observed)
       if resolution == RESOLUTIONS.INITIAL then
-        document = next(document, { base = observed })
-        if value.text ~= observed.text then
+        if vim.bo[buf].modified and observed.version and value.text ~= observed.text then
+          local text = merge(value, { text = "" }, observed)
+          if replace(buf, value, text, valid) then
+            vim.bo[buf].modified = text ~= observed.text
+            document = next(document, { base = observed })
+          end
+        else
+          document = next(document, { base = observed })
+        end
+        if not document.base or value.text ~= observed.text then
           chan.send(retry(0))
         end
       elseif resolution == RESOLUTIONS.SYNCED then
