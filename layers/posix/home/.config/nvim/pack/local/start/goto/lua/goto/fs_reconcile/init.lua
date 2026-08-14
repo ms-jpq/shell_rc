@@ -82,13 +82,6 @@ local mark = function(buf)
   end
 end
 
-local detach = function(buf)
-  local chan = get(buf)
-  if chan then
-    chan.close()
-  end
-end
-
 ---@param current FsReconcileDocument
 ---@param changes table
 ---@return FsReconcileDocument
@@ -301,6 +294,13 @@ local start = function(buf, chan)
   end
 
   return close
+end
+
+local detach = function(buf)
+  local chan = get(buf)
+  if chan then
+    chan.close()
+  end
 end
 
 local attach = function(buf)

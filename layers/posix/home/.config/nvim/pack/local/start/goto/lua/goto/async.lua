@@ -73,19 +73,26 @@ end
 ---@return AsyncMpsc<T>
 M.mpsc = function()
   local closed = false
-  local queued = {}
-  local resolve ---@type fun(elapsed?: boolean)?
+  local queue = {}
+  local pending ---@type fun(elapsed?: boolean)?
 
   local ch = {}
 
-  local wake = function(elapsed)
-    if resolve then
-      local resume = resolve
-      resolve = nil
+  local notify = function(elapsed)
+    if pending then
+      local resume = pending
+      pending = nil
       vim.schedule(function()
         resume(elapsed)
       end)
     end
+  end
+
+  local await = function()
+    assert(not pending, "mpsc: consumer already waiting")
+    local future = M.future()
+    pending = future.resolve
+    return future
   end
 
   ch.close = function()
@@ -93,48 +100,45 @@ M.mpsc = function()
       return
     end
     closed = true
-    queued = {}
-    wake(false)
+    queue = {}
+    notify(false)
   end
 
   ch.send = function(value)
+    assert(value ~= nil, "mpsc: nil message")
     if closed then
       return false
     end
-    table.insert(queued, value)
-    wake(false)
+    table.insert(queue, value)
+    notify(false)
     return true
   end
 
   ch.wait = function(milliseconds)
-    if closed or #queued > 0 then
+    if closed or #queue > 0 then
       return false
     end
-    assert(not resolve, "mpsc: multiple consumers")
-    local future = M.future()
-    local resume = future.resolve
-    resolve = resume
+    local future = await()
+    local resume = pending
     vim.defer_fn(function()
-      if resolve == resume then
-        wake(true)
+      if pending == resume then
+        notify(true)
       end
     end, milliseconds)
-    return future.await() == true
+    local elapsed = future.await()
+    return not closed and elapsed == true
   end
 
   local next = function()
     if closed then
       return
-    elseif #queued > 0 then
-      return table.remove(queued, 1)
+    elseif #queue > 0 then
+      return table.remove(queue, 1)
     end
-    assert(not resolve, "mpsc: multiple consumers")
-    local future = M.future()
-    resolve = future.resolve
+    local future = await()
     future.await()
-    resolve = nil
     if not closed then
-      return table.remove(queued, 1)
+      return table.remove(queue, 1)
     end
   end
 
