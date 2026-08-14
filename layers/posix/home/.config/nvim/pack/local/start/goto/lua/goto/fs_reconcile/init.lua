@@ -391,13 +391,15 @@ local drive = function(buf, path, chan, close)
         end
       elseif resolution == RESOLUTIONS.MERGE then
         ---@cast base FsReconcileBase
-        local text = merge(value, base, observed)
-        local changed = text ~= value.text
-        if replace(buf, value, text, valid) then
-          vim.bo[buf].modified = text ~= observed.text
-          document = next(document, { base = observed })
-          if vim.bo[buf].modified and not changed then
-            chan.send(retry(0))
+        if observed.version or not base.version then
+          local text = merge(value, base, observed)
+          local changed = text ~= value.text
+          if replace(buf, value, text, valid) then
+            vim.bo[buf].modified = text ~= observed.text
+            document = next(document, { base = observed })
+            if vim.bo[buf].modified and not changed then
+              chan.send(retry(0))
+            end
           end
         end
       else
