@@ -317,6 +317,13 @@ local attach = function(buf)
 end
 
 do
+  vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
+    group = lib.group,
+    callback = async(function(args)
+      detach(args.buf)
+    end),
+  })
+
   vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
     group = lib.group,
     callback = async(function(args)
@@ -340,13 +347,6 @@ do
       send(args.buf, { type = EVENTS.INSERT, inserting = false })
     end)
   )
-
-  vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
-    group = lib.group,
-    callback = async(function(args)
-      detach(args.buf)
-    end),
-  })
 
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = lib.group,
