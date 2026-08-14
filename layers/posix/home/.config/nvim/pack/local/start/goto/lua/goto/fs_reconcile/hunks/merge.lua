@@ -7,21 +7,20 @@ local M = {}
 ---@field remote_patches FsReconcileHunk[]
 
 local chars = function(text)
-  local characters = {}
-  local start = 1
+  return coroutine.wrap(function()
+    local start = 1
 
-  for index = 2, #text do
-    local byte = string.byte(text, index)
-    if byte < 128 or byte >= 192 then
-      table.insert(characters, string.sub(text, start, index - 1))
-      start = index
+    for index = 2, #text do
+      local byte = string.byte(text, index)
+      if byte < 128 or byte >= 192 then
+        coroutine.yield(string.sub(text, start, index - 1))
+        start = index
+      end
     end
-  end
-  if start <= #text then
-    table.insert(characters, string.sub(text, start))
-  end
-
-  return characters
+    if start <= #text then
+      coroutine.yield(string.sub(text, start))
+    end
+  end)
 end
 
 local split = function(hunk)
@@ -49,13 +48,17 @@ local changes = function(before, after, after_records)
 end
 
 local atomic_patches = function(hunks)
-  return vim
-    .iter(hunks)
-    :map(function(hunk)
-      return hunk.finish - hunk.start == #hunk.lines and split(hunk) or { hunk }
-    end)
-    :flatten()
-    :totable()
+  local patches = {}
+
+  for _, hunk in ipairs(hunks) do
+    if hunk.finish - hunk.start == #hunk.lines then
+      vim.list_extend(patches, split(hunk))
+    else
+      table.insert(patches, hunk)
+    end
+  end
+
+  return patches
 end
 
 local resizes = function(patches)
@@ -64,14 +67,12 @@ local resizes = function(patches)
   end)
 end
 
-local patches_lines = function(patches)
-  return vim
-    .iter(patches)
-    :map(function(patch)
-      return patch.lines
-    end)
-    :flatten()
-    :totable()
+local patches_text = function(patches)
+  local text = {}
+  for _, hunk in ipairs(patches) do
+    vim.list_extend(text, hunk.lines)
+  end
+  return table.concat(text)
 end
 
 local overlaps = function(left, right)
@@ -167,12 +168,14 @@ end
 local bounds = function(group)
   local first = group.local_patches[1] or group.remote_patches[1]
   local start, finish = first.start, first.finish
-  for _, patches in pairs { group.local_patches, group.remote_patches } do
+  local scan = function(patches)
     for _, hunk in ipairs(patches) do
       start = math.min(start, hunk.start)
       finish = math.max(finish, hunk.finish)
     end
   end
+  scan(group.local_patches)
+  scan(group.remote_patches)
   return start, finish
 end
 
@@ -190,16 +193,13 @@ local relative = function(patches, start)
     :totable()
 end
 
-local take_both = function(linefeed, local_lines, remote_lines)
-  local local_text = table.concat(local_lines)
-  local remote_text = table.concat(remote_lines)
-
+local take_both = function(linefeed, local_text, remote_text)
   if local_text == remote_text then
-    return local_lines
+    return diff.records(linefeed, local_text)
   elseif local_text == "" then
-    return remote_lines
+    return diff.records(linefeed, remote_text)
   elseif remote_text == "" then
-    return local_lines
+    return diff.records(linefeed, local_text)
   end
 
   if not vim.endswith(local_text, linefeed) and not vim.startswith(remote_text, linefeed) then
@@ -229,18 +229,14 @@ end
 
 local character_records = function(text)
   local records = {}
-  for _, character in ipairs(chars(text)) do
+  for character in chars(text) do
     table.insert(records, character .. "\n")
   end
   return records
 end
 
 local characters_text = function(records)
-  local characters = {}
-  for _, record in ipairs(records) do
-    table.insert(characters, string.sub(record, 1, -2))
-  end
-  return table.concat(characters)
+  return (table.concat(records):gsub("\n", ""))
 end
 
 local character_patches = function(before, after)
@@ -260,7 +256,7 @@ local merge_record = function(linefeed, base, local_record, remote_record)
   local local_text, local_eol = split_record(linefeed, local_record)
   local remote_text, remote_eol = split_record(linefeed, remote_record)
   if local_eol ~= remote_eol then
-    return take_both(linefeed, { local_record }, { remote_record })
+    return take_both(linefeed, local_record, remote_record)
   end
 
   local local_patches = character_patches(base_text, local_text)
@@ -271,7 +267,7 @@ local merge_record = function(linefeed, base, local_record, remote_record)
     end)
   end)
   if conflicted then
-    return take_both(linefeed, { local_record }, { remote_record })
+    return take_both(linefeed, local_record, remote_record)
   end
 
   local patches = vim.list_extend(local_patches, remote_patches)
@@ -280,11 +276,11 @@ local merge_record = function(linefeed, base, local_record, remote_record)
   return { characters_text(characters) .. local_eol }
 end
 
-local merge_overlap = function(linefeed, base, group)
+local merge_concurrent = function(linefeed, base, group)
   if resizes(group.local_patches) or resizes(group.remote_patches) then
     return replacement(
       group,
-      take_both(linefeed, patches_lines(group.local_patches), patches_lines(group.remote_patches))
+      take_both(linefeed, patches_text(group.local_patches), patches_text(group.remote_patches))
     )
   end
 
@@ -299,17 +295,20 @@ local merge_overlap = function(linefeed, base, group)
   return replacement(group, lines)
 end
 
+local resolve_group = function(linefeed, base, group)
+  if #group.remote_patches == 0 then
+    return group.local_patches
+  elseif #group.local_patches == 0 then
+    return group.remote_patches
+  end
+  return { merge_concurrent(linefeed, base, group) }
+end
+
 local merge_groups = function(linefeed, base, grouped)
   local merged = {}
 
   for group in grouped do
-    if #group.remote_patches == 0 then
-      vim.list_extend(merged, group.local_patches)
-    elseif #group.local_patches == 0 then
-      vim.list_extend(merged, group.remote_patches)
-    else
-      table.insert(merged, merge_overlap(linefeed, base, group))
-    end
+    vim.list_extend(merged, resolve_group(linefeed, base, group))
   end
 
   return merged
