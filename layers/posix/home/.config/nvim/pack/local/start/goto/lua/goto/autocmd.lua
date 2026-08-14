@@ -3,13 +3,15 @@ local lib = require "goto.lib"
 
 local M = {}
 
-M.vim_enter = function(fn)
+---@param fn fun()
+---@param opts? vim.api.keyset.create_autocmd
+M.vim_enter = function(fn, opts)
   local callback = async(fn)
   if vim.v.vim_did_enter == 1 then
     callback()
   else
     vim.api.nvim_create_autocmd({ "VimEnter" }, {
-      group = lib.group,
+      group = opts and opts.group or lib.group,
       once = true,
       callback = callback,
     })

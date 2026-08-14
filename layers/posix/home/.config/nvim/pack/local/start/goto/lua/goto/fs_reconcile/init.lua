@@ -8,7 +8,9 @@ local util = require "goto.fs_reconcile.util"
 local TAG = "__fs_reconcile__"
 local INTERVAL_MS = 99
 local FLASH_SPAN = 200
+
 local ns = vim.api.nvim_create_namespace "fs-reconcile"
+local group = vim.api.nvim_create_augroup("lv_fs_reconcile", { clear = true })
 
 ---@class FsReconcileQuiet
 ---@field LOCAL integer
@@ -484,12 +486,12 @@ end
 
 do
   vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
-    group = lib.group,
+    group = group,
     command = [[silent! wall! ++p]],
   })
 
   vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
-    group = lib.group,
+    group = group,
     callback = async(function(args)
       vim.v.fcs_choice = ""
       send(args.buf, remote())
@@ -497,21 +499,21 @@ do
   })
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
-    group = lib.group,
+    group = group,
     callback = async(function(args)
       detach(args.buf)
     end),
   })
 
   vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
-    group = lib.group,
+    group = group,
     callback = async(function(args)
       attach(args.buf)
     end),
   })
 
   vim.api.nvim_create_autocmd({ "BufFilePost" }, {
-    group = lib.group,
+    group = group,
     callback = async(function(args)
       detach(args.buf)
       attach(args.buf)
@@ -519,7 +521,7 @@ do
   })
 
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-    group = lib.group,
+    group = group,
     callback = function(args)
       local data = args.data or {}
       if data.fs_reconcile then
@@ -530,7 +532,7 @@ do
   })
 
   autocmd.insert_mode(
-    { group = lib.group },
+    { group = group },
     async(function(args)
       send(args.buf, { type = EVENTS.INSERT, inserting = true })
     end),
@@ -540,7 +542,7 @@ do
   )
 
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
-    group = lib.group,
+    group = group,
     pattern = "modifiable",
     callback = function()
       send(vim.api.nvim_get_current_buf(), remote())
@@ -553,5 +555,5 @@ do
         attach(buf)
       end
     end
-  end)
+  end, { group = group })
 end
