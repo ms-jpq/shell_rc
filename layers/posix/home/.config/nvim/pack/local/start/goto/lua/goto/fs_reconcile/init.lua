@@ -16,15 +16,16 @@ local ns = vim.api.nvim_create_namespace "fs-reconcile"
 
 ---@class FsReconcileSnapshot: FsReconcileBuffer
 ---@field changedtick integer
----@field epoch integer
 
 ---@class FsReconcileDocument
----@field path string
----@field epoch integer
 ---@field changedtick integer
 ---@field base? FsReconcileBase
 ---@field inserting boolean
 ---@field local_at? integer
+
+---@class FsReconcileAttachment
+---@field path string
+---@field chan FsReconcileChannel
 
 ---@class FsReconcileInsertEvent
 ---@field type "insert"
@@ -40,7 +41,6 @@ local ns = vim.api.nvim_create_namespace "fs-reconcile"
 
 ---@class FsReconcileRetryEvent
 ---@field type "retry"
----@field epoch integer
 ---@field sleep integer
 
 ---@alias FsReconcileEvent FsReconcileInsertEvent|FsReconcileLocalEvent|FsReconcileRemoteEvent|FsReconcileRetryEvent
@@ -62,7 +62,7 @@ local EVENTS = {
 ---@alias FsReconcileChannel AsyncMpsc<FsReconcileEvent>
 
 ---@param buf integer
----@return FsReconcileChannel?
+---@return FsReconcileAttachment?
 local get = function(buf)
   return vim.b[buf][TAG]
 end
@@ -70,9 +70,9 @@ end
 ---@param buf integer
 ---@param event FsReconcileEvent
 local send = function(buf, event)
-  local chan = get(buf)
-  if chan then
-    chan.send(event)
+  local attachment = get(buf)
+  if attachment then
+    attachment.chan.send(event)
   end
 end
 
