@@ -241,7 +241,7 @@ M.start = function(spec)
         if
           not status.reading
           and not status.writing
-          and not status.insert_base
+          and (not status.insert_base or remote_change ~= nil)
           and not (status.modified and local_debounce)
           and not remote_quiet
         then
