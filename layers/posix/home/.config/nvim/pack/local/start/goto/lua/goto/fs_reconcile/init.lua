@@ -40,6 +40,7 @@ local ns = vim.api.nvim_create_namespace "fs-reconcile"
 
 ---@class FsReconcileRetryEvent
 ---@field type "retry"
+---@field epoch integer
 ---@field sleep integer
 
 ---@alias FsReconcileEvent FsReconcileInsertEvent|FsReconcileLocalEvent|FsReconcileRemoteEvent|FsReconcileRetryEvent
@@ -88,7 +89,16 @@ local CHANGES = {
 ---@param buf integer
 ---@return FsReconcileChannel?
 local get = function(buf)
-  return vim.api.nvim_buf_is_valid(buf) and vim.b[buf][TAG] or nil
+  return vim.b[buf][TAG]
+end
+
+---@param buf integer
+---@param event FsReconcileEvent
+local send = function(buf, event)
+  local chan = get(buf)
+  if chan then
+    chan.send(event)
+  end
 end
 
 local mark = function(buf)
@@ -98,10 +108,7 @@ local mark = function(buf)
 end
 
 local active = function(buf)
-  return vim.api.nvim_buf_is_valid(buf)
-    and vim.api.nvim_buf_is_loaded(buf)
-    and vim.api.nvim_buf_get_name(buf) ~= ""
-    and vim.bo[buf].modifiable
+  return vim.api.nvim_buf_get_name(buf) ~= "" and vim.bo[buf].modifiable
 end
 
 ---@param base FsReconcileBase
@@ -118,20 +125,6 @@ local observe = function(base, value, disk)
   else
     return { kind = CHANGES.CONCURRENT, disk = disk }
   end
-end
-
-local save = function(buf, path, base)
-  vim.api.nvim_exec_autocmds("BufWritePre", { buffer = buf })
-  if not util.unchanged(path, base) then
-    return false
-  end
-  local ok = pcall(vim.api.nvim_buf_call, buf, function()
-    vim.cmd [[noautocmd write! ++p]]
-  end)
-  if ok then
-    vim.api.nvim_exec_autocmds("BufWritePost", { buffer = buf })
-  end
-  return ok
 end
 
 local detach = function(buf)
@@ -173,50 +166,6 @@ local drive = function(buf, chan, close)
       return document.epoch == epoch and active(buf) and vim.api.nvim_buf_get_name(buf) == document.path
     end
 
-    local retry = function(sleep)
-      chan.send { type = EVENTS.RETRY, sleep = sleep }
-    end
-
-    local publish = function(value, base)
-      if document.inserting then
-        return
-      end
-      local elapsed = document.local_at and vim.uv.hrtime() - document.local_at or math.huge
-      local quiet = lib.ms_to_ns(LOCAL_QUIET_MS)
-      local path = document.path
-      if elapsed < quiet then
-        retry(quiet - elapsed)
-      elseif util.unchanged(path, base) and save(buf, path, base) and valid(value.epoch) then
-        local after = util.read_file(buf, path, util.buffer(buf, value.epoch))
-        if after and valid(value.epoch) then
-          next_document { base = after, local_at = vim.NIL }
-        end
-      end
-    end
-
-    local adopt = function(value, change, guard)
-      if value.text == change.disk.text or hunks.replace(buf, value, change.disk.text, mark(buf), nil, guard) then
-        vim.bo[buf].modified = false
-        next_document { base = change.disk, local_at = vim.NIL }
-      end
-    end
-
-    local merge = function(value, base, change, guard)
-      local merged = hunks.merge(value.linefeed, base.text, value.text, change.disk.text)
-      if not guard() then
-        return
-      end
-      local text = util.buffer_text(value, merged)
-      local changed = text ~= value.text
-      if not changed or hunks.replace(buf, value, text, mark(buf), nil, guard) then
-        vim.bo[buf].modified = text ~= change.disk.text
-        next_document { base = change.disk }
-        if vim.bo[buf].modified and not changed then
-          publish(value, change.disk)
-        end
-      end
-    end
-
     local step = function()
       if not valid(document.epoch) then
         return
@@ -233,7 +182,11 @@ local drive = function(buf, chan, close)
       if not base then
         next_document { base = observed }
         if value.text ~= observed.text then
-          retry(0)
+          chan.send {
+            type = EVENTS.RETRY,
+            epoch = document.epoch,
+            sleep = 0,
+          }
         end
         return
       end
@@ -244,17 +197,69 @@ local drive = function(buf, chan, close)
       if not change then
         return
       elseif change.kind == CHANGES.LOCAL then
-        publish(value, base)
+        if document.inserting then
+          return
+        end
+        local elapsed = document.local_at and vim.uv.hrtime() - document.local_at or math.huge
+        local quiet = lib.ms_to_ns(LOCAL_QUIET_MS)
+        if elapsed < quiet then
+          chan.send {
+            type = EVENTS.RETRY,
+            epoch = document.epoch,
+            sleep = quiet - elapsed,
+          }
+          return
+        end
+        vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
+        if not util.unchanged(document.path, base) then
+          return
+        end
+        local ok = pcall(vim.api.nvim_buf_call, buf, function()
+          vim.cmd [[noautocmd write! ++p]]
+        end)
+        if not ok then
+          return
+        end
+        vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf })
+        if not valid(value.epoch) then
+          return
+        end
+        local after = util.read_file(buf, document.path, util.buffer(buf, value.epoch))
+        if after and valid(value.epoch) then
+          next_document { base = after, local_at = vim.NIL }
+        end
       elseif change.kind == CHANGES.REMOTE then
-        adopt(value, change, guard)
+        if value.text == change.disk.text or hunks.replace(buf, value, change.disk.text, mark(buf), nil, guard) then
+          vim.bo[buf].modified = false
+          next_document { base = change.disk, local_at = vim.NIL }
+        end
       else
         ---@cast change FsReconcileConcurrent
-        merge(value, base, change, guard)
+        local merged = hunks.merge(value.linefeed, base.text, value.text, change.disk.text)
+        if not guard() then
+          return
+        end
+        local text = util.buffer_text(value, merged)
+        local changed = text ~= value.text
+        if not changed or hunks.replace(buf, value, text, mark(buf), nil, guard) then
+          vim.bo[buf].modified = text ~= change.disk.text
+          next_document { base = change.disk }
+          if vim.bo[buf].modified and not changed then
+            chan.send {
+              type = EVENTS.RETRY,
+              epoch = document.epoch,
+              sleep = 0,
+            }
+          end
+        end
       end
     end
 
-    for event in chan.next do
-      if event.type ~= EVENTS.RETRY or chan.wait(event.sleep) then
+    for event in chan do
+      if
+        event.type ~= EVENTS.RETRY
+        or (event.epoch == document.epoch and chan.wait(event.sleep) and event.epoch == document.epoch)
+      then
         local path = vim.api.nvim_buf_get_name(buf)
         if document.path ~= path then
           next_document {
@@ -295,19 +300,31 @@ local start = function(buf, chan)
     end
     chan.send { type = EVENTS.REMOTE }
   end
-  local file_post = vim.api.nvim_create_autocmd("BufFilePost", {
+  local file_post = vim.api.nvim_create_autocmd({ "BufFilePost" }, {
     group = lib.group,
     buffer = buf,
-    callback = watch,
+    callback = async(function()
+      watch()
+    end),
   })
-  local closed = false
-  local mpsc_close = chan.close
+
+  local changed = async(function(_, _, changedtick)
+    chan.send {
+      type = EVENTS.LOCAL,
+      at = vim.uv.hrtime(),
+      changedtick = changedtick,
+    }
+  end)
+  vim.api.nvim_buf_attach(buf, false, {
+    on_changedtick = changed,
+    on_detach = function()
+      chan.close()
+    end,
+  })
+  watch()
+
   local close = function()
-    if closed then
-      return
-    end
-    closed = true
-    mpsc_close()
+    chan.close()
     vim.api.nvim_del_autocmd(file_post)
     if poller then
       poller.close()
@@ -319,30 +336,10 @@ local start = function(buf, chan)
     end
   end
 
-  local changed = function()
-    if not closed then
-      chan.send {
-        type = EVENTS.LOCAL,
-        at = vim.uv.hrtime(),
-        changedtick = vim.api.nvim_buf_get_changedtick(buf),
-      }
-    end
-  end
-  vim.api.nvim_buf_attach(buf, false, {
-    on_changedtick = changed,
-    on_lines = changed,
-    on_detach = function()
-      chan.close()
-    end,
-  })
-  watch()
   return close
 end
 
 local attach = function(buf)
-  if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_buf_is_loaded(buf) then
-    return
-  end
   local existing = get(buf)
   if existing then
     existing.send { type = EVENTS.REMOTE }
@@ -352,62 +349,55 @@ local attach = function(buf)
   local chan = async.mpsc()
   vim.b[buf][TAG] = chan
   local close = start(buf, chan)
-  vim.schedule(async(function()
-    drive(buf, chan, close)
-  end))
+  drive(buf, chan, close)
 end
 
 do
   vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
     group = lib.group,
-    callback = function(args)
+    callback = async(function(args)
       attach(args.buf)
-    end,
+    end),
   })
 
-  vim.api.nvim_create_autocmd("BufWritePost", {
+  vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
-    callback = function(args)
-      local chan = get(args.buf)
-      if chan then
-        chan.send { type = EVENTS.REMOTE }
-      end
-    end,
+    callback = async(function(args)
+      send(args.buf, { type = EVENTS.REMOTE })
+    end),
   })
 
-  autocmd.insert_mode({ group = lib.group }, function(args)
-    local chan = get(args.buf)
-    if chan then
-      chan.send { type = EVENTS.INSERT, inserting = true }
-    end
-  end, function(args)
-    local chan = get(args.buf)
-    if chan then
-      chan.send { type = EVENTS.INSERT, inserting = false }
-    end
-  end)
+  autocmd.insert_mode(
+    { group = lib.group },
+    async(function(args)
+      send(args.buf, { type = EVENTS.INSERT, inserting = true })
+    end),
+    async(function(args)
+      send(args.buf, { type = EVENTS.INSERT, inserting = false })
+    end)
+  )
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
-    callback = function(args)
+    callback = async(function(args)
       detach(args.buf)
-    end,
+    end),
   })
 
-  vim.api.nvim_create_autocmd("OptionSet", {
+  vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = lib.group,
     pattern = "modifiable",
-    callback = function()
-      local chan = get(vim.api.nvim_get_current_buf())
-      if chan then
-        chan.send { type = EVENTS.REMOTE }
-      end
-    end,
+    callback = async(function()
+      local buf = vim.api.nvim_get_current_buf()
+      send(buf, { type = EVENTS.REMOTE })
+    end),
   })
 
   autocmd.vim_enter(function()
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-      attach(buf)
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+        attach(buf)
+      end
     end
   end)
 end

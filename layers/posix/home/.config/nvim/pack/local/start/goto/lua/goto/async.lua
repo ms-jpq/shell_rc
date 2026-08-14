@@ -63,10 +63,9 @@ M.sleep = function(milliseconds)
 end
 
 ---@generic T
----@class AsyncMpsc<T>
+---@class AsyncMpsc<T>: fun(...: any): T?
 ---@field close fun()
 ---@field send fun(value: T): boolean
----@field next fun(): T?
 ---@field wait fun(milliseconds: integer): boolean
 
 ---@generic T
@@ -104,7 +103,7 @@ M.mpsc = function()
     wake(false)
     return true
   end
-  ch.next = function()
+  local next = function()
     if closed then
       return
     elseif #queued > 0 then
@@ -134,7 +133,9 @@ M.mpsc = function()
     end, milliseconds)
     return future.await() == true
   end
-  return ch
+  return setmetatable(ch, {
+    __call = next,
+  })
 end
 
 ---@param bytecode string
