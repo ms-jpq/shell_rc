@@ -88,24 +88,24 @@ M.state = {
         next[key] = value
       end
     end
-    if current and current.pending and next.epoch == current.epoch and (not changes or changes.pending == nil) then
+    local changed_source = false
+    if current then
+      local before = current.poller and current.poller.close
+      local after = next.poller and next.poller.close
+      changed_source = next.path ~= current.path or after ~= before
+    end
+    if current and current.pending and not changed_source and (not changes or changes.pending == nil) then
       vim.tbl_extend("force", next, {
         inserting = current.inserting,
         local_at = current.local_at,
         pending = true,
       })
     end
+    if current then
+      next.epoch = current.epoch + (changed_source and 1 or 0)
+    end
     vim.b[buf][TAG] = next
     return next
-  end,
-
-  ---@param buf integer
-  ---@param state FsReconcileState
-  ---@param changes? table
-  ---@return FsReconcileState?
-  cancel = function(buf, state, changes)
-    local next = vim.tbl_extend("force", {}, changes or {}, { epoch = state.epoch + 1 })
-    return M.state.next(buf, state, next)
   end,
 }
 
@@ -167,22 +167,9 @@ local save = function(buf, path, base)
   return ok and written
 end
 
-local detach = function(buf)
-  local state = M.state.get(buf)
-  if state then
-    if state.poller then
-      state.poller.close()
-    end
-    vim.b[buf][TAG] = nil
-  end
-end
-
-local retry = async(function(buf, epoch, milliseconds)
+local retry = async(function(buf, milliseconds)
   async.sleep(milliseconds)
-  local state = M.state.get(buf)
-  if state and state.epoch == epoch then
-    drive(buf)
-  end
+  wake(buf)
 end)
 
 local defer = function(buf)
@@ -190,12 +177,20 @@ local defer = function(buf)
   if not state or not active(buf, state.path) then
     return
   end
-  local next = M.state.cancel(buf, state, {
+  M.state.next(buf, state, {
     local_at = vim.uv.hrtime(),
     pending = state.running or state.pending,
   })
-  if next then
-    retry(buf, next.epoch, LOCAL_QUIET_MS)
+  retry(buf, LOCAL_QUIET_MS)
+end
+
+local detach = function(buf)
+  local state = M.state.get(buf)
+  if state then
+    if state.poller then
+      state.poller.close()
+    end
+    vim.b[buf][TAG] = nil
   end
 end
 
@@ -207,7 +202,7 @@ local publish = function(buf, path, state, base)
   local elapsed = state.local_at and vim.uv.hrtime() - state.local_at or math.huge
   local quiet = lib.ms_to_ns(LOCAL_QUIET_MS)
   if elapsed < quiet then
-    retry(buf, state.epoch, math.max(1, math.ceil(lib.ns_to_ms(quiet - elapsed))))
+    retry(buf, math.max(1, math.ceil(lib.ns_to_ms(quiet - elapsed))))
   elseif util.unchanged(path, base) and save(buf, path, base) then
     local after = util.read_file(buf, path, util.buffer(buf, state.epoch))
     if after then
@@ -300,8 +295,15 @@ wake = function(buf, changes)
   local state = M.state.get(buf)
   if not state or not active(buf, state.path) then
     return
+  elseif state.running then
+    M.state.next(buf, state, { pending = true })
+    return
   end
-  if M.state.cancel(buf, state, changes) then
+  local next = M.state.next(buf, state, vim.tbl_extend("force", changes or {}, {
+    running = true,
+    pending = true,
+  }))
+  if next then
     drive(buf)
   end
 end
@@ -337,7 +339,7 @@ local bind = function(buf, path)
   end
   local state
   if old then
-    state = M.state.cancel(buf, old, {
+    state = M.state.next(buf, old, {
       path = path,
       base = old.path == path and old.base or vim.NIL,
       inserting = old.inserting,
