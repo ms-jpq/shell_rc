@@ -9,6 +9,12 @@ local NANOSECONDS_PER_MILLISECOND = 1000 * 1000
 
 M.LF = "\n"
 
+---@param mode string
+---@return boolean
+M.insert_mode = function(mode)
+  return string.find(mode, "^[iR]") ~= nil
+end
+
 ---@param milliseconds number
 ---@return number
 M.ms_to_ns = function(milliseconds)

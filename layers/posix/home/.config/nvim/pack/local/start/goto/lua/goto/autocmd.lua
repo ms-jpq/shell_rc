@@ -3,10 +3,6 @@ local lib = require "goto.lib"
 
 local M = {}
 
-local insert_mode = function(mode)
-  return string.find(mode, "^[iR]") ~= nil
-end
-
 M.vim_enter = function(fn)
   local callback = async(fn)
   if vim.v.vim_did_enter == 1 then
@@ -40,7 +36,7 @@ M.insert_leave = function(opts, leave)
         local event = args.data or vim.v.event
         local old = vim.fn.get(event, "old_mode", "")
         local new = vim.fn.get(event, "new_mode", "")
-        if insert_mode(old) and not insert_mode(new) then
+        if lib.insert_mode(old) and not lib.insert_mode(new) then
           leave(args)
         end
       end,

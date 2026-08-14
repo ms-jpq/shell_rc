@@ -260,7 +260,7 @@ local drive = function(buf, path, chan, close)
   ---@type FsReconcileDocument
   local document = {
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
-    inserting = vim.api.nvim_get_current_buf() == buf and vim.api.nvim_get_mode().mode:find "^[iR]" ~= nil,
+    inserting = vim.api.nvim_get_current_buf() == buf and lib.insert_mode(vim.api.nvim_get_mode().mode),
     local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
   }
   local valid = function()
