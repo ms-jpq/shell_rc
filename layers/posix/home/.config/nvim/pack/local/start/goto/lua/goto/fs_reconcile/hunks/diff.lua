@@ -1,5 +1,3 @@
-local async = require "goto.async"
-
 local M = {}
 
 ---@class FsReconcileHunk
@@ -60,17 +58,6 @@ M.changes = function(after_records, indices)
       }
     end)
     :totable()
-end
-
-local worker = function(before, after)
-  return vim.text.diff(before, after, { result_type = "indices" })
-end
-
----@param before string
----@param after string
----@return integer[][]
-M.indices = function(before, after)
-  return async.work(worker, before, after)
 end
 
 return M

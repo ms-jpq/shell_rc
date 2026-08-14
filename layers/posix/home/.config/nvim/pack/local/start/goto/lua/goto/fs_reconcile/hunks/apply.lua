@@ -1,3 +1,4 @@
+local async = require "goto.async"
 local diff = require "goto.fs_reconcile.hunks.diff"
 
 local M = {}
@@ -15,13 +16,17 @@ local buffer_lines = function(linefeed, records)
     :totable()
 end
 
+local indices = function(before, after)
+  return vim.text.diff(before, after, { result_type = "indices" })
+end
+
 ---@param current FsReconcileBuffer
 ---@param text string
 ---@return FsReconcileReplacement
 M.plan = function(current, text)
-  local indices = diff.indices(current.text, text)
+  local changes = async.work(indices, current.text, text)
   return {
-    changes = diff.changes(diff.records(current.linefeed, text), indices),
+    changes = diff.changes(diff.records(current.linefeed, text), changes),
     trailing_empty = string.sub(text, -#current.linefeed) == current.linefeed,
   }
 end

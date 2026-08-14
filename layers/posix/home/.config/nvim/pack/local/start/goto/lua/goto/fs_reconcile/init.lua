@@ -156,14 +156,14 @@ local next = function(current, changes)
 end
 
 ---@param buf integer
+---@param path string
 ---@param chan FsReconcileChannel
 ---@return fun()
-local start = function(buf, chan)
-  local path = vim.api.nvim_buf_get_name(buf)
+local start = function(buf, path, chan)
   ---@type FsReconcilePoller?
-  local poller = path ~= "" and util.poller(path, INTERVAL_MS, function()
+  local poller = util.poller(path, INTERVAL_MS, function()
     chan.send { type = EVENTS.REMOTE }
-  end) or nil
+  end)
 
   local changed = async(function(_, _, changedtick)
     chan.send {
@@ -209,10 +209,10 @@ local resolve = function(base, value, observed)
 end
 
 ---@param buf integer
+---@param path string
 ---@param chan FsReconcileChannel
 ---@param close fun()
-local drive = function(buf, chan, close)
-  local path = vim.api.nvim_buf_get_name(buf)
+local drive = function(buf, path, chan, close)
   ---@type FsReconcileDocument
   local document = {
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
@@ -220,10 +220,10 @@ local drive = function(buf, chan, close)
     local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
   }
   local valid = function()
-    return get(buf) == chan and path ~= "" and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
+    return get(buf) == chan and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
   end
 
-  return lib.scope(function(defer)
+  lib.scope(function(defer)
     defer(close)
     for event in chan do
       if event.type == EVENTS.RETRY then
@@ -314,6 +314,10 @@ local detach = function(buf)
 end
 
 local attach = function(buf)
+  local path = vim.api.nvim_buf_get_name(buf)
+  if path == "" then
+    return
+  end
   local existing = get(buf)
   if existing then
     existing.send { type = EVENTS.REMOTE }
@@ -322,8 +326,8 @@ local attach = function(buf)
   ---@type FsReconcileChannel
   local chan = async.mpsc()
   vim.b[buf][TAG] = chan
-  local close = start(buf, chan)
-  drive(buf, chan, close)
+  local close = start(buf, path, chan)
+  drive(buf, path, chan, close)
 end
 
 do
@@ -352,6 +356,14 @@ do
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     callback = async(function(args)
+      send(args.buf, { type = EVENTS.REMOTE })
+    end),
+  })
+
+  vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
+    group = lib.group,
+    callback = async(function(args)
+      vim.v.fcs_choice = ""
       send(args.buf, { type = EVENTS.REMOTE })
     end),
   })
