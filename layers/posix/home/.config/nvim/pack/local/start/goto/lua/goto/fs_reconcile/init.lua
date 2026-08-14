@@ -14,18 +14,11 @@ local ns = vim.api.nvim_create_namespace "fs-reconcile"
 ---@field text string
 ---@field version? uv.fs_stat.result
 
----@class FsReconcileSnapshot: FsReconcileBuffer
----@field changedtick integer
-
 ---@class FsReconcileDocument
 ---@field changedtick integer
 ---@field base? FsReconcileBase
 ---@field inserting boolean
 ---@field local_at? integer
-
----@class FsReconcileAttachment
----@field path string
----@field chan FsReconcileChannel
 
 ---@class FsReconcileInsertEvent
 ---@field type "insert"
@@ -62,7 +55,7 @@ local EVENTS = {
 ---@alias FsReconcileChannel AsyncMpsc<FsReconcileEvent>
 
 ---@param buf integer
----@return FsReconcileAttachment?
+---@return FsReconcileChannel?
 local get = function(buf)
   return vim.b[buf][TAG]
 end
@@ -70,9 +63,9 @@ end
 ---@param buf integer
 ---@param event FsReconcileEvent
 local send = function(buf, event)
-  local attachment = get(buf)
-  if attachment then
-    attachment.chan.send(event)
+  local chan = get(buf)
+  if chan then
+    chan.send(event)
   end
 end
 
@@ -102,30 +95,23 @@ end
 ---@param chan FsReconcileChannel
 ---@param close fun()
 local drive = function(buf, chan, close)
+  local path = vim.api.nvim_buf_get_name(buf)
   ---@type FsReconcileDocument
   local document = {
-    path = vim.api.nvim_buf_get_name(buf),
-    epoch = 1,
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
     inserting = vim.api.nvim_get_current_buf() == buf and vim.api.nvim_get_mode().mode:find "^[iR]" ~= nil,
     local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
   }
-  local valid = function(epoch)
-    return document.epoch == epoch
-      and document.path ~= ""
-      and vim.api.nvim_buf_get_name(buf) == document.path
-      and vim.bo[buf].modifiable
+  local valid = function()
+    return get(buf) == chan and path ~= "" and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
   end
 
   return lib.scope(function(defer)
     defer(close)
     for event in chan do
       if event.type == EVENTS.RETRY then
-        if event.epoch ~= document.epoch then
-          goto continue
-        end
         local elapsed = chan.wait(event.sleep)
-        if not elapsed or event.epoch ~= document.epoch then
+        if not elapsed then
           goto continue
         end
       elseif event.type == EVENTS.INSERT then
@@ -136,25 +122,15 @@ local drive = function(buf, chan, close)
       else
         assert(false, event.type)
       end
-      local path = vim.api.nvim_buf_get_name(buf)
-      if document.path ~= path then
-        document = next(document, {
-          path = path,
-          epoch = document.epoch + 1,
-          changedtick = vim.api.nvim_buf_get_changedtick(buf),
-          base = vim.NIL,
-          local_at = vim.bo[buf].modified and vim.uv.hrtime() or vim.NIL,
-        })
-      end
-      if not valid(document.epoch) then
+      if not valid() then
         goto continue
       end
-      local value = util.buffer(buf, document.epoch)
+      local value = util.buffer(buf)
       if value.changedtick ~= document.changedtick then
         goto continue
       end
-      local observed = util.read_file(buf, document.path, value)
-      if not observed or not valid(value.epoch) then
+      local observed = util.read_file(path, value)
+      if not observed or not valid() then
         goto continue
       end
       local base = document.base
@@ -163,14 +139,13 @@ local drive = function(buf, chan, close)
         if value.text ~= observed.text then
           chan.send {
             type = EVENTS.RETRY,
-            epoch = document.epoch,
             sleep = 0,
           }
         end
         goto continue
       end
       local guard = function()
-        return valid(value.epoch)
+        return valid()
       end
       if value.text == base.text then
         if util.same_base(base, observed) then
@@ -191,13 +166,12 @@ local drive = function(buf, chan, close)
           local sleep = math.ceil(LOCAL_QUIET_MS - elapsed)
           chan.send {
             type = EVENTS.RETRY,
-            epoch = document.epoch,
             sleep = sleep,
           }
           goto continue
         end
         vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
-        if not util.unchanged(document.path, base) then
+        if not util.unchanged(path, base) then
           goto continue
         end
         local ok = pcall(vim.api.nvim_buf_call, buf, function()
@@ -207,11 +181,11 @@ local drive = function(buf, chan, close)
           goto continue
         end
         vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf })
-        if not valid(value.epoch) then
+        if not valid() then
           goto continue
         end
-        local after = util.read_file(buf, document.path, util.buffer(buf, value.epoch))
-        if after and valid(value.epoch) then
+        local after = util.read_file(path, util.buffer(buf))
+        if after and valid() then
           document = next(document, { base = after, local_at = vim.NIL })
         end
         goto continue
@@ -228,7 +202,6 @@ local drive = function(buf, chan, close)
         if vim.bo[buf].modified and not changed then
           chan.send {
             type = EVENTS.RETRY,
-            epoch = document.epoch,
             sleep = 0,
           }
         end
@@ -242,28 +215,11 @@ end
 ---@param chan FsReconcileChannel
 ---@return fun()
 local start = function(buf, chan)
+  local path = vim.api.nvim_buf_get_name(buf)
   ---@type FsReconcilePoller?
-  local poller = nil
-  local watch = function()
-    local path = vim.api.nvim_buf_get_name(buf)
-    if poller and poller.path ~= path then
-      poller.close()
-      poller = nil
-    end
-    if path ~= "" and not poller then
-      poller = util.poller(path, INTERVAL_MS, function()
-        chan.send { type = EVENTS.REMOTE }
-      end)
-    end
+  local poller = path ~= "" and util.poller(path, INTERVAL_MS, function()
     chan.send { type = EVENTS.REMOTE }
-  end
-  local file_post = vim.api.nvim_create_autocmd({ "BufFilePost" }, {
-    group = lib.group,
-    buffer = buf,
-    callback = async(function()
-      watch()
-    end),
-  })
+  end) or nil
 
   local changed = async(function(_, _, changedtick)
     chan.send {
@@ -279,16 +235,15 @@ local start = function(buf, chan)
       chan.close()
     end,
   })
-  watch()
+  chan.send { type = EVENTS.REMOTE }
 
   local close = function()
     chan.close()
-    vim.api.nvim_del_autocmd(file_post)
     if poller then
       poller.close()
       poller = nil
     end
-    if vim.api.nvim_buf_is_valid(buf) then
+    if vim.api.nvim_buf_is_valid(buf) and get(buf) == chan then
       vim.b[buf][TAG] = nil
     end
   end
@@ -327,6 +282,14 @@ do
   vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
     group = lib.group,
     callback = async(function(args)
+      attach(args.buf)
+    end),
+  })
+
+  vim.api.nvim_create_autocmd({ "BufFilePost" }, {
+    group = lib.group,
+    callback = async(function(args)
+      detach(args.buf)
       attach(args.buf)
     end),
   })

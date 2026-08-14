@@ -74,24 +74,30 @@ end
 M.mpsc = function()
   local closed = false
   local queue = {}
-  local pending ---@type fun(elapsed?: boolean)?
+  local pending ---@type { elapsed: boolean, resolve: fun(elapsed: boolean), scheduled: boolean }?
 
   local ch = {}
 
   local notify = function(elapsed)
     if pending then
-      local resume = pending
-      pending = nil
-      vim.schedule(function()
-        resume(elapsed)
-      end)
+      pending.elapsed = elapsed
+      if not pending.scheduled then
+        local waiter = pending
+        waiter.scheduled = true
+        vim.schedule(function()
+          if pending == waiter then
+            pending = nil
+            waiter.resolve(waiter.elapsed)
+          end
+        end)
+      end
     end
   end
 
   local await = function()
     assert(not pending, "mpsc: consumer already waiting")
     local future = M.future()
-    pending = future.resolve
+    pending = { elapsed = false, resolve = future.resolve, scheduled = false }
     return future
   end
 
@@ -119,9 +125,9 @@ M.mpsc = function()
       return false
     end
     local future = await()
-    local resume = pending
+    local waiter = pending
     vim.defer_fn(function()
-      if pending == resume then
+      if pending == waiter then
         notify(true)
       end
     end, milliseconds)

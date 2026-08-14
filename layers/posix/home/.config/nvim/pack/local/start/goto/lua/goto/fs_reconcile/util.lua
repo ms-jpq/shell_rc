@@ -8,6 +8,11 @@ local MAX_BYTES = 2 * 1024 * 1024
 ---@field path string
 ---@field close fun()
 
+---@class FsReconcileSnapshot: FsReconcileBuffer
+---@field changedtick integer
+---@field fileencoding string
+---@field encoding string
+
 ---@param left? uv.fs_stat.result
 ---@param right? uv.fs_stat.result
 ---@return boolean
@@ -61,6 +66,8 @@ M.buffer = function(buf)
     endofline = endofline,
     final_empty = lines[#lines] == "",
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
+    fileencoding = vim.bo[buf].fileencoding,
+    encoding = vim.o.encoding,
   }
 end
 
@@ -92,22 +99,21 @@ M.poller = function(path, interval, wake)
   poll:close()
 end
 
----@param buf integer
+---@param snapshot FsReconcileSnapshot
 ---@param text string
 ---@return string?
-M.decode = function(buf, text)
-  local encoding = vim.bo[buf].fileencoding
-  if encoding ~= "" and encoding ~= vim.o.encoding then
-    text = vim.fn.iconv(text, encoding, vim.o.encoding)
+local decode = function(snapshot, text)
+  if snapshot.fileencoding ~= "" and snapshot.fileencoding ~= snapshot.encoding then
+    text = vim.fn.iconv(text, snapshot.fileencoding, snapshot.encoding)
   end
-  local remainder = string.gsub(text, lib.buf_linefeed(buf), "")
+  local remainder = string.gsub(text, snapshot.linefeed, "")
   return not string.find(remainder, "[\r\n]") and text or nil
 end
 
 ---@param snapshot FsReconcileSnapshot
 ---@param text string
 ---@return string
-M.merge_text = function(snapshot, text)
+local merge_text = function(snapshot, text)
   if snapshot.final_empty and not snapshot.endofline then
     return text .. snapshot.linefeed
   elseif snapshot.endofline and not vim.endswith(text, snapshot.linefeed) then
@@ -131,11 +137,10 @@ M.buffer_text = function(snapshot, text)
   return text
 end
 
----@param buf integer
 ---@param path string
 ---@param snapshot FsReconcileSnapshot
 ---@return FsReconcileBase?
-M.read_file = function(buf, path, snapshot)
+M.read_file = function(path, snapshot)
   local before = vim.uv.fs_stat(path)
   if not before then
     return { text = "" }
@@ -146,12 +151,12 @@ M.read_file = function(buf, path, snapshot)
   if not ok or type(text) ~= "string" then
     return
   end
-  text = M.decode(buf, text)
+  text = decode(snapshot, text)
   local after = vim.uv.fs_stat(path)
   if not text or not M.same_version(before, after) then
     return
   end
-  return { text = M.buffer_text(snapshot, M.merge_text(snapshot, text)), version = before }
+  return { text = M.buffer_text(snapshot, merge_text(snapshot, text)), version = before }
 end
 
 return M
