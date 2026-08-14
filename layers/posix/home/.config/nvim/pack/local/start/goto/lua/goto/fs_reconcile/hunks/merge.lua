@@ -6,8 +6,7 @@ local M = {}
 ---@field local_patches FsReconcileHunk[]
 ---@field remote_patches FsReconcileHunk[]
 
-local chars = function(pieces)
-  local text = table.concat(pieces)
+local chars = function(text)
   local characters = {}
   local start = 1
 
@@ -59,7 +58,7 @@ local atomic_patches = function(hunks)
     :totable()
 end
 
-local variable = function(patches)
+local resizes = function(patches)
   return vim.iter(patches):any(function(patch)
     return patch.finish - patch.start ~= #patch.lines
   end)
@@ -142,16 +141,14 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
 end
 
 local groups = function(local_patches, remote_patches)
-  local local_i, remote_i = 1, 1
-  local grouped = {}
-
-  while local_patches[local_i] or remote_patches[remote_i] do
-    local group
-    group, local_i, remote_i = next_group(local_patches, remote_patches, local_i, remote_i)
-    table.insert(grouped, group)
-  end
-
-  return grouped
+  return coroutine.wrap(function()
+    local local_i, remote_i = 1, 1
+    while local_patches[local_i] or remote_patches[remote_i] do
+      local group
+      group, local_i, remote_i = next_group(local_patches, remote_patches, local_i, remote_i)
+      coroutine.yield(group)
+    end
+  end)
 end
 
 local sort = function(patches)
@@ -193,7 +190,7 @@ local relative = function(patches, start)
     :totable()
 end
 
-local take_both_lines = function(linefeed, local_lines, remote_lines)
+local take_both = function(linefeed, local_lines, remote_lines)
   local local_text = table.concat(local_lines)
   local remote_text = table.concat(remote_lines)
 
@@ -223,59 +220,96 @@ local replacement = function(group, replacement_lines)
   }
 end
 
-local take_both = function(linefeed, group)
-  return replacement(
-    group,
-    take_both_lines(linefeed, patches_lines(group.local_patches), patches_lines(group.remote_patches))
-  )
+local split_record = function(linefeed, record)
+  if vim.endswith(record, linefeed) then
+    return string.sub(record, 1, -#linefeed - 1), linefeed
+  end
+  return record, ""
+end
+
+local character_records = function(text)
+  local records = {}
+  for _, character in ipairs(chars(text)) do
+    table.insert(records, character .. "\n")
+  end
+  return records
+end
+
+local characters_text = function(records)
+  local characters = {}
+  for _, record in ipairs(records) do
+    table.insert(characters, string.sub(record, 1, -2))
+  end
+  return table.concat(characters)
+end
+
+local character_patches = function(before, after)
+  local before_records = character_records(before)
+  local after_records = character_records(after)
+  return atomic_patches(changes(table.concat(before_records), table.concat(after_records), after_records))
+end
+
+local merge_record = function(linefeed, base, local_record, remote_record)
+  if local_record == remote_record or local_record == base then
+    return { remote_record }
+  elseif remote_record == base then
+    return { local_record }
+  end
+
+  local base_text = split_record(linefeed, base)
+  local local_text, local_eol = split_record(linefeed, local_record)
+  local remote_text, remote_eol = split_record(linefeed, remote_record)
+  if local_eol ~= remote_eol then
+    return take_both(linefeed, { local_record }, { remote_record })
+  end
+
+  local local_patches = character_patches(base_text, local_text)
+  local remote_patches = character_patches(base_text, remote_text)
+  local conflicted = vim.iter(local_patches):any(function(local_patch)
+    return vim.iter(remote_patches):any(function(remote_patch)
+      return overlaps(local_patch, remote_patch)
+    end)
+  end)
+  if conflicted then
+    return take_both(linefeed, { local_record }, { remote_record })
+  end
+
+  local patches = vim.list_extend(local_patches, remote_patches)
+  sort(patches)
+  local characters = patch(character_records(base_text), patches)
+  return { characters_text(characters) .. local_eol }
 end
 
 local merge_overlap = function(linefeed, base, group)
-  if variable(group.local_patches) or variable(group.remote_patches) then
-    return take_both(linefeed, group)
+  if resizes(group.local_patches) or resizes(group.remote_patches) then
+    return replacement(
+      group,
+      take_both(linefeed, patches_lines(group.local_patches), patches_lines(group.remote_patches))
+    )
   end
 
   local start, finish = bounds(group)
   local before = diff.slice(base, start, finish)
   local local_lines = patch(before, relative(group.local_patches, start))
   local remote_lines = patch(before, relative(group.remote_patches, start))
-  local characters = chars(before)
-  local local_characters = chars(local_lines)
-  local remote_characters = chars(remote_lines)
-
-  local character_text = table.concat(characters, linefeed)
-  local local_character_text = table.concat(local_characters, linefeed)
-  local remote_character_text = table.concat(remote_characters, linefeed)
-  local local_hunks = atomic_patches(changes(character_text, local_character_text, local_characters))
-  local remote_hunks = atomic_patches(changes(character_text, remote_character_text, remote_characters))
-  local conflicted = vim.iter(local_hunks):any(function(local_hunk)
-    return vim.iter(remote_hunks):any(function(remote_hunk)
-      return overlaps(local_hunk, remote_hunk)
-    end)
-  end)
-
-  if conflicted then
-    return take_both(linefeed, group)
+  local lines = {}
+  for index, record in ipairs(before) do
+    vim.list_extend(lines, merge_record(linefeed, record, local_lines[index], remote_lines[index]))
   end
-  local patches = vim.list_extend(local_hunks, remote_hunks)
-  sort(patches)
-  return replacement(group, diff.records(linefeed, table.concat(patch(characters, patches))))
-end
-
-local merge_group = function(linefeed, base, group)
-  if #group.remote_patches == 0 then
-    return group.local_patches
-  elseif #group.local_patches == 0 then
-    return group.remote_patches
-  end
-  return { merge_overlap(linefeed, base, group) }
+  return replacement(group, lines)
 end
 
 local merge_groups = function(linefeed, base, grouped)
   local merged = {}
 
-  for _, group in ipairs(grouped) do
-    vim.list_extend(merged, merge_group(linefeed, base, group))
+  for group in grouped do
+    if #group.remote_patches == 0 then
+      vim.list_extend(merged, group.local_patches)
+    elseif #group.local_patches == 0 then
+      vim.list_extend(merged, group.remote_patches)
+    else
+      table.insert(merged, merge_overlap(linefeed, base, group))
+    end
   end
 
   return merged

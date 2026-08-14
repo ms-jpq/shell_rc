@@ -245,7 +245,7 @@ local drive = function(buf, chan, close)
         goto continue
       end
       local observed = util.read_file(path, value)
-      if not observed or not valid() then
+      if not observed then
         goto continue
       end
       local base = document.base
