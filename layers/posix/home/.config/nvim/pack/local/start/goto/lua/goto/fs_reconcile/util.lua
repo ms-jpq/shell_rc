@@ -4,7 +4,8 @@ local lib = require "goto.lib"
 local M = {}
 local MAX_BYTES = 2 * 1024 * 1024
 
----@class FsReconcileHandle
+---@class FsReconcilePoller
+---@field path string
 ---@field close fun()
 
 ---@param left? uv.fs_stat.result
@@ -68,7 +69,7 @@ end
 ---@param path string
 ---@param interval integer
 ---@param wake fun()
----@return FsReconcileHandle?
+---@return FsReconcilePoller?
 M.poller = function(path, interval, wake)
   local poll = vim.uv.new_fs_poll()
   local changed = async(function()
@@ -80,6 +81,7 @@ M.poller = function(path, interval, wake)
   elseif poll:start(path, interval, changed) then
     local closed = false
     return {
+      path = path,
       close = function()
         if not closed then
           closed = true

@@ -67,15 +67,26 @@ end
 ---@field close fun()
 ---@field send fun(value: T): boolean
 ---@field next fun(): T?
+---@field wait fun(milliseconds: integer): boolean
 
 ---@generic T
 ---@return AsyncMpsc<T>
 M.mpsc = function()
   local closed = false
   local queued = {}
-  local resolve ---@type fun()?
+  local resolve ---@type fun(elapsed?: boolean)?
 
   local ch = {}
+
+  local wake = function(elapsed)
+    if resolve then
+      local resume = resolve
+      resolve = nil
+      vim.schedule(function()
+        resume(elapsed)
+      end)
+    end
+  end
 
   ch.close = function()
     if closed then
@@ -83,22 +94,14 @@ M.mpsc = function()
     end
     closed = true
     queued = {}
-    if resolve then
-      local wake = resolve
-      resolve = nil
-      vim.schedule(wake)
-    end
+    wake(false)
   end
   ch.send = function(value)
     if closed then
       return false
     end
     table.insert(queued, value)
-    if resolve then
-      local wake = resolve
-      resolve = nil
-      vim.schedule(wake)
-    end
+    wake(false)
     return true
   end
   ch.next = function()
@@ -115,6 +118,21 @@ M.mpsc = function()
     if not closed then
       return table.remove(queued, 1)
     end
+  end
+  ch.wait = function(milliseconds)
+    if closed or #queued > 0 then
+      return false
+    end
+    assert(not resolve, "mpsc: multiple consumers")
+    local future = M.future()
+    local resume = future.resolve
+    resolve = resume
+    vim.defer_fn(function()
+      if resolve == resume then
+        wake(true)
+      end
+    end, milliseconds)
+    return future.await() == true
   end
   return ch
 end
