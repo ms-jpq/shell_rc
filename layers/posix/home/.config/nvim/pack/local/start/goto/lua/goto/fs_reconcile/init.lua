@@ -172,20 +172,18 @@ end
 ---@param valid fun(): boolean
 ---@return FsReconcileWrite?
 local save = function(buf, path, base, valid)
-  vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
-  if not valid() then
-    return
-  end
-  if not util.unchanged(path, base) then
-    return
-  end
-  local ok = pcall(vim.api.nvim_buf_call, buf, function()
+  local ok, written = pcall(vim.api.nvim_buf_call, buf, function()
+    vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
+    if not valid() or not util.unchanged(path, base) then
+      return false
+    end
     vim.cmd [[noautocmd silent! write! ++p]]
+    vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf, data = { fs_reconcile = true } })
+    return true
   end)
-  if not ok then
+  if not ok or not written then
     return
   end
-  vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf, data = { fs_reconcile = true } })
   local value = util.buffer(buf)
   local after = util.read_file(path, value)
   if after and after.text == value.text then
