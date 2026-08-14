@@ -7,10 +7,18 @@ local util = require "goto.fs_reconcile.util"
 
 local TAG = "__fs_reconcile__"
 local INTERVAL_MS = 99
-local LOCAL_QUIET_MS = 3 * INTERVAL_MS
-local REMOTE_QUIET_MS = 6 * INTERVAL_MS
 local FLASH_SPAN = 200
 local ns = vim.api.nvim_create_namespace "fs-reconcile"
+
+---@class FsReconcileQuiet
+---@field LOCAL integer
+---@field REMOTE integer
+
+---@type FsReconcileQuiet
+local QUIET = {
+  LOCAL = 3 * INTERVAL_MS,
+  REMOTE = 6 * INTERVAL_MS,
+}
 
 ---@class FsReconcileDocument
 ---@field changedtick integer
@@ -38,9 +46,8 @@ local ns = vim.api.nvim_create_namespace "fs-reconcile"
 
 ---@class FsReconcileWriteEvent
 ---@field type "write"
----@field at integer
 ---@field changedtick integer
----@field base? FsReconcileBase
+---@field base FsReconcileBase
 
 ---@alias FsReconcileEvent FsReconcileInsertEvent|FsReconcileLocalEvent|FsReconcileRemoteEvent|FsReconcileRetryEvent|FsReconcileWriteEvent
 
@@ -59,6 +66,35 @@ local EVENTS = {
   REMOTE = "remote",
   WRITE = "write",
 }
+
+---@return FsReconcileRemoteEvent
+local remote = function()
+  return { type = EVENTS.REMOTE, at = vim.uv.hrtime() }
+end
+
+---@param sleep integer
+---@return FsReconcileRetryEvent
+local retry = function(sleep)
+  return { type = EVENTS.RETRY, sleep = sleep }
+end
+
+---@param changedtick integer
+---@return FsReconcileLocalEvent
+local local_change = function(changedtick)
+  return {
+    type = EVENTS.LOCAL,
+    at = vim.uv.hrtime(),
+    changedtick = changedtick,
+  }
+end
+
+---@param now integer
+---@param at integer
+---@param quiet integer
+---@return integer
+local remaining = function(now, at, quiet)
+  return math.max(0, math.ceil(quiet - lib.ns_to_ms(now - at)))
+end
 
 ---@class FsReconcileResolutions
 ---@field INITIAL "initial"
@@ -209,15 +245,11 @@ local start = function(buf, path, chan)
   local mpsc_close = chan.close
   ---@type FsReconcilePoller?
   local poller = util.poller(path, INTERVAL_MS, function()
-    chan.send { type = EVENTS.REMOTE, at = vim.uv.hrtime() }
+    chan.send(remote())
   end)
 
   local changed = async(function(_, _, changedtick)
-    chan.send {
-      type = EVENTS.LOCAL,
-      at = vim.uv.hrtime(),
-      changedtick = changedtick,
-    }
+    chan.send(local_change(changedtick))
   end)
   vim.api.nvim_buf_attach(buf, false, {
     on_changedtick = changed,
@@ -238,7 +270,7 @@ local start = function(buf, path, chan)
     end
   end
 
-  chan.send { type = EVENTS.REMOTE, at = vim.uv.hrtime() }
+  chan.send(remote())
   return chan.close
 end
 
@@ -263,7 +295,7 @@ local drive = function(buf, path, chan, close)
   ---@type FsReconcileDocument
   local document = {
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
-    inserting = vim.api.nvim_get_current_buf() == buf and lib.insert_mode(vim.api.nvim_get_mode().mode),
+    inserting = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode),
     local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
   }
   local valid = function()
@@ -284,9 +316,9 @@ local drive = function(buf, path, chan, close)
         document = next(document, { local_at = event.at, changedtick = event.changedtick })
       elseif event.type == EVENTS.WRITE then
         document = next(document, {
-          base = event.base or document.base,
+          base = event.base,
           changedtick = event.changedtick,
-          local_at = event.base and vim.NIL or event.at,
+          local_at = vim.NIL,
         })
       elseif event.type == EVENTS.REMOTE then
         document = next(document, { remote_at = event.at })
@@ -296,13 +328,10 @@ local drive = function(buf, path, chan, close)
       if not valid() then
         goto continue
       end
-      local remote_elapsed = document.base and document.remote_at and lib.ns_to_ms(vim.uv.hrtime() - document.remote_at)
-        or math.huge
-      if remote_elapsed < REMOTE_QUIET_MS then
-        chan.send {
-          type = EVENTS.RETRY,
-          sleep = math.ceil(REMOTE_QUIET_MS - remote_elapsed),
-        }
+      local remote_sleep = document.base and document.remote_at and remaining(vim.uv.hrtime(), document.remote_at, QUIET.REMOTE)
+        or 0
+      if remote_sleep > 0 then
+        chan.send(retry(remote_sleep))
         goto continue
       end
       document = next(document, { remote_at = vim.NIL })
@@ -319,10 +348,7 @@ local drive = function(buf, path, chan, close)
       if resolution == RESOLUTIONS.INITIAL then
         document = next(document, { base = observed })
         if value.text ~= observed.text then
-          chan.send {
-            type = EVENTS.RETRY,
-            sleep = 0,
-          }
+          chan.send(retry(0))
         end
       elseif resolution == RESOLUTIONS.SYNCED then
       elseif resolution == RESOLUTIONS.ADOPT then
@@ -335,13 +361,9 @@ local drive = function(buf, path, chan, close)
         if document.inserting then
           goto continue
         end
-        local elapsed = document.local_at and lib.ns_to_ms(vim.uv.hrtime() - document.local_at) or math.huge
-        if elapsed < LOCAL_QUIET_MS then
-          local sleep = math.ceil(LOCAL_QUIET_MS - elapsed)
-          chan.send {
-            type = EVENTS.RETRY,
-            sleep = sleep,
-          }
+        local local_sleep = document.local_at and remaining(vim.uv.hrtime(), document.local_at, QUIET.LOCAL) or 0
+        if local_sleep > 0 then
+          chan.send(retry(local_sleep))
           goto continue
         end
         local write = save(buf, path, base, valid)
@@ -353,7 +375,7 @@ local drive = function(buf, path, chan, close)
             end
           elseif write.type == WRITES.UNATTESTED then
             if valid() then
-              chan.send { type = EVENTS.REMOTE, at = vim.uv.hrtime() }
+              chan.send(remote())
             end
           else
             assert(false, write.type)
@@ -367,10 +389,7 @@ local drive = function(buf, path, chan, close)
           vim.bo[buf].modified = text ~= observed.text
           document = next(document, { base = observed })
           if vim.bo[buf].modified and not changed then
-            chan.send {
-              type = EVENTS.RETRY,
-              sleep = 0,
-            }
+            chan.send(retry(0))
           end
         end
       else
@@ -397,7 +416,7 @@ local attach = function(buf)
     end
     local existing = get(buf)
     if existing then
-      existing.send { type = EVENTS.REMOTE, at = vim.uv.hrtime() }
+      existing.send(remote())
       return
     end
     ---@type FsReconcileChannel
@@ -441,18 +460,22 @@ do
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     callback = async(function(args)
-      local value = util.buffer(args.buf)
       local data = args.data or {}
-      local base = not data.fs_reconcile and util.read_file(vim.api.nvim_buf_get_name(args.buf), value) or nil
-      if base and base.text ~= value.text then
-        base = nil
+      if data.fs_reconcile then
+        return
       end
-      send(args.buf, {
-        type = EVENTS.WRITE,
-        at = vim.uv.hrtime(),
-        changedtick = value.changedtick,
-        base = base,
-      })
+      local value = util.buffer(args.buf)
+      local base = util.read_file(vim.api.nvim_buf_get_name(args.buf), value)
+      if base and base.text == value.text then
+        send(args.buf, {
+          type = EVENTS.WRITE,
+          changedtick = value.changedtick,
+          base = base,
+        })
+      else
+        send(args.buf, local_change(value.changedtick))
+        send(args.buf, remote())
+      end
     end),
   })
 
@@ -460,7 +483,7 @@ do
     group = lib.group,
     callback = async(function(args)
       vim.v.fcs_choice = ""
-      send(args.buf, { type = EVENTS.REMOTE, at = vim.uv.hrtime() })
+      send(args.buf, remote())
     end),
   })
 
@@ -479,7 +502,7 @@ do
     pattern = "modifiable",
     callback = async(function()
       local buf = vim.api.nvim_get_current_buf()
-      send(buf, { type = EVENTS.REMOTE, at = vim.uv.hrtime() })
+      send(buf, remote())
     end),
   })
 

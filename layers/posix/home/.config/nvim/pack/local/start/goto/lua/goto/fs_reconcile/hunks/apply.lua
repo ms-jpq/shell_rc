@@ -42,7 +42,7 @@ end
 ---@param replacement FsReconcileReplacement
 ---@param mark fun(start: integer, finish: integer)
 M.run = function(buf, current, replacement, mark)
-  local in_insert = vim.api.nvim_get_current_buf() == buf and lib.insert_mode(vim.api.nvim_get_mode().mode)
+  local in_insert = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode)
 
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
