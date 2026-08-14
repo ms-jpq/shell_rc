@@ -52,6 +52,24 @@ local EVENTS = {
   REMOTE = "remote",
 }
 
+---@class FsReconcileResolutions
+---@field INITIAL "initial"
+---@field SYNCED "synced"
+---@field ADOPT "adopt"
+---@field SAVE "save"
+---@field MERGE "merge"
+
+---@type FsReconcileResolutions
+local RESOLUTIONS = {
+  INITIAL = "initial",
+  SYNCED = "synced",
+  ADOPT = "adopt",
+  SAVE = "save",
+  MERGE = "merge",
+}
+
+---@alias FsReconcileResolution "initial"|"synced"|"adopt"|"save"|"merge"
+
 ---@alias FsReconcileChannel AsyncMpsc<FsReconcileEvent>
 
 ---@param buf integer
@@ -91,6 +109,19 @@ local next = function(current, changes)
   return copy
 end
 
+---@param base? FsReconcileBase
+---@param value FsReconcileSnapshot
+---@param observed FsReconcileBase
+---@return FsReconcileResolution
+local resolve = function(base, value, observed)
+  if not base then
+    return RESOLUTIONS.INITIAL
+  elseif value.text == base.text then
+    return util.same_base(base, observed) and RESOLUTIONS.SYNCED or RESOLUTIONS.ADOPT
+  end
+  return util.same_base(base, observed) and RESOLUTIONS.SAVE or RESOLUTIONS.MERGE
+end
+
 ---@param buf integer
 ---@param chan FsReconcileChannel
 ---@param close fun()
@@ -104,6 +135,9 @@ local drive = function(buf, chan, close)
   }
   local valid = function()
     return get(buf) == chan and path ~= "" and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
+  end
+  local guard = function()
+    return valid()
   end
 
   return lib.scope(function(defer)
@@ -134,7 +168,8 @@ local drive = function(buf, chan, close)
         goto continue
       end
       local base = document.base
-      if not base then
+      local resolution = resolve(base, value, observed)
+      if resolution == RESOLUTIONS.INITIAL then
         document = next(document, { base = observed })
         if value.text ~= observed.text then
           chan.send {
@@ -143,21 +178,18 @@ local drive = function(buf, chan, close)
           }
         end
         goto continue
+      elseif resolution == RESOLUTIONS.SYNCED then
+        goto continue
       end
-      local guard = function()
-        return valid()
-      end
-      if value.text == base.text then
-        if util.same_base(base, observed) then
-          goto continue
-        end
+      if resolution == RESOLUTIONS.ADOPT then
         if value.text == observed.text or hunks.replace(buf, value, observed.text, mark(buf), nil, guard) then
           vim.bo[buf].modified = false
           document = next(document, { base = observed, local_at = vim.NIL })
         end
         goto continue
       end
-      if util.same_base(base, observed) then
+      ---@cast base FsReconcileBase
+      if resolution == RESOLUTIONS.SAVE then
         if document.inserting then
           goto continue
         end
@@ -190,6 +222,7 @@ local drive = function(buf, chan, close)
         end
         goto continue
       end
+      assert(resolution == RESOLUTIONS.MERGE, resolution)
       local merged = hunks.merge(value.linefeed, base.text, value.text, observed.text)
       if not guard() then
         goto continue

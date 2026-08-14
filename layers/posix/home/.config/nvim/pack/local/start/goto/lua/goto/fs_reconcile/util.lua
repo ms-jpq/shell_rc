@@ -5,7 +5,6 @@ local M = {}
 local MAX_BYTES = 2 * 1024 * 1024
 
 ---@class FsReconcilePoller
----@field path string
 ---@field close fun()
 
 ---@class FsReconcileSnapshot: FsReconcileBuffer
@@ -86,7 +85,6 @@ M.poller = function(path, interval, wake)
   elseif poll:start(path, interval, changed) then
     local closed = false
     return {
-      path = path,
       close = function()
         if not closed then
           closed = true
