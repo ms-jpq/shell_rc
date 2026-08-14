@@ -47,6 +47,13 @@ M.same_version = function(left, right)
     and left.ctime.nsec == right.ctime.nsec
 end
 
+---@param left? uv.fs_stat.result
+---@param right? uv.fs_stat.result
+---@return boolean
+M.same_file = function(left, right)
+  return left ~= nil and right ~= nil and left.dev == right.dev and left.ino == right.ino
+end
+
 ---@param left FsReconcileBase
 ---@param right FsReconcileBase
 ---@return boolean

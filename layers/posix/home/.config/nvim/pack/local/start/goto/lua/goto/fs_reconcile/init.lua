@@ -247,10 +247,13 @@ end
 ---@return integer?
 local transition = function(document, event)
   if event.type == EVENTS.RETRY then
-    return document, event.sleep
+    return document, event.sleep > 0 and event.sleep or nil
   elseif event.type == EVENTS.INSERT then
     return next(document, { inserting = event.inserting })
   elseif event.type == EVENTS.LOCAL then
+    if event.changedtick == document.changedtick then
+      return document
+    end
     return next(document, { local_at = event.at, changedtick = event.changedtick })
   elseif event.type == EVENTS.WRITE then
     return next(document, {
@@ -350,15 +353,6 @@ local drive = function(buf, path, chan, close)
         chan.send(retry(QUIET.REMOTE))
         goto continue
       end
-      local remote_sleep = document.base
-          and document.remote_at
-          and remaining(vim.uv.hrtime(), document.remote_at, QUIET.REMOTE)
-        or 0
-      if remote_sleep > 0 then
-        chan.send(retry(remote_sleep))
-        goto continue
-      end
-      document = next(document, { remote_at = vim.NIL })
       local value = util.buffer(buf)
       if value.changedtick ~= document.changedtick then
         document = next(document, {
@@ -376,13 +370,23 @@ local drive = function(buf, path, chan, close)
         goto continue
       end
       local base = document.base
+      if base and not util.same_base(base, observed) and util.same_file(base.version, observed.version) then
+        local remote_at = document.remote_at or vim.uv.hrtime()
+        local remote_sleep = remaining(vim.uv.hrtime(), remote_at, QUIET.REMOTE)
+        if remote_sleep > 0 then
+          document = next(document, { remote_at = remote_at })
+          chan.send(retry(remote_sleep))
+          goto continue
+        end
+      end
+      document = next(document, { remote_at = vim.NIL })
       local resolution = resolve(base, value, observed)
       if resolution == RESOLUTIONS.INITIAL then
         if vim.bo[buf].modified and observed.version and value.text ~= observed.text then
           local text = merge(value, { text = "" }, observed)
           if replace(buf, value, text, valid) then
             vim.bo[buf].modified = text ~= observed.text
-            document = next(document, { base = observed })
+            document = next(document, { base = observed, changedtick = vim.api.nvim_buf_get_changedtick(buf) })
           end
         else
           document = next(document, { base = observed })
@@ -394,7 +398,11 @@ local drive = function(buf, path, chan, close)
       elseif resolution == RESOLUTIONS.ADOPT then
         if replace(buf, value, observed.text, valid) then
           vim.bo[buf].modified = false
-          document = next(document, { base = observed, local_at = vim.NIL })
+          document = next(document, {
+            base = observed,
+            changedtick = vim.api.nvim_buf_get_changedtick(buf),
+            local_at = vim.NIL,
+          })
         end
       elseif resolution == RESOLUTIONS.SAVE then
         ---@cast base FsReconcileBase
@@ -426,11 +434,10 @@ local drive = function(buf, path, chan, close)
         ---@cast base FsReconcileBase
         if observed.version or not base.version then
           local text = merge(value, base, observed)
-          local changed = text ~= value.text
           if replace(buf, value, text, valid) then
             vim.bo[buf].modified = text ~= observed.text
-            document = next(document, { base = observed })
-            if vim.bo[buf].modified and not changed then
+            document = next(document, { base = observed, changedtick = vim.api.nvim_buf_get_changedtick(buf) })
+            if vim.bo[buf].modified then
               chan.send(retry(0))
             end
           end
@@ -457,6 +464,7 @@ local attach = function(buf)
     if path == "" then
       return
     end
+    vim.bo[buf].autoread = false
     local existing = get(buf)
     if existing then
       existing.send(remote())
@@ -547,9 +555,13 @@ do
 
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = group,
-    pattern = { "modifiable", "readonly" },
-    callback = function()
-      send(vim.api.nvim_get_current_buf(), remote())
+    pattern = { "autoread", "modifiable", "readonly" },
+    callback = function(args)
+      local buf = vim.api.nvim_get_current_buf()
+      if args.match == "autoread" then
+        vim.bo[buf].autoread = false
+      end
+      send(buf, remote())
     end,
   })
 
