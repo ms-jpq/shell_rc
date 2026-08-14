@@ -93,6 +93,34 @@ local mark = function(buf)
   end
 end
 
+---@param buf integer
+---@param path string
+---@param base FsReconcileBase
+---@return FsReconcileBase?
+local save = function(buf, path, base)
+  vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
+  if not util.unchanged(path, base) then
+    return
+  end
+  local ok = pcall(vim.api.nvim_buf_call, buf, function()
+    vim.cmd [[noautocmd write! ++p]]
+  end)
+  if not ok then
+    return
+  end
+  vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf })
+  return util.read_file(path, util.buffer(buf))
+end
+
+---@param value FsReconcileSnapshot
+---@param base FsReconcileBase
+---@param observed FsReconcileBase
+---@return string
+local merge = function(value, base, observed)
+  local text = hunks.merge(value.linefeed, base.text, value.text, observed.text)
+  return util.buffer_text(value, text)
+end
+
 ---@param current FsReconcileDocument
 ---@param changes table
 ---@return FsReconcileDocument
@@ -203,29 +231,14 @@ local drive = function(buf, chan, close)
           }
           goto continue
         end
-        vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
-        if not util.unchanged(path, base) then
-          goto continue
-        end
-        local ok = pcall(vim.api.nvim_buf_call, buf, function()
-          vim.cmd [[noautocmd write! ++p]]
-        end)
-        if not ok then
-          goto continue
-        end
-        vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf })
-        if not valid() then
-          goto continue
-        end
-        local after = util.read_file(path, util.buffer(buf))
+        local after = save(buf, path, base)
         if after and valid() then
           document = next(document, { base = after, local_at = vim.NIL })
         end
       elseif resolution == RESOLUTIONS.MERGE then
         ---@cast base FsReconcileBase
-        local merged = hunks.merge(value.linefeed, base.text, value.text, observed.text)
+        local text = merge(value, base, observed)
         if valid() then
-          local text = util.buffer_text(value, merged)
           local changed = text ~= value.text
           local applied = true
           if changed then

@@ -13,43 +13,39 @@ end
 ---@param current FsReconcileBuffer
 ---@param replacement FsReconcileReplacement
 ---@param mark fun(start: integer, finish: integer)
----@param rewrite? fun(apply: fun(): boolean): boolean
 ---@return boolean
-M.run = function(buf, current, replacement, mark, rewrite)
-  local apply = function()
-    vim.api.nvim_buf_call(buf, function()
-      for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
-        if index == #replacement.changes then
-          vim.cmd [[let &undolevels=&undolevels]]
-        else
-          vim.cmd.undojoin()
-        end
-
-        local lines = buffer_lines(current.linefeed, hunk.lines)
-        vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
-        if #lines > 0 then
-          mark(hunk.start, hunk.start + #lines)
-        end
+M.run = function(buf, current, replacement, mark)
+  vim.api.nvim_buf_call(buf, function()
+    for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
+      if index == #replacement.changes then
+        vim.cmd [[let &undolevels=&undolevels]]
+      else
+        vim.cmd.undojoin()
       end
 
-      if not current.endofline then
-        local count = vim.api.nvim_buf_line_count(buf)
-        local last = unpack(vim.api.nvim_buf_get_lines(buf, count - 1, count, true))
-        if replacement.trailing_empty ~= (count > 1 and last == "") then
-          vim.cmd.undojoin()
-          vim.api.nvim_buf_set_lines(
-            buf,
-            replacement.trailing_empty and -1 or -2,
-            -1,
-            true,
-            replacement.trailing_empty and { "" } or {}
-          )
-        end
+      local lines = buffer_lines(current.linefeed, hunk.lines)
+      vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
+      if #lines > 0 then
+        mark(hunk.start, hunk.start + #lines)
       end
-    end)
-    return true
-  end
-  return rewrite and rewrite(apply) or apply()
+    end
+
+    if not current.endofline then
+      local count = vim.api.nvim_buf_line_count(buf)
+      local last = unpack(vim.api.nvim_buf_get_lines(buf, count - 1, count, true))
+      if replacement.trailing_empty ~= (count > 1 and last == "") then
+        vim.cmd.undojoin()
+        vim.api.nvim_buf_set_lines(
+          buf,
+          replacement.trailing_empty and -1 or -2,
+          -1,
+          true,
+          replacement.trailing_empty and { "" } or {}
+        )
+      end
+    end
+  end)
+  return true
 end
 
 return M

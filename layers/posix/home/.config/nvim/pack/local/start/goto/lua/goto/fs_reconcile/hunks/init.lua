@@ -67,26 +67,15 @@ end
 ---@param current FsReconcileBuffer
 ---@param replacement FsReconcileReplacement
 ---@param mark fun(start: integer, finish: integer)
----@param rewrite? fun(apply: fun(): boolean): boolean
 ---@return boolean
-M.apply = function(buf, current, replacement, mark, rewrite)
+M.apply = function(buf, current, replacement, mark)
   if
     not vim.api.nvim_buf_is_valid(buf)
     or current.changedtick and current.changedtick ~= vim.api.nvim_buf_get_changedtick(buf)
   then
     return false
   end
-  return apply.run(buf, current, replacement, mark, rewrite)
-end
-
----@param buf integer
----@param current FsReconcileBuffer
----@param text string
----@param mark fun(start: integer, finish: integer)
----@param rewrite? fun(apply: fun(): boolean): boolean
----@return boolean
-M.replace = function(buf, current, text, mark, rewrite)
-  return M.apply(buf, current, M.replacement(current, text), mark, rewrite)
+  return apply.run(buf, current, replacement, mark)
 end
 
 return M
