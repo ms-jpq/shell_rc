@@ -57,14 +57,15 @@ end
 ---@param text string
 ---@param mark fun(start: integer, finish: integer)
 ---@param rewrite? fun(apply: fun(): boolean): boolean
+---@param valid? fun(): boolean
 ---@return boolean
-M.replace = function(buf, current, text, mark, rewrite)
+M.replace = function(buf, current, text, mark, rewrite, valid)
   local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-  if current.changedtick and current.changedtick ~= changedtick then
+  if valid and not valid() or current.changedtick and current.changedtick ~= changedtick then
     return false
   end
   local indices = index_diff(current.text, text)
-  if not vim.api.nvim_buf_is_valid(buf) or vim.api.nvim_buf_get_changedtick(buf) ~= changedtick then
+  if valid and not valid() or not vim.api.nvim_buf_is_valid(buf) or vim.api.nvim_buf_get_changedtick(buf) ~= changedtick then
     return false
   end
   local replacement = {

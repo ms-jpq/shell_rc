@@ -43,8 +43,9 @@ M.unchanged = function(path, base)
 end
 
 ---@param buf integer
+---@param epoch integer
 ---@return FsReconcileSnapshot
-M.buffer = function(buf)
+M.buffer = function(buf, epoch)
   local endofline = vim.bo[buf].endofline
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   local linefeed = lib.buf_linefeed(buf)
@@ -55,6 +56,7 @@ M.buffer = function(buf)
     endofline = endofline,
     final_empty = lines[#lines] == "",
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
+    epoch = epoch,
   }
 end
 
