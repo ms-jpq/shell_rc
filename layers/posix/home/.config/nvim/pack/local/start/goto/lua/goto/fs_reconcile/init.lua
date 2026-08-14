@@ -92,9 +92,13 @@ end
 ---@param buf integer
 ---@param path string
 ---@param base FsReconcileBase
+---@param valid fun(): boolean
 ---@return FsReconcileBase?
-local save = function(buf, path, base)
+local save = function(buf, path, base, valid)
   vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
+  if not valid() then
+    return
+  end
   if not util.unchanged(path, base) then
     return
   end
@@ -117,6 +121,22 @@ local merge = function(value, base, observed)
   return util.buffer_text(value, text)
 end
 
+---@param buf integer
+---@param value FsReconcileSnapshot
+---@param text string
+---@param valid fun(): boolean
+---@return boolean
+local replace = function(buf, value, text, valid)
+  if value.text == text then
+    return true
+  end
+  local replacement = hunks.replacement(value, text)
+  if not valid() then
+    return false
+  end
+  return hunks.apply(buf, value, replacement, mark(buf))
+end
+
 ---@param current FsReconcileDocument
 ---@param changes table
 ---@return FsReconcileDocument
@@ -131,19 +151,6 @@ local next = function(current, changes)
     end
   end
   return copy
-end
-
----@param base? FsReconcileBase
----@param value FsReconcileSnapshot
----@param observed FsReconcileBase
----@return FsReconcileResolution
-local resolve = function(base, value, observed)
-  if not base then
-    return RESOLUTIONS.INITIAL
-  elseif value.text == base.text then
-    return util.same_base(base, observed) and RESOLUTIONS.SYNCED or RESOLUTIONS.ADOPT
-  end
-  return util.same_base(base, observed) and RESOLUTIONS.SAVE or RESOLUTIONS.MERGE
 end
 
 ---@param buf integer
@@ -186,11 +193,17 @@ local start = function(buf, chan)
   return close
 end
 
-local detach = function(buf)
-  local chan = get(buf)
-  if chan then
-    chan.close()
+---@param base? FsReconcileBase
+---@param value FsReconcileSnapshot
+---@param observed FsReconcileBase
+---@return FsReconcileResolution
+local resolve = function(base, value, observed)
+  if not base then
+    return RESOLUTIONS.INITIAL
+  elseif value.text == base.text then
+    return util.same_base(base, observed) and RESOLUTIONS.SYNCED or RESOLUTIONS.ADOPT
   end
+  return util.same_base(base, observed) and RESOLUTIONS.SAVE or RESOLUTIONS.MERGE
 end
 
 ---@param buf integer
@@ -206,17 +219,6 @@ local drive = function(buf, chan, close)
   }
   local valid = function()
     return get(buf) == chan and path ~= "" and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
-  end
-  local replace = function(value, text)
-    if value.text == text then
-      return true
-    end
-    local replacement = hunks.replacement(value, text)
-    if not valid() then
-      return false
-    end
-    local applied = hunks.apply(buf, value, replacement, mark(buf))
-    return applied
   end
 
   return lib.scope(function(defer)
@@ -258,7 +260,7 @@ local drive = function(buf, chan, close)
         end
       elseif resolution == RESOLUTIONS.SYNCED then
       elseif resolution == RESOLUTIONS.ADOPT then
-        if replace(value, observed.text) then
+        if replace(buf, value, observed.text, valid) then
           vim.bo[buf].modified = false
           document = next(document, { base = observed, local_at = vim.NIL })
         end
@@ -276,7 +278,7 @@ local drive = function(buf, chan, close)
           }
           goto continue
         end
-        local after = save(buf, path, base)
+        local after = save(buf, path, base, valid)
         if after and valid() then
           document = next(document, { base = after, local_at = vim.NIL })
         end
@@ -284,7 +286,7 @@ local drive = function(buf, chan, close)
         ---@cast base FsReconcileBase
         local text = merge(value, base, observed)
         local changed = text ~= value.text
-        if replace(value, text) then
+        if replace(buf, value, text, valid) then
           vim.bo[buf].modified = text ~= observed.text
           document = next(document, { base = observed })
           if vim.bo[buf].modified and not changed then
@@ -300,6 +302,13 @@ local drive = function(buf, chan, close)
       ::continue::
     end
   end)
+end
+
+local detach = function(buf)
+  local chan = get(buf)
+  if chan then
+    chan.close()
+  end
 end
 
 local attach = function(buf)
