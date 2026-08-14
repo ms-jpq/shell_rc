@@ -62,6 +62,63 @@ M.sleep = function(milliseconds)
   return fut.await()
 end
 
+---@generic T
+---@class AsyncMpsc<T>
+---@field close fun()
+---@field send fun(value: T): boolean
+---@field next fun(): T?
+
+---@generic T
+---@return AsyncMpsc<T>
+M.mpsc = function()
+  local closed = false
+  local queued = {}
+  local resolve ---@type fun()?
+
+  local ch = {}
+
+  ch.close = function()
+    if closed then
+      return
+    end
+    closed = true
+    queued = {}
+    if resolve then
+      local wake = resolve
+      resolve = nil
+      vim.schedule(wake)
+    end
+  end
+  ch.send = function(value)
+    if closed then
+      return false
+    end
+    table.insert(queued, value)
+    if resolve then
+      local wake = resolve
+      resolve = nil
+      vim.schedule(wake)
+    end
+    return true
+  end
+  ch.next = function()
+    if closed then
+      return
+    elseif #queued > 0 then
+      return table.remove(queued, 1)
+    end
+    assert(not resolve, "mpsc: multiple consumers")
+    local future = M.future()
+    resolve = future.resolve
+    future.await()
+    resolve = nil
+    if not closed then
+      return table.remove(queued, 1)
+    end
+  end
+  return ch
+end
+
 ---@param bytecode string
 local transfer = function(bytecode, ...)
   return assert(load(bytecode))(...)

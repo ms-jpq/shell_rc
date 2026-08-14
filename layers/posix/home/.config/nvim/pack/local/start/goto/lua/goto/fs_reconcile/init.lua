@@ -25,10 +25,47 @@ local ns = vim.api.nvim_create_namespace "fs-reconcile"
 ---@field inserting boolean
 ---@field local_at? integer
 
----@class FsReconcileDriver
----@field post fun(changes?: table)
----@field bind fun(path: string)
----@field stop fun()
+---@class FsReconcileBindEvent
+---@field kind "bind"
+---@field path string
+
+---@class FsReconcileInsertEvent
+---@field kind "insert"
+---@field inserting boolean
+
+---@class FsReconcileLocalEvent
+---@field kind "local"
+---@field at integer
+
+---@class FsReconcileWakeEvent
+---@field kind "wake"
+
+---@class FsReconcileRetryEvent
+---@field kind "retry"
+---@field epoch integer
+
+---@alias FsReconcileEvent FsReconcileBindEvent|FsReconcileInsertEvent|FsReconcileLocalEvent|FsReconcileWakeEvent|FsReconcileRetryEvent
+
+---@class FsReconcileEventKinds
+---@field BIND "bind"
+---@field INSERT "insert"
+---@field LOCAL "local"
+---@field RETRY "retry"
+---@field WAKE "wake"
+
+---@type FsReconcileEventKinds
+local EVENT = {
+  BIND = "bind",
+  INSERT = "insert",
+  LOCAL = "local",
+  RETRY = "retry",
+  WAKE = "wake",
+}
+
+---@class FsReconcileAttachment
+---@field channel AsyncMpsc<FsReconcileEvent>
+---@field bind fun()
+---@field close fun()
 
 ---@class FsReconcileLocal
 ---@field kind "local"
@@ -56,7 +93,7 @@ local CHANGE = {
 }
 
 ---@param buf integer
----@return FsReconcileDriver?
+---@return FsReconcileAttachment?
 local get = function(buf)
   return vim.api.nvim_buf_is_valid(buf) and vim.b[buf][TAG] or nil
 end
@@ -108,24 +145,24 @@ local save = function(buf, path, base)
   return ok and written
 end
 
----@param buf integer
----@param path string
----@return FsReconcileDriver
-local drive = function(buf, path)
-  local document = {
-    path = path,
-    epoch = 1,
-    inserting = vim.api.nvim_get_current_buf() == buf and vim.api.nvim_get_mode().mode:find("^[iR]") ~= nil,
-    local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
-  } ---@type FsReconcileDocument
-  local alive = true
-  local pending = false
-  local resolve ---@type fun()?
-  local poller ---@type FsReconcileHandle?
-  local watched_path ---@type string?
-  local watching = false
-  local driver = {} ---@type FsReconcileDriver
+local detach = function(buf)
+  local attachment = get(buf)
+  if attachment then
+    vim.b[buf][TAG] = nil
+    attachment.close()
+  end
+end
 
+---@param buf integer
+---@param channel AsyncMpsc<FsReconcileEvent>
+local drive = function(buf, channel)
+  ---@type FsReconcileDocument
+  local document = {
+    path = vim.api.nvim_buf_get_name(buf),
+    epoch = 1,
+    inserting = vim.api.nvim_get_current_buf() == buf and vim.api.nvim_get_mode().mode:find "^[iR]" ~= nil,
+    local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
+  }
   local next_document = function(changes)
     local next = vim.tbl_extend("force", {}, document)
     ---@cast next FsReconcileDocument
@@ -140,84 +177,44 @@ local drive = function(buf, path)
     return document
   end
 
-  local select = function(milliseconds)
-    if pending then
-      pending = false
-      return alive
-    end
-    local future = async.future()
-    local done = false
-    local done_once = function()
-      if not done then
-        done = true
-        future.resolve()
-      end
-    end
-    resolve = done_once
-    if milliseconds then
-      vim.defer_fn(done_once, milliseconds)
-    end
-    future.await()
-    resolve = nil
-    pending = false
-    return alive
-  end
-
-  driver.post = function(changes)
-    if changes then
-      next_document(changes)
-    end
-    pending = true
-    if resolve then
-      vim.schedule(resolve)
-    end
-  end
-  driver.bind = function(next_path)
-    if document.path ~= next_path then
-      next_document {
-        path = next_path,
-        epoch = document.epoch + 1,
-        base = vim.NIL,
-        local_at = vim.bo[buf].modified and vim.uv.hrtime() or vim.NIL,
-      }
-    end
-  end
-  driver.stop = function()
-    alive = false
-    driver.post()
-  end
-
   local current = function(epoch)
-    if alive and document.epoch == epoch and active(buf, document.path) then
+    local attachment = get(buf)
+    if attachment and attachment.channel == channel and document.epoch == epoch and active(buf, document.path) then
       return document
     end
   end
 
-  local watch = function()
-    local enabled = active(buf, document.path)
-    if watched_path == document.path and watching == enabled then
-      return
+  local transition = function(event)
+    if event.kind == EVENT.BIND then
+      if document.path ~= event.path then
+        next_document {
+          path = event.path,
+          epoch = document.epoch + 1,
+          base = vim.NIL,
+          local_at = vim.bo[buf].modified and vim.uv.hrtime() or vim.NIL,
+        }
+      end
+    elseif event.kind == EVENT.INSERT then
+      next_document { inserting = event.inserting }
+    elseif event.kind == EVENT.LOCAL then
+      next_document { local_at = event.at }
+    elseif event.kind == EVENT.RETRY and event.epoch ~= document.epoch then
+      return false
     end
-    if poller then
-      poller.close()
-      poller = nil
-    end
-    watched_path = document.path
-    watching = enabled
-    if enabled then
-      poller = util.poller(document.path, INTERVAL_MS, driver.post)
-    end
+    return true
   end
 
   local publish = function(value, base)
     if document.inserting then
       return
     end
-    local path = document.path
     local elapsed = document.local_at and vim.uv.hrtime() - document.local_at or math.huge
     local quiet = lib.ms_to_ns(LOCAL_QUIET_MS)
+    local path = document.path
     if elapsed < quiet then
-      return math.max(1, math.ceil(lib.ns_to_ms(quiet - elapsed)))
+      vim.defer_fn(function()
+        channel.send { kind = EVENT.RETRY, epoch = value.epoch }
+      end, math.max(1, math.ceil(lib.ns_to_ms(quiet - elapsed))))
     elseif util.unchanged(path, base) and save(buf, path, base) and current(value.epoch) then
       local after = util.read_file(buf, path, util.buffer(buf, value.epoch))
       if after and current(value.epoch) then
@@ -242,7 +239,9 @@ local drive = function(buf, path)
     if text == value.text or hunks.replace(buf, value, text, mark(buf), nil, guard) then
       vim.bo[buf].modified = text ~= change.disk.text
       next_document { base = change.disk }
-      return vim.bo[buf].modified and 0 or nil
+      if vim.bo[buf].modified then
+        channel.send { kind = EVENT.RETRY, epoch = value.epoch }
+      end
     end
   end
 
@@ -258,7 +257,10 @@ local drive = function(buf, path)
     local base = document.base
     if not base then
       next_document { base = observed }
-      return value.text ~= observed.text and 0 or nil
+      if value.text ~= observed.text then
+        channel.send { kind = EVENT.RETRY, epoch = value.epoch }
+      end
+      return
     end
     local guard = function()
       return current(value.epoch) ~= nil
@@ -267,69 +269,84 @@ local drive = function(buf, path)
     if not change then
       return
     elseif change.kind == CHANGE.LOCAL then
-      return publish(value, base)
+      publish(value, base)
     elseif change.kind == CHANGE.REMOTE then
       adopt(value, change, guard)
     else
       ---@cast change FsReconcileConcurrent
-      return reconcile(value, base, change, guard)
+      reconcile(value, base, change, guard)
     end
   end
 
-  async(function()
-    local delay
-    while select(delay) do
-      if get(buf) ~= driver then
-        break
-      end
-      watch()
-      delay = step()
-    end
-    if poller then
-      poller.close()
-    end
-  end)()
-  return driver
-end
-
-local detach = function(buf)
-  local driver = get(buf)
-  if driver then
-    vim.b[buf][TAG] = nil
-    driver.stop()
-  end
-end
-
-local buffer_attach = function(buf)
-  local changed = function()
-    local driver = get(buf)
-    if driver then
-      driver.post { local_at = vim.uv.hrtime() }
+  for event in channel.next do
+    if transition(event) then
+      step()
     end
   end
-  vim.api.nvim_buf_attach(buf, false, {
-    on_changedtick = changed,
-    on_lines = changed,
-    on_detach = function(_, detached)
-      detach(detached)
-    end,
-  })
 end
 
 local attach = function(buf)
   if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_buf_is_loaded(buf) then
     return
   end
-  local path = vim.api.nvim_buf_get_name(buf)
-  local driver = get(buf)
-  if driver then
-    driver.bind(path)
-  else
-    driver = drive(buf, path)
-    vim.b[buf][TAG] = driver
-    buffer_attach(buf)
+  local a = get(buf)
+  if a then
+    a.bind()
+    return
   end
-  driver.post()
+  ---@type AsyncMpsc<FsReconcileEvent>
+  local chan = async.mpsc()
+  ---@type FsReconcileHandle?
+  local poller = nil
+  ---@type string?
+  local watched_path = nil
+  local watching = false
+
+  local close = function()
+    if poller then
+      poller.close()
+      poller = nil
+    end
+    chan.close()
+  end
+  local bind = function()
+    local path = vim.api.nvim_buf_get_name(buf)
+    local enabled = active(buf, path)
+    if path ~= watched_path or enabled ~= watching then
+      if poller then
+        poller.close()
+      end
+      watched_path = path
+      watching = enabled
+      poller = enabled and util.poller(path, INTERVAL_MS, function()
+        chan.send { kind = EVENT.WAKE }
+      end) or nil
+    end
+    chan.send { kind = EVENT.BIND, path = path }
+  end
+  ---@type FsReconcileAttachment
+  local attachment = { channel = chan, bind = bind, close = close }
+
+  vim.b[buf][TAG] = attachment
+  local changed = function()
+    if get(buf) == attachment then
+      chan.send { kind = EVENT.LOCAL, at = vim.uv.hrtime() }
+    end
+  end
+  vim.api.nvim_buf_attach(buf, false, {
+    on_changedtick = changed,
+    on_lines = changed,
+    on_detach = function(_, detached)
+      if get(detached) == attachment then
+        vim.b[detached][TAG] = nil
+      end
+      attachment.close()
+    end,
+  })
+  vim.schedule(async(function()
+    drive(buf, chan)
+  end))
+  attachment.bind()
 end
 
 do
@@ -340,21 +357,17 @@ do
     end,
   })
 
-  autocmd.insert_mode(
-    { group = lib.group },
-    function(args)
-      local driver = get(args.buf)
-      if driver then
-        driver.post { inserting = true }
-      end
-    end,
-    function(args)
-      local driver = get(args.buf)
-      if driver then
-        driver.post { inserting = false }
-      end
+  autocmd.insert_mode({ group = lib.group }, function(args)
+    local attachment = get(args.buf)
+    if attachment then
+      attachment.channel.send { kind = EVENT.INSERT, inserting = true }
     end
-  )
+  end, function(args)
+    local attachment = get(args.buf)
+    if attachment then
+      attachment.channel.send { kind = EVENT.INSERT, inserting = false }
+    end
+  end)
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
