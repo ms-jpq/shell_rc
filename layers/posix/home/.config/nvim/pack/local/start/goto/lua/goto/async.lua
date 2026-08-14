@@ -63,10 +63,11 @@ M.sleep = function(milliseconds)
 end
 
 ---@generic T
----@class AsyncMpsc<T>: fun(...: any): T?
+---@class AsyncMpsc<T>
 ---@field close fun()
 ---@field send fun(value: T): boolean
 ---@field wait fun(milliseconds: integer): boolean
+---@operator call: fun(...: any): T?
 
 ---@generic T
 ---@return AsyncMpsc<T>
@@ -95,6 +96,7 @@ M.mpsc = function()
     queued = {}
     wake(false)
   end
+
   ch.send = function(value)
     if closed then
       return false
@@ -103,21 +105,7 @@ M.mpsc = function()
     wake(false)
     return true
   end
-  local next = function()
-    if closed then
-      return
-    elseif #queued > 0 then
-      return table.remove(queued, 1)
-    end
-    assert(not resolve, "mpsc: multiple consumers")
-    local future = M.future()
-    resolve = future.resolve
-    future.await()
-    resolve = nil
-    if not closed then
-      return table.remove(queued, 1)
-    end
-  end
+
   ch.wait = function(milliseconds)
     if closed or #queued > 0 then
       return false
@@ -133,9 +121,24 @@ M.mpsc = function()
     end, milliseconds)
     return future.await() == true
   end
-  return setmetatable(ch, {
-    __call = next,
-  })
+
+  local next = function()
+    if closed then
+      return
+    elseif #queued > 0 then
+      return table.remove(queued, 1)
+    end
+    assert(not resolve, "mpsc: multiple consumers")
+    local future = M.future()
+    resolve = future.resolve
+    future.await()
+    resolve = nil
+    if not closed then
+      return table.remove(queued, 1)
+    end
+  end
+
+  return setmetatable(ch, { __call = next })
 end
 
 ---@param bytecode string
