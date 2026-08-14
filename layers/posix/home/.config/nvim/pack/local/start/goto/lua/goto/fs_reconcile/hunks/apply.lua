@@ -1,4 +1,10 @@
+local diff = require "goto.fs_reconcile.hunks.diff"
+
 local M = {}
+
+---@class FsReconcileReplacement
+---@field changes FsReconcileHunk[]
+---@field trailing_empty boolean
 
 local buffer_lines = function(linefeed, records)
   return vim
@@ -9,11 +15,21 @@ local buffer_lines = function(linefeed, records)
     :totable()
 end
 
+---@param current FsReconcileBuffer
+---@param text string
+---@return FsReconcileReplacement
+M.plan = function(current, text)
+  local indices = diff.indices(current.text, text)
+  return {
+    changes = diff.changes(diff.records(current.linefeed, text), indices),
+    trailing_empty = string.sub(text, -#current.linefeed) == current.linefeed,
+  }
+end
+
 ---@param buf integer
 ---@param current FsReconcileBuffer
 ---@param replacement FsReconcileReplacement
 ---@param mark fun(start: integer, finish: integer)
----@return boolean
 M.run = function(buf, current, replacement, mark)
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
@@ -45,7 +61,6 @@ M.run = function(buf, current, replacement, mark)
       end
     end
   end)
-  return true
 end
 
 return M

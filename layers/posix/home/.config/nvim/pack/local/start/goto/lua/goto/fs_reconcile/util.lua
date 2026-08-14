@@ -4,6 +4,11 @@ local lib = require "goto.lib"
 local M = {}
 local MAX_BYTES = 2 * 1024 * 1024
 
+---@class FsReconcileBuffer
+---@field linefeed string
+---@field text string
+---@field endofline boolean
+
 ---@class FsReconcileBase
 ---@field text string
 ---@field version? uv.fs_stat.result
@@ -67,7 +72,6 @@ M.buffer = function(buf)
     linefeed = linefeed,
     text = endofline and text .. linefeed or text,
     endofline = endofline,
-    final_empty = lines[#lines] == "",
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
     fileencoding = vim.bo[buf].fileencoding,
     encoding = vim.o.encoding,
@@ -116,7 +120,8 @@ end
 ---@param text string
 ---@return string
 local merge_text = function(snapshot, text)
-  if snapshot.final_empty and not snapshot.endofline then
+  local final_empty = not snapshot.endofline and (snapshot.text == "" or vim.endswith(snapshot.text, snapshot.linefeed))
+  if final_empty then
     return text .. snapshot.linefeed
   elseif snapshot.endofline and not vim.endswith(text, snapshot.linefeed) then
     return text .. snapshot.linefeed

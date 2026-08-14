@@ -153,14 +153,24 @@ end
 
 ---@param bytecode string
 local transfer = function(bytecode, ...)
-  return assert(load(bytecode))(...)
+  local fn = assert(load(bytecode))
+  local ok, result = pcall(fn, ...)
+  return vim.json.encode(ok and { ok = true, result = result } or { ok = false, error = result })
 end
 
+---@generic T
+---@param fn fun(...any): T
+---@return T
 M.work = function(fn, ...)
   local fut = M.future()
   local work = vim.uv.new_work(transfer, vim.schedule_wrap(fut.resolve))
   work:queue(string.dump(fn), ...)
-  return fut.await()
+
+  local rsp = vim.json.decode(fut.await())
+  if not rsp.ok then
+    error(rsp.error, 0)
+  end
+  return rsp.result
 end
 
 M.scheduled = M.wrap(vim.schedule)

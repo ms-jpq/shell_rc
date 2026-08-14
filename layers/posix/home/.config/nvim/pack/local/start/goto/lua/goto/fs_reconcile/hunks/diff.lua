@@ -1,3 +1,5 @@
+local async = require "goto.async"
+
 local M = {}
 
 ---@class FsReconcileHunk
@@ -6,25 +8,30 @@ local M = {}
 ---@field lines string[]
 ---@field slot? integer
 
----@class FsReconcileReplacement
----@field changes FsReconcileHunk[]
----@field trailing_empty boolean
+local each_record = function(linefeed, text)
+  return coroutine.wrap(function()
+    local start = 1
+    while true do
+      local _, finish = string.find(text, linefeed, start, true)
+      if not finish then
+        break
+      end
+      coroutine.yield(string.sub(text, start, finish))
+      start = finish + 1
+    end
+    if start <= #text then
+      coroutine.yield(string.sub(text, start))
+    end
+  end)
+end
 
 ---@param linefeed string
 ---@param text string
 ---@return string[]
 M.records = function(linefeed, text)
-  if text == "" then
-    return {}
-  end
-
-  local parts = vim.split(text, linefeed, { plain = true })
   local records = {}
-  for index = 1, #parts - 1 do
-    table.insert(records, parts[index] .. linefeed)
-  end
-  if string.sub(text, -#linefeed) ~= linefeed then
-    table.insert(records, parts[#parts])
+  for record in each_record(linefeed, text) do
+    table.insert(records, record)
   end
   return records
 end
@@ -53,6 +60,17 @@ M.changes = function(after_records, indices)
       }
     end)
     :totable()
+end
+
+local worker = function(before, after)
+  return vim.text.diff(before, after, { result_type = "indices" })
+end
+
+---@param before string
+---@param after string
+---@return integer[][]
+M.indices = function(before, after)
+  return async.work(worker, before, after)
 end
 
 return M

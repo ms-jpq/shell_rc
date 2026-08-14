@@ -1,5 +1,6 @@
 local async = require "goto.async"
 local autocmd = require "goto.autocmd"
+local hunk_apply = require "goto.fs_reconcile.hunks.apply"
 local hunks = require "goto.fs_reconcile.hunks"
 local lib = require "goto.lib"
 local util = require "goto.fs_reconcile.util"
@@ -130,11 +131,12 @@ local replace = function(buf, value, text, valid)
   if value.text == text then
     return true
   end
-  local replacement = hunks.replacement(value, text)
-  if not valid() then
+  local replacement = hunk_apply.plan(value, text)
+  if not valid() or value.changedtick ~= vim.api.nvim_buf_get_changedtick(buf) then
     return false
   end
-  return hunks.apply(buf, value, replacement, mark(buf))
+  hunk_apply.run(buf, value, replacement, mark(buf))
+  return true
 end
 
 ---@param current FsReconcileDocument

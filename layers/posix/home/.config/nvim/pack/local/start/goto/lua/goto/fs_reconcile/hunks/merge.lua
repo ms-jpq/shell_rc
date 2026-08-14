@@ -86,6 +86,12 @@ local overlaps = function(left, right)
   return left.start < right.finish and right.start < left.finish
 end
 
+local overlaps_any = function(hunk, patches)
+  return vim.iter(patches):any(function(other)
+    return overlaps(hunk, other)
+  end)
+end
+
 local patch = function(base, patches)
   local lines = diff.slice(base, 0, #base)
 
@@ -106,11 +112,7 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   local group = { local_patches = {}, remote_patches = {} }
 
   local overlaps_group = function(hunk)
-    return vim.iter(group.local_patches):any(function(other)
-      return overlaps(hunk, other)
-    end) or vim.iter(group.remote_patches):any(function(other)
-      return overlaps(hunk, other)
-    end)
+    return overlaps_any(hunk, group.local_patches) or overlaps_any(hunk, group.remote_patches)
   end
 
   local take = function(patches, index, group_patches)
@@ -262,9 +264,7 @@ local merge_record = function(linefeed, base, local_record, remote_record)
   local local_patches = character_patches(base_text, local_text)
   local remote_patches = character_patches(base_text, remote_text)
   local conflicted = vim.iter(local_patches):any(function(local_patch)
-    return vim.iter(remote_patches):any(function(remote_patch)
-      return overlaps(local_patch, remote_patch)
-    end)
+    return overlaps_any(local_patch, remote_patches)
   end)
   if conflicted then
     return take_both(linefeed, local_record, remote_record)
@@ -333,6 +333,10 @@ M.merge = function(linefeed, base, local_text, remote_text)
   local patches = merge_groups(linefeed, base_lines, grouped)
   sort(patches)
   return table.concat(patch(base_lines, patches))
+end
+
+M.worker = function(linefeed, base, local_text, remote_text)
+  return require("goto.fs_reconcile.hunks.merge").merge(linefeed, base, local_text, remote_text)
 end
 
 return M
