@@ -40,17 +40,12 @@ local ns = vim.api.nvim_create_namespace "fs-reconcile"
 ---@class FsReconcileWakeEvent
 ---@field kind "wake"
 
----@class FsReconcileRetryEvent
----@field kind "retry"
----@field epoch integer
-
----@alias FsReconcileEvent FsReconcileBindEvent|FsReconcileInsertEvent|FsReconcileLocalEvent|FsReconcileWakeEvent|FsReconcileRetryEvent
+---@alias FsReconcileEvent FsReconcileBindEvent|FsReconcileInsertEvent|FsReconcileLocalEvent|FsReconcileWakeEvent
 
 ---@class FsReconcileEventKinds
 ---@field BIND "bind"
 ---@field INSERT "insert"
 ---@field LOCAL "local"
----@field RETRY "retry"
 ---@field WAKE "wake"
 
 ---@type FsReconcileEventKinds
@@ -58,11 +53,11 @@ local EVENT = {
   BIND = "bind",
   INSERT = "insert",
   LOCAL = "local",
-  RETRY = "retry",
   WAKE = "wake",
 }
 
 ---@class FsReconcileAttachment
+---@field buf integer
 ---@field channel AsyncMpsc<FsReconcileEvent>
 ---@field bind fun()
 ---@field close fun()
@@ -153,9 +148,12 @@ local detach = function(buf)
   end
 end
 
----@param buf integer
----@param channel AsyncMpsc<FsReconcileEvent>
-local drive = function(buf, channel)
+---@param attachment FsReconcileAttachment
+local start = function(attachment)
+  local buf = attachment.buf
+  if get(buf) ~= attachment then
+    return
+  end
   ---@type FsReconcileDocument
   local document = {
     path = vim.api.nvim_buf_get_name(buf),
@@ -178,30 +176,9 @@ local drive = function(buf, channel)
   end
 
   local current = function(epoch)
-    local attachment = get(buf)
-    if attachment and attachment.channel == channel and document.epoch == epoch and active(buf, document.path) then
+    if get(buf) == attachment and document.epoch == epoch and active(buf, document.path) then
       return document
     end
-  end
-
-  local transition = function(event)
-    if event.kind == EVENT.BIND then
-      if document.path ~= event.path then
-        next_document {
-          path = event.path,
-          epoch = document.epoch + 1,
-          base = vim.NIL,
-          local_at = vim.bo[buf].modified and vim.uv.hrtime() or vim.NIL,
-        }
-      end
-    elseif event.kind == EVENT.INSERT then
-      next_document { inserting = event.inserting }
-    elseif event.kind == EVENT.LOCAL then
-      next_document { local_at = event.at }
-    elseif event.kind == EVENT.RETRY and event.epoch ~= document.epoch then
-      return false
-    end
-    return true
   end
 
   local publish = function(value, base)
@@ -212,9 +189,7 @@ local drive = function(buf, channel)
     local quiet = lib.ms_to_ns(LOCAL_QUIET_MS)
     local path = document.path
     if elapsed < quiet then
-      vim.defer_fn(function()
-        channel.send { kind = EVENT.RETRY, epoch = value.epoch }
-      end, math.max(1, math.ceil(lib.ns_to_ms(quiet - elapsed))))
+      return
     elseif util.unchanged(path, base) and save(buf, path, base) and current(value.epoch) then
       local after = util.read_file(buf, path, util.buffer(buf, value.epoch))
       if after and current(value.epoch) then
@@ -230,17 +205,18 @@ local drive = function(buf, channel)
     end
   end
 
-  local reconcile = function(value, base, change, guard)
+  local merge = function(value, base, change, guard)
     local merged = hunks.merge(value.linefeed, base.text, value.text, change.disk.text)
     if not guard() then
       return
     end
     local text = util.buffer_text(value, merged)
-    if text == value.text or hunks.replace(buf, value, text, mark(buf), nil, guard) then
+    local changed = text ~= value.text
+    if not changed or hunks.replace(buf, value, text, mark(buf), nil, guard) then
       vim.bo[buf].modified = text ~= change.disk.text
       next_document { base = change.disk }
-      if vim.bo[buf].modified then
-        channel.send { kind = EVENT.RETRY, epoch = value.epoch }
+      if vim.bo[buf].modified and not changed then
+        publish(value, change.disk)
       end
     end
   end
@@ -257,9 +233,6 @@ local drive = function(buf, channel)
     local base = document.base
     if not base then
       next_document { base = observed }
-      if value.text ~= observed.text then
-        channel.send { kind = EVENT.RETRY, epoch = value.epoch }
-      end
       return
     end
     local guard = function()
@@ -274,24 +247,39 @@ local drive = function(buf, channel)
       adopt(value, change, guard)
     else
       ---@cast change FsReconcileConcurrent
-      reconcile(value, base, change, guard)
+      merge(value, base, change, guard)
     end
   end
 
-  for event in channel.next do
-    if transition(event) then
+  local drive = function(events)
+    for event in events do
+      if event.kind == EVENT.BIND then
+        if document.path ~= event.path then
+          next_document {
+            path = event.path,
+            epoch = document.epoch + 1,
+            base = vim.NIL,
+            local_at = vim.bo[buf].modified and vim.uv.hrtime() or vim.NIL,
+          }
+        end
+      elseif event.kind == EVENT.INSERT then
+        next_document { inserting = event.inserting }
+      elseif event.kind == EVENT.LOCAL then
+        next_document { local_at = event.at }
+      end
       step()
     end
   end
+  drive(attachment.channel.next)
 end
 
 local attach = function(buf)
   if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_buf_is_loaded(buf) then
     return
   end
-  local a = get(buf)
-  if a then
-    a.bind()
+  local existing = get(buf)
+  if existing then
+    existing.bind()
     return
   end
   ---@type AsyncMpsc<FsReconcileEvent>
@@ -301,13 +289,32 @@ local attach = function(buf)
   ---@type string?
   local watched_path = nil
   local watching = false
+  local closed = false
+  local quiet_tick ---@type integer?
 
   local close = function()
+    if closed then
+      return
+    end
+    closed = true
     if poller then
       poller.close()
       poller = nil
     end
     chan.close()
+  end
+  local quiet = function()
+    local tick = vim.api.nvim_buf_get_changedtick(buf)
+    if quiet_tick == tick then
+      return
+    end
+    quiet_tick = tick
+    vim.defer_fn(function()
+      if not closed and quiet_tick == tick and vim.api.nvim_buf_get_changedtick(buf) == tick then
+        quiet_tick = nil
+        chan.send { kind = EVENT.WAKE }
+      end
+    end, LOCAL_QUIET_MS)
   end
   local bind = function()
     local path = vim.api.nvim_buf_get_name(buf)
@@ -323,14 +330,18 @@ local attach = function(buf)
       end) or nil
     end
     chan.send { kind = EVENT.BIND, path = path }
+    if vim.bo[buf].modified then
+      quiet()
+    end
   end
   ---@type FsReconcileAttachment
-  local attachment = { channel = chan, bind = bind, close = close }
+  local attachment = { buf = buf, channel = chan, bind = bind, close = close }
 
   vim.b[buf][TAG] = attachment
   local changed = function()
-    if get(buf) == attachment then
+    if not closed then
       chan.send { kind = EVENT.LOCAL, at = vim.uv.hrtime() }
+      quiet()
     end
   end
   vim.api.nvim_buf_attach(buf, false, {
@@ -344,7 +355,7 @@ local attach = function(buf)
     end,
   })
   vim.schedule(async(function()
-    drive(buf, chan)
+    start(attachment)
   end))
   attachment.bind()
 end
