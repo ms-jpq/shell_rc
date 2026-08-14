@@ -160,6 +160,22 @@ local send = function(buf, event)
   end
 end
 
+---@param buf integer
+local native_write = function(buf)
+  local value = util.buffer(buf)
+  local base = util.read_file(vim.api.nvim_buf_get_name(buf), value)
+  if base and base.text == value.text then
+    send(buf, {
+      type = EVENTS.WRITE,
+      changedtick = value.changedtick,
+      base = base,
+    })
+  else
+    send(buf, local_change(value.changedtick))
+    send(buf, remote())
+  end
+end
+
 local mark = function(buf)
   return function(start, finish)
     vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
@@ -296,8 +312,11 @@ local drive = function(buf, path, chan, close)
     inserting = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode),
     local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
   }
+  local active = function()
+    return attached(buf, chan) and vim.api.nvim_buf_get_name(buf) == path
+  end
   local valid = function()
-    return attached(buf, chan) and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
+    return active() and vim.bo[buf].modifiable
   end
 
   lib.scope(function(defer)
@@ -323,7 +342,10 @@ local drive = function(buf, path, chan, close)
       else
         assert(false, event.type)
       end
-      if not valid() then
+      if not active() then
+        goto continue
+      elseif not vim.bo[buf].modifiable then
+        chan.send(retry(QUIET.REMOTE))
         goto continue
       end
       local remote_sleep = document.base
@@ -445,6 +467,14 @@ do
     command = [[silent! wall! ++p]],
   })
 
+  vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
+    group = lib.group,
+    callback = async(function(args)
+      vim.v.fcs_choice = ""
+      send(args.buf, remote())
+    end),
+  })
+
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
     callback = async(function(args)
@@ -469,32 +499,13 @@ do
 
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
-    callback = async(function(args)
+    callback = function(args)
       local data = args.data or {}
       if data.fs_reconcile then
         return
       end
-      local value = util.buffer(args.buf)
-      local base = util.read_file(vim.api.nvim_buf_get_name(args.buf), value)
-      if base and base.text == value.text then
-        send(args.buf, {
-          type = EVENTS.WRITE,
-          changedtick = value.changedtick,
-          base = base,
-        })
-      else
-        send(args.buf, local_change(value.changedtick))
-        send(args.buf, remote())
-      end
-    end),
-  })
-
-  vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
-    group = lib.group,
-    callback = async(function(args)
-      vim.v.fcs_choice = ""
-      send(args.buf, remote())
-    end),
+      native_write(args.buf)
+    end,
   })
 
   autocmd.insert_mode(
