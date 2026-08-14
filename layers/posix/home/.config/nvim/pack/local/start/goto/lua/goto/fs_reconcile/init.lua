@@ -93,7 +93,7 @@ end
 ---@param quiet integer
 ---@return integer
 local remaining = function(now, at, quiet)
-  return math.max(0, math.ceil(quiet - lib.ns_to_ms(now - at)))
+  return math.max(0, math.floor(quiet - lib.ns_to_ms(now - at)))
 end
 
 ---@class FsReconcileResolutions
@@ -157,22 +157,6 @@ local send = function(buf, event)
   local chan = get(buf)
   if chan then
     chan.send(event)
-  end
-end
-
----@param buf integer
-local native_write = function(buf)
-  local value = util.buffer(buf)
-  local base = util.read_file(vim.api.nvim_buf_get_name(buf), value)
-  if base and base.text == value.text then
-    send(buf, {
-      type = EVENTS.WRITE,
-      changedtick = value.changedtick,
-      base = base,
-    })
-  else
-    send(buf, local_change(value.changedtick))
-    send(buf, remote())
   end
 end
 
@@ -251,6 +235,30 @@ local next = function(current, changes)
   return copy
 end
 
+---@param document FsReconcileDocument
+---@param event FsReconcileEvent
+---@return FsReconcileDocument
+---@return integer?
+local transition = function(document, event)
+  if event.type == EVENTS.RETRY then
+    return document, event.sleep
+  elseif event.type == EVENTS.INSERT then
+    return next(document, { inserting = event.inserting })
+  elseif event.type == EVENTS.LOCAL then
+    return next(document, { local_at = event.at, changedtick = event.changedtick })
+  elseif event.type == EVENTS.WRITE then
+    return next(document, {
+      base = event.base,
+      changedtick = event.changedtick,
+      local_at = vim.NIL,
+    })
+  elseif event.type == EVENTS.REMOTE then
+    return next(document, { remote_at = event.at })
+  end
+  assert(false, event.type)
+  return document
+end
+
 ---@param buf integer
 ---@param path string
 ---@param chan FsReconcileChannel
@@ -322,25 +330,13 @@ local drive = function(buf, path, chan, close)
   lib.scope(function(defer)
     defer(close)
     for event in chan do
-      if event.type == EVENTS.RETRY then
-        local elapsed = chan.wait(event.sleep)
+      local sleep
+      document, sleep = transition(document, event)
+      if sleep then
+        local elapsed = chan.wait(sleep)
         if not elapsed then
           goto continue
         end
-      elseif event.type == EVENTS.INSERT then
-        document = next(document, { inserting = event.inserting })
-      elseif event.type == EVENTS.LOCAL then
-        document = next(document, { local_at = event.at, changedtick = event.changedtick })
-      elseif event.type == EVENTS.WRITE then
-        document = next(document, {
-          base = event.base,
-          changedtick = event.changedtick,
-          local_at = vim.NIL,
-        })
-      elseif event.type == EVENTS.REMOTE then
-        document = next(document, { remote_at = event.at })
-      else
-        assert(false, event.type)
       end
       if not active() then
         goto continue
@@ -359,6 +355,11 @@ local drive = function(buf, path, chan, close)
       document = next(document, { remote_at = vim.NIL })
       local value = util.buffer(buf)
       if value.changedtick ~= document.changedtick then
+        document = next(document, {
+          changedtick = value.changedtick,
+          local_at = vim.bo[buf].modified and vim.uv.hrtime() or vim.NIL,
+        })
+        chan.send(remote())
         goto continue
       end
       local observed = util.read_file(path, value)
@@ -458,6 +459,22 @@ local attach = function(buf)
   end)
   if chan then
     drive(buf, path, chan, close)
+  end
+end
+
+---@param buf integer
+local native_write = function(buf)
+  local value = util.buffer(buf)
+  local base = util.read_file(vim.api.nvim_buf_get_name(buf), value)
+  if base and base.text == value.text then
+    send(buf, {
+      type = EVENTS.WRITE,
+      changedtick = value.changedtick,
+      base = base,
+    })
+  else
+    send(buf, local_change(value.changedtick))
+    send(buf, remote())
   end
 end
 
