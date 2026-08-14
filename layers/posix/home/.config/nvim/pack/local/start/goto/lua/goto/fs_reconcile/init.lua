@@ -126,118 +126,118 @@ local drive = function(buf, chan, close)
     end
 
     for event in chan do
-      repeat
-        if event.type == EVENTS.RETRY then
-          if event.epoch ~= document.epoch or not chan.wait(event.sleep) or event.epoch ~= document.epoch then
-            break
-          end
-        elseif event.type == EVENTS.INSERT then
-          next_document { inserting = event.inserting }
-        elseif event.type == EVENTS.LOCAL then
-          next_document { local_at = event.at, changedtick = event.changedtick }
-        elseif event.type == EVENTS.REMOTE then
-        else
-          assert(false, event.type)
+      if event.type == EVENTS.RETRY then
+        if event.epoch == document.epoch then
+          chan.wait(event.sleep)
         end
-        local path = vim.api.nvim_buf_get_name(buf)
-        if document.path ~= path then
-          next_document {
-            path = path,
-            epoch = document.epoch + 1,
-            changedtick = vim.api.nvim_buf_get_changedtick(buf),
-            base = vim.NIL,
-            local_at = vim.bo[buf].modified and vim.uv.hrtime() or vim.NIL,
+        goto continue
+      elseif event.type == EVENTS.INSERT then
+        next_document { inserting = event.inserting }
+      elseif event.type == EVENTS.LOCAL then
+        next_document { local_at = event.at, changedtick = event.changedtick }
+      elseif event.type == EVENTS.REMOTE then
+      else
+        assert(false, event.type)
+      end
+      local path = vim.api.nvim_buf_get_name(buf)
+      if document.path ~= path then
+        next_document {
+          path = path,
+          epoch = document.epoch + 1,
+          changedtick = vim.api.nvim_buf_get_changedtick(buf),
+          base = vim.NIL,
+          local_at = vim.bo[buf].modified and vim.uv.hrtime() or vim.NIL,
+        }
+      end
+      if not valid(document.epoch) then
+        goto continue
+      end
+      local value = util.buffer(buf, document.epoch)
+      if value.changedtick ~= document.changedtick then
+        goto continue
+      end
+      local observed = util.read_file(buf, document.path, value)
+      if not observed or not valid(value.epoch) then
+        goto continue
+      end
+      local base = document.base
+      if not base then
+        next_document { base = observed }
+        if value.text ~= observed.text then
+          chan.send {
+            type = EVENTS.RETRY,
+            epoch = document.epoch,
+            sleep = 0,
           }
         end
-        if not valid(document.epoch) then
-          break
+        goto continue
+      end
+      if value.text == base.text then
+        if util.same_base(base, observed) then
+          goto continue
         end
-        local value = util.buffer(buf, document.epoch)
-        if value.changedtick ~= document.changedtick then
-          break
+        local guard = function()
+          return valid(value.epoch)
         end
-        local observed = util.read_file(buf, document.path, value)
-        if not observed or not valid(value.epoch) then
-          break
+        if value.text == observed.text or hunks.replace(buf, value, observed.text, mark(buf), nil, guard) then
+          vim.bo[buf].modified = false
+          next_document { base = observed, local_at = vim.NIL }
         end
-        local base = document.base
-        if not base then
+      elseif util.same_base(base, observed) then
+        if document.inserting then
+          goto continue
+        end
+        local elapsed = document.local_at and vim.uv.hrtime() - document.local_at or math.huge
+        local quiet = lib.ms_to_ns(LOCAL_QUIET_MS)
+        if elapsed < quiet then
+          chan.send {
+            type = EVENTS.RETRY,
+            epoch = document.epoch,
+            sleep = quiet - elapsed,
+          }
+          goto continue
+        end
+        vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
+        if not util.unchanged(document.path, base) then
+          goto continue
+        end
+        local ok = pcall(vim.api.nvim_buf_call, buf, function()
+          vim.cmd [[noautocmd write! ++p]]
+        end)
+        if not ok then
+          goto continue
+        end
+        vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf })
+        if not valid(value.epoch) then
+          goto continue
+        end
+        local after = util.read_file(buf, document.path, util.buffer(buf, value.epoch))
+        if after and valid(value.epoch) then
+          next_document { base = after, local_at = vim.NIL }
+        end
+      else
+        local guard = function()
+          return valid(value.epoch)
+        end
+        local merged = hunks.merge(value.linefeed, base.text, value.text, observed.text)
+        if not guard() then
+          goto continue
+        end
+        local text = util.buffer_text(value, merged)
+        local changed = text ~= value.text
+        if not changed or hunks.replace(buf, value, text, mark(buf), nil, guard) then
+          vim.bo[buf].modified = text ~= observed.text
           next_document { base = observed }
-          if value.text ~= observed.text then
+          if vim.bo[buf].modified and not changed then
             chan.send {
               type = EVENTS.RETRY,
               epoch = document.epoch,
               sleep = 0,
             }
           end
-          break
         end
-        if value.text == base.text then
-          if util.same_base(base, observed) then
-            break
-          end
-          local guard = function()
-            return valid(value.epoch)
-          end
-          if value.text == observed.text or hunks.replace(buf, value, observed.text, mark(buf), nil, guard) then
-            vim.bo[buf].modified = false
-            next_document { base = observed, local_at = vim.NIL }
-          end
-        elseif util.same_base(base, observed) then
-          if document.inserting then
-            break
-          end
-          local elapsed = document.local_at and vim.uv.hrtime() - document.local_at or math.huge
-          local quiet = lib.ms_to_ns(LOCAL_QUIET_MS)
-          if elapsed < quiet then
-            chan.send {
-              type = EVENTS.RETRY,
-              epoch = document.epoch,
-              sleep = quiet - elapsed,
-            }
-            break
-          end
-          vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
-          if not util.unchanged(document.path, base) then
-            break
-          end
-          local ok = pcall(vim.api.nvim_buf_call, buf, function()
-            vim.cmd [[noautocmd write! ++p]]
-          end)
-          if not ok then
-            break
-          end
-          vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf })
-          if not valid(value.epoch) then
-            break
-          end
-          local after = util.read_file(buf, document.path, util.buffer(buf, value.epoch))
-          if after and valid(value.epoch) then
-            next_document { base = after, local_at = vim.NIL }
-          end
-        else
-          local guard = function()
-            return valid(value.epoch)
-          end
-          local merged = hunks.merge(value.linefeed, base.text, value.text, observed.text)
-          if not guard() then
-            break
-          end
-          local text = util.buffer_text(value, merged)
-          local changed = text ~= value.text
-          if not changed or hunks.replace(buf, value, text, mark(buf), nil, guard) then
-            vim.bo[buf].modified = text ~= observed.text
-            next_document { base = observed }
-            if vim.bo[buf].modified and not changed then
-              chan.send {
-                type = EVENTS.RETRY,
-                epoch = document.epoch,
-                sleep = 0,
-              }
-            end
-          end
-        end
-      until true
+      end
+      ::continue::
     end
   end)
 end
