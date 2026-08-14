@@ -4,6 +4,10 @@ local lib = require "goto.lib"
 local M = {}
 local MAX_BYTES = 2 * 1024 * 1024
 
+---@class FsReconcileBase
+---@field text string
+---@field version? uv.fs_stat.result
+
 ---@class FsReconcilePoller
 ---@field close fun()
 

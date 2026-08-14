@@ -10,10 +10,6 @@ local LOCAL_QUIET_MS = 3 * INTERVAL_MS
 local FLASH_SPAN = 200
 local ns = vim.api.nvim_create_namespace "fs-reconcile"
 
----@class FsReconcileBase
----@field text string
----@field version? uv.fs_stat.result
-
 ---@class FsReconcileDocument
 ---@field changedtick integer
 ---@field base? FsReconcileBase
@@ -152,124 +148,6 @@ end
 
 ---@param buf integer
 ---@param chan FsReconcileChannel
----@param close fun()
-local drive = function(buf, chan, close)
-  local path = vim.api.nvim_buf_get_name(buf)
-  ---@type FsReconcileDocument
-  local document = {
-    changedtick = vim.api.nvim_buf_get_changedtick(buf),
-    inserting = vim.api.nvim_get_current_buf() == buf and vim.api.nvim_get_mode().mode:find "^[iR]" ~= nil,
-    local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
-  }
-  local valid = function()
-    return get(buf) == chan and path ~= "" and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
-  end
-
-  return lib.scope(function(defer)
-    defer(close)
-    for event in chan do
-      if event.type == EVENTS.RETRY then
-        local elapsed = chan.wait(event.sleep)
-        if not elapsed then
-          goto continue
-        end
-      elseif event.type == EVENTS.INSERT then
-        document = next(document, { inserting = event.inserting })
-      elseif event.type == EVENTS.LOCAL then
-        document = next(document, { local_at = event.at, changedtick = event.changedtick })
-      elseif event.type == EVENTS.REMOTE then
-      else
-        assert(false, event.type)
-      end
-      if not valid() then
-        goto continue
-      end
-      local value = util.buffer(buf)
-      if value.changedtick ~= document.changedtick then
-        goto continue
-      end
-      local observed = util.read_file(path, value)
-      if not observed or not valid() then
-        goto continue
-      end
-      local base = document.base
-      local resolution = resolve(base, value, observed)
-      if resolution == RESOLUTIONS.INITIAL then
-        document = next(document, { base = observed })
-        if value.text ~= observed.text then
-          chan.send {
-            type = EVENTS.RETRY,
-            sleep = 0,
-          }
-        end
-      elseif resolution == RESOLUTIONS.SYNCED then
-      elseif resolution == RESOLUTIONS.ADOPT then
-        local applied = true
-        if value.text ~= observed.text then
-          local replacement = hunks.replacement(value, observed.text)
-          if valid() then
-            applied = hunks.apply(buf, value, replacement, mark(buf))
-          else
-            applied = false
-          end
-        end
-        if applied then
-          vim.bo[buf].modified = false
-          document = next(document, { base = observed, local_at = vim.NIL })
-        end
-      elseif resolution == RESOLUTIONS.SAVE then
-        ---@cast base FsReconcileBase
-        if document.inserting then
-          goto continue
-        end
-        local elapsed = document.local_at and lib.ns_to_ms(vim.uv.hrtime() - document.local_at) or math.huge
-        if elapsed < LOCAL_QUIET_MS then
-          local sleep = math.ceil(LOCAL_QUIET_MS - elapsed)
-          chan.send {
-            type = EVENTS.RETRY,
-            sleep = sleep,
-          }
-          goto continue
-        end
-        local after = save(buf, path, base)
-        if after and valid() then
-          document = next(document, { base = after, local_at = vim.NIL })
-        end
-      elseif resolution == RESOLUTIONS.MERGE then
-        ---@cast base FsReconcileBase
-        local text = merge(value, base, observed)
-        if valid() then
-          local changed = text ~= value.text
-          local applied = true
-          if changed then
-            local replacement = hunks.replacement(value, text)
-            if valid() then
-              applied = hunks.apply(buf, value, replacement, mark(buf))
-            else
-              applied = false
-            end
-          end
-          if applied then
-            vim.bo[buf].modified = text ~= observed.text
-            document = next(document, { base = observed })
-            if vim.bo[buf].modified and not changed then
-              chan.send {
-                type = EVENTS.RETRY,
-                sleep = 0,
-              }
-            end
-          end
-        end
-      else
-        assert(false, resolution)
-      end
-      ::continue::
-    end
-  end)
-end
-
----@param buf integer
----@param chan FsReconcileChannel
 ---@return fun()
 local start = function(buf, chan)
   local path = vim.api.nvim_buf_get_name(buf)
@@ -313,6 +191,115 @@ local detach = function(buf)
   if chan then
     chan.close()
   end
+end
+
+---@param buf integer
+---@param chan FsReconcileChannel
+---@param close fun()
+local drive = function(buf, chan, close)
+  local path = vim.api.nvim_buf_get_name(buf)
+  ---@type FsReconcileDocument
+  local document = {
+    changedtick = vim.api.nvim_buf_get_changedtick(buf),
+    inserting = vim.api.nvim_get_current_buf() == buf and vim.api.nvim_get_mode().mode:find "^[iR]" ~= nil,
+    local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
+  }
+  local valid = function()
+    return get(buf) == chan and path ~= "" and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
+  end
+  local replace = function(value, text)
+    if value.text == text then
+      return true
+    end
+    local replacement = hunks.replacement(value, text)
+    if not valid() then
+      return false
+    end
+    local applied = hunks.apply(buf, value, replacement, mark(buf))
+    return applied
+  end
+
+  return lib.scope(function(defer)
+    defer(close)
+    for event in chan do
+      if event.type == EVENTS.RETRY then
+        local elapsed = chan.wait(event.sleep)
+        if not elapsed then
+          goto continue
+        end
+      elseif event.type == EVENTS.INSERT then
+        document = next(document, { inserting = event.inserting })
+      elseif event.type == EVENTS.LOCAL then
+        document = next(document, { local_at = event.at, changedtick = event.changedtick })
+      elseif event.type == EVENTS.REMOTE then
+      else
+        assert(false, event.type)
+      end
+      if not valid() then
+        goto continue
+      end
+      local value = util.buffer(buf)
+      if value.changedtick ~= document.changedtick then
+        goto continue
+      end
+      local observed = util.read_file(path, value)
+      if not observed or not valid() then
+        goto continue
+      end
+      local base = document.base
+      local resolution = resolve(base, value, observed)
+      if resolution == RESOLUTIONS.INITIAL then
+        document = next(document, { base = observed })
+        if value.text ~= observed.text then
+          chan.send {
+            type = EVENTS.RETRY,
+            sleep = 0,
+          }
+        end
+      elseif resolution == RESOLUTIONS.SYNCED then
+      elseif resolution == RESOLUTIONS.ADOPT then
+        if replace(value, observed.text) then
+          vim.bo[buf].modified = false
+          document = next(document, { base = observed, local_at = vim.NIL })
+        end
+      elseif resolution == RESOLUTIONS.SAVE then
+        ---@cast base FsReconcileBase
+        if document.inserting then
+          goto continue
+        end
+        local elapsed = document.local_at and lib.ns_to_ms(vim.uv.hrtime() - document.local_at) or math.huge
+        if elapsed < LOCAL_QUIET_MS then
+          local sleep = math.ceil(LOCAL_QUIET_MS - elapsed)
+          chan.send {
+            type = EVENTS.RETRY,
+            sleep = sleep,
+          }
+          goto continue
+        end
+        local after = save(buf, path, base)
+        if after and valid() then
+          document = next(document, { base = after, local_at = vim.NIL })
+        end
+      elseif resolution == RESOLUTIONS.MERGE then
+        ---@cast base FsReconcileBase
+        local text = merge(value, base, observed)
+        local changed = text ~= value.text
+        if replace(value, text) then
+          vim.bo[buf].modified = text ~= observed.text
+          document = next(document, { base = observed })
+          if vim.bo[buf].modified and not changed then
+            chan.send {
+              type = EVENTS.RETRY,
+              sleep = 0,
+            }
+          end
+        end
+      else
+        assert(false, resolution)
+      end
+      ::continue::
+    end
+  end)
 end
 
 local attach = function(buf)
@@ -385,5 +372,3 @@ do
     end
   end)
 end
-
-return {}
