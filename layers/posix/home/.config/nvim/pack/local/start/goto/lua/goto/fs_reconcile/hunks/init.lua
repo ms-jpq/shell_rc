@@ -52,31 +52,41 @@ local index_diff = function(before, after)
   return response.result
 end
 
+---@param current FsReconcileBuffer
+---@param text string
+---@return FsReconcileReplacement
+M.replacement = function(current, text)
+  local indices = index_diff(current.text, text)
+  return {
+    changes = diff.changes(diff.records(current.linefeed, text), indices),
+    trailing_empty = string.sub(text, -#current.linefeed) == current.linefeed,
+  }
+end
+
+---@param buf integer
+---@param current FsReconcileBuffer
+---@param replacement FsReconcileReplacement
+---@param mark fun(start: integer, finish: integer)
+---@param rewrite? fun(apply: fun(): boolean): boolean
+---@return boolean
+M.apply = function(buf, current, replacement, mark, rewrite)
+  if
+    not vim.api.nvim_buf_is_valid(buf)
+    or current.changedtick and current.changedtick ~= vim.api.nvim_buf_get_changedtick(buf)
+  then
+    return false
+  end
+  return apply.run(buf, current, replacement, mark, rewrite)
+end
+
 ---@param buf integer
 ---@param current FsReconcileBuffer
 ---@param text string
 ---@param mark fun(start: integer, finish: integer)
 ---@param rewrite? fun(apply: fun(): boolean): boolean
----@param valid? fun(): boolean
 ---@return boolean
-M.replace = function(buf, current, text, mark, rewrite, valid)
-  local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-  if valid and not valid() or current.changedtick and current.changedtick ~= changedtick then
-    return false
-  end
-  local indices = index_diff(current.text, text)
-  if
-    valid and not valid()
-    or not vim.api.nvim_buf_is_valid(buf)
-    or vim.api.nvim_buf_get_changedtick(buf) ~= changedtick
-  then
-    return false
-  end
-  local replacement = {
-    changes = diff.changes(diff.records(current.linefeed, text), indices),
-    trailing_empty = string.sub(text, -#current.linefeed) == current.linefeed,
-  }
-  return apply.run(buf, current, replacement, mark, rewrite)
+M.replace = function(buf, current, text, mark, rewrite)
+  return M.apply(buf, current, M.replacement(current, text), mark, rewrite)
 end
 
 return M

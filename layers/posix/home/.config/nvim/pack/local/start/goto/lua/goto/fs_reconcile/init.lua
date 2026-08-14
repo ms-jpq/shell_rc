@@ -136,9 +136,6 @@ local drive = function(buf, chan, close)
   local valid = function()
     return get(buf) == chan and path ~= "" and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
   end
-  local guard = function()
-    return valid()
-  end
 
   return lib.scope(function(defer)
     defer(close)
@@ -177,19 +174,23 @@ local drive = function(buf, chan, close)
             sleep = 0,
           }
         end
-        goto continue
       elseif resolution == RESOLUTIONS.SYNCED then
-        goto continue
-      end
-      if resolution == RESOLUTIONS.ADOPT then
-        if value.text == observed.text or hunks.replace(buf, value, observed.text, mark(buf), nil, guard) then
+      elseif resolution == RESOLUTIONS.ADOPT then
+        local applied = true
+        if value.text ~= observed.text then
+          local replacement = hunks.replacement(value, observed.text)
+          if valid() then
+            applied = hunks.apply(buf, value, replacement, mark(buf))
+          else
+            applied = false
+          end
+        end
+        if applied then
           vim.bo[buf].modified = false
           document = next(document, { base = observed, local_at = vim.NIL })
         end
-        goto continue
-      end
-      ---@cast base FsReconcileBase
-      if resolution == RESOLUTIONS.SAVE then
+      elseif resolution == RESOLUTIONS.SAVE then
+        ---@cast base FsReconcileBase
         if document.inserting then
           goto continue
         end
@@ -220,24 +221,34 @@ local drive = function(buf, chan, close)
         if after and valid() then
           document = next(document, { base = after, local_at = vim.NIL })
         end
-        goto continue
-      end
-      assert(resolution == RESOLUTIONS.MERGE, resolution)
-      local merged = hunks.merge(value.linefeed, base.text, value.text, observed.text)
-      if not guard() then
-        goto continue
-      end
-      local text = util.buffer_text(value, merged)
-      local changed = text ~= value.text
-      if not changed or hunks.replace(buf, value, text, mark(buf), nil, guard) then
-        vim.bo[buf].modified = text ~= observed.text
-        document = next(document, { base = observed })
-        if vim.bo[buf].modified and not changed then
-          chan.send {
-            type = EVENTS.RETRY,
-            sleep = 0,
-          }
+      elseif resolution == RESOLUTIONS.MERGE then
+        ---@cast base FsReconcileBase
+        local merged = hunks.merge(value.linefeed, base.text, value.text, observed.text)
+        if valid() then
+          local text = util.buffer_text(value, merged)
+          local changed = text ~= value.text
+          local applied = true
+          if changed then
+            local replacement = hunks.replacement(value, text)
+            if valid() then
+              applied = hunks.apply(buf, value, replacement, mark(buf))
+            else
+              applied = false
+            end
+          end
+          if applied then
+            vim.bo[buf].modified = text ~= observed.text
+            document = next(document, { base = observed })
+            if vim.bo[buf].modified and not changed then
+              chan.send {
+                type = EVENTS.RETRY,
+                sleep = 0,
+              }
+            end
+          end
         end
+      else
+        assert(false, resolution)
       end
       ::continue::
     end

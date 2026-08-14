@@ -104,9 +104,9 @@ M.start = function(commit)
     local current, text = instruction.current, instruction.text
     if text ~= current.text then
       vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+      local replacement = hunks.replacement(current, text)
       if
-        ---@diagnostic disable-next-line: param-type-mismatch
-        not hunks.replace(buf, current, text, function(start, finish)
+        not hunks.apply(buf, current, replacement, function(start, finish)
           vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
         end, function(apply)
           return session.rewrite(buf, apply)
