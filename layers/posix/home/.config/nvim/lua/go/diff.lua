@@ -6,7 +6,7 @@ vim.opt.diffexpr = ""
 vim.opt.diffopt:append { "followwrap", "algorithm:patience" }
 
 vim.api.nvim_create_autocmd({ "OptionSet" }, {
-  pattern = "diff",
+  pattern = { "diff" },
   group = lib.group,
   callback = function()
     if vim.v.option_new ~= "0" then
