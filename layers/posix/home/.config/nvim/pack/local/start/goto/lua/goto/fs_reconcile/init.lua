@@ -510,10 +510,9 @@ do
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = lib.group,
     pattern = "modifiable",
-    callback = async(function()
-      local buf = vim.api.nvim_get_current_buf()
-      send(buf, remote())
-    end),
+    callback = function()
+      send(vim.api.nvim_get_current_buf(), remote())
+    end,
   })
 
   autocmd.vim_enter(function()
