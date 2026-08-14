@@ -159,13 +159,12 @@ end
 local poller = function(buf, path)
   local poll = vim.uv.new_fs_poll()
   local changed = async(function()
+    async.scheduled()
     wake(buf)
   end)
   if not poll then
     return
-  elseif poll:start(path, INTERVAL_MS, function()
-    vim.schedule(changed)
-  end) then
+  elseif poll:start(path, INTERVAL_MS, changed) then
     local closed = false
     return {
       close = function()
@@ -320,6 +319,20 @@ wake = function(buf)
   drain(buf, next.path, next.poller)
 end
 
+local buffer_attach = function(buf)
+  local changed = async(function()
+    async.scheduled()
+    defer(buf)
+  end)
+  vim.api.nvim_buf_attach(buf, false, {
+    on_changedtick = changed,
+    on_lines = changed,
+    on_detach = function()
+      detach(buf)
+    end,
+  })
+end
+
 local bind = function(buf, path)
   local old = M.state.get(buf)
   local enabled = active(buf, path)
@@ -354,19 +367,7 @@ local bind = function(buf, path)
   state = lib.copy(state, { poller = poller(buf, path) })
   M.state.put(buf, state)
   if not old then
-    local deferred = async(function()
-      defer(buf)
-    end)
-    local schedule_defer = function()
-      vim.schedule(deferred)
-    end
-    vim.api.nvim_buf_attach(buf, false, {
-      on_changedtick = schedule_defer,
-      on_lines = schedule_defer,
-      on_detach = function()
-        detach(buf)
-      end,
-    })
+    buffer_attach(buf)
   end
   if vim.bo[buf].modified then
     defer(buf)
@@ -400,11 +401,15 @@ do
     end
     wake(args.buf)
   end
-  autocmd.insert_mode({ group = lib.group }, async(function(args)
-    set_inserting(args, true)
-  end), async(function(args)
-    set_inserting(args, false)
-  end))
+  autocmd.insert_mode(
+    { group = lib.group },
+    async(function(args)
+      set_inserting(args, true)
+    end),
+    async(function(args)
+      set_inserting(args, false)
+    end)
+  )
 
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
