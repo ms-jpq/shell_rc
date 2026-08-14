@@ -43,7 +43,7 @@ do
     vim.api.nvim_create_autocmd({ "CmdlineEnter" }, {
       group = group,
       once = true,
-      pattern = ":",
+      pattern = { ":" },
       callback = function()
         vim.fn.setcmdline(line, #line - 1)
       end,
