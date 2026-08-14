@@ -36,7 +36,7 @@ M.insert_leave = function(opts, leave)
         local event = args.data or vim.v.event
         local old = vim.fn.get(event, "old_mode", "")
         local new = vim.fn.get(event, "new_mode", "")
-        if lib.insert_mode(old) and not lib.insert_mode(new) then
+        if lib.is_insert(old) and not lib.is_insert(new) then
           leave(args)
         end
       end,

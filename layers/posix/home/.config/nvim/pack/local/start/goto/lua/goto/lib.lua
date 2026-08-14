@@ -11,7 +11,7 @@ M.LF = "\n"
 
 ---@param mode string
 ---@return boolean
-M.insert_mode = function(mode)
+M.is_insert = function(mode)
   return string.find(mode, "^[iR]") ~= nil
 end
 
