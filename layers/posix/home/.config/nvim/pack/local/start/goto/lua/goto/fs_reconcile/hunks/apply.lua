@@ -1,5 +1,6 @@
 local async = require "goto.async"
 local diff = require "goto.fs_reconcile.hunks.diff"
+local lib = require "goto.lib"
 
 local M = {}
 
@@ -41,10 +42,14 @@ end
 ---@param replacement FsReconcileReplacement
 ---@param mark fun(start: integer, finish: integer)
 M.run = function(buf, current, replacement, mark)
+  local in_insert = vim.api.nvim_get_current_buf() == buf and lib.insert_mode(vim.api.nvim_get_mode().mode)
+
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
       if index == #replacement.changes then
-        vim.cmd [[let &undolevels=&undolevels]]
+        if not in_insert then
+          vim.opt_local.undolevels = vim.bo.undolevels
+        end
       else
         vim.cmd.undojoin()
       end
