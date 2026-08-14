@@ -5,6 +5,16 @@ local M = {}
 local MAX_BYTES = 2 * 1024 * 1024
 local UTF8_BOM = "\239\187\191"
 
+---@class FsReconcileReadStates
+---@field OPAQUE "opaque"
+---@field UNSTABLE "unstable"
+
+---@type FsReconcileReadStates
+M.READ = {
+  OPAQUE = "opaque",
+  UNSTABLE = "unstable",
+}
+
 ---@class FsReconcileBuffer
 ---@field linefeed string
 ---@field text string
@@ -165,21 +175,24 @@ end
 ---@param path string
 ---@param snapshot FsReconcileSnapshot
 ---@return FsReconcileBase?
+---@return "opaque"|"unstable"?
 M.read_file = function(path, snapshot)
   local before = vim.uv.fs_stat(path)
   if not before then
     return { text = "" }
   elseif before.size > MAX_BYTES then
-    return
+    return nil, M.READ.OPAQUE
   end
   local ok, text = pcall(vim.fn.readblob, path)
   if not ok or type(text) ~= "string" then
-    return
+    return nil, M.READ.UNSTABLE
   end
   text = decode(snapshot, text)
   local after = vim.uv.fs_stat(path)
-  if not text or not M.same_version(before, after) then
-    return
+  if not text then
+    return nil, M.READ.OPAQUE
+  elseif not M.same_version(before, after) then
+    return nil, M.READ.UNSTABLE
   end
   return { text = M.buffer_text(snapshot, merge_text(snapshot, text)), version = before }
 end

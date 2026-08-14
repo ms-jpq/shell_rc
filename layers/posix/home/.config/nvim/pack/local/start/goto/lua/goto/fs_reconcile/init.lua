@@ -362,8 +362,11 @@ local drive = function(buf, path, chan, close)
         chan.send(remote())
         goto continue
       end
-      local observed = util.read_file(path, value)
+      local observed, state = util.read_file(path, value)
       if not observed then
+        if state == util.READ.UNSTABLE then
+          chan.send(retry(QUIET.REMOTE))
+        end
         goto continue
       end
       local base = document.base
@@ -398,19 +401,20 @@ local drive = function(buf, path, chan, close)
           goto continue
         end
         local write = save(buf, path, base, valid)
-        if write then
-          document = next(document, { changedtick = write.value.changedtick })
-          if write.type == WRITES.ATTESTED then
-            if valid() then
-              document = next(document, { base = write.base, local_at = vim.NIL })
-            end
-          elseif write.type == WRITES.UNATTESTED then
-            if valid() then
-              chan.send(remote())
-            end
-          else
-            assert(false, write.type)
+        if not write then
+          goto continue
+        end
+        document = next(document, { changedtick = write.value.changedtick })
+        if write.type == WRITES.ATTESTED then
+          if valid() then
+            document = next(document, { base = write.base, local_at = vim.NIL })
           end
+        elseif write.type == WRITES.UNATTESTED then
+          if valid() then
+            chan.send(remote())
+          end
+        else
+          assert(false, write.type)
         end
       elseif resolution == RESOLUTIONS.MERGE then
         ---@cast base FsReconcileBase
