@@ -5,6 +5,13 @@ local hunks = require "goto.fs_reconcile.hunks"
 local lib = require "goto.lib"
 local util = require "goto.fs_reconcile.util"
 
+-- wa!
+vim.opt.autowriteall = true
+
+vim.opt.autoread = false
+vim.opt.backup = false
+vim.opt.writebackup = false
+
 local TAG = "__fs_reconcile__"
 local INTERVAL_MS = 99
 local FLASH_SPAN = 200
