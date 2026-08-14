@@ -394,7 +394,7 @@ local drive = function(buf, path, chan, close)
         end
       elseif resolution == RESOLUTIONS.SAVE then
         ---@cast base FsReconcileBase
-        if document.inserting then
+        if document.inserting or vim.bo[buf].readonly then
           goto continue
         end
         local local_sleep = document.local_at and remaining(vim.uv.hrtime(), document.local_at, QUIET.LOCAL) or 0
@@ -543,7 +543,7 @@ do
 
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = group,
-    pattern = "modifiable",
+    pattern = { "modifiable", "readonly" },
     callback = function()
       send(vim.api.nvim_get_current_buf(), remote())
     end,
