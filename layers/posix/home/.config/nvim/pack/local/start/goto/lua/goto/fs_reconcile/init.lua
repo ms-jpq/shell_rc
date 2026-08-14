@@ -328,7 +328,9 @@ local drive = function(buf, path, chan, close)
       if not valid() then
         goto continue
       end
-      local remote_sleep = document.base and document.remote_at and remaining(vim.uv.hrtime(), document.remote_at, QUIET.REMOTE)
+      local remote_sleep = document.base
+          and document.remote_at
+          and remaining(vim.uv.hrtime(), document.remote_at, QUIET.REMOTE)
         or 0
       if remote_sleep > 0 then
         chan.send(retry(remote_sleep))
