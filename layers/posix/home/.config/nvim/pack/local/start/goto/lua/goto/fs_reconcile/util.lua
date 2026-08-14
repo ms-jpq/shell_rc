@@ -1,6 +1,8 @@
+local async = require "goto.async"
 local lib = require "goto.lib"
 
 local M = {}
+local MAX_BYTES = 2 * 1024 * 1024
 
 ---@param left? uv.fs_stat.result
 ---@param right? uv.fs_stat.result
@@ -60,6 +62,33 @@ M.buffer = function(buf, epoch)
   }
 end
 
+---@param path string
+---@param interval integer
+---@param wake fun()
+---@return FsReconcileHandle?
+M.poller = function(path, interval, wake)
+  local poll = vim.uv.new_fs_poll()
+  local changed = async(function()
+    async.scheduled()
+    wake()
+  end)
+  if not poll then
+    return
+  elseif poll:start(path, interval, changed) then
+    local closed = false
+    return {
+      close = function()
+        if not closed then
+          closed = true
+          poll:stop()
+          poll:close()
+        end
+      end,
+    }
+  end
+  poll:close()
+end
+
 ---@param buf integer
 ---@param text string
 ---@return string?
@@ -97,6 +126,29 @@ M.buffer_text = function(snapshot, text)
     return string.sub(text, 1, -#snapshot.linefeed - 1)
   end
   return text
+end
+
+---@param buf integer
+---@param path string
+---@param snapshot FsReconcileSnapshot
+---@return FsReconcileBase?
+M.read_file = function(buf, path, snapshot)
+  local before = vim.uv.fs_stat(path)
+  if not before then
+    return { text = "" }
+  elseif before.size > MAX_BYTES then
+    return
+  end
+  local ok, text = pcall(vim.fn.readblob, path)
+  if not ok or type(text) ~= "string" then
+    return
+  end
+  text = M.decode(buf, text)
+  local after = vim.uv.fs_stat(path)
+  if not text or not M.same_version(before, after) then
+    return
+  end
+  return { text = M.buffer_text(snapshot, M.merge_text(snapshot, text)), version = before }
 end
 
 return M

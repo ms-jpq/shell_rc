@@ -4,9 +4,34 @@ local async = require "goto.async"
 local libexec = require "goto.libexec"
 
 local M = {}
+local MILLISECONDS_PER_SECOND = 1000
+local NANOSECONDS_PER_MILLISECOND = 1000 * 1000
 
 M.LF = "\n"
-M.MILLISECONDS_PER_SECOND, M.NANOSECONDS_PER_MILLISECOND = 1000, 1000 * 1000
+
+---@param milliseconds number
+---@return number
+M.ms_to_ns = function(milliseconds)
+  return milliseconds * NANOSECONDS_PER_MILLISECOND
+end
+
+---@param nanoseconds number
+---@return number
+M.ns_to_ms = function(nanoseconds)
+  return nanoseconds / NANOSECONDS_PER_MILLISECOND
+end
+
+---@param seconds number
+---@return number
+M.seconds_to_ms = function(seconds)
+  return seconds * MILLISECONDS_PER_SECOND
+end
+
+---@param microseconds number
+---@return number
+M.microseconds_to_ms = function(microseconds)
+  return microseconds / MILLISECONDS_PER_SECOND
+end
 
 M.clamp = function(lo, self, hi)
   return math.max(lo, math.min(self, hi))

@@ -50,7 +50,7 @@ M.ACTIONS = {
 local within_grace = function(generation, local_grace_ms)
   return local_grace_ms > 0
     and generation ~= nil
-    and vim.uv.hrtime() - generation.monotonic_ts < local_grace_ms * lib.NANOSECONDS_PER_MILLISECOND
+    and vim.uv.hrtime() - generation.monotonic_ts < lib.ms_to_ns(local_grace_ms)
 end
 
 ---@param spec ChecktimeResolveConfig

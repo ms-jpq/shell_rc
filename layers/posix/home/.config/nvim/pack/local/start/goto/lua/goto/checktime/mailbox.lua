@@ -169,8 +169,8 @@ end
 M.start = function(spec)
   ---@diagnostic disable-next-line: missing-fields
   local mailbox = {} ---@type ChecktimeMailbox
-  local local_debounce_ns = spec.local_debounce_ms * lib.NANOSECONDS_PER_MILLISECOND
-  local remote_quiet_ns = spec.remote_quiet_ms * lib.NANOSECONDS_PER_MILLISECOND
+  local local_debounce_ns = lib.ms_to_ns(spec.local_debounce_ms)
+  local remote_quiet_ns = lib.ms_to_ns(spec.remote_quiet_ms)
   local sequential = 0
 
   ---@return ChecktimeGeneration

@@ -65,7 +65,11 @@ M.replace = function(buf, current, text, mark, rewrite, valid)
     return false
   end
   local indices = index_diff(current.text, text)
-  if valid and not valid() or not vim.api.nvim_buf_is_valid(buf) or vim.api.nvim_buf_get_changedtick(buf) ~= changedtick then
+  if
+    valid and not valid()
+    or not vim.api.nvim_buf_is_valid(buf)
+    or vim.api.nvim_buf_get_changedtick(buf) ~= changedtick
+  then
     return false
   end
   local replacement = {

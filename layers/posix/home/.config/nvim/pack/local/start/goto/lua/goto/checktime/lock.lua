@@ -10,12 +10,12 @@ local MAX_WAIT, MAX_DELAY, MAX_JITTER = 750, 96, 24
 local LEASE = 3 * 1000
 
 local milliseconds = function()
-  return vim.uv.hrtime() / lib.NANOSECONDS_PER_MILLISECOND
+  return lib.ns_to_ms(vim.uv.hrtime())
 end
 
 local EPOCH_OFFSET = (function()
   local seconds, microseconds = vim.uv.gettimeofday()
-  return seconds * lib.MILLISECONDS_PER_SECOND + microseconds / lib.MILLISECONDS_PER_SECOND - milliseconds()
+  return lib.seconds_to_ms(assert(seconds)) + lib.microseconds_to_ms(assert(tonumber(microseconds))) - milliseconds()
 end)()
 
 local deadline = function()
@@ -47,8 +47,7 @@ local acquire = function(lock)
   if not fd then
     local _, stat = async.uv.fs_stat(lock)
     local now = EPOCH_OFFSET + milliseconds()
-    local modified = stat
-      and (stat.mtime.sec * lib.MILLISECONDS_PER_SECOND + stat.mtime.nsec / lib.NANOSECONDS_PER_MILLISECOND)
+    local modified = stat and (lib.seconds_to_ms(stat.mtime.sec) + lib.ns_to_ms(stat.mtime.nsec))
     if modified and now - modified > LEASE then
       async.uv.fs_unlink(lock)
     end
