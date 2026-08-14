@@ -33,13 +33,20 @@ local ns = vim.api.nvim_create_namespace "fs-reconcile"
 ---@field type "retry"
 ---@field sleep integer
 
----@alias FsReconcileEvent FsReconcileInsertEvent|FsReconcileLocalEvent|FsReconcileRemoteEvent|FsReconcileRetryEvent
+---@class FsReconcileWriteEvent
+---@field type "write"
+---@field at integer
+---@field changedtick integer
+---@field base? FsReconcileBase
+
+---@alias FsReconcileEvent FsReconcileInsertEvent|FsReconcileLocalEvent|FsReconcileRemoteEvent|FsReconcileRetryEvent|FsReconcileWriteEvent
 
 ---@class FsReconcileEvents
 ---@field INSERT "insert"
 ---@field LOCAL "local"
 ---@field RETRY "retry"
 ---@field REMOTE "remote"
+---@field WRITE "write"
 
 ---@type FsReconcileEvents
 local EVENTS = {
@@ -47,6 +54,7 @@ local EVENTS = {
   LOCAL = "local",
   RETRY = "retry",
   REMOTE = "remote",
+  WRITE = "write",
 }
 
 ---@class FsReconcileResolutions
@@ -67,6 +75,27 @@ local RESOLUTIONS = {
 
 ---@alias FsReconcileResolution "initial"|"synced"|"adopt"|"save"|"merge"
 
+---@class FsReconcileAttestedWrite
+---@field type "attested"
+---@field base FsReconcileBase
+---@field value FsReconcileSnapshot
+
+---@class FsReconcileUnattestedWrite
+---@field type "unattested"
+---@field value FsReconcileSnapshot
+
+---@alias FsReconcileWrite FsReconcileAttestedWrite|FsReconcileUnattestedWrite
+
+---@class FsReconcileWrites
+---@field ATTESTED "attested"
+---@field UNATTESTED "unattested"
+
+---@type FsReconcileWrites
+local WRITES = {
+  ATTESTED = "attested",
+  UNATTESTED = "unattested",
+}
+
 ---@alias FsReconcileChannel AsyncMpsc<FsReconcileEvent>
 
 ---@param buf integer
@@ -80,7 +109,7 @@ end
 ---@return boolean
 local attached = function(buf, chan)
   local current = get(buf)
-  return current and current.close == chan.close
+  return current ~= nil and current.close == chan.close
 end
 
 ---@param buf integer
@@ -102,7 +131,7 @@ end
 ---@param path string
 ---@param base FsReconcileBase
 ---@param valid fun(): boolean
----@return FsReconcileBase?
+---@return FsReconcileWrite?
 local save = function(buf, path, base, valid)
   vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
   if not valid() then
@@ -117,8 +146,14 @@ local save = function(buf, path, base, valid)
   if not ok then
     return
   end
-  vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf })
-  return util.read_file(path, util.buffer(buf))
+  vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf, data = { fs_reconcile = true } })
+  local value = util.buffer(buf)
+  local after = util.read_file(path, value)
+  if after and after.text == value.text then
+    return { type = WRITES.ATTESTED, base = after, value = value }
+  end
+  vim.bo[buf].modified = true
+  return { type = WRITES.UNATTESTED, value = value }
 end
 
 ---@param value FsReconcileSnapshot
@@ -188,7 +223,6 @@ local start = function(buf, path, chan)
       chan.close()
     end,
   })
-  chan.send { type = EVENTS.REMOTE }
 
   chan.close = function()
     mpsc_close()
@@ -201,6 +235,7 @@ local start = function(buf, path, chan)
     end
   end
 
+  chan.send { type = EVENTS.REMOTE }
   return chan.close
 end
 
@@ -244,6 +279,12 @@ local drive = function(buf, path, chan, close)
         document = next(document, { inserting = event.inserting })
       elseif event.type == EVENTS.LOCAL then
         document = next(document, { local_at = event.at, changedtick = event.changedtick })
+      elseif event.type == EVENTS.WRITE then
+        document = next(document, {
+          base = event.base or document.base,
+          changedtick = event.changedtick,
+          local_at = event.base and vim.NIL or event.at,
+        })
       elseif event.type == EVENTS.REMOTE then
       else
         assert(false, event.type)
@@ -289,9 +330,20 @@ local drive = function(buf, path, chan, close)
           }
           goto continue
         end
-        local after = save(buf, path, base, valid)
-        if after and valid() then
-          document = next(document, { base = after, local_at = vim.NIL })
+        local write = save(buf, path, base, valid)
+        if write then
+          document = next(document, { changedtick = write.value.changedtick })
+          if write.type == WRITES.ATTESTED then
+            if valid() then
+              document = next(document, { base = write.base, local_at = vim.NIL })
+            end
+          elseif write.type == WRITES.UNATTESTED then
+            if valid() then
+              chan.send { type = EVENTS.REMOTE }
+            end
+          else
+            assert(false, write.type)
+          end
         end
       elseif resolution == RESOLUTIONS.MERGE then
         ---@cast base FsReconcileBase
@@ -323,8 +375,9 @@ local detach = function(buf)
 end
 
 local attach = function(buf)
+  local path, chan, close
   lib.report(function()
-    local path = vim.api.nvim_buf_get_name(buf)
+    path = vim.api.nvim_buf_get_name(buf)
     if path == "" then
       return
     end
@@ -334,11 +387,13 @@ local attach = function(buf)
       return
     end
     ---@type FsReconcileChannel
-    local chan = async.mpsc()
+    chan = async.mpsc()
+    close = start(buf, path, chan)
     vim.b[buf][TAG] = chan
-    local close = start(buf, path, chan)
-    drive(buf, path, chan, close)
   end)
+  if chan then
+    drive(buf, path, chan, close)
+  end
 end
 
 do
@@ -367,7 +422,18 @@ do
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = lib.group,
     callback = async(function(args)
-      send(args.buf, { type = EVENTS.REMOTE })
+      local value = util.buffer(args.buf)
+      local data = args.data or {}
+      local base = not data.fs_reconcile and util.read_file(vim.api.nvim_buf_get_name(args.buf), value) or nil
+      if base and base.text ~= value.text then
+        base = nil
+      end
+      send(args.buf, {
+        type = EVENTS.WRITE,
+        at = vim.uv.hrtime(),
+        changedtick = value.changedtick,
+        base = base,
+      })
     end),
   })
 

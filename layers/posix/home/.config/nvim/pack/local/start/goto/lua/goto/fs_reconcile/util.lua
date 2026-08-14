@@ -3,6 +3,7 @@ local lib = require "goto.lib"
 
 local M = {}
 local MAX_BYTES = 2 * 1024 * 1024
+local UTF8_BOM = "\239\187\191"
 
 ---@class FsReconcileBuffer
 ---@field linefeed string
@@ -112,8 +113,25 @@ local decode = function(snapshot, text)
   if snapshot.fileencoding ~= "" and snapshot.fileencoding ~= snapshot.encoding then
     text = vim.fn.iconv(text, snapshot.fileencoding, snapshot.encoding)
   end
-  local remainder = string.gsub(text, snapshot.linefeed, "")
-  return not string.find(remainder, "[\r\n]") and text or nil
+  if vim.startswith(text, UTF8_BOM) then
+    text = string.sub(text, #UTF8_BOM + 1)
+  end
+  local linefeed
+  if string.find(text, "\r\n", 1, true) then
+    linefeed = "\r\n"
+  elseif string.find(text, "\n", 1, true) then
+    linefeed = "\n"
+  elseif string.find(text, "\r", 1, true) then
+    linefeed = "\r"
+  else
+    return text
+  end
+  local remainder = string.gsub(text, linefeed, "")
+  if string.find(remainder, "[\r\n]") then
+    return
+  end
+  local normalized = string.gsub(text, linefeed, snapshot.linefeed)
+  return normalized
 end
 
 ---@param snapshot FsReconcileSnapshot

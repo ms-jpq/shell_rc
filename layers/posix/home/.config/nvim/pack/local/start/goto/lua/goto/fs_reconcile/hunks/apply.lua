@@ -16,8 +16,13 @@ local buffer_lines = function(linefeed, records)
     :totable()
 end
 
+---@param before string
+---@param after string
+---@return integer[][]
 local indices = function(before, after)
-  return vim.text.diff(before, after, { result_type = "indices" })
+  local result = assert(vim.text.diff(before, after, { result_type = "indices" }))
+  ---@cast result integer[][]
+  return result
 end
 
 ---@param current FsReconcileBuffer

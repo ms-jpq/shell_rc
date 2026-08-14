@@ -159,7 +159,7 @@ local transfer = function(bytecode, ...)
 end
 
 ---@generic T
----@param fn fun(...any): T
+---@param fn fun(...: any): T
 ---@return T
 M.work = function(fn, ...)
   local fut = M.future()
