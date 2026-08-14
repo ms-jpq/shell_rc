@@ -1,0 +1,100 @@
+local lib = require "goto.lib"
+
+local M = {}
+
+---@param left? uv.fs_stat.result
+---@param right? uv.fs_stat.result
+---@return boolean
+M.same_version = function(left, right)
+  return left ~= nil
+    and right ~= nil
+    and left.dev == right.dev
+    and left.ino == right.ino
+    and left.size == right.size
+    and left.mtime.sec == right.mtime.sec
+    and left.mtime.nsec == right.mtime.nsec
+    and left.ctime.sec == right.ctime.sec
+    and left.ctime.nsec == right.ctime.nsec
+end
+
+---@param left FsReconcileBase
+---@param right FsReconcileBase
+---@return boolean
+M.same_base = function(left, right)
+  if not left.version then
+    return not right.version
+  elseif right.version then
+    return M.same_version(left.version, right.version)
+  end
+  return false
+end
+
+---@param path string
+---@param base FsReconcileBase
+---@return boolean
+M.unchanged = function(path, base)
+  local version = vim.uv.fs_stat(path)
+  if not base.version then
+    return not version
+  elseif version then
+    return M.same_version(base.version, version)
+  end
+  return false
+end
+
+---@param buf integer
+---@return FsReconcileSnapshot
+M.buffer = function(buf)
+  local endofline = vim.bo[buf].endofline
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+  local linefeed = lib.buf_linefeed(buf)
+  local text = table.concat(lines, linefeed)
+  return {
+    linefeed = linefeed,
+    text = endofline and text .. linefeed or text,
+    endofline = endofline,
+    final_empty = lines[#lines] == "",
+    changedtick = vim.api.nvim_buf_get_changedtick(buf),
+  }
+end
+
+---@param buf integer
+---@param text string
+---@return string?
+M.decode = function(buf, text)
+  local encoding = vim.bo[buf].fileencoding
+  if encoding ~= "" and encoding ~= vim.o.encoding then
+    text = vim.fn.iconv(text, encoding, vim.o.encoding)
+  end
+  local remainder = string.gsub(text, lib.buf_linefeed(buf), "")
+  return not string.find(remainder, "[\r\n]") and text or nil
+end
+
+---@param snapshot FsReconcileSnapshot
+---@param text string
+---@return string
+M.merge_text = function(snapshot, text)
+  if snapshot.final_empty and not snapshot.endofline then
+    return text .. snapshot.linefeed
+  elseif snapshot.endofline and not vim.endswith(text, snapshot.linefeed) then
+    return text .. snapshot.linefeed
+  end
+  return text
+end
+
+---@param snapshot FsReconcileSnapshot
+---@param text string
+---@return string
+M.buffer_text = function(snapshot, text)
+  local ending = vim.endswith(text, snapshot.linefeed)
+  if text == snapshot.linefeed then
+    return ""
+  elseif snapshot.endofline then
+    return ending and text or text .. snapshot.linefeed
+  elseif ending then
+    return string.sub(text, 1, -#snapshot.linefeed - 1)
+  end
+  return text
+end
+
+return M

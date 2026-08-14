@@ -1,7 +1,7 @@
 local M = {}
 
 M.setup = function()
-  require "goto.checktime"
+  require "goto.fs_reconcile"
   require "goto.conceal"
   require "goto.repl"
 end

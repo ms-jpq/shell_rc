@@ -12,6 +12,14 @@ M.clamp = function(lo, self, hi)
   return math.max(lo, math.min(self, hi))
 end
 
+---@generic T: table
+---@param value T
+---@param changes? table
+---@return T
+M.copy = function(value, changes)
+  return vim.tbl_extend("force", {}, value, changes or {})
+end
+
 do
   M.group = vim.api.nvim_create_augroup([[lv_goto]], { clear = true })
 end
