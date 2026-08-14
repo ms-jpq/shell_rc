@@ -76,6 +76,14 @@ local get = function(buf)
 end
 
 ---@param buf integer
+---@param chan FsReconcileChannel
+---@return boolean
+local attached = function(buf, chan)
+  local current = get(buf)
+  return current and current.close == chan.close
+end
+
+---@param buf integer
 ---@param event FsReconcileEvent
 local send = function(buf, event)
   local chan = get(buf)
@@ -160,6 +168,7 @@ end
 ---@param chan FsReconcileChannel
 ---@return fun()
 local start = function(buf, path, chan)
+  local mpsc_close = chan.close
   ---@type FsReconcilePoller?
   local poller = util.poller(path, INTERVAL_MS, function()
     chan.send { type = EVENTS.REMOTE }
@@ -181,18 +190,18 @@ local start = function(buf, path, chan)
   })
   chan.send { type = EVENTS.REMOTE }
 
-  local close = function()
-    chan.close()
+  chan.close = function()
+    mpsc_close()
     if poller then
       poller.close()
       poller = nil
     end
-    if vim.api.nvim_buf_is_valid(buf) and get(buf) == chan then
+    if vim.api.nvim_buf_is_valid(buf) and attached(buf, chan) then
       vim.b[buf][TAG] = nil
     end
   end
 
-  return close
+  return chan.close
 end
 
 ---@param base? FsReconcileBase
@@ -220,7 +229,7 @@ local drive = function(buf, path, chan, close)
     local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
   }
   local valid = function()
-    return get(buf) == chan and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
+    return attached(buf, chan) and vim.api.nvim_buf_get_name(buf) == path and vim.bo[buf].modifiable
   end
 
   lib.scope(function(defer)
@@ -314,20 +323,22 @@ local detach = function(buf)
 end
 
 local attach = function(buf)
-  local path = vim.api.nvim_buf_get_name(buf)
-  if path == "" then
-    return
-  end
-  local existing = get(buf)
-  if existing then
-    existing.send { type = EVENTS.REMOTE }
-    return
-  end
-  ---@type FsReconcileChannel
-  local chan = async.mpsc()
-  vim.b[buf][TAG] = chan
-  local close = start(buf, path, chan)
-  drive(buf, path, chan, close)
+  lib.report(function()
+    local path = vim.api.nvim_buf_get_name(buf)
+    if path == "" then
+      return
+    end
+    local existing = get(buf)
+    if existing then
+      existing.send { type = EVENTS.REMOTE }
+      return
+    end
+    ---@type FsReconcileChannel
+    local chan = async.mpsc()
+    vim.b[buf][TAG] = chan
+    local close = start(buf, path, chan)
+    drive(buf, path, chan, close)
+  end)
 end
 
 do
