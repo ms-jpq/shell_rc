@@ -141,7 +141,7 @@ local save = function(buf, path, base, valid)
     return
   end
   local ok = pcall(vim.api.nvim_buf_call, buf, function()
-    vim.cmd [[noautocmd write! ++p]]
+    vim.cmd [[noautocmd silent! write! ++p]]
   end)
   if not ok then
     return
@@ -397,6 +397,11 @@ local attach = function(buf)
 end
 
 do
+  vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
+    group = lib.group,
+    command = [[silent! wall! ++p]],
+  })
+
   vim.api.nvim_create_autocmd({ "BufUnload", "BufWipeout" }, {
     group = lib.group,
     callback = async(function(args)
