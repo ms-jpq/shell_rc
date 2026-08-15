@@ -15,6 +15,13 @@ M.READ = {
   UNSTABLE = "unstable",
 }
 
+---@param left? uv.fs_stat.result
+---@param right? uv.fs_stat.result
+---@return boolean
+M.same_file = function(left, right)
+  return left ~= nil and right ~= nil and left.dev == right.dev and left.ino == right.ino
+end
+
 ---@class FsReconcileBuffer
 ---@field text string
 
@@ -41,13 +48,6 @@ M.same_version = function(left, right)
     and left.mtime.nsec == right.mtime.nsec
     and left.ctime.sec == right.ctime.sec
     and left.ctime.nsec == right.ctime.nsec
-end
-
----@param left? uv.fs_stat.result
----@param right? uv.fs_stat.result
----@return boolean
-M.same_file = function(left, right)
-  return left ~= nil and right ~= nil and left.dev == right.dev and left.ino == right.ino
 end
 
 ---@param left FsReconcileBase
@@ -125,15 +125,14 @@ local decode = function(buf, text)
   if vim.startswith(text, UTF8_BOM) then
     text = string.sub(text, #UTF8_BOM + 1)
   end
-  text = string.gsub(text, "\r\n", lib.LF)
-  return string.gsub(text, "\r", lib.LF)
+  return (string.gsub(text, "\r?\n", lib.LF))
 end
 
----@param path string
 ---@param buf integer
+---@param path string
 ---@return FsReconcileBase?
 ---@return "opaque"|"unstable"?
-M.read_file = function(path, buf)
+M.read_file = function(buf, path)
   local before = vim.uv.fs_stat(path)
   if not before then
     return { text = "" }
@@ -144,14 +143,14 @@ M.read_file = function(path, buf)
   if not ok or type(text) ~= "string" then
     return nil, M.READ.UNSTABLE
   end
-  text = decode(buf, text)
+  text = decode(buf, assert(text))
   local after = vim.uv.fs_stat(path)
   if not text then
     return nil, M.READ.OPAQUE
   elseif not M.same_version(before, after) then
     return nil, M.READ.UNSTABLE
   end
-  return { text = text, version = before }
+  return { text = text, version = after }
 end
 
 return M

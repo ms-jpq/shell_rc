@@ -6,7 +6,6 @@ local M = {}
 
 ---@class FsReconcileReplacement
 ---@field changes FsReconcileHunk[]
----@field endofline boolean
 
 local buffer_lines = function(records)
   return vim
@@ -31,16 +30,14 @@ end
 ---@return FsReconcileReplacement
 M.plan = function(current, text)
   local changes = async.work(indices, current.text, text)
-  return {
-    changes = diff.changes(diff.records(text), changes),
-    endofline = vim.endswith(text, lib.LF),
-  }
+  return { changes = diff.changes(diff.records(text), changes) }
 end
 
 ---@param buf integer
 ---@param replacement FsReconcileReplacement
+---@param text string
 ---@param mark fun(start: integer, finish: integer)
-M.run = function(buf, replacement, mark)
+M.run = function(buf, replacement, text, mark)
   local in_insert = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode)
 
   vim.api.nvim_buf_call(buf, function()
@@ -60,7 +57,7 @@ M.run = function(buf, replacement, mark)
       end
     end
 
-    vim.bo[buf].endofline = replacement.endofline
+    vim.bo[buf].endofline = vim.endswith(text, lib.LF)
   end)
 end
 

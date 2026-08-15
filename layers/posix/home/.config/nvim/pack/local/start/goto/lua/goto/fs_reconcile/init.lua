@@ -191,7 +191,7 @@ local save = function(buf, path, base, valid)
     return
   end
   local value = util.buffer(buf)
-  local after = util.read_file(path, buf)
+  local after = util.read_file(buf, path)
   if after and after.text == value.text then
     return { type = WRITES.ATTESTED, base = after, value = value }
   end
@@ -220,7 +220,7 @@ local replace = function(buf, value, text, valid)
   if not valid() or value.changedtick ~= vim.api.nvim_buf_get_changedtick(buf) then
     return false
   end
-  hunk_apply.run(buf, replacement, mark(buf))
+  hunk_apply.run(buf, replacement, text, mark(buf))
   return true
 end
 
@@ -361,7 +361,7 @@ local drive = function(buf, path, chan, close)
         chan.send(remote())
         goto continue
       end
-      local observed, state = util.read_file(path, buf)
+      local observed, state = util.read_file(buf, path)
       if not observed then
         if state == util.READ.UNSTABLE then
           chan.send(retry(QUIET.REMOTE))
@@ -482,7 +482,7 @@ end
 ---@param buf integer
 local native_write = function(buf)
   local value = util.buffer(buf)
-  local base = util.read_file(vim.api.nvim_buf_get_name(buf), buf)
+  local base = util.read_file(buf, vim.api.nvim_buf_get_name(buf))
   if base and base.text == value.text then
     send(buf, {
       type = EVENTS.WRITE,
