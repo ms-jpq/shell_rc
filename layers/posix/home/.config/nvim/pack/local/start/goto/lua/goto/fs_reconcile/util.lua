@@ -78,11 +78,9 @@ end
 ---@param buf integer
 ---@return FsReconcileSnapshot
 M.buffer = function(buf)
-  local endofline = vim.bo[buf].endofline
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local text = table.concat(lines, lib.LF)
   return {
-    text = endofline and text .. lib.LF or text,
+    text = table.concat(lines, lib.LF),
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
   }
 end
@@ -125,7 +123,8 @@ local decode = function(buf, text)
   if vim.startswith(text, UTF8_BOM) then
     text = string.sub(text, #UTF8_BOM + 1)
   end
-  return (string.gsub(text, "\r?\n", lib.LF))
+  text = string.gsub(text, "\r?\n", lib.LF)
+  return (string.gsub(text, lib.LF .. "$", ""))
 end
 
 ---@param buf integer

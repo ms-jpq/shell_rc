@@ -35,9 +35,8 @@ end
 
 ---@param buf integer
 ---@param replacement FsReconcileReplacement
----@param text string
 ---@param mark fun(start: integer, finish: integer)
-M.run = function(buf, replacement, text, mark)
+M.run = function(buf, replacement, mark)
   local in_insert = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode)
 
   vim.api.nvim_buf_call(buf, function()
@@ -56,8 +55,6 @@ M.run = function(buf, replacement, text, mark)
         mark(hunk.start, hunk.start + #lines)
       end
     end
-
-    vim.bo[buf].endofline = vim.endswith(text, lib.LF)
   end)
 end
 
