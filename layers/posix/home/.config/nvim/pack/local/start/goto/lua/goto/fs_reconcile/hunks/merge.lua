@@ -1,4 +1,5 @@
 local diff = require "goto.fs_reconcile.hunks.diff"
+local lib = require "goto.lib"
 
 local M = {}
 
@@ -195,19 +196,19 @@ local relative = function(patches, start)
     :totable()
 end
 
-local take_both = function(linefeed, local_text, remote_text)
+local take_both = function(local_text, remote_text)
   if local_text == remote_text then
-    return diff.records(linefeed, local_text)
+    return diff.records(local_text)
   elseif local_text == "" then
-    return diff.records(linefeed, remote_text)
+    return diff.records(remote_text)
   elseif remote_text == "" then
-    return diff.records(linefeed, local_text)
+    return diff.records(local_text)
   end
 
-  if not vim.endswith(local_text, linefeed) and not vim.startswith(remote_text, linefeed) then
-    local_text = local_text .. linefeed
+  if not vim.endswith(local_text, lib.LF) and not vim.startswith(remote_text, lib.LF) then
+    local_text = local_text .. lib.LF
   end
-  return diff.records(linefeed, local_text .. remote_text)
+  return diff.records(local_text .. remote_text)
 end
 
 local replacement = function(group, replacement_lines)
@@ -222,9 +223,9 @@ local replacement = function(group, replacement_lines)
   }
 end
 
-local split_record = function(linefeed, record)
-  if vim.endswith(record, linefeed) then
-    return string.sub(record, 1, -#linefeed - 1), linefeed
+local split_record = function(record)
+  if vim.endswith(record, lib.LF) then
+    return string.sub(record, 1, -#lib.LF - 1), lib.LF
   end
   return record, ""
 end
@@ -232,13 +233,13 @@ end
 local character_records = function(text)
   local records = {}
   for character in chars(text) do
-    table.insert(records, character .. "\n")
+    table.insert(records, character .. lib.LF)
   end
   return records
 end
 
 local characters_text = function(records)
-  return (table.concat(records):gsub("\n", ""))
+  return (table.concat(records):gsub(lib.LF, ""))
 end
 
 local character_patches = function(before, after)
@@ -247,18 +248,18 @@ local character_patches = function(before, after)
   return atomic_patches(changes(table.concat(before_records), table.concat(after_records), after_records))
 end
 
-local merge_record = function(linefeed, base, local_record, remote_record)
+local merge_record = function(base, local_record, remote_record)
   if local_record == remote_record or local_record == base then
     return { remote_record }
   elseif remote_record == base then
     return { local_record }
   end
 
-  local base_text = split_record(linefeed, base)
-  local local_text, local_eol = split_record(linefeed, local_record)
-  local remote_text, remote_eol = split_record(linefeed, remote_record)
+  local base_text = split_record(base)
+  local local_text, local_eol = split_record(local_record)
+  local remote_text, remote_eol = split_record(remote_record)
   if local_eol ~= remote_eol then
-    return take_both(linefeed, local_record, remote_record)
+    return take_both(local_record, remote_record)
   end
 
   local local_patches = character_patches(base_text, local_text)
@@ -267,7 +268,7 @@ local merge_record = function(linefeed, base, local_record, remote_record)
     return overlaps_any(local_patch, remote_patches)
   end)
   if conflicted then
-    return take_both(linefeed, local_record, remote_record)
+    return take_both(local_record, remote_record)
   end
 
   local patches = vim.list_extend(local_patches, remote_patches)
@@ -276,12 +277,9 @@ local merge_record = function(linefeed, base, local_record, remote_record)
   return { characters_text(characters) .. local_eol }
 end
 
-local merge_concurrent = function(linefeed, base, group)
+local merge_concurrent = function(base, group)
   if resizes(group.local_patches) or resizes(group.remote_patches) then
-    return replacement(
-      group,
-      take_both(linefeed, patches_text(group.local_patches), patches_text(group.remote_patches))
-    )
+    return replacement(group, take_both(patches_text(group.local_patches), patches_text(group.remote_patches)))
   end
 
   local start, finish = bounds(group)
@@ -290,53 +288,52 @@ local merge_concurrent = function(linefeed, base, group)
   local remote_lines = patch(before, relative(group.remote_patches, start))
   local lines = {}
   for index, record in ipairs(before) do
-    vim.list_extend(lines, merge_record(linefeed, record, local_lines[index], remote_lines[index]))
+    vim.list_extend(lines, merge_record(record, local_lines[index], remote_lines[index]))
   end
   return replacement(group, lines)
 end
 
-local resolve_group = function(linefeed, base, group)
+local resolve_group = function(base, group)
   if #group.remote_patches == 0 then
     return group.local_patches
   elseif #group.local_patches == 0 then
     return group.remote_patches
   end
-  return { merge_concurrent(linefeed, base, group) }
+  return { merge_concurrent(base, group) }
 end
 
-local merge_groups = function(linefeed, base, grouped)
+local merge_groups = function(base, grouped)
   local merged = {}
 
   for group in grouped do
-    vim.list_extend(merged, resolve_group(linefeed, base, group))
+    vim.list_extend(merged, resolve_group(base, group))
   end
 
   return merged
 end
 
----@param linefeed string
 ---@param base string
 ---@param local_text string
 ---@param remote_text string
 ---@return string
-M.merge = function(linefeed, base, local_text, remote_text)
+M.merge = function(base, local_text, remote_text)
   if local_text == base then
     return remote_text
   elseif remote_text == base then
     return local_text
   end
 
-  local base_lines = diff.records(linefeed, base)
-  local local_lines = diff.records(linefeed, local_text)
-  local remote_lines = diff.records(linefeed, remote_text)
+  local base_lines = diff.records(base)
+  local local_lines = diff.records(local_text)
+  local remote_lines = diff.records(remote_text)
   local grouped = groups(changes(base, local_text, local_lines), changes(base, remote_text, remote_lines))
-  local patches = merge_groups(linefeed, base_lines, grouped)
+  local patches = merge_groups(base_lines, grouped)
   sort(patches)
   return table.concat(patch(base_lines, patches))
 end
 
-M.worker = function(linefeed, base, local_text, remote_text)
-  return require("goto.fs_reconcile.hunks.merge").merge(linefeed, base, local_text, remote_text)
+M.worker = function(base, local_text, remote_text)
+  return require("goto.fs_reconcile.hunks.merge").merge(base, local_text, remote_text)
 end
 
 return M

@@ -6,13 +6,13 @@ local M = {}
 
 ---@class FsReconcileReplacement
 ---@field changes FsReconcileHunk[]
----@field trailing_empty boolean
+---@field endofline boolean
 
-local buffer_lines = function(linefeed, records)
+local buffer_lines = function(records)
   return vim
     .iter(records)
     :map(function(record)
-      return string.sub(record, -#linefeed) == linefeed and string.sub(record, 1, -#linefeed - 1) or record
+      return vim.endswith(record, lib.LF) and string.sub(record, 1, -#lib.LF - 1) or record
     end)
     :totable()
 end
@@ -32,16 +32,15 @@ end
 M.plan = function(current, text)
   local changes = async.work(indices, current.text, text)
   return {
-    changes = diff.changes(diff.records(current.linefeed, text), changes),
-    trailing_empty = string.sub(text, -#current.linefeed) == current.linefeed,
+    changes = diff.changes(diff.records(text), changes),
+    endofline = vim.endswith(text, lib.LF),
   }
 end
 
 ---@param buf integer
----@param current FsReconcileBuffer
 ---@param replacement FsReconcileReplacement
 ---@param mark fun(start: integer, finish: integer)
-M.run = function(buf, current, replacement, mark)
+M.run = function(buf, replacement, mark)
   local in_insert = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode)
 
   vim.api.nvim_buf_call(buf, function()
@@ -54,27 +53,14 @@ M.run = function(buf, current, replacement, mark)
         vim.cmd.undojoin()
       end
 
-      local lines = buffer_lines(current.linefeed, hunk.lines)
+      local lines = buffer_lines(hunk.lines)
       vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
       if #lines > 0 then
         mark(hunk.start, hunk.start + #lines)
       end
     end
 
-    if not current.endofline then
-      local count = vim.api.nvim_buf_line_count(buf)
-      local last = unpack(vim.api.nvim_buf_get_lines(buf, count - 1, count, true))
-      if replacement.trailing_empty ~= (count > 1 and last == "") then
-        vim.cmd.undojoin()
-        vim.api.nvim_buf_set_lines(
-          buf,
-          replacement.trailing_empty and -1 or -2,
-          -1,
-          true,
-          replacement.trailing_empty and { "" } or {}
-        )
-      end
-    end
+    vim.bo[buf].endofline = replacement.endofline
   end)
 end
 

@@ -16,9 +16,7 @@ M.READ = {
 }
 
 ---@class FsReconcileBuffer
----@field linefeed string
 ---@field text string
----@field endofline boolean
 
 ---@class FsReconcileBase
 ---@field text string
@@ -29,8 +27,6 @@ M.READ = {
 
 ---@class FsReconcileSnapshot: FsReconcileBuffer
 ---@field changedtick integer
----@field fileencoding string
----@field encoding string
 
 ---@param left? uv.fs_stat.result
 ---@param right? uv.fs_stat.result
@@ -84,15 +80,10 @@ end
 M.buffer = function(buf)
   local endofline = vim.bo[buf].endofline
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local linefeed = lib.buf_linefeed(buf)
-  local text = table.concat(lines, linefeed)
+  local text = table.concat(lines, lib.LF)
   return {
-    linefeed = linefeed,
-    text = endofline and text .. linefeed or text,
-    endofline = endofline,
+    text = endofline and text .. lib.LF or text,
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
-    fileencoding = vim.bo[buf].fileencoding,
-    encoding = vim.o.encoding,
   }
 end
 
@@ -123,67 +114,26 @@ M.poller = function(path, interval, wake)
   poll:close()
 end
 
----@param snapshot FsReconcileSnapshot
+---@param buf integer
 ---@param text string
 ---@return string?
-local decode = function(snapshot, text)
-  if snapshot.fileencoding ~= "" and snapshot.fileencoding ~= snapshot.encoding then
-    text = vim.fn.iconv(text, snapshot.fileencoding, snapshot.encoding)
+local decode = function(buf, text)
+  local fileencoding = vim.bo[buf].fileencoding
+  if fileencoding ~= "" and fileencoding ~= vim.o.encoding then
+    text = vim.fn.iconv(text, fileencoding, vim.o.encoding)
   end
   if vim.startswith(text, UTF8_BOM) then
     text = string.sub(text, #UTF8_BOM + 1)
   end
-  local linefeed
-  if string.find(text, "\r\n", 1, true) then
-    linefeed = "\r\n"
-  elseif string.find(text, "\n", 1, true) then
-    linefeed = "\n"
-  elseif string.find(text, "\r", 1, true) then
-    linefeed = "\r"
-  else
-    return text
-  end
-  local remainder = string.gsub(text, linefeed, "")
-  if string.find(remainder, "[\r\n]") then
-    return
-  end
-  local normalized = string.gsub(text, linefeed, snapshot.linefeed)
-  return normalized
-end
-
----@param snapshot FsReconcileSnapshot
----@param text string
----@return string
-local merge_text = function(snapshot, text)
-  local final_empty = not snapshot.endofline and (snapshot.text == "" or vim.endswith(snapshot.text, snapshot.linefeed))
-  if final_empty then
-    return text .. snapshot.linefeed
-  elseif snapshot.endofline and not vim.endswith(text, snapshot.linefeed) then
-    return text .. snapshot.linefeed
-  end
-  return text
-end
-
----@param snapshot FsReconcileSnapshot
----@param text string
----@return string
-M.buffer_text = function(snapshot, text)
-  local ending = vim.endswith(text, snapshot.linefeed)
-  if text == snapshot.linefeed then
-    return ""
-  elseif snapshot.endofline then
-    return ending and text or text .. snapshot.linefeed
-  elseif ending then
-    return string.sub(text, 1, -#snapshot.linefeed - 1)
-  end
-  return text
+  text = string.gsub(text, "\r\n", lib.LF)
+  return string.gsub(text, "\r", lib.LF)
 end
 
 ---@param path string
----@param snapshot FsReconcileSnapshot
+---@param buf integer
 ---@return FsReconcileBase?
 ---@return "opaque"|"unstable"?
-M.read_file = function(path, snapshot)
+M.read_file = function(path, buf)
   local before = vim.uv.fs_stat(path)
   if not before then
     return { text = "" }
@@ -194,14 +144,14 @@ M.read_file = function(path, snapshot)
   if not ok or type(text) ~= "string" then
     return nil, M.READ.UNSTABLE
   end
-  text = decode(snapshot, text)
+  text = decode(buf, text)
   local after = vim.uv.fs_stat(path)
   if not text then
     return nil, M.READ.OPAQUE
   elseif not M.same_version(before, after) then
     return nil, M.READ.UNSTABLE
   end
-  return { text = M.buffer_text(snapshot, merge_text(snapshot, text)), version = before }
+  return { text = text, version = before }
 end
 
 return M

@@ -191,7 +191,7 @@ local save = function(buf, path, base, valid)
     return
   end
   local value = util.buffer(buf)
-  local after = util.read_file(path, value)
+  local after = util.read_file(path, buf)
   if after and after.text == value.text then
     return { type = WRITES.ATTESTED, base = after, value = value }
   end
@@ -204,8 +204,7 @@ end
 ---@param observed FsReconcileBase
 ---@return string
 local merge = function(value, base, observed)
-  local text = hunks.merge(value.linefeed, base.text, value.text, observed.text)
-  return util.buffer_text(value, text)
+  return hunks.merge(base.text, value.text, observed.text)
 end
 
 ---@param buf integer
@@ -221,7 +220,7 @@ local replace = function(buf, value, text, valid)
   if not valid() or value.changedtick ~= vim.api.nvim_buf_get_changedtick(buf) then
     return false
   end
-  hunk_apply.run(buf, value, replacement, mark(buf))
+  hunk_apply.run(buf, replacement, mark(buf))
   return true
 end
 
@@ -362,7 +361,7 @@ local drive = function(buf, path, chan, close)
         chan.send(remote())
         goto continue
       end
-      local observed, state = util.read_file(path, value)
+      local observed, state = util.read_file(path, buf)
       if not observed then
         if state == util.READ.UNSTABLE then
           chan.send(retry(QUIET.REMOTE))
@@ -461,7 +460,7 @@ local attach = function(buf)
   local path, chan, close
   lib.report(function()
     path = vim.api.nvim_buf_get_name(buf)
-    if path == "" then
+    if path == "" or vim.bo[buf].buftype ~= "" then
       return
     end
     vim.bo[buf].autoread = false
@@ -483,7 +482,7 @@ end
 ---@param buf integer
 local native_write = function(buf)
   local value = util.buffer(buf)
-  local base = util.read_file(vim.api.nvim_buf_get_name(buf), value)
+  local base = util.read_file(vim.api.nvim_buf_get_name(buf), buf)
   if base and base.text == value.text then
     send(buf, {
       type = EVENTS.WRITE,

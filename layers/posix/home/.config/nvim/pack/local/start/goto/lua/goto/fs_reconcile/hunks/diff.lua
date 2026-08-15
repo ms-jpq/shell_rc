@@ -1,3 +1,5 @@
+local lib = require "goto.lib"
+
 local M = {}
 
 ---@class FsReconcileHunk
@@ -6,11 +8,11 @@ local M = {}
 ---@field lines string[]
 ---@field slot? integer
 
-local each_record = function(linefeed, text)
+local each_record = function(text)
   return coroutine.wrap(function()
     local start = 1
     while true do
-      local _, finish = string.find(text, linefeed, start, true)
+      local _, finish = string.find(text, lib.LF, start, true)
       if not finish then
         break
       end
@@ -23,12 +25,11 @@ local each_record = function(linefeed, text)
   end)
 end
 
----@param linefeed string
 ---@param text string
 ---@return string[]
-M.records = function(linefeed, text)
+M.records = function(text)
   local records = {}
-  for record in each_record(linefeed, text) do
+  for record in each_record(text) do
     table.insert(records, record)
   end
   return records
