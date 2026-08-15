@@ -508,8 +508,10 @@ do
   autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+        local current = buf
         vim.schedule(async(function()
-          attach(buf)
+
+          attach(current)
         end))
       end
     end
