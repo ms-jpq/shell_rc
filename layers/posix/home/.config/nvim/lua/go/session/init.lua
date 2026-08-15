@@ -22,7 +22,8 @@ do
   })
 
   vim.api.nvim_create_user_command("PS", function()
-    scope.prune_session()
+    local cwd = vim.fn.getcwd()
+    scope.prune_session(cwd)
   end, {})
 
   vim.api.nvim_create_user_command("KS", function()
