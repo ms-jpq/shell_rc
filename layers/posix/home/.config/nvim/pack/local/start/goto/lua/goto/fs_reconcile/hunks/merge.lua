@@ -209,7 +209,7 @@ local take_both = function(local_text, remote_text)
     return diff.records(local_text)
   end
 
-  if not vim.endswith(local_text, lib.LF) and not vim.startswith(remote_text, lib.LF) then
+  if not vim.endswith(local_text, lib.LF) then
     local_text = local_text .. lib.LF
   end
   return diff.records(local_text .. remote_text)
