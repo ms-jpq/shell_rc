@@ -132,6 +132,11 @@ local OBSERVATIONS = {
 ---@field value? FsReconcileSnapshot
 ---@field observed? FsReconcileBase
 
+---@class FsReconcileReadyObservation
+---@field type "ready"
+---@field value FsReconcileSnapshot
+---@field observed FsReconcileBase
+
 ---@alias FsReconcileChannel QueueMpsc<FsReconcileEvent>
 
 ---@param buf integer
@@ -386,32 +391,35 @@ local drive = function(buf, path, chan, close)
         goto continue
       end
       assert(observation.type == OBSERVATIONS.READY, observation.type)
-      value, observed = assert(observation.value), assert(observation.observed)
+      ---@cast observation FsReconcileReadyObservation
 
-      local base = document.base
-      if not base then
-        if vim.bo[buf].modified and observed.version and value.text ~= observed.text then
-          local text = merge(value, { text = "" }, observed)
-          if replace(buf, value, text, valid) then
-            vim.bo[buf].modified = text ~= observed.text
+      if not document.base then
+        if
+          vim.bo[buf].modified
+          and observation.observed.version
+          and observation.value.text ~= observation.observed.text
+        then
+          local text = merge(observation.value, { text = "" }, observation.observed)
+          if replace(buf, observation.value, text, valid) then
+            vim.bo[buf].modified = text ~= observation.observed.text
             local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-            document = next(document, { base = observed, changedtick = changedtick })
+            document = next(document, { base = observation.observed, changedtick = changedtick })
           end
         else
-          document = next(document, { base = observed })
+          document = next(document, { base = observation.observed })
         end
-        if not document.base or value.text ~= observed.text then
+        if not document.base or observation.value.text ~= observation.observed.text then
           chan.send(retry(0))
         end
         goto continue
       end
-      local resolution = resolve(base, value, observed)
+      local resolution = resolve(document.base, observation.value, observation.observed)
 
       if resolution == RESOLUTIONS.ADOPT then
-        if replace(buf, value, observed.text, valid) then
+        if replace(buf, observation.value, observation.observed.text, valid) then
           vim.bo[buf].modified = false
           document = next(document, {
-            base = observed,
+            base = observation.observed,
             changedtick = vim.api.nvim_buf_get_changedtick(buf),
             local_at = vim.NIL,
           })
@@ -425,7 +433,7 @@ local drive = function(buf, path, chan, close)
           chan.send(retry(local_sleep))
           goto continue
         end
-        local written, after = save(buf, path, base, valid)
+        local written, after = save(buf, path, document.base, valid)
         if not written then
           goto continue
         end
@@ -440,12 +448,12 @@ local drive = function(buf, path, chan, close)
           end
         end
       elseif resolution == RESOLUTIONS.MERGE then
-        if observed.version or not base.version then
-          local text = merge(value, base, observed)
-          if replace(buf, value, text, valid) then
-            vim.bo[buf].modified = text ~= observed.text
+        if observation.observed.version or not document.base.version then
+          local text = merge(observation.value, document.base, observation.observed)
+          if replace(buf, observation.value, text, valid) then
+            vim.bo[buf].modified = text ~= observation.observed.text
             local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-            document = next(document, { base = observed, changedtick = changedtick })
+            document = next(document, { base = observation.observed, changedtick = changedtick })
             if vim.bo[buf].modified then
               chan.send(retry(0))
             end
