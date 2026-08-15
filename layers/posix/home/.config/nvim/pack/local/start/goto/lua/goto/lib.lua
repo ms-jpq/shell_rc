@@ -51,16 +51,14 @@ M.copy = function(value, changes)
   return vim.tbl_extend("force", {}, value, changes or {})
 end
 
-do
+if vim.api and vim.api.nvim_create_augroup then
   M.group = vim.api.nvim_create_augroup([[lv_goto]], { clear = true })
 end
 
-M.is_win = vim.fn.has [[win64]] == 1
-  or vim.fn.has [[win64unix]] == 1
-  or vim.fn.has [[win32]] == 1
-  or vim.fn.has [[win32unix]] == 1
-
-M.is_linux = vim.fn.has [[linux]] == 1
+local has = vim.fn and vim.fn.has
+M.is_win = has and (has [[win64]] == 1 or has [[win64unix]] == 1 or has [[win32]] == 1 or has [[win32unix]] == 1)
+  or false
+M.is_linux = has and has [[linux]] == 1 or false
 
 M.os = {
   sep = M.is_win and [[\]] or [[/]],
