@@ -388,11 +388,11 @@ local drive = function(buf, path, chan, close)
         goto continue
       elseif resolution.type == RESOLUTIONS.OPAQUE then
         goto continue
-      elseif resolution.type == RESOLUTIONS.REFRESH then
-        chan.send(remote())
-        goto continue
       elseif resolution.type == RESOLUTIONS.RETRY then
         chan.send(retry(resolution.sleep))
+        goto continue
+      elseif resolution.type == RESOLUTIONS.REFRESH then
+        chan.send(remote())
         goto continue
       elseif resolution.type == RESOLUTIONS.INITIAL then
         if
