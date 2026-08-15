@@ -118,7 +118,11 @@ end
 local decode = function(buf, text)
   local fileencoding = vim.bo[buf].fileencoding
   if fileencoding ~= "" and fileencoding ~= vim.o.encoding then
-    text = vim.fn.iconv(text, fileencoding, vim.o.encoding)
+    local converted = vim.fn.iconv(text, fileencoding, vim.o.encoding)
+    if text ~= "" and converted == "" then
+      return
+    end
+    text = converted
   end
   if vim.startswith(text, UTF8_BOM) then
     text = string.sub(text, #UTF8_BOM + 1)
