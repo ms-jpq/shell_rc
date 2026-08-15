@@ -97,45 +97,43 @@ local remaining = function(now, at, quiet)
 end
 
 ---@class FsReconcileResolutions
----@field SYNCED "synced"
 ---@field ADOPT "adopt"
----@field SAVE "save"
+---@field INITIAL "initial"
 ---@field MERGE "merge"
+---@field OPAQUE "opaque"
+---@field REFRESH "refresh"
+---@field RETRY "retry"
+---@field SAVE "save"
+---@field SYNCED "synced"
 
 ---@type FsReconcileResolutions
 local RESOLUTIONS = {
-  SYNCED = "synced",
   ADOPT = "adopt",
-  SAVE = "save",
+  INITIAL = "initial",
   MERGE = "merge",
-}
-
----@alias FsReconcileResolution "synced"|"adopt"|"save"|"merge"
-
----@class FsReconcileObservations
----@field REFRESH "refresh"
----@field RETRY "retry"
----@field OPAQUE "opaque"
----@field READY "ready"
-
----@type FsReconcileObservations
-local OBSERVATIONS = {
+  OPAQUE = "opaque",
   REFRESH = "refresh",
   RETRY = "retry",
-  OPAQUE = "opaque",
-  READY = "ready",
+  SAVE = "save",
+  SYNCED = "synced",
 }
 
----@class FsReconcileObservation
----@field type "refresh"|"retry"|"opaque"|"ready"
----@field sleep? integer
----@field value? FsReconcileSnapshot
----@field observed? FsReconcileBase
+---@class FsReconcileRefreshResolution
+---@field type "refresh"
 
----@class FsReconcileReadyObservation
----@field type "ready"
+---@class FsReconcileRetryResolution
+---@field type "retry"
+---@field sleep integer
+
+---@class FsReconcileOpaqueResolution
+---@field type "opaque"
+
+---@class FsReconcileResolved
+---@field type "initial"|"synced"|"adopt"|"save"|"merge"
 ---@field value FsReconcileSnapshot
 ---@field observed FsReconcileBase
+
+---@alias FsReconcileResolution FsReconcileRefreshResolution|FsReconcileRetryResolution|FsReconcileOpaqueResolution|FsReconcileResolved
 
 ---@alias FsReconcileChannel QueueMpsc<FsReconcileEvent>
 
@@ -275,17 +273,6 @@ local start = function(buf, path, chan)
   return chan.close
 end
 
----@param base FsReconcileBase
----@param value FsReconcileSnapshot
----@param observed FsReconcileBase
----@return FsReconcileResolution
-local resolve = function(base, value, observed)
-  if value.text == base.text then
-    return util.same_base(base, observed) and RESOLUTIONS.SYNCED or RESOLUTIONS.ADOPT
-  end
-  return util.same_base(base, observed) and RESOLUTIONS.SAVE or RESOLUTIONS.MERGE
-end
-
 ---@param document FsReconcileDocument
 ---@param value FsReconcileSnapshot
 ---@param observed FsReconcileBase?
@@ -293,36 +280,51 @@ end
 ---@param modified boolean
 ---@param now integer
 ---@return FsReconcileDocument
----@return FsReconcileObservation
-local observe = function(document, value, observed, state, modified, now)
+---@return FsReconcileResolution
+local resolve = function(document, value, observed, state, modified, now)
   if value.changedtick ~= document.changedtick then
     return next(document, {
       changedtick = value.changedtick,
       local_at = modified and now or vim.NIL,
     }),
-      { type = OBSERVATIONS.REFRESH }
+      { type = RESOLUTIONS.REFRESH }
   elseif not observed then
     if state == util.READ.UNSTABLE then
-      return document, { type = OBSERVATIONS.RETRY, sleep = REMOTE_DELAY_MS }
+      return document, { type = RESOLUTIONS.RETRY, sleep = REMOTE_DELAY_MS }
     end
-    return document, { type = OBSERVATIONS.OPAQUE }
+    return document, { type = RESOLUTIONS.OPAQUE }
   end
   local base = document.base
   if base and not util.same_base(base, observed) and util.same_file(base.version, observed.version) then
     local remote_at = document.remote_at or now
     local remote_sleep = remaining(now, remote_at, REMOTE_DELAY_MS)
     if remote_sleep > 0 then
-      return next(document, { remote_at = remote_at }), { type = OBSERVATIONS.RETRY, sleep = remote_sleep }
+      return next(document, { remote_at = remote_at }), { type = RESOLUTIONS.RETRY, sleep = remote_sleep }
     end
   end
   document = next(document, { remote_at = vim.NIL })
   if document.inserting and document.local_at then
     local local_sleep = remaining(now, document.local_at, LOCAL_DELAY_MS)
     if local_sleep > 0 then
-      return document, { type = OBSERVATIONS.RETRY, sleep = local_sleep }
+      return document, { type = RESOLUTIONS.RETRY, sleep = local_sleep }
     end
   end
-  return document, { type = OBSERVATIONS.READY, value = value, observed = observed }
+  if not base then
+    return document, { type = RESOLUTIONS.INITIAL, value = value, observed = observed }
+  elseif value.text == base.text then
+    return document,
+      {
+        type = util.same_base(base, observed) and RESOLUTIONS.SYNCED or RESOLUTIONS.ADOPT,
+        value = value,
+        observed = observed,
+      }
+  end
+  return document,
+    {
+      type = util.same_base(base, observed) and RESOLUTIONS.SAVE or RESOLUTIONS.MERGE,
+      value = value,
+      observed = observed,
+    }
 end
 
 ---@param buf integer
@@ -379,52 +381,47 @@ local drive = function(buf, path, chan, close)
 
       local value = util.buffer(buf)
       local observed, state = util.read_file(buf, path)
-      local observation
-      document, observation = observe(document, value, observed, state, vim.bo[buf].modified, vim.uv.hrtime())
-      if observation.type == OBSERVATIONS.REFRESH then
+      local resolution
+      document, resolution = resolve(document, value, observed, state, vim.bo[buf].modified, vim.uv.hrtime())
+
+      if resolution.type == RESOLUTIONS.SYNCED then
+        goto continue
+      elseif resolution.type == RESOLUTIONS.OPAQUE then
+        goto continue
+      elseif resolution.type == RESOLUTIONS.REFRESH then
         chan.send(remote())
         goto continue
-      elseif observation.type == OBSERVATIONS.RETRY then
-        chan.send(retry(assert(observation.sleep)))
+      elseif resolution.type == RESOLUTIONS.RETRY then
+        chan.send(retry(resolution.sleep))
         goto continue
-      elseif observation.type == OBSERVATIONS.OPAQUE then
-        goto continue
-      end
-      assert(observation.type == OBSERVATIONS.READY, observation.type)
-      ---@cast observation FsReconcileReadyObservation
-
-      if not document.base then
+      elseif resolution.type == RESOLUTIONS.INITIAL then
         if
           vim.bo[buf].modified
-          and observation.observed.version
-          and observation.value.text ~= observation.observed.text
+          and resolution.observed.version
+          and resolution.value.text ~= resolution.observed.text
         then
-          local text = merge(observation.value, { text = "" }, observation.observed)
-          if replace(buf, observation.value, text, valid) then
-            vim.bo[buf].modified = text ~= observation.observed.text
+          local text = merge(resolution.value, { text = "" }, resolution.observed)
+          if replace(buf, resolution.value, text, valid) then
+            vim.bo[buf].modified = text ~= resolution.observed.text
             local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-            document = next(document, { base = observation.observed, changedtick = changedtick })
+            document = next(document, { base = resolution.observed, changedtick = changedtick })
           end
         else
-          document = next(document, { base = observation.observed })
+          document = next(document, { base = resolution.observed })
         end
-        if not document.base or observation.value.text ~= observation.observed.text then
+        if not document.base or resolution.value.text ~= resolution.observed.text then
           chan.send(retry(0))
         end
-        goto continue
-      end
-      local resolution = resolve(document.base, observation.value, observation.observed)
-
-      if resolution == RESOLUTIONS.ADOPT then
-        if replace(buf, observation.value, observation.observed.text, valid) then
+      elseif resolution.type == RESOLUTIONS.ADOPT then
+        if replace(buf, resolution.value, resolution.observed.text, valid) then
           vim.bo[buf].modified = false
           document = next(document, {
-            base = observation.observed,
+            base = resolution.observed,
             changedtick = vim.api.nvim_buf_get_changedtick(buf),
             local_at = vim.NIL,
           })
         end
-      elseif resolution == RESOLUTIONS.SAVE then
+      elseif resolution.type == RESOLUTIONS.SAVE then
         if document.inserting or vim.bo[buf].readonly then
           goto continue
         end
@@ -447,20 +444,20 @@ local drive = function(buf, path, chan, close)
             chan.send(remote())
           end
         end
-      elseif resolution == RESOLUTIONS.MERGE then
-        if observation.observed.version or not document.base.version then
-          local text = merge(observation.value, document.base, observation.observed)
-          if replace(buf, observation.value, text, valid) then
-            vim.bo[buf].modified = text ~= observation.observed.text
+      elseif resolution.type == RESOLUTIONS.MERGE then
+        if resolution.observed.version or not document.base.version then
+          local text = merge(resolution.value, document.base, resolution.observed)
+          if replace(buf, resolution.value, text, valid) then
+            vim.bo[buf].modified = text ~= resolution.observed.text
             local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-            document = next(document, { base = observation.observed, changedtick = changedtick })
+            document = next(document, { base = resolution.observed, changedtick = changedtick })
             if vim.bo[buf].modified then
               chan.send(retry(0))
             end
           end
         end
       else
-        assert(resolution == RESOLUTIONS.SYNCED, resolution)
+        assert(false, resolution.type)
       end
       ::continue::
     end
