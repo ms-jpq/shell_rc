@@ -112,6 +112,26 @@ local RESOLUTIONS = {
 
 ---@alias FsReconcileResolution "synced"|"adopt"|"save"|"merge"
 
+---@class FsReconcileObservations
+---@field REFRESH "refresh"
+---@field RETRY "retry"
+---@field OPAQUE "opaque"
+---@field READY "ready"
+
+---@type FsReconcileObservations
+local OBSERVATIONS = {
+  REFRESH = "refresh",
+  RETRY = "retry",
+  OPAQUE = "opaque",
+  READY = "ready",
+}
+
+---@class FsReconcileObservation
+---@field type "refresh"|"retry"|"opaque"|"ready"
+---@field sleep? integer
+---@field value? FsReconcileSnapshot
+---@field observed? FsReconcileBase
+
 ---@alias FsReconcileChannel QueueMpsc<FsReconcileEvent>
 
 ---@param buf integer
@@ -261,6 +281,45 @@ local resolve = function(base, value, observed)
   return util.same_base(base, observed) and RESOLUTIONS.SAVE or RESOLUTIONS.MERGE
 end
 
+---@param document FsReconcileDocument
+---@param value FsReconcileSnapshot
+---@param observed FsReconcileBase?
+---@param state "opaque"|"unstable"?
+---@param modified boolean
+---@param now integer
+---@return FsReconcileDocument
+---@return FsReconcileObservation
+local observe = function(document, value, observed, state, modified, now)
+  if value.changedtick ~= document.changedtick then
+    return next(document, {
+      changedtick = value.changedtick,
+      local_at = modified and now or vim.NIL,
+    }),
+      { type = OBSERVATIONS.REFRESH }
+  elseif not observed then
+    if state == util.READ.UNSTABLE then
+      return document, { type = OBSERVATIONS.RETRY, sleep = REMOTE_DELAY_MS }
+    end
+    return document, { type = OBSERVATIONS.OPAQUE }
+  end
+  local base = document.base
+  if base and not util.same_base(base, observed) and util.same_file(base.version, observed.version) then
+    local remote_at = document.remote_at or now
+    local remote_sleep = remaining(now, remote_at, REMOTE_DELAY_MS)
+    if remote_sleep > 0 then
+      return next(document, { remote_at = remote_at }), { type = OBSERVATIONS.RETRY, sleep = remote_sleep }
+    end
+  end
+  document = next(document, { remote_at = vim.NIL })
+  if document.inserting and document.local_at then
+    local local_sleep = remaining(now, document.local_at, LOCAL_DELAY_MS)
+    if local_sleep > 0 then
+      return document, { type = OBSERVATIONS.RETRY, sleep = local_sleep }
+    end
+  end
+  return document, { type = OBSERVATIONS.READY, value = value, observed = observed }
+end
+
 ---@param buf integer
 ---@param path string
 ---@param chan FsReconcileChannel
@@ -314,39 +373,22 @@ local drive = function(buf, path, chan, close)
       end
 
       local value = util.buffer(buf)
-      if value.changedtick ~= document.changedtick then
-        document = next(document, {
-          changedtick = value.changedtick,
-          local_at = vim.bo[buf].modified and vim.uv.hrtime() or vim.NIL,
-        })
+      local observed, state = util.read_file(buf, path)
+      local observation
+      document, observation = observe(document, value, observed, state, vim.bo[buf].modified, vim.uv.hrtime())
+      if observation.type == OBSERVATIONS.REFRESH then
         chan.send(remote())
         goto continue
-      end
-      local observed, state = util.read_file(buf, path)
-      if not observed then
-        if state == util.READ.UNSTABLE then
-          chan.send(retry(REMOTE_DELAY_MS))
-        end
+      elseif observation.type == OBSERVATIONS.RETRY then
+        chan.send(retry(assert(observation.sleep)))
+        goto continue
+      elseif observation.type == OBSERVATIONS.OPAQUE then
         goto continue
       end
+      assert(observation.type == OBSERVATIONS.READY, observation.type)
+      value, observed = assert(observation.value), assert(observation.observed)
+
       local base = document.base
-      if base and not util.same_base(base, observed) and util.same_file(base.version, observed.version) then
-        local remote_at = document.remote_at or vim.uv.hrtime()
-        local remote_sleep = remaining(vim.uv.hrtime(), remote_at, REMOTE_DELAY_MS)
-        if remote_sleep > 0 then
-          document = next(document, { remote_at = remote_at })
-          chan.send(retry(remote_sleep))
-          goto continue
-        end
-      end
-      document = next(document, { remote_at = vim.NIL })
-      if document.inserting and document.local_at then
-        local local_sleep = remaining(vim.uv.hrtime(), document.local_at, LOCAL_DELAY_MS)
-        if local_sleep > 0 then
-          chan.send(retry(local_sleep))
-          goto continue
-        end
-      end
       if not base then
         if vim.bo[buf].modified and observed.version and value.text ~= observed.text then
           local text = merge(value, { text = "" }, observed)
