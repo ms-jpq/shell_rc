@@ -217,13 +217,15 @@ end
 ---@param buf integer
 ---@param path string
 ---@param chan FsReconcileChannel
----@return fun()
+---@return fun()?
 local start = function(buf, path, chan)
   local mpsc_close = chan.close
-  ---@type FsReconcilePoller?
   local poller = util.poller(path, INTERVAL_MS, function()
     chan.send(remote())
   end)
+  if not poller then
+    return
+  end
 
   local changed = async(function(_, _, changedtick)
     chan.send(local_change(changedtick))
@@ -238,10 +240,7 @@ local start = function(buf, path, chan)
 
   chan.close = function()
     mpsc_close()
-    if poller then
-      poller.close()
-      poller = nil
-    end
+    poller.close()
     if vim.api.nvim_buf_is_valid(buf) and attached(buf, chan) then
       vim.b[buf][TAG] = nil
     end
@@ -414,24 +413,22 @@ local detach = function(buf)
 end
 
 local attach = function(buf)
-  local path, chan, close
   lib.report(function()
-    path = vim.api.nvim_buf_get_name(buf)
-    if path == "" or vim.bo[buf].buftype ~= "" then
+    local path = vim.api.nvim_buf_get_name(buf)
+    if vim.bo[buf].buftype ~= "" or path == "" or get(buf) then
       return
     end
-    vim.bo[buf].autoread = false
-    if get(buf) then
-      return
-    end
+
     ---@type FsReconcileChannel
-    chan = queue.mpsc()
-    close = start(buf, path, chan)
-    vim.b[buf][TAG] = chan
+    local chan = queue.mpsc()
+    local close = start(buf, path, chan)
+
+    vim.bo[buf].autoread = close == nil
+    if close then
+      vim.b[buf][TAG] = chan
+      drive(buf, path, chan, close)
+    end
   end)
-  if chan then
-    drive(buf, path, chan, close)
-  end
 end
 
 ---@param buf integer
