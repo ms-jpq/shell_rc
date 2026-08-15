@@ -305,12 +305,14 @@ local drive = function(buf, path, chan, close)
       else
         assert(false, event.type)
       end
+
       if not active() then
         goto continue
       elseif not vim.bo[buf].modifiable then
         chan.send(retry(REMOTE_DELAY_MS))
         goto continue
       end
+
       local value = util.buffer(buf)
       if value.changedtick ~= document.changedtick then
         document = next(document, {
@@ -338,6 +340,13 @@ local drive = function(buf, path, chan, close)
         end
       end
       document = next(document, { remote_at = vim.NIL })
+      if document.inserting and document.local_at then
+        local local_sleep = remaining(vim.uv.hrtime(), document.local_at, LOCAL_DELAY_MS)
+        if local_sleep > 0 then
+          chan.send(retry(local_sleep))
+          goto continue
+        end
+      end
       if not base then
         if vim.bo[buf].modified and observed.version and value.text ~= observed.text then
           local text = merge(value, { text = "" }, observed)
@@ -355,6 +364,7 @@ local drive = function(buf, path, chan, close)
         goto continue
       end
       local resolution = resolve(base, value, observed)
+
       if resolution == RESOLUTIONS.ADOPT then
         if replace(buf, value, observed.text, valid) then
           vim.bo[buf].modified = false
