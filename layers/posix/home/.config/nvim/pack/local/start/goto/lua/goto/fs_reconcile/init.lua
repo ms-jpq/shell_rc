@@ -124,7 +124,8 @@ end
 ---@param chan FsReconcileChannel
 ---@return boolean
 local attached = function(buf, chan)
-  return get(buf) == chan
+  local current = get(buf)
+  return current ~= nil and current.close == chan.close
 end
 
 ---@param buf integer
@@ -510,9 +511,9 @@ do
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
         local current = buf
-        vim.schedule(async(function()
+        async(function()
           attach(current)
-        end))
+        end)()
       end
     end
   end, { group = group })
