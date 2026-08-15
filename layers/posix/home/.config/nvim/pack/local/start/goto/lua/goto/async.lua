@@ -103,9 +103,10 @@ M.fn = {
   end),
 }
 
-M.ui = {
-  select = M.wrap(vim.ui.select),
-}
+M.ui = {}
+if vim.ui and vim.ui.select then
+  M.ui.select = M.wrap(vim.ui.select)
+end
 
 return setmetatable(M, {
   __call = function(_, fn)

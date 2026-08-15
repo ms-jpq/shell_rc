@@ -123,7 +123,7 @@ local decode = function(buf, text)
   if vim.startswith(text, UTF8_BOM) then
     text = string.sub(text, #UTF8_BOM + 1)
   end
-  text = string.gsub(text, "\r?\n", lib.LF)
+  text = string.gsub(string.gsub(text, "\r-\n", lib.LF), "\r", lib.LF)
   return (string.gsub(text, lib.LF .. "$", ""))
 end
 
