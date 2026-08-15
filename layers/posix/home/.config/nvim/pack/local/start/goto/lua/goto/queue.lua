@@ -1,6 +1,50 @@
 local async = require "goto.async"
 
 local M = {}
+local fifo = {}
+
+---@generic T
+---@class Queue<T>
+---@field clear fun()
+---@field empty fun(): boolean
+---@field pop fun(): T?
+---@field push fun(value: T)
+
+---@generic T
+---@return Queue<T>
+fifo.new = function()
+  local values = {}
+  local first, last = 1, 0
+
+  local clear = function()
+    values = {}
+    first, last = 1, 0
+  end
+
+  local empty = function()
+    return first > last
+  end
+
+  local push = function(value)
+    last = last + 1
+    values[last] = value
+  end
+
+  local pop = function()
+    if empty() then
+      return
+    end
+    local value = values[first]
+    values[first] = nil
+    first = first + 1
+    if empty() then
+      clear()
+    end
+    return value
+  end
+
+  return { clear = clear, empty = empty, pop = pop, push = push }
+end
 
 ---@generic T
 ---@class QueueMpsc<T>
@@ -13,22 +57,20 @@ local M = {}
 ---@return QueueMpsc<T>
 M.mpsc = function()
   local closed = false
-  local values = {}
+  local values = fifo.new()
   local pending ---@type { elapsed: boolean, resolve: fun(elapsed: boolean), scheduled: boolean }?
 
   local notify = function(elapsed)
-    if pending then
+    if pending and not pending.scheduled then
       pending.elapsed = elapsed
-      if not pending.scheduled then
-        local waiter = pending
-        waiter.scheduled = true
-        vim.schedule(function()
-          if pending == waiter then
-            pending = nil
-            waiter.resolve(waiter.elapsed)
-          end
-        end)
-      end
+      local waiter = pending
+      waiter.scheduled = true
+      vim.schedule(function()
+        if pending == waiter then
+          pending = nil
+          waiter.resolve(waiter.elapsed)
+        end
+      end)
     end
   end
 
@@ -46,7 +88,7 @@ M.mpsc = function()
       return
     end
     closed = true
-    values = {}
+    values.clear()
     notify(false)
   end
 
@@ -55,13 +97,13 @@ M.mpsc = function()
     if closed then
       return false
     end
-    table.insert(values, value)
+    values.push(value)
     notify(false)
     return true
   end
 
   ch.wait = function(milliseconds)
-    if closed or #values > 0 then
+    if closed or not values.empty() then
       return false
     end
     local future = await()
@@ -78,13 +120,13 @@ M.mpsc = function()
   local next = function()
     if closed then
       return
-    elseif #values > 0 then
-      return table.remove(values, 1)
+    elseif not values.empty() then
+      return values.pop()
     end
     local future = await()
     future.await()
     if not closed then
-      return table.remove(values, 1)
+      return values.pop()
     end
   end
 
