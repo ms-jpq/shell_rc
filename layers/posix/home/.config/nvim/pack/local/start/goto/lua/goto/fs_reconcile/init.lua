@@ -3,6 +3,7 @@ local autocmd = require "goto.autocmd"
 local hunk_apply = require "goto.fs_reconcile.hunks.apply"
 local hunks = require "goto.fs_reconcile.hunks"
 local lib = require "goto.lib"
+local queue = require "goto.queue"
 local util = require "goto.fs_reconcile.util"
 
 vim.opt.autoread = false
@@ -111,7 +112,7 @@ local RESOLUTIONS = {
 
 ---@alias FsReconcileResolution "synced"|"adopt"|"save"|"merge"
 
----@alias FsReconcileChannel AsyncMpsc<FsReconcileEvent>
+---@alias FsReconcileChannel QueueMpsc<FsReconcileEvent>
 
 ---@param buf integer
 ---@return FsReconcileChannel?
@@ -421,7 +422,7 @@ local attach = function(buf)
       return
     end
     ---@type FsReconcileChannel
-    chan = async.mpsc()
+    chan = queue.mpsc()
     close = start(buf, path, chan)
     vim.b[buf][TAG] = chan
   end)
@@ -510,7 +511,6 @@ do
       if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
         local current = buf
         vim.schedule(async(function()
-
           attach(current)
         end))
       end
