@@ -343,7 +343,8 @@ local drive = function(buf, path, chan, close)
           local text = merge(value, { text = "" }, observed)
           if replace(buf, value, text, valid) then
             vim.bo[buf].modified = text ~= observed.text
-            document = next(document, { base = observed, changedtick = vim.api.nvim_buf_get_changedtick(buf) })
+            local changedtick = vim.api.nvim_buf_get_changedtick(buf)
+            document = next(document, { base = observed, changedtick = changedtick })
           end
         else
           document = next(document, { base = observed })
@@ -391,7 +392,8 @@ local drive = function(buf, path, chan, close)
           local text = merge(value, base, observed)
           if replace(buf, value, text, valid) then
             vim.bo[buf].modified = text ~= observed.text
-            document = next(document, { base = observed, changedtick = vim.api.nvim_buf_get_changedtick(buf) })
+            local changedtick = vim.api.nvim_buf_get_changedtick(buf)
+            document = next(document, { base = observed, changedtick = changedtick })
             if vim.bo[buf].modified then
               chan.send(retry(0))
             end
