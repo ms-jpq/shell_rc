@@ -94,15 +94,19 @@ local overlaps_any = function(hunk, patches)
 end
 
 local patch = function(base, patches)
-  local lines = diff.slice(base, 0, #base)
+  local lines = {}
+  local cursor = 0
 
-  for hunk in vim.iter(patches):rev() do
-    for _ = hunk.start, hunk.finish - 1 do
-      table.remove(lines, hunk.start + 1)
+  for _, hunk in ipairs(patches) do
+    for index = cursor + 1, hunk.start do
+      table.insert(lines, base[index])
     end
-    for index = #hunk.lines, 1, -1 do
-      table.insert(lines, hunk.start + 1, hunk.lines[index])
-    end
+    vim.list_extend(lines, hunk.lines)
+    cursor = hunk.finish
+  end
+
+  for index = cursor + 1, #base do
+    table.insert(lines, base[index])
   end
 
   return lines
