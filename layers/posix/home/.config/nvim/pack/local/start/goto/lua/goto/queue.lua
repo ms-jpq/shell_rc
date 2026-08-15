@@ -1,49 +1,50 @@
 local async = require "goto.async"
 
 local M = {}
-local fifo = {}
 
 ---@generic T
----@class Queue<T>
+---@class FIFO<T>
 ---@field clear fun()
 ---@field empty fun(): boolean
 ---@field pop fun(): T?
 ---@field push fun(value: T)
 
 ---@generic T
----@return Queue<T>
-fifo.new = function()
+---@return FIFO<T>
+M.fifo = function()
+  local f = {}
+
   local values = {}
   local first, last = 1, 0
 
-  local clear = function()
+  f.clear = function()
     values = {}
     first, last = 1, 0
   end
 
-  local empty = function()
+  f.empty = function()
     return first > last
   end
 
-  local push = function(value)
+  f.push = function(value)
     last = last + 1
     values[last] = value
   end
 
-  local pop = function()
-    if empty() then
+  f.pop = function()
+    if f.empty() then
       return
     end
     local value = values[first]
     values[first] = nil
     first = first + 1
-    if empty() then
-      clear()
+    if f.empty() then
+      f.clear()
     end
     return value
   end
 
-  return { clear = clear, empty = empty, pop = pop, push = push }
+  return f
 end
 
 ---@generic T
@@ -57,7 +58,7 @@ end
 ---@return QueueMpsc<T>
 M.mpsc = function()
   local closed = false
-  local values = fifo.new()
+  local values = M.fifo()
   local pending ---@type { elapsed: boolean, resolve: fun(elapsed: boolean), scheduled: boolean }?
 
   local notify = function(elapsed)
