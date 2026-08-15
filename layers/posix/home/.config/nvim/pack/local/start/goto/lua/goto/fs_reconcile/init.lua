@@ -117,7 +117,9 @@ local RESOLUTIONS = {
 ---@param buf integer
 ---@return FsReconcileChannel?
 local get = function(buf)
-  return vim.b[buf][TAG]
+  if vim.api.nvim_buf_is_valid(buf) then
+    return vim.b[buf][TAG]
+  end
 end
 
 ---@param buf integer
