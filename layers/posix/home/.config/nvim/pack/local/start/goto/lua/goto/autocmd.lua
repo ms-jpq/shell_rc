@@ -38,10 +38,11 @@ M.insert_mode = function(opts, enter, leave)
         local event = args.data or vim.v.event
         local old = vim.fn.get(event, "old_mode", "")
         local new = vim.fn.get(event, "new_mode", "")
+        local old_ins, new_ins = lib.is_insert(old), lib.is_insert(new)
 
-        if not lib.is_insert(old) and lib.is_insert(new) then
+        if not old_ins and new_ins then
           enter(args)
-        elseif lib.is_insert(old) and not lib.is_insert(new) then
+        elseif old_ins and not new_ins then
           leave(args)
         end
       end,
