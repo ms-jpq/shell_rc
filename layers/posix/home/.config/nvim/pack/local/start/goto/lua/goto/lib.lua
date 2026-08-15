@@ -12,7 +12,7 @@ M.LF = "\n"
 ---@param mode string
 ---@return boolean
 M.is_insert = function(mode)
-  return string.find(mode, "^[iR]") ~= nil
+  return string.find(mode, "^[iR]") ~= nil or string.find(mode, "^ni[IRV]") ~= nil
 end
 
 ---@param milliseconds number

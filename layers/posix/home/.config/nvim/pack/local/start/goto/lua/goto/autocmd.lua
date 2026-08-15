@@ -30,7 +30,7 @@ M.buf_win = function(opts, enter, leave)
   return enter, leave
 end
 
-M.insert_leave = function(opts, leave)
+M.insert_mode = function(opts, enter, leave)
   vim.api.nvim_create_autocmd(
     { "ModeChanged" },
     vim.tbl_extend("force", { group = lib.group }, opts, {
@@ -38,22 +38,21 @@ M.insert_leave = function(opts, leave)
         local event = args.data or vim.v.event
         local old = vim.fn.get(event, "old_mode", "")
         local new = vim.fn.get(event, "new_mode", "")
-        if lib.is_insert(old) and not lib.is_insert(new) then
+
+        if not lib.is_insert(old) and lib.is_insert(new) then
+          enter(args)
+        elseif lib.is_insert(old) and not lib.is_insert(new) then
           leave(args)
         end
       end,
     })
   )
-  return leave
+  return enter, leave
 end
 
-M.insert_mode = function(opts, enter, leave)
-  vim.api.nvim_create_autocmd(
-    { "InsertEnter" },
-    vim.tbl_extend("force", { group = lib.group }, opts, { callback = enter })
-  )
-  M.insert_leave(opts, leave)
-  return enter, leave
+M.insert_leave = function(opts, leave)
+  M.insert_mode(opts, function() end, leave)
+  return leave
 end
 
 return M

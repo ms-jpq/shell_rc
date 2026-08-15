@@ -462,7 +462,7 @@ do
     end),
   })
 
-  vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+  vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile", "BufEnter" }, {
     group = group,
     callback = async(function(args)
       attach(args.buf)

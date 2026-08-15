@@ -132,9 +132,12 @@ end
 ---@return FsReconcileBase?
 ---@return "opaque"|"unstable"?
 M.read_file = function(buf, path)
-  local before = vim.uv.fs_stat(path)
+  local before, _, code = vim.uv.fs_stat(path)
   if not before then
-    return { text = "" }
+    if code == "ENOENT" then
+      return { text = "" }
+    end
+    return nil, M.READ.UNSTABLE
   elseif before.size > MAX_BYTES then
     return nil, M.READ.OPAQUE
   end
