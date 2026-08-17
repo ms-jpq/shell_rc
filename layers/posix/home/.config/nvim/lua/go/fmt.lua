@@ -1,4 +1,5 @@
 local async = require "goto.async"
+local hunk_apply = require "goto.fs_reconcile.hunks.apply"
 local lib = require "goto.lib"
 local proc = require "go.proc"
 
@@ -44,11 +45,14 @@ local fmt = function()
   end
 
   local buf = vim.api.nvim_get_current_buf()
-  -- local name = vim.api.nvim_buf_get_name(buf)
   local cwd = vim.fn.getcwd()
 
   local cmd = fmt_command(cwd, buf)
   local stdin = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+  local snapshot = {
+    text = table.concat(stdin, lib.LF),
+    changedtick = vim.api.nvim_buf_get_changedtick(buf),
+  }
   local opts = { cwd = cwd, stdin = stdin, text = true }
 
   vim.notify([[⏳...]], vim.log.levels.INFO)
@@ -76,11 +80,9 @@ local fmt = function()
     return
   end
 
-  local lines = vim.split(waited.stdout, lib.LF, { plain = true })
-  if lines[#lines] == "" then
-    lines[#lines] = nil
-  end
-  vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
+  local text = string.gsub(waited.stdout, lib.LF .. "$", "")
+  local replacement = hunk_apply.plan(snapshot, text)
+  hunk_apply.run(buf, replacement, function() end)
   vim.notify([[✅...]], vim.log.levels.INFO)
 end
 
