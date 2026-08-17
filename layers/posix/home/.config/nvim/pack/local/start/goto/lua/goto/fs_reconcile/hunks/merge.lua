@@ -80,9 +80,9 @@ local overlaps = function(left, right)
   if left.start == left.finish and right.start == right.finish then
     return left.start == right.start and left.slot == right.slot
   elseif left.start == left.finish then
-    return right.start <= left.start and left.start <= right.finish
+    return right.start < left.start and left.start < right.finish
   elseif right.start == right.finish then
-    return left.start <= right.start and right.start <= left.finish
+    return left.start < right.start and right.start < left.finish
   end
   return left.start < right.finish and right.start < left.finish
 end
