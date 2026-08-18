@@ -23,13 +23,8 @@ local REMOTE_DELAY_MS = 6 * INTERVAL_MS
 ---@class FsReconcileDocument
 ---@field changedtick integer
 ---@field base? FsReconcileBase
----@field inserting boolean
 ---@field local_at? integer
 ---@field remote_at? integer
-
----@class FsReconcileInsertEvent
----@field type "insert"
----@field inserting boolean
 
 ---@class FsReconcileLocalEvent
 ---@field type "local"
@@ -49,10 +44,9 @@ local REMOTE_DELAY_MS = 6 * INTERVAL_MS
 ---@field changedtick integer
 ---@field base FsReconcileBase
 
----@alias FsReconcileEvent FsReconcileInsertEvent|FsReconcileLocalEvent|FsReconcileRemoteEvent|FsReconcileRetryEvent|FsReconcileWriteEvent
+---@alias FsReconcileEvent FsReconcileLocalEvent|FsReconcileRemoteEvent|FsReconcileRetryEvent|FsReconcileWriteEvent
 
 ---@class FsReconcileEvents
----@field INSERT "insert"
 ---@field LOCAL "local"
 ---@field RETRY "retry"
 ---@field REMOTE "remote"
@@ -60,7 +54,6 @@ local REMOTE_DELAY_MS = 6 * INTERVAL_MS
 
 ---@type FsReconcileEvents
 local EVENTS = {
-  INSERT = "insert",
   LOCAL = "local",
   RETRY = "retry",
   REMOTE = "remote",
@@ -303,12 +296,6 @@ local resolve = function(document, value, observed, state, modified, now)
     end
   end
   document = next(document, { remote_at = vim.NIL })
-  if document.inserting and document.local_at then
-    local local_sleep = remaining(now, document.local_at, LOCAL_DELAY_MS)
-    if local_sleep > 0 then
-      return document, { type = RESOLUTIONS.RETRY, sleep = local_sleep }
-    end
-  end
   if not base then
     return document, { type = RESOLUTIONS.INITIAL, value = value, observed = observed }
   elseif value.text == base.text then
@@ -335,7 +322,6 @@ local drive = function(buf, path, chan, close)
   ---@type FsReconcileDocument
   local document = {
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
-    inserting = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode),
     local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
   }
   local active = function()
@@ -353,8 +339,6 @@ local drive = function(buf, path, chan, close)
         if not elapsed then
           goto continue
         end
-      elseif event.type == EVENTS.INSERT then
-        document = next(document, { inserting = event.inserting })
       elseif event.type == EVENTS.LOCAL then
         if event.changedtick == document.changedtick then
           goto continue
@@ -422,7 +406,7 @@ local drive = function(buf, path, chan, close)
           })
         end
       elseif resolution.type == RESOLUTIONS.SAVE then
-        if document.inserting or vim.bo[buf].readonly then
+        if vim.bo[buf].readonly then
           goto continue
         end
         local local_sleep = document.local_at and remaining(vim.uv.hrtime(), document.local_at, LOCAL_DELAY_MS) or 0
@@ -545,16 +529,6 @@ do
       native_write(args.buf)
     end,
   })
-
-  autocmd.insert_mode(
-    { group = group },
-    async(function(args)
-      send(args.buf, { type = EVENTS.INSERT, inserting = true })
-    end),
-    async(function(args)
-      send(args.buf, { type = EVENTS.INSERT, inserting = false })
-    end)
-  )
 
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = group,
