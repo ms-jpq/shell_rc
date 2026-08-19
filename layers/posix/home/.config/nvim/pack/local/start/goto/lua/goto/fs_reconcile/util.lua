@@ -80,7 +80,7 @@ end
 M.buffer = function(buf)
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
   return {
-    text = table.concat(lines, lib.LF),
+    text = table.concat(lines, lib.LF) .. (vim.bo[buf].endofline and lib.LF or ""),
     changedtick = vim.api.nvim_buf_get_changedtick(buf),
   }
 end
@@ -128,7 +128,7 @@ local decode = function(buf, text)
     text = string.sub(text, #UTF8_BOM + 1)
   end
   text = string.gsub(string.gsub(text, "\r\n", lib.LF), "\r", lib.LF)
-  return (string.gsub(text, lib.LF .. "$", ""))
+  return text
 end
 
 ---@param buf integer

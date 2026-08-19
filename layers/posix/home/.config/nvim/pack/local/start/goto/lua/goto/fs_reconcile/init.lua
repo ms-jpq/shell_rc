@@ -213,6 +213,7 @@ local replace = function(buf, value, text, valid)
     return false
   end
   hunk_apply.run(buf, replacement, mark(buf))
+  vim.bo[buf].endofline = vim.endswith(text, lib.LF)
   return true
 end
 

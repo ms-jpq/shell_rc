@@ -331,7 +331,7 @@ M.merge = function(base, local_text, remote_text)
   local grouped = groups(changes(base, local_text, local_lines), changes(base, remote_text, remote_lines))
   local patches = merge_groups(base_lines, grouped)
   sort(patches)
-  return (string.gsub(table.concat(patch(base_lines, patches)), lib.LF .. "$", ""))
+  return table.concat(patch(base_lines, patches))
 end
 
 M.worker = function(base, local_text, remote_text)
