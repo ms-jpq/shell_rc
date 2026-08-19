@@ -157,9 +157,7 @@ end
 
 local mark = function(buf)
   return function(start, finish)
-    if start < finish then
-      vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
-    end
+    vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
   end
 end
 
@@ -567,3 +565,4 @@ do
     end
   end, { group = group })
 end
+
