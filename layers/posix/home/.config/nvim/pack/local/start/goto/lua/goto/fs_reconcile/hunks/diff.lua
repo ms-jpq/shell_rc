@@ -2,6 +2,26 @@ local lib = require "goto.lib"
 
 local M = {}
 
+local input = function(text)
+  return text == "" and lib.LF or text
+end
+
+---@param before string
+---@param after string
+---@return integer[][]
+M.indices = function(before, after)
+  local result = assert(vim.text.diff(input(before), input(after), { result_type = "indices" }))
+  ---@cast result integer[][]
+  return result
+end
+
+---@param before string
+---@param after string
+---@return integer[][]
+M.worker = function(before, after)
+  return require("goto.fs_reconcile.hunks.diff").indices(before, after)
+end
+
 ---@class FsReconcileHunk
 ---@field start integer
 ---@field finish integer
@@ -28,6 +48,9 @@ end
 ---@param text string
 ---@return string[]
 M.records = function(text)
+  if text == "" then
+    return { "" }
+  end
   local records = {}
   for record in each_record(text) do
     table.insert(records, record)

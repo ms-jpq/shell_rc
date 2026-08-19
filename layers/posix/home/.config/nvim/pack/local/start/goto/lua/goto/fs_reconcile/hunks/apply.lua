@@ -16,20 +16,11 @@ local buffer_lines = function(records)
     :totable()
 end
 
----@param before string
----@param after string
----@return integer[][]
-local indices = function(before, after)
-  local result = assert(vim.text.diff(before, after, { result_type = "indices" }))
-  ---@cast result integer[][]
-  return result
-end
-
 ---@param current FsReconcileBuffer
 ---@param text string
 ---@return FsReconcileReplacement
 M.plan = function(current, text)
-  local changes = async.work(indices, current.text, text)
+  local changes = async.work(diff.worker, current.text, text)
   return { changes = diff.changes(diff.records(text), changes) }
 end
 
@@ -51,9 +42,7 @@ M.run = function(buf, replacement, mark)
 
       local lines = buffer_lines(hunk.lines)
       vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
-      if #lines > 0 then
-        mark(hunk.start, hunk.start + #lines)
-      end
+      mark(hunk.start, hunk.start + #lines)
     end
   end)
 end

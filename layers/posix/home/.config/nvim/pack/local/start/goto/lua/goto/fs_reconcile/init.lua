@@ -157,7 +157,9 @@ end
 
 local mark = function(buf)
   return function(start, finish)
-    vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
+    if start < finish then
+      vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
+    end
   end
 end
 
@@ -246,13 +248,18 @@ local start = function(buf, path, chan)
   local changed = async(function(_, _, changedtick)
     chan.send(local_change(changedtick))
   end)
-  vim.api.nvim_buf_attach(buf, false, {
+  local listening = vim.api.nvim_buf_attach(buf, false, {
     on_changedtick = changed,
     on_lines = changed,
-    on_detach = function()
-      chan.close()
+    on_reload = function()
+      chan.send(remote())
     end,
+    on_detach = chan.close,
   })
+  if not listening then
+    poller.close()
+    return
+  end
 
   chan.close = function()
     mpsc_close()
@@ -340,7 +347,7 @@ local drive = function(buf, path, chan, close)
           goto continue
         end
       elseif event.type == EVENTS.LOCAL then
-        if event.changedtick == document.changedtick then
+        if event.changedtick <= document.changedtick then
           goto continue
         end
         document = next(document, { local_at = event.at, changedtick = event.changedtick })
@@ -457,6 +464,9 @@ end
 
 local attach = function(buf)
   lib.report(function()
+    if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_buf_is_loaded(buf) then
+      return
+    end
     local path = vim.api.nvim_buf_get_name(buf)
     if vim.bo[buf].buftype ~= "" or path == "" or get(buf) then
       return
@@ -499,12 +509,16 @@ do
   vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
     group = group,
     callback = async(function(args)
-      vim.v.fcs_choice = ""
-      send(args.buf, remote())
+      if get(args.buf) then
+        vim.v.fcs_choice = ""
+        send(args.buf, remote())
+      else
+        vim.v.fcs_choice = "ask"
+      end
     end),
   })
 
-  vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile", "BufEnter" }, {
+  vim.api.nvim_create_autocmd({ "BufReadPost", "BufEnter" }, {
     group = group,
     callback = async(function(args)
       attach(args.buf)
@@ -526,7 +540,11 @@ do
       if data.fs_reconcile then
         return
       end
-      native_write(args.buf)
+      local written = vim.uv.fs_realpath(args.file)
+      local path = vim.uv.fs_realpath(vim.api.nvim_buf_get_name(args.buf))
+      if written and written == path then
+        native_write(args.buf)
+      end
     end,
   })
 
@@ -541,12 +559,10 @@ do
 
   autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-        local current = buf
-        async(function()
-          attach(current)
-        end)()
-      end
+      local current = buf
+      async(function()
+        attach(current)
+      end)()
     end
   end, { group = group })
 end

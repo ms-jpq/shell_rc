@@ -43,9 +43,7 @@ local split = function(hunk)
 end
 
 local changes = function(before, after, after_records)
-  local indices = vim.text.diff(before, after, { result_type = "indices" })
-  ---@cast indices integer[][]
-  return diff.changes(after_records, indices)
+  return diff.changes(after_records, diff.indices(before, after))
 end
 
 local atomic_patches = function(hunks)
@@ -333,7 +331,7 @@ M.merge = function(base, local_text, remote_text)
   local grouped = groups(changes(base, local_text, local_lines), changes(base, remote_text, remote_lines))
   local patches = merge_groups(base_lines, grouped)
   sort(patches)
-  return table.concat(patch(base_lines, patches))
+  return (string.gsub(table.concat(patch(base_lines, patches)), lib.LF .. "$", ""))
 end
 
 M.worker = function(base, local_text, remote_text)

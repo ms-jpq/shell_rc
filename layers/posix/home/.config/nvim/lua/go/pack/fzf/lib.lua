@@ -1,4 +1,3 @@
-local lib = require "goto.lib"
 local proc = require "go.proc"
 
 local M = {}
@@ -6,7 +5,7 @@ local M = {}
 local preview = vim.fs.joinpath(proc.HOME, ".local", "libexec", "preview.sh")
 
 local fnameshort = function(path)
-  return vim.fn.fnamemodify(path, [[:~:.]])
+  return vim.fn.fnamemodify(path, [[:.]])
 end
 
 local shelljoin = function(args)
