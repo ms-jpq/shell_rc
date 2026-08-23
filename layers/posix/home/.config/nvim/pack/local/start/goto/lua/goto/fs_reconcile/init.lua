@@ -148,6 +148,16 @@ local mark = function(buf)
   end
 end
 
+local write = function()
+  local fixendofline = vim.bo.fixendofline
+  vim.bo.fixendofline = false
+  local ok, err = pcall(function()
+    vim.cmd [[noautocmd silent! write! ++p]]
+  end)
+  vim.bo.fixendofline = fixendofline
+  assert(ok, err)
+end
+
 ---@param buf integer
 ---@param path string
 ---@param base FsReconcileBase
@@ -160,14 +170,7 @@ local save = function(buf, path, base, valid)
     if not valid() or not util.unchanged(path, base) then
       return false
     end
-    lib.scope(function(defer)
-      local fixendofline = vim.bo.fixendofline
-      vim.bo.fixendofline = false
-      defer(function()
-        vim.bo.fixendofline = fixendofline
-      end)
-      vim.cmd [[noautocmd silent! write! ++p]]
-    end)
+    write()
     vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf, data = { fs_reconcile = true } })
     return true
   end)
@@ -534,3 +537,4 @@ do
     end
   end, { group = group })
 end
+
