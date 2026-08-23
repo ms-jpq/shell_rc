@@ -85,7 +85,8 @@ end
 ---@param after string
 ---@return FsReconcileHunk[]
 M.worker = function(before, after)
-  return M.plan(before, after)
+  local diff = require "goto.fs_reconcile.hunks.diff"
+  return diff.plan(before, after)
 end
 
 return M
