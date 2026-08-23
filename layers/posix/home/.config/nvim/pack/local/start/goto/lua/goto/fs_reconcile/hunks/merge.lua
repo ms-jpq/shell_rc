@@ -197,6 +197,10 @@ end
 local take_both = function(local_text, remote_text)
   if local_text == remote_text then
     return diff.records(local_text)
+  elseif local_text == "" then
+    return diff.records(remote_text)
+  elseif remote_text == "" then
+    return diff.records(local_text)
   end
 
   local records = diff.records(local_text)

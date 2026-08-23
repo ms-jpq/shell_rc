@@ -25,7 +25,9 @@ local each_record = function(text)
       coroutine.yield(string.sub(text, start, finish))
       start = finish + 1
     end
-    coroutine.yield(string.sub(text, start))
+    if start <= #text then
+      coroutine.yield(string.sub(text, start))
+    end
   end)
 end
 
@@ -42,6 +44,9 @@ end
 ---@param text string
 ---@return string[]
 M.lines = function(text)
+  if text == "" then
+    return {}
+  end
   return M.records(input(text))
 end
 
