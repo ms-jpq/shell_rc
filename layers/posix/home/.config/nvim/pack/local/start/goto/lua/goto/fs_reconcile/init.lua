@@ -5,20 +5,6 @@ local lib = require "goto.lib"
 local queue = require "goto.queue"
 local util = require "goto.fs_reconcile.util"
 
-vim.opt.autoread = false
-vim.opt.backup = false
-vim.opt.writebackup = false
-
-local TAG = "__fs_reconcile__"
-local INTERVAL_MS = 99
-local FLASH_SPAN = 200
-
-local ns = vim.api.nvim_create_namespace "fs-reconcile"
-local group = vim.api.nvim_create_augroup("lv_fs_reconcile", { clear = true })
-
-local LOCAL_DELAY_MS = 3 * INTERVAL_MS
-local REMOTE_DELAY_MS = 6 * INTERVAL_MS
-
 ---@class FsReconcileDocument
 ---@field changedtick integer
 ---@field base? FsReconcileBase
@@ -51,6 +37,28 @@ local REMOTE_DELAY_MS = 6 * INTERVAL_MS
 ---@field REMOTE "remote"
 ---@field WRITE "write"
 
+---@class FsReconcileResolutions
+---@field ADOPT "adopt"
+---@field MERGE "merge"
+---@field RETRY "retry"
+---@field SAVE "save"
+---@field SYNCED "synced"
+
+---@class FsReconcileRetryResolution
+---@field type "retry"
+---@field sleep integer
+
+---@class FsReconcileResolved
+---@field type "synced"|"adopt"|"save"|"merge"
+
+---@alias FsReconcileResolution FsReconcileRetryResolution|FsReconcileResolved
+
+---@alias FsReconcileChannel QueueMpsc<FsReconcileEvent>
+
+vim.opt.autoread = false
+vim.opt.backup = false
+vim.opt.writebackup = false
+
 ---@type FsReconcileEvents
 local EVENTS = {
   LOCAL = "local",
@@ -58,6 +66,25 @@ local EVENTS = {
   REMOTE = "remote",
   WRITE = "write",
 }
+
+---@type FsReconcileResolutions
+local RESOLUTIONS = {
+  ADOPT = "adopt",
+  MERGE = "merge",
+  RETRY = "retry",
+  SAVE = "save",
+  SYNCED = "synced",
+}
+
+local TAG = "__fs_reconcile__"
+local INTERVAL_MS = 99
+local FLASH_SPAN = 200
+
+local ns = vim.api.nvim_create_namespace "fs-reconcile"
+local group = vim.api.nvim_create_augroup("lv_fs_reconcile", { clear = true })
+
+local LOCAL_DELAY_MS = 3 * INTERVAL_MS
+local REMOTE_DELAY_MS = 6 * INTERVAL_MS
 
 ---@return FsReconcileRemoteEvent
 local remote = function()
@@ -87,35 +114,6 @@ end
 local remaining = function(now, at, quiet)
   return math.max(0, math.floor(quiet - lib.ns_to_ms(now - at)))
 end
-
----@class FsReconcileResolutions
----@field ADOPT "adopt"
----@field INITIAL "initial"
----@field MERGE "merge"
----@field RETRY "retry"
----@field SAVE "save"
----@field SYNCED "synced"
-
----@type FsReconcileResolutions
-local RESOLUTIONS = {
-  ADOPT = "adopt",
-  INITIAL = "initial",
-  MERGE = "merge",
-  RETRY = "retry",
-  SAVE = "save",
-  SYNCED = "synced",
-}
-
----@class FsReconcileRetryResolution
----@field type "retry"
----@field sleep integer
-
----@class FsReconcileResolved
----@field type "initial"|"synced"|"adopt"|"save"|"merge"
-
----@alias FsReconcileResolution FsReconcileRetryResolution|FsReconcileResolved
-
----@alias FsReconcileChannel QueueMpsc<FsReconcileEvent>
 
 ---@param buf integer
 ---@return FsReconcileChannel?
@@ -263,10 +261,11 @@ end
 ---@param document FsReconcileDocument
 ---@param value FsReconcileSnapshot
 ---@param observed FsReconcileBase
+---@param modified boolean
 ---@param now integer
 ---@return FsReconcileDocument
 ---@return FsReconcileResolution
-local resolve = function(document, value, observed, now)
+local resolve = function(document, value, observed, modified, now)
   local base = document.base
   if base and not util.same_base(base, observed) and util.same_file(base.version, observed.version) then
     local remote_at = document.remote_at or now
@@ -277,7 +276,12 @@ local resolve = function(document, value, observed, now)
   end
   document = next(document, { remote_at = vim.NIL })
   if not base then
-    return document, { type = RESOLUTIONS.INITIAL }
+    if not modified then
+      return document, { type = RESOLUTIONS.ADOPT }
+    elseif observed.version then
+      return document, { type = RESOLUTIONS.MERGE }
+    end
+    return document, { type = RESOLUTIONS.SAVE }
   elseif util.same_buffer(value, base) then
     return document, {
       type = util.same_base(base, observed) and RESOLUTIONS.SYNCED or RESOLUTIONS.ADOPT,
@@ -354,27 +358,13 @@ local drive = function(buf, path, chan, close)
         goto continue
       end
       local resolution
-      document, resolution = resolve(document, value, observed, now)
+      document, resolution = resolve(document, value, observed, vim.bo[buf].modified, now)
 
       if resolution.type == RESOLUTIONS.SYNCED then
         goto continue
       elseif resolution.type == RESOLUTIONS.RETRY then
         chan.send(retry(resolution.sleep))
         goto continue
-      elseif resolution.type == RESOLUTIONS.INITIAL then
-        if vim.bo[buf].modified and observed.version and not util.same_buffer(value, observed) then
-          local target = hunks.merge(util.empty(), value, observed)
-          if replace(buf, value, target, valid) then
-            vim.bo[buf].modified = not util.same_buffer(target, observed)
-            local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-            document = next(document, { base = observed, changedtick = changedtick })
-          end
-        else
-          document = next(document, { base = observed })
-        end
-        if not document.base or not util.same_buffer(value, observed) then
-          chan.send(retry(0))
-        end
       elseif resolution.type == RESOLUTIONS.ADOPT then
         if replace(buf, value, observed, valid) then
           vim.bo[buf].modified = false
@@ -383,6 +373,19 @@ local drive = function(buf, path, chan, close)
             changedtick = vim.api.nvim_buf_get_changedtick(buf),
             local_at = vim.NIL,
           })
+        end
+      elseif resolution.type == RESOLUTIONS.MERGE then
+        local base = document.base or util.empty()
+        if observed.version or not base.version then
+          local target = hunks.merge(base, value, observed)
+          if replace(buf, value, target, valid) then
+            vim.bo[buf].modified = not util.same_buffer(target, observed)
+            local changedtick = vim.api.nvim_buf_get_changedtick(buf)
+            document = next(document, { base = observed, changedtick = changedtick })
+            if vim.bo[buf].modified then
+              chan.send(retry(0))
+            end
+          end
         end
       elseif resolution.type == RESOLUTIONS.SAVE then
         if vim.bo[buf].readonly then
@@ -393,7 +396,7 @@ local drive = function(buf, path, chan, close)
           chan.send(retry(local_sleep))
           goto continue
         end
-        local written, after = save(buf, path, document.base, valid)
+        local written, after = save(buf, path, document.base or util.empty(), valid)
         if not written then
           goto continue
         end
@@ -405,18 +408,6 @@ local drive = function(buf, path, chan, close)
         else
           if valid() then
             chan.send(remote())
-          end
-        end
-      elseif resolution.type == RESOLUTIONS.MERGE then
-        if observed.version or not document.base.version then
-          local target = hunks.merge(document.base, value, observed)
-          if replace(buf, value, target, valid) then
-            vim.bo[buf].modified = not util.same_buffer(target, observed)
-            local changedtick = vim.api.nvim_buf_get_changedtick(buf)
-            document = next(document, { base = observed, changedtick = changedtick })
-            if vim.bo[buf].modified then
-              chan.send(retry(0))
-            end
           end
         end
       else
@@ -537,4 +528,3 @@ do
     end
   end, { group = group })
 end
-
