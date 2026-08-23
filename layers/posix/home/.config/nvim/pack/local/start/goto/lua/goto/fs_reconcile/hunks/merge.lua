@@ -42,10 +42,6 @@ local split = function(hunk)
   return patches
 end
 
-local changes = function(before, after, after_records)
-  return diff.changes(after_records, diff.indices(before, after))
-end
-
 local atomic_patches = function(hunks)
   local patches = {}
 
@@ -243,7 +239,7 @@ end
 local character_patches = function(before, after)
   local before_records = character_records(before)
   local after_records = character_records(after)
-  return atomic_patches(changes(table.concat(before_records), table.concat(after_records), after_records))
+  return atomic_patches(diff.plan_records(before_records, after_records))
 end
 
 local merge_record = function(base, local_record, remote_record)
@@ -314,20 +310,25 @@ end
 ---@param local_text string
 ---@param remote_text string
 ---@return string
+local merge = function(base, local_text, remote_text)
+  local base_lines = diff.lines(base)
+  local grouped = groups(diff.plan(base, local_text), diff.plan(base, remote_text))
+  local patches = merge_groups(base_lines, grouped)
+  sort(patches)
+  return table.concat(patch(base_lines, patches))
+end
+
 M.merge = function(base, local_text, remote_text)
-  if local_text == base then
+  if local_text == remote_text then
+    return local_text
+  elseif local_text == base then
     return remote_text
   elseif remote_text == base then
     return local_text
   end
 
-  local base_lines = diff.records(base)
-  local local_lines = diff.records(local_text)
-  local remote_lines = diff.records(remote_text)
-  local grouped = groups(changes(base, local_text, local_lines), changes(base, remote_text, remote_lines))
-  local patches = merge_groups(base_lines, grouped)
-  sort(patches)
-  return table.concat(patch(base_lines, patches))
+  local text = merge(base, local_text, remote_text)
+  return string.sub(text, 1, -#lib.LF - 1)
 end
 
 M.worker = function(base, local_text, remote_text)

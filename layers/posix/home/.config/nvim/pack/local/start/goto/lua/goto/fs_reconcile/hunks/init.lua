@@ -24,7 +24,7 @@ end
 ---@return FsReconcileReplacement
 M.plan = function(current, target)
   local changes = async.work(diff.worker, current.text, target.text)
-  return { changes = diff.changes(diff.records(target.text), changes), endofline = target.endofline }
+  return { changes = changes, endofline = target.endofline }
 end
 
 ---@param buf integer

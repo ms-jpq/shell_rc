@@ -2,20 +2,10 @@ local lib = require "goto.lib"
 
 local M = {}
 
----@param before string
----@param after string
----@return integer[][]
-M.indices = function(before, after)
-  local result = assert(vim.text.diff(before .. lib.LF, after .. lib.LF, { result_type = "indices" }))
-  ---@cast result integer[][]
-  return result
-end
-
----@param before string
----@param after string
----@return integer[][]
-M.worker = function(before, after)
-  return require("goto.fs_reconcile.hunks.diff").indices(before, after)
+---@param text string
+---@return string
+local input = function(text)
+  return text .. lib.LF
 end
 
 ---@class FsReconcileHunk
@@ -49,6 +39,12 @@ M.records = function(text)
   return records
 end
 
+---@param text string
+---@return string[]
+M.lines = function(text)
+  return M.records(input(text))
+end
+
 ---@param lines string[]
 ---@param start integer
 ---@param finish integer
@@ -57,10 +53,13 @@ M.slice = function(lines, start, finish)
   return vim.list_slice(lines, start + 1, finish)
 end
 
+---@param before_records string[]
 ---@param after_records string[]
----@param indices integer[][]
 ---@return FsReconcileHunk[]
-M.changes = function(after_records, indices)
+M.plan_records = function(before_records, after_records)
+  local indices =
+    assert(vim.text.diff(table.concat(before_records), table.concat(after_records), { result_type = "indices" }))
+  ---@cast indices integer[][]
   return vim
     .iter(indices)
     :map(function(hunk)
@@ -73,6 +72,20 @@ M.changes = function(after_records, indices)
       }
     end)
     :totable()
+end
+
+---@param before string
+---@param after string
+---@return FsReconcileHunk[]
+M.plan = function(before, after)
+  return M.plan_records(M.lines(before), M.lines(after))
+end
+
+---@param before string
+---@param after string
+---@return FsReconcileHunk[]
+M.worker = function(before, after)
+  return M.plan(before, after)
 end
 
 return M
