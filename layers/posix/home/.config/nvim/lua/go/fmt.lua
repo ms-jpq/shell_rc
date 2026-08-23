@@ -1,7 +1,8 @@
 local async = require "goto.async"
-local hunk_apply = require "goto.fs_reconcile.hunks.apply"
+local hunks = require "goto.fs_reconcile.hunks"
 local lib = require "goto.lib"
 local proc = require "go.proc"
+local reconcile = require "goto.fs_reconcile.util"
 
 local timeout = 8888
 
@@ -49,10 +50,7 @@ local fmt = function()
 
   local cmd = fmt_command(cwd, buf)
   local stdin = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
-  local snapshot = {
-    text = table.concat(stdin, lib.LF),
-    changedtick = vim.api.nvim_buf_get_changedtick(buf),
-  }
+  local snapshot = reconcile.buffer(buf)
   local opts = { cwd = cwd, stdin = stdin, text = true }
 
   vim.notify([[⏳...]], vim.log.levels.INFO)
@@ -80,9 +78,9 @@ local fmt = function()
     return
   end
 
-  local text = string.gsub(waited.stdout, lib.LF .. "$", "")
-  local replacement = hunk_apply.plan(snapshot, text)
-  hunk_apply.run(buf, replacement, function() end)
+  local target = reconcile.format_output(snapshot, waited.stdout)
+  local replacement = hunks.plan(snapshot, target)
+  hunks.apply(buf, replacement, function() end)
   vim.notify([[✅...]], vim.log.levels.INFO)
 end
 

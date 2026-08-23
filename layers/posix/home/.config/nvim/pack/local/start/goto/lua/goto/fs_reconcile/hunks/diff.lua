@@ -2,15 +2,11 @@ local lib = require "goto.lib"
 
 local M = {}
 
-local input = function(text)
-  return text == "" and lib.LF or text
-end
-
 ---@param before string
 ---@param after string
 ---@return integer[][]
 M.indices = function(before, after)
-  local result = assert(vim.text.diff(input(before), input(after), { result_type = "indices" }))
+  local result = assert(vim.text.diff(before .. lib.LF, after .. lib.LF, { result_type = "indices" }))
   ---@cast result integer[][]
   return result
 end
@@ -39,18 +35,13 @@ local each_record = function(text)
       coroutine.yield(string.sub(text, start, finish))
       start = finish + 1
     end
-    if start <= #text then
-      coroutine.yield(string.sub(text, start))
-    end
+    coroutine.yield(string.sub(text, start))
   end)
 end
 
 ---@param text string
 ---@return string[]
 M.records = function(text)
-  if text == "" then
-    return { "" }
-  end
   local records = {}
   for record in each_record(text) do
     table.insert(records, record)
@@ -63,7 +54,7 @@ end
 ---@param finish integer
 ---@return string[]
 M.slice = function(lines, start, finish)
-  return vim.list_slice(lines, math.floor(start + 1), math.floor(finish))
+  return vim.list_slice(lines, start + 1, finish)
 end
 
 ---@param after_records string[]

@@ -201,16 +201,12 @@ end
 local take_both = function(local_text, remote_text)
   if local_text == remote_text then
     return diff.records(local_text)
-  elseif local_text == "" then
-    return diff.records(remote_text)
-  elseif remote_text == "" then
-    return diff.records(local_text)
   end
 
-  if not vim.endswith(local_text, lib.LF) then
-    local_text = local_text .. lib.LF
-  end
-  return diff.records(local_text .. remote_text)
+  local records = diff.records(local_text)
+  records[#records] = records[#records] .. lib.LF
+  vim.list_extend(records, diff.records(remote_text))
+  return records
 end
 
 local replacement = function(group, replacement_lines)
