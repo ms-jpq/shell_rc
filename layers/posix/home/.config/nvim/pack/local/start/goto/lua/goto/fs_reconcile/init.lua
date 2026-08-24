@@ -398,6 +398,7 @@ local drive = function(buf, path, chan, close)
         end
         local written, after = save(buf, path, document.base or util.empty(), valid)
         if not written then
+          chan.send(retry(LOCAL_DELAY_MS))
           goto continue
         end
         document = next(document, { changedtick = written.changedtick })

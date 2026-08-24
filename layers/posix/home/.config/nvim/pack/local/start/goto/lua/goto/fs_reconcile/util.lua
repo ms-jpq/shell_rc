@@ -183,7 +183,7 @@ M.read_file = function(buf, path)
       return M.empty()
     end
     return nil, M.READ.UNSTABLE
-  elseif before.size > MAX_BYTES then
+  elseif before.type ~= "file" or before.size > MAX_BYTES then
     return nil, M.READ.OPAQUE
   end
   local ok, text = pcall(vim.fn.readblob, path)

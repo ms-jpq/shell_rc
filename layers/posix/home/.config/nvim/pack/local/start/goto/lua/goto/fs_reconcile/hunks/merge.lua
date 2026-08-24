@@ -203,10 +203,10 @@ local take_both = function(local_text, remote_text)
     return diff.records(local_text)
   end
 
-  local records = diff.records(local_text)
-  records[#records] = records[#records] .. lib.LF
-  vim.list_extend(records, diff.records(remote_text))
-  return records
+  if not vim.endswith(local_text, lib.LF) then
+    local_text = local_text .. lib.LF
+  end
+  return diff.records(local_text .. remote_text)
 end
 
 local replacement = function(group, replacement_lines)
@@ -246,6 +246,14 @@ local character_patches = function(before, after)
   return atomic_patches(diff.plan_records(before_records, after_records))
 end
 
+local substitution_patches = function(before, after)
+  local patches = character_patches(before, after)
+  if resizes(patches) then
+    return nil
+  end
+  return patches
+end
+
 local merge_record = function(base, local_record, remote_record)
   if local_record == remote_record or local_record == base then
     return { remote_record }
@@ -260,8 +268,11 @@ local merge_record = function(base, local_record, remote_record)
     return take_both(local_record, remote_record)
   end
 
-  local local_patches = character_patches(base_text, local_text)
-  local remote_patches = character_patches(base_text, remote_text)
+  local local_patches = substitution_patches(base_text, local_text)
+  local remote_patches = substitution_patches(base_text, remote_text)
+  if not local_patches or not remote_patches then
+    return take_both(local_record, remote_record)
+  end
   local conflicted = vim.iter(local_patches):any(function(local_patch)
     return overlaps_any(local_patch, remote_patches)
   end)
