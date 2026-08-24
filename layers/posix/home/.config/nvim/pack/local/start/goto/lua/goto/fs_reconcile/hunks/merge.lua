@@ -7,7 +7,7 @@ local M = {}
 ---@field local_patches FsReconcileHunk[]
 ---@field remote_patches FsReconcileHunk[]
 
-local chars = function(text)
+local characters = function(text)
   return coroutine.wrap(function()
     local start = 1
 
@@ -25,17 +25,14 @@ local chars = function(text)
 end
 
 local split = function(hunk)
-  local old_count = hunk.finish - hunk.start
-  local count = math.max(old_count, #hunk.lines)
   local patches = {}
 
-  for index = 0, count - 1 do
-    local start = hunk.start + math.min(index, old_count)
+  for index, line in ipairs(hunk.lines) do
+    local start = hunk.start + index - 1
     table.insert(patches, {
       start = start,
-      finish = start + (index < old_count and 1 or 0),
-      lines = index < #hunk.lines and { hunk.lines[index + 1] } or {},
-      slot = index < old_count and nil or index - old_count,
+      finish = start + 1,
+      lines = { line },
     })
   end
 
@@ -72,7 +69,7 @@ end
 
 local overlaps = function(left, right)
   if left.start == left.finish and right.start == right.finish then
-    return left.start == right.start and left.slot == right.slot
+    return left.start == right.start
   elseif left.start == left.finish then
     return right.start < left.start and left.start < right.finish
   elseif right.start == right.finish then
@@ -162,7 +159,7 @@ local sort = function(patches)
     if left_insert ~= right_insert then
       return left_insert
     end
-    return (left.slot or 0) < (right.slot or 0)
+    return false
   end)
 end
 
@@ -188,7 +185,6 @@ local relative = function(patches, start)
         start = hunk.start - start,
         finish = hunk.finish - start,
         lines = hunk.lines,
-        slot = hunk.slot,
       }
     end)
     :totable()
@@ -211,13 +207,11 @@ end
 
 local replacement = function(group, replacement_lines)
   local start, finish = bounds(group)
-  local source = group.local_patches[1] or group.remote_patches[1]
 
   return {
     start = start,
     finish = finish,
     lines = replacement_lines,
-    slot = start == finish and source.slot or nil,
   }
 end
 
@@ -230,7 +224,7 @@ end
 
 local character_records = function(text)
   local records = {}
-  for character in chars(text) do
+  for character in characters(text) do
     table.insert(records, character .. lib.LF)
   end
   return records
@@ -241,9 +235,7 @@ local characters_text = function(records)
 end
 
 local character_patches = function(before, after)
-  local before_records = character_records(before)
-  local after_records = character_records(after)
-  return atomic_patches(diff.plan_records(before_records, after_records))
+  return atomic_patches(diff.plan_records(character_records(before), character_records(after)))
 end
 
 local substitution_patches = function(before, after)
@@ -282,8 +274,8 @@ local merge_record = function(base, local_record, remote_record)
 
   local patches = vim.list_extend(local_patches, remote_patches)
   sort(patches)
-  local characters = patch(character_records(base_text), patches)
-  return { characters_text(characters) .. local_eol }
+  local merged = patch(character_records(base_text), patches)
+  return { characters_text(merged) .. local_eol }
 end
 
 local merge_concurrent = function(base, group)

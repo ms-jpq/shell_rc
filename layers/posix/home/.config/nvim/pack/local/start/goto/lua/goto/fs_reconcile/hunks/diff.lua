@@ -12,7 +12,6 @@ end
 ---@field start integer
 ---@field finish integer
 ---@field lines string[]
----@field slot? integer
 
 local each_record = function(text)
   return coroutine.wrap(function()
