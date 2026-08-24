@@ -3,48 +3,15 @@ local lib = require "goto.lib"
 
 local M = {}
 
----@class FsReconcileHunkGroup
----@field local_patches FsReconcileHunk[]
----@field remote_patches FsReconcileHunk[]
-
-local characters = function(text)
-  return coroutine.wrap(function()
-    local start = 1
-
-    for index = 2, #text do
-      local byte = string.byte(text, index)
-      if byte < 128 or byte >= 192 then
-        coroutine.yield(string.sub(text, start, index - 1))
-        start = index
-      end
-    end
-    if start <= #text then
-      coroutine.yield(string.sub(text, start))
-    end
-  end)
-end
-
-local split = function(hunk)
-  local patches = {}
-
-  for index, line in ipairs(hunk.lines) do
-    local start = hunk.start + index - 1
-    table.insert(patches, {
-      start = start,
-      finish = start + 1,
-      lines = { line },
-    })
-  end
-
-  return patches
-end
-
 local atomic_patches = function(hunks)
   local patches = {}
 
   for _, hunk in ipairs(hunks) do
     if hunk.finish - hunk.start == #hunk.lines then
-      vim.list_extend(patches, split(hunk))
+      for index, line in ipairs(hunk.lines) do
+        local start = hunk.start + index - 1
+        table.insert(patches, { start = start, finish = start + 1, lines = { line } })
+      end
     else
       table.insert(patches, hunk)
     end
@@ -84,16 +51,17 @@ local overlaps_any = function(hunk, patches)
   end)
 end
 
-local patch = function(base, patches)
+local patch = function(base, patches, offset)
   local lines = {}
   local cursor = 0
 
   for _, hunk in ipairs(patches) do
-    for index = cursor + 1, hunk.start do
+    local start, finish = hunk.start - offset, hunk.finish - offset
+    for index = cursor + 1, start do
       table.insert(lines, base[index])
     end
     vim.list_extend(lines, hunk.lines)
-    cursor = hunk.finish
+    cursor = finish
   end
 
   for index = cursor + 1, #base do
@@ -177,19 +145,6 @@ local bounds = function(group)
   return start, finish
 end
 
-local relative = function(patches, start)
-  return vim
-    .iter(patches)
-    :map(function(hunk)
-      return {
-        start = hunk.start - start,
-        finish = hunk.finish - start,
-        lines = hunk.lines,
-      }
-    end)
-    :totable()
-end
-
 local take_both = function(local_text, remote_text)
   if local_text == remote_text then
     return diff.records(local_text)
@@ -224,23 +179,28 @@ end
 
 local character_records = function(text)
   local records = {}
-  for character in characters(text) do
-    table.insert(records, character .. lib.LF)
+  local start = 1
+
+  for index = 2, #text do
+    local byte = string.byte(text, index)
+    if byte < 128 or byte >= 192 then
+      table.insert(records, string.sub(text, start, index - 1) .. lib.LF)
+      start = index
+    end
+  end
+  if start <= #text then
+    table.insert(records, string.sub(text, start) .. lib.LF)
   end
   return records
 end
 
-local characters_text = function(records)
-  return (table.concat(records):gsub(lib.LF, ""))
-end
-
-local character_patches = function(before, after)
-  return atomic_patches(diff.plan_records(character_records(before), character_records(after)))
-end
-
-local substitution_patches = function(before, after)
-  local patches = character_patches(before, after)
-  if resizes(patches) then
+local safe_character_patches = function(before, after)
+  local patches = atomic_patches(diff.plan_records(character_records(before), character_records(after)))
+  if
+    vim.iter(patches):any(function(p)
+      return p.start < p.finish and #p.lines > 0 and p.finish - p.start ~= #p.lines
+    end)
+  then
     return nil
   end
   return patches
@@ -260,8 +220,8 @@ local merge_record = function(base, local_record, remote_record)
     return take_both(local_record, remote_record)
   end
 
-  local local_patches = substitution_patches(base_text, local_text)
-  local remote_patches = substitution_patches(base_text, remote_text)
+  local local_patches = safe_character_patches(base_text, local_text)
+  local remote_patches = safe_character_patches(base_text, remote_text)
   if not local_patches or not remote_patches then
     return take_both(local_record, remote_record)
   end
@@ -274,8 +234,8 @@ local merge_record = function(base, local_record, remote_record)
 
   local patches = vim.list_extend(local_patches, remote_patches)
   sort(patches)
-  local merged = patch(character_records(base_text), patches)
-  return { characters_text(merged) .. local_eol }
+  local merged = patch(character_records(base_text), patches, 0)
+  return { string.gsub(table.concat(merged), lib.LF, "") .. local_eol }
 end
 
 local merge_concurrent = function(base, group)
@@ -285,32 +245,13 @@ local merge_concurrent = function(base, group)
 
   local start, finish = bounds(group)
   local before = diff.slice(base, start, finish)
-  local local_lines = patch(before, relative(group.local_patches, start))
-  local remote_lines = patch(before, relative(group.remote_patches, start))
+  local local_lines = patch(before, group.local_patches, start)
+  local remote_lines = patch(before, group.remote_patches, start)
   local lines = {}
   for index, record in ipairs(before) do
     vim.list_extend(lines, merge_record(record, local_lines[index], remote_lines[index]))
   end
   return replacement(group, lines)
-end
-
-local resolve_group = function(base, group)
-  if #group.remote_patches == 0 then
-    return group.local_patches
-  elseif #group.local_patches == 0 then
-    return group.remote_patches
-  end
-  return { merge_concurrent(base, group) }
-end
-
-local merge_groups = function(base, grouped)
-  local merged = {}
-
-  for group in grouped do
-    vim.list_extend(merged, resolve_group(base, group))
-  end
-
-  return merged
 end
 
 ---@param base string
@@ -319,10 +260,19 @@ end
 ---@return string
 local merge = function(base, local_text, remote_text)
   local base_lines = diff.lines(base)
-  local grouped = groups(diff.plan(base, local_text), diff.plan(base, remote_text))
-  local patches = merge_groups(base_lines, grouped)
+  local patches = {}
+
+  for group in groups(diff.plan(base, local_text), diff.plan(base, remote_text)) do
+    if #group.remote_patches == 0 then
+      vim.list_extend(patches, group.local_patches)
+    elseif #group.local_patches == 0 then
+      vim.list_extend(patches, group.remote_patches)
+    else
+      table.insert(patches, merge_concurrent(base_lines, group))
+    end
+  end
   sort(patches)
-  return table.concat(patch(base_lines, patches))
+  return table.concat(patch(base_lines, patches, 0))
 end
 
 M.merge = function(base, local_text, remote_text)
