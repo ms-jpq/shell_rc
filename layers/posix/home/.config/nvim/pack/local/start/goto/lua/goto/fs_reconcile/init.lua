@@ -275,21 +275,19 @@ local resolve = function(document, value, observed, modified, now)
     end
   end
   document = next(document, { remote_at = vim.NIL })
-  if not base then
-    if not modified then
-      return document, { type = RESOLUTIONS.ADOPT }
-    elseif observed.version then
-      return document, { type = RESOLUTIONS.MERGE }
-    end
-    return document, { type = RESOLUTIONS.SAVE }
-  elseif util.same_buffer(value, base) then
-    return document, {
-      type = util.same_base(base, observed) and RESOLUTIONS.SYNCED or RESOLUTIONS.ADOPT,
-    }
+
+  local same_file = base and util.same_base(base, observed)
+  local same_observed = util.same_buffer(value, observed)
+  local same_base = base and util.same_buffer(value, base)
+
+  if same_file and (same_observed or same_base) then
+    return document, { type = RESOLUTIONS.SYNCED }
+  elseif same_observed or (not base and not modified) or same_base then
+    return document, { type = RESOLUTIONS.ADOPT }
+  elseif (not base and observed.version) or (base and not same_file) then
+    return document, { type = RESOLUTIONS.MERGE }
   end
-  return document, {
-    type = util.same_base(base, observed) and RESOLUTIONS.SAVE or RESOLUTIONS.MERGE,
-  }
+  return document, { type = RESOLUTIONS.SAVE }
 end
 
 ---@param buf integer
