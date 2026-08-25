@@ -2,17 +2,13 @@ local lib = require "goto.lib"
 
 local M = {}
 
----@param text string
----@return string
-local input = function(text)
-  return text .. lib.LF
-end
-
 ---@class FsReconcileHunk
 ---@field start integer
 ---@field finish integer
 ---@field lines string[]
 
+---@param text string
+---@return fun(): string?
 local each_record = function(text)
   return coroutine.wrap(function()
     local start = 1
@@ -32,7 +28,7 @@ end
 
 ---@param text string
 ---@return string[]
-M.records = function(text)
+local records = function(text)
   local records = {}
   for record in each_record(text) do
     table.insert(records, record)
@@ -46,7 +42,7 @@ M.lines = function(text)
   if text == "" then
     return {}
   end
-  return M.records(input(text))
+  return records(text .. lib.LF)
 end
 
 ---@param lines string[]

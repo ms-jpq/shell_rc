@@ -10,21 +10,11 @@ local M = {}
 ---@field changes FsReconcileHunk[]
 ---@field endofline boolean
 
-local rows = function(records)
-  return vim
-    .iter(records)
-    :map(function(record)
-      return vim.endswith(record, lib.LF) and string.sub(record, 1, -#lib.LF - 1) or record
-    end)
-    :totable()
-end
-
 ---@param current FsReconcileBuffer
 ---@param target FsReconcileBuffer
 ---@return FsReconcileReplacement
 M.plan = function(current, target)
-  local changes = async.work(diff.worker, current.text, target.text)
-  return { changes = changes, endofline = target.endofline }
+  return { changes = async.work(diff.worker, current.text, target.text), endofline = target.endofline }
 end
 
 ---@param buf integer
@@ -43,7 +33,12 @@ M.apply = function(buf, replacement, mark)
         vim.cmd.undojoin()
       end
 
-      local lines = rows(hunk.lines)
+      local lines = vim
+        .iter(hunk.lines)
+        :map(function(record)
+          return vim.endswith(record, lib.LF) and string.sub(record, 1, -#lib.LF - 1) or record
+        end)
+        :totable()
       vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
       mark(hunk.start, hunk.start + #lines)
     end
