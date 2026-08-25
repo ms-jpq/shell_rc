@@ -201,6 +201,16 @@ local replace = function(buf, value, target, valid)
   return true
 end
 
+---@param buf integer
+---@return integer
+local active_row = function(buf)
+  if vim.api.nvim_get_current_buf() == buf then
+    local row = unpack(vim.api.nvim_win_get_cursor(0))
+    return row - 1
+  end
+  return -1
+end
+
 ---@param current FsReconcileDocument
 ---@param changes table
 ---@return FsReconcileDocument
@@ -377,7 +387,7 @@ local drive = function(buf, path, chan, close)
       elseif resolution.type == RESOLUTIONS.MERGE then
         local base = document.base or util.empty()
         if observed.version or not base.version then
-          local target = hunks.merge(base, value, observed)
+          local target = hunks.merge(base, value, observed, active_row(buf))
           if replace(buf, value, target, valid) then
             vim.bo[buf].modified = not util.same_buffer(target, observed)
             local changedtick = vim.api.nvim_buf_get_changedtick(buf)
