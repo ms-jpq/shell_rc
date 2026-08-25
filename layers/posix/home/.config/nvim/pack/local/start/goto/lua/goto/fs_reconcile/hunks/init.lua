@@ -14,7 +14,11 @@ local M = {}
 ---@param target FsReconcileBuffer
 ---@return FsReconcileReplacement
 M.plan = function(current, target)
-  return { changes = async.work(diff.worker, current.text, target.text), endofline = target.endofline }
+  local changes = async.work(diff.worker, current.text, target.text)
+  if current.text == "" and target.text ~= "" then
+    changes[1].finish = 1
+  end
+  return { changes = changes, endofline = target.endofline }
 end
 
 ---@param buf integer
