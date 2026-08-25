@@ -26,14 +26,6 @@ local resizes = function(patches)
   end)
 end
 
-local patches_text = function(patches)
-  local text = {}
-  for _, hunk in ipairs(patches) do
-    vim.list_extend(text, hunk.lines)
-  end
-  return table.concat(text)
-end
-
 local overlaps = function(left, right)
   if left.start == left.finish and right.start == right.finish then
     return left.start == right.start
@@ -145,21 +137,6 @@ local bounds = function(group)
   return start, finish
 end
 
-local take_both = function(local_text, remote_text)
-  if local_text == remote_text then
-    return diff.records(local_text)
-  elseif local_text == "" then
-    return diff.records(remote_text)
-  elseif remote_text == "" then
-    return diff.records(local_text)
-  end
-
-  if not vim.endswith(local_text, lib.LF) then
-    local_text = local_text .. lib.LF
-  end
-  return diff.records(local_text .. remote_text)
-end
-
 local replacement = function(group, replacement_lines)
   local start, finish = bounds(group)
 
@@ -217,19 +194,19 @@ local merge_record = function(base, local_record, remote_record)
   local local_text, local_eol = split_record(local_record)
   local remote_text, remote_eol = split_record(remote_record)
   if local_eol ~= remote_eol then
-    return take_both(local_record, remote_record)
+    return { local_record }
   end
 
   local local_patches = safe_character_patches(base_text, local_text)
   local remote_patches = safe_character_patches(base_text, remote_text)
   if not local_patches or not remote_patches then
-    return take_both(local_record, remote_record)
+    return { local_record }
   end
   local conflicted = vim.iter(local_patches):any(function(local_patch)
     return overlaps_any(local_patch, remote_patches)
   end)
   if conflicted then
-    return take_both(local_record, remote_record)
+    return { local_record }
   end
 
   local patches = vim.list_extend(local_patches, remote_patches)
@@ -239,12 +216,12 @@ local merge_record = function(base, local_record, remote_record)
 end
 
 local merge_concurrent = function(base, group)
-  if resizes(group.local_patches) or resizes(group.remote_patches) then
-    return replacement(group, take_both(patches_text(group.local_patches), patches_text(group.remote_patches)))
-  end
-
   local start, finish = bounds(group)
   local before = diff.slice(base, start, finish)
+  if resizes(group.local_patches) or resizes(group.remote_patches) then
+    return replacement(group, patch(before, group.local_patches, start))
+  end
+
   local local_lines = patch(before, group.local_patches, start)
   local remote_lines = patch(before, group.remote_patches, start)
   local lines = {}
