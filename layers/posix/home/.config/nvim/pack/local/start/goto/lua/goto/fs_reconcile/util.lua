@@ -71,9 +71,10 @@ M.same_buffer = function(left, right)
   return left.text == right.text and left.endofline == right.endofline
 end
 
+---@param buf integer
 ---@return FsReconcileBase
-M.empty = function()
-  return { text = "", endofline = false }
+M.empty = function(buf)
+  return { text = "", endofline = vim.bo[buf].endofline }
 end
 
 ---@param text string
@@ -180,7 +181,7 @@ M.read_file = function(buf, path)
   local before, _, code = vim.uv.fs_stat(path)
   if not before then
     if code == "ENOENT" then
-      return M.empty()
+      return M.empty(buf)
     end
     return nil, M.READ.UNSTABLE
   elseif before.type ~= "file" or before.size > MAX_BYTES then

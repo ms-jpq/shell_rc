@@ -385,7 +385,7 @@ local drive = function(buf, path, chan, close)
           })
         end
       elseif resolution.type == RESOLUTIONS.MERGE then
-        local base = document.base or util.empty()
+        local base = document.base or util.empty(buf)
         if observed.version or not base.version then
           local target = hunks.merge(base, value, observed, active_row(buf))
           if replace(buf, value, target, valid) then
@@ -406,7 +406,7 @@ local drive = function(buf, path, chan, close)
           chan.send(retry(local_sleep))
           goto continue
         end
-        local written, after = save(buf, path, document.base or util.empty(), valid)
+        local written, after = save(buf, path, document.base or util.empty(buf), valid)
         if not written then
           chan.send(retry(LOCAL_DELAY_MS))
           goto continue
