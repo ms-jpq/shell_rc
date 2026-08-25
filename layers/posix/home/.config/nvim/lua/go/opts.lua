@@ -22,6 +22,8 @@ vim.opt.swapfile = false
 -- no hex or binary parsing
 vim.opt.nrformats = ""
 
+vim.opt.formatoptions:append "r"
+
 -- waiting time within a key sequence
 vim.opt.timeoutlen = 500
 -- cursor hold time
