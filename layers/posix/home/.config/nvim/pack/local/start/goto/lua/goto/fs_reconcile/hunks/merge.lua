@@ -34,6 +34,14 @@ local resizes = function(patches)
   end)
 end
 
+---@param patches FsReconcileHunk[]
+---@return boolean
+local inserts = function(patches)
+  return vim.iter(patches):all(function(patch)
+    return patch.start == patch.finish
+  end)
+end
+
 ---@param left FsReconcileHunk
 ---@param right FsReconcileHunk
 ---@return boolean
@@ -294,7 +302,11 @@ end
 local merge_concurrent = function(base, group)
   local start, finish = bounds(group)
   local before = diff.slice(base, start, finish)
-  if resizes(group.local_patches) or resizes(group.remote_patches) then
+  if inserts(group.local_patches) and inserts(group.remote_patches) then
+    local lines = patch(before, group.local_patches, start)
+    vim.list_extend(lines, patch(before, group.remote_patches, start))
+    return replacement(start, finish, lines)
+  elseif resizes(group.local_patches) or resizes(group.remote_patches) then
     return replacement(start, finish, patch(before, group.local_patches, start))
   end
 
