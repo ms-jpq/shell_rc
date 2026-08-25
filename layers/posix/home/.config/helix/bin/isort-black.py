@@ -5,7 +5,7 @@ from sys import exit
 
 with (
     Popen(("isort", "--profile=black", "--", "-"), stdout=PIPE) as isort,
-    Popen(("black", "--", "-"), stdin=isort.stdout) as black,
+    Popen(("black", "--quiet", "--", "-"), stdin=isort.stdout) as black,
 ):
     assert isort.stdout
     isort.stdout.close()
