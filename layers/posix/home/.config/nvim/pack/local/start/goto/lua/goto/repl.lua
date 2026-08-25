@@ -30,9 +30,18 @@ do
   end
 end
 
-local metadata = function(buf, target)
+local selection = function(win)
+  local row = unpack(vim.api.nvim_win_get_cursor(win))
+  if not string.find(vim.fn.mode(1), "^[vV\22]") then
+    return row, row
+  end
+
+  local anchor = vim.fn.line "v"
+  return math.min(anchor, row), math.max(anchor, row)
+end
+
+local metadata = function(buf, target, lo, hi)
   local filename = M.buf_path(buf)
-  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
   local paths = vim.iter(vim.fs.parents(filename)):totable()
   table.remove(paths)
 
@@ -40,23 +49,25 @@ local metadata = function(buf, target)
     REPL_ANCESTOR_PATHS = table.concat(paths, ":"),
     REPL_FILE_NAME = filename,
     REPL_IFS = REPL_IFS,
-    REPL_LINE_COL = tostring(col + 1),
     REPL_LINE_COUNT = tostring(vim.api.nvim_buf_line_count(buf)),
-    REPL_LINE_ROW = tostring(row),
     REPL_PARENT_PATH = vim.fs.dirname(filename),
     REPL_PRETTY_NAME = vim.fn.fnamemodify(filename, [[:~]]),
+    REPL_SELECT_HI = tostring(hi),
+    REPL_SELECT_LO = tostring(lo),
     REPL_TARGET = target,
   }
 end
 ---@param buf integer
 ---@param all? boolean
-local pick = function(buf, all)
+---@param lo integer
+---@param hi integer
+local pick = function(buf, all, lo, hi)
   local target = vim.b[buf].__repl_target__
   if not all and target and string.find(target, REPL_IFS, 1, true) then
     return target
   end
 
-  local proc = async.system({ exec }, { env = metadata(buf, all and "*" or "") })
+  local proc = async.system({ exec }, { env = metadata(buf, all and "*" or "", lo, hi) })
   async.scheduled()
   if proc.code ~= 0 or proc.stderr ~= "" then
     vim.notify(proc.stderr .. proc.stdout, vim.log.levels.ERROR)
@@ -87,7 +98,8 @@ end
 local run_repl = function(all)
   return async(function()
     local buf = vim.api.nvim_get_current_buf()
-    local target = pick(buf, all)
+    local lo, hi = selection(0)
+    local target = pick(buf, all, lo, hi)
     if not target then
       return
     end
@@ -95,7 +107,7 @@ local run_repl = function(all)
     vim.api.nvim_buf_call(buf, function()
       vim.cmd [[silent! write! ++p]]
     end)
-    local proc = async.system({ exec }, { env = metadata(buf, target) })
+    local proc = async.system({ exec }, { env = metadata(buf, target, lo, hi) })
 
     async.scheduled()
     vim.notify(proc.stdout, vim.log.levels.INFO)

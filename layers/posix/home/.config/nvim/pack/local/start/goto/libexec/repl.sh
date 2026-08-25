@@ -5,11 +5,11 @@ set -o pipefail
 : "${REPL_ANCESTOR_PATHS?}"
 : "${REPL_FILE_NAME?}"
 : "${REPL_IFS?}"
-: "${REPL_LINE_COL?}"
 : "${REPL_LINE_COUNT?}"
-: "${REPL_LINE_ROW?}"
 : "${REPL_PARENT_PATH?}"
 : "${REPL_PRETTY_NAME?}"
+: "${REPL_SELECT_HI?}"
+: "${REPL_SELECT_LO?}"
 : "${REPL_TARGET?}"
 
 TMUX_SOCKET="${TMUX:-}"
@@ -119,9 +119,9 @@ BEGIN {
   AFTER = 6
 
   WIDTH = length(COUNT)
-  LO = ROW > BEFORE ? ROW - BEFORE : 1
-  HI = ROW + AFTER < COUNT ? ROW + AFTER : COUNT
-  printf "REPL> @%s\n\n%s:%d:%d\n", REPL_MD, DISPLAY, ROW, COL
+  LO = SELECT_LO > BEFORE ? SELECT_LO - BEFORE : 1
+  HI = SELECT_HI + AFTER < COUNT ? SELECT_HI + AFTER : COUNT
+  printf "REPL> @%s\n\n%s:%d-%d\n", REPL_MD, DISPLAY, SELECT_LO, SELECT_HI
 }
 
 FNR < LO {
@@ -133,18 +133,18 @@ FNR > HI {
 }
 
 {
-  MARKER = FNR == ROW ? "→" : " "
+  MARKER = SELECT_LO <= FNR && FNR <= SELECT_HI ? "→" : " "
   printf "%s %*d | %s\n", MARKER, WIDTH, FNR, $0
 }
 AWK
 
   PRINT_CONTEXT=(
     awk
-    -v COL="$REPL_LINE_COL"
     -v COUNT="$REPL_LINE_COUNT"
     -v DISPLAY="$REPL_PRETTY_NAME"
     -v REPL_MD="${REPL_MD/#"$HOME"/"~"}"
-    -v ROW="$REPL_LINE_ROW"
+    -v SELECT_HI="$REPL_SELECT_HI"
+    -v SELECT_LO="$REPL_SELECT_LO"
     --
     "$FRONTMATTER"
   )
