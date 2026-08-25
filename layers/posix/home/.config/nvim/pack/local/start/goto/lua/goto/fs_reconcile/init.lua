@@ -281,7 +281,7 @@ local resolve = function(document, value, observed, modified, now)
 
   if same_file and same_observed and same_base then
     return document, { type = RESOLUTIONS.SYNCED }
-  elseif same_observed or (not base and not modified) or same_base then
+  elseif same_observed or (not base and not modified and observed.version) or same_base then
     return document, { type = RESOLUTIONS.ADOPT }
   elseif (not base and observed.version) or (base and not same_file) then
     return document, { type = RESOLUTIONS.MERGE }
@@ -491,9 +491,7 @@ do
   vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost" }, {
     group = lib.group,
     callback = async(function(args)
-      if vim.uv.fs_stat(vim.api.nvim_buf_get_name(args.buf)) then
-        attach(args.buf)
-      end
+      attach(args.buf)
     end),
   })
 
