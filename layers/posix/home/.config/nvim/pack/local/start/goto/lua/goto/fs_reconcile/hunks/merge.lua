@@ -65,19 +65,9 @@ end
 ---@param hunk FsReconcileHunk
 ---@param patches FsReconcileHunk[]
 ---@return boolean
-local overlaps_any = function(hunk, patches)
+local conflicts_any = function(hunk, patches)
   return vim.iter(patches):any(function(other)
-    return overlaps(hunk, other)
-  end)
-end
-
----@param hunk FsReconcileHunk
----@param patches FsReconcileHunk[]
----@param active boolean
----@return boolean
-local conflicts_any = function(hunk, patches, active)
-  return vim.iter(patches):any(function(other)
-    return active and not commutes(hunk, other) or overlaps(hunk, other)
+    return not commutes(hunk, other)
   end)
 end
 
@@ -105,6 +95,23 @@ local patch = function(base, patches, offset)
   return lines
 end
 
+---@param group FsReconcileHunkGroup
+---@param hunk FsReconcileHunk
+---@return boolean
+local overlaps_group = function(group, hunk)
+  for _, other in ipairs(group.local_patches) do
+    if overlaps(hunk, other) then
+      return true
+    end
+  end
+  for _, other in ipairs(group.remote_patches) do
+    if overlaps(hunk, other) then
+      return true
+    end
+  end
+  return false
+end
+
 ---@param local_patches FsReconcileHunk[]
 ---@param remote_patches FsReconcileHunk[]
 ---@param local_i integer
@@ -116,13 +123,9 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   local local_patch, remote_patch = local_patches[local_i], remote_patches[remote_i]
   local group = { local_patches = {}, remote_patches = {} }
 
-  local overlaps_group = function(hunk)
-    return overlaps_any(hunk, group.local_patches) or overlaps_any(hunk, group.remote_patches)
-  end
-
   local take = function(patches, index, group_patches)
     local hunk = patches[index]
-    if hunk and overlaps_group(hunk) then
+    if hunk and overlaps_group(group, hunk) then
       table.insert(group_patches, hunk)
       return true, index + 1
     end
@@ -252,9 +255,8 @@ end
 ---@param base string
 ---@param local_record string
 ---@param remote_record string
----@param active boolean
 ---@return string[]
-local merge_record = function(base, local_record, remote_record, active)
+local merge_record = function(base, local_record, remote_record)
   if local_record == remote_record or local_record == base then
     return { remote_record }
   elseif remote_record == base then
@@ -274,7 +276,7 @@ local merge_record = function(base, local_record, remote_record, active)
     return { local_record }
   end
   local conflicted = vim.iter(local_patches):any(function(local_patch)
-    return conflicts_any(local_patch, remote_patches, active)
+    return conflicts_any(local_patch, remote_patches)
   end)
   if conflicted then
     return { local_record }
@@ -288,9 +290,8 @@ end
 
 ---@param base string[]
 ---@param group FsReconcileHunkGroup
----@param cursor_row integer
 ---@return FsReconcileHunk
-local merge_concurrent = function(base, group, cursor_row)
+local merge_concurrent = function(base, group)
   local start, finish = bounds(group)
   local before = diff.slice(base, start, finish)
   if resizes(group.local_patches) or resizes(group.remote_patches) then
@@ -301,8 +302,7 @@ local merge_concurrent = function(base, group, cursor_row)
   local remote_lines = patch(before, group.remote_patches, start)
   local lines = {}
   for index, record in ipairs(before) do
-    local active = start + index - 1 == cursor_row
-    vim.list_extend(lines, merge_record(record, local_lines[index], remote_lines[index], active))
+    vim.list_extend(lines, merge_record(record, local_lines[index], remote_lines[index]))
   end
   return replacement(start, finish, lines)
 end
@@ -310,9 +310,8 @@ end
 ---@param base string
 ---@param local_text string
 ---@param remote_text string
----@param cursor_row integer
 ---@return string
-local merge_lines = function(base, local_text, remote_text, cursor_row)
+local merge_lines = function(base, local_text, remote_text)
   local base_lines = diff.lines(base)
   local patches = {}
 
@@ -322,7 +321,7 @@ local merge_lines = function(base, local_text, remote_text, cursor_row)
     elseif #group.local_patches == 0 then
       vim.list_extend(patches, group.remote_patches)
     else
-      table.insert(patches, merge_concurrent(base_lines, group, cursor_row))
+      table.insert(patches, merge_concurrent(base_lines, group))
     end
   end
   sort(patches)
@@ -332,9 +331,8 @@ end
 ---@param base string
 ---@param local_text string
 ---@param remote_text string
----@param cursor_row integer
 ---@return string
-M.merge = function(base, local_text, remote_text, cursor_row)
+M.merge = function(base, local_text, remote_text)
   if local_text == remote_text then
     return local_text
   elseif local_text == base then
@@ -343,17 +341,16 @@ M.merge = function(base, local_text, remote_text, cursor_row)
     return local_text
   end
 
-  local text = merge_lines(base, local_text, remote_text, cursor_row)
+  local text = merge_lines(base, local_text, remote_text)
   return string.sub(text, 1, -#lib.LF - 1)
 end
 
 ---@param base string
 ---@param local_text string
 ---@param remote_text string
----@param cursor_row integer
 ---@return string
-M.worker = function(base, local_text, remote_text, cursor_row)
-  return require("goto.fs_reconcile.hunks.merge").merge(base, local_text, remote_text, cursor_row)
+M.worker = function(base, local_text, remote_text)
+  return require("goto.fs_reconcile.hunks.merge").merge(base, local_text, remote_text)
 end
 
 return M

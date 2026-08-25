@@ -49,16 +49,15 @@ end
 ---@param base FsReconcileBuffer
 ---@param local_value FsReconcileBuffer
 ---@param remote FsReconcileBuffer
----@param cursor_row integer
 ---@return FsReconcileBuffer
-M.merge = function(base, local_value, remote, cursor_row)
+M.merge = function(base, local_value, remote)
   local text
   if local_value.text == base.text then
     text = remote.text
   elseif remote.text == base.text then
     text = local_value.text
   else
-    text = async.work(merge.worker, base.text, local_value.text, remote.text, cursor_row)
+    text = async.work(merge.worker, base.text, local_value.text, remote.text)
   end
 
   return { text = text, endofline = util.merge_endofline(base, local_value, remote) }
