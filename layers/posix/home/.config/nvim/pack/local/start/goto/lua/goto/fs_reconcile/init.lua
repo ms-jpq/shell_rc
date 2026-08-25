@@ -81,7 +81,6 @@ local INTERVAL_MS = 99
 local FLASH_SPAN = 200
 
 local ns = vim.api.nvim_create_namespace "fs-reconcile"
-local group = vim.api.nvim_create_augroup("lv_fs_reconcile", { clear = true })
 
 local LOCAL_DELAY_MS = 3 * INTERVAL_MS
 local REMOTE_DELAY_MS = 6 * INTERVAL_MS
@@ -280,7 +279,7 @@ local resolve = function(document, value, observed, modified, now)
   local same_observed = util.same_buffer(value, observed)
   local same_base = base and util.same_buffer(value, base)
 
-  if same_file and (same_observed or same_base) then
+  if same_file and same_observed and same_base then
     return document, { type = RESOLUTIONS.SYNCED }
   elseif same_observed or (not base and not modified) or same_base then
     return document, { type = RESOLUTIONS.ADOPT }
@@ -332,7 +331,9 @@ local drive = function(buf, path, chan, close)
         assert(false, event.type)
       end
 
-      if not active() then
+      if vim.bo[buf].buftype ~= "" then
+        break
+      elseif not active() then
         goto continue
       elseif not vim.bo[buf].modifiable then
         chan.send(retry(REMOTE_DELAY_MS))
@@ -464,12 +465,12 @@ end
 
 do
   vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
-    group = group,
+    group = lib.group,
     command = [[silent! wall! ++p]],
   })
 
   vim.api.nvim_create_autocmd({ "FileChangedShell" }, {
-    group = group,
+    group = lib.group,
     callback = async(function(args)
       if get(args.buf) then
         vim.v.fcs_choice = ""
@@ -480,24 +481,32 @@ do
     end),
   })
 
-  vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost" }, {
-    group = group,
-    callback = async(function(args)
+  vim.api.nvim_create_autocmd({ "BufFilePre", "BufUnload" }, {
+    group = lib.group,
+    callback = function(args)
       detach(args.buf)
-      attach(args.buf)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost" }, {
+    group = lib.group,
+    callback = async(function(args)
+      if vim.uv.fs_stat(vim.api.nvim_buf_get_name(args.buf)) then
+        attach(args.buf)
+      end
     end),
   })
 
   vim.api.nvim_create_autocmd({ "BufEnter" }, {
-    group = group,
+    group = lib.group,
     callback = async(function(args)
       attach(args.buf)
     end),
   })
 
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-    group = group,
-    callback = function(args)
+    group = lib.group,
+    callback = async(function(args)
       local data = args.data or {}
       if data.fs_reconcile then
         return
@@ -505,13 +514,14 @@ do
       local written = vim.uv.fs_realpath(args.file)
       local path = vim.uv.fs_realpath(vim.api.nvim_buf_get_name(args.buf))
       if written and written == path then
+        attach(args.buf)
         native_write(args.buf)
       end
-    end,
+    end),
   })
 
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
-    group = group,
+    group = lib.group,
     pattern = { "modifiable", "readonly" },
     callback = function(args)
       send(args.buf, remote())
@@ -525,5 +535,5 @@ do
         attach(current)
       end)()
     end
-  end, { group = group })
+  end, { group = lib.group })
 end
