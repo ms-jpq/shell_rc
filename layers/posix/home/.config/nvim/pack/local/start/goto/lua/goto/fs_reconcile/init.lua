@@ -464,7 +464,7 @@ local native_write = function(buf)
 end
 
 do
-  vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
+  vim.api.nvim_create_autocmd({ "QuitPre" }, {
     group = lib.group,
     command = [[silent! wall! ++p]],
   })
