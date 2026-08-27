@@ -14,7 +14,7 @@ local termstart = async.wrap(function(buf, cmd, cb)
     new_buf,
     async(function()
       local _, code = async.fn.jobstart(cmd, { term = true })
-      if code == 0 then
+      if code == 0 and vim.api.nvim_buf_is_valid(new_buf) then
         vim.api.nvim_buf_delete(new_buf, { force = true })
       end
       cb()
