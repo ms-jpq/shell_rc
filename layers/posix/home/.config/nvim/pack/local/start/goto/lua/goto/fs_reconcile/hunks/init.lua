@@ -26,6 +26,12 @@ end
 ---@param mark fun(start: integer, finish: integer)
 M.apply = function(buf, replacement, mark)
   local in_insert = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode)
+  local views = {}
+  for _, win in pairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_get_buf(win) == buf then
+      views[win] = vim.api.nvim_win_call(win, vim.fn.winsaveview)
+    end
+  end
 
   vim.api.nvim_buf_call(buf, function()
     for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
@@ -48,6 +54,14 @@ M.apply = function(buf, replacement, mark)
     end
     vim.bo[buf].endofline = replacement.endofline
   end)
+
+  for win, view in pairs(views) do
+    if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
+      vim.api.nvim_win_call(win, function()
+        vim.fn.winrestview(view)
+      end)
+    end
+  end
 end
 
 ---@param base FsReconcileBuffer
