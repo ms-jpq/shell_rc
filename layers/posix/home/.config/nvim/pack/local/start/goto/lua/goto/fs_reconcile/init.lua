@@ -20,6 +20,11 @@ local util = require "goto.fs_reconcile.util"
 ---@field type "remote"
 ---@field at integer
 
+---@class FsReconcileRebindEvent
+---@field type "rebind"
+---@field at integer
+---@field path string
+
 ---@class FsReconcileRetryEvent
 ---@field type "retry"
 ---@field sleep integer
@@ -29,10 +34,11 @@ local util = require "goto.fs_reconcile.util"
 ---@field changedtick integer
 ---@field base FsReconcileBase
 
----@alias FsReconcileEvent FsReconcileLocalEvent|FsReconcileRemoteEvent|FsReconcileRetryEvent|FsReconcileWriteEvent
+---@alias FsReconcileEvent FsReconcileLocalEvent|FsReconcileRebindEvent|FsReconcileRemoteEvent|FsReconcileRetryEvent|FsReconcileWriteEvent
 
 ---@class FsReconcileEvents
 ---@field LOCAL "local"
+---@field REBIND "rebind"
 ---@field RETRY "retry"
 ---@field REMOTE "remote"
 ---@field WRITE "write"
@@ -53,7 +59,8 @@ local util = require "goto.fs_reconcile.util"
 
 ---@alias FsReconcileResolution FsReconcileRetryResolution|FsReconcileResolved
 
----@alias FsReconcileChannel QueueMpsc<FsReconcileEvent>
+---@class FsReconcileChannel: QueueMpsc<FsReconcileEvent>
+---@field retarget fun(path: string): boolean
 
 vim.opt.autoread = false
 vim.opt.backup = false
@@ -62,6 +69,7 @@ vim.opt.writebackup = false
 ---@type FsReconcileEvents
 local EVENTS = {
   LOCAL = "local",
+  REBIND = "rebind",
   RETRY = "retry",
   REMOTE = "remote",
   WRITE = "write",
@@ -88,6 +96,12 @@ local REMOTE_DELAY_MS = 6 * INTERVAL_MS
 ---@return FsReconcileRemoteEvent
 local remote = function()
   return { type = EVENTS.REMOTE, at = vim.uv.hrtime() }
+end
+
+---@param path string
+---@return FsReconcileRebindEvent
+local rebind = function(path)
+  return { type = EVENTS.REBIND, at = vim.uv.hrtime(), path = path }
 end
 
 ---@param sleep integer
@@ -217,43 +231,68 @@ local next = function(current, changes)
 end
 
 ---@param buf integer
----@param path string
+---@param at integer
+---@return FsReconcileDocument
+local new_document = function(buf, at)
+  return {
+    changedtick = vim.api.nvim_buf_get_changedtick(buf),
+    local_at = vim.bo[buf].modified and at or nil,
+  }
+end
+
+---@param buf integer
 ---@param chan FsReconcileChannel
 ---@return fun()?
-local start = function(buf, path, chan)
+local start = function(buf, chan)
   local mpsc_close = chan.close
-  local poller = util.poller(path, INTERVAL_MS, function()
-    chan.send(remote())
-  end)
-  if not poller then
-    return
-  end
-
-  local changed = async(function(_, _, changedtick)
-    chan.send(local_change(changedtick))
-  end)
-  local listening = vim.api.nvim_buf_attach(buf, false, {
-    on_changedtick = changed,
-    on_lines = changed,
-    on_reload = function()
-      chan.send(remote())
-    end,
-    on_detach = chan.close,
-  })
-  if not listening then
-    poller.close()
-    return
-  end
+  local poller, path
 
   chan.close = function()
     mpsc_close()
-    poller.close()
+    if poller then
+      poller.close()
+    end
     if vim.api.nvim_buf_is_valid(buf) and attached(buf, chan) then
       vim.b[buf][TAG] = nil
     end
   end
 
-  chan.send(remote())
+  chan.retarget = function(current)
+    if poller and path == current then
+      return true
+    end
+    if poller then
+      poller.close()
+      poller = nil
+    end
+    path = current
+    poller = util.poller(path, INTERVAL_MS, function()
+      chan.send(remote())
+    end)
+    chan.send(rebind(current))
+    return poller ~= nil
+  end
+
+  if not chan.retarget(vim.api.nvim_buf_get_name(buf)) then
+    return
+  end
+
+  local changed = function(_, _, changedtick)
+    if not attached(buf, chan) then
+      return true
+    end
+    chan.send(local_change(changedtick))
+  end
+  local listening = vim.api.nvim_buf_attach(buf, false, {
+    on_changedtick = changed,
+    on_lines = changed,
+    on_detach = chan.close,
+  })
+  if not listening then
+    chan.close()
+    return
+  end
+
   return chan.close
 end
 
@@ -290,15 +329,12 @@ local resolve = function(document, value, observed, modified, now)
 end
 
 ---@param buf integer
----@param path string
 ---@param chan FsReconcileChannel
 ---@param close fun()
-local drive = function(buf, path, chan, close)
+local drive = function(buf, chan, close)
   ---@type FsReconcileDocument
-  local document = {
-    changedtick = vim.api.nvim_buf_get_changedtick(buf),
-    local_at = vim.bo[buf].modified and vim.uv.hrtime() or nil,
-  }
+  local document = new_document(buf, vim.uv.hrtime())
+  local path = vim.api.nvim_buf_get_name(buf)
   local active = function()
     return attached(buf, chan) and vim.api.nvim_buf_get_name(buf) == path
   end
@@ -319,6 +355,9 @@ local drive = function(buf, path, chan, close)
           goto continue
         end
         document = next(document, { local_at = event.at, changedtick = event.changedtick })
+      elseif event.type == EVENTS.REBIND then
+        path = event.path
+        document = new_document(buf, event.at)
       elseif event.type == EVENTS.WRITE then
         document = next(document, {
           base = event.base,
@@ -431,18 +470,24 @@ local attach = function(buf)
       return
     end
     local path = vim.api.nvim_buf_get_name(buf)
-    if vim.bo[buf].buftype ~= "" or path == "" or get(buf) then
+    if vim.bo[buf].buftype ~= "" or path == "" then
+      return
+    end
+
+    local current = get(buf)
+    if current then
+      vim.bo[buf].autoread = not current.retarget(path)
       return
     end
 
     ---@type FsReconcileChannel
     local chan = queue.mpsc()
-    local close = start(buf, path, chan)
+    local close = start(buf, chan)
 
     vim.bo[buf].autoread = close == nil
     if close then
       vim.b[buf][TAG] = chan
-      drive(buf, path, chan, close)
+      drive(buf, chan, close)
     end
   end)
 end
@@ -481,7 +526,7 @@ do
     end),
   })
 
-  vim.api.nvim_create_autocmd({ "BufFilePre", "BufUnload" }, {
+  vim.api.nvim_create_autocmd({ "BufUnload" }, {
     group = lib.group,
     callback = function(args)
       detach(args.buf)
