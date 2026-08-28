@@ -62,17 +62,23 @@ M.mpsc = function()
   local pending ---@type { elapsed: boolean, resolve: fun(elapsed: boolean), scheduled: boolean }?
 
   local notify = function(elapsed)
-    if pending and not pending.scheduled then
-      pending.elapsed = elapsed
-      local waiter = pending
-      waiter.scheduled = true
-      vim.schedule(function()
-        if pending == waiter then
-          pending = nil
-          waiter.resolve(waiter.elapsed)
-        end
-      end)
+    if not pending then
+      return
+    elseif pending.scheduled then
+      if not elapsed then
+        pending.elapsed = false
+      end
+      return
     end
+    pending.elapsed = elapsed
+    local waiter = pending
+    waiter.scheduled = true
+    vim.schedule(function()
+      if pending == waiter then
+        pending = nil
+        waiter.resolve(waiter.elapsed)
+      end
+    end)
   end
 
   local await = function()
