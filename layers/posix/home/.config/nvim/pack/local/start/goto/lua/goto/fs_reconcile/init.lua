@@ -395,6 +395,9 @@ local drive = function(buf, chan, close)
         end
         goto continue
       end
+      local fresh = function()
+        return valid() and util.unchanged(path, observed)
+      end
       local resolution
       document, resolution = resolve(document, value, observed, vim.bo[buf].modified, now)
 
@@ -404,25 +407,29 @@ local drive = function(buf, chan, close)
         chan.send(retry(resolution.sleep))
         goto continue
       elseif resolution.type == RESOLUTIONS.ADOPT then
-        if replace(buf, value, observed, valid) then
+        if replace(buf, value, observed, fresh) then
           vim.bo[buf].modified = false
           document = next(document, {
             base = observed,
             changedtick = vim.api.nvim_buf_get_changedtick(buf),
             local_at = vim.NIL,
           })
+        else
+          chan.send(remote())
         end
       elseif resolution.type == RESOLUTIONS.MERGE then
         local base = document.base or util.empty(buf)
         if observed.version or not base.version then
           local target = hunks.merge(base, value, observed)
-          if replace(buf, value, target, valid) then
+          if replace(buf, value, target, fresh) then
             vim.bo[buf].modified = not util.same_buffer(target, observed)
             local changedtick = vim.api.nvim_buf_get_changedtick(buf)
             document = next(document, { base = observed, changedtick = changedtick })
             if vim.bo[buf].modified then
               chan.send(retry(0))
             end
+          else
+            chan.send(remote())
           end
         end
       elseif resolution.type == RESOLUTIONS.SAVE then
