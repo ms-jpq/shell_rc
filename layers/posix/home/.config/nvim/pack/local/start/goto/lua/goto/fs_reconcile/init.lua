@@ -533,14 +533,7 @@ do
     end,
   })
 
-  vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost" }, {
-    group = lib.group,
-    callback = async(function(args)
-      attach(args.buf)
-    end),
-  })
-
-  vim.api.nvim_create_autocmd({ "BufEnter" }, {
+  vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost", "BufEnter" }, {
     group = lib.group,
     callback = async(function(args)
       attach(args.buf)
@@ -573,10 +566,7 @@ do
 
   autocmd.vim_enter(function()
     for _, buf in pairs(vim.api.nvim_list_bufs()) do
-      local current = buf
-      async(function()
-        attach(current)
-      end)()
+      async(attach)(buf)
     end
   end, { group = lib.group })
 end
