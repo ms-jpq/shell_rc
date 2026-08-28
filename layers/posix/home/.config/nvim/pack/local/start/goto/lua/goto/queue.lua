@@ -59,24 +59,24 @@ end
 M.mpsc = function()
   local closed = false
   local values = M.fifo()
-  local pending ---@type { elapsed: boolean, resolve: fun(elapsed: boolean), scheduled: boolean }?
+  local pending ---@type { timed_out: boolean, resolve: fun(timed_out: boolean), scheduled: boolean }?
 
-  local notify = function(elapsed)
+  local notify = function(timed_out)
     if not pending then
       return
     elseif pending.scheduled then
-      if not elapsed then
-        pending.elapsed = false
+      if not timed_out then
+        pending.timed_out = false
       end
       return
     end
-    pending.elapsed = elapsed
+    pending.timed_out = timed_out
     local waiter = pending
     waiter.scheduled = true
     vim.schedule(function()
       if pending == waiter then
         pending = nil
-        waiter.resolve(waiter.elapsed)
+        waiter.resolve(waiter.timed_out)
       end
     end)
   end
@@ -84,7 +84,7 @@ M.mpsc = function()
   local await = function()
     assert(not pending, "mpsc: consumer already waiting")
     local future = async.future()
-    pending = { elapsed = false, resolve = future.resolve, scheduled = false }
+    pending = { timed_out = false, resolve = future.resolve, scheduled = false }
     return future
   end
 
@@ -120,8 +120,8 @@ M.mpsc = function()
         notify(true)
       end
     end, milliseconds)
-    local elapsed = future.await()
-    return not closed and elapsed == true
+    local timed_out = future.await()
+    return not closed and timed_out == true
   end
 
   local next = function()

@@ -43,7 +43,7 @@ M.apply = function(buf, replacement, mark)
         local hunk = vim.iter(replacement.changes):find(function(hunk)
           return hunk.start < row and row <= hunk.finish
         end)
-        local offset = hunk and hunk.finish - hunk.start == #hunk.lines and row - hunk.start - 1 or 0
+        local offset = hunk and hunk.finish - hunk.start == #hunk.records and row - hunk.start - 1 or 0
         cursors[win] = {
           col = col,
           offset = offset,
@@ -65,7 +65,7 @@ M.apply = function(buf, replacement, mark)
         end
 
         local lines = vim
-          .iter(hunk.lines)
+          .iter(hunk.records)
           :map(function(record)
             return vim.endswith(record, lib.LF) and string.sub(record, 1, -#lib.LF - 1) or record
           end)

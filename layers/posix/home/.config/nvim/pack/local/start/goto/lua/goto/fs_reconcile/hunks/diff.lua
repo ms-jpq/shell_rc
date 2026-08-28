@@ -5,7 +5,7 @@ local M = {}
 ---@class FsReconcileHunk
 ---@field start integer
 ---@field finish integer
----@field lines string[]
+---@field records string[]
 
 ---@param text string
 ---@return fun(): string?
@@ -38,7 +38,7 @@ end
 
 ---@param text string
 ---@return string[]
-M.lines = function(text)
+M.records = function(text)
   if text == "" then
     return {}
   end
@@ -68,7 +68,7 @@ M.plan_records = function(before_records, after_records)
       return {
         start = start,
         finish = start + old_count,
-        lines = M.slice(after_records, new_start - 1, new_start + new_count - 1),
+        records = M.slice(after_records, new_start - 1, new_start + new_count - 1),
       }
     end)
     :totable()
@@ -78,7 +78,7 @@ end
 ---@param after string
 ---@return FsReconcileHunk[]
 M.plan = function(before, after)
-  return M.plan_records(M.lines(before), M.lines(after))
+  return M.plan_records(M.records(before), M.records(after))
 end
 
 ---@param before string

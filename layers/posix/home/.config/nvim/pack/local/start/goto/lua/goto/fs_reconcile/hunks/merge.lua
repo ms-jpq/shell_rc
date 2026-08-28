@@ -13,10 +13,10 @@ local atomic_patches = function(hunks)
   local patches = {}
 
   for _, hunk in ipairs(hunks) do
-    if hunk.finish - hunk.start == #hunk.lines then
-      for index, line in ipairs(hunk.lines) do
+    if hunk.finish - hunk.start == #hunk.records then
+      for index, record in ipairs(hunk.records) do
         local start = hunk.start + index - 1
-        table.insert(patches, { start = start, finish = start + 1, lines = { line } })
+        table.insert(patches, { start = start, finish = start + 1, records = { record } })
       end
     else
       table.insert(patches, hunk)
@@ -30,7 +30,7 @@ end
 ---@return boolean
 local resizes = function(patches)
   return vim.iter(patches):any(function(patch)
-    return patch.finish - patch.start ~= #patch.lines
+    return patch.finish - patch.start ~= #patch.records
   end)
 end
 
@@ -62,9 +62,9 @@ end
 local commutes = function(left, right)
   if overlaps(left, right) then
     return false
-  elseif left.start == left.finish and #right.lines == 0 then
+  elseif left.start == left.finish and #right.records == 0 then
     return left.start ~= right.finish
-  elseif right.start == right.finish and #left.lines == 0 then
+  elseif right.start == right.finish and #left.records == 0 then
     return right.start ~= left.finish
   end
   return true
@@ -79,28 +79,28 @@ local conflicts_any = function(hunk, patches)
   end)
 end
 
----@param base string[]
+---@param base_records string[]
 ---@param patches FsReconcileHunk[]
 ---@param offset integer
 ---@return string[]
-local patch = function(base, patches, offset)
-  local lines = {}
+local patch = function(base_records, patches, offset)
+  local records = {}
   local cursor = 0
 
   for _, hunk in ipairs(patches) do
     local start, finish = hunk.start - offset, hunk.finish - offset
     for index = cursor + 1, start do
-      table.insert(lines, base[index])
+      table.insert(records, base_records[index])
     end
-    vim.list_extend(lines, hunk.lines)
+    vim.list_extend(records, hunk.records)
     cursor = finish
   end
 
-  for index = cursor + 1, #base do
-    table.insert(lines, base[index])
+  for index = cursor + 1, #base_records do
+    table.insert(records, base_records[index])
   end
 
-  return lines
+  return records
 end
 
 ---@param group FsReconcileHunkGroup
@@ -120,6 +120,21 @@ local overlaps_group = function(group, hunk)
   return false
 end
 
+---@param group FsReconcileHunkGroup
+---@param patches FsReconcileHunk[]
+---@param index integer
+---@param group_patches FsReconcileHunk[]
+---@return boolean
+---@return integer
+local take = function(group, patches, index, group_patches)
+  local hunk = patches[index]
+  if hunk and overlaps_group(group, hunk) then
+    table.insert(group_patches, hunk)
+    return true, index + 1
+  end
+  return false, index
+end
+
 ---@param local_patches FsReconcileHunk[]
 ---@param remote_patches FsReconcileHunk[]
 ---@param local_i integer
@@ -130,15 +145,6 @@ end
 local next_group = function(local_patches, remote_patches, local_i, remote_i)
   local local_patch, remote_patch = local_patches[local_i], remote_patches[remote_i]
   local group = { local_patches = {}, remote_patches = {} }
-
-  local take = function(patches, index, group_patches)
-    local hunk = patches[index]
-    if hunk and overlaps_group(group, hunk) then
-      table.insert(group_patches, hunk)
-      return true, index + 1
-    end
-    return false, index
-  end
 
   if local_patch and (not remote_patch or local_patch.start <= remote_patch.start) then
     table.insert(group.local_patches, local_patch)
@@ -151,8 +157,8 @@ local next_group = function(local_patches, remote_patches, local_i, remote_i)
   local expanded = true
   while expanded do
     local local_expanded, remote_expanded
-    local_expanded, local_i = take(local_patches, local_i, group.local_patches)
-    remote_expanded, remote_i = take(remote_patches, remote_i, group.remote_patches)
+    local_expanded, local_i = take(group, local_patches, local_i, group.local_patches)
+    remote_expanded, remote_i = take(group, remote_patches, remote_i, group.remote_patches)
     expanded = local_expanded or remote_expanded
   end
 
@@ -187,32 +193,29 @@ local sort = function(patches)
   end)
 end
 
----@param group FsReconcileHunkGroup
+---@param ... FsReconcileHunk[]
 ---@return integer
 ---@return integer
-local bounds = function(group)
-  local first = group.local_patches[1] or group.remote_patches[1]
-  local start, finish = first.start, first.finish
-  local scan = function(patches)
+local bounds = function(...)
+  local start, finish
+  for _, patches in ipairs { ... } do
     for _, hunk in ipairs(patches) do
-      start = math.min(start, hunk.start)
-      finish = math.max(finish, hunk.finish)
+      start = start and math.min(start, hunk.start) or hunk.start
+      finish = finish and math.max(finish, hunk.finish) or hunk.finish
     end
   end
-  scan(group.local_patches)
-  scan(group.remote_patches)
-  return start, finish
+  return assert(start), assert(finish)
 end
 
 ---@param start integer
 ---@param finish integer
----@param replacement_lines string[]
+---@param replacement_records string[]
 ---@return FsReconcileHunk
-local replacement = function(start, finish, replacement_lines)
+local replacement = function(start, finish, replacement_records)
   return {
     start = start,
     finish = finish,
-    lines = replacement_lines,
+    records = replacement_records,
   }
 end
 
@@ -235,23 +238,15 @@ local character_records = function(text)
   return records
 end
 
----@param before string
----@param after string
----@return FsReconcileHunk[]?
-local safe_character_patches = function(before, after)
-  local patches = atomic_patches(diff.plan_records(character_records(before), character_records(after)))
-  if
-    vim.iter(patches):any(function(p)
-      return p.start < p.finish and #p.lines > 0 and p.finish - p.start ~= #p.lines
-    end)
-  then
-    return nil
-  end
-  return patches
+---@param left FsReconcileHunk[]
+---@param right FsReconcileHunk[]
+---@return boolean
+local spans_overlap = function(left, right)
+  local left_start, left_finish = bounds(left)
+  local right_start, right_finish = bounds(right)
+  return left_start < right_finish and right_start < left_finish
 end
 
----@param before string
----@param after string
 ---@param base string
 ---@param local_record string
 ---@param remote_record string
@@ -266,14 +261,13 @@ local merge_record = function(base, local_record, remote_record)
   local base_text = string.sub(base, 1, -#lib.LF - 1)
   local local_text = string.sub(local_record, 1, -#lib.LF - 1)
   local remote_text = string.sub(remote_record, 1, -#lib.LF - 1)
-  local local_patches = safe_character_patches(base_text, local_text)
-  local remote_patches = safe_character_patches(base_text, remote_text)
-  if not local_patches or not remote_patches then
-    return { local_record }
-  end
-  local conflicted = vim.iter(local_patches):any(function(local_patch)
-    return conflicts_any(local_patch, remote_patches)
-  end)
+  local local_patches = atomic_patches(diff.plan_records(character_records(base_text), character_records(local_text)))
+  local remote_patches = atomic_patches(diff.plan_records(character_records(base_text), character_records(remote_text)))
+  local conflicted = (resizes(local_patches) or resizes(remote_patches))
+      and spans_overlap(local_patches, remote_patches)
+    or vim.iter(local_patches):any(function(local_patch)
+      return conflicts_any(local_patch, remote_patches)
+    end)
   if conflicted then
     return { local_record }
   end
@@ -284,35 +278,35 @@ local merge_record = function(base, local_record, remote_record)
   return { string.gsub(table.concat(merged), lib.LF, "") .. lib.LF }
 end
 
----@param base string[]
+---@param base_records string[]
 ---@param group FsReconcileHunkGroup
 ---@return FsReconcileHunk
-local merge_concurrent = function(base, group)
-  local start, finish = bounds(group)
-  local before = diff.slice(base, start, finish)
+local merge_concurrent = function(base_records, group)
+  local start, finish = bounds(group.local_patches, group.remote_patches)
+  local before = diff.slice(base_records, start, finish)
   if inserts(group.local_patches) and inserts(group.remote_patches) then
-    local lines = patch(before, group.local_patches, start)
-    vim.list_extend(lines, patch(before, group.remote_patches, start))
-    return replacement(start, finish, lines)
+    local records = patch(before, group.local_patches, start)
+    vim.list_extend(records, patch(before, group.remote_patches, start))
+    return replacement(start, finish, records)
   elseif resizes(group.local_patches) or resizes(group.remote_patches) then
     return replacement(start, finish, patch(before, group.local_patches, start))
   end
 
-  local local_lines = patch(before, group.local_patches, start)
-  local remote_lines = patch(before, group.remote_patches, start)
-  local lines = {}
+  local local_records = patch(before, group.local_patches, start)
+  local remote_records = patch(before, group.remote_patches, start)
+  local records = {}
   for index, record in ipairs(before) do
-    vim.list_extend(lines, merge_record(record, local_lines[index], remote_lines[index]))
+    vim.list_extend(records, merge_record(record, local_records[index], remote_records[index]))
   end
-  return replacement(start, finish, lines)
+  return replacement(start, finish, records)
 end
 
 ---@param base string
 ---@param local_text string
 ---@param remote_text string
 ---@return string
-local merge_lines = function(base, local_text, remote_text)
-  local base_lines = diff.lines(base)
+local merge_records = function(base, local_text, remote_text)
+  local base_records = diff.records(base)
   local patches = {}
 
   for group in groups(diff.plan(base, local_text), diff.plan(base, remote_text)) do
@@ -321,11 +315,11 @@ local merge_lines = function(base, local_text, remote_text)
     elseif #group.local_patches == 0 then
       vim.list_extend(patches, group.remote_patches)
     else
-      table.insert(patches, merge_concurrent(base_lines, group))
+      table.insert(patches, merge_concurrent(base_records, group))
     end
   end
   sort(patches)
-  return table.concat(patch(base_lines, patches, 0))
+  return table.concat(patch(base_records, patches, 0))
 end
 
 ---@param base string
@@ -341,7 +335,7 @@ M.merge = function(base, local_text, remote_text)
     return local_text
   end
 
-  local text = merge_lines(base, local_text, remote_text)
+  local text = merge_records(base, local_text, remote_text)
   return string.sub(text, 1, -#lib.LF - 1)
 end
 

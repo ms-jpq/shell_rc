@@ -350,8 +350,8 @@ local drive = function(buf, chan, close)
     defer(close)
     for event in chan do
       if event.type == EVENTS.RETRY then
-        local elapsed = chan.wait(event.sleep)
-        if not elapsed then
+        local timed_out = chan.wait(event.sleep)
+        if not timed_out then
           goto continue
         end
       elseif event.type == EVENTS.LOCAL then
@@ -451,12 +451,10 @@ local drive = function(buf, chan, close)
           goto continue
         end
         document = next(document, { changedtick = written.changedtick })
-        if after then
-          if valid() then
+        if valid() then
+          if after then
             document = next(document, { base = after, local_at = vim.NIL })
-          end
-        else
-          if valid() then
+          else
             chan.send(remote())
           end
         end
@@ -562,8 +560,8 @@ do
       local written = vim.uv.fs_realpath(args.file)
       local path = vim.uv.fs_realpath(vim.api.nvim_buf_get_name(args.buf))
       if written and written == path then
-        attach(args.buf)
         native_write(args.buf)
+        attach(args.buf)
       end
     end),
   })

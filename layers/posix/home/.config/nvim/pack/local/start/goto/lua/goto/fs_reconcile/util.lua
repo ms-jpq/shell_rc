@@ -1,4 +1,3 @@
-local async = require "goto.async"
 local lib = require "goto.lib"
 
 local M = {}
@@ -126,13 +125,9 @@ end
 ---@return FsReconcilePoller?
 M.poller = function(path, interval, wake)
   local poll = vim.uv.new_fs_poll()
-  local changed = async(function()
-    async.scheduled()
-    wake()
-  end)
   if not poll then
     return
-  elseif poll:start(path, interval, changed) then
+  elseif poll:start(path, interval, vim.schedule_wrap(wake)) then
     local closed = false
     return {
       close = function()
