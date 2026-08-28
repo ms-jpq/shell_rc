@@ -31,13 +31,9 @@ M.apply = function(buf, replacement, mark)
   for _, win in pairs(vim.api.nvim_list_wins()) do
     if vim.api.nvim_win_get_buf(win) == buf then
       local row, col = unpack(vim.api.nvim_win_get_cursor(win))
-      local right_gravity = true
-      for _, hunk in pairs(replacement.changes) do
-        if hunk.start < row and row <= hunk.finish then
-          right_gravity = false
-          break
-        end
-      end
+      local right_gravity = not vim.iter(replacement.changes):any(function(hunk)
+        return hunk.start < row and row <= hunk.finish
+      end)
       cursors[win] = {
         col = col,
         mark = vim.api.nvim_buf_set_extmark(buf, cursor_ns, row - 1, col, { right_gravity = right_gravity }),
