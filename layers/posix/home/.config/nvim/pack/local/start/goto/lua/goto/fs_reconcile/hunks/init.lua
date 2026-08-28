@@ -5,6 +5,7 @@ local merge = require "goto.fs_reconcile.hunks.merge"
 local util = require "goto.fs_reconcile.util"
 
 local M = {}
+local cursor_ns = vim.api.nvim_create_namespace "fs-reconcile-cursor"
 
 ---@class FsReconcileReplacement
 ---@field changes FsReconcileHunk[]
@@ -26,10 +27,21 @@ end
 ---@param mark fun(start: integer, finish: integer)
 M.apply = function(buf, replacement, mark)
   local in_insert = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode)
-  local views = {}
+  local cursors = {}
   for _, win in pairs(vim.api.nvim_list_wins()) do
     if vim.api.nvim_win_get_buf(win) == buf then
-      views[win] = vim.api.nvim_win_call(win, vim.fn.winsaveview)
+      local row, col = unpack(vim.api.nvim_win_get_cursor(win))
+      local right_gravity = true
+      for _, hunk in pairs(replacement.changes) do
+        if hunk.start < row and row <= hunk.finish then
+          right_gravity = false
+          break
+        end
+      end
+      cursors[win] = {
+        col = col,
+        mark = vim.api.nvim_buf_set_extmark(buf, cursor_ns, row - 1, col, { right_gravity = right_gravity }),
+      }
     end
   end
 
@@ -55,11 +67,11 @@ M.apply = function(buf, replacement, mark)
     vim.bo[buf].endofline = replacement.endofline
   end)
 
-  for win, view in pairs(views) do
+  for win, cursor in pairs(cursors) do
+    local row = unpack(vim.api.nvim_buf_get_extmark_by_id(buf, cursor_ns, cursor.mark, {}))
+    vim.api.nvim_buf_del_extmark(buf, cursor_ns, cursor.mark)
     if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
-      vim.api.nvim_win_call(win, function()
-        vim.fn.winrestview(view)
-      end)
+      vim.api.nvim_win_set_cursor(win, { row + 1, cursor.col })
     end
   end
 end
