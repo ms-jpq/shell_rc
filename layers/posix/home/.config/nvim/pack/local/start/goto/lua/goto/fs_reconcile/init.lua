@@ -172,13 +172,13 @@ end
 ---@param buf integer
 ---@param path string
 ---@param base FsReconcileBase
----@param valid fun(): boolean
+---@param guard fun(): boolean
 ---@return FsReconcileSnapshot?
 ---@return FsReconcileBase?
-local save = function(buf, path, base, valid)
+local save = function(buf, path, base, guard)
   local ok, written = pcall(vim.api.nvim_buf_call, buf, function()
     vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
-    if not valid() or not util.unchanged(path, base) then
+    if not guard() or not util.unchanged(path, base) then
       return false
     end
     write()
@@ -200,14 +200,14 @@ end
 ---@param buf integer
 ---@param value FsReconcileSnapshot
 ---@param target FsReconcileBuffer
----@param valid fun(): boolean
+---@param guard fun(): boolean
 ---@return boolean
-local replace = function(buf, value, target, valid)
+local replace = function(buf, value, target, guard)
   local replacement
   if not util.same_buffer(value, target) then
     replacement = hunks.plan(value, target)
   end
-  if not valid() or value.changedtick ~= vim.api.nvim_buf_get_changedtick(buf) then
+  if not guard() or value.changedtick ~= vim.api.nvim_buf_get_changedtick(buf) then
     return false
   end
   if replacement then
@@ -344,7 +344,7 @@ local drive = function(buf, chan, close)
   local active = function()
     return attached(buf, chan) and vim.api.nvim_buf_get_name(buf) == path
   end
-  local valid = function()
+  local editable = function()
     return active() and vim.bo[buf].modifiable
   end
 
@@ -402,7 +402,7 @@ local drive = function(buf, chan, close)
         goto continue
       end
       local fresh = function()
-        return valid() and util.unchanged(path, observed)
+        return editable() and util.unchanged(path, observed)
       end
       local resolution
       document, resolution = resolve(document, value, observed, vim.bo[buf].modified, now)
@@ -447,13 +447,13 @@ local drive = function(buf, chan, close)
           chan.send(retry(local_sleep))
           goto continue
         end
-        local written, after = save(buf, path, document.base or util.empty(buf), valid)
+        local written, after = save(buf, path, document.base or util.empty(buf), editable)
         if not written then
           chan.send(retry(LOCAL_DELAY_MS))
           goto continue
         end
         document = next(document, { changedtick = written.changedtick })
-        if valid() then
+        if editable() then
           if after then
             document = next(document, { base = after, local_at = vim.NIL })
           else

@@ -65,9 +65,7 @@ M.mpsc = function()
     if not pending then
       return
     elseif pending.scheduled then
-      if not timed_out then
-        pending.timed_out = false
-      end
+      pending.timed_out = pending.timed_out and timed_out
       return
     end
     pending.timed_out = timed_out
