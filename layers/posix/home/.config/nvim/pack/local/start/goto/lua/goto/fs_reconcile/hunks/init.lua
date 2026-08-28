@@ -26,51 +26,64 @@ end
 ---@param replacement FsReconcileReplacement
 ---@param mark fun(start: integer, finish: integer)
 M.apply = function(buf, replacement, mark)
-  local in_insert = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode)
-  local cursors = {}
-  for _, win in pairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_win_get_buf(win) == buf then
-      local row, col = unpack(vim.api.nvim_win_get_cursor(win))
-      local right_gravity = not vim.iter(replacement.changes):any(function(hunk)
-        return hunk.start < row and row <= hunk.finish
-      end)
-      cursors[win] = {
-        col = col,
-        mark = vim.api.nvim_buf_set_extmark(buf, cursor_ns, row - 1, col, { right_gravity = right_gravity }),
-      }
-    end
-  end
-
-  vim.api.nvim_buf_call(buf, function()
-    for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
-      if index == #replacement.changes then
-        if not in_insert then
-          vim.opt_local.undolevels = vim.bo.undolevels
+  lib.scope(function(defer)
+    local in_insert = vim.api.nvim_get_current_buf() == buf and lib.is_insert(vim.api.nvim_get_mode().mode)
+    local cursors = {}
+    defer(function()
+      if vim.api.nvim_buf_is_valid(buf) then
+        for _, cursor in pairs(cursors) do
+          vim.api.nvim_buf_del_extmark(buf, cursor_ns, cursor.mark)
         end
-      else
-        vim.cmd.undojoin()
       end
+    end)
 
-      local lines = vim
-        .iter(hunk.lines)
-        :map(function(record)
-          return vim.endswith(record, lib.LF) and string.sub(record, 1, -#lib.LF - 1) or record
+    for _, win in pairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_get_buf(win) == buf then
+        local row, col = unpack(vim.api.nvim_win_get_cursor(win))
+        local hunk = vim.iter(replacement.changes):find(function(hunk)
+          return hunk.start < row and row <= hunk.finish
         end)
-        :totable()
-      vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
-      mark(hunk.start, hunk.start + #lines)
+        local offset = hunk and hunk.finish - hunk.start == #hunk.lines and row - hunk.start - 1 or 0
+        cursors[win] = {
+          col = col,
+          offset = offset,
+          mark = vim.api.nvim_buf_set_extmark(buf, cursor_ns, row - offset - 1, offset == 0 and col or 0, {
+            right_gravity = hunk == nil,
+          }),
+        }
+      end
     end
-    vim.bo[buf].endofline = replacement.endofline
-  end)
 
-  for win, cursor in pairs(cursors) do
-    local row = unpack(vim.api.nvim_buf_get_extmark_by_id(buf, cursor_ns, cursor.mark, {}))
-    vim.api.nvim_buf_del_extmark(buf, cursor_ns, cursor.mark)
-    if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
-      local count = vim.api.nvim_buf_line_count(buf)
-      vim.api.nvim_win_set_cursor(win, { math.min(row + 1, count), cursor.col })
+    vim.api.nvim_buf_call(buf, function()
+      for index, hunk in vim.iter(replacement.changes):rev():enumerate() do
+        if index == #replacement.changes then
+          if not in_insert then
+            vim.opt_local.undolevels = vim.bo.undolevels
+          end
+        else
+          vim.cmd.undojoin()
+        end
+
+        local lines = vim
+          .iter(hunk.lines)
+          :map(function(record)
+            return vim.endswith(record, lib.LF) and string.sub(record, 1, -#lib.LF - 1) or record
+          end)
+          :totable()
+        vim.api.nvim_buf_set_lines(buf, hunk.start, hunk.finish, true, lines)
+        mark(hunk.start, hunk.start + #lines)
+      end
+      vim.bo[buf].endofline = replacement.endofline
+    end)
+
+    for win, cursor in pairs(cursors) do
+      local row = unpack(vim.api.nvim_buf_get_extmark_by_id(buf, cursor_ns, cursor.mark, {}))
+      if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
+        local count = vim.api.nvim_buf_line_count(buf)
+        vim.api.nvim_win_set_cursor(win, { math.min(row + cursor.offset + 1, count), cursor.col })
+      end
     end
-  end
+  end)
 end
 
 ---@param base FsReconcileBuffer
