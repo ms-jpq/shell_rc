@@ -28,29 +28,23 @@ end
 
 ---@param text string
 ---@return string[]
-local records = function(text)
+M.records = function(text)
+  if text == "" then
+    return {}
+  end
   local records = {}
-  for record in each_record(text) do
+  for record in each_record(text .. lib.LF) do
     table.insert(records, record)
   end
   return records
 end
 
----@param text string
----@return string[]
-M.records = function(text)
-  if text == "" then
-    return {}
-  end
-  return records(text .. lib.LF)
-end
-
----@param lines string[]
+---@param records string[]
 ---@param start integer
 ---@param finish integer
 ---@return string[]
-M.slice = function(lines, start, finish)
-  return vim.list_slice(lines, start + 1, finish)
+M.slice = function(records, start, finish)
+  return vim.list_slice(records, start + 1, finish)
 end
 
 ---@param before_records string[]

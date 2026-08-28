@@ -1,25 +1,8 @@
 local lib = require "goto.lib"
 
-local M = {}
-local MAX_BYTES = 2 * 1024 * 1024
-local UTF8_BOM = "\239\187\191"
-
 ---@class FsReconcileReadStates
 ---@field OPAQUE "opaque"
 ---@field UNSTABLE "unstable"
-
----@type FsReconcileReadStates
-M.READ = {
-  OPAQUE = "opaque",
-  UNSTABLE = "unstable",
-}
-
----@param left? uv.fs_stat.result
----@param right? uv.fs_stat.result
----@return boolean
-M.same_identity = function(left, right)
-  return left ~= nil and right ~= nil and left.dev == right.dev and left.ino == right.ino
-end
 
 ---@class FsReconcileBuffer
 ---@field text string
@@ -33,6 +16,23 @@ end
 
 ---@class FsReconcileSnapshot: FsReconcileBuffer
 ---@field changedtick integer
+
+local M = {}
+local MAX_BYTES = 2 * 1024 * 1024
+local UTF8_BOM = "\239\187\191"
+
+---@type FsReconcileReadStates
+M.READ = {
+  OPAQUE = "opaque",
+  UNSTABLE = "unstable",
+}
+
+---@param left? uv.fs_stat.result
+---@param right? uv.fs_stat.result
+---@return boolean
+M.same_identity = function(left, right)
+  return left ~= nil and right ~= nil and left.dev == right.dev and left.ino == right.ino
+end
 
 ---@param left? uv.fs_stat.result
 ---@param right? uv.fs_stat.result
@@ -179,7 +179,7 @@ M.read_file = function(buf, path)
   if not ok or type(text) ~= "string" then
     return nil, M.READ.UNSTABLE
   end
-  text = decode(buf, assert(text))
+  text = decode(buf, text)
   local after = vim.uv.fs_stat(path)
   if not text then
     return nil, M.READ.OPAQUE

@@ -311,7 +311,7 @@ end
 ---@return FsReconcileResolution
 local resolve = function(document, value, observed, modified, now)
   local base = document.base
-  local disk_unchanged = base and util.same_observation(base.version, observed.version)
+  local disk_unchanged = base ~= nil and util.same_observation(base.version, observed.version)
   if base and not disk_unchanged and util.same_identity(base.version, observed.version) then
     local remote_at = document.remote_at or now
     local remote_sleep = remaining(now, remote_at, REMOTE_DELAY_MS)
@@ -322,7 +322,7 @@ local resolve = function(document, value, observed, modified, now)
   document = next(document, { remote_at = vim.NIL })
 
   local buffer_is_observed = util.same_buffer(value, observed)
-  local buffer_is_base = base and util.same_buffer(value, base)
+  local buffer_is_base = base ~= nil and util.same_buffer(value, base)
 
   if disk_unchanged and buffer_is_observed and buffer_is_base then
     return document, { type = RESOLUTIONS.SYNCED }
