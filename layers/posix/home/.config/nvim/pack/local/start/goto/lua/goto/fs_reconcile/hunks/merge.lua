@@ -216,16 +216,6 @@ local replacement = function(start, finish, replacement_lines)
   }
 end
 
----@param record string
----@return string
----@return string
-local split_record = function(record)
-  if vim.endswith(record, lib.LF) then
-    return string.sub(record, 1, -#lib.LF - 1), lib.LF
-  end
-  return record, ""
-end
-
 ---@param text string
 ---@return string[]
 local character_records = function(text)
@@ -260,6 +250,8 @@ local safe_character_patches = function(before, after)
   return patches
 end
 
+---@param before string
+---@param after string
 ---@param base string
 ---@param local_record string
 ---@param remote_record string
@@ -271,13 +263,9 @@ local merge_record = function(base, local_record, remote_record)
     return { local_record }
   end
 
-  local base_text = split_record(base)
-  local local_text, local_eol = split_record(local_record)
-  local remote_text, remote_eol = split_record(remote_record)
-  if local_eol ~= remote_eol then
-    return { local_record }
-  end
-
+  local base_text = string.sub(base, 1, -#lib.LF - 1)
+  local local_text = string.sub(local_record, 1, -#lib.LF - 1)
+  local remote_text = string.sub(remote_record, 1, -#lib.LF - 1)
   local local_patches = safe_character_patches(base_text, local_text)
   local remote_patches = safe_character_patches(base_text, remote_text)
   if not local_patches or not remote_patches then
@@ -293,7 +281,7 @@ local merge_record = function(base, local_record, remote_record)
   local patches = vim.list_extend(local_patches, remote_patches)
   sort(patches)
   local merged = patch(character_records(base_text), patches, 0)
-  return { string.gsub(table.concat(merged), lib.LF, "") .. local_eol }
+  return { string.gsub(table.concat(merged), lib.LF, "") .. lib.LF }
 end
 
 ---@param base string[]

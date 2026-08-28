@@ -269,8 +269,12 @@ local start = function(buf, chan)
     poller = util.poller(path, INTERVAL_MS, function()
       chan.send(remote())
     end)
+    if not poller then
+      chan.close()
+      return false
+    end
     chan.send(rebind(current))
-    return poller ~= nil
+    return true
   end
 
   if not chan.retarget(vim.api.nvim_buf_get_name(buf)) then
@@ -305,7 +309,8 @@ end
 ---@return FsReconcileResolution
 local resolve = function(document, value, observed, modified, now)
   local base = document.base
-  if base and not util.same_base(base, observed) and util.same_file(base.version, observed.version) then
+  local disk_unchanged = base and util.same_observation(base.version, observed.version)
+  if base and not disk_unchanged and util.same_identity(base.version, observed.version) then
     local remote_at = document.remote_at or now
     local remote_sleep = remaining(now, remote_at, REMOTE_DELAY_MS)
     if remote_sleep > 0 then
@@ -314,15 +319,14 @@ local resolve = function(document, value, observed, modified, now)
   end
   document = next(document, { remote_at = vim.NIL })
 
-  local same_file = base and util.same_base(base, observed)
-  local same_observed = util.same_buffer(value, observed)
-  local same_base = base and util.same_buffer(value, base)
+  local buffer_is_observed = util.same_buffer(value, observed)
+  local buffer_is_base = base and util.same_buffer(value, base)
 
-  if same_file and same_observed and same_base then
+  if disk_unchanged and buffer_is_observed and buffer_is_base then
     return document, { type = RESOLUTIONS.SYNCED }
-  elseif same_observed or (not base and not modified and observed.version) or same_base then
+  elseif buffer_is_observed or (not base and not modified and observed.version) or buffer_is_base then
     return document, { type = RESOLUTIONS.ADOPT }
-  elseif (not base and observed.version) or (base and not same_file) then
+  elseif (not base and observed.version) or (base and not disk_unchanged) then
     return document, { type = RESOLUTIONS.MERGE }
   end
   return document, { type = RESOLUTIONS.SAVE }
@@ -478,6 +482,7 @@ local attach = function(buf)
     end
     local path = vim.api.nvim_buf_get_name(buf)
     if vim.bo[buf].buftype ~= "" or path == "" then
+      detach(buf)
       return
     end
 
@@ -535,9 +540,9 @@ do
 
   vim.api.nvim_create_autocmd({ "BufUnload" }, {
     group = lib.group,
-    callback = function(args)
+    callback = async(function(args)
       detach(args.buf)
-    end,
+    end),
   })
 
   vim.api.nvim_create_autocmd({ "BufReadPost", "BufFilePost", "BufEnter" }, {
@@ -565,10 +570,17 @@ do
 
   vim.api.nvim_create_autocmd({ "OptionSet" }, {
     group = lib.group,
-    pattern = { "modifiable", "readonly" },
-    callback = function(args)
+    pattern = { "buftype", "modifiable", "readonly" },
+    callback = async(function(args)
       send(args.buf, remote())
-    end,
+      if args.match == "buftype" then
+        if vim.bo[args.buf].buftype == "" then
+          attach(args.buf)
+        else
+          detach(args.buf)
+        end
+      end
+    end),
   })
 
   autocmd.vim_enter(function()
