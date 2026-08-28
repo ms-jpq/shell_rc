@@ -71,7 +71,8 @@ M.apply = function(buf, replacement, mark)
     local row = unpack(vim.api.nvim_buf_get_extmark_by_id(buf, cursor_ns, cursor.mark, {}))
     vim.api.nvim_buf_del_extmark(buf, cursor_ns, cursor.mark)
     if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
-      vim.api.nvim_win_set_cursor(win, { row + 1, cursor.col })
+      local count = vim.api.nvim_buf_line_count(buf)
+      vim.api.nvim_win_set_cursor(win, { math.min(row + 1, count), cursor.col })
     end
   end
 end
