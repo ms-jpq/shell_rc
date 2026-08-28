@@ -18,7 +18,7 @@ M.READ = {
 ---@param left? uv.fs_stat.result
 ---@param right? uv.fs_stat.result
 ---@return boolean
-M.same_file = function(left, right)
+M.same_identity = function(left, right)
   return left ~= nil and right ~= nil and left.dev == right.dev and left.ino == right.ino
 end
 
@@ -55,13 +55,6 @@ end
 ---@return boolean
 M.same_observation = function(left, right)
   return (left == nil and right == nil) or M.same_version(left, right)
-end
-
----@param left FsReconcileBase
----@param right FsReconcileBase
----@return boolean
-M.same_base = function(left, right)
-  return M.same_observation(left.version, right.version)
 end
 
 ---@param left FsReconcileBuffer
