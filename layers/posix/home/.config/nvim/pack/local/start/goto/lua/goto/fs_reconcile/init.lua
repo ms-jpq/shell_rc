@@ -203,14 +203,16 @@ end
 ---@param valid fun(): boolean
 ---@return boolean
 local replace = function(buf, value, target, valid)
-  if util.same_buffer(value, target) then
-    return true
+  local replacement
+  if not util.same_buffer(value, target) then
+    replacement = hunks.plan(value, target)
   end
-  local replacement = hunks.plan(value, target)
   if not valid() or value.changedtick ~= vim.api.nvim_buf_get_changedtick(buf) then
     return false
   end
-  hunks.apply(buf, replacement, mark(buf))
+  if replacement then
+    hunks.apply(buf, replacement, mark(buf))
+  end
   return true
 end
 
