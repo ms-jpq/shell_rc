@@ -59,30 +59,33 @@ end
 M.mpsc = function()
   local closed = false
   local values = M.fifo()
-  local pending ---@type { timed_out: boolean, resolve: fun(timed_out: boolean), scheduled: boolean }?
+  local waiting ---@type fun()?
+  local scheduled = false
 
-  local notify = function(timed_out)
-    if not pending then
-      return
-    elseif pending.scheduled then
-      pending.timed_out = pending.timed_out and timed_out
+  local finish = function(waiter)
+    if waiting ~= waiter then
       return
     end
-    pending.timed_out = timed_out
-    local waiter = pending
-    waiter.scheduled = true
+    waiting = nil
+    scheduled = false
+    waiter()
+  end
+
+  local notify = function()
+    if not waiting or scheduled then
+      return
+    end
+    local waiter = waiting
+    scheduled = true
     vim.schedule(function()
-      if pending == waiter then
-        pending = nil
-        waiter.resolve(waiter.timed_out)
-      end
+      finish(waiter)
     end)
   end
 
   local await = function()
-    assert(not pending, "mpsc: consumer already waiting")
+    assert(not waiting, "mpsc: consumer already waiting")
     local future = async.future()
-    pending = { timed_out = false, resolve = future.resolve, scheduled = false }
+    waiting = future.resolve
     return future
   end
 
@@ -94,7 +97,9 @@ M.mpsc = function()
     end
     closed = true
     values.clear()
-    notify(false)
+    if waiting then
+      finish(waiting)
+    end
   end
 
   ch.send = function(value)
@@ -103,7 +108,7 @@ M.mpsc = function()
       return false
     end
     values.push(value)
-    notify(false)
+    notify()
     return true
   end
 
@@ -112,14 +117,19 @@ M.mpsc = function()
       return false
     end
     local future = await()
-    local waiter = pending
-    vim.defer_fn(function()
-      if pending == waiter then
-        notify(true)
+    local waiter = waiting
+    local timed_out = false
+    local timer = vim.defer_fn(function()
+      if waiting == waiter then
+        timed_out = true
+        notify()
       end
     end, milliseconds)
-    local timed_out = future.await()
-    return not closed and timed_out == true
+    future.await()
+    if not timer:is_closing() then
+      timer:close()
+    end
+    return not closed and timed_out and values.empty()
   end
 
   local next = function()

@@ -250,13 +250,15 @@ local start = function(buf, chan)
   local poller, path
 
   chan.close = function()
-    mpsc_close()
     if poller then
-      poller.close()
+      local current = poller
+      poller = nil
+      current.close()
     end
     if vim.api.nvim_buf_is_valid(buf) and attached(buf, chan) then
       vim.b[buf][TAG] = nil
     end
+    mpsc_close()
   end
 
   chan.retarget = function(current)
