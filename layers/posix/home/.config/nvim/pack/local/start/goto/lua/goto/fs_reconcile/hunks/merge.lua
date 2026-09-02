@@ -82,15 +82,12 @@ end
 
 ---@param component FsReconcileHunkComponent
 ---@param hunk FsReconcileHunk
+---@param local_patch boolean
 ---@param related fun(left: FsReconcileHunk, right: FsReconcileHunk): boolean
 ---@return boolean
-local joins = function(component, hunk, related)
-  for _, other in ipairs(component.local_patches) do
-    if related(hunk, other) then
-      return true
-    end
-  end
-  for _, other in ipairs(component.remote_patches) do
+local joins = function(component, hunk, local_patch, related)
+  local others = local_patch and component.remote_patches or component.local_patches
+  for _, other in ipairs(others) do
     if related(hunk, other) then
       return true
     end
@@ -131,13 +128,18 @@ local components = function(local_patches, remote_patches, related)
       return precedes(left.hunk, right.hunk)
     end)
 
-    while #pending > 0 do
-      local first = table.remove(pending, 1)
+    local index = 1
+    while pending[index] do
+      local first = pending[index]
+      pending[index] = nil
+      index = index + 1
       local component = { local_patches = {}, remote_patches = {} }
       table.insert(first.local_patch and component.local_patches or component.remote_patches, first.hunk)
 
-      while pending[1] and joins(component, pending[1].hunk, related) do
-        local item = table.remove(pending, 1)
+      while pending[index] and joins(component, pending[index].hunk, pending[index].local_patch, related) do
+        local item = pending[index]
+        pending[index] = nil
+        index = index + 1
         table.insert(item.local_patch and component.local_patches or component.remote_patches, item.hunk)
       end
       coroutine.yield(component)
