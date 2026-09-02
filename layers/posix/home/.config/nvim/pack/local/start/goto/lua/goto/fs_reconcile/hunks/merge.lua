@@ -280,9 +280,11 @@ end
 ---@param remote_text string
 ---@return string
 local merge_characters = function(base, local_text, remote_text)
+  local local_records = character_records(local_text)
+  local remote_records = character_records(remote_text)
   local base_records = character_records(base)
-  local records =
-    reconcile(base_records, character_records(local_text), character_records(remote_text), conflicts, local_authority)
+
+  local records = reconcile(base_records, local_records, remote_records, conflicts, local_authority)
   return (string.gsub(table.concat(records), lib.LF, ""))
 end
 
