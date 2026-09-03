@@ -97,6 +97,20 @@ const xformParagraph = () => (tree) => {
   })
 }
 
+/** @type {Plugin<[], Root>} */
+const xformMarkdown = function () {
+  const processor = this
+  return (tree) =>
+    visit(tree, "code", (node) => {
+      if (node.lang === "markdown") {
+        node.value = processor
+          .processSync(node.value)
+          .toString()
+          .replace(/\n$/, "")
+      }
+    })
+}
+
 if (!remark || !frontmatter || !visit) {
   await pipeline(stdin, stdout)
   exit(0)
@@ -108,7 +122,7 @@ const out = await remark()
   .use(frontmatter, ["yaml", "toml"])
   .use(xformList)
   .use(xformParagraph)
-  .data("settings", { bullet: "-", listItemIndent: "one" })
+  .use(xformMarkdown)
   .process(src)
 
 stdout.write(out.toString())
