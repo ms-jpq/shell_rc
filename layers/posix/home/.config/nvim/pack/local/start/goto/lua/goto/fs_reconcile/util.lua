@@ -20,6 +20,7 @@ local lib = require "goto.lib"
 local M = {}
 local MAX_BYTES = 2 * 1024 * 1024
 local UTF8_BOM = "\239\187\191"
+local DOS_EOF = "\026"
 
 ---@type FsReconcileReadStates
 M.READ = {
@@ -157,6 +158,9 @@ local decode = function(buf, text)
   if vim.startswith(text, UTF8_BOM) then
     text = string.sub(text, #UTF8_BOM + 1)
   end
+  if vim.bo[buf].fileformat == "dos" and not vim.bo[buf].binary then
+    text = string.gsub(text, DOS_EOF .. "$", "")
+  end
   text = string.gsub(string.gsub(text, "\r\n", lib.LF), "\r", lib.LF)
   return text
 end
@@ -175,10 +179,14 @@ M.read_file = function(buf, path)
   elseif before.type ~= "file" or before.size > MAX_BYTES then
     return nil, M.READ.OPAQUE
   end
+
   local ok, text = pcall(vim.fn.readblob, path)
   if not ok or type(text) ~= "string" then
     return nil, M.READ.UNSTABLE
+  elseif vim.fn.type(text) == vim.v.t_blob then
+    return nil, M.READ.OPAQUE
   end
+
   text = decode(buf, text)
   local after = vim.uv.fs_stat(path)
   if not text then

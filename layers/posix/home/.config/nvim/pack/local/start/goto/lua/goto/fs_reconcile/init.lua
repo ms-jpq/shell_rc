@@ -176,25 +176,24 @@ end
 ---@return FsReconcileSnapshot?
 ---@return FsReconcileBase?
 local save = function(buf, path, base, guard)
-  local ok, written = pcall(vim.api.nvim_buf_call, buf, function()
+  local value, after
+  local ok = pcall(vim.api.nvim_buf_call, buf, function()
     vim.api.nvim_exec_autocmds({ "BufWritePre" }, { buffer = buf })
     if not guard() or not util.unchanged(path, base) then
-      return false
+      return
     end
     write()
+    value = util.buffer(buf)
+    after = util.read_file(buf, path)
+    if not after or not util.same_buffer(after, value) then
+      after = nil
+      vim.bo[buf].modified = true
+    end
     vim.api.nvim_exec_autocmds({ "BufWritePost" }, { buffer = buf, data = { fs_reconcile = true } })
-    return true
   end)
-  if not ok or not written then
-    return
-  end
-  local value = util.buffer(buf)
-  local after = util.read_file(buf, path)
-  if after and util.same_buffer(after, value) then
+  if ok then
     return value, after
   end
-  vim.bo[buf].modified = true
-  return value
 end
 
 ---@param buf integer
@@ -313,7 +312,9 @@ end
 ---@return FsReconcileResolution
 local resolve = function(document, value, observed, modified, now)
   local base = document.base
-  local disk_unchanged = base ~= nil and util.same_observation(base.version, observed.version)
+  local disk_unchanged = base ~= nil
+    and util.same_observation(base.version, observed.version)
+    and util.same_buffer(base, observed)
   if base and not disk_unchanged and util.same_identity(base.version, observed.version) then
     local remote_at = document.remote_at or now
     local remote_sleep = remaining(now, remote_at, REMOTE_DELAY_MS)
@@ -458,9 +459,8 @@ local drive = function(buf, chan, close)
         if editable() then
           if after then
             document = next(document, { base = after, local_at = vim.NIL })
-          else
-            chan.send(remote())
           end
+          chan.send(remote())
         end
       else
         assert(false, resolution.type)
