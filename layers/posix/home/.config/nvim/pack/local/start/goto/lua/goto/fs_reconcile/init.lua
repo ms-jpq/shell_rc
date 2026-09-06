@@ -389,7 +389,7 @@ local drive = function(buf, chan, close)
       end
 
       local value = util.buffer(buf)
-      local observed, state = util.read_file(buf, path)
+      local observed, state = util.read_file(buf, path, document.base)
       local now = vim.uv.hrtime()
       if value.changedtick ~= document.changedtick then
         document = next(document, {

@@ -10,6 +10,7 @@ local lib = require "goto.lib"
 
 ---@class FsReconcileBase: FsReconcileBuffer
 ---@field version? uv.fs_stat.result
+---@field encoding string
 
 ---@class FsReconcilePoller
 ---@field close fun()
@@ -65,9 +66,16 @@ M.same_buffer = function(left, right)
 end
 
 ---@param buf integer
+---@return string
+local buffer_encoding = function(buf)
+  local fileencoding = vim.bo[buf].fileencoding
+  return fileencoding ~= "" and fileencoding or vim.o.encoding
+end
+
+---@param buf integer
 ---@return FsReconcileBase
 M.empty = function(buf)
-  return { text = "", endofline = vim.bo[buf].endofline }
+  return { text = "", endofline = vim.bo[buf].endofline, encoding = buffer_encoding(buf) }
 end
 
 ---@param text string
@@ -145,11 +153,11 @@ end
 
 ---@param buf integer
 ---@param text string
+---@param encoding string
 ---@return string?
-local decode = function(buf, text)
-  local fileencoding = vim.bo[buf].fileencoding
-  if fileencoding ~= "" and fileencoding ~= vim.o.encoding then
-    local converted = vim.fn.iconv(text, fileencoding, vim.o.encoding)
+local decode = function(buf, text, encoding)
+  if encoding ~= vim.o.encoding then
+    local converted = vim.fn.iconv(text, encoding, vim.o.encoding)
     if text ~= "" and converted == "" then
       return
     end
@@ -167,9 +175,10 @@ end
 
 ---@param buf integer
 ---@param path string
+---@param base? FsReconcileBase
 ---@return FsReconcileBase?
 ---@return "opaque"|"unstable"?
-M.read_file = function(buf, path)
+M.read_file = function(buf, path, base)
   local before, _, code = vim.uv.fs_stat(path)
   if not before then
     if code == "ENOENT" then
@@ -187,15 +196,16 @@ M.read_file = function(buf, path)
     return nil, M.READ.OPAQUE
   end
 
-  text = decode(buf, text)
+  local encoding = base and base.encoding or buffer_encoding(buf)
+  text = decode(buf, text, encoding)
   local after = vim.uv.fs_stat(path)
   if not text then
     return nil, M.READ.OPAQUE
   elseif not M.same_version(before, after) then
     return nil, M.READ.UNSTABLE
   end
-  local base = M.from_text(text)
-  return { text = base.text, endofline = base.endofline, version = after }
+  local value = M.from_text(text)
+  return { text = value.text, endofline = value.endofline, version = after, encoding = encoding }
 end
 
 return M
