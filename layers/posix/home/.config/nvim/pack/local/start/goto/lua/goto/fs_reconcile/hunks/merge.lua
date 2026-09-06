@@ -180,12 +180,6 @@ local pure_insertions = function(component)
 end
 
 ---@param component FsReconcileHunkComponent
----@return boolean
-local structural = function(component)
-  return vim.iter(component.local_patches):any(resize) or vim.iter(component.remote_patches):any(resize)
-end
-
----@param component FsReconcileHunkComponent
 ---@return FsReconcileHunk
 local merge_insertions = function(component)
   local local_records = {}
@@ -256,15 +250,13 @@ local character_records = function(text)
   local records = {}
   local start = 1
 
-  for index = 2, #text do
+  for index = 2, #text + 1 do
     local byte = string.byte(text, index)
-    if byte < 128 or byte >= 192 then
-      table.insert(records, string.sub(text, start, index - 1) .. lib.LF)
+    if not byte or byte < 128 or byte >= 192 then
+      local character = string.sub(text, start, index - 1)
+      table.insert(records, character == lib.LF and lib.LF or character .. lib.LF)
       start = index
     end
-  end
-  if start <= #text then
-    table.insert(records, string.sub(text, start) .. lib.LF)
   end
   return records
 end
@@ -285,18 +277,16 @@ local merge_characters = function(base, local_text, remote_text)
   local base_records = character_records(base)
 
   local records = reconcile(base_records, local_records, remote_records, conflicts, local_authority)
-  return (string.gsub(table.concat(records), lib.LF, ""))
+  for index, record in ipairs(records) do
+    records[index] = record == lib.LF and lib.LF or string.sub(record, 1, -#lib.LF - 1)
+  end
+  return table.concat(records)
 end
 
----@param base string
----@param local_record string
----@param remote_record string
----@return string[]
-local merge_record = function(base, local_record, remote_record)
-  local base_text = string.sub(base, 1, -#lib.LF - 1)
-  local local_text = string.sub(local_record, 1, -#lib.LF - 1)
-  local remote_text = string.sub(remote_record, 1, -#lib.LF - 1)
-  return { merge_characters(base_text, local_text, remote_text) .. lib.LF }
+---@param records string[]
+---@return string
+local records_text = function(records)
+  return string.sub(table.concat(records), 1, -#lib.LF - 1)
 end
 
 ---@param component FsReconcileHunkComponent
@@ -305,16 +295,14 @@ end
 local resolve_rows = function(component, base_records)
   local start, finish = bounds(component)
   local before = diff.slice(base_records, start, finish)
-  if structural(component) then
-    return { replacement(start, finish, apply(before, component.local_patches, start)) }
-  end
-
   local local_records = apply(before, component.local_patches, start)
   local remote_records = apply(before, component.remote_patches, start)
-  local records = {}
-  for index, record in ipairs(before) do
-    vim.list_extend(records, merge_record(record, local_records[index], remote_records[index]))
+  if #local_records == 0 or #remote_records == 0 then
+    return { replacement(start, finish, local_records) }
   end
+
+  local text = merge_characters(records_text(before), records_text(local_records), records_text(remote_records))
+  local records = text == "" and { lib.LF } or diff.records(text)
   return { replacement(start, finish, records) }
 end
 
