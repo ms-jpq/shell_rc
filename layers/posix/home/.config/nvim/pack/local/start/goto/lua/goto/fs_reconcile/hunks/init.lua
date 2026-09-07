@@ -92,12 +92,24 @@ end
 ---@return FsReconcileBuffer
 M.merge = function(base, local_value, remote)
   local text
-  if local_value.text == base.text then
+  if local_value.text == remote.text then
+    text = local_value.text
+  elseif local_value.text == base.text then
     text = remote.text
   elseif remote.text == base.text then
     text = local_value.text
   else
-    text = async.work(merge.worker, base.text, local_value.text, remote.text)
+    local parts = async.work(merge.prepare_worker, base.text, local_value.text, remote.text)
+    local tasks = vim
+      .iter(parts)
+      :map(function(part)
+        return function()
+          return async.work(merge.resolve_worker, unpack(part))
+        end
+      end)
+      :totable()
+    local resolved = async.all(tasks)
+    text = string.sub(table.concat(resolved), 1, -#lib.LF - 1)
   end
 
   return { text = text, endofline = util.merge_endofline(base, local_value, remote) }

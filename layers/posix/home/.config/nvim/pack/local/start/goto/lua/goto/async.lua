@@ -8,7 +8,8 @@ M.future = function()
   local resolved = nil
 
   fut.resolve = function(...)
-    if coroutine.status(thread) == "running" then
+    local status = coroutine.status(thread)
+    if status == "running" or status == "normal" then
       resolved = { ... }
     else
       local ok, err = coroutine.resume(thread, ...)
@@ -75,13 +76,48 @@ end
 M.work = function(fn, ...)
   local fut = M.future()
   local work = vim.uv.new_work(transfer, vim.schedule_wrap(fut.resolve))
-  work:queue(string.dump(fn), ...)
+  assert(work:queue(string.dump(fn), ...))
 
   local rsp = vim.json.decode(fut.await())
   if not rsp.ok then
     error(rsp.error, 0)
   end
   return rsp.result
+end
+
+---@generic T
+---@param tasks (fun(): T)[]
+---@return T[]
+M.all = function(tasks)
+  local results = {}
+  local failed, err = false, nil
+
+  local future = M.future()
+  local remaining = #tasks
+  local run = lift(function(index, task)
+    local ok, result = pcall(task)
+    if ok then
+      results[index] = result
+    elseif not failed then
+      failed, err = true, result
+    end
+    remaining = remaining - 1
+    if remaining == 0 then
+      future.resolve()
+    end
+  end)
+  for index, task in pairs(tasks) do
+    run(index, task)
+  end
+  if remaining > 0 then
+    future.await()
+  end
+
+  if failed then
+    error(err, 0)
+  end
+
+  return results
 end
 
 M.scheduled = M.wrap(vim.schedule)
