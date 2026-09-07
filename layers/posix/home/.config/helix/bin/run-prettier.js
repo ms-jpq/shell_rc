@@ -52,7 +52,7 @@ const plugins = {
   [join("@typespec", "prettier-plugin-typespec", "dist", "index.js")]:
     /^typespec$/,
   [join("prettier-plugin-awk", "out", "index.js")]: /^awk$/,
-  [join("prettier-plugin-nginx", "dist", "index.js")]: /^nginx$/,
+  [join("prettier-plugin-nginx", "dist", "esm", "index.js")]: /^nginx$/,
   [join("prettier-plugin-tailwindcss", "dist", "index.mjs")]: /^(html|js|ts)$/,
   [join("prettier-plugin-organize-imports", "index.js")]: {
     [Symbol.match](str) {
