@@ -16,6 +16,10 @@
 + chafa
 + cloc
 + cmatrix
++ codex
++ codex-app-server
++ codex-code-mode-host
++ codex-responses-api-proxy
 + colorized-logs
 + cowsay
 + dialog
