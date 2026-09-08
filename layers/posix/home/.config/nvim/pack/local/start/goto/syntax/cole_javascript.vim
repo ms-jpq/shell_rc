@@ -11,4 +11,5 @@ syntax match jsReplResponse '^\s*\zs//\s*|' conceal cchar=┇
 syntax match jsBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
 
 syntax match jsBlockCommentOpen '^\s*\zs\/\*' conceal cchar=┌
+syntax match jsBlockCommentDoc '\%(^\s*/\*\)\@<=\*' conceal cchar=┐
 syntax match jsBlockCommentClose '^\s*\zs\*\/' conceal cchar=└
