@@ -2,6 +2,14 @@
 
 set -o pipefail
 
+BACKGROUND=0
+case "${1:-}" in
+--background)
+  BACKGROUND=1
+  shift -- 1
+  ;;
+esac
+
 PANE="${1:-${__TMUX_ROOT_PANE__:-$TMUX_PANE}}"
 TM=(tmux -S "${2:-${__TMUX_ROOT_SOCKET__:-${TMUX%%,*}}}")
 
@@ -17,4 +25,6 @@ case "$STATUS" in
   ;;
 esac
 
-"${TM[@]}" set-option -t "$PANE" -p window-style 'bg=#{tmux_colour_bell}'
+if ((BACKGROUND)); then
+  "${TM[@]}" set-option -t "$PANE" -p window-style 'bg=#{tmux_colour_bell}'
+fi
