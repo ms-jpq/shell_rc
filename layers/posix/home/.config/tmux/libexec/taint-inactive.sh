@@ -4,9 +4,14 @@ set -o pipefail
 
 BACKGROUND=0
 case "${1:-}" in
---background)
+-b | --background)
   BACKGROUND=1
   shift -- 1
+  ;;
+'') ;;
+*)
+  set -x
+  exit 2
   ;;
 esac
 
