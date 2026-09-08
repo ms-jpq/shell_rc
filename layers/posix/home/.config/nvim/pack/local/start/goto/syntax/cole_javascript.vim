@@ -13,3 +13,8 @@ syntax match jsBlockCommentEdge '^\s*\/\@<!\zs\*\/\@!' conceal cchar=│
 syntax match jsBlockCommentOpen '^\s*\zs\/\*' conceal cchar=┌
 syntax match jsBlockCommentDoc '\%(^\s*/\*\)\@<=\*' conceal cchar=┐
 syntax match jsBlockCommentClose '^\s*\zs\*\/' conceal cchar=└
+
+syntax match jsBlockCommentInline '^\s*\zs/\*.\{-}\*/' transparent contains=jsBlockCommentInlineOpen,jsBlockCommentInlineDoc,jsBlockCommentInlineClose
+syntax match jsBlockCommentInlineOpen '/\*' contained conceal cchar=┌
+syntax match jsBlockCommentInlineDoc '\%(/\*\)\@<=\*/\@!' contained conceal cchar=─
+syntax match jsBlockCommentInlineClose '\*/' contained conceal cchar=┘
