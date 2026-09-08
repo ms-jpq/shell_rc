@@ -3,17 +3,21 @@
 set -o pipefail
 
 BACKGROUND=0
-case "${1:-}" in
--b | --background)
-  BACKGROUND=1
-  shift -- 1
-  ;;
-'') ;;
-*)
-  set -x
-  exit 2
-  ;;
-esac
+while (($#)); do
+  case "$1" in
+  -b | --background)
+    BACKGROUND=1
+    shift -- 1
+    ;;
+  --)
+    shift -- 1
+    break
+    ;;
+  *)
+    break
+    ;;
+  esac
+done
 
 PANE="${1:-${__TMUX_ROOT_PANE__:-$TMUX_PANE}}"
 TM=(tmux -S "${2:-${__TMUX_ROOT_SOCKET__:-${TMUX%%,*}}}")
