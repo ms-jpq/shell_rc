@@ -161,12 +161,6 @@ local send = function(buf, event)
   end
 end
 
-local mark = function(buf)
-  return function(start, finish)
-    vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
-  end
-end
-
 local write = function()
   local fixendofline = vim.bo.fixendofline
   vim.bo.fixendofline = false
@@ -215,25 +209,6 @@ local new_document = function(buf, at)
 end
 
 ---@param buf integer
----@param value FsReconcileSnapshot
----@param target FsReconcileBuffer
----@param guard fun(): boolean
----@return boolean
-local replace = function(buf, value, target, guard)
-  local replacement
-  if not util.same_buffer(value, target) then
-    replacement = hunks.plan(value, target)
-  end
-  if not guard() or value.changedtick ~= vim.api.nvim_buf_get_changedtick(buf) then
-    return false
-  end
-  if replacement then
-    hunks.apply(buf, replacement, mark(buf))
-  end
-  return true
-end
-
----@param buf integer
 ---@param chan FsReconcileChannel
 ---@param document FsReconcileDocument
 ---@param path string
@@ -242,16 +217,24 @@ end
 ---@param observed FsReconcileBase
 ---@return boolean
 local apply_observation = function(buf, chan, document, path, value, target, observed)
+  local replacement
+  if not util.same_buffer(value, target) then
+    replacement = hunks.plan(value, target)
+  end
   if
-    not replace(buf, value, target, function()
-      return attached(buf, chan)
-        and vim.api.nvim_buf_get_name(buf) == path
-        and vim.bo[buf].modifiable
-        and util.unchanged(path, observed)
-    end)
+    not attached(buf, chan)
+    or vim.api.nvim_buf_get_name(buf) ~= path
+    or not vim.bo[buf].modifiable
+    or not util.unchanged(path, observed)
+    or value.changedtick ~= vim.api.nvim_buf_get_changedtick(buf)
   then
     chan.send(remote())
     return false
+  end
+  if replacement then
+    hunks.apply(buf, replacement, function(start, finish)
+      vim.hl.range(buf, ns, "HighlightedyankRegion", { start, 0 }, { finish - 1, -1 }, { timeout = FLASH_SPAN })
+    end)
   end
   vim.bo[buf].modified = not util.same_buffer(target, observed)
   document.base = observed
@@ -394,7 +377,7 @@ local resolve = function(document, value, observed, modified, now)
   local buffer_is_observed = util.same_buffer(value, observed)
   local buffer_is_base = base ~= nil and util.same_buffer(value, base)
 
-  if disk_unchanged and buffer_is_observed and buffer_is_base and not modified then
+  if disk_unchanged and buffer_is_observed and not modified then
     return { type = RESOLUTIONS.SYNCED }
   elseif buffer_is_observed or (not base and not modified and observed.version) or buffer_is_base then
     return { type = RESOLUTIONS.ADOPT }
