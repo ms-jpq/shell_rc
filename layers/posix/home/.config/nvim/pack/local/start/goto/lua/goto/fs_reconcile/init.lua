@@ -161,6 +161,52 @@ local send = function(buf, event)
   end
 end
 
+---@param buf integer
+---@param at integer
+---@return FsReconcileDocument
+local new_document = function(buf, at)
+  return {
+    changedtick = vim.api.nvim_buf_get_changedtick(buf),
+    local_at = vim.bo[buf].modified and at or nil,
+  }
+end
+
+---@param document FsReconcileDocument
+---@param value FsReconcileSnapshot
+---@param observed FsReconcileBase
+---@param modified boolean
+---@param now integer
+---@return FsReconcileResolution
+local resolve = function(document, value, observed, modified, now)
+  local base = document.base
+  local disk_unchanged = base ~= nil and util.same_buffer(base, observed)
+  if disk_unchanged then
+    base = observed
+    document.base = observed
+  end
+  if base and not disk_unchanged and util.same_identity(base.version, observed.version) then
+    local remote_at = document.remote_at or now
+    local remote_sleep = remaining(now, remote_at, REMOTE_DELAY_MS)
+    if remote_sleep > 0 then
+      document.remote_at = remote_at
+      return { type = RESOLUTIONS.RETRY, sleep = remote_sleep }
+    end
+  end
+  document.remote_at = nil
+
+  local buffer_is_observed = util.same_buffer(value, observed)
+  local buffer_is_base = base ~= nil and util.same_buffer(value, base)
+
+  if disk_unchanged and buffer_is_observed and not modified then
+    return { type = RESOLUTIONS.SYNCED }
+  elseif buffer_is_observed or (not base and not modified and observed.version) or buffer_is_base then
+    return { type = RESOLUTIONS.ADOPT }
+  elseif (not base and observed.version) or (base and not disk_unchanged) then
+    return { type = RESOLUTIONS.MERGE }
+  end
+  return { type = RESOLUTIONS.SAVE }
+end
+
 local write = function()
   local fixendofline = vim.bo.fixendofline
   vim.bo.fixendofline = false
@@ -196,16 +242,6 @@ local save = function(buf, path, base, guard)
     vim.notify(err, vim.log.levels.ERROR)
   end
   return value, after
-end
-
----@param buf integer
----@param at integer
----@return FsReconcileDocument
-local new_document = function(buf, at)
-  return {
-    changedtick = vim.api.nvim_buf_get_changedtick(buf),
-    local_at = vim.bo[buf].modified and at or nil,
-  }
 end
 
 ---@param buf integer
@@ -349,42 +385,6 @@ local start = function(buf, chan)
   end
 
   return chan.close
-end
-
----@param document FsReconcileDocument
----@param value FsReconcileSnapshot
----@param observed FsReconcileBase
----@param modified boolean
----@param now integer
----@return FsReconcileResolution
-local resolve = function(document, value, observed, modified, now)
-  local base = document.base
-  local disk_unchanged = base ~= nil and util.same_buffer(base, observed)
-  if disk_unchanged then
-    base = observed
-    document.base = observed
-  end
-  if base and not disk_unchanged and util.same_identity(base.version, observed.version) then
-    local remote_at = document.remote_at or now
-    local remote_sleep = remaining(now, remote_at, REMOTE_DELAY_MS)
-    if remote_sleep > 0 then
-      document.remote_at = remote_at
-      return { type = RESOLUTIONS.RETRY, sleep = remote_sleep }
-    end
-  end
-  document.remote_at = nil
-
-  local buffer_is_observed = util.same_buffer(value, observed)
-  local buffer_is_base = base ~= nil and util.same_buffer(value, base)
-
-  if disk_unchanged and buffer_is_observed and not modified then
-    return { type = RESOLUTIONS.SYNCED }
-  elseif buffer_is_observed or (not base and not modified and observed.version) or buffer_is_base then
-    return { type = RESOLUTIONS.ADOPT }
-  elseif (not base and observed.version) or (base and not disk_unchanged) then
-    return { type = RESOLUTIONS.MERGE }
-  end
-  return { type = RESOLUTIONS.SAVE }
 end
 
 ---@param buf integer
