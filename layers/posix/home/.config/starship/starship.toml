@@ -1,4 +1,3 @@
-#:schema https://starship.rs/config-schema.json
 "$schema"    = 'https://starship.rs/config-schema.json'
 add_newline  = false
 format       = "$directory$fill$env_var$shell$username$hostname$line_break$character"
