@@ -50,6 +50,7 @@ end
 ---@generic T
 ---@class QueueMpsc<T>
 ---@field close fun()
+---@field empty fun(): boolean
 ---@field send fun(value: T): boolean
 ---@field wait fun(milliseconds: integer): boolean
 ---@operator call: fun(...: any): T?
@@ -89,7 +90,7 @@ M.mpsc = function()
     return future
   end
 
-  local ch = {}
+  local ch = { empty = values.empty }
 
   ch.close = function()
     if closed then

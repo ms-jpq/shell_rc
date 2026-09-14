@@ -18,6 +18,8 @@ local lib = require "goto.lib"
 ---@class FsReconcileSnapshot: FsReconcileBuffer
 ---@field changedtick integer
 
+---@class FsReconcileWriteSnapshot: FsReconcileSnapshot, FsReconcileBase
+
 local M = {}
 local MAX_BYTES = 2 * 1024 * 1024
 local UTF8_BOM = "\239\187\191"
@@ -128,6 +130,15 @@ M.buffer = function(buf)
   }
 end
 
+---@param buf integer
+---@return FsReconcileWriteSnapshot
+M.write_snapshot = function(buf)
+  local value = M.buffer(buf)
+  ---@cast value FsReconcileWriteSnapshot
+  value.encoding = buffer_encoding(buf)
+  return value
+end
+
 ---@param path string
 ---@param interval integer
 ---@param wake fun()
@@ -206,6 +217,15 @@ M.read_file = function(buf, path, base)
   end
   local value = M.from_text(text)
   return { text = value.text, endofline = value.endofline, version = after, encoding = encoding }
+end
+
+---@param buf integer
+---@param path string
+---@param written FsReconcileBase
+---@return FsReconcileBase
+M.confirm_write = function(buf, path, written)
+  local observed = M.read_file(buf, path, written)
+  return observed and M.same_buffer(observed, written) and observed or written
 end
 
 return M
