@@ -1,6 +1,7 @@
+#:schema https://starship.rs/config-schema.json
 "$schema"    = 'https://starship.rs/config-schema.json'
 add_newline  = false
-format       = "$directory$git_branch$fill$env_var$shell$username$hostname$line_break$character"
+format       = "$directory$fill$env_var$shell$username$hostname$line_break$character"
 right_format = "$cmd_duration$status"
 
 [directory]
@@ -9,11 +10,6 @@ style             = 'blue'
 truncate_to_repo  = false
 truncation_length = 0
 truncation_symbol = ''
-
-[git_branch]
-format = '[$symbol$branch]($style) '
-style  = 'green'
-symbol = " "
 
 [fill]
 symbol = ' '
