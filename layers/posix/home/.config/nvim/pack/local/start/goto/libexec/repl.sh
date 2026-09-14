@@ -150,7 +150,15 @@ AWK
   )
 
   "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | "$REPL_SCRIPT" "$PANE_ID"
-
-  printf '%s' "⮕  [$PANE_ID]"
+  COLOURS=(
+    🔴
+    🟠
+    🟡
+    🟢
+    🔵
+    🟣
+  )
+  RAINBOW="$(shuf --echo -- "${COLOURS[@]}" | tr -d '\n')"
+  printf '%s' "$RAINBOW → $PANE_ID"
   ;;
 esac
