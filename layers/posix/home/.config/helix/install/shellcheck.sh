@@ -11,7 +11,7 @@ VERSION="$(gh-latest.sh . "$REPO")"
 
 case "$OSTYPE" in
 darwin*)
-  URI="$BASE-$VERSION.darwin.x86_64.tar.xz"
+  URI="$BASE-$VERSION.darwin.$HOSTTYPE.tar.xz"
   ;;
 linux*)
   URI="$BASE-$VERSION.linux.$HOSTTYPE.tar.xz"

@@ -49,7 +49,7 @@ endif
 
 
 $(VAR)/bin/shellcheck: | $(VAR)/bin
-	URI='https://github.com/koalaman/shellcheck/releases/latest/download/shellcheck-$(V_SHELLCHECK).$(OS).x86_64.tar.xz'
+	URI='https://github.com/koalaman/shellcheck/releases/latest/download/shellcheck-$(V_SHELLCHECK).$(OS).$(HOSTTYPE).tar.xz'
 	$(CURL) -- "$$URI" | tar --extract --xz --file - --directory '$(VAR)/bin' --strip-components 1 -- 'shellcheck-$(V_SHELLCHECK)/shellcheck'
 	chmod +x '$@'
 
