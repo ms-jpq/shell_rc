@@ -37,7 +37,8 @@
     "terraform.sh": [],
     "texlab.sh": [],
     "tflint.sh": [],
-    "typos-ls.sh": []
+    "typos-ls.sh": [],
+    "vale.sh": []
   },
   "composer": {
     "phan/phan": []
