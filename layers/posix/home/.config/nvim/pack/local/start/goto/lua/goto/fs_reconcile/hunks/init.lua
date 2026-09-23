@@ -83,6 +83,10 @@ M.apply = function(buf, replacement, mark)
         vim.api.nvim_win_set_cursor(win, { math.min(row + cursor.offset + 1, count), cursor.col })
       end
     end
+
+    if in_insert and vim.fn.pumvisible() == 1 then
+      vim.fn.complete(vim.fn.col ".", {})
+    end
   end)
 end
 
