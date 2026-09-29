@@ -6,6 +6,7 @@ SRC="$(realpath -- "$1")"
 
 ZOUT="$SRC/config/zsh"
 BIN_LINK=~/.cache/helix-rt/more/bin-link.sh
+RSYNC=(rsync --archive --no-perms --executability)
 
 case "$OSTYPE" in
 darwin*)
@@ -27,7 +28,7 @@ env -C "$SRC" -- ./zsh.sh "$OS" "$ZOUT" "$SRC"
 
 mkdir -p -- ~/.config ~/.local/share ~/.local/state/{shell_history,ssh,tmux} ~/.cache
 
-rsync --archive -- "$SRC/cache/" ~/.cache/
+"${RSYNC[@]}" -- "$SRC/cache/" ~/.cache/
 
 mkdir -p -- "$BIN_LINK"
 ln -sTnfr -- "$SRC/bin-link" "$BIN_LINK/bin"
@@ -36,12 +37,12 @@ pushd -- "$SRC/config" > /dev/null
 for NAME in *; do
   DST=~/.config/"$NAME"
   if [[ $NAME == nvim ]]; then
-    rsync --archive --exclude=/init.lua -- "$PWD/$NAME/" "$DST"
+    "${RSYNC[@]}" --exclude=/init.lua -- "$PWD/$NAME/" "$DST"
   elif ! [[ -L $DST ]] && ! [[ -d $DST ]]; then
     ln -sTnfr -- "$PWD/$NAME" "$DST"
   fi
 done
 
-rsync --archive --keep-dirlinks -- "$SRC/config.d/" ~/.config/
-rsync --archive --keep-dirlinks -- "$SRC/local/" ~/.local/
-rsync --archive --keep-dirlinks -- "$SRC/local.d/" ~/.local/
+"${RSYNC[@]}" --keep-dirlinks -- "$SRC/config.d/" ~/.config/
+"${RSYNC[@]}" --keep-dirlinks -- "$SRC/local/" ~/.local/
+"${RSYNC[@]}" --keep-dirlinks -- "$SRC/local.d/" ~/.local/
