@@ -6,7 +6,7 @@ SRC="$(realpath -- "$1")"
 
 ZOUT="$SRC/config/zsh"
 BIN_LINK=~/.cache/helix-rt/more/bin-link.sh
-RSYNC=(rsync --archive --no-perms --executability --insecure-links --remote-option=--insecure-links)
+RSYNC=(rsync --archive --no-perms --executability --insecure-links)
 
 case "$OSTYPE" in
 darwin*)
