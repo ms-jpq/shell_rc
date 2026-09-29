@@ -58,7 +58,7 @@ RSY=(
   --recursive
   --keep-dirlinks
   --links
-  --perms
+  --executability
   --times
   --rsh "$RSH"
   --
