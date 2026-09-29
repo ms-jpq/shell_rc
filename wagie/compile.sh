@@ -31,7 +31,7 @@ done
 
 SNIPS_OUT="$CACHE/helix-rt/nvim/pack/opt/snips"
 mkdir -p -- "$SNIPS_OUT"
-rsync --archive --exclude='.git' -- "$SNIPS/" "$SNIPS_OUT/"
+rsync --archive --no-perms --executability --exclude='.git' -- "$SNIPS/" "$SNIPS_OUT/"
 
 COPIES=(
   bin
