@@ -1,5 +1,4 @@
 # + patat
-# + rsync
 # + vhs
 + aerc
 + aha
@@ -99,6 +98,7 @@
 + rem
 + ripgrep
 + rlwrap
++ rsync
 + sad
 + senpai
 + sevenzip
