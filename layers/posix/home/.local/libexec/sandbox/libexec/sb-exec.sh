@@ -24,11 +24,11 @@ while (($#)); do
     DIRS+=("${1#*=}")
     shift -- 1
     ;;
-  -f | --file)
+  -f | --path)
     FILES+=("$2")
     shift -- 2
     ;;
-  --file=*)
+  --path=*)
     FILES+=("${1#*=}")
     shift -- 1
     ;;

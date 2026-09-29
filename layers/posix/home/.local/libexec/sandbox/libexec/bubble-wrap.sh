@@ -3,7 +3,7 @@
 set -o pipefail
 
 OPTS='a,n,d:,f:'
-LONG_OPTS='auth,network,dir:,file:'
+LONG_OPTS='auth,network,dir:,path:'
 GO="$(getopt --options="$OPTS" --longoptions="$LONG_OPTS" --name="$0" -- "$@")"
 eval -- set -- "$GO"
 
@@ -25,7 +25,7 @@ while true; do
     DIRS+=("$2")
     shift -- 2
     ;;
-  -f | --file)
+  -f | --path)
     FILES+=("$2")
     shift -- 2
     ;;
