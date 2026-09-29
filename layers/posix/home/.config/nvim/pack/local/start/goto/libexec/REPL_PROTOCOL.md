@@ -4,7 +4,7 @@
 
 - The response should land _inline in the document_ as well as in the chat.
 
-- Reply to every queued REPL instruction individually, inline at its location and in the chat.
+- Reply to every queued `REPL` instruction individually, inline at its location and in the chat.
 
   - A newer instruction does not replace an unanswered one.
 
