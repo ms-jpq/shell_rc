@@ -99,6 +99,7 @@
 + ripgrep
 + rlwrap
 + rsync
++ s6
 + sad
 + senpai
 + sevenzip

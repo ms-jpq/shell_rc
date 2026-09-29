@@ -85,6 +85,7 @@
 + rs
 + rsync
 + run-one
++ s6
 + sad
 + sl
 + socat
