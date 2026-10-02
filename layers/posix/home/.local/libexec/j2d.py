@@ -2,6 +2,8 @@
 
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
+from contextlib import suppress
+from itertools import count
 from json import dumps, loads
 from os import altsep, fsencode
 from os import name as _os
@@ -48,8 +50,7 @@ match _os:
             return len(fsencode(value))
 
         def _name(key: str) -> str:
-            name = key.translate(_ESCAPES)
-            match name:
+            match (name := key.translate(_ESCAPES)):
                 case "":
                     return "%"
                 case "." | "..":
@@ -79,41 +80,84 @@ def _fits(dst: Path, *, name_max: int, path_max: int) -> bool:
     )
 
 
-def _write(
+def _candidates(dst: Path) -> Iterator[Path]:
+    for index in count():
+        match index:
+            case 0:
+                yield dst
+            case 1:
+                yield dst.with_name(f"{dst.name}.~")
+            case _:
+                yield dst.with_name(f"{dst.name}.~{index}")
+
+
+def _expand(
     value: object,
     *,
     dst: Path,
-    leaf: Path,
     depth: int | None,
     name_max: int,
     path_max: int,
-    root: bool = False,
-) -> None:
-    expand = (
+) -> bool:
+    suffix = f".~{len(value)}" if isinstance(value, dict) and len(value) > 1 else ""
+    return (
         isinstance(value, (dict, list))
         and depth != 0
         and all(
-            _fits(dst / (name + ".json"), name_max=name_max, path_max=path_max)
+            _fits(dst / (name + suffix + ".json"), name_max=name_max, path_max=path_max)
             for name, _ in _children(value)
         )
     )
-    if expand:
-        if not root:
-            dst.mkdir()
-        for name, child in _children(value):
-            _write(
+
+
+def _walk(
+    value: object,
+    *,
+    dst: Path,
+    depth: int | None,
+    name_max: int,
+    path_max: int,
+) -> Iterator[tuple[Path, object]]:
+    depth = None if depth is None else depth - 1
+    for name, child in _children(value):
+        for candidate in _candidates(dst / name):
+            directory = _expand(
                 child,
-                dst=dst / name,
-                leaf=dst / (name + ".json"),
-                depth=None if depth is None else depth - 1,
+                dst=candidate,
+                depth=depth,
                 name_max=name_max,
                 path_max=path_max,
             )
-    else:
-        with leaf.open(mode="x", encoding="utf-8") as stream:
-            stream.write(
-                dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
+            if not directory:
+                break
+            with suppress(FileExistsError):
+                candidate.mkdir()
+                break
+        else:
+            assert False
+        if directory:
+            yield from _walk(
+                child,
+                dst=candidate,
+                depth=depth,
+                name_max=name_max,
+                path_max=path_max,
             )
+        else:
+            yield candidate, child
+
+
+def _write(value: object, *, dst: Path) -> None:
+    for candidate in _candidates(dst):
+        leaf = candidate.with_name(candidate.name + ".json")
+        with suppress(FileExistsError):
+            stream = leaf.open(mode="x", encoding="utf-8")
+            break
+    else:
+        assert False
+
+    with stream:
+        stream.write(dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
 
 
 def _parse_args() -> Namespace:
@@ -133,15 +177,23 @@ def _main() -> None:
     name_max, path_max = _limits(dst)
 
     dst.mkdir()
-    _write(
+    if _expand(
         value,
         dst=dst,
-        leaf=dst / "-.json",
         depth=args.depth,
         name_max=name_max,
         path_max=path_max,
-        root=True,
-    )
+    ):
+        for child_dst, child in _walk(
+            value,
+            dst=dst,
+            depth=args.depth,
+            name_max=name_max,
+            path_max=path_max,
+        ):
+            _write(child, dst=child_dst)
+    else:
+        _write(value, dst=dst / "-")
 
 
 _main()
