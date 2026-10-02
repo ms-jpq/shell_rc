@@ -5,9 +5,10 @@ from http import HTTPStatus
 from http.server import CGIHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import PurePosixPath
 from posixpath import normpath, sep
+from signal import Signals
 from socket import IPPROTO_IPV6, IPV6_V6ONLY, AddressFamily, getfqdn
 from socketserver import TCPServer
-from sys import stderr
+from sys import exit, stderr
 from typing import Any
 from urllib.parse import urlsplit
 from webbrowser import open
@@ -70,9 +71,15 @@ class _Server(ThreadingHTTPServer):
         self.server_port = server_port
 
 
-with suppress(KeyboardInterrupt):
+def _main() -> None:
     srv = _Server(("", 0), _Handler)
     addr = f"http://{srv.server_name}:{srv.server_port}"
     open(addr)
     print(addr, file=stderr)
     srv.serve_forever()
+
+
+with suppress(KeyboardInterrupt):
+    exit(_main())
+
+exit(128 + Signals.SIGINT)

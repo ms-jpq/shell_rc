@@ -22,6 +22,7 @@ from logging import INFO, basicConfig, captureWarnings, getLogger
 from os import environ, linesep
 from os.path import normcase, sep
 from pathlib import Path
+from signal import Signals
 from sys import exit
 from typing import MutableSequence, MutableSet, Sequence
 from unicodedata import normalize
@@ -231,8 +232,8 @@ def _main() -> None:
         tuple(ex.map(proc, accounts))
 
 
-try:
-    if not _FLAG in environ:
-        _main()
-except KeyboardInterrupt:
-    exit(130)
+if _FLAG not in environ:
+    with suppress(KeyboardInterrupt):
+        exit(_main())
+
+    exit(128 + Signals.SIGINT)

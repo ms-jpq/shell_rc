@@ -9,6 +9,7 @@ from os import altsep, fsencode
 from os import name as _os
 from os import sep
 from pathlib import Path, PureWindowsPath
+from signal import Signals
 from sys import exit, stdin
 
 match _os:
@@ -166,7 +167,10 @@ def _parse_args() -> Namespace:
     return args
 
 
-def _main() -> None:
+def _main() -> int:
+    if stdin.isatty():
+        return 2
+
     args = _parse_args()
     value = loads(stdin.read())
     dst = args.dst.absolute()
@@ -191,11 +195,10 @@ def _main() -> None:
     else:
         _write(value, dst=dst / "-")
 
+    return 0
 
-if stdin.isatty():
-    exit(2)
 
 with suppress(KeyboardInterrupt):
-    _main()
+    exit(_main())
 
-exit(130)
+exit(128 + Signals.SIGINT)

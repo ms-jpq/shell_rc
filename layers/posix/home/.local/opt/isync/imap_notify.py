@@ -10,6 +10,7 @@ from itertools import islice
 from logging import INFO, basicConfig, captureWarnings, getLogger
 from os import linesep
 from pathlib import Path
+from signal import Signals
 from socket import gaierror
 from string import Template
 from subprocess import STDOUT, CalledProcessError, check_output
@@ -199,7 +200,7 @@ def main() -> None:
         raise
 
 
-try:
-    main()
-except KeyboardInterrupt:
-    exit(130)
+with suppress(KeyboardInterrupt):
+    exit(main())
+
+exit(128 + Signals.SIGINT)

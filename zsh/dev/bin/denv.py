@@ -8,7 +8,7 @@ from collections.abc import (
     Mapping,
     MutableMapping,
 )
-from contextlib import contextmanager, nullcontext
+from contextlib import contextmanager, nullcontext, suppress
 from enum import Enum
 from itertools import chain
 from json import dumps
@@ -18,6 +18,7 @@ from pathlib import Path, PurePath
 from re import RegexFlag, compile
 from shlex import quote, split
 from shutil import which
+from signal import Signals
 from string import Template
 from sys import exit, stderr, stdout
 
@@ -138,7 +139,7 @@ def main() -> None:
         raise OSError(args.arg0)
 
 
-try:
-    main()
-except KeyboardInterrupt:
-    exit(130)
+with suppress(KeyboardInterrupt):
+    exit(main())
+
+exit(128 + Signals.SIGINT)
