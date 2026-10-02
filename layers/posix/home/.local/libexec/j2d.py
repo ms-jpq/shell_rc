@@ -9,7 +9,7 @@ from os import altsep, fsencode
 from os import name as _os
 from os import sep
 from pathlib import Path, PureWindowsPath
-from sys import stdin
+from sys import exit, stdin
 
 match _os:
     case "nt":
@@ -192,4 +192,10 @@ def _main() -> None:
         _write(value, dst=dst / "-")
 
 
-_main()
+if stdin.isatty():
+    exit(2)
+
+with suppress(KeyboardInterrupt):
+    _main()
+
+exit(130)
