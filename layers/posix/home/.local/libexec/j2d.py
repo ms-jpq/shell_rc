@@ -125,16 +125,6 @@ def _walk(
     path_max: int,
 ) -> Iterator[tuple[Path, object]]:
     yield dst / "-", value
-
-    if not _expand(
-        value,
-        dst=dst,
-        depth=depth,
-        name_max=name_max,
-        path_max=path_max,
-    ):
-        return
-
     depth = None if depth is None else depth - 1
     for name, child in _children(value):
         for candidate in _candidates(dst / name):
@@ -188,14 +178,23 @@ def _main() -> int:
     dst.mkdir(parents=True, exist_ok=True)
     name_max, path_max = _limits(dst)
 
-    for child_dst, child in _walk(
+    if _expand(
         value,
         dst=dst,
         depth=args.depth,
         name_max=name_max,
         path_max=path_max,
     ):
-        _write(child, dst=child_dst)
+        for child_dst, child in _walk(
+            value,
+            dst=dst,
+            depth=args.depth,
+            name_max=name_max,
+            path_max=path_max,
+        ):
+            _write(child, dst=child_dst)
+    else:
+        _write(value, dst=dst / "-")
 
     return 0
 
