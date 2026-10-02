@@ -17,6 +17,7 @@ match _os:
             code: f"%{code:02X}"
             for code in (*range(32), *map(ord, f'%<>:"|?*{sep}{altsep}'))
         }
+        _TRAILING_ESCAPES = {**_ESCAPES, **str.maketrans({" ": "%20", ".": "%2E"})}
 
         def _limits(dst: Path) -> tuple[int, int]:
             return 255, 248
@@ -25,14 +26,12 @@ match _os:
             return len(value.encode("utf-16-le", errors="surrogatepass")) // 2
 
         def _name(key: str) -> str:
-            name = key.translate(_ESCAPES)
-            end = len(name.rstrip(" ."))
-            trailing = name[end:].replace(" ", "%20").replace(".", "%2E")
-            name = name[:end] + trailing
+            end = len(key.rstrip(" ."))
+            name = key[:end].translate(_ESCAPES) + key[end:].translate(
+                _TRAILING_ESCAPES
+            )
             if PureWindowsPath(name).is_reserved():
                 name = f"%{ord(name[0]):02X}" + name[1:]
-            if name.lower().endswith(".json"):
-                return name[:-5] + "%2E" + name[-4:]
             return name or "%"
 
     case _:
@@ -56,8 +55,6 @@ match _os:
                 case "." | "..":
                     return name.replace(".", "%2E")
                 case _:
-                    if name.lower().endswith(".json"):
-                        return name[:-5] + "%2E" + name[-4:]
                     return name
 
 
@@ -99,15 +96,20 @@ def _expand(
     name_max: int,
     path_max: int,
 ) -> bool:
+    if depth == 0 or not isinstance(value, (dict, list)):
+        return False
     suffix = f".~{len(value)}" if isinstance(value, dict) and len(value) > 1 else ""
-    return (
-        isinstance(value, (dict, list))
-        and depth != 0
-        and all(
-            _fits(dst / (name + suffix + ".json"), name_max=name_max, path_max=path_max)
-            for name, _ in _children(value)
-        )
+    return all(
+        _fits(dst / (name + suffix + ".json"), name_max=name_max, path_max=path_max)
+        for name, _ in _children(value)
     )
+
+
+def _mkdir(dst: Path) -> bool:
+    with suppress(FileExistsError):
+        dst.mkdir()
+        return True
+    return False
 
 
 def _walk(
@@ -121,30 +123,24 @@ def _walk(
     depth = None if depth is None else depth - 1
     for name, child in _children(value):
         for candidate in _candidates(dst / name):
-            directory = _expand(
+            if not _expand(
                 child,
                 dst=candidate,
                 depth=depth,
                 name_max=name_max,
                 path_max=path_max,
-            )
-            if not directory:
+            ):
+                yield candidate, child
                 break
-            with suppress(FileExistsError):
-                candidate.mkdir()
+            if _mkdir(candidate):
+                yield from _walk(
+                    child,
+                    dst=candidate,
+                    depth=depth,
+                    name_max=name_max,
+                    path_max=path_max,
+                )
                 break
-        else:
-            assert False
-        if directory:
-            yield from _walk(
-                child,
-                dst=candidate,
-                depth=depth,
-                name_max=name_max,
-                path_max=path_max,
-            )
-        else:
-            yield candidate, child
 
 
 def _write(value: object, *, dst: Path) -> None:
