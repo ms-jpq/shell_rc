@@ -99,7 +99,10 @@ def _expand(
 ) -> bool:
     if depth == 0 or not isinstance(value, (dict, list)):
         return False
-    suffix = f".~{len(value)}" if isinstance(value, dict) and len(value) > 1 else ""
+    if not _fits(dst / "-.json", name_max=name_max, path_max=path_max):
+        return False
+
+    suffix = f".~{len(value)}" if isinstance(value, dict) and value else ""
     return all(
         _fits(dst / (name + suffix + ".json"), name_max=name_max, path_max=path_max)
         for name, _ in _children(value)
@@ -121,6 +124,17 @@ def _walk(
     name_max: int,
     path_max: int,
 ) -> Iterator[tuple[Path, object]]:
+    yield dst / "-", value
+
+    if not _expand(
+        value,
+        dst=dst,
+        depth=depth,
+        name_max=name_max,
+        path_max=path_max,
+    ):
+        return
+
     depth = None if depth is None else depth - 1
     for name, child in _children(value):
         for candidate in _candidates(dst / name):
@@ -171,26 +185,17 @@ def _main() -> int:
     args = _parse_args()
     value = loads(stdin.read())
     dst = args.dst.absolute()
+    dst.mkdir(parents=True, exist_ok=True)
     name_max, path_max = _limits(dst)
 
-    dst.mkdir()
-    if _expand(
+    for child_dst, child in _walk(
         value,
         dst=dst,
         depth=args.depth,
         name_max=name_max,
         path_max=path_max,
     ):
-        for child_dst, child in _walk(
-            value,
-            dst=dst,
-            depth=args.depth,
-            name_max=name_max,
-            path_max=path_max,
-        ):
-            _write(child, dst=child_dst)
-    else:
-        _write(value, dst=dst / "-")
+        _write(child, dst=child_dst)
 
     return 0
 
