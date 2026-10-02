@@ -4,8 +4,8 @@ from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
 from contextlib import suppress
 from itertools import count
-from json import dumps, loads
-from os import altsep, fsencode
+from json import dump, loads
+from os import altsep, fsencode, linesep
 from os import name as _os
 from os import sep
 from pathlib import Path, PureWindowsPath
@@ -148,13 +148,10 @@ def _write(value: object, *, dst: Path) -> None:
     for candidate in _candidates(dst):
         leaf = candidate.with_name(candidate.name + ".json")
         with suppress(FileExistsError):
-            stream = leaf.open(mode="x", encoding="utf-8")
+            with leaf.open(mode="x", encoding="utf-8", newline="") as stream:
+                dump(value, fp=stream, ensure_ascii=False, sort_keys=True, indent=2)
+                stream.write(linesep)
             break
-    else:
-        assert False
-
-    with stream:
-        stream.write(dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
 
 
 def _parse_args() -> Namespace:
