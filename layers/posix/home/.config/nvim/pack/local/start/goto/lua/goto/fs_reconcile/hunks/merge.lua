@@ -169,6 +169,25 @@ local pure_insertions = function(component)
   return vim.iter(component.local_patches):all(insertion) and vim.iter(component.remote_patches):all(insertion)
 end
 
+---@param left string[]
+---@param right string[]
+---@return string[]
+local combine_insertions = function(left, right)
+  local shorter, longer = left, right
+  if #shorter > #longer then
+    shorter, longer = longer, shorter
+  end
+  local prefix, suffix = true, true
+  for index, record in ipairs(shorter) do
+    prefix = prefix and record == longer[index]
+    suffix = suffix and record == longer[#longer - #shorter + index]
+    if not prefix and not suffix then
+      return vim.list_extend(left, right)
+    end
+  end
+  return longer
+end
+
 ---@param component FsReconcileHunkComponent
 ---@return FsReconcileHunk
 local merge_insertions = function(component)
@@ -180,11 +199,8 @@ local merge_insertions = function(component)
   for _, hunk in ipairs(component.remote_patches) do
     vim.list_extend(remote_records, hunk.records)
   end
-  if not vim.deep_equal(local_records, remote_records) then
-    vim.list_extend(local_records, remote_records)
-  end
   local start, finish = bounds(component)
-  return replacement(start, finish, local_records)
+  return replacement(start, finish, combine_insertions(local_records, remote_records))
 end
 
 ---@param base_records string[]
@@ -251,6 +267,13 @@ M.resolve = function(base, local_text, remote_text)
   elseif local_text == base then
     return remote_text
   elseif base == "" then
+    local shorter, longer = local_text, remote_text
+    if #shorter > #longer then
+      shorter, longer = longer, shorter
+    end
+    if vim.startswith(longer, shorter) or vim.endswith(longer, lib.LF .. shorter) then
+      return longer
+    end
     return local_text .. remote_text
   elseif local_text == "" or remote_text == "" then
     return local_text
