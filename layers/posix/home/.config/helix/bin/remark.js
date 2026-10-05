@@ -10,7 +10,8 @@ import { pipeline } from "node:stream/promises"
 import { pathToFileURL } from "node:url"
 
 /**
- * @import { Root, Paragraph } from "mdast"
+ * @import { Paragraph, Root } from "mdast"
+ * @import { Options } from "mdast-util-to-markdown"
  * @import { Plugin } from "unified"
  */
 
@@ -31,22 +32,30 @@ const _import = (specifier) =>
 
 /**
  * @type {[
- *   { remark?: typeof import("remark").remark },
- *   { default?: typeof import("remark-frontmatter").default },
- *   { visit?: typeof import("unist-util-visit").visit },
+ *   { defaultHandlers: typeof import("mdast-util-to-markdown").defaultHandlers },
+ *   { remark: typeof import("remark").remark },
+ *   { default: typeof import("remark-frontmatter").default },
+ *   { visit: typeof import("unist-util-visit").visit },
  * ]}
  */
-const [{ remark }, { default: frontmatter }, { visit }] = await (async () => {
-  try {
-    return await Promise.all([
-      _import("remark"),
-      _import("remark-frontmatter"),
-      _import("unist-util-visit"),
-    ])
-  } catch {
-    return [{}, {}, {}]
-  }
-})()
+const [{ defaultHandlers }, { remark }, { default: frontmatter }, { visit }] =
+  await (async () => {
+    try {
+      return await Promise.all([
+        _import("mdast-util-to-markdown"),
+        _import("remark"),
+        _import("remark-frontmatter"),
+        _import("unist-util-visit"),
+      ])
+    } catch {
+      await pipeline(stdin, stdout)
+      exit(0)
+    }
+  })()
+
+const LINE_ENDING = /\r\n|\n|\r/
+const PIPE_PREFIX = /^\| ?/
+const QUOTE_PREFIX = /^(?:[ \t]*>[ \t]?)+/
 
 /**
  * @param {Paragraph} para
@@ -97,32 +106,56 @@ const xformParagraph = () => (tree) => {
   })
 }
 
-/** @type {Plugin<[], Root>} */
-const xformMarkdown = function () {
-  const processor = this
-  return (tree) =>
-    visit(tree, "code", (node) => {
-      if (node.lang === "markdown") {
-        node.value = processor
-          .processSync(node.value)
-          .toString()
-          .replace(/\n$/, "")
-      }
-    })
+/** @type {Plugin<[(markdown: string) => string], Root>} */
+const xformMarkdown = (format) => (tree) =>
+  visit(tree, "code", (node) => {
+    if (node.lang === "markdown") {
+      node.value = format(node.value).replace(/\n$/, "")
+    }
+  })
+
+/** @param {string} source @returns {string} */
+const format = (source) => {
+  /** @type {Options} */
+  const options = {
+    handlers: {
+      blockquote(node, parent, state, info) {
+        const [first] = node.children
+        const leading =
+          first?.type === "paragraph" ? first.children.at(0) : undefined
+
+        if (leading?.type !== "text" || !leading.value.startsWith("|")) {
+          return defaultHandlers.blockquote(node, parent, state, info)
+        }
+
+        const lines = source
+          .slice(node.position.start.offset, node.position.end.offset)
+          .split(LINE_ENDING)
+          .map((line) => line.replace(QUOTE_PREFIX, ""))
+
+        if (!lines.every((line) => !line || line.startsWith("|"))) {
+          return defaultHandlers.blockquote(node, parent, state, info)
+        }
+
+        const markdown = lines
+          .map((line) => line.replace(PIPE_PREFIX, ""))
+          .join("\n")
+
+        return state.indentLines(
+          format(markdown).replace(/\n$/, ""),
+          (line, _, blank) => (blank ? "> |" : `> | ${line}`),
+        )
+      },
+    },
+  }
+  return remark()
+    .use(frontmatter, ["yaml", "toml"])
+    .use(xformList)
+    .use(xformParagraph)
+    .use(xformMarkdown, format)
+    .data("settings", options)
+    .processSync(source)
+    .toString()
 }
 
-if (!remark || !frontmatter || !visit) {
-  await pipeline(stdin, stdout)
-  exit(0)
-}
-
-const src = await text(stdin)
-
-const out = await remark()
-  .use(frontmatter, ["yaml", "toml"])
-  .use(xformList)
-  .use(xformParagraph)
-  .use(xformMarkdown)
-  .process(src)
-
-stdout.write(out.toString())
+stdout.write(format(await text(stdin)))
