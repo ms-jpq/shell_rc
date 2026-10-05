@@ -51,9 +51,8 @@ const [{ remark }, { default: frontmatter }, { visit }] = await (async () => {
 })()
 
 const LINE_ENDING = /\r\n|\n|\r/
-const PIPE_PREFIX = /^\| ?/
+const PREFIX_SPACE = /^[ \t]/
 const QUOTE_PREFIX = /^(?:[ \t]*>[ \t]?)+/
-const RESPONSE_PREFIX = /^>>>[ \t]?/
 
 /**
  * @param {Paragraph} para
@@ -107,18 +106,13 @@ const xformParagraph = () => (tree) => {
 /**
  * @param {Blockquote} node
  * @param {{ source: string, response: boolean }} options
- * @returns {{ prefix: string, markdown?: string, response?: boolean }}
+ * @returns {{ prefix: string, source: string }}
  */
 const quoteContent = (node, { source, response }) => {
   const raw = source.slice(node.position.start.offset, node.position.end.offset)
   const lines = raw.split(LINE_ENDING)
   if (response && raw.startsWith(">>>")) {
-    return {
-      prefix: ">>>",
-      markdown: lines
-        .map((line) => line.replace(RESPONSE_PREFIX, ""))
-        .join("\n"),
-    }
+    return { prefix: ">>>", source: raw }
   }
 
   const [first] = node.children
@@ -128,14 +122,32 @@ const quoteContent = (node, { source, response }) => {
     if (contents.every((line) => !line || line.startsWith("|"))) {
       return {
         prefix: "> |",
-        markdown: contents
-          .map((line) => line.replace(PIPE_PREFIX, ""))
-          .join("\n"),
-        response: true,
+        source: contents.map((line) => `> ${line || "|"}`).join("\n"),
       }
     }
   }
-  return { prefix: ">" }
+  return { prefix: ">", source: raw }
+}
+
+/**
+ * @param {string} source
+ * @param {{ prefix: string, format: (markdown: string) => string }} options
+ * @returns {string}
+ */
+const formatPrefixed = (source, { prefix, format }) => {
+  const markdown = source
+    .split(LINE_ENDING)
+    .map((line) =>
+      prefix && line.startsWith(prefix)
+        ? line.slice(prefix.length).replace(PREFIX_SPACE, "")
+        : line,
+    )
+    .join("\n")
+  return format(markdown)
+    .replace(/\n$/, "")
+    .split(LINE_ENDING)
+    .map((line) => prefix + (prefix && line ? " " : "") + line)
+    .join("\n")
 }
 
 /** @type {Plugin<[(markdown: string) => string], Root>} */
@@ -156,22 +168,21 @@ const format = (source, { response = false } = {}) => {
   const options = {
     handlers: {
       blockquote(node, _, state, info) {
-        const {
-          prefix,
-          markdown,
-          response: nestedResponse,
-        } = quoteContent(node, { source, response })
+        const { prefix, source: content } = quoteContent(node, {
+          source,
+          response,
+        })
         const leave = state.enter("blockquote")
         const tracker = state.createTracker(info)
         tracker.move(`${prefix} `)
         tracker.shift(prefix.length + 1)
-        const content =
-          markdown === undefined
-            ? state.containerFlow(node, tracker.current())
-            : format(markdown, { response: nestedResponse }).replace(/\n$/, "")
-        const quoted = state.indentLines(content, (line, _, blank) =>
-          blank ? prefix : `${prefix} ${line}`,
-        )
+        const quoted = formatPrefixed(content, {
+          prefix,
+          format: (markdown) =>
+            prefix === ">"
+              ? state.containerFlow(node, tracker.current())
+              : format(markdown, { response: prefix === "> |" }),
+        })
         leave()
         return quoted
       },
