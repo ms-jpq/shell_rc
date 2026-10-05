@@ -11,8 +11,12 @@ _comp_init() {
   f=("$dump"(Nm-6))
   if (($#f)); then
     f=(-C)
+  else
+    mkdir -p -- "${dump:h}"
   fi
-  compinit -i "${f[@]}" -d "$dump"
+  if compinit -i "${f[@]}" -d "$dump" && ((!$#f)); then
+    touch -c -- "$dump"
+  fi
   bashcompinit
 }
 
