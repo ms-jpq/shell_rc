@@ -73,25 +73,25 @@ const PREFIXES = [
  * @returns {Paragraph[]}
  */
 const splitParagraph = (para) => {
+  /** @type {Paragraph["children"]} */
+  let current = []
   /** @type {Paragraph["children"][]} */
-  const groups = [[]]
-  for (const [i, child] of para.children.entries()) {
-    const prev = para.children[i - 1]
+  const groups = [current]
+  for (const child of para.children) {
+    const prev = current.at(-1)
     if (
       child.type === "strong" &&
       prev?.type === "text" &&
       TRAILING_NEWLINE.test(prev.value)
     ) {
-      const tail = groups.at(-1)?.at(-1)
-      if (tail?.type === "text") {
-        tail.value = tail.value.replace(TRAILING_NEWLINES, "")
-        if (!tail.value) {
-          groups.at(-1)?.pop()
-        }
+      prev.value = prev.value.replace(TRAILING_NEWLINES, "")
+      if (!prev.value) {
+        current.pop()
       }
-      groups.push([])
+      current = []
+      groups.push(current)
     }
-    groups.at(-1)?.push(child)
+    current.push(child)
   }
   return groups.length === 1
     ? [para]
@@ -208,18 +208,15 @@ const format = (input, { context = "quote", definitions = "" } = {}) => {
   }
   /** @type {Plugin<[], Root>} */
   const xformContent = () => (tree) => {
-    /** @type {string[]} */
-    const local = []
-    visit(tree, "definition", (node) => {
-      ok(node.position?.start.offset !== undefined)
-      if (node.position.start.offset < input.length) {
-        local.push(processor.stringify({ type: "root", children: [node] }))
-      }
-    })
-    definitions = [...local, definitions].join("\n")
     tree.children = tree.children.filter(
       (node) => (node.position?.start.offset ?? input.length) < input.length,
     )
+    /** @type {string[]} */
+    const local = []
+    visit(tree, "definition", (node) => {
+      local.push(processor.stringify({ type: "root", children: [node] }))
+    })
+    definitions = [...local, definitions].join("\n")
     visit(tree, "code", (node) => {
       if (MARKDOWN.has(node.lang ?? "")) {
         node.value = format(node.value).replace(TRAILING_NEWLINE, "")
