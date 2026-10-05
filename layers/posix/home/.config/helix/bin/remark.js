@@ -122,15 +122,8 @@ const xformParagraph = () => (tree) => {
   })
 }
 
-/**
- * @typedef {{ prefix: string, next: string, lines: string[] }} PrefixBlock
- * @param {Blockquote} node
- * @param {{ source: string, context: string }} options
- * @returns {PrefixBlock[]}
- */
-const quoteBlocks = (node, { source, context }) => {
-  ok(node.position)
-  const { start, end } = node.position
+/** @param {Blockquote} node @returns {Set<number>} */
+const literalLines = (node) => {
   const literal = new Set()
   visit(node, (child) => {
     if (
@@ -151,8 +144,26 @@ const quoteBlocks = (node, { source, context }) => {
       literal.add(line)
     }
   })
+  return literal
+}
+
+/**
+ * @typedef {{ prefix: string, next: string, lines: string[] }} PrefixBlock
+ * @param {Blockquote} node
+ * @param {{ source: string, context: string }} options
+ * @returns {PrefixBlock[]}
+ */
+const quoteBlocks = (node, { source, context }) => {
+  ok(node.position)
+  const { start, end } = node.position
+  const literal = literalLines(node)
+  const rules = PREFIXES.filter(
+    (rule) => !rule.context || rule.context === context,
+  )
   /** @type {PrefixBlock[]} */
   const blocks = []
+  /** @type {PrefixBlock | undefined} */
+  let current
   for (const [index, raw] of source
     .slice(start.offset, end.offset)
     .split(LINE_ENDING)
@@ -160,24 +171,26 @@ const quoteBlocks = (node, { source, context }) => {
     const line = index
       ? raw.replace(INDENT, (indent) => indent.slice(start.column - 1))
       : raw
-    const previous = blocks.at(-1)
-    const rule = PREFIXES.find(
+    const rule = rules.find(
       (rule) =>
-        (!rule.context || rule.context === context) &&
         (!literal.has(start.line + index) || rule.prefix === ">") &&
         line.startsWith(rule.spelling),
     )
     const content = rule
       ? line.slice(rule.spelling.length).replace(SPACE, "")
       : line
-    const prefix = content.trim()
-      ? (rule?.prefix ?? previous?.prefix ?? ">")
-      : (previous?.prefix ?? rule?.prefix ?? ">")
-    if (!previous || previous.prefix !== prefix) {
-      blocks.push({ prefix, next: rule?.next ?? "quote", lines: [content] })
-    } else {
-      previous.lines.push(content)
+    if (
+      !current ||
+      (content.trim() && rule && rule.prefix !== current.prefix)
+    ) {
+      current = {
+        prefix: rule?.prefix ?? ">",
+        next: rule?.next ?? "quote",
+        lines: [],
+      }
+      blocks.push(current)
     }
+    current.lines.push(content)
   }
   return blocks
 }
@@ -190,6 +203,7 @@ const quoteBlocks = (node, { source, context }) => {
 const format = (input, { context = "quote", definitions = "" } = {}) => {
   const source = definitions ? input + "\n\n" + definitions : input
   const processor = remark().use(frontmatter, ["yaml", "toml"])
+
   /** @type {Options} */
   const options = {
     handlers: {
