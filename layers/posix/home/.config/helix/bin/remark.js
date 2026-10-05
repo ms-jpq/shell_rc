@@ -1,6 +1,7 @@
 #!/usr/bin/env -S -- node
 "use strict"
 
+import { ok } from "node:assert/strict"
 import { createRequire } from "node:module"
 import { homedir } from "node:os"
 import { join } from "node:path"
@@ -27,6 +28,7 @@ const require = createRequire(
   ),
 )
 
+/** @param {string} specifier */
 const _import = (specifier) =>
   import(pathToFileURL(require.resolve(specifier)).href)
 
@@ -51,53 +53,20 @@ const [{ remark }, { default: frontmatter }, { visit }] = await (async () => {
 })()
 
 const LINE_ENDING = /\r\n|\n|\r/
-const PREFIX_SPACE = /^[ \t]/
-const QUOTE_PREFIX = /^(?:[ \t]*>[ \t]?)+/
-const QUOTE_MARKER = /^>[ \t]?/
-
-/** @param {string} source @returns {string} */
-const separateQuotes = (source) => {
-  const lines = source.split(LINE_ENDING)
-  const tree = remark().use(frontmatter, ["yaml", "toml"]).parse(source)
-  const literal = new Set()
-  const boundaries = new Map()
-  visit(tree, "code", (node) => {
-    for (
-      let line = node.position.start.line - 1;
-      line < node.position.end.line;
-      line++
-    ) {
-      literal.add(line)
-    }
-  })
-  visit(tree, "blockquote", (node) => {
-    const { start, end } = node.position
-    let previous
-    for (let index = start.line - 1; index < end.line; index++) {
-      if (literal.has(index)) {
-        continue
-      }
-      const line = lines[index].slice(start.column - 1)
-      if (!QUOTE_MARKER.test(line)) {
-        continue
-      }
-      const content = line.replace(QUOTE_MARKER, "")
-      if (!content.trim()) {
-        continue
-      }
-      const prefix = content.startsWith("|")
-      if (previous !== undefined && previous !== prefix) {
-        boundaries.set(index, lines[index].slice(0, start.column - 1).trimEnd())
-      }
-      previous = prefix
-    }
-  })
-  return lines
-    .flatMap((line, index) =>
-      boundaries.has(index) ? [boundaries.get(index), line] : [line],
-    )
-    .join("\n")
-}
+const TRAILING_NEWLINE = /\n$/
+const TRAILING_NEWLINES = /\n+$/
+const SPACE = /^[ \t]/
+const INDENT = /^ */
+const MARKDOWN = new Set(["markdown", "md"])
+const PREFIXES = [
+  { prefix: ">>>", spellings: [">>>"], context: "reply", next: "quote" },
+  { prefix: "> |", spellings: ["> |", ">|", ">\t|"], next: "reply" },
+  { prefix: ">", spellings: [">"], next: "quote" },
+]
+  .flatMap(({ spellings, ...rule }) =>
+    spellings.map((spelling) => ({ ...rule, spelling })),
+  )
+  .sort((left, right) => right.spelling.length - left.spelling.length)
 
 /**
  * @param {Paragraph} para
@@ -106,14 +75,19 @@ const separateQuotes = (source) => {
 const splitParagraph = (para) => {
   /** @type {Paragraph["children"][]} */
   const groups = [[]]
-
   for (const [i, child] of para.children.entries()) {
     const prev = para.children[i - 1]
-    if (i > 0 && child.type === "strong" && /\n$/.test(prev?.value ?? "")) {
-      const tail = groups.at(-1).at(-1)
-      tail.value = tail.value.replace(/\n+$/, "")
-      if (!tail.value) {
-        groups.at(-1)?.pop()
+    if (
+      child.type === "strong" &&
+      prev?.type === "text" &&
+      TRAILING_NEWLINE.test(prev.value)
+    ) {
+      const tail = groups.at(-1)?.at(-1)
+      if (tail?.type === "text") {
+        tail.value = tail.value.replace(TRAILING_NEWLINES, "")
+        if (!tail.value) {
+          groups.at(-1)?.pop()
+        }
       }
       groups.push([])
     }
@@ -149,96 +123,113 @@ const xformParagraph = () => (tree) => {
 }
 
 /**
+ * @typedef {{ prefix: string, next: string, lines: string[] }} PrefixBlock
  * @param {Blockquote} node
- * @param {{ source: string, response: boolean }} options
- * @returns {{ prefix: string, source: string }}
+ * @param {{ source: string, context: string }} options
+ * @returns {PrefixBlock[]}
  */
-const quoteContent = (node, { source, response }) => {
-  const raw = source.slice(node.position.start.offset, node.position.end.offset)
-  const lines = raw.split(LINE_ENDING)
-  if (response && raw.startsWith(">>>")) {
-    return { prefix: ">>>", source: raw }
-  }
-
-  const [first] = node.children
-  const leading = first?.type === "paragraph" ? first.children.at(0) : undefined
-  if (leading?.type === "text" && leading.value.startsWith("|")) {
-    const contents = lines.map((line) => line.replace(QUOTE_PREFIX, ""))
-    if (contents.every((line) => !line || line.startsWith("|"))) {
-      return {
-        prefix: "> |",
-        source: contents.map((line) => `> ${line || "|"}`).join("\n"),
-      }
+const quoteBlocks = (node, { source, context }) => {
+  ok(node.position)
+  const { start, end } = node.position
+  const literal = new Set()
+  visit(node, (child) => {
+    if (
+      child !== node &&
+      ["blockquote", "paragraph", "heading"].includes(child.type)
+    ) {
+      return "skip"
     }
-  }
-  return { prefix: ">", source: raw }
-}
-
-/**
- * @param {string} source
- * @param {{ prefix: string, format: (markdown: string) => string }} options
- * @returns {string}
- */
-const formatPrefixed = (source, { prefix, format }) => {
-  const markdown = source
-    .split(LINE_ENDING)
-    .map((line) =>
-      prefix && line.startsWith(prefix)
-        ? line.slice(prefix.length).replace(PREFIX_SPACE, "")
-        : line,
-    )
-    .join("\n")
-  return format(markdown)
-    .replace(/\n$/, "")
-    .split(LINE_ENDING)
-    .map((line) => prefix + (prefix && line ? " " : "") + line)
-    .join("\n")
-}
-
-/** @type {Plugin<[(markdown: string) => string], Root>} */
-const xformMarkdown = (format) => (tree) =>
-  visit(tree, "code", (node) => {
-    if (node.lang === "markdown") {
-      node.value = format(node.value).replace(/\n$/, "")
+    if (child.type !== "code" && child.type !== "html") {
+      return
+    }
+    ok(child.position)
+    for (
+      let line = child.position.start.line;
+      line <= child.position.end.line;
+      line++
+    ) {
+      literal.add(line)
     }
   })
+  /** @type {PrefixBlock[]} */
+  const blocks = []
+  for (const [index, raw] of source
+    .slice(start.offset, end.offset)
+    .split(LINE_ENDING)
+    .entries()) {
+    const line = index
+      ? raw.replace(INDENT, (indent) => indent.slice(start.column - 1))
+      : raw
+    const previous = blocks.at(-1)
+    const rule = PREFIXES.find(
+      (rule) =>
+        (!rule.context || rule.context === context) &&
+        (!literal.has(start.line + index) || rule.prefix === ">") &&
+        line.startsWith(rule.spelling),
+    )
+    const content = rule
+      ? line.slice(rule.spelling.length).replace(SPACE, "")
+      : line
+    const prefix = content.trim()
+      ? (rule?.prefix ?? previous?.prefix ?? ">")
+      : (previous?.prefix ?? rule?.prefix ?? ">")
+    if (!previous || previous.prefix !== prefix) {
+      blocks.push({ prefix, next: rule?.next ?? "quote", lines: [content] })
+    } else {
+      previous.lines.push(content)
+    }
+  }
+  return blocks
+}
 
 /**
  * @param {string} input
- * @param {{ response?: boolean }} options
+ * @param {{ context?: string, definitions?: string }} options
  * @returns {string}
  */
-const format = (input, { response = false } = {}) => {
-  const source = separateQuotes(input)
+const format = (input, { context = "quote", definitions = "" } = {}) => {
+  const source = definitions ? input + "\n\n" + definitions : input
+  const processor = remark().use(frontmatter, ["yaml", "toml"])
   /** @type {Options} */
   const options = {
     handlers: {
-      blockquote(node, _, state, info) {
-        const { prefix, source: content } = quoteContent(node, {
-          source,
-          response,
-        })
-        const leave = state.enter("blockquote")
-        const tracker = state.createTracker(info)
-        tracker.move(`${prefix} `)
-        tracker.shift(prefix.length + 1)
-        const quoted = formatPrefixed(content, {
-          prefix,
-          format: (markdown) =>
-            prefix === ">"
-              ? state.containerFlow(node, tracker.current())
-              : format(markdown, { response: prefix === "> |" }),
-        })
-        leave()
-        return quoted
+      blockquote(node) {
+        return quoteBlocks(node, { source, context })
+          .map(({ prefix, next, lines }) =>
+            format(lines.join("\n"), { context: next, definitions })
+              .replace(TRAILING_NEWLINE, "")
+              .split(LINE_ENDING)
+              .map((line) => (line ? prefix + " " + line : prefix))
+              .join("\n"),
+          )
+          .join("\n\n")
       },
     },
   }
-  return remark()
-    .use(frontmatter, ["yaml", "toml"])
+  /** @type {Plugin<[], Root>} */
+  const xformContent = () => (tree) => {
+    /** @type {string[]} */
+    const local = []
+    visit(tree, "definition", (node) => {
+      ok(node.position?.start.offset !== undefined)
+      if (node.position.start.offset < input.length) {
+        local.push(processor.stringify({ type: "root", children: [node] }))
+      }
+    })
+    definitions = [...local, definitions].join("\n")
+    tree.children = tree.children.filter(
+      (node) => (node.position?.start.offset ?? input.length) < input.length,
+    )
+    visit(tree, "code", (node) => {
+      if (MARKDOWN.has(node.lang ?? "")) {
+        node.value = format(node.value).replace(TRAILING_NEWLINE, "")
+      }
+    })
+  }
+  return processor
+    .use(xformContent)
     .use(xformList)
     .use(xformParagraph)
-    .use(xformMarkdown, format)
     .data("settings", options)
     .processSync(source)
     .toString()
