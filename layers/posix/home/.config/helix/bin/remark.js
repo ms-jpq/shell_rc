@@ -10,7 +10,7 @@ import { pipeline } from "node:stream/promises"
 import { pathToFileURL } from "node:url"
 
 /**
- * @import { Paragraph, Root } from "mdast"
+ * @import { Blockquote, Paragraph, Root } from "mdast"
  * @import { Options } from "mdast-util-to-markdown"
  * @import { Plugin } from "unified"
  */
@@ -32,30 +32,28 @@ const _import = (specifier) =>
 
 /**
  * @type {[
- *   { defaultHandlers: typeof import("mdast-util-to-markdown").defaultHandlers },
  *   { remark: typeof import("remark").remark },
  *   { default: typeof import("remark-frontmatter").default },
  *   { visit: typeof import("unist-util-visit").visit },
  * ]}
  */
-const [{ defaultHandlers }, { remark }, { default: frontmatter }, { visit }] =
-  await (async () => {
-    try {
-      return await Promise.all([
-        _import("mdast-util-to-markdown"),
-        _import("remark"),
-        _import("remark-frontmatter"),
-        _import("unist-util-visit"),
-      ])
-    } catch {
-      await pipeline(stdin, stdout)
-      exit(0)
-    }
-  })()
+const [{ remark }, { default: frontmatter }, { visit }] = await (async () => {
+  try {
+    return await Promise.all([
+      _import("remark"),
+      _import("remark-frontmatter"),
+      _import("unist-util-visit"),
+    ])
+  } catch {
+    await pipeline(stdin, stdout)
+    exit(0)
+  }
+})()
 
 const LINE_ENDING = /\r\n|\n|\r/
 const PIPE_PREFIX = /^\| ?/
 const QUOTE_PREFIX = /^(?:[ \t]*>[ \t]?)+/
+const RESPONSE_PREFIX = /^>>>[ \t]?/
 
 /**
  * @param {Paragraph} para
@@ -71,11 +69,11 @@ const splitParagraph = (para) => {
       const tail = groups.at(-1).at(-1)
       tail.value = tail.value.replace(/\n+$/, "")
       if (!tail.value) {
-        groups.at(-1).pop()
+        groups.at(-1)?.pop()
       }
       groups.push([])
     }
-    groups.at(-1).push(child)
+    groups.at(-1)?.push(child)
   }
   return groups.length === 1
     ? [para]
@@ -106,6 +104,40 @@ const xformParagraph = () => (tree) => {
   })
 }
 
+/**
+ * @param {Blockquote} node
+ * @param {{ source: string, response: boolean }} options
+ * @returns {{ prefix: string, markdown?: string, response?: boolean }}
+ */
+const quoteContent = (node, { source, response }) => {
+  const raw = source.slice(node.position.start.offset, node.position.end.offset)
+  const lines = raw.split(LINE_ENDING)
+  if (response && raw.startsWith(">>>")) {
+    return {
+      prefix: ">>>",
+      markdown: lines
+        .map((line) => line.replace(RESPONSE_PREFIX, ""))
+        .join("\n"),
+    }
+  }
+
+  const [first] = node.children
+  const leading = first?.type === "paragraph" ? first.children.at(0) : undefined
+  if (leading?.type === "text" && leading.value.startsWith("|")) {
+    const contents = lines.map((line) => line.replace(QUOTE_PREFIX, ""))
+    if (contents.every((line) => !line || line.startsWith("|"))) {
+      return {
+        prefix: "> |",
+        markdown: contents
+          .map((line) => line.replace(PIPE_PREFIX, ""))
+          .join("\n"),
+        response: true,
+      }
+    }
+  }
+  return { prefix: ">" }
+}
+
 /** @type {Plugin<[(markdown: string) => string], Root>} */
 const xformMarkdown = (format) => (tree) =>
   visit(tree, "code", (node) => {
@@ -114,37 +146,34 @@ const xformMarkdown = (format) => (tree) =>
     }
   })
 
-/** @param {string} source @returns {string} */
-const format = (source) => {
+/**
+ * @param {string} source
+ * @param {{ response?: boolean }} options
+ * @returns {string}
+ */
+const format = (source, { response = false } = {}) => {
   /** @type {Options} */
   const options = {
     handlers: {
-      blockquote(node, parent, state, info) {
-        const [first] = node.children
-        const leading =
-          first?.type === "paragraph" ? first.children.at(0) : undefined
-
-        if (leading?.type !== "text" || !leading.value.startsWith("|")) {
-          return defaultHandlers.blockquote(node, parent, state, info)
-        }
-
-        const lines = source
-          .slice(node.position.start.offset, node.position.end.offset)
-          .split(LINE_ENDING)
-          .map((line) => line.replace(QUOTE_PREFIX, ""))
-
-        if (!lines.every((line) => !line || line.startsWith("|"))) {
-          return defaultHandlers.blockquote(node, parent, state, info)
-        }
-
-        const markdown = lines
-          .map((line) => line.replace(PIPE_PREFIX, ""))
-          .join("\n")
-
-        return state.indentLines(
-          format(markdown).replace(/\n$/, ""),
-          (line, _, blank) => (blank ? "> |" : `> | ${line}`),
+      blockquote(node, _, state, info) {
+        const {
+          prefix,
+          markdown,
+          response: nestedResponse,
+        } = quoteContent(node, { source, response })
+        const leave = state.enter("blockquote")
+        const tracker = state.createTracker(info)
+        tracker.move(`${prefix} `)
+        tracker.shift(prefix.length + 1)
+        const content =
+          markdown === undefined
+            ? state.containerFlow(node, tracker.current())
+            : format(markdown, { response: nestedResponse }).replace(/\n$/, "")
+        const quoted = state.indentLines(content, (line, _, blank) =>
+          blank ? prefix : `${prefix} ${line}`,
         )
+        leave()
+        return quoted
       },
     },
   }
