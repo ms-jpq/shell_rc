@@ -53,6 +53,51 @@ const [{ remark }, { default: frontmatter }, { visit }] = await (async () => {
 const LINE_ENDING = /\r\n|\n|\r/
 const PREFIX_SPACE = /^[ \t]/
 const QUOTE_PREFIX = /^(?:[ \t]*>[ \t]?)+/
+const QUOTE_MARKER = /^>[ \t]?/
+
+/** @param {string} source @returns {string} */
+const separateQuotes = (source) => {
+  const lines = source.split(LINE_ENDING)
+  const tree = remark().use(frontmatter, ["yaml", "toml"]).parse(source)
+  const literal = new Set()
+  const boundaries = new Map()
+  visit(tree, "code", (node) => {
+    for (
+      let line = node.position.start.line - 1;
+      line < node.position.end.line;
+      line++
+    ) {
+      literal.add(line)
+    }
+  })
+  visit(tree, "blockquote", (node) => {
+    const { start, end } = node.position
+    let previous
+    for (let index = start.line - 1; index < end.line; index++) {
+      if (literal.has(index)) {
+        continue
+      }
+      const line = lines[index].slice(start.column - 1)
+      if (!QUOTE_MARKER.test(line)) {
+        continue
+      }
+      const content = line.replace(QUOTE_MARKER, "")
+      if (!content.trim()) {
+        continue
+      }
+      const prefix = content.startsWith("|")
+      if (previous !== undefined && previous !== prefix) {
+        boundaries.set(index, lines[index].slice(0, start.column - 1).trimEnd())
+      }
+      previous = prefix
+    }
+  })
+  return lines
+    .flatMap((line, index) =>
+      boundaries.has(index) ? [boundaries.get(index), line] : [line],
+    )
+    .join("\n")
+}
 
 /**
  * @param {Paragraph} para
@@ -159,11 +204,12 @@ const xformMarkdown = (format) => (tree) =>
   })
 
 /**
- * @param {string} source
+ * @param {string} input
  * @param {{ response?: boolean }} options
  * @returns {string}
  */
-const format = (source, { response = false } = {}) => {
+const format = (input, { response = false } = {}) => {
+  const source = separateQuotes(input)
   /** @type {Options} */
   const options = {
     handlers: {
