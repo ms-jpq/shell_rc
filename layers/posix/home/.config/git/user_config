@@ -102,9 +102,6 @@ fallbackToNoIndex = true
 lineNumber        = true
 patternType       = "perl"
 
-[help]
-autoCorrect = "prompt"
-
 [init]
 defaultBranch = "main"
 
