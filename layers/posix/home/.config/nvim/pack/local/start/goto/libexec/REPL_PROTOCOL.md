@@ -49,8 +49,7 @@
 ---
 
 ````markdown
-> !md
-> show a directory tree
+> !md show a directory tree
 
 > | >>> Here is the directory tree.
 
