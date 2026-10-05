@@ -140,6 +140,7 @@ def main() -> None:
 
 
 with suppress(KeyboardInterrupt):
-    exit(main())
+    main()
+    exit(0)
 
 exit(128 + Signals.SIGINT)

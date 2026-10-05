@@ -80,6 +80,7 @@ def _main() -> None:
 
 
 with suppress(KeyboardInterrupt):
-    exit(_main())
+    _main()
+    exit(0)
 
 exit(128 + Signals.SIGINT)
