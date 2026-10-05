@@ -14,7 +14,7 @@ _comp_init() {
   else
     mkdir -p -- "${dump:h}"
   fi
-  if compinit -i "${f[@]}" -d "$dump" && ((!$#f)); then
+  if compinit -i "${f[@]}" -d "$dump" && ((! $#f)); then
     touch -c -- "$dump"
   fi
   bashcompinit
