@@ -26,7 +26,7 @@ do
 
   vim.print "<<< <<<"
   vim.print(languages)
-  ts.install(languages, options):wait(timeout)
-  ts.update(languages, options):wait(timeout)
+  assert(ts.install(languages, options):wait(timeout), "!!! Tree-sitter Parser Installation")
+  assert(ts.update(languages, options):wait(timeout), "!!! Tree-sitter parser Update")
   vim.print ">>> >>>"
 end
