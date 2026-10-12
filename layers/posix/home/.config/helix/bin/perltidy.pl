@@ -13,6 +13,7 @@ my $dir = dirname(__FILE__);
 my $lib = catfile( $dir, '..', '..', 'perlcritic.pl', 'lib' );
 
 $ENV{PERL5LIB} = catfile( $lib, 'lib', 'perl5' );
+
 exec 'perl', catfile( $lib, 'bin', 'perltidy' ),
   qw( --standard-error-output --standard-output --indent-columns=2 --output-line-ending=unix ),
   @ARGV
