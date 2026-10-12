@@ -39,6 +39,7 @@ PYTHON_DEPS=(
 apt-install "${PYTHON_DEPS[@]}"
 asdf-install --global -- python
 
+apt-install libatomic1
 mkdir --verbose --parent -- "$XDG_DATA_HOME/gnupg"
 NODEJS_CHECK_SIGNATURES=no asdf-install --global -- nodejs
 
