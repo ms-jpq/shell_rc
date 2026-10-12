@@ -55,6 +55,7 @@ func main() {
 	unpack.Stdin, get.Stdout = r, w
 
 	wg := sync.WaitGroup{}
+	wg.Add(2)
 
 	go func() {
 		defer wg.Done()
@@ -69,7 +70,6 @@ func main() {
 			log.Panicln(err)
 		}
 	}()
-	wg.Add(2)
 	wg.Wait()
 
 	pat := filepath.Join(run, "*", "golangci-lint*")
