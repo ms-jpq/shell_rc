@@ -22,10 +22,6 @@ if ( !-x $cpan ) {
   exit;
 }
 
-if ( $ENV{CI} ) {
-  exit;
-}
-
 my @names = qw( perlcritic perltidy );
 if ( grep { !-f catfile( $lib, 'bin', $_ ) } @names ) {
 
