@@ -13,7 +13,7 @@ fi
 if [[ -x $ARG0 ]]; then
   BANG="$(sed -E -n -e '1s@^#!([^ ]+).*$@\1@p' -- "$ARG0")"
   if [[ $BANG == '/usr/bin/env' ]]; then
-    ARG0="$(sed -E -n -e '1s@^#!/usr/bin/env( {1,}-{1,2}[[:alnum:]]+ {1,})(-- {1,})?([[:alnum:]]+=[[:alnum:]]* *)*([[:alnum:]]+).*$@\4@p' -- "$ARG0")"
+    ARG0="$(sed -E -n -e '1s@^#!/usr/bin/env( {1,}-{1,2}[[:alnum:]]+ {1,})(-- {1,})?([[:alpha:]_][[:alnum:]_]*=[^ ]* *)*([[:alnum:]]+).*$@\4@p' -- "$ARG0")"
   elif [[ -z $BANG ]]; then
     ARG0="$(sed -E -n -e '1s@^// *; *exec *([[:alnum:]]+).*$@\1@p' -- "$ARG0")"
   fi

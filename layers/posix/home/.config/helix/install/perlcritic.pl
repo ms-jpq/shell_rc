@@ -4,7 +4,6 @@ use Carp;
 use Config;
 use English;
 use File::Basename;
-use File::Copy;
 use File::Spec::Functions;
 use autodie;
 use strict;
@@ -27,18 +26,21 @@ if ( $ENV{CI} ) {
   exit;
 }
 
-if ( !-d $lib ) {
+my @names = qw( perlcritic perltidy );
+if ( grep { !-f catfile( $lib, 'bin', $_ ) } @names ) {
 
   $ENV{HOME}                = $tmp;
-  $ENV{PERL_LOCAL_LIB_ROOT} = $tmp;
-  $ENV{PERL_MB_OPT}         = "--install_base $tmp";
-  $ENV{PERL_MM_OPT}         = "INSTALL_BASE=$tmp";
+  $ENV{PERL_LOCAL_LIB_ROOT} = $lib;
+  $ENV{PERL_MB_OPT}         = "--install_base $lib";
+  $ENV{PERL_MM_OPT}         = "INSTALL_BASE=$lib";
   $ENV{PERL_MM_USE_DEFAULT} = 1;
-  $ENV{PERL5LIB}            = catfile( $tmp, 'lib', 'perl5' );
+  $ENV{PERL5LIB}            = catfile( $lib, 'lib', 'perl5' );
 
   my @chronic = system( 'which', '--', 'chronic' ) ? () : qw( chronic -- );
   system( @chronic, $cpan, '-T', '-i', qw( Perl::Critic Perl::Tidy ) ) == 0
     or croak $CHILD_ERROR;
 
-  move( $tmp, $lib ) or croak $ERRNO;
+  for my $name (@names) {
+    -f catfile( $lib, 'bin', $name ) or croak $ERRNO;
+  }
 }

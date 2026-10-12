@@ -89,7 +89,7 @@ M.buffers = function()
 end
 
 do
-  local file_opts = opts { preview = preview .. " {}", preview_window = "right:wrap" }
+  local file_opts = opts { multi = true, preview = preview .. " {}", preview_window = "right:wrap" }
   local file_sink = sink(function(line)
     return { filename = line }
   end)
