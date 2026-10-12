@@ -14,6 +14,7 @@ require "go.pack.treesitter"
 
 do
   local ts = require "nvim-treesitter"
+  local log = require "nvim-treesitter.log"
   local languages = vim.json.decode(vim.fn.readblob(vim.fs.joinpath(cfg, "ts-languages.json"))).languages
   local options = { summary = true }
   local timeout = 5 * 60 * 1000
@@ -26,7 +27,11 @@ do
 
   vim.print "<<< <<<"
   vim.print(languages)
-  assert(ts.install(languages, options):wait(timeout), "!!! Tree-sitter Parser Installation")
-  assert(ts.update(languages, options):wait(timeout), "!!! Tree-sitter parser Update")
+  local installed = ts.install(languages, options):wait(timeout)
+  local updated = ts.update(languages, options):wait(timeout)
+  local succ = not installed or not updated
+  if not succ then
+    log.show()
+  end
   vim.print ">>> >>>"
 end
