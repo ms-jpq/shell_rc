@@ -24,6 +24,7 @@
     "lua-ls.lua": [],
     "marksman.sh": [],
     "omnisharp.fsx": [],
+    "perlcritic.pl": [],
     "prolog-ls.pro": [],
     "pwsh-es.ps1": [],
     "rust-analyzer.rs": [],
