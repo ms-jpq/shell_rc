@@ -1,22 +1,19 @@
-#!/usr/bin/env -S -- PERL_UNICODE=ASD perl -w
+#!/usr/bin/env -S -- PERL_UNICODE=ASD perl
 
 use Carp;
 use Config;
 use English;
 use File::Basename;
 use File::Copy;
-use File::Path;
 use File::Spec::Functions;
 use autodie;
 use strict;
 use utf8;
+use warnings FATAL => 'all';
 
-my $dir   = dirname(__FILE__);
-my $tmp   = $ENV{RUN};
-my $cpan  = catfile( dirname( $Config{perlpath} ), 'cpan' );
-my $bin   = $ENV{BIN};
-my $lib   = $ENV{LIB};
-my @names = qw( perlcritic perltidy );
+my $tmp  = $ENV{RUN};
+my $cpan = catfile( dirname( $Config{perlpath} ), 'cpan' );
+my $lib  = $ENV{LIB};
 
 if ( $OSNAME eq 'MSWin32' ) {
   $cpan = "$cpan.bat";
@@ -39,9 +36,8 @@ if ( !-d $lib ) {
   $ENV{PERL5LIB}            = catfile( $tmp, 'lib', 'perl5' );
 
   my @chronic = system( 'which', '--', 'chronic' ) ? () : qw( chronic -- );
-  system( @chronic, $cpan, '-T', '-I', '-i', 'Perl::Critic' )
-    && croak $CHILD_ERROR;
+  system( @chronic, $cpan, '-T', '-I', '-i', 'Perl::Critic' ) == 0
+    or croak $CHILD_ERROR;
 
-  move( $tmp, $lib );
+  move( $tmp, $lib ) or croak $ERRNO;
 }
-
