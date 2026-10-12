@@ -103,7 +103,7 @@ if ((GLOBAL)); then
     ;;
   esac
 
+  touch -- "$HOME/.tool-versions"
   "${SED[@]}" -e "/^$LANG/d" -- "$HOME/.tool-versions"
-  # shellcheck disable=SC2016
-  "${SED[@]}" -e '$a'"$LANG $VERSION" -- "$HOME/.tool-versions"
+  printf -- '%s %s\n' "$LANG" "$VERSION" >> "$HOME/.tool-versions"
 fi
