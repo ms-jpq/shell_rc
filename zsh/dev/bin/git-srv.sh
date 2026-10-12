@@ -13,18 +13,10 @@ WEB="${INFO%/*}/gitweb"
 ROOT="$(git --no-optional-locks rev-parse --path-format=absolute --show-toplevel)"
 NAME="${ROOT##*/}"
 
-link() {
-  local -- src="$1" dst="$2"
-
-  if ! [[ -L $dst ]]; then
-    ln -v -sTnfr -- "$src" "$dst"
-  fi
-}
-
 rm -v -fr -- "$WEB_DIR"
 mkdir -v -p -- "$CGI_BIN" "$TMP"
-link "$WEB/static" "$CGI_BIN/static"
-link "$WEB/gitweb.cgi" "$CGI_BIN/gitweb.cgi"
+ln -v -sTnfr -- "$WEB/static" "$CGI_BIN/static"
+ln -v -sTnfr -- "$WEB/gitweb.cgi" "$CGI_BIN/gitweb.cgi"
 
 read -r -d '' -- PERL << PERL || true
 our \$projectroot = "$ROOT";
