@@ -1,4 +1,5 @@
 local hsminweb = require "hs.httpserver.hsminweb"
+local power = require "togo.lib.power"
 local screen = require "togo.lib.screen"
 
 local M = {}
@@ -33,6 +34,13 @@ local new_desktop = function()
   ---@type TogoScreenSettler?
   local settler = nil
   local views = {}
+
+  local clear_views = function()
+    for _, view in pairs(views) do
+      view:delete()
+    end
+    views = {}
+  end
 
   local snapshot = function(screens)
     if #screens == 0 then
@@ -101,9 +109,7 @@ local new_desktop = function()
     if settler then
       settler.stop()
     end
-    for _, view in pairs(views) do
-      view:delete()
-    end
+    clear_views()
     server:stop()
   end
 
@@ -128,7 +134,7 @@ M.init = function()
     end
   end
 
-  local desktop = new_desktop()
+  local desktop = power.new(new_desktop)
   _G.togo_desktop = desktop
   _G.desktop_maintenance, _G.desktop_server, _G.desktop_views = nil, nil, nil
   desktop.start()

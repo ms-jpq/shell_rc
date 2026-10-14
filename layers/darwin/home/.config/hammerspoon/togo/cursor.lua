@@ -1,3 +1,4 @@
+local power = require "togo.lib.power"
 local screen = require "togo.lib.screen"
 
 local M = {}
@@ -250,7 +251,7 @@ M.init = function()
     previous.stop()
   end
 
-  local cursor = new_cursor()
+  local cursor = power.new(new_cursor)
   _G.togo_cursor = cursor
   cursor.start()
 end
