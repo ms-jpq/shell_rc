@@ -30,8 +30,8 @@ mkdir -p -- ~/.config ~/.local/share ~/.local/state/{shell_history,ssh,tmux} ~/.
 
 "${RSYNC[@]}" -- "$SRC/cache/" ~/.cache/
 
-mkdir -p -- "$BIN_LINK"
-ln -sTnfr -- "$SRC/bin-link" "$BIN_LINK/bin"
+mkdir -p -- "$BIN_LINK/bin"
+"${RSYNC[@]}" -- "$SRC/bin-link/" "$BIN_LINK/bin/"
 
 pushd -- "$SRC/config" > /dev/null
 for NAME in *; do
