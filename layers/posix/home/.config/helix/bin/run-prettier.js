@@ -5,7 +5,7 @@ import { ok } from "node:assert/strict"
 import { spawnSync } from "node:child_process"
 import { constants, existsSync } from "node:fs"
 import { access } from "node:fs/promises"
-import { homedir } from "node:os"
+import { devNull, homedir } from "node:os"
 import { dirname, extname, join } from "node:path"
 import { cwd, execPath, stdin, stdout } from "node:process"
 import { pipeline } from "node:stream/promises"
@@ -76,6 +76,7 @@ const argv = (function* () {
   yield `--stdin-filepath=${filename}`
   yield `--tab-width=${tabsize}`
   yield `--log-level=warn`
+  yield `--ignore-path=${devNull}`
 
   if (managed) {
     for (const [plugin, re] of Object.entries(plugins)) {
