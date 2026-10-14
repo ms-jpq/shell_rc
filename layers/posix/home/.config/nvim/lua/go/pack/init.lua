@@ -33,7 +33,6 @@ autocmd.vim_enter(function()
   proc.pack "easyalign"
   proc.pack "fzf"
   proc.pack "gitsigns"
-  proc.pack "illuminate"
   proc.pack "leap"
   proc.pack "treesitter"
   -- lib.report(require, "go.pack.coq-3p")
