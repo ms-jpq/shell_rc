@@ -17,8 +17,12 @@ const {
 ok(filename)
 ok(tabsize)
 
-const p1 = spawn("remark", [], {
+const p0 = spawn("text-normalize", [], {
   stdio: ["inherit", "pipe", "inherit"],
+})
+
+const p1 = spawn("remark", [], {
+  stdio: [p0.stdout, "pipe", "inherit"],
 })
 
 const p2 = spawn(
@@ -29,9 +33,10 @@ const p2 = spawn(
   },
 )
 
-const [[code1], [code2]] = await Promise.all([
+const [[code0], [code1], [code2]] = await Promise.all([
+  once(p0, "exit"),
   once(p1, "exit"),
   once(p2, "close"),
 ])
 
-process.exitCode = code1 + code2
+process.exitCode = code0 + code1 + code2
