@@ -99,8 +99,6 @@
     "yaml-language-server": []
   },
   "pack": {
-    "https://codeberg.org/andyg/leap.nvim": ["--lazy"],
-    "https://github.com/RRethy/vim-illuminate": ["--lazy"],
     "https://github.com/cocopon/iceberg.vim": [],
     "https://github.com/junegunn/fzf": ["--lazy"],
     "https://github.com/junegunn/vim-easy-align": ["--lazy"],
