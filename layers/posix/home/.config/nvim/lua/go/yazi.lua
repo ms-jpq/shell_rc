@@ -1,7 +1,6 @@
 local async = require "goto.async"
 local autocmd = require "goto.autocmd"
 local lib = require "goto.lib"
-local proc = require "go.proc"
 
 local termstart = async.wrap(function(buf, cmd, cb)
   local new_buf = vim.api.nvim_create_buf(false, true)
@@ -22,8 +21,6 @@ local termstart = async.wrap(function(buf, cmd, cb)
   )
 end)
 
-local yazi_sh = vim.fs.joinpath(proc.HOME, ".local", "libexec", "yazi.sh")
-
 local chooser_path = function(line)
   return string.match(line, "^search://[^/]*/(.*)$") or line
 end
@@ -35,7 +32,7 @@ local spawn_yazi = function(buf, path)
       vim.fs.rm(tmp, { force = true })
     end)
 
-    termstart(buf, { yazi_sh, "--chooser-file", tmp, "--", path })
+    termstart(buf, { "yazi", "--chooser-file", tmp, "--", path })
 
     if vim.fn.filereadable(tmp) == 1 then
       local selected = vim.fn.readblob(tmp)
