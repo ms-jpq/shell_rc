@@ -30,7 +30,11 @@ do
   end
 end
 
-local selection = function(win)
+local selection = function(win, args)
+  if args and args.range > 0 then
+    return args.line1, args.line2
+  end
+
   local row = unpack(vim.api.nvim_win_get_cursor(win))
   if not string.find(vim.fn.mode(1), "^[vV\22]") then
     return row, row
@@ -96,17 +100,19 @@ end
 ---@param all? boolean
 ---@return fun()
 local run_repl = function(all)
-  return async(function()
+  return async(function(args)
     local buf = vim.api.nvim_get_current_buf()
-    local lo, hi = selection(0)
+    local lo, hi = selection(0, args)
+
+    vim.api.nvim_buf_call(buf, function()
+      vim.cmd [[silent write! ++p]]
+    end)
+
     local target = pick(buf, all, lo, hi)
     if not target then
       return
     end
 
-    vim.api.nvim_buf_call(buf, function()
-      vim.cmd [[silent! write! ++p]]
-    end)
     local proc = async.system({ exec }, { env = metadata(buf, target, lo, hi) })
 
     async.scheduled()

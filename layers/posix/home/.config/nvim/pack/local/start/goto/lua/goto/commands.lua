@@ -9,9 +9,10 @@ M.register = function(commands)
 end
 
 vim.api.nvim_create_user_command("Go", function(args)
-  registered[args.args]()
+  registered[args.args](args)
 end, {
   nargs = 1,
+  range = true,
   complete = function()
     return vim.tbl_keys(registered)
   end,
