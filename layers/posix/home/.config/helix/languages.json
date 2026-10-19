@@ -49,6 +49,12 @@
         "command": "dockerfile-utils"
       }
     },
+    "dot": {
+      "formatter": {
+        "args": ["-Tcanon"],
+        "command": "dot"
+      }
+    },
     "fortran": {
       "formatter": {
         "args": [],
