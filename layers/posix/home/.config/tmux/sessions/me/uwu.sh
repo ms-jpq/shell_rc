@@ -3,6 +3,7 @@
 set -o pipefail
 
 ENV=TMUX_NO_SAVE
+trap 'tmux set-environment -g -h -u -- "$ENV"' EXIT
 tmux set-environment -g -h -- "$ENV" 1
 
 tmux new-window -c ~/Downloads
@@ -30,6 +31,5 @@ tmux select-pane -t '{marked}'
 tmux select-pane -M
 
 tmux select-window -t :-2
-tmux set-environment -g -h -u -- "$ENV"
 
 # tmux new-window -- ~/.local/libexec/aerospace-route.sh kitty '^me/uwu' 3

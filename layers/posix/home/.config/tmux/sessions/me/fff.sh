@@ -3,6 +3,7 @@
 set -o pipefail
 
 ENV=TMUX_NO_SAVE
+trap 'tmux set-environment -g -h -u -- "$ENV"' EXIT
 tmux set-environment -g -h -- "$ENV" 1
 
 DIRS=(
@@ -32,4 +33,3 @@ for ((I = 0; I < ${#DIRS[@]}; I += 2)); do
 done
 
 tmux select-window -t :-$((${#DIRS[@]} / 2 - 1))
-tmux set-environment -g -h -u -- "$ENV"

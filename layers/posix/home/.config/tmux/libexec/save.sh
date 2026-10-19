@@ -112,6 +112,8 @@ for SID in "${!SESSIONS[@]}"; do
     head -n 3 -- "$0"
     printf -- '\n'
 
+    printf -- '%q ' trap "tmux set-environment -g -h -u -- $ENV" EXIT
+    printf -- '\n'
     printf -- '%q ' tmux set-environment -g -h -- "$ENV" 1
     printf -- '\n'
 
@@ -168,8 +170,6 @@ for SID in "${!SESSIONS[@]}"; do
     printf -- '%q ' tmux select-window -t ":-$((I - W_MARK))"
     printf -- '\n'
 
-    printf -- '%q ' tmux set-environment -g -h -u -- "$ENV"
-    printf -- '\n'
   } > "$TMP"
 
   if ((S_OK)); then
