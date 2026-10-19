@@ -5,7 +5,7 @@ syntax match mdCommentOpen  "^\s*\zs<!--\ze\s" conceal cchar=│
 syntax match mdCommentClose "\%(^\s*<!--.*\)\@<=\s*-->\s*$" conceal
 syntax match mdReplResponse "^\s*\zs<!--\s*|" conceal cchar=┇
 
-syntax match mdDash "^\s*\zs-\ze\%( \|$\)"  conceal cchar=*
+syntax match mdDash "^\s*\zs-\ze\%( \|$\)"  conceal cchar=•
 syntax match mdPlus "^\s*\zs+\ze\%( \|$\)"  conceal cchar=◆
 syntax match mdStar "^\s*\zs\*\ze\%( \|$\)" conceal cchar=✱
 
