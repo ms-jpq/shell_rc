@@ -1,62 +1,60 @@
 #!/usr/bin/env -S -- PYTHONSAFEPATH= python3
 
+import sys
 from argparse import ArgumentParser, Namespace
 from collections.abc import Iterator
 from contextlib import suppress
 from itertools import count
 from json import dump, loads
-from os import altsep, fsencode, linesep
-from os import name as _os
-from os import sep
-from pathlib import Path, PureWindowsPath
+from os import altsep, fsencode, linesep, sep
+from pathlib import Path
 from signal import Signals
 from sys import exit, stdin
 
-match _os:
-    case "nt":
-        _ESCAPES = {
-            code: f"%{code:02X}"
-            for code in (*range(32), *map(ord, f'%<>:"|?*{sep}{altsep}'))
-        }
-        _TRAILING_ESCAPES = {**_ESCAPES, **str.maketrans({" ": "%20", ".": "%2E"})}
+if sys.platform == "win32":
+    from ntpath import isreserved
 
-        def _limits(dst: Path) -> tuple[int, int]:
-            return 255, 248
+    _ESCAPES = {
+        code: f"%{code:02X}"
+        for code in (*range(32), *map(ord, f'%<>:"|?*{sep}{altsep}'))
+    }
+    _TRAILING_ESCAPES = {**_ESCAPES, **str.maketrans({" ": "%20", ".": "%2E"})}
 
-        def _length(value: str) -> int:
-            return len(value.encode("utf-16-le", errors="surrogatepass")) // 2
+    def _limits(dst: Path) -> tuple[int, int]:
+        return 255, 248
 
-        def _name(key: str) -> str:
-            end = len(key.rstrip(" ."))
-            name = key[:end].translate(_ESCAPES) + key[end:].translate(
-                _TRAILING_ESCAPES
-            )
-            if PureWindowsPath(name).is_reserved():
-                name = f"%{ord(name[0]):02X}" + name[1:]
-            return name or "%"
+    def _length(value: str) -> int:
+        return len(value.encode("utf-16-le", errors="surrogatepass")) // 2
 
-    case _:
-        from os import pathconf
+    def _name(key: str) -> str:
+        end = len(key.rstrip(" ."))
+        name = key[:end].translate(_ESCAPES) + key[end:].translate(_TRAILING_ESCAPES)
+        if isreserved(name):
+            name = f"%{ord(name[0]):02X}" + name[1:]
+        return name or "%"
 
-        _ESCAPES = {ord(char): f"%{ord(char):02X}" for char in f"%\0{sep}"}
+else:
+    from os import pathconf
 
-        def _limits(dst: Path) -> tuple[int, int]:
-            return (
-                pathconf(dst.parent, "PC_NAME_MAX"),
-                pathconf(dst.parent, "PC_PATH_MAX"),
-            )
+    _ESCAPES = {ord(char): f"%{ord(char):02X}" for char in f"%\0{sep}"}
 
-        def _length(value: str) -> int:
-            return len(fsencode(value))
+    def _limits(dst: Path) -> tuple[int, int]:
+        return (
+            pathconf(dst.parent, "PC_NAME_MAX"),
+            pathconf(dst.parent, "PC_PATH_MAX"),
+        )
 
-        def _name(key: str) -> str:
-            match (name := key.translate(_ESCAPES)):
-                case "":
-                    return "%"
-                case "." | "..":
-                    return name.replace(".", "%2E")
-                case _:
-                    return name
+    def _length(value: str) -> int:
+        return len(fsencode(value))
+
+    def _name(key: str) -> str:
+        match (name := key.translate(_ESCAPES)):
+            case "":
+                return "%"
+            case "." | "..":
+                return name.replace(".", "%2E")
+            case _:
+                return name
 
 
 def _children(value: object) -> Iterator[tuple[str, object]]:
