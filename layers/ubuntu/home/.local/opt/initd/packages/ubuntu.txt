@@ -39,6 +39,7 @@
 + git-delta
 + gitui
 + gping
++ graphviz
 + grep
 + htop
 + hyperfine

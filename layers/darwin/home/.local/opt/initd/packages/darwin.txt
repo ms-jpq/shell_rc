@@ -51,6 +51,7 @@
 + gnu-which
 + gnupg
 + gping
++ graphviz
 + grep
 + gum
 + htop
