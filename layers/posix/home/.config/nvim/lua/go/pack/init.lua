@@ -25,6 +25,7 @@ autocmd.vim_enter(function()
   async.scheduled()
 
   proc.pack "coq-nvim"
+  proc.pack "coq-3p"
   local globbed = vim.fn.globpath(opt, "*/plugin/*.{lua,vim}", true, true)
   for _, file in pairs(globbed) do
     vim.cmd.source(file)
