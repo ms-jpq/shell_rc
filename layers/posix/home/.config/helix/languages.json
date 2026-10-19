@@ -51,8 +51,7 @@
     },
     "dot": {
       "formatter": {
-        "args": ["-Tcanon"],
-        "command": "dot"
+        "command": "nop"
       }
     },
     "fortran": {
