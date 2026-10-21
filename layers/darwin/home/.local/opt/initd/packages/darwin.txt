@@ -50,6 +50,7 @@
 + gnu-tar
 + gnu-which
 + gnupg
++ gnuplot
 + gojq
 + gping
 + graphviz
@@ -98,6 +99,7 @@
 + pv
 + qemu
 + recode
++ recutils
 + rem
 + ripgrep
 + rlwrap

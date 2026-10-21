@@ -38,6 +38,7 @@
 + git
 + git-delta
 + gitui
++ gnuplot
 + gojq
 + gping
 + graphviz
@@ -84,6 +85,7 @@
 + pv
 + rclone
 + recode
++ recutils
 + ripgrep
 + rlwrap
 + rs
