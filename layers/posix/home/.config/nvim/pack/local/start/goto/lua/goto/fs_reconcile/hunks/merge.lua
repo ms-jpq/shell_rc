@@ -3,6 +3,19 @@ local lib = require "goto.lib"
 
 local M = {}
 
+---@param left string
+---@param right string
+---@return string?
+local record_extension = function(left, right)
+  local shorter, longer = left, right
+  if #shorter > #longer then
+    shorter, longer = longer, shorter
+  end
+  if vim.startswith(longer, shorter) or vim.endswith(longer, lib.LF .. shorter) then
+    return longer
+  end
+end
+
 ---@class FsReconcileHunkComponent
 ---@field local_patches FsReconcileHunk[]
 ---@field remote_patches FsReconcileHunk[]
@@ -173,19 +186,10 @@ end
 ---@param right string[]
 ---@return string[]
 local combine_insertions = function(left, right)
-  local shorter, longer = left, right
-  if #shorter > #longer then
-    shorter, longer = longer, shorter
+  if record_extension(table.concat(left), table.concat(right)) then
+    return #left > #right and left or right
   end
-  local prefix, suffix = true, true
-  for index, record in ipairs(shorter) do
-    prefix = prefix and record == longer[index]
-    suffix = suffix and record == longer[#longer - #shorter + index]
-    if not prefix and not suffix then
-      return vim.list_extend(left, right)
-    end
-  end
-  return longer
+  return vim.list_extend(left, right)
 end
 
 ---@param component FsReconcileHunkComponent
@@ -267,14 +271,7 @@ M.resolve = function(base, local_text, remote_text)
   elseif local_text == base then
     return remote_text
   elseif base == "" then
-    local shorter, longer = local_text, remote_text
-    if #shorter > #longer then
-      shorter, longer = longer, shorter
-    end
-    if vim.startswith(longer, shorter) or vim.endswith(longer, lib.LF .. shorter) then
-      return longer
-    end
-    return local_text .. remote_text
+    return record_extension(local_text, remote_text) or local_text .. remote_text
   elseif local_text == "" or remote_text == "" then
     return local_text
   end
