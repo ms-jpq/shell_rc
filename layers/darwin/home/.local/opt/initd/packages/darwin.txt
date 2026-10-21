@@ -71,6 +71,7 @@
 + m4
 + make
 + man2html
++ miller
 + moreutils
 + mosh
 + mpv

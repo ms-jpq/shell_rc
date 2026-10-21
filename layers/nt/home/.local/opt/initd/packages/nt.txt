@@ -36,6 +36,7 @@
 + junegunn.fzf
 + koalaman.shellcheck
 + Microsoft.PowerShell
++ Miller.Miller
 + ms-jpq.sad
 + muesli.duf
 + Neovim.Neovim
