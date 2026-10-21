@@ -50,6 +50,7 @@
 + gnu-tar
 + gnu-which
 + gnupg
++ gojq
 + gping
 + graphviz
 + grep

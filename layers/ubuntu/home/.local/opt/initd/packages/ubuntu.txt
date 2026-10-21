@@ -38,6 +38,7 @@
 + git
 + git-delta
 + gitui
++ gojq
 + gping
 + graphviz
 + grep
