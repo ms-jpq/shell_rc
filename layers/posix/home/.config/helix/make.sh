@@ -80,9 +80,7 @@ JQ
   linux* | darwin*)
     if [[ -z ${CI:-} ]]; then
       ARGV+=(
-        nice
-        -n 19
-        --
+        ~/.local/libexec/supernice.sh
         ~/.local/libexec/sandbox/libexec/dispatch.sh
         --auth
         --network

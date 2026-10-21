@@ -10,10 +10,10 @@ M.sandbox = function(workdir, opts)
     return {}
   end
 
-  local oom = lib.is_linux and { "choom", "--adjust", "1000", "--" } or {}
+  local nice = vim.fs.joinpath(M.HOME, ".local", "libexec", "supernice.sh")
   local exec = vim.fs.joinpath(M.HOME, ".local", "libexec", "sandbox", "libexec", "dispatch.sh")
   local net = opts.network and { "--network" } or {}
-  return vim.iter({ { "nice", "-n", "19", "--" }, oom, { exec }, net, { "--dir", workdir, "--" } }):flatten():totable()
+  return vim.iter({ { nice }, { exec }, net, { "--dir", workdir, "--" } }):flatten():totable()
 end
 
 M.pack = function(name)
