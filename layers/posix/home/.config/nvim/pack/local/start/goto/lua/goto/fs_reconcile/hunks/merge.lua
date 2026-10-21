@@ -3,17 +3,37 @@ local lib = require "goto.lib"
 
 local M = {}
 
+---@param base string
+---@param local_text string
+---@param remote_text string
+---@param prefix_boundary string
+---@return string?
+local extension = function(base, local_text, remote_text, prefix_boundary)
+  local shorter, longer = local_text, remote_text
+  if #shorter > #longer then
+    shorter, longer = longer, shorter
+  end
+  if
+    (vim.startswith(shorter, base) and vim.startswith(longer, shorter .. prefix_boundary))
+    or (vim.endswith(shorter, base) and vim.endswith(longer, lib.LF .. shorter))
+  then
+    return longer
+  end
+end
+
+---@param base string
+---@param local_text string
+---@param remote_text string
+---@return string?
+M.extension = function(base, local_text, remote_text)
+  return extension(base, local_text, remote_text, lib.LF)
+end
+
 ---@param left string
 ---@param right string
 ---@return string?
 local record_extension = function(left, right)
-  local shorter, longer = left, right
-  if #shorter > #longer then
-    shorter, longer = longer, shorter
-  end
-  if vim.startswith(longer, shorter) or vim.endswith(longer, lib.LF .. shorter) then
-    return longer
-  end
+  return extension("", left, right, "")
 end
 
 ---@class FsReconcileHunkComponent
@@ -345,6 +365,11 @@ M.merge = function(base, local_text, remote_text)
     return remote_text
   elseif remote_text == base then
     return local_text
+  end
+
+  local extension = M.extension(base, local_text, remote_text)
+  if extension then
+    return extension
   end
 
   local parts = {}

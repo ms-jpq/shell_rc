@@ -103,6 +103,10 @@ M.merge = function(base, local_value, remote)
   elseif remote.text == base.text then
     text = local_value.text
   else
+    text = merge.extension(base.text, local_value.text, remote.text)
+  end
+
+  if not text then
     local parts = async.work(merge.prepare_worker, base.text, local_value.text, remote.text)
     local tasks = vim
       .iter(parts)
