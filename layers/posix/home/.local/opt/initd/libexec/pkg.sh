@@ -113,6 +113,7 @@ if (("${#ADD[@]}")); then
   msys | cygwin)
     WINGET=(
       winget install
+      --no-upgrade
       --disable-interactivity
       --accept-source-agreements --accept-package-agreements
       --exact
@@ -120,7 +121,9 @@ if (("${#ADD[@]}")); then
     )
     for A in "${ADD[@]}"; do
       printf -- '%s%s\n' '> --id ' "${A@Q}" >&2
-      if ! "${WINGET[@]}" "$A"; then
+      STATUS=0
+      "${WINGET[@]}" "$A" || STATUS=$?
+      if ((STATUS != 0 && STATUS != (0x8A150061 & 255))); then
         printf -- '%s%s\n' '!!! --id ' "${A@Q}" >&2
         exit 1
       fi
