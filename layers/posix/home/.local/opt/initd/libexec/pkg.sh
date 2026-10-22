@@ -20,10 +20,10 @@ linux*)
   PKGS="$(dpkg --get-selections | cut --field 1 | cut --delimiter : --field 1)"
   ;;
 msys | cygwin)
-  S1=(winget list --disable-interactivity --accept-source-agreements)
-  # shellcheck disable=SC2016
-  S2=(awk '{ print $(NF > 3 ? NF-2 : 1) "\n" $(NF > 4 ? NF-3 : 1) }')
-  PKGS="$("${S1[@]}" | "${S2[@]}")"
+  PKGS_JSON="$(mktemp)"
+  trap 'rm -f -- "$PKGS_JSON"' EXIT
+  winget export --disable-interactivity --accept-source-agreements --output "$PKGS_JSON"
+  PKGS="$(jq --raw-output '.Sources[].Packages[].PackageIdentifier' "$PKGS_JSON")"
   ;;
 *)
   exit 1
