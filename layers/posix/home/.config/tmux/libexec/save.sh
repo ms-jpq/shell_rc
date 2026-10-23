@@ -24,9 +24,7 @@ PS=()
 
 S="$(tmux list-sessions -F '#{session_id} #{session_name}')"
 W="$(tmux list-windows -a -F '#{window_id} #{session_id} #{window_active} #{window_layout}')"
-P="$(tmux list-panes -a -F '#{pane_id} #{window_id} #{pane_active}')"
-P_WD="$(tmux list-panes -a -F '#{pane_id} #{?#{pane_path},#{pane_path},#{pane_current_path}}')"
-P_CMD="$(tmux list-panes -a -F '#{pane_id} #{pane_pid} #{pane_current_command}')"
+P="$(tmux list-panes -a -F $'#{pane_id}\x1f#{window_id}\x1f#{pane_active}\x1f#{pane_pid}\x1f#{pane_current_command}\x1f#{?#{pane_path},#{pane_path},#{pane_current_path}}')"
 
 readarray -t -- SL <<< "$S"
 for LINE in "${SL[@]}"; do
@@ -53,32 +51,15 @@ done
 
 readarray -t -- PL <<< "$P"
 for LINE in "${PL[@]}"; do
-  PID="${LINE%% *}"
-  RHS="${LINE#* }"
-  WID="${RHS%% *}"
-  ACT="${RHS#* }"
+  IFS=$'\x1f' read -r PID WID ACT PS_ID CMD WD <<< "$LINE"
+  PS_IDS["$PID"]="$PS_ID"
+  CMDS["$PID"]="$CMD"
+  WDS["$PID"]="$WD"
   PANES["$PID"]="$WID"
   PS+=("$PID")
   if ((ACT)); then
     ACTIVE["$PID"]="$ACT"
   fi
-done
-
-readarray -t -- P_WDL <<< "$P_WD"
-for LINE in "${P_WDL[@]}"; do
-  PID="${LINE%% *}"
-  WD="${LINE#* }"
-  WDS["$PID"]="$WD"
-done
-
-readarray -t -- P_CMDL <<< "$P_CMD"
-for LINE in "${P_CMDL[@]}"; do
-  PID="${LINE%% *}"
-  RHS="${LINE#* }"
-  PS_ID="${RHS%% *}"
-  PS_IDS["$PID"]="$PS_ID"
-  CMD="${RHS#* }"
-  CMDS["$PID"]="$CMD"
 done
 
 PROC_LS="$(
@@ -173,7 +154,11 @@ for SID in "${!SESSIONS[@]}"; do
   } > "$TMP"
 
   if ((S_OK)); then
-    chmod +x "$TMP"
-    mv -f -- "$TMP" "$DST"
+    if [[ -x $DST ]] && cmp -s -- "$TMP" "$DST"; then
+      rm -fr -- "$TMP"
+    else
+      chmod +x "$TMP"
+      mv -f -- "$TMP" "$DST"
+    fi
   fi
 done

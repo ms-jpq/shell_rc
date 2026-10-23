@@ -26,9 +26,13 @@ darwin*)
   fi
   ;;
 linux*)
-  if PS_ID="$(pgrep -P "$PPS_ID")"; then
-    if readarray -t -d '' -- ARGV < "/proc/$PS_ID/cmdline"; then
-      :
+  CHILDREN=()
+  if readarray -t -d ' ' -- CHILDREN < "/proc/$PPS_ID/task/$PPS_ID/children"; then
+    if ((${#CHILDREN[@]} == 1)); then
+      PS_ID="${CHILDREN[*]}"
+      if readarray -t -d '' -- ARGV < "/proc/$PS_ID/cmdline"; then
+        :
+      fi
     fi
   fi
   ;;
