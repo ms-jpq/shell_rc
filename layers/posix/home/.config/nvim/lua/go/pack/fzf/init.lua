@@ -4,8 +4,8 @@ local fzf = require "go.pack.fzf.lib"
 
 vim.g.fzf_layout = {
   window = {
-    width = 0.96,
-    height = 0.96,
+    width = 1,
+    height = 1,
   },
 }
 

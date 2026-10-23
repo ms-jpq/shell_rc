@@ -4,6 +4,7 @@ local lib = require "goto.lib"
 
 local termstart = async.wrap(function(buf, cmd, cb)
   local new_buf = vim.api.nvim_create_buf(false, true)
+  vim.bo[new_buf].filetype = "yazi"
   lib.keepalt_buffer(new_buf)
   if buf then
     vim.api.nvim_buf_delete(buf, { force = true })
@@ -83,15 +84,12 @@ do
         return
       end
 
-      vim.wo[win].cursorline = false
-      vim.wo[win].cursorcolumn = false
       vim.api.nvim_win_call(
         win,
         async(function()
           spawn_yazi(args.buf, name)
         end)
       )
-      vim.wo[win].cursorline = true
     end
   end
 

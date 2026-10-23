@@ -158,6 +158,8 @@ mdx_analyzer:
     .mdx: mdx
 
 ts_ls:
+  before_init_param:
+    processId: null
   cmd:
     - typescript-language-server
     - --stdio

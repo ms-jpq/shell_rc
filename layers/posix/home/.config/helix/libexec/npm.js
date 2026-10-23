@@ -31,7 +31,12 @@ const cwd = join(
   pkg.replaceAll(sep, "-"),
 )
 const json = {
-  dependencies: Object.fromEntries([pkg, ...pkgs].map((p) => [p, "*"])),
+  dependencies: Object.fromEntries(
+    [pkg, ...pkgs].map((p) => {
+      const at = p.lastIndexOf("@")
+      return at > 0 ? [p.slice(0, at), p.slice(at + 1)] : [p, "*"]
+    }),
+  ),
 }
 
 mkdirSync(cwd, { recursive: true })

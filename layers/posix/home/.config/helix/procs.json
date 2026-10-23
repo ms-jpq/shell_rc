@@ -93,7 +93,7 @@
     "sql-formatter": [],
     "svelte-language-server": ["typescript-svelte-plugin"],
     "tree-sitter-cli": ["--no-ignoreScripts"],
-    "typescript-language-server": ["@types/node", "typescript"],
+    "typescript-language-server": ["@types/node", "typescript@6"],
     "vim-language-server": [],
     "vscode-langservers-extracted": [],
     "yaml-language-server": []
