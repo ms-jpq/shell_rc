@@ -57,7 +57,27 @@ local sink = function(parse)
 end
 
 local run = function(name, spec)
-  vim.fn["fzf#run"](vim.fn["fzf#wrap"](name, spec))
+  local win = vim.api.nvim_get_current_win()
+  local cursorline, cursorcolumn = vim.wo[win].cursorline, vim.wo[win].cursorcolumn
+  local restore = function()
+    if vim.api.nvim_win_is_valid(win) then
+      vim.wo[win].cursorline = cursorline
+      vim.wo[win].cursorcolumn = cursorcolumn
+    end
+  end
+
+  local wrapped = vim.fn["fzf#wrap"](name, spec)
+  do
+    wrapped.exit = restore
+    vim.wo[win].cursorline = false
+    vim.wo[win].cursorcolumn = false
+  end
+
+  local ok, err = pcall(vim.fn["fzf#run"], wrapped)
+  if not ok then
+    restore()
+    error(err, 0)
+  end
 end
 
 M.buffers = function()
