@@ -161,6 +161,6 @@ AWK
     🟣
   )
   RAINBOW="$(shuf --echo -- "${COLOURS[@]}" | tr -d '\n')"
-  printf -- '%s' "$RAINBOW → $PANE_ID"
+  printf -- '%s' "$RAINBOW $REPL_LOCATION → $PANE_ID"
   ;;
 esac
