@@ -57,7 +57,7 @@ local sink = function(parse)
 end
 
 local run = function(name, spec)
-  vim.fn["fzf#run"](vim.fn["fzf#wrap"](name, spec, true))
+  vim.fn["fzf#run"](vim.fn["fzf#wrap"](name, spec))
 end
 
 M.buffers = function()

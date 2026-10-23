@@ -130,31 +130,9 @@ local move_tabs = function(cwd)
   vim.cmd.tabfirst()
 end
 
-vim.api.nvim_create_autocmd({
-  "BufEnter",
-  "BufFilePost",
-  "BufWinEnter",
-  "BufWinLeave",
-  "TabClosed",
-  "TabNew",
-  "VimResized",
-  "WinClosed",
-  "WinNew",
-}, {
+vim.api.nvim_create_autocmd({ "FocusLost", "VimLeavePre" }, {
   group = lib.group,
-  callback = lib.throttle(300, function()
-    async.scheduled()
-    mk_session()
-  end),
-})
-
-vim.api.nvim_create_autocmd({ "QuitPre" }, {
-  group = lib.group,
-  once = true,
-  callback = function()
-    session_ready = true
-    mk_session()
-  end,
+  callback = mk_session,
 })
 
 autocmd.vim_enter(function()

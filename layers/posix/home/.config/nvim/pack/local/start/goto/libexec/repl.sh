@@ -3,6 +3,7 @@
 set -o pipefail
 
 : "${REPL_ANCESTOR_PATHS?}"
+: "${REPL_LOCATION?}"
 : "${REPL_FILE_NAME?}"
 : "${REPL_IFS?}"
 : "${REPL_LINE_COUNT?}"
@@ -16,7 +17,7 @@ TMUX_SOCKET="${TMUX:-}"
 SOCKET="${__TMUX_ROOT_SOCKET__:-${TMUX_SOCKET%%,*}}"
 CURRENT_PANE="${__TMUX_ROOT_PANE__:-${TMUX_PANE:-}}"
 
-if [[ -z $SOCKET || -z $CURRENT_PANE ]]; then
+if [[ -z $SOCKET ]] || [[ -z $CURRENT_PANE ]]; then
   exit 1
 fi
 
@@ -121,7 +122,7 @@ BEGIN {
   WIDTH = length(COUNT)
   LO = SELECT_LO > BEFORE ? SELECT_LO - BEFORE : 1
   HI = SELECT_HI + AFTER < COUNT ? SELECT_HI + AFTER : COUNT
-  printf "REPL> @%s\n\n%s:%d-%d\n", REPL_MD, DISPLAY, SELECT_LO, SELECT_HI
+  printf "REPL> @%s\n\n%s:%s\n", REPL_MD, DISPLAY, LOCATION
 }
 
 FNR < LO {
@@ -141,6 +142,7 @@ AWK
   PRINT_CONTEXT=(
     awk
     -v COUNT="$REPL_LINE_COUNT"
+    -v LOCATION="$REPL_LOCATION"
     -v DISPLAY="$REPL_PRETTY_NAME"
     -v REPL_MD="${REPL_MD/#"$HOME"/"~"}"
     -v SELECT_HI="$REPL_SELECT_HI"
@@ -159,6 +161,6 @@ AWK
     🟣
   )
   RAINBOW="$(shuf --echo -- "${COLOURS[@]}" | tr -d '\n')"
-  printf '%s' "$RAINBOW → $PANE_ID"
+  printf -- '%s' "$RAINBOW → $PANE_ID"
   ;;
 esac

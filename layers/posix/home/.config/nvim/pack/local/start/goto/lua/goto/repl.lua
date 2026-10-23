@@ -30,27 +30,41 @@ do
   end
 end
 
-local selection = function(win, args)
-  if args and args.range > 0 then
-    return args.line1, args.line2
-  end
-
-  local row = unpack(vim.api.nvim_win_get_cursor(win))
-  if not string.find(vim.fn.mode(1), "^[vV\22]") then
-    return row, row
-  end
-
-  local anchor = vim.fn.line "v"
-  return math.min(anchor, row), math.max(anchor, row)
+local column = function(buf, row, bytes)
+  local line = unpack(vim.api.nvim_buf_get_lines(buf, row - 1, row, true))
+  return vim.fn.strchars(string.sub(line, 1, bytes)) + 1
 end
 
-local metadata = function(buf, target, lo, hi)
+local selection = function(win, args)
+  local buf = vim.api.nvim_win_get_buf(win)
+  local mode = vim.fn.mode(1)
+
+  if string.find(mode, "^[vV\22]") then
+    local region = vim.fn.getregionpos(vim.fn.getpos "v", vim.fn.getpos ".", { type = mode, eol = true })
+    local first, last = unpack(region[1]), unpack(region[#region], 2)
+    local _, lo, col_lo = unpack(first)
+    local _, hi, col_hi = unpack(last)
+    local location = string.format("%d:%d-%d:%d", lo, column(buf, lo, col_lo - 1), hi, column(buf, hi, col_hi))
+    return lo, hi, location
+  end
+
+  if args and args.range > 0 then
+    local lo, hi = args.line1, args.line2
+    return lo, hi, string.format("%d:1-%d:%d", lo, hi, column(buf, hi, -1))
+  end
+
+  local row, col = unpack(vim.api.nvim_win_get_cursor(win))
+  return row, row, string.format("%d:%d", row, column(buf, row, col))
+end
+
+local metadata = function(buf, target, lo, hi, location)
   local filename = M.buf_path(buf)
   local paths = vim.iter(vim.fs.parents(filename)):totable()
   table.remove(paths)
 
   return {
     REPL_ANCESTOR_PATHS = table.concat(paths, ":"),
+    REPL_LOCATION = location,
     REPL_FILE_NAME = filename,
     REPL_IFS = REPL_IFS,
     REPL_LINE_COUNT = tostring(vim.api.nvim_buf_line_count(buf)),
@@ -63,15 +77,15 @@ local metadata = function(buf, target, lo, hi)
 end
 ---@param buf integer
 ---@param all? boolean
----@param lo integer
----@param hi integer
-local pick = function(buf, all, lo, hi)
+---@param env table<string, string>
+local pick = function(buf, all, env)
   local target = vim.b[buf].__repl_target__
   if not all and target and string.find(target, REPL_IFS, 1, true) then
     return target
   end
 
-  local proc = async.system({ exec }, { env = metadata(buf, all and "*" or "", lo, hi) })
+  env.REPL_TARGET = all and "*" or ""
+  local proc = async.system({ exec }, { env = env })
   async.scheduled()
   if proc.code ~= 0 or proc.stderr ~= "" then
     vim.notify(proc.stderr .. proc.stdout, vim.log.levels.ERROR)
@@ -102,18 +116,20 @@ end
 local run_repl = function(all)
   return async(function(args)
     local buf = vim.api.nvim_get_current_buf()
-    local lo, hi = selection(0, args)
+    local lo, hi, location = selection(0, args)
+    local env = metadata(buf, "", lo, hi, location)
 
     vim.api.nvim_buf_call(buf, function()
       vim.cmd [[silent write! ++p]]
     end)
 
-    local target = pick(buf, all, lo, hi)
+    local target = pick(buf, all, env)
     if not target then
       return
     end
 
-    local proc = async.system({ exec }, { env = metadata(buf, target, lo, hi) })
+    env.REPL_TARGET = target
+    local proc = async.system({ exec }, { env = env })
 
     async.scheduled()
     vim.notify(proc.stdout, vim.log.levels.INFO)
