@@ -72,6 +72,8 @@ digestif:
     .tex: tex
 
 bashls:
+  before_init_param:
+    processId: null
   extensions:
     .bash: sh
     .sh: sh

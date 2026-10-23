@@ -9,7 +9,29 @@ local build_overrides = function(conf)
       acc[k] = conf[k]
     end
   end
+
   return acc
+end
+
+local runtime_overrides = function(conf, merged)
+  return {
+    before_init = function(params, config)
+      if merged.before_init then
+        merged.before_init(params, config)
+      end
+      if type(conf.before_init_param) == "table" then
+        for key, value in pairs(conf.before_init_param) do
+          params[key] = value
+        end
+      end
+    end,
+    cmd = function(dispatchers, config)
+      local workdir = (config or {}).root_dir or vim.fn.getcwd()
+      local cmd = vim.list_extend(proc.sandbox(workdir, conf.sandbox or {}), merged.cmd)
+
+      return vim.lsp.rpc.start(cmd, dispatchers)
+    end,
+  }
 end
 
 return function()
@@ -33,13 +55,7 @@ return function()
 
       local bin = unpack(argv)
       if bin and vim.fn.executable(bin) == 1 then
-        overrides.cmd = function(dispatchers, config)
-          local workdir = (config or {}).root_dir or vim.fn.getcwd()
-          local cmd = vim.list_extend(proc.sandbox(workdir, conf.sandbox or {}), argv)
-
-          return vim.lsp.rpc.start(cmd, dispatchers)
-        end
-        vim.lsp.config(name, overrides)
+        vim.lsp.config(name, runtime_overrides(conf, merged))
         local ok, err = pcall(vim.lsp.enable, name)
 
         if not ok then
