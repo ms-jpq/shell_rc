@@ -26,7 +26,6 @@ darwin*)
   fi
   ;;
 linux*)
-  CHILDREN=()
   if readarray -t -d ' ' -- CHILDREN < "/proc/$PPS_ID/task/$PPS_ID/children"; then
     if ((${#CHILDREN[@]} == 1)); then
       PS_ID="${CHILDREN[*]}"
