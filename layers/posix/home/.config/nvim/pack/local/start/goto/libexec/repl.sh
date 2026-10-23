@@ -153,12 +153,12 @@ AWK
 
   "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | "$REPL_SCRIPT" "$PANE_ID"
   COLOURS=(
-    🔴
-    🟠
-    🟡
-    🟢
-    🔵
-    🟣
+    🟥
+    🟦
+    🟧
+    🟨
+    🟩
+    🟪
   )
   RAINBOW="$(shuf --echo -- "${COLOURS[@]}" | tr -d '\n')"
   printf -- '%s' "$RAINBOW $REPL_LOCATION → $PANE_ID"

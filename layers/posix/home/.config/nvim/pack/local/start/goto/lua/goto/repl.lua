@@ -116,6 +116,10 @@ end
 local run_repl = function(all)
   return async(function(args)
     local buf = vim.api.nvim_get_current_buf()
+    local buftype = vim.bo[buf].buftype
+    if vim.api.nvim_buf_get_name(buf) == "" or (buftype ~= "" and buftype ~= "acwrite") then
+      return
+    end
     local lo, hi, location = selection(0, args)
     local env = metadata(buf, "", lo, hi, location)
 
