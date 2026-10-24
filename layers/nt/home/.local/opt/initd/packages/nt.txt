@@ -29,6 +29,7 @@
 + Derailed.k9s
 + dundee.gdu
 + eza-community.eza
++ GNU.datamash
 + gnuplot.gnuplot
 + GnuWin32.M4
 + Helix.Helix

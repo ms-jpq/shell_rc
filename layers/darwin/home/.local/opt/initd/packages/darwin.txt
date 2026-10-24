@@ -20,6 +20,7 @@
 + cowsay
 + curl
 + dash-shell
++ datamash
 + dialog
 + diffnav
 + difftastic
