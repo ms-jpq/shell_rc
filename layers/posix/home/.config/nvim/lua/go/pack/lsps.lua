@@ -19,10 +19,8 @@ local runtime_overrides = function(conf, merged)
       if merged.before_init then
         merged.before_init(params, config)
       end
-      if type(conf.before_init_param) == "table" then
-        for key, value in pairs(conf.before_init_param) do
-          params[key] = value
-        end
+      if lib.is_linux then
+        params.processId = vim.NIL
       end
     end,
     cmd = function(dispatchers, config)

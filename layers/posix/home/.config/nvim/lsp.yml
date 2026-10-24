@@ -72,8 +72,6 @@ digestif:
     .tex: tex
 
 bashls:
-  before_init_param:
-    processId: null
   extensions:
     .bash: sh
     .sh: sh
@@ -158,8 +156,6 @@ mdx_analyzer:
     .mdx: mdx
 
 ts_ls:
-  before_init_param:
-    processId: null
   cmd:
     - typescript-language-server
     - --stdio
