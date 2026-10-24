@@ -2,14 +2,4 @@
 
 set -o pipefail
 
-cleanup() {
-  set -x
-  kill -9 "-$PGID" || :
-}
-
-trap -- cleanup EXIT
-
-~/.cache/helix-rt/more/ltex-plus.sh/bin/ltex-ls-plus &
-PGID=$!
-
-wait
+exec -- "$HOME/.cache/helix-rt/more/ltex-plus.sh/bin/ltex-ls-plus" "$@"
