@@ -89,7 +89,7 @@
       "prettier-plugin-tailwindcss"
     ],
     "pyright": [],
-    "remark": ["remark-frontmatter"],
+    "remark": ["remark-frontmatter", "remark-gfm"],
     "sql-formatter": [],
     "svelte-language-server": ["typescript-svelte-plugin"],
     "tree-sitter-cli": ["--no-ignoreScripts"],

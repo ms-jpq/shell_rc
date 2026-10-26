@@ -9,6 +9,7 @@
     "prettier": "*",
     "remark": "*",
     "remark-frontmatter": "*",
+    "remark-gfm": "*",
     "typescript": "*",
     "unist-util-visit": "*"
   },

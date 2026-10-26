@@ -36,21 +36,24 @@ const _import = (specifier) =>
  * @type {[
  *   { remark: typeof import("remark").remark },
  *   { default: typeof import("remark-frontmatter").default },
+ *   { default: typeof import("remark-gfm").default },
  *   { visit: typeof import("unist-util-visit").visit },
  * ]}
  */
-const [{ remark }, { default: frontmatter }, { visit }] = await (async () => {
-  try {
-    return await Promise.all([
-      _import("remark"),
-      _import("remark-frontmatter"),
-      _import("unist-util-visit"),
-    ])
-  } catch {
-    await pipeline(stdin, stdout)
-    exit(0)
-  }
-})()
+const [{ remark }, { default: frontmatter }, { default: gfm }, { visit }] =
+  await (async () => {
+    try {
+      return await Promise.all([
+        _import("remark"),
+        _import("remark-frontmatter"),
+        _import("remark-gfm"),
+        _import("unist-util-visit"),
+      ])
+    } catch {
+      await pipeline(stdin, stdout)
+      exit(0)
+    }
+  })()
 
 const LINE_ENDING = /\r\n|\n|\r/
 const TRAILING_NEWLINE = /\n$/
@@ -202,7 +205,7 @@ const quoteBlocks = (node, { source, context }) => {
  */
 const format = (input, { context = "quote", definitions = "" } = {}) => {
   const source = definitions ? input + "\n\n" + definitions : input
-  const processor = remark().use(frontmatter, ["yaml", "toml"])
+  const processor = remark().use(frontmatter, ["yaml", "toml"]).use(gfm)
 
   /** @type {Options} */
   const options = {
