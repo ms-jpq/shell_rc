@@ -20,6 +20,16 @@
 
 - In Markdown, `comment(text)` is `> text`.
 
+---
+
+## Acknowledgements
+
+- If an immediate answer is not possible, write `comment(| >>> ACK: <next action>)` inline.
+
+- Replace the acknowledgement with the final response.
+
+---
+
 ## Special Directives
 
 - `> !<name>` selects the named directive for the following instruction.
