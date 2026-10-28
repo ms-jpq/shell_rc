@@ -83,6 +83,9 @@ case "$REPL_TARGET" in
       continue
     fi
     if [[ $REPL_TARGET != '*' ]]; then
+      if [[ -z $PANE_PATH ]]; then
+        continue
+      fi
       if [[ -n $EXPLICIT_TARGET_PATH ]]; then
         if [[ $PANE_PATH != "$EXPLICIT_TARGET_PATH" ]]; then
           continue
