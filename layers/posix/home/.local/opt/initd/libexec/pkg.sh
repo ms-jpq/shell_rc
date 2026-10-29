@@ -113,6 +113,7 @@ if (("${#ADD[@]}")); then
   msys | cygwin)
     WINGET=(
       winget install
+      --source winget
       --no-upgrade
       --disable-interactivity
       --accept-source-agreements --accept-package-agreements
