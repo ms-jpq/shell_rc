@@ -1,4 +1,0 @@
-inherits = "iceberg-light"
-
-"ui.background"         = { fg = "foreground", bg = "background" }
-"ui.cursorline.primary" = { bg = "#eae0f1" }

@@ -32,7 +32,6 @@
 + GNU.datamash
 + gnuplot.gnuplot
 + GnuWin32.M4
-+ Helix.Helix
 + JesseDuffield.lazygit
 + jqlang.jq
 + junegunn.fzf
