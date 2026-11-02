@@ -3,7 +3,7 @@
 
 import { ok } from "node:assert/strict"
 import { createRequire } from "node:module"
-import { homedir } from "node:os"
+import { EOL, homedir } from "node:os"
 import { join } from "node:path"
 import { exit, stdin, stdout } from "node:process"
 import { text } from "node:stream/consumers"
@@ -55,16 +55,26 @@ const [{ remark }, { default: frontmatter }, { default: gfm }, { visit }] =
     }
   })()
 
-const LINE_ENDING = /\r\n|\n|\r/
-const TRAILING_NEWLINE = /\n$/
-const TRAILING_NEWLINES = /\n+$/
-const SPACE = /^[ \t]/
-const INDENT = /^ */
-const MARKDOWN = new Set(["markdown", "md"])
+const SYN = {
+  lineEnding: /\r\n|\n|\r/,
+  trailingNewline: /\n$/,
+  trailingNewlines: /\n+$/,
+  space: /^[ \t]/,
+  indent: /^ */,
+  markdown: new Set(["markdown", "md"]),
+  marker: ">>>",
+  reply: "> |",
+  quote: ">",
+}
 const PREFIXES = [
-  { prefix: ">>>", spellings: [">>>"], context: "reply", next: "quote" },
-  { prefix: "> |", spellings: ["> |", ">|", ">\t|"], next: "reply" },
-  { prefix: ">", spellings: [">"], next: "quote" },
+  {
+    prefix: SYN.marker,
+    spellings: [SYN.marker],
+    context: "reply",
+    next: "quote",
+  },
+  { prefix: SYN.reply, spellings: [SYN.reply, ">|", ">\t|"], next: "reply" },
+  { prefix: SYN.quote, spellings: [SYN.quote], next: "quote" },
 ]
   .flatMap(({ spellings, ...rule }) =>
     spellings.map((spelling) => ({ ...rule, spelling })),
@@ -85,9 +95,9 @@ const splitParagraph = (para) => {
     if (
       child.type === "strong" &&
       prev?.type === "text" &&
-      TRAILING_NEWLINE.test(prev.value)
+      SYN.trailingNewline.test(prev.value)
     ) {
-      prev.value = prev.value.replace(TRAILING_NEWLINES, "")
+      prev.value = prev.value.replace(SYN.trailingNewlines, "")
       if (!prev.value) {
         current.pop()
       }
@@ -169,25 +179,27 @@ const quoteBlocks = (node, { source, context }) => {
   let current
   for (const [index, raw] of source
     .slice(start.offset, end.offset)
-    .split(LINE_ENDING)
+    .split(SYN.lineEnding)
     .entries()) {
     const line = index
-      ? raw.replace(INDENT, (indent) => indent.slice(start.column - 1))
+      ? raw.replace(SYN.indent, (indent) => indent.slice(start.column - 1))
       : raw
     const rule = rules.find(
       (rule) =>
-        (!literal.has(start.line + index) || rule.prefix === ">") &&
+        (!literal.has(start.line + index) || rule.prefix === SYN.quote) &&
         line.startsWith(rule.spelling),
     )
     const content = rule
-      ? line.slice(rule.spelling.length).replace(SPACE, "")
+      ? line.slice(rule.spelling.length).replace(SYN.space, "")
       : line
+    const endsMarker = current?.prefix === SYN.marker && !rule
     if (
       !current ||
+      endsMarker ||
       (content.trim() && rule && rule.prefix !== current.prefix)
     ) {
       current = {
-        prefix: rule?.prefix ?? ">",
+        prefix: rule?.prefix ?? (endsMarker ? "" : SYN.quote),
         next: rule?.next ?? "quote",
         lines: [],
       }
@@ -214,9 +226,11 @@ const format = (input, { context = "quote", definitions = "" } = {}) => {
         return quoteBlocks(node, { source, context })
           .map(({ prefix, next, lines }) =>
             format(lines.join("\n"), { context: next, definitions })
-              .replace(TRAILING_NEWLINE, "")
-              .split(LINE_ENDING)
-              .map((line) => (line ? prefix + " " + line : prefix))
+              .replace(SYN.trailingNewline, "")
+              .split(SYN.lineEnding)
+              .map((line) =>
+                line && prefix ? prefix + " " + line : prefix || line,
+              )
               .join("\n"),
           )
           .join("\n\n")
@@ -235,8 +249,8 @@ const format = (input, { context = "quote", definitions = "" } = {}) => {
     })
     definitions = [...local, definitions].join("\n")
     visit(tree, "code", (node) => {
-      if (MARKDOWN.has(node.lang ?? "")) {
-        node.value = format(node.value).replace(TRAILING_NEWLINE, "")
+      if (SYN.markdown.has(node.lang ?? "")) {
+        node.value = format(node.value).replace(SYN.trailingNewline, "")
       }
     })
   }
@@ -249,4 +263,8 @@ const format = (input, { context = "quote", definitions = "" } = {}) => {
     .toString()
 }
 
-stdout.write(format(await text(stdin)))
+stdout.write(
+  format(await text(stdin))
+    .split(SYN.lineEnding)
+    .join(EOL),
+)

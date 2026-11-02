@@ -24,7 +24,7 @@
 
 ## Acknowledgements
 
-- If an immediate answer is not possible, write `comment(| >>> ACK: <next action>)` inline.
+- Immediately acknowledge every instruction inline with `comment(| >>> 📨 <next action>)`.
 
 - Replace the acknowledgement with the final response.
 
