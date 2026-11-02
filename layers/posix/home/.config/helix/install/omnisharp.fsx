@@ -23,11 +23,11 @@ let base_uri =
 
 let uri =
     if RuntimeInformation.IsOSPlatform OSPlatform.OSX then
-        sprintf "%s-%s" base_uri "osx-arm64-net6.0.tar.gz"
+        sprintf "%s-osx-%s.tar.gz" base_uri arch
     elif RuntimeInformation.IsOSPlatform OSPlatform.Linux then
-        sprintf "%s-linux-%s-net6.0.tar.gz" base_uri arch
+        sprintf "%s-linux-%s.tar.gz" base_uri arch
     else
-        sprintf "%s-win-%s-net6.0.zip" base_uri arch
+        sprintf "%s-win-%s.zip" base_uri arch
 
 let pipe arg0 argv (input: 'a) =
     let start =

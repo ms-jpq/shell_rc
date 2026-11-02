@@ -80,7 +80,12 @@ M.apply = function(buf, replacement, mark)
       local row = unpack(vim.api.nvim_buf_get_extmark_by_id(buf, cursor_ns, cursor.mark, {}))
       if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then
         local count = vim.api.nvim_buf_line_count(buf)
-        vim.api.nvim_win_set_cursor(win, { math.min(row + cursor.offset + 1, count), cursor.col })
+        vim.api.nvim_win_call(win, function()
+          local view = vim.fn.winsaveview()
+          vim.api.nvim_win_set_cursor(win, { math.min(row + cursor.offset + 1, count), cursor.col })
+          view.lnum, view.col = unpack(vim.api.nvim_win_get_cursor(win))
+          vim.fn.winrestview(view)
+        end)
       end
     end
 

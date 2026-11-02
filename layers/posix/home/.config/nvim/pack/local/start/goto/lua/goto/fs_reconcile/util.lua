@@ -144,22 +144,44 @@ end
 ---@param wake fun()
 ---@return FsReconcilePoller?
 M.poller = function(path, interval, wake)
-  local poll = vim.uv.new_fs_poll()
-  if not poll then
+  local timer = vim.uv.new_timer()
+  if not timer then
     return
-  elseif poll:start(path, interval, vim.schedule_wrap(wake)) then
-    local closed = false
-    return {
-      close = function()
-        if not closed then
-          closed = true
-          poll:stop()
-          poll:close()
-        end
-      end,
-    }
   end
-  poll:close()
+  local initialized = false
+  local request, previous, previous_error
+  local observe = vim.schedule_wrap(function(err, version)
+    request = nil
+    if timer:is_closing() then
+      return
+    end
+    local changed = not initialized or err ~= previous_error or not M.same_observation(previous, version)
+    initialized, previous, previous_error = true, version, err
+    if changed then
+      wake()
+    end
+  end)
+  if
+    not timer:start(0, interval, function()
+      if not request then
+        request = vim.uv.fs_stat(path, observe)
+      end
+    end)
+  then
+    timer:close()
+    return
+  end
+  return {
+    close = function()
+      if not timer:is_closing() then
+        timer:stop()
+        timer:close()
+        if request then
+          vim.uv.cancel(request)
+        end
+      end
+    end,
+  }
 end
 
 ---@param buf integer

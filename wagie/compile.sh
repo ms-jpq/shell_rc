@@ -47,4 +47,4 @@ ln -sTnf -- /dev/null "$STUB/.zshenv"
 
 BIN="$OUT/bin-link" "$CONFIG/helix/install/bin-link.sh"
 
-rm -fr -- "$CONFIG/tmux/sessions"
+rm -fr -- "$CONFIG/tmux/sessions" "$CONFIG/nvim/test.lua" "$CONFIG/nvim/tests"

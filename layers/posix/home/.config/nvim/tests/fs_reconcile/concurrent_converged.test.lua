@@ -1,0 +1,42 @@
+local T = require "tests.lib"
+
+T.test({ "concurrent converged", timeout = 10000 }, function()
+  local path = T.file { "a", "b", "c" }
+  vim.cmd.edit(path)
+  require "goto.fs_reconcile"
+  vim.cmd [[doautocmd VimEnter]]
+
+  local hunks = require "goto.fs_reconcile.hunks"
+  local apply = hunks.apply
+  local before_save
+  T.patch(hunks, "apply", function(...)
+    apply(...)
+    before_save = { disk = vim.fn.readfile(path), modified = vim.bo.modified }
+    vim.fn.writefile(vim.api.nvim_buf_get_lines(0, 0, -1, true), path)
+  end)
+
+  vim.api.nvim_buf_set_lines(0, 0, 1, true, { "A" })
+  vim.fn.writefile({ "a", "B", "c" }, path)
+  local merged = { "A", "B", "c" }
+  T.eventually(function()
+    return vim.deep_equal(vim.api.nvim_buf_get_lines(0, 0, -1, true), merged)
+      and vim.deep_equal(vim.fn.readfile(path), merged)
+      and not vim.bo.modified
+  end, { timeout = 3000 })
+
+  T.eq({ disk = { "a", "B", "c" }, modified = true }, before_save)
+
+  vim.api.nvim_buf_set_lines(0, 0, 1, true, { "final" })
+  T.eventually(function()
+    return vim.deep_equal(vim.fn.readfile(path), { "final", "B", "c" }) and not vim.bo.modified
+  end, {
+    timeout = 3000,
+    message = function()
+      return vim.inspect {
+        buffer = vim.api.nvim_buf_get_lines(0, 0, -1, true),
+        disk = vim.fn.readfile(path),
+        modified = vim.bo.modified,
+      }
+    end,
+  })
+end)
