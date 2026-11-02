@@ -44,6 +44,6 @@ execute)
       HEAD=0
     fi
     printf -- '%s\n%s\0' "$SHA_TIME" "$LINE"
-  done | "${0%/*}/../libexec/fzf-lr.sh" "$0"
+  done | "${0%/*}/../libexec/fzf-lr.sh" --delimiter $'\n' --nth '2..' -- "$0"
   ;;
 esac

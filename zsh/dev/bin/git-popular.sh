@@ -68,6 +68,6 @@ execute)
     COUNT="${COUNTS["$LINE"]}"
     TIME="${TIMES["$LINE"]}"
     printf -- '%s %s\n%s\0' "$COUNT" "$TIME" "$LINE"
-  done | sort --zero-terminated --key 1 --numeric-sort --reverse | "${0%/*}/../libexec/fzf-lr.sh" "$0"
+  done | sort --zero-terminated --key 1 --numeric-sort --reverse | "${0%/*}/../libexec/fzf-lr.sh" --delimiter $'\n' --nth '2..' -- "$0"
   ;;
 esac

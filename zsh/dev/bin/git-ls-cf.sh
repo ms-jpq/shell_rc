@@ -27,6 +27,6 @@ execute)
     -z
     "$@"
   )
-  "${ARGV[@]}" | "${0%/*}/../libexec/fzf-lr.sh" "$0" "$@"
+  "${ARGV[@]}" | "${0%/*}/../libexec/fzf-lr.sh" -- "$0" "$@"
   ;;
 esac

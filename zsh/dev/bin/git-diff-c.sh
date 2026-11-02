@@ -47,6 +47,6 @@ execute)
       fi
       printf -- '%s\0' "$STAT $LINE"
     fi
-  done | "${0%/*}/../libexec/fzf-lr.sh" "$0" "$@"
+  done | "${0%/*}/../libexec/fzf-lr.sh" --delimiter ' ' --nth '2..' -- "$0" "$@"
   ;;
 esac

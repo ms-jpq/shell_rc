@@ -31,6 +31,11 @@ if [[ -n ${__FZF_LR_ARGV__:-} ]]; then
   : "${__FZF_LR_SH__?}"
   SHELL="$__FZF_LR_SH__" SCRIPT_MODE="$MODE" exec -- "${ARGV[@]}" < "$FILE"
 else
+  while [[ $1 != -- ]]; do
+    ARGV+=("$1")
+    shift -- 1
+  done
+  shift -- 1
   IFS="$SEP"
   # shellcheck disable=SC2097,SC2098
   __FZF_LR_SH__="$SHELL" SHELL="$0" __FZF_LR_ARGV__="$*" LC_ALL=C exec -- fzf "${ARGV[@]}"
