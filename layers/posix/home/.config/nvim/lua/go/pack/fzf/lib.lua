@@ -111,6 +111,7 @@ do
       source = shelljoin { "git", "status", "--short", "--untracked-files=all" },
       options = opts {
         multi = true,
+        nth = "2..",
         preview = preview .. " {2..}",
         preview_window = "right:wrap",
       },
@@ -148,7 +149,7 @@ M.marks = function(list, want)
         entry.text = entry.filename
       end
       by_letter[letter] = entry
-      table.insert(items, string.format("%s  %d:%d  %s", letter, lnum, col, entry.text or ""))
+      table.insert(items, string.format("%s\t%d:%d\t%s", letter, lnum, col, entry.text or ""))
     end)
 
   if #items == 0 then
@@ -157,7 +158,7 @@ M.marks = function(list, want)
 
   run("marks", {
     source = items,
-    options = opts { multi = true, no_sort = true },
+    options = opts { multi = true, no_sort = true, delimiter = "\t", nth = "1,3.." },
     ["sink*"] = sink(function(line)
       return by_letter[string.match(line, "^(%S)")]
     end),
