@@ -72,6 +72,8 @@ fi
 
 VERSION_INSTALLED=0
 for VER in "${INSTALLED[@]}"; do
+  VER="${VER##+([[:space:]*])}"
+  VER="${VER%%+([[:space:]])}"
   if [[ $VER == "$VERSION" ]]; then
     VERSION_INSTALLED=1
     break
@@ -104,6 +106,6 @@ if ((GLOBAL)); then
   esac
 
   touch -- "$HOME/.tool-versions"
-  "${SED[@]}" -e "/^$LANG/d" -- "$HOME/.tool-versions"
+  "${SED[@]}" -e "/^$LANG/d" -e $'$a\\' -- "$HOME/.tool-versions"
   printf -- '%s %s\n' "$LANG" "$VERSION" >> "$HOME/.tool-versions"
 fi

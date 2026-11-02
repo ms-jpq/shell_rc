@@ -40,7 +40,7 @@ end
 ---@field local_patches FsReconcileHunk[]
 ---@field remote_patches FsReconcileHunk[]
 
----@alias FsReconcileMergePart string[] # { base, local, remote }, retaining row terminators
+---@alias FsReconcileMergePart string[]
 
 ---@param hunk FsReconcileHunk
 ---@return boolean
@@ -55,15 +55,15 @@ local resize = function(hunk)
 end
 
 ---@param hunks FsReconcileHunk[]
+---@param split_deletions boolean?
 ---@return FsReconcileHunk[]
-local atomize = function(hunks)
+local atomize = function(hunks, split_deletions)
   local patches = {}
 
   for _, hunk in ipairs(hunks) do
-    if not resize(hunk) then
-      for index, record in ipairs(hunk.records) do
-        local start = hunk.start + index - 1
-        table.insert(patches, { start = start, finish = start + 1, records = { record } })
+    if not resize(hunk) or (split_deletions and #hunk.records == 0) then
+      for start = hunk.start, hunk.finish - 1 do
+        table.insert(patches, { start = start, finish = start + 1, records = { hunk.records[start - hunk.start + 1] } })
       end
     else
       table.insert(patches, hunk)
@@ -74,10 +74,69 @@ local atomize = function(hunks)
 end
 
 ---@param base_records string[]
----@param target_records string[]
+---@param patches FsReconcileHunk[]
+---@param index integer
+---@return { start: integer, finish: integer }?
+local repeated_range = function(base_records, patches, index)
+  local hunk = patches[index]
+  if not insertion(hunk) then
+    return
+  end
+  local start, finish = hunk.start, hunk.finish
+  local lower = index > 1 and patches[index - 1].finish or 0
+  local upper = patches[index + 1] and patches[index + 1].start or #base_records
+  local count = #hunk.records
+  while start > lower and base_records[start] == hunk.records[(start - hunk.start - 1) % count + 1] do
+    start = start - 1
+  end
+  while finish < upper and base_records[finish + 1] == hunk.records[(finish - hunk.finish) % count + 1] do
+    finish = finish + 1
+  end
+  if start < finish then
+    return { start = start, finish = finish }
+  end
+end
+
+---@param ranges Iter
+---@return fun(range: { start: integer, finish: integer }?): boolean
+local intersections = function(ranges)
+  local current = ranges:next()
+  return function(range)
+    if not range then
+      return false
+    end
+    while current and current.finish <= range.start do
+      current = ranges:next()
+    end
+    return current ~= nil and current.start < range.finish
+  end
+end
+
+---@param base_records string[]
+---@param local_records string[]
+---@param remote_records string[]
+---@param split_deletions boolean?
 ---@return FsReconcileHunk[]
-local changes = function(base_records, target_records)
-  return atomize(diff.plan_records(base_records, target_records))
+---@return FsReconcileHunk[]
+local changes = function(base_records, local_records, remote_records, split_deletions)
+  local local_patches = atomize(diff.plan_records(base_records, local_records), split_deletions)
+  local remote_patches = atomize(diff.plan_records(base_records, remote_records), split_deletions)
+  local deleted = intersections(vim.iter(local_patches):filter(function(hunk)
+    return #hunk.records == 0
+  end))
+  local extended = intersections(vim.iter(local_patches):enumerate():map(function(index)
+    return repeated_range(base_records, local_patches, index)
+  end))
+
+  local remaining = {}
+  for index, hunk in ipairs(remote_patches) do
+    local conflict = (#hunk.records == 0 and extended(hunk))
+      or (insertion(hunk) and deleted(repeated_range(base_records, remote_patches, index)))
+    if not conflict then
+      table.insert(remaining, hunk)
+    end
+  end
+  return local_patches, remaining
 end
 
 ---@param left FsReconcileHunk
@@ -153,18 +212,14 @@ local components = function(local_patches, remote_patches, related)
 
     local index = 1
     while pending[index] do
-      local first = pending[index]
-      pending[index] = nil
-      index = index + 1
       local component = { local_patches = {}, remote_patches = {} }
-      table.insert(first.local_patch and component.local_patches or component.remote_patches, first.hunk)
-
-      while pending[index] and joins(component, pending[index].hunk, pending[index].local_patch, related) do
+      repeat
         local item = pending[index]
         pending[index] = nil
         index = index + 1
-        table.insert(item.local_patch and component.local_patches or component.remote_patches, item.hunk)
-      end
+        local patches = item.local_patch and component.local_patches or component.remote_patches
+        table.insert(patches, item.hunk)
+      until not pending[index] or not joins(component, pending[index].hunk, pending[index].local_patch, related)
       coroutine.yield(component)
     end
   end)
@@ -184,24 +239,6 @@ local bounds = function(component)
   return assert(start), assert(finish)
 end
 
----@param start integer
----@param finish integer
----@param replacement_records string[]
----@return FsReconcileHunk
-local replacement = function(start, finish, replacement_records)
-  return {
-    start = start,
-    finish = finish,
-    records = replacement_records,
-  }
-end
-
----@param component FsReconcileHunkComponent
----@return boolean
-local pure_insertions = function(component)
-  return vim.iter(component.local_patches):all(insertion) and vim.iter(component.remote_patches):all(insertion)
-end
-
 ---@param left string[]
 ---@param right string[]
 ---@return string[]
@@ -210,21 +247,6 @@ local combine_insertions = function(left, right)
     return #left > #right and left or right
   end
   return vim.list_extend(left, right)
-end
-
----@param component FsReconcileHunkComponent
----@return FsReconcileHunk
-local merge_insertions = function(component)
-  local local_records = {}
-  local remote_records = {}
-  for _, hunk in ipairs(component.local_patches) do
-    vim.list_extend(local_records, hunk.records)
-  end
-  for _, hunk in ipairs(component.remote_patches) do
-    vim.list_extend(remote_records, hunk.records)
-  end
-  local start, finish = bounds(component)
-  return replacement(start, finish, combine_insertions(local_records, remote_records))
 end
 
 ---@param base_records string[]
@@ -252,15 +274,20 @@ local apply = function(base_records, patches, offset)
 end
 
 ---@param component FsReconcileHunkComponent
----@return FsReconcileHunk[]?
-local resolved = function(component)
-  if #component.remote_patches == 0 then
-    return component.local_patches
-  elseif #component.local_patches == 0 then
+---@return FsReconcileHunk[]
+local merge_component = function(component)
+  if #component.local_patches == 0 then
     return component.remote_patches
-  elseif pure_insertions(component) then
-    return { merge_insertions(component) }
+  elseif #component.remote_patches == 0 then
+    return component.local_patches
   end
+  local start, finish = bounds(component)
+  if start ~= finish then
+    return component.local_patches
+  end
+  local left = apply({}, component.local_patches, start)
+  local right = apply({}, component.remote_patches, start)
+  return { { start = start, finish = finish, records = combine_insertions(left, right) } }
 end
 
 ---@param text string
@@ -301,11 +328,11 @@ M.resolve = function(base, local_text, remote_text)
   local base_records = character_records(base)
 
   local patches = {}
-  for component in components(changes(base_records, local_records), changes(base_records, remote_records), conflicts) do
-    vim.list_extend(patches, resolved(component) or component.local_patches)
+  local local_patches, remote_patches = changes(base_records, local_records, remote_records)
+  for component in components(local_patches, remote_patches, conflicts) do
+    vim.list_extend(patches, merge_component(component))
   end
-  -- | >>> Inlined the sort wrapper here.
-  table.sort(patches, precedes)
+
   local records = apply(base_records, patches, 0)
   for index, record in ipairs(records) do
     records[index] = record == lib.LF and lib.LF or string.sub(record, 1, -#lib.LF - 1)
@@ -327,13 +354,10 @@ M.prepare = function(base, local_text, remote_text)
   return coroutine.wrap(function()
     local base_records = diff.records(base)
     local cursor = 0
-    for component in
-      components(
-        changes(base_records, diff.records(local_text)),
-        changes(base_records, diff.records(remote_text)),
-        overlaps
-      )
-    do
+    local local_patches, remote_patches =
+      changes(base_records, diff.records(local_text), diff.records(remote_text), true)
+
+    for component in components(local_patches, remote_patches, overlaps) do
       local start, finish = bounds(component)
       if cursor < start then
         local unchanged = table.concat(diff.slice(base_records, cursor, start))
@@ -359,17 +383,15 @@ end
 ---@param remote_text string
 ---@return string
 M.merge = function(base, local_text, remote_text)
-  if local_text == remote_text then
+  if local_text == remote_text or remote_text == base then
     return local_text
   elseif local_text == base then
     return remote_text
-  elseif remote_text == base then
-    return local_text
   end
 
-  local extension = M.extension(base, local_text, remote_text)
-  if extension then
-    return extension
+  local ext = M.extension(base, local_text, remote_text)
+  if ext then
+    return ext
   end
 
   local parts = {}
