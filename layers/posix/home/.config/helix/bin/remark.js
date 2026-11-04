@@ -11,7 +11,7 @@ import { pipeline } from "node:stream/promises"
 import { pathToFileURL } from "node:url"
 
 /**
- * @import { Blockquote, Paragraph, Root } from "mdast"
+ * @import { Blockquote, Paragraph, Root, Nodes } from "mdast"
  * @import { Options } from "mdast-util-to-markdown"
  * @import { Plugin } from "unified"
  */
@@ -70,11 +70,10 @@ const PREFIXES = [
   {
     prefix: SYN.marker,
     spellings: [SYN.marker],
-    context: "reply",
-    next: "quote",
+    parent: SYN.reply,
   },
-  { prefix: SYN.reply, spellings: [SYN.reply, ">|", ">\t|"], next: "reply" },
-  { prefix: SYN.quote, spellings: [SYN.quote], next: "quote" },
+  { prefix: SYN.reply, spellings: [SYN.reply, ">|", ">\t|"] },
+  { prefix: SYN.quote, spellings: [SYN.quote] },
 ]
   .flatMap(({ spellings, ...rule }) =>
     spellings.map((spelling) => ({ ...rule, spelling })),
@@ -145,7 +144,7 @@ const literalLines = (node) => {
     ) {
       return "skip"
     }
-    if (child.type !== "code" && child.type !== "html") {
+    if (!["code", "html", "table"].includes(child.type)) {
       return
     }
     ok(child.position)
@@ -161,17 +160,17 @@ const literalLines = (node) => {
 }
 
 /**
- * @typedef {{ prefix: string, next: string, lines: string[] }} PrefixBlock
+ * @typedef {{ prefix: string, lines: string[] }} PrefixBlock
  * @param {Blockquote} node
- * @param {{ source: string, context: string }} options
+ * @param {{ source: string, prefix: string }} options
  * @returns {PrefixBlock[]}
  */
-const quoteBlocks = (node, { source, context }) => {
+const quoteBlocks = (node, { source, prefix }) => {
   ok(node.position)
   const { start, end } = node.position
   const literal = literalLines(node)
   const rules = PREFIXES.filter(
-    (rule) => !rule.context || rule.context === context,
+    (rule) => !rule.parent || rule.parent === prefix,
   )
   /** @type {PrefixBlock[]} */
   const blocks = []
@@ -200,7 +199,6 @@ const quoteBlocks = (node, { source, context }) => {
     ) {
       current = {
         prefix: rule?.prefix ?? (endsMarker ? "" : SYN.quote),
-        next: rule?.next ?? "quote",
         lines: [],
       }
       blocks.push(current)
@@ -210,30 +208,111 @@ const quoteBlocks = (node, { source, context }) => {
   return blocks
 }
 
+/** @param {string} text @param {string} prefix @returns {string} */
+const quote = (text, prefix) =>
+  text
+    .replace(SYN.trailingNewline, "")
+    .split(SYN.lineEnding)
+    .map((line) => (line && prefix ? prefix + " " + line : prefix || line))
+    .join(EOL)
+
+/** @param {Nodes} node @returns {boolean} */
+const hasTable = (node) => {
+  let found = false
+  visit(node, (child) => {
+    switch (child.type) {
+      case "blockquote":
+        return "skip"
+      case "table":
+        found = true
+        return false
+      default:
+        return
+    }
+  })
+  return found
+}
+
+/**
+ * @param {{ processor: typeof remark, prefix: string }} options
+ * @returns {import("unified").Transformer<Root, Root>}
+ */
+const xformTable = ({ processor, prefix }) => {
+  const compiler = processor.compiler
+  ok(compiler)
+
+  return (root) => {
+    processor.compiler = (node, file) => {
+      if (node !== root) {
+        return compiler(node, file)
+      }
+
+      if (prefix !== SYN.reply) {
+        const rendered = compiler(root, file)
+        return prefix ? quote(rendered, prefix) + EOL : rendered
+      }
+      return (
+        root.children
+          .map((child) => ({
+            child,
+            prefix: hasTable(child) ? SYN.quote : SYN.reply,
+          }))
+          .map(({ child, prefix }, index, blocks) => {
+            const body = quote(
+              compiler({ type: "root", children: [child] }, file),
+              prefix,
+            )
+            const separator =
+              prefix === SYN.quote || blocks[index - 1]?.prefix === SYN.quote
+                ? SYN.quote
+                : SYN.reply
+            return (index ? EOL + separator + EOL : "") + body
+          })
+          .join("") + EOL
+      )
+    }
+  }
+}
+
 /**
  * @param {string} input
- * @param {{ context?: string, definitions?: string }} options
+ * @param {{ definitions?: string, prefix?: string }} options
  * @returns {string}
  */
-const format = (input, { context = "quote", definitions = "" } = {}) => {
-  const source = definitions ? input + "\n\n" + definitions : input
+const format = (input, { definitions = "", prefix = "" } = {}) => {
+  const source = definitions ? input + EOL + EOL + definitions : input
   const processor = remark().use(frontmatter, ["yaml", "toml"]).use(gfm)
+
+  /** @param {Root} tree @returns {string} */
+  const declarations = (tree) => {
+    /** @type {string[]} */
+    const found = []
+    visit(tree, "definition", (node) => {
+      found.push(processor.stringify({ type: "root", children: [node] }))
+    })
+    return found.join(EOL)
+  }
 
   /** @type {Options} */
   const options = {
     handlers: {
       blockquote(node) {
-        return quoteBlocks(node, { source, context })
-          .map(({ prefix, next, lines }) =>
-            format(lines.join("\n"), { context: next, definitions })
-              .replace(SYN.trailingNewline, "")
-              .split(SYN.lineEnding)
-              .map((line) =>
-                line && prefix ? prefix + " " + line : prefix || line,
-              )
-              .join("\n"),
+        const blocks = quoteBlocks(node, { source, prefix })
+        const local = declarations(
+          processor.parse(
+            blocks.map(({ lines }) => lines.join(EOL)).join(EOL + EOL),
+          ),
+        )
+        return blocks
+          .map(({ prefix, lines }) =>
+            format(lines.join(EOL), {
+              definitions: [local, definitions].join(EOL),
+              prefix,
+            }).replace(SYN.trailingNewline, ""),
           )
-          .join("\n\n")
+          .join(
+            node.children.some(hasTable) ? EOL + SYN.quote + EOL : EOL + EOL,
+          )
       },
     },
   }
@@ -242,22 +321,19 @@ const format = (input, { context = "quote", definitions = "" } = {}) => {
     tree.children = tree.children.filter(
       (node) => (node.position?.start.offset ?? input.length) < input.length,
     )
-    /** @type {string[]} */
-    const local = []
-    visit(tree, "definition", (node) => {
-      local.push(processor.stringify({ type: "root", children: [node] }))
-    })
-    definitions = [...local, definitions].join("\n")
+    definitions = [declarations(tree), definitions].join(EOL)
     visit(tree, "code", (node) => {
       if (SYN.markdown.has(node.lang ?? "")) {
         node.value = format(node.value).replace(SYN.trailingNewline, "")
       }
     })
   }
+
   return processor
     .use(xformContent)
     .use(xformList)
     .use(xformParagraph)
+    .use(xformTable, { processor, prefix })
     .data("settings", options)
     .processSync(source)
     .toString()

@@ -15,5 +15,5 @@ shopt -u failglob
 for F in "$SRC"/*; do
   NAME="$(basename -- "$F")"
   STEM="${NAME%.*}"
-  install -bD -- "$F" "$DST/$STEM"
+  install -v -bD -- "$F" "$DST/$STEM"
 done
