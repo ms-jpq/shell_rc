@@ -234,43 +234,37 @@ const hasTable = (node) => {
 }
 
 /**
- * @param {{ processor: typeof remark, prefix: string }} options
- * @returns {import("unified").Transformer<Root, Root>}
+ * @param {{ processor: Pick<typeof remark, "compiler">, prefix: string }} options
+ * @returns {void}
  */
 const xformTable = ({ processor, prefix }) => {
   const compiler = processor.compiler
   ok(compiler)
 
-  return (root) => {
-    processor.compiler = (node, file) => {
-      if (node !== root) {
-        return compiler(node, file)
-      }
-
-      if (prefix !== SYN.reply) {
-        const rendered = compiler(root, file)
-        return prefix ? quote(rendered, prefix) + EOL : rendered
-      }
-      return (
-        root.children
-          .map((child) => ({
-            child,
-            prefix: hasTable(child) ? SYN.quote : SYN.reply,
-          }))
-          .map(({ child, prefix }, index, blocks) => {
-            const body = quote(
-              compiler({ type: "root", children: [child] }, file),
-              prefix,
-            )
-            const separator =
-              prefix === SYN.quote || blocks[index - 1]?.prefix === SYN.quote
-                ? SYN.quote
-                : SYN.reply
-            return (index ? EOL + separator + EOL : "") + body
-          })
-          .join("") + EOL
-      )
+  processor.compiler = (root, file) => {
+    if (prefix !== SYN.reply) {
+      const rendered = compiler(root, file)
+      return prefix ? quote(rendered, prefix) + EOL : rendered
     }
+    return (
+      root.children
+        .map((child) => ({
+          child,
+          prefix: hasTable(child) ? SYN.quote : SYN.reply,
+        }))
+        .map(({ child, prefix }, index, blocks) => {
+          const body = quote(
+            compiler({ type: "root", children: [child] }, file),
+            prefix,
+          )
+          const separator =
+            prefix === SYN.quote || blocks[index - 1]?.prefix === SYN.quote
+              ? SYN.quote
+              : SYN.reply
+          return (index ? EOL + separator + EOL : "") + body
+        })
+        .join("") + EOL
+    )
   }
 }
 
@@ -306,7 +300,7 @@ const format = (input, { definitions = "", prefix = "" } = {}) => {
         return blocks
           .map(({ prefix, lines }) =>
             format(lines.join(EOL), {
-              definitions: [local, definitions].join(EOL),
+              definitions: [local, combinedDefinitions].join(EOL),
               prefix,
             }).replace(SYN.trailingNewline, ""),
           )
@@ -321,7 +315,6 @@ const format = (input, { definitions = "", prefix = "" } = {}) => {
     tree.children = tree.children.filter(
       (node) => (node.position?.start.offset ?? input.length) < input.length,
     )
-    definitions = [declarations(tree), definitions].join(EOL)
     visit(tree, "code", (node) => {
       if (SYN.markdown.has(node.lang ?? "")) {
         node.value = format(node.value).replace(SYN.trailingNewline, "")
@@ -329,14 +322,18 @@ const format = (input, { definitions = "", prefix = "" } = {}) => {
     })
   }
 
-  return processor
+  const configured = processor
     .use(xformContent)
     .use(xformList)
     .use(xformParagraph)
-    .use(xformTable, { processor, prefix })
+
+  const tree = configured.runSync(configured.parse(source))
+  const combinedDefinitions = [declarations(tree), definitions].join(EOL)
+  const renderer = configured()
+  return renderer
+    .use(xformTable, { processor: renderer, prefix })
     .data("settings", options)
-    .processSync(source)
-    .toString()
+    .stringify(tree)
 }
 
 stdout.write(
