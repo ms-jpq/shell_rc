@@ -157,7 +157,7 @@ AWK
   "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | {
     tee
     if ((RANDOM % 8 == 0)); then
-      tee << EOF
+      tee <<- EOF
 
 <system-reminder>
 $(< "$REPL_MD")
