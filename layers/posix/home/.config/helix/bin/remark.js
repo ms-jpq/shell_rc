@@ -13,7 +13,7 @@ import { pathToFileURL } from "node:url"
 /**
  * @import { Blockquote, Paragraph, Root, Nodes } from "mdast"
  * @import { Options } from "mdast-util-to-markdown"
- * @import { Plugin } from "unified"
+ * @import { Plugin, Processor } from "unified"
  */
 
 const require = createRequire(
@@ -38,22 +38,29 @@ const _import = (specifier) =>
  *   { default: typeof import("remark-frontmatter").default },
  *   { default: typeof import("remark-gfm").default },
  *   { visit: typeof import("unist-util-visit").visit },
+ *   { defaultHandlers: typeof import("mdast-util-to-markdown").defaultHandlers },
  * ]}
  */
-const [{ remark }, { default: frontmatter }, { default: gfm }, { visit }] =
-  await (async () => {
-    try {
-      return await Promise.all([
-        _import("remark"),
-        _import("remark-frontmatter"),
-        _import("remark-gfm"),
-        _import("unist-util-visit"),
-      ])
-    } catch {
-      await pipeline(stdin, stdout)
-      exit(0)
-    }
-  })()
+const [
+  { remark },
+  { default: frontmatter },
+  { default: gfm },
+  { visit },
+  { defaultHandlers },
+] = await (async () => {
+  try {
+    return await Promise.all([
+      _import("remark"),
+      _import("remark-frontmatter"),
+      _import("remark-gfm"),
+      _import("unist-util-visit"),
+      _import("mdast-util-to-markdown"),
+    ])
+  } catch {
+    await pipeline(stdin, stdout)
+    exit(0)
+  }
+})()
 
 const SYN = {
   lineEnding: /\r\n|\n|\r/,
@@ -234,63 +241,73 @@ const hasTable = (node) => {
 }
 
 /**
- * @param {{ processor: Pick<typeof remark, "compiler">, prefix: string }} options
+ * @param {Processor<Root, Root, Root, Root, string>} processor
+ * @param {Options} extension
  * @returns {void}
  */
-const xformTable = ({ processor, prefix }) => {
-  const compiler = processor.compiler
-  ok(compiler)
-
-  processor.compiler = (root, file) => {
-    if (prefix !== SYN.reply) {
-      const rendered = compiler(root, file)
-      return prefix ? quote(rendered, prefix) + EOL : rendered
-    }
-    return (
-      root.children
-        .map((child) => ({
-          child,
-          prefix: hasTable(child) ? SYN.quote : SYN.reply,
-        }))
-        .map(({ child, prefix }, index, blocks) => {
-          const body = quote(
-            compiler({ type: "root", children: [child] }, file),
-            prefix,
-          )
-          const separator =
-            prefix === SYN.quote || blocks[index - 1]?.prefix === SYN.quote
-              ? SYN.quote
-              : SYN.reply
-          return (index ? EOL + separator + EOL : "") + body
-        })
-        .join("") + EOL
-    )
-  }
+const addMarkdownExtension = (processor, extension) => {
+  processor.data("toMarkdownExtensions", [
+    ...(processor.data("toMarkdownExtensions") ?? []),
+    extension,
+  ])
 }
 
 /**
- * @param {string} input
- * @param {{ definitions?: string, prefix?: string }} options
- * @returns {string}
+ * @param {{ processor: Processor<Root, Root, Root, Root, string>, prefix: string }} options
+ * @returns {void}
  */
-const format = (input, { definitions = "", prefix = "" } = {}) => {
-  const source = definitions ? input + EOL + EOL + definitions : input
-  const processor = remark().use(frontmatter, ["yaml", "toml"]).use(gfm)
-
-  /** @param {Root} tree @returns {string} */
-  const declarations = (tree) => {
-    /** @type {string[]} */
-    const found = []
-    visit(tree, "definition", (node) => {
-      found.push(processor.stringify({ type: "root", children: [node] }))
-    })
-    return found.join(EOL)
-  }
-
-  /** @type {Options} */
-  const options = {
+const xformTable = ({ processor, prefix }) =>
+  addMarkdownExtension(processor, {
     handlers: {
-      blockquote(node) {
+      /** @type {typeof defaultHandlers.root} */
+      root: (root, parent, state, info) => {
+        if (prefix !== SYN.reply) {
+          const rendered = defaultHandlers.root(root, parent, state, info)
+          return prefix ? quote(rendered, prefix) + EOL : rendered
+        }
+        return (
+          root.children
+            .map((child) => ({
+              child,
+              prefix: hasTable(child) ? SYN.quote : SYN.reply,
+            }))
+            .map(({ child, prefix }, index, blocks) => {
+              const body = quote(
+                defaultHandlers.root(
+                  { type: "root", children: [child] },
+                  parent,
+                  state,
+                  info,
+                ),
+                prefix,
+              )
+              const separator =
+                prefix === SYN.quote || blocks[index - 1]?.prefix === SYN.quote
+                  ? SYN.quote
+                  : SYN.reply
+              return (index ? EOL + separator + EOL : "") + body
+            })
+            .join("") + EOL
+        )
+      },
+    },
+  })
+
+/**
+ * @param {{ processor: Processor<Root, Root, Root, Root, string>, source: string, prefix: string, definitions: string, declarations: (tree: Root) => string }} options
+ * @returns {void}
+ */
+const xformBlockquote = ({
+  processor,
+  source,
+  prefix,
+  definitions,
+  declarations,
+}) =>
+  addMarkdownExtension(processor, {
+    handlers: {
+      /** @type {typeof defaultHandlers.blockquote} */
+      blockquote: (node) => {
         const blocks = quoteBlocks(node, { source, prefix })
         const local = declarations(
           processor.parse(
@@ -300,7 +317,7 @@ const format = (input, { definitions = "", prefix = "" } = {}) => {
         return blocks
           .map(({ prefix, lines }) =>
             format(lines.join(EOL), {
-              definitions: [local, combinedDefinitions].join(EOL),
+              definitions: [local, definitions].join(EOL),
               prefix,
             }).replace(SYN.trailingNewline, ""),
           )
@@ -309,11 +326,14 @@ const format = (input, { definitions = "", prefix = "" } = {}) => {
           )
       },
     },
-  }
-  /** @type {Plugin<[], Root>} */
-  const xformContent = () => (tree) => {
+  })
+
+/** @type {Plugin<[{ length: number }], Root>} */
+const xformContent =
+  ({ length }) =>
+  (tree) => {
     tree.children = tree.children.filter(
-      (node) => (node.position?.start.offset ?? input.length) < input.length,
+      (node) => (node.position?.start.offset ?? length) < length,
     )
     visit(tree, "code", (node) => {
       if (SYN.markdown.has(node.lang ?? "")) {
@@ -322,17 +342,43 @@ const format = (input, { definitions = "", prefix = "" } = {}) => {
     })
   }
 
-  const configured = processor
-    .use(xformContent)
+/**
+ * @param {string} input
+ * @param {{ definitions?: string, prefix?: string }} options
+ * @returns {string}
+ */
+const format = (input, { definitions = "", prefix = "" } = {}) => {
+  const source = definitions ? input + EOL + EOL + definitions : input
+  const parser = remark()
+    .use(frontmatter, ["yaml", "toml"])
+    .use(gfm)
+    .use(xformContent, { length: input.length })
     .use(xformList)
     .use(xformParagraph)
 
-  const tree = configured.runSync(configured.parse(source))
+  /** @param {Root} tree @returns {string} */
+  const declarations = (tree) => {
+    /** @type {string[]} */
+    const found = []
+    visit(tree, "definition", (node) => {
+      found.push(parser.stringify({ type: "root", children: [node] }))
+    })
+    return found.join(EOL)
+  }
+
+  const tree = parser.runSync(parser.parse(source))
   const combinedDefinitions = [declarations(tree), definitions].join(EOL)
-  const renderer = configured()
-  return renderer
-    .use(xformTable, { processor: renderer, prefix })
-    .data("settings", options)
+
+  const processor = parser()
+  return processor
+    .use(xformTable, { processor, prefix })
+    .use(xformBlockquote, {
+      processor,
+      source,
+      prefix,
+      definitions: combinedDefinitions,
+      declarations,
+    })
     .stringify(tree)
 }
 
