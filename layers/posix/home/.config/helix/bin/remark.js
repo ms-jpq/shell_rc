@@ -196,7 +196,7 @@ const quoteBlocks = (node, { source, prefix }) => {
   /** @type {PrefixBlock[]} */
   const blocks = []
   /** @type {PrefixBlock | undefined} */
-  let current
+  let current = undefined
   for (const [index, raw] of source
     .slice(start.offset, end.offset)
     .split(SYN.lineEnding)
