@@ -154,8 +154,8 @@ AWK
     "$FRONTMATTER"
   )
 
-  "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | {
-    tee
+  {
+    "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME"
     if ((RANDOM % 8 == 0)); then
       tee <<- EOF
 
