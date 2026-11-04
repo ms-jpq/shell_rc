@@ -154,7 +154,17 @@ AWK
     "$FRONTMATTER"
   )
 
-  "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | "$REPL_SCRIPT" "$PANE_ID"
+  "${PRINT_CONTEXT[@]}" < "$REPL_FILE_NAME" | {
+    tee
+    if ((RANDOM % 8 == 0)); then
+      tee << EOF
+
+<system-reminder>
+$(< "$REPL_MD")
+</system-reminder>
+EOF
+    fi
+  } | "$REPL_SCRIPT" "$PANE_ID"
   COLOURS=(
     🟥
     🟦
