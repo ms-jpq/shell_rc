@@ -87,6 +87,20 @@ const PREFIXES = [
   )
   .sort((left, right) => right.spelling.length - left.spelling.length)
 
+/** @type {Plugin<[{ length: number }], Root>} */
+const xformContent =
+  ({ length }) =>
+  (tree) => {
+    tree.children = tree.children.filter(
+      (node) => (node.position?.start.offset ?? length) < length,
+    )
+    visit(tree, "code", (node) => {
+      if (SYN.markdown.has(node.lang ?? "")) {
+        node.value = format(node.value).replace(SYN.trailingNewline, "")
+      }
+    })
+  }
+
 /**
  * @param {Paragraph} para
  * @returns {Paragraph[]}
@@ -224,21 +238,10 @@ const quote = (text, prefix) =>
     .join(EOL)
 
 /** @param {Nodes} node @returns {boolean} */
-const hasTable = (node) => {
-  let found = false
-  visit(node, (child) => {
-    switch (child.type) {
-      case "blockquote":
-        return "skip"
-      case "table":
-        found = true
-        return false
-      default:
-        return
-    }
-  })
-  return found
-}
+const needsPlainQuote = (node) =>
+  node.type === "table" ||
+  node.type === "code" ||
+  ("children" in node && node.children.some(needsPlainQuote))
 
 /**
  * @param {Processor<Root, Root, Root, Root, string>} processor
@@ -256,7 +259,7 @@ const addMarkdownExtension = (processor, extension) => {
  * @param {{ processor: Processor<Root, Root, Root, Root, string>, prefix: string }} options
  * @returns {void}
  */
-const xformTable = ({ processor, prefix }) =>
+const xformReply = ({ processor, prefix }) =>
   addMarkdownExtension(processor, {
     handlers: {
       /** @type {typeof defaultHandlers.root} */
@@ -267,20 +270,22 @@ const xformTable = ({ processor, prefix }) =>
         }
         return (
           root.children
-            .map((child) => ({
-              child,
-              prefix: hasTable(child) ? SYN.quote : SYN.reply,
+            .map((child) =>
+              defaultHandlers.root(
+                { type: "root", children: [child] },
+                parent,
+                state,
+                info,
+              ),
+            )
+            .map((rendered) => ({
+              rendered,
+              prefix: needsPlainQuote(processor.parse(rendered))
+                ? SYN.quote
+                : SYN.reply,
             }))
-            .map(({ child, prefix }, index, blocks) => {
-              const body = quote(
-                defaultHandlers.root(
-                  { type: "root", children: [child] },
-                  parent,
-                  state,
-                  info,
-                ),
-                prefix,
-              )
+            .map(({ rendered, prefix }, index, blocks) => {
+              const body = quote(rendered, prefix)
               const separator =
                 prefix === SYN.quote || blocks[index - 1]?.prefix === SYN.quote
                   ? SYN.quote
@@ -294,16 +299,23 @@ const xformTable = ({ processor, prefix }) =>
   })
 
 /**
- * @param {{ processor: Processor<Root, Root, Root, Root, string>, source: string, prefix: string, definitions: string, declarations: (tree: Root) => string }} options
+ * @param {Root} tree
+ * @returns {string}
+ */
+const declarations = (tree) => {
+  /** @type {string[]} */
+  const found = []
+  visit(tree, "definition", (node) => {
+    found.push(remark.stringify({ type: "root", children: [node] }))
+  })
+  return found.join(EOL)
+}
+
+/**
+ * @param {{ processor: Processor<Root, Root, Root, Root, string>, source: string, prefix: string, definitions: string }} options
  * @returns {void}
  */
-const xformBlockquote = ({
-  processor,
-  source,
-  prefix,
-  definitions,
-  declarations,
-}) =>
+const xformBlockquote = ({ processor, source, prefix, definitions }) =>
   addMarkdownExtension(processor, {
     handlers: {
       /** @type {typeof defaultHandlers.blockquote} */
@@ -317,30 +329,18 @@ const xformBlockquote = ({
         return blocks
           .map(({ prefix, lines }) =>
             format(lines.join(EOL), {
-              definitions: [local, definitions].join(EOL),
+              definitions: [local, definitions].filter(Boolean).join(EOL),
               prefix,
             }).replace(SYN.trailingNewline, ""),
           )
           .join(
-            node.children.some(hasTable) ? EOL + SYN.quote + EOL : EOL + EOL,
+            node.children.some(needsPlainQuote)
+              ? EOL + SYN.quote + EOL
+              : EOL + EOL,
           )
       },
     },
   })
-
-/** @type {Plugin<[{ length: number }], Root>} */
-const xformContent =
-  ({ length }) =>
-  (tree) => {
-    tree.children = tree.children.filter(
-      (node) => (node.position?.start.offset ?? length) < length,
-    )
-    visit(tree, "code", (node) => {
-      if (SYN.markdown.has(node.lang ?? "")) {
-        node.value = format(node.value).replace(SYN.trailingNewline, "")
-      }
-    })
-  }
 
 /**
  * @param {string} input
@@ -356,28 +356,19 @@ const format = (input, { definitions = "", prefix = "" } = {}) => {
     .use(xformList)
     .use(xformParagraph)
 
-  /** @param {Root} tree @returns {string} */
-  const declarations = (tree) => {
-    /** @type {string[]} */
-    const found = []
-    visit(tree, "definition", (node) => {
-      found.push(parser.stringify({ type: "root", children: [node] }))
-    })
-    return found.join(EOL)
-  }
-
   const tree = parser.runSync(parser.parse(source))
-  const combinedDefinitions = [declarations(tree), definitions].join(EOL)
+  const combinedDefinitions = [declarations(tree), definitions]
+    .filter(Boolean)
+    .join(EOL)
 
   const processor = parser()
   return processor
-    .use(xformTable, { processor, prefix })
+    .use(xformReply, { processor, prefix })
     .use(xformBlockquote, {
       processor,
       source,
       prefix,
       definitions: combinedDefinitions,
-      declarations,
     })
     .stringify(tree)
 }
