@@ -104,6 +104,15 @@ const xformContent =
     })
   }
 
+/** @type {Plugin<[], Root>} */
+const xformList = () => (tree) =>
+  visit(tree, "list", (node) => {
+    node.spread = true
+    for (const item of node.children) {
+      item.spread = true
+    }
+  })
+
 /**
  * @param {Paragraph} para
  * @returns {Paragraph[]}
@@ -133,15 +142,6 @@ const splitParagraph = (para) => {
     ? [para]
     : groups.map((children) => ({ type: "paragraph", children }))
 }
-
-/** @type {Plugin<[], Root>} */
-const xformList = () => (tree) =>
-  visit(tree, "list", (node) => {
-    node.spread = true
-    for (const item of node.children) {
-      item.spread = true
-    }
-  })
 
 /** @type {Plugin<[], Root>} */
 const xformParagraph = () => (tree) => {
@@ -247,8 +247,9 @@ const needsPlainQuote = (node) =>
   ("children" in node && node.children.some(needsPlainQuote))
 
 /**
+ * @typedef {Omit<Options, "handlers"> & { handlers: Partial<typeof defaultHandlers> }} MarkdownExtension
  * @param {Processor<Root, Root, Root, Root, string>} processor
- * @param {Options} extension
+ * @param {MarkdownExtension} extension
  * @returns {void}
  */
 const addMarkdownExtension = (processor, extension) => {
@@ -265,7 +266,6 @@ const addMarkdownExtension = (processor, extension) => {
 const xformReply = ({ processor, prefix }) =>
   addMarkdownExtension(processor, {
     handlers: {
-      /** @type {typeof defaultHandlers.root} */
       root: (root, parent, state, info) => {
         if (prefix !== SYN.reply) {
           const rendered = defaultHandlers.root(root, parent, state, info)
@@ -321,7 +321,6 @@ const declarations = (tree) => {
 const xformBlockquote = ({ processor, source, prefix, definitions }) =>
   addMarkdownExtension(processor, {
     handlers: {
-      /** @type {typeof defaultHandlers.blockquote} */
       blockquote: (node) => {
         const blocks = quoteBlocks(node, { source, prefix })
         const local = declarations(
