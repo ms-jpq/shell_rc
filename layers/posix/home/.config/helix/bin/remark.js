@@ -11,36 +11,38 @@ import { pipeline } from "node:stream/promises"
 import { pathToFileURL } from "node:url"
 
 /**
- * @import { Blockquote, Paragraph, Root, Nodes } from "mdast"
+ * @import { Blockquote, Definition, Paragraph, Root, Nodes } from "mdast"
  * @import { Options } from "mdast-util-to-markdown"
  * @import { Plugin, Processor } from "unified"
+ * @typedef {{
+ *   remark: typeof import("remark"),
+ *   "remark-frontmatter": typeof import("remark-frontmatter"),
+ *   "remark-gfm": typeof import("remark-gfm"),
+ *   "unist-util-visit": typeof import("unist-util-visit"),
+ *   "mdast-util-to-markdown": typeof import("mdast-util-to-markdown"),
+ * }} Modules
  */
 
-const require = createRequire(
-  join(
-    homedir(),
-    ".cache",
-    "helix-rt",
-    "nodejs",
-    "remark",
-    "node_modules",
-    "_.js",
-  ),
-)
+const _import = (() => {
+  const require = createRequire(
+    join(
+      homedir(),
+      ".cache",
+      "helix-rt",
+      "nodejs",
+      "remark",
+      "node_modules",
+      "_.js",
+    ),
+  )
+  /**
+   * @template {keyof Modules} Name
+   * @param {Name} specifier
+   * @returns {Promise<Modules[Name]>}
+   */
+  return (specifier) => import(pathToFileURL(require.resolve(specifier)).href)
+})()
 
-/** @param {string} specifier */
-const _import = (specifier) =>
-  import(pathToFileURL(require.resolve(specifier)).href)
-
-/**
- * @type {[
- *   { remark: typeof import("remark").remark },
- *   { default: typeof import("remark-frontmatter").default },
- *   { default: typeof import("remark-gfm").default },
- *   { visit: typeof import("unist-util-visit").visit },
- *   { defaultHandlers: typeof import("mdast-util-to-markdown").defaultHandlers },
- * ]}
- */
 const [
   { remark },
   { default: frontmatter },
@@ -73,6 +75,7 @@ const SYN = {
   reply: "> |",
   quote: ">",
 }
+
 const PREFIXES = [
   {
     prefix: SYN.marker,
@@ -196,7 +199,7 @@ const quoteBlocks = (node, { source, prefix }) => {
   /** @type {PrefixBlock[]} */
   const blocks = []
   /** @type {PrefixBlock | undefined} */
-  let current = undefined
+  let current
   for (const [index, raw] of source
     .slice(start.offset, end.offset)
     .split(SYN.lineEnding)
@@ -303,12 +306,12 @@ const xformReply = ({ processor, prefix }) =>
  * @returns {string}
  */
 const declarations = (tree) => {
-  /** @type {string[]} */
-  const found = []
+  /** @type {Definition[]} */
+  const children = []
   visit(tree, "definition", (node) => {
-    found.push(remark.stringify({ type: "root", children: [node] }))
+    children.push(node)
   })
-  return found.join(EOL)
+  return remark.stringify({ type: "root", children })
 }
 
 /**
