@@ -26,13 +26,13 @@ autocmd.vim_enter(function()
 
   proc.pack "coq-nvim"
   proc.pack "coq-3p"
+  proc.pack "fzf"
   local globbed = vim.fn.globpath(opt, "*/plugin/*.{lua,vim}", true, true)
   for _, file in pairs(globbed) do
     vim.cmd.source(file)
   end
 
   proc.pack "easyalign"
-  proc.pack "fzf"
   proc.pack "gitsigns"
   proc.pack "treesitter"
   -- lib.report(require, "go.pack.coq-3p")

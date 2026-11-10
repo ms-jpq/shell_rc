@@ -1,6 +1,17 @@
 -- vim.env.FZF_DEFAULT_OPTS = vim.env.FZF_DEFAULT_OPTS .. " --no-border"
 
 local fzf = require "go.pack.fzf.lib"
+local lib = require "goto.lib"
+
+do
+  if lib.is_mac then
+    vim.opt.runtimepath:prepend "/opt/homebrew/opt/fzf"
+  elseif lib.is_linux then
+    vim.opt.runtimepath:prepend "/usr/share/doc/fzf/examples"
+  end
+
+  vim.cmd.runtime "plugin/fzf.vim"
+end
 
 vim.g.fzf_layout = {
   window = {

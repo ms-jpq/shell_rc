@@ -56,9 +56,10 @@ if vim.api and vim.api.nvim_create_augroup then
 end
 
 local has = vim.fn and vim.fn.has
+M.is_mac = has and has [[macunix]] == 1 or false
+M.is_linux = has and has [[linux]] == 1 or false
 M.is_win = has and (has [[win64]] == 1 or has [[win64unix]] == 1 or has [[win32]] == 1 or has [[win32unix]] == 1)
   or false
-M.is_linux = has and has [[linux]] == 1 or false
 
 M.os = {
   sep = M.is_win and [[\]] or [[/]],
