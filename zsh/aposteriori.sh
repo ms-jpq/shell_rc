@@ -6,22 +6,13 @@ else
   _sh='zsh'
 fi
 
-case "$OSTYPE" in
-darwin*)
-  _fzf_shell='/opt/homebrew/opt/fzf/shell'
-  ;;
-*)
-  _fzf_shell="$HOME/.local/opt/fzf/shell"
-  ;;
-esac
-
-for _fzf in "$_fzf_shell"/{key-bindings,completion}."$_sh"; do
-  if [[ -r $_fzf ]]; then
-    # shellcheck disable=SC1090
-    source -- "$_fzf"
-  fi
-done
-unset -- _fzf _fzf_shell
+# shellcheck disable=SC2154
+_fzf="$XDG_CACHE_HOME/fzf/integration.$_sh"
+if [[ -r $_fzf ]]; then
+  # shellcheck disable=SC1090
+  source -- "$_fzf"
+fi
+unset -- _fzf
 
 # shellcheck disable=SC2312,SC1090
 source -- <(zoxide init "$_sh")

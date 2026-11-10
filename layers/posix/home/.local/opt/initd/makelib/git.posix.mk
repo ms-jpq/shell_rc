@@ -19,7 +19,6 @@ define GIT_REPOS
 
 $(OPT)/aerc                    https://git.sr.ht/~rjarry/aerc
 $(OPT)/ai                      https://github.com/ms-jpq/ai
-$(OPT)/fzf                     https://github.com/junegunn/fzf
 $(OPT)/fzf-tab                 https://github.com/Aloxaf/fzf-tab
 $(OPT)/k9s                     https://github.com/derailed/k9s
 $(OPT)/pipes.sh                https://github.com/pipeseroni/pipes.sh
