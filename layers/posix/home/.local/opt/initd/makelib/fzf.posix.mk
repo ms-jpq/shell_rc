@@ -1,6 +1,8 @@
 .PHONY: fzf.posix
 
+ifneq ($(OS),nt)
 zsh: fzf.posix
+endif
 
 FZF_INTEGRATIONS := $(CACHE)/fzf/integration.bash $(CACHE)/fzf/integration.zsh
 FZF_BINARY :=

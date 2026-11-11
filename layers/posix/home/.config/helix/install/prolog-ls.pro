@@ -25,4 +25,8 @@ install(Pack, Attempts) :-
           )).
 
 main(_Argv) :-
+    getenv('CI', CI),
+    CI \= '',
+    !.
+main(_Argv) :-
     install('lsp_server', 3).
