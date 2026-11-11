@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-TAB=$'\t'
+SEP=$'\x1f'
 
 RESET=$'\033[0m'
 DIM=$'\033[2m'
@@ -14,15 +14,16 @@ case "${RECUR:-}" in
 list)
   FORMAT=(
     '#{session_id}:#{window_id}.#{pane_id}'
-    "$BLUE#{q:session_name}$RESET"
+    "$BLUE#{session_name}$RESET"
     "$DIM#{window_index}.#{pane_index}$RESET"
-    "$MAGENTA#{q:window_name}$RESET"
-    "$GREEN#{q:pane_current_command}$RESET"
-    "$DIM#{q:pane_current_path}$RESET"
-    '#{q:pane_title}'
+    "$MAGENTA#{window_name}$RESET"
+    "$GREEN#{pane_current_command}$RESET"
+    "$DIM"'#{s|^#{HOME}$|~|;s|^#{HOME}/|~/|:pane_current_path}'"$RESET"
+    '#{pane_title}'
   )
-  IFS="$TAB"
-  exec -- tmux list-panes -a -F "${FORMAT[*]}"
+  IFS="$SEP"
+  LINE="${FORMAT[*]}"
+  exec -- tmux list-panes -a -F "${LINE//"$SEP"/"$SEP "}"
   ;;
 '')
   LIST=(env -- RECUR=list "$0")
@@ -39,7 +40,7 @@ list)
     --literal
     --no-multi
     --no-border
-    --delimiter "$TAB"
+    --delimiter "$SEP "
     --with-nth '2..'
     --nth '1,3..'
     --query "$*"
@@ -50,7 +51,7 @@ list)
     --bind 'alt-e:ignore,alt-o:ignore'
   )
   if SELECTED="$("${FZF[@]}" <<< "$PANES")"; then
-    TARGET="${SELECTED%%"$TAB"*}"
+    TARGET="${SELECTED%%"$SEP"*}"
   else
     CODE="$?"
     case "$CODE" in
