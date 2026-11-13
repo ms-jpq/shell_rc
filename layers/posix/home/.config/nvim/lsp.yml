@@ -148,6 +148,9 @@ ruby_lsp:
     - ruby-lsp
 
 sorbet:
+  root_markers:
+    - sorbet/config
+  workspace_required: true
 
 solargraph:
 

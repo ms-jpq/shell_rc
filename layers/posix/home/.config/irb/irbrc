@@ -43,12 +43,24 @@ IRB.conf[:USE_AUTOCOMPLETE] = false
   tsort
   uri
   yaml
-].each { require(_1) }
+].each { require(it) }
 
 module Kernel
-  def clear! = system(*%w[clear --], exception: true) unless respond_to?(:clear!)
-  def methods! = (methods - Object.methods).sort unless respond_to?(:methods!)
-  def own_methods! = (methods - self.class.superclass.instance_methods).sort unless respond_to?(:own_methods!)
+  unless respond_to?(:clear!)
+    def clear!
+      system(*%w[clear --], exception: true)
+    end
+  end
+  unless respond_to?(:methods!)
+    def methods!
+      (methods - Object.methods).sort
+    end
+  end
+  unless respond_to?(:own_methods!)
+    def own_methods!
+      (methods - self.class.superclass.instance_methods).sort
+    end
+  end
 
   unless respond_to?(:assert!)
     def assert!(c, m = nil, &msg)
@@ -60,7 +72,7 @@ module Kernel
 end
 
 class Module
-  unless instance_methods.include?(:edit!)
+  unless method_defined?(:edit!)
     def edit!
       case Object.const_source_location(name)
       in []
@@ -73,7 +85,7 @@ class Module
 end
 
 class Class
-  unless instance_methods.include?(:edit!)
+  unless method_defined?(:edit!)
     def edit!
       case Object.const_source_location(name)
       in []
@@ -86,7 +98,7 @@ class Class
 end
 
 class Method
-  unless instance_methods.include?(:edit!)
+  unless method_defined?(:edit!)
     def edit!
       source_location => [path, lineno]
       if File.file?(path.to_s)

@@ -14,7 +14,7 @@ class CyrusSaslXoauth2 < Formula
   def install
     system('glibtoolize')
     File.open('./autogen.sh') do |f|
-      f.drop(1).each { system(_1) }
+      f.drop(1).each { system(it) }
     end
 
     system('./configure', "--with-cyrus-sasl=#{prefix}")

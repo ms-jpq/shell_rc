@@ -22,7 +22,7 @@ local fmt_command = function(workdir, buf)
     if vim.fn.executable(spec.command) == 1 then
       local mapped = vim
         .iter({
-          proc.sandbox(workdir, {}),
+          proc.sandbox(workdir, spec.sandbox or {}),
           { spec.command },
           spec.args == vim.NIL and {} or spec.args,
         })

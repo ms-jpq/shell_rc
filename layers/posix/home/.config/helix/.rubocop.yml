@@ -2,7 +2,6 @@
 ---
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.3
 
 inherit_from:
   - ./rubocop.json

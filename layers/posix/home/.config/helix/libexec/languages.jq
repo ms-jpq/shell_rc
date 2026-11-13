@@ -14,5 +14,4 @@ def indentfix:
   | [$presets.language[] | select(.indent)] | map({ (.name): (.indent |= indentfix | pick(.indent)) }) | add as $pre_indent
   | $usr.language | with_entries(.value."language-servers" += $pre_langs[.key]."language-servers") | . as $user_langs
   | $pre_indent * $pre_langs * $user_langs | to_entries | map({name: .key} * .value) as $langs
-  | {language: $langs, "language-server": $usr."language-server"}
-
+  | {language: ($langs | map(del(.formatter.sandbox))), "language-server": $usr."language-server"}

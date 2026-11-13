@@ -206,7 +206,10 @@
           "--no-color",
           "--autocorrect"
         ],
-        "command": "rubocop"
+        "command": "rubocop",
+        "sandbox": {
+          "network": true
+        }
       },
       "language-servers": ["srb"]
     },

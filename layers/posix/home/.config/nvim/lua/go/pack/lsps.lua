@@ -1,10 +1,12 @@
 local lib = require "goto.lib"
 local proc = require "go.proc"
+
 local lsp_path = vim.fs.joinpath(proc.cfg, "apriori", "lsp.json")
+local override_keys = { "cmd", "filetypes", "init_options", "root_markers", "settings", "workspace_required" }
 
 local build_overrides = function(conf)
   local acc = { detached = false }
-  for _, k in pairs { "cmd", "filetypes", "init_options", "settings" } do
+  for _, k in pairs(override_keys) do
     if conf[k] and conf[k] ~= vim.NIL then
       acc[k] = conf[k]
     end
@@ -24,10 +26,14 @@ local runtime_overrides = function(conf, merged)
       end
     end,
     cmd = function(dispatchers, config)
-      local workdir = (config or {}).root_dir or vim.fn.getcwd()
+      local workdir = config.cmd_cwd or config.root_dir or vim.fn.getcwd()
       local cmd = vim.list_extend(proc.sandbox(workdir, conf.sandbox or {}), merged.cmd)
 
-      return vim.lsp.rpc.start(cmd, dispatchers)
+      return vim.lsp.rpc.start(cmd, dispatchers, {
+        cwd = workdir,
+        env = config.cmd_env,
+        detached = config.detached,
+      })
     end,
   }
 end

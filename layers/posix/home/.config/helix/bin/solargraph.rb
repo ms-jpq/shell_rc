@@ -3,7 +3,6 @@
 # typed: strong
 
 require('English')
-require('pathname')
 
 ENV['SOLARGRAPH_CACHE'] = File.join(ENV.fetch('XDG_CACHE_HOME'), 'solargraph')
 
