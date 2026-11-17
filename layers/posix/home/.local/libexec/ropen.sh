@@ -13,8 +13,6 @@ if [[ ${RECUR:-} == 1 ]]; then
       open -- "$TARGET"
       ;;
     *)
-      set -x
-      exit 2
       ;;
     esac
   done
@@ -25,5 +23,5 @@ else
   umask -- 077
   mkdir -p -- "${SOCK%/*}"
   export -- RECUR=1
-  exec -- socat "UNIX-LISTEN:$SOCK,fork,mode=0600" "EXEC:\"$0\""
+  exec -- socat "UNIX-LISTEN:$SOCK,unlink-early,fork,mode=0600" "EXEC:\"$0\""
 fi
