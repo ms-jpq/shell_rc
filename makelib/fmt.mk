@@ -9,7 +9,7 @@ shfmt: $(VAR)/bin/shfmt
 	git ls-files --deduplicate -z -- '*.*sh' | grep -E -z -v -e '\.jsh$$' | xargs -r -0 -- '$<' --write --simplify --binary-next-line --space-redirects --indent 2 --
 
 black: $(VENV)/$(PY_BIN)
-	git ls-files --deduplicate -z -- '*.py' | xargs -r -0 -- '$</ssort' --
+	'$</ssort' -- .
 	'$</isort' --profile=black --gitignore -- .
 	'$</black' --extend-exclude pack -- .
 
