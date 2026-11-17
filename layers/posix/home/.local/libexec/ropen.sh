@@ -4,7 +4,7 @@ set -o pipefail
 
 : "${XDG_RUNTIME_DIR?}"
 
-SOCK="$XDG_RUNTIME_DIR/ropen/open.sock"
+SOCK="$XDG_RUNTIME_DIR/ropen.sock"
 
 if [[ ${RECUR:-} == 1 ]]; then
   while IFS= read -r -d '' TARGET; do
@@ -20,8 +20,6 @@ elif [[ -n ${SSH_CONNECTION:-} ]]; then
   : "${1?}"
   printf -- '%s\0' "$@" | socat - "UNIX-CONNECT:$SOCK"
 else
-  umask -- 077
-  mkdir -p -- "${SOCK%/*}"
   export -- RECUR=1
   exec -- socat "UNIX-LISTEN:$SOCK,unlink-early,fork,mode=0600" "EXEC:\"$0\""
 fi
