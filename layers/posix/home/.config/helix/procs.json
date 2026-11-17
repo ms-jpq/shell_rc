@@ -120,7 +120,7 @@
     "psalm": ["vimeo/psalm"]
   },
   "pip": {
-    "black": ["isort"],
+    "black": ["isort", "ssort"],
     "fortls": [],
     "fprettify": [],
     "mypy": [],
