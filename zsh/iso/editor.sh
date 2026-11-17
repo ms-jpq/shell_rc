@@ -14,7 +14,12 @@ msys | cygwin)
   _open=xdg-open
   ;;
 esac
-export -- BROWSER="${BROWSER:-$_open}"
+
+if [[ -n ${SSH_CONNECTION:-} ]]; then
+  export -- BROWSER="$HOME/.local/libexec/ropen.sh"
+else
+  export -- BROWSER="${BROWSER:-$_open}"
+fi
 unset -- _open
 
 # shellcheck disable=2154

@@ -21,7 +21,7 @@ tmux select-pane -t '{marked}'
 tmux select-pane -M
 
 tmux new-window -c ~/Downloads
-tmux set-buffer -- $'~/.local/opt/ai/bin/notificationd\n'
+tmux set-buffer -- $'~/.local/libexec/ropen.sh\n'
 tmux paste-buffer -d -p
 tmux select-pane -m
 tmux split-window -h -c ~/Downloads
