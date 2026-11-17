@@ -352,6 +352,13 @@ const xformBlockquote = ({ processor, source, prefix, definitions }) =>
 const format = (input, { definitions = "", prefix = "" } = {}) => {
   const source = definitions ? input + EOL + EOL + definitions : input
   const parser = remark()
+    .data("settings", {
+      bullet: "-",
+      bulletOrdered: ")",
+      resourceLink: true,
+      rule: "-",
+      ruleSpaces: true,
+    })
     .use(frontmatter, ["yaml", "toml"])
     .use(gfm)
     .use(xformContent, { length: input.length })
