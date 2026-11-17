@@ -2,6 +2,8 @@
 # frozen_string_literal: true
 # typed: strong
 
+require('pathname')
+
 return if (/^2/ =~ RUBY_VERSION) || (Gem.win_platform? && ENV.key?('CI'))
 
 ARGV.map(&:strip) => [pkg, *pkgs]
