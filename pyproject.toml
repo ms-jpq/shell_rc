@@ -5,4 +5,5 @@ version = "0"
 dependencies = ["PyYAML", "tomli", "tomli-w"]
 
 [project.optional-dependencies]
-dev = ["mypy", "types-PyYAML", "black", "isort", "ssort"]
+dev          = ["mypy", "types-PyYAML", "black", "isort"]
+dev-optional = ["ssort"]

@@ -1,8 +1,7 @@
 .PHONY: venv
 
 define PYDEPS
-from itertools import chain
-from subprocess import check_call
+from subprocess import check_call, run
 from sys import executable
 
 from tomli import load
@@ -19,8 +18,12 @@ check_call(
         "--upgrade",
         "--",
         *project.get("dependencies", ()),
-        *chain.from_iterable(project["optional-dependencies"].values()),
+        *project["optional-dependencies"]["dev"],
     )
+)
+run(
+    (executable, "-m", "pip", "install", "--upgrade", "--", *project["optional-dependencies"]["dev-optional"]),
+    check=False,
 )
 endef
 export -- PYDEPS

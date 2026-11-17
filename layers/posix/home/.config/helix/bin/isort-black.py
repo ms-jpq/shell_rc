@@ -1,10 +1,14 @@
 #!/usr/bin/env -S -- PYTHONSAFEPATH= python3
 
+from shutil import which
 from subprocess import PIPE, Popen
 from sys import exit
 
 with (
-    Popen(("ssort", "--", "-"), stdout=PIPE) as ssort,
+    Popen(
+        (command, "--", "-") if (command := which("ssort")) else ("tee",),
+        stdout=PIPE,
+    ) as ssort,
     Popen(
         ("isort", "--quiet", "--profile=black", "--", "-"),
         stdin=ssort.stdout,
