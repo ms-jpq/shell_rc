@@ -2,7 +2,11 @@
 
 set -o pipefail
 
+SAVE_CURSOR="$(tput -- sc)"
+RESTORE_CURSOR="$(tput -- rc)"
+
 RESET=(
+  "$SAVE_CURSOR"
   $'\033[>4m'    # Extended keyboard
   $'\033[?69l'   # Horizontal margins
   $'\033[?1002l' # Mouse dragging
@@ -13,15 +17,17 @@ RESET=(
   $'\033[?1016l' # Mouse pixel coordinates
   $'\033[?2004l' # Bracketed paste
   $'\033[r'      # Vertical margins
+  "$RESTORE_CURSOR"
 )
 
-stty sane
+reset -I -Q
 tput -S << 'EOF'
 rmcup
 cnorm
 sgr0
 rmacs
 rmkx
+smam
 XM 0
 EOF
 
