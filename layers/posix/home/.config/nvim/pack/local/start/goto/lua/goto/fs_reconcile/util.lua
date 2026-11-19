@@ -151,7 +151,6 @@ M.poller = function(path, interval, wake)
   local initialized = false
   local request, previous, previous_error
   local observe = vim.schedule_wrap(function(err, version)
-    request = nil
     if timer:is_closing() then
       return
     end
@@ -161,10 +160,14 @@ M.poller = function(path, interval, wake)
       wake()
     end
   end)
+  local on_stat = function(err, version)
+    request = nil
+    observe(err, version)
+  end
   if
     not timer:start(0, interval, function()
       if not request then
-        request = vim.uv.fs_stat(path, observe)
+        request = vim.uv.fs_stat(path, on_stat)
       end
     end)
   then

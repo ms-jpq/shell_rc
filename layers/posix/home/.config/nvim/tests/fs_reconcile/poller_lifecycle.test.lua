@@ -1,5 +1,31 @@
 local T = require "tests.lib"
 
+T.test({ "closing after stat completion does not cancel a completed request" }, function()
+  local util = require "goto.fs_reconcile.util"
+  local path = T.file { "dogs" }
+  local stat = vim.uv.fs_stat
+  local poller, closed, failure
+  local observations = 0
+  T.patch(vim.uv, "fs_stat", function(name, callback)
+    return stat(name, function(...)
+      callback(...)
+      local ok, err = pcall(poller.close)
+      failure = not ok and err or nil
+      closed = true
+    end)
+  end)
+  poller = assert(util.poller(path, 10, function()
+    observations = observations + 1
+  end))
+  T.cleanup(poller.close)
+  T.eventually(function()
+    return closed
+  end)
+  assert(not failure, tostring(failure))
+  require("goto.async").scheduled()
+  T.eq(0, observations)
+end)
+
 T.test({ "polling reports its first error and recovers after creation" }, function()
   local util = require "goto.fs_reconcile.util"
   local path = vim.fs.joinpath(T.tempdir(), "missing")
