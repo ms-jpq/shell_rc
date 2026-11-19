@@ -2,12 +2,11 @@
 
 set -o pipefail
 
-DIR="$(realpath -- "$0")"
-DIR="$(dirname -- "$DIR")"
-PARENT="$(dirname -- "$DIR")"
+DIR="${0%/*}"
+PARENT="$DIR/.."
 
 DST="$PARENT/languages.toml"
-ROOT="$(realpath -- "$PARENT/../../../../..")"
+ROOT="$PARENT/../../../../.."
 TOML="$ROOT/var/helix.lang.toml"
 
 JQ=(

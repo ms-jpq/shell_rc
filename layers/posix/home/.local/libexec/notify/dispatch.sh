@@ -40,8 +40,7 @@ done
 TITLE="$1"
 BODY="${2-}"
 
-ROOT="$(realpath -- "$0")"
-BASE="${ROOT%/*}"
+BASE="${0%/*}"
 
 ARGS=("$TITLE" "$BODY")
 if [[ -n $SOUND ]]; then

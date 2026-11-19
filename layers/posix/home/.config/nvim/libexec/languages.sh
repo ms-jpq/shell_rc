@@ -2,8 +2,8 @@
 
 set -o pipefail
 
-DIR="$(dirname -- "$0")"
-ROOT="$(realpath -- "$DIR/../../../../../..")"
+DIR="${0%/*}"
+ROOT="$DIR/../../../../../.."
 
 read -r -d '' -- PY <<- 'PYTHON' || true
 from json import dump

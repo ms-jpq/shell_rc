@@ -4,9 +4,7 @@ set -o pipefail
 
 : "${BIN?}"
 
-SELF="$(realpath -- "$0")"
-BASE="${SELF%/*}"
-BASE="${BASE%/*}"
+BASE="${0%/*}/.."
 
 SRC="$BASE/bin"
 DST="$BIN"

@@ -47,8 +47,7 @@ SED=(
 )
 
 "${ARGV[@]}" | if [[ -n ${AERC_MIME_TYPE:-} ]]; then
-  SELF="$(realpath -- "$0")"
-  BASE="${SELF%/*}"
+  BASE="${0%/*}"
   tac | IDENT=$(((C - COLS) / 2)) WIDTH="$C" "$BASE/html.awk" | tac
 else
   tee
