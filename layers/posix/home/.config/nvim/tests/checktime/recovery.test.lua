@@ -78,23 +78,48 @@ T.test({ "disk changes during a read retain the common ancestor" }, function()
   end)
 end)
 
-T.test({ "read-only concurrent insertions into empty text retain local-first record order" }, function()
+T.test({ "empty-base insertions merge and autosave without notifications" }, function()
   local path = T.file {}
   vim.cmd.edit(path)
   require "goto.fs_reconcile"
   vim.api.nvim_exec_autocmds("VimEnter", {})
-  vim.bo.readonly = true
+  local notifications = {}
+  T.patch(vim, "notify", function(message)
+    table.insert(notifications, message)
+  end)
   vim.api.nvim_buf_set_lines(0, 0, -1, true, { "", "", "", "" })
   vim.fn.writefile({ "dogs" }, path)
   T.eventually(function()
-    return vim.deep_equal(vim.api.nvim_buf_get_lines(0, 0, -1, true), { "", "", "", "", "dogs" })
-  end, {
-    message = function()
-      return vim.inspect(vim.api.nvim_buf_get_lines(0, 0, -1, true))
-    end,
-  })
-  T.eq({ "dogs" }, vim.fn.readfile(path))
-  assert(vim.bo.modified)
+    return vim.deep_equal(vim.fn.readfile(path), { "", "", "", "", "dogs" }) and not vim.bo.modified
+  end)
+  T.eq({}, notifications)
+  T.eq({ "", "", "", "", "dogs" }, vim.api.nvim_buf_get_lines(0, 0, -1, true))
+  vim.api.nvim_buf_set_lines(0, 0, -1, true, { "local pups" })
+  T.eventually(function()
+    return vim.deep_equal(vim.fn.readfile(path), { "local pups" }) and not vim.bo.modified
+  end)
+  T.eq({}, notifications)
+end)
+
+T.test({ "empty-base merge continues accepting disk edits" }, function()
+  local path = T.file {}
+  vim.cmd.edit(path)
+  require "goto.fs_reconcile"
+  vim.api.nvim_exec_autocmds("VimEnter", {})
+  local notifications = {}
+  T.patch(vim, "notify", function(message)
+    table.insert(notifications, message)
+  end)
+  vim.api.nvim_buf_set_lines(0, 0, -1, true, { "dogs" })
+  vim.fn.writefile({ "pups" }, path)
+  T.eventually(function()
+    return vim.deep_equal(vim.fn.readfile(path), { "dogs", "pups" }) and not vim.bo.modified
+  end)
+  vim.fn.writefile({ "small pups" }, path)
+  T.eventually(function()
+    return vim.deep_equal(vim.api.nvim_buf_get_lines(0, 0, -1, true), { "small pups" }) and not vim.bo.modified
+  end)
+  T.eq({}, notifications)
 end)
 
 T.test({ "read-only merge retains a final empty record without endofline" }, function()

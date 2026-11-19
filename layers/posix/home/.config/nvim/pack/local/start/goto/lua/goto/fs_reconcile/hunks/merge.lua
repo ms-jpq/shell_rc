@@ -7,15 +7,16 @@ local M = {}
 ---@param local_text string
 ---@param remote_text string
 ---@param prefix_boundary string
+---@param suffix_boundary string
 ---@return string?
-local extension = function(base, local_text, remote_text, prefix_boundary)
+local extension = function(base, local_text, remote_text, prefix_boundary, suffix_boundary)
   local shorter, longer = local_text, remote_text
   if #shorter > #longer then
     shorter, longer = longer, shorter
   end
   if
     (vim.startswith(shorter, base) and vim.startswith(longer, shorter .. prefix_boundary))
-    or (vim.endswith(shorter, base) and vim.endswith(longer, lib.LF .. shorter))
+    or (vim.endswith(shorter, base) and vim.endswith(longer, suffix_boundary .. shorter))
   then
     return longer
   end
@@ -26,14 +27,15 @@ end
 ---@param remote_text string
 ---@return string?
 M.extension = function(base, local_text, remote_text)
-  return extension(base, local_text, remote_text, lib.LF)
+  local boundary = base == "" and "" or lib.LF
+  return extension(base, local_text, remote_text, boundary, boundary)
 end
 
 ---@param left string
 ---@param right string
 ---@return string?
 local record_extension = function(left, right)
-  return extension("", left, right, "")
+  return extension("", left, right, "", lib.LF)
 end
 
 ---@class FsReconcileHunkComponent

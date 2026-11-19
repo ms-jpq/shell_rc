@@ -22,7 +22,6 @@ RESET=(
 
 reset -I -Q
 tput -S << 'EOF'
-rmcup
 cnorm
 sgr0
 rmacs

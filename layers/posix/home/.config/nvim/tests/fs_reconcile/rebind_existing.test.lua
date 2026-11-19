@@ -7,6 +7,10 @@ T.test({ "rebind existing", timeout = 10000 }, function()
   vim.cmd.edit(before)
   require "goto.fs_reconcile"
   vim.cmd [[doautocmd VimEnter]]
+  local notifications = {}
+  T.patch(vim, "notify", function(message)
+    table.insert(notifications, message)
+  end)
 
   vim.api.nvim_buf_set_lines(0, 0, -1, true, { "local" })
   vim.cmd.file(after)
@@ -29,4 +33,5 @@ T.test({ "rebind existing", timeout = 10000 }, function()
   vim.cmd [[write!]]
   assert(vim.deep_equal(vim.fn.readfile(after), { "local", "agent" }))
   assert(not vim.bo.modified)
+  T.eq({}, notifications)
 end)
