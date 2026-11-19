@@ -31,6 +31,37 @@ T.test({ "REPL retains the entered symlink path across cwd changes and alternate
   T.eq(absolute, repl.buf_path(0))
 end)
 
+for _, case in ipairs {
+  { "characters", "gg0vll", "1:1-1:4", 1, 1 },
+  { "reversed characters", "gg03lvhh", "1:2-1:5", 1, 1 },
+  { "lines", "ggVj", "1:1-2:9", 1, 2 },
+  { "block", "gg0<C-v>jl", "1:1-2:3", 1, 2 },
+} do
+  T.test({ "REPL exits Visual mode before reading " .. case[1] .. " bounds", isolate = true }, function()
+    require "go.to"
+    vim.cmd.edit(T.file { "dogs run", "dogs nap", "dogs eat" })
+    vim.b.__repl_target__ = "dogs" .. string.char(31) .. "target"
+    local captured
+    T.patch(require "goto.async", "system", function(_, options)
+      T.eq("n", vim.fn.mode())
+      captured = options.env
+      return { code = 0, stdout = "", stderr = "" }
+    end)
+    T.patch(vim, "notify", function() end)
+    local getregionpos = vim.fn.getregionpos
+    T.patch(vim.fn, "getregionpos", function(...)
+      T.eq("n", vim.fn.mode())
+      return getregionpos(...)
+    end)
+    vim.cmd.normal { args = { vim.keycode(case[2]) }, bang = true }
+    vim.api.nvim_feedkeys(vim.keycode [[\w]], "xt", false)
+    assert(captured)
+    T.eq(case[3], captured.REPL_LOCATION)
+    T.eq(tostring(case[4]), captured.REPL_SELECT_LO)
+    T.eq(tostring(case[5]), captured.REPL_SELECT_HI)
+  end)
+end
+
 T.test({ "REPL records paths for new files and updates them after a rename" }, function()
   local root, _, repl = paths()
   vim.cmd.edit "relative/new-file"

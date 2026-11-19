@@ -37,10 +37,10 @@ end
 
 local selection = function(win, args)
   local buf = vim.api.nvim_win_get_buf(win)
-  local mode = vim.fn.mode(1)
+  local first, last = vim.fn.getpos "'<", vim.fn.getpos "'>"
 
-  if string.find(mode, "^[vV\22]") then
-    local region = vim.fn.getregionpos(vim.fn.getpos "v", vim.fn.getpos ".", { type = mode, eol = true })
+  if args and args.range > 0 and args.line1 == first[2] and args.line2 == last[2] then
+    local region = vim.fn.getregionpos(first, last, { type = vim.fn.visualmode(), eol = true })
     local first, last = unpack(region[1]), unpack(region[#region], 2)
     local _, lo, col_lo = unpack(first)
     local _, hi, col_hi = unpack(last)
