@@ -1,8 +1,12 @@
 ---@diagnostic disable-next-line: global-element
 _G.Go = _G.Go or { pack = {} }
 
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+do
+  vim.g.mapleader = " "
+  vim.g.maplocalleader = " "
+  vim.keymap.set({ "n", "x" }, [[<leader>]], [[<nop>]])
+  vim.keymap.set({ "n", "x" }, [[<leader><leader>]], [[<nop>]], { nowait = true })
+end
 
 require "go.bookmark"
 require "go.clipboard"
