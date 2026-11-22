@@ -13,9 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - run: |-
-          HOMEBREW_DEVELOPER=1 brew install --HEAD --formula -- ./formulae/*
-          HOMEBREW_DEVELOPER=1 brew reinstall --formula -- ./formulae/*
+      - shell: bash
+        run: |-
+          brew tap-new --no-git -- ms-jpq/ci
+          cp -- ./formulae/*.rb "$(brew --repository ms-jpq/ci)/Formula/"
+          FORMULAE=(ms-jpq/ci/{aerc,cyrus-sasl-xoauth2,mblaze})
+          brew install --HEAD --formula -- "${FORMULAE[@]}"
+          brew reinstall --formula -- "${FORMULAE[@]}"
 
   docker:
     strategy:

@@ -13,8 +13,7 @@ T.test({ "worker merges agree with synchronous merges", timeout = 10000, isolate
           { text = base, endofline = true },
           { text = local_text, endofline = true },
           { text = remote, endofline = true }
-        )
-        actual = actual.text
+        ).text
         assert(
           actual == expected,
           vim.inspect { base = base, local_text = local_text, remote = remote, expected = expected, actual = actual }
