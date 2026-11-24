@@ -91,7 +91,7 @@ local mk_session = function(update)
   vim.fn.mkdir(parent, "p")
   vim.fn.setfperm(parent, [[rwxr-xr-x]])
 
-  vim.cmd.mksession { path, bang = true }
+  vim.cmd.mksession { vim.fn.fnameescape(path), bang = true }
   if saved_path and saved_path ~= path then
     vim.fn.delete(saved_path)
   end
@@ -106,7 +106,7 @@ local restore = function()
   local path = context.restore_path()
   if path then
     async.scheduled()
-    vim.cmd.source { path, mods = { silent = true, emsg_silent = true } }
+    vim.cmd.source { vim.fn.fnameescape(path), mods = { silent = true, emsg_silent = true } }
   end
 end
 
