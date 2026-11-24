@@ -8,6 +8,7 @@ local MILLISECONDS_PER_SECOND = 1000
 local NANOSECONDS_PER_MILLISECOND = 1000 * 1000
 
 M.LF = "\n"
+M.US = string.char(31)
 
 ---@param mode string
 ---@return boolean

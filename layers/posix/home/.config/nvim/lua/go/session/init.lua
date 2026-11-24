@@ -1,14 +1,12 @@
 local async = require "goto.async"
 local autocmd = require "goto.autocmd"
+local context = require "go.session.context"
 local lib = require "goto.lib"
 local scope = require "go.session.scope"
 
 -- limit session restoration info
 vim.opt.sessionoptions:remove { "blank", "buffers", "curdir", "help", "terminal" }
 vim.opt.sessionoptions:append { "skiprtp" }
-
-local session_dir = vim.fs.joinpath(vim.fn.stdpath "cache", "sessions")
-local startup_cwd = vim.fn.getcwd()
 
 do
   -- scratch buffer
@@ -54,7 +52,7 @@ local no_session = (function()
       return ret
     end
 
-    local cwd = startup_cwd
+    local cwd = context.startup_cwd
     if cwd == "" then
       ret = true
       return ret
@@ -80,27 +78,24 @@ local no_session = (function()
   end
 end)()
 
-local session_path = function(cwd)
-  local key = vim.fn.sha256(cwd)
-  local path = vim.fs.joinpath(session_dir, key .. ".vim")
-
-  local norm = vim.fs.normalize(path, { expand_env = false })
-  return norm
-end
-
 local session_ready = false
+local saved_path = nil
 
-local mk_session = function()
+local mk_session = function(update)
   if not session_ready or no_session() then
     return
   end
 
-  local path = session_path(startup_cwd)
+  local path = context.save_path(update)
   local parent = vim.fs.dirname(path)
   vim.fn.mkdir(parent, "p")
   vim.fn.setfperm(parent, [[rwxr-xr-x]])
 
   vim.cmd.mksession { path, bang = true }
+  if saved_path and saved_path ~= path then
+    vim.fn.delete(saved_path)
+  end
+  saved_path = path
 end
 
 local restore = function()
@@ -108,8 +103,8 @@ local restore = function()
     return
   end
 
-  local path = session_path(startup_cwd)
-  if vim.fn.filereadable(path) == 1 then
+  local path = context.restore_path()
+  if path then
     async.scheduled()
     vim.cmd.source { path, mods = { silent = true, emsg_silent = true } }
   end
@@ -130,13 +125,22 @@ local move_tabs = function(cwd)
   vim.cmd.tabfirst()
 end
 
-vim.api.nvim_create_autocmd({ "FocusLost", "VimLeavePre" }, {
+vim.api.nvim_create_autocmd({ "FocusLost" }, {
   group = lib.group,
-  callback = mk_session,
+  callback = async(function()
+    mk_session(true)
+  end),
+})
+
+vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
+  group = lib.group,
+  callback = function()
+    mk_session(false)
+  end,
 })
 
 autocmd.vim_enter(function()
   restore()
-  move_tabs(startup_cwd)
+  move_tabs(context.startup_cwd)
   session_ready = true
 end)

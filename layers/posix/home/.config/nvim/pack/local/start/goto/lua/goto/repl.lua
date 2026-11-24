@@ -4,7 +4,6 @@ local lib = require "goto.lib"
 
 local M = {}
 
-local REPL_IFS = string.char(31)
 local exec = assert(unpack(vim.api.nvim_get_runtime_file("libexec/repl.sh", false)))
 
 do
@@ -66,7 +65,7 @@ local metadata = function(buf, target, lo, hi, location)
     REPL_ANCESTOR_PATHS = table.concat(paths, ":"),
     REPL_LOCATION = location,
     REPL_FILE_NAME = filename,
-    REPL_IFS = REPL_IFS,
+    REPL_IFS = lib.US,
     REPL_LINE_COUNT = tostring(vim.api.nvim_buf_line_count(buf)),
     REPL_PARENT_PATH = vim.fs.dirname(filename),
     REPL_PRETTY_NAME = vim.fn.fnamemodify(filename, [[:~]]),
@@ -80,7 +79,7 @@ end
 ---@param env table<string, string>
 local pick = function(buf, all, env)
   local target = vim.b[buf].__repl_target__
-  if not all and target and string.find(target, REPL_IFS, 1, true) then
+  if not all and target and string.find(target, lib.US, 1, true) then
     return target
   end
 
@@ -103,8 +102,8 @@ local pick = function(buf, all, env)
   async.scheduled()
   target = async.ui.select(choices, {
     format_item = function(choice)
-      local line = string.gsub(choice, "^[^" .. REPL_IFS .. "]*" .. REPL_IFS, "")
-      return string.gsub(line, REPL_IFS, " ")
+      local line = string.gsub(choice, "^[^" .. lib.US .. "]*" .. lib.US, "")
+      return string.gsub(line, lib.US, " ")
     end,
   })
   vim.b[buf].__repl_target__ = target
