@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from collections.abc import Generator, Iterator
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import contextmanager, nullcontext, suppress
+from contextlib import closing, contextmanager, nullcontext, suppress
 from functools import cache, lru_cache, partial
 from imaplib import IMAP4, IMAP4_SSL
 from itertools import islice
@@ -58,7 +58,7 @@ def _require_ok(status: str, data: object) -> None:
 
 
 @contextmanager
-def _imap(host: str, authn: str, user: str) -> Generator[IMAP4]:
+def _imap(host: str, authn: str, user: str) -> Iterator[IMAP4]:
     now = int(monotonic() / _MINUTE)
     with _lock():
         auth = _auth(authn, user=user, now=now)
@@ -75,8 +75,11 @@ def _imap(host: str, authn: str, user: str) -> Generator[IMAP4]:
         m._get_capabilities()
         yield m
     finally:
-        with suppress(IMAP4.error, OSError):
+        try:
             m.logout()
+        except (IMAP4.error, OSError):
+            with suppress(IMAP4.error, OSError):
+                m.shutdown()
 
 
 def _mailboxes(m: IMAP4) -> Iterator[str]:
@@ -90,7 +93,7 @@ def _mailboxes(m: IMAP4) -> Iterator[str]:
         yield dir.decode()
 
 
-def _waiting(host: str, authn: str, user: str, mailbox: str) -> Iterator[None]:
+def _waiting(host: str, authn: str, user: str, mailbox: str) -> Generator[None]:
     with _imap(host, authn=authn, user=user) as m:
         status, data = m.select(mailbox, readonly=True)
         _require_ok(status, data=data)
@@ -118,8 +121,11 @@ def _idle(
     while daemonize or not touched:
         touched = True
         try:
-            for _ in _waiting(host, authn=authn, user=user, mailbox=mailbox):
-                _trigger(channel)
+            with closing(
+                _waiting(host, authn=authn, user=user, mailbox=mailbox)
+            ) as events:
+                for _ in events:
+                    _trigger(channel)
         except (TimeoutError, gaierror, CalledProcessError) as e:
             getLogger().info("%s", e)
         except IMAP4.abort as e:
