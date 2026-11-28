@@ -2,7 +2,8 @@ local lib = require "goto.lib"
 local proc = require "go.proc"
 
 local lsp_path = vim.fs.joinpath(proc.cfg, "apriori", "lsp.json")
-local override_keys = { "cmd", "filetypes", "init_options", "root_markers", "settings", "workspace_required" }
+local override_keys =
+  { "capabilities", "cmd", "filetypes", "init_options", "root_markers", "settings", "workspace_required" }
 
 local build_overrides = function(conf)
   local acc = { detached = false }

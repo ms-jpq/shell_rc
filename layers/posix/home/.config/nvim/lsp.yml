@@ -106,6 +106,10 @@ dockerls:
 docker_compose_language_service:
 
 pyright:
+  capabilities:
+    workspace:
+      didChangeWatchedFiles:
+        dynamicRegistration: true
 
 # pylyzer:
 
